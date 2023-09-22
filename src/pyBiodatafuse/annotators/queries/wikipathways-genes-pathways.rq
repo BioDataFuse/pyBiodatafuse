@@ -1,0 +1,12 @@
+SELECT ?geneId ?pathwayId
+WHERE {
+
+	VALUES ?geneId { $gene_list }
+
+	?geneProduct a wp:GeneProduct .
+	?geneProduct rdfs:label ?geneId .
+	?geneProduct dcterms:isPartOf ?pathway .
+
+	?pathway a wp:Pathway .
+	?pathway dcterms:identifier ?pathwayId
+}

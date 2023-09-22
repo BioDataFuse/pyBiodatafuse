@@ -1,0 +1,7 @@
+SELECT DISTINCT (str(?titleLit) as ?title)
+WHERE {
+   ?dataset a void:Dataset ;
+   dcterms:title ?titleLit
+ }
+ LIMIT 1
+
