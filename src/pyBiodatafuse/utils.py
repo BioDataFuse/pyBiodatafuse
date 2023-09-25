@@ -6,7 +6,7 @@ import os
 from typing import List
 import json
 import pandas as pd
-from src.constants import(
+from .constants import(
     BRIDGEDB_DIR, 
     DATA_DIR,
     COMBINED_DIR)
