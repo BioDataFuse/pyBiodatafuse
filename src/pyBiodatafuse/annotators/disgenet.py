@@ -9,7 +9,6 @@ import datetime
 from pyBiodatafuse.constants import DATA_DIR
 from pyBiodatafuse.utils import (
     get_identifier_of_interest,
-    create_or_append_to_metadata,
     collapse_data_sources,
 )
 
@@ -136,13 +135,7 @@ def disgenetAnnotator(
             },
         }
 
-        create_or_append_to_metadata(
-            disgenet_metadata
-        )  # Call the function from the metadata module
-
-        print(f"The query metadata is appended: {DATA_DIR}\metadata.json")
-
         if s:
             s.close()
 
-        return merged_df
+        return merged_df, disgenet_metadata

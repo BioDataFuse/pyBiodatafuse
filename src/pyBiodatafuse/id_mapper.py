@@ -9,8 +9,6 @@ import csv
 import os
 
 from .constants import BRIDGEDB_DIR, DATA_DIR
-from .utils import create_or_append_to_metadata
-
 
 def bridgedb_Xref(
     identifiers: pd.DataFrame,
@@ -50,7 +48,9 @@ def bridgedb_Xref(
             "HGNC",
         ]
 
-    data_sources = pd.read_csv(f"data/bridgedb/datasources.tsv", sep=",")
+    data_sources = pd.read_csv(
+        f"data/bridgedb/datasources.tsv",
+        sep = ",")
     input_source = data_sources.loc[
         data_sources["source"] == inputDatasource, "systemCode"
     ].iloc[0]
@@ -60,7 +60,7 @@ def bridgedb_Xref(
             "\n".join(
                 [f"{identifier}\t{input_source}" for identifier in identifiers]
             )
-            + f"\t{input_source}\n"
+            + f"\n"
         )
 
         # Setting up the query url
@@ -185,10 +185,4 @@ def bridgedb_Xref(
             },
         }
 
-        create_or_append_to_metadata(
-            bridgedb_metadata
-        )  # Call the function from the metadata module
-
-        print(f"The query metadata is saved in {DATA_DIR}\metadata.json")
-
-        return bridgedb
+        return bridgedb, bridgedb_metadata
