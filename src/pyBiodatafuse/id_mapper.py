@@ -7,8 +7,22 @@ import pandas as pd
 import datetime
 import csv
 import os
+import importlib.resources
 
 from .constants import BRIDGEDB_DIR, DATA_DIR
+
+def read_resource_files(file_name: str):
+    """read the datasource file.
+
+    @param file_name: dataource file name in the sources subdirectory
+   
+    Usage example:
+    >> file_name = "datasources.csv"
+    """
+    with importlib.resources.path("resources", file_name) as file_path:
+        file_path_str = str(file_path)
+        df = pd.read_csv(file_path_str, sep=',') 
+        return df
 
 def bridgedb_Xref(
     identifiers: pd.DataFrame,
@@ -48,9 +62,7 @@ def bridgedb_Xref(
             "HGNC",
         ]
 
-    data_sources = pd.read_csv(
-        f"data/bridgedb/datasources.tsv",
-        sep = ",")
+    data_sources = read_resource_files("datasources.tsv")
     input_source = data_sources.loc[
         data_sources["source"] == inputDatasource, "systemCode"
     ].iloc[0]

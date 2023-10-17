@@ -1,0 +1,44 @@
+systemCode,source,type
+En,Ensembl,gene
+L,NCBI Gene,gene
+H,HGNC,gene
+Hac,HGNC Accession Number,gene
+M,MGI,gene
+Mbm,miRBase mature sequence,gene
+Mb,miRBase Sequence,gene
+Om,OMIM,gene
+Q,RefSeq,gene
+Rf,Rfam,gene
+R,RGD,gene
+D,SGD,gene
+Uc,UCSC Genome Browser,gene
+Wg,WikiGenes,gene
+Np,NCBI Protein,gene
+Pd,PDB,gene
+Pf,Pfam,gene
+S,Uniprot-TrEMBL,gene
+Sp,Uniprot-SwissProt,gene
+X,Affy,gene
+Ag,Agilent,gene
+Il,Illumina,gene
+T,Gene Ontology,gene
+Ca,CAS,metabolite
+Ce,ChEBI,metabolite
+Cs,ChemSpider,metabolite
+Cl,ChEMBL compound,metabolite
+Dr,DrugBank,metabolite
+Ch,HMDB,metabolite
+Gpl,Guide to Pharmacology Ligand ID (aka IUPHAR),metabolite
+Ik,InChIKey,metabolite
+Ck,KEGG Compound,metabolite
+Kd,KEGG Drug,metabolite
+Kl,KEGG Glycan,metabolite
+Lm,LIPID MAPS,metabolite
+Lb,LipidBank,metabolite
+Pgd,PharmGKB Drug,metabolite
+Cpc,PubChem Compound,metabolite
+Cps,PubChem Substance,metabolite
+Sl,SwissLipids,metabolite
+Td,TTD Drug,metabolite
+Wd,Wikidata,metabolite
+Wi,Wikipedia,metabolite
