@@ -1,6 +1,6 @@
 # coding: utf-8
 
-"""Python file x DisGeNet database (https://www.disgenet.org/home/)."""
+"""Python file for queriying DisGeNet database (https://www.disgenet.org/home/)."""
 
 import datetime
 from typing import Optional, Tuple
@@ -11,7 +11,7 @@ import requests
 from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interest
 
 
-def disgenet_annotator(
+def get_gene_disease(
     bridgedb_df: pd.DataFrame,
     api_key: str = "0209751bfa7b6a981a8f5fb5f062313067ecd36c",
     params: Optional[dict] = None,
