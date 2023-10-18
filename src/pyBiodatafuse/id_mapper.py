@@ -10,7 +10,7 @@ from typing import Optional, Tuple
 import pandas as pd
 import requests
 
-from .constants import BRIDGEDB_DIR
+from .constants import BRIDGEDB_DIR, DATA_DIR
 
 
 def read_resource_files() -> pd.DataFrame:
@@ -18,7 +18,7 @@ def read_resource_files() -> pd.DataFrame:
 
     :returns: a DataFrame containing the data from the datasource file
     """
-    return pd.read_csv("resources/datasources.tsv", sep=",")
+    return pd.read_csv(f"{DATA_DIR}/datasources.csv")
 
 
 def bridgedb_xref(
