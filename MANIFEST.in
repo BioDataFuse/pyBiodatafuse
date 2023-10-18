@@ -1,5 +1,6 @@
 graft src
 graft tests
+graft data
 prune scripts
 prune notebooks
 prune tests/.pytest_cache

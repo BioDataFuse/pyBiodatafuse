@@ -10,7 +10,7 @@ from typing import Optional, Tuple
 import pandas as pd
 import requests
 
-from .constants import BRIDGEDB_DIR, DATA_DIR
+from pyBiodatafuse.constants import BRIDGEDB_DIR, DATA_DIR
 
 
 def read_resource_files() -> pd.DataFrame:

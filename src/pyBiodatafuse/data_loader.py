@@ -7,7 +7,7 @@ import re
 
 import pandas as pd
 
-from .constants import BRIDGEDB_DIR
+from pyBiodatafuse.constants import BRIDGEDB_DIR
 
 
 def create_df_from_file(file_path: str) -> pd.DataFrame:
