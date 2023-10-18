@@ -10,7 +10,7 @@ from typing import Optional, Tuple
 import pandas as pd
 import requests
 
-from pyBiodatafuse.constants import BRIDGEDB_DIR, DATA_DIR
+from pyBiodatafuse.constants import BRIDGEDB_DIR, DATA_DIR, RESOURCES_DIR
 
 
 def read_resource_files() -> pd.DataFrame:
@@ -18,7 +18,7 @@ def read_resource_files() -> pd.DataFrame:
 
     :returns: a DataFrame containing the data from the datasource file
     """
-    return pd.read_csv(f"{DATA_DIR}/datasources.csv")
+    return pd.read_csv(f"{RESOURCES_DIR}/datasources.csv")
 
 
 def bridgedb_xref(

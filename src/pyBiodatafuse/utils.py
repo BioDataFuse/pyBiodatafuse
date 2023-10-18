@@ -8,7 +8,7 @@ from typing import List
 
 import pandas as pd
 
-from pyBiodatafuse.constants import BRIDGEDB_DIR, COMBINED_DIR, DATA_DIR
+from pyBiodatafuse.constants import BRIDGEDB_DIR, COMBINED_DIR, DATA_DIR, RESOURCES_DIR
 
 
 def get_identifier_of_interest(bridgedb_df: pd.DataFrame, source: str) -> pd.DataFrame:
@@ -19,7 +19,7 @@ def get_identifier_of_interest(bridgedb_df: pd.DataFrame, source: str) -> pd.Dat
     :returns: a DataFrame containing the identifiers of interest
     """
     # Load identifier options
-    identifier_options = pd.read_csv(f"{BRIDGEDB_DIR}/datasources.tsv")["source"].tolist()
+    identifier_options = pd.read_csv(f"{RESOURCES_DIR}/datasources.Csv")["source"].tolist()
 
     # Check if source is in identifier options
     assert source in identifier_options, f"Source {source} is not in identifier options"
