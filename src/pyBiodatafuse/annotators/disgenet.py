@@ -1,35 +1,30 @@
 # coding: utf-8
 
-"""Python file for querying the DisGeNet database (https://www.disgenet.org/home/)."""
+"""Python file for queriying DisGeNet database (https://www.disgenet.org/home/)."""
+
+import datetime
+from typing import Optional, Tuple
 
 import pandas as pd
 import requests
-import datetime
 
-from pyBiodatafuse.constants import DATA_DIR
-from pyBiodatafuse.utils import (
-    get_identifier_of_interest,
-    collapse_data_sources,
-)
+from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interest
 
 
-def disgenetAnnotator(
+def get_gene_disease(
     bridgedb_df: pd.DataFrame,
     api_key: str = "0209751bfa7b6a981a8f5fb5f062313067ecd36c",
-    params: dict = {"source": "CURATED", "format": "json"},
-) -> pd.DataFrame:
+    params: Optional[dict] = None,
+) -> Tuple[pd.DataFrame, dict]:
     """Query gene-disease associations from DisGeNET.
 
-    @param bridgedb_df: BridgeDb output for creating the list of gene ids to query
-    @param api_key: DisGeNET API key (more details can be found at https://www.disgenet.org/api/#/Authorization)
-    @param params: dictionary of parameters to be passed to the DisGeNET API (more details can be found at https://www.disgenet.org/api/#/gene)
-
-    Usage example:
-    >> api_key = "YOUR_KEY_HERE"
-    >> params = {'source': 'CURATED', 'format': 'json'} # only curated data
-    >> disgenetAnnotator(api_key, params)
+    :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
+    :param api_key: DisGeNET API key (more details can be found at https://www.disgenet.org/api/#/Authorization)
+    :param params: dictionary of parameters to be passed to the DisGeNET API.
+                   More details can be found at https://www.disgenet.org/api/#/gene.
+    :returns: a DataFrame containing the DisGeNET output and dictionary of the DisGeNET metadata.
+    :raises ValueError: if the DisGeNET API key is not provided
     """
-
     # Extract the "target" values and join them into a single string separated by commas
     data_df = get_identifier_of_interest(bridgedb_df, "NCBI Gene")
     disgenet_input = ",".join(data_df["target"])
@@ -53,6 +48,12 @@ def disgenetAnnotator(
 
     disgenet_output = []
 
+    if not params:
+        params = {"source": "CURATED", "format": "json"}
+    else:
+        params["format"] = "json"
+        params["source"] = "CURATED"
+
     for chunk in chunks:
         # Join the chunked targets into a comma-separated string
         chunked_input = ",".join(chunk)
@@ -74,10 +75,6 @@ def disgenetAnnotator(
         # Add DisGeNET output as a new column to BridgeDb file
         disgenet_df.rename(columns={"geneid": "target", "gene_symbol": "identifier"}, inplace=True)
         disgenet_df["target"] = disgenet_df["target"].values.astype(str)
-
-        # Save the output in a CSV file
-        # disgenet_df.to_csv(disgenet_file_path, index=False)
-        # print(f"The query output is saved as {disgenet_file_path}")
 
         selected_columns = [
             "gene_dsi",
@@ -108,11 +105,6 @@ def disgenetAnnotator(
             target_specific_cols=selected_columns,
             col_name="DisGeNET",
         )
-
-        # Save the output in a CSV file
-        # merged_df.to_csv(output_file_path, index=False)
-
-        # print(f"The complete merged output is saved as {output_file_path}")
 
         """Metdata details"""
         # Get the current date and time

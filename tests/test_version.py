@@ -4,6 +4,7 @@
 
 import unittest
 
+from pyBiodatafuse.annotators.opentargets import get_version as opentargets_version
 from pyBiodatafuse.version import get_version
 
 
@@ -17,3 +18,8 @@ class TestVersion(unittest.TestCase):
         """
         version = get_version()
         self.assertIsInstance(version, str)
+
+    def test_opentargets_version_type(self):
+        """Test the version from OpenTargets is a dictionary."""
+        version = opentargets_version()
+        self.assertIsInstance(version, dict)
