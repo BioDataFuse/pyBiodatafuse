@@ -23,8 +23,8 @@ sys.path.insert(0, os.path.abspath("../../src"))
 # -- Project information -----------------------------------------------------
 
 project = "pyBiodatafuse"
-copyright = f"{date.today().year}, Tooba Abbassi-Daloii"
-author = "Tooba Abbassi-Daloii"
+copyright = f"{date.today().year}, Tooba Abbassi-Daloii and Yojana Gadiya"
+author = "Tooba Abbassi-Daloii and Yojana Gadiya"
 
 # The full version, including alpha/beta/rc tags.
 release = "0.0.1-dev"
@@ -63,8 +63,6 @@ extensions = [
     "sphinx.ext.todo",
     "sphinx.ext.mathjax",
     "sphinx.ext.viewcode",
-    "sphinx_automodapi.automodapi",
-    "sphinx_automodapi.smart_resolver",
     # 'texext',
 ]
 
@@ -199,7 +197,7 @@ texinfo_documents = [
         "pyBiodatafuse",
         "pyBioDataFuse Documentation",
         author,
-        "Tooba Abbassi-Daloii",
+        "Tooba Abbassi-Daloii and Yojana Gadiya",
         "A python package for integrating data from multiple resources",
         "Miscellaneous",
     ),

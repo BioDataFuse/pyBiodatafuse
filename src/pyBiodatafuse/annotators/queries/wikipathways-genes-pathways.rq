@@ -1,7 +1,7 @@
 SELECT ?geneId ?pathwayId
 WHERE {
 
-	VALUES ?geneId { $gene_list }
+	VALUES ?geneId { %s }
 
 	?geneProduct a wp:GeneProduct .
 	?geneProduct rdfs:label ?geneId .

@@ -1,4 +1,4 @@
 Usage
 =====
-.. automodule:: pyBiodatafuse.api
+.. automodule:: pyBiodatafuse.cli
     :members:
