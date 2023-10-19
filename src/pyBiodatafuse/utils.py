@@ -8,7 +8,7 @@ from typing import List
 
 import pandas as pd
 
-from pyBiodatafuse.constants import BRIDGEDB_DIR, COMBINED_DIR, DATA_DIR, RESOURCES_DIR
+from pyBiodatafuse.constants import COMBINED_DIR, DATA_DIR, RESOURCES_DIR
 
 
 def get_identifier_of_interest(bridgedb_df: pd.DataFrame, source: str) -> pd.DataFrame:
