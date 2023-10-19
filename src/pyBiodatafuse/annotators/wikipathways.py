@@ -58,8 +58,7 @@ def get_gene_pathway(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
     for gene_list in query_gene_lists:
         query_count += 1
 
-        sparql_query_template = Template(sparql_query).substitute(mapping={"gene_list": gene_list})
-
+        sparql_query_template = Template(sparql_query).substitute(gene_list=gene_list)
         sparql.setQuery(sparql_query_template)
 
         try:

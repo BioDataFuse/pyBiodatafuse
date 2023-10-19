@@ -1,8 +1,8 @@
 SELECT ?geneId ?pathwayId
 WHERE {
 
-	VALUES ?geneId { %s }
-
+    VALUES ?geneId { $gene_list }
+	
 	?geneProduct a wp:GeneProduct .
 	?geneProduct rdfs:label ?geneId .
 	?geneProduct dcterms:isPartOf ?pathway .
