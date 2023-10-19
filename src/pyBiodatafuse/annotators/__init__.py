@@ -1,3 +1,3 @@
 # -*- coding: utf-8 -*-
 
-"""Data sources and thir annotation pipelines."""
+"""Data sources and their annotation pipelines."""
