@@ -60,7 +60,6 @@ def get_version() -> dict:
 
     return metadata
 
-
 def get_gene_location(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
     """Get location of gene in human body.
 
@@ -135,9 +134,8 @@ def get_gene_location(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
         "date": str(datetime.datetime.now()),
         "url": base_url,
     }
-    create_or_append_to_metadata(version_metadata)
 
-    return merged_df
+    return merged_df, version_metadata
 
 
 def get_gene_go_process(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
@@ -213,8 +211,8 @@ def get_gene_go_process(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
         "date": str(datetime.datetime.now()),
         "url": base_url,
     }
-    create_or_append_to_metadata(version_metadata)
-    return merged_df
+    
+    return merged_df, version_metadata
 
 
 def get_gene_reactome_pathways(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
@@ -283,9 +281,8 @@ def get_gene_reactome_pathways(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
         "date": str(datetime.datetime.now()),
         "url": base_url,
     }
-    create_or_append_to_metadata(version_metadata)
-    return merged_df
 
+    return merged_df, version_metadata
 
 # TODO: Look into the utility of this function while applying filters
 def get_gene_tractability(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
@@ -346,10 +343,8 @@ def get_gene_tractability(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
         "date": str(datetime.datetime.now()),
         "url": base_url,
     }
-    create_or_append_to_metadata(version_metadata)
 
-    return opentargets_df
-
+    return merged_df, version_metadata
 
 def get_gene_drug_interactions(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
     """Get information about drugs associated with a genes of interest.
@@ -429,9 +424,8 @@ def get_gene_drug_interactions(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
         "date": str(datetime.datetime.now()),
         "url": base_url,
     }
-    create_or_append_to_metadata(version_metadata)
-    return merged_df
 
+    return merged_df, version_metadata
 
 def get_gene_disease_associations(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
     """Get information about diseases associated with genes based on OpenTargets.
@@ -518,5 +512,5 @@ def get_gene_disease_associations(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
         "date": str(datetime.datetime.now()),
         "url": base_url,
     }
-    create_or_append_to_metadata(version_metadata)
-    return merged_df
+
+    return merged_df, version_metadata
