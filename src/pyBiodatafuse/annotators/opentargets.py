@@ -7,11 +7,7 @@ import datetime
 import pandas as pd
 import requests
 
-from pyBiodatafuse.utils import (
-    collapse_data_sources,
-    create_or_append_to_metadata,
-    get_identifier_of_interest,
-)
+from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interest
 
 # URL of OpenTarget's GraphQL API endpoint
 base_url = "https://api.platform.opentargets.org/api/v4/graphql"
@@ -59,6 +55,7 @@ def get_version() -> dict:
     }
 
     return metadata
+
 
 def get_gene_location(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
     """Get location of gene in human body.
@@ -211,7 +208,7 @@ def get_gene_go_process(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
         "date": str(datetime.datetime.now()),
         "url": base_url,
     }
-    
+
     return merged_df, version_metadata
 
 
@@ -284,6 +281,7 @@ def get_gene_reactome_pathways(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
 
     return merged_df, version_metadata
 
+
 # TODO: Look into the utility of this function while applying filters
 def get_gene_tractability(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
     """Get tractability information about a gene.
@@ -344,7 +342,8 @@ def get_gene_tractability(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
         "url": base_url,
     }
 
-    return merged_df, version_metadata
+    return opentargets_df, version_metadata
+
 
 def get_gene_drug_interactions(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
     """Get information about drugs associated with a genes of interest.
@@ -426,6 +425,7 @@ def get_gene_drug_interactions(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
     }
 
     return merged_df, version_metadata
+
 
 def get_gene_disease_associations(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
     """Get information about diseases associated with genes based on OpenTargets.
