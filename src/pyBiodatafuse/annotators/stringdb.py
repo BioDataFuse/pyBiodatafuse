@@ -1,0 +1,138 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import pandas as pd
+from SPARQLWrapper import SPARQLWrapper, JSON
+from string import Template
+from pyBiodatafuse.utils import(
+    get_identifier_of_interest,
+    collapse_data_sources
+)
+import datetime
+import os
+import io
+import requests
+import json
+
+def annotateGenesWithStringdbPPI(bridgedb_df: pd.DataFrame):
+    """
+    
+    @param bridgedb_df: BridgeDb output for creating the list of gene ids to query
+    """
+    
+    # Record the start time
+    start_time = datetime.datetime.now()
+    
+    data_df = get_identifier_of_interest(bridgedb_df, "Ensembl")
+    data_df = data_df.reset_index(drop=True)
+
+    gene_list = list(set(data_df["target"].tolist()))
+
+    print("Number of identifiers to annotate: "+ str(len(gene_list)))
+
+    #--------- Get the String identifiers of the gene list --------#
+    string_api_url = "https://string-db.org/api"
+    output_format = "tsv"
+    method = "get_string_ids"
+
+    params = {
+		"identifiers" : "\r".join(gene_list), # your protein list
+		"species" : 9606, # species NCBI identifier 
+		"limit" : 1, # only one (best) identifier per input protein
+		"caller_identity" : "github.com" # your app name
+	}
+
+    request_url = "/".join([string_api_url, output_format, method])
+
+    results = requests.post(request_url, data=params)
+
+    stringdb_ids_df = pd.read_csv(io.StringIO(results.content.decode('utf-8')), sep='\t')
+    stringdb_ids_df.queryIndex = stringdb_ids_df.queryIndex.astype(str)
+	
+	#for i, row in stringdb_ids_df.iterrows():
+	#	stringdb_ids_df.at[i, 'queryIndex'] = gene_list.at[gene_list.index[int(row['queryIndex'])],"identifier"]
+
+	
+	#----------- Merge the new identifiers frame with the original df --------------#
+	
+	#data_df = data_df.merge(stringdb_ids_df, left_on='identifier', right_on='queryIndex', how='left')
+
+
+	#---------- Get String PPI network using the String identifiers ---------------#
+	
+    method='network'
+    request_url = "/".join([string_api_url, output_format, method])
+
+
+    params = {
+		"identifiers" : "%0d".join(list(stringdb_ids_df.stringId.unique())), # your protein
+		"species" : 9606, # species NCBI identifier 
+		"caller_identity" : "github.com" # your app name
+    }
+
+    response = requests.post(request_url, data=params)
+
+    network_df = pd.read_csv(io.StringIO(response.content.decode('utf-8')), sep='\t')
+
+    print(network_df)
+
+	#---------- Add the interactions of each protein (row) to a new column ('stringdb') ---------------#
+	
+    data_df['stringdb'] = data_df.apply(get_protein_interactions, network_df=network_df, axis=1)
+
+	#data_df.drop(['queryIndex', 'stringId', 'ncbiTaxonId', 'taxonName', 'preferredName', 'annotation'],axis=1, inplace=True)
+
+    # Record the end time
+    end_time = datetime.datetime.now()
+
+
+    # Metdata details
+    # Get the current date and time
+    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    # Calculate the time elapsed
+    time_elapsed = str(end_time - start_time)
+    # Add version to metadata file
+    
+    output_format = "json"
+    method = "version"
+	
+    request_url = "/".join([string_api_url, output_format, method])
+	
+    version_call = requests.get(request_url)
+    version_call = json.loads(version_call.content)[0]
+    string_version = version_call['string_version']
+    
+    # Add the datasource, query, query time, and the date to metadata
+    string_metadata = {
+		"datasource": "StringDB",
+		"metadata": {"source_version": str(string_version)},
+		"query": {
+			"size": len(gene_list),
+			"time": time_elapsed,
+			"date": current_date,
+			"url": string_api_url,
+		},
+    }
+
+    
+    return data_df, string_metadata
+    
+    
+def get_protein_interactions(row, network_df):
+        
+    gene_ppi_links = list()
+    
+    target_links_set = set()  	
+
+    for i, row_arr in network_df.iterrows():
+        if(row_arr['preferredName_A'] == row['identifier']):
+            if(row_arr['preferredName_B'] not in target_links_set):			
+                gene_ppi_links.append({"stringdb_link_to": row_arr['preferredName_B'], 'score': row_arr['score']})
+                target_links_set.add(row_arr['preferredName_B'])    		
+
+        elif(row_arr['preferredName_B'] == row['identifier']):
+            if(row_arr['preferredName_A'] not in target_links_set):	
+                gene_ppi_links.append({"stringdb_link_to": row_arr['preferredName_A'], 'score': row_arr['score']})
+                target_links_set.add(row_arr['preferredName_A'])    		
+
+    return gene_ppi_links
