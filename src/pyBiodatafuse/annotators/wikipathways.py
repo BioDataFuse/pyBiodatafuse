@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+"""Python file for queriying Wikipathways SPARQL endpoint (https://sparql.wikipathways.org/sparql)."""
+
 import datetime
 import os
 from string import Template
@@ -11,12 +13,12 @@ from SPARQLWrapper import JSON, SPARQLWrapper
 from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interest
 
 
-def annotateGenesWithWikipathwaysPathways(bridgedb_df: pd.DataFrame):
+def annotate_genes_with_wikipathways_pathways(bridgedb_df: pd.DataFrame):
     """Query WikiPathways for pathways associated with genes.
 
-    @param bridgedb_df: BridgeDb output for creating the list of gene ids to query
+    :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
+    :returns: a DataFrame containing the WikiPathways output and dictionary of the WikiPathways metadata.
     """
-
     # Record the start time
     start_time = datetime.datetime.now()
 
@@ -28,10 +30,6 @@ def annotateGenesWithWikipathwaysPathways(bridgedb_df: pd.DataFrame):
     query_gene_lists = []
 
     if len(hgnc_gene_list) > 25:
-        print(
-            "The number of gene IDs is larger than 25. Therfore, multiple queries will be issued, each with a 25 ID."
-        )
-
         for i in range(0, len(hgnc_gene_list), 25):
             tmp_list = hgnc_gene_list[i : i + 25]
             query_gene_lists.append(" ".join(f'"{g}"' for g in tmp_list))
@@ -49,24 +47,21 @@ def annotateGenesWithWikipathwaysPathways(bridgedb_df: pd.DataFrame):
 
     results_df_list = list()
 
-    for gene_list in query_gene_lists:
+    for gene_list_str in query_gene_lists:
         query_count += 1
 
         sparql_query_template = Template(sparql_query)
-        sparql_query_template = sparql_query_template.substitute(gene_list=gene_list)
+        substit_dict = dict(gene_list=gene_list_str)
+        sparql_query_template_sub = sparql_query_template.substitute(substit_dict)
 
-        sparql.setQuery(sparql_query_template)
+        sparql.setQuery(sparql_query_template_sub)
 
-        try:
-            res = sparql.queryAndConvert()
+        res = sparql.queryAndConvert()
 
-            df = pd.DataFrame(res["results"]["bindings"])
-            df = df.applymap(lambda x: x["value"])
+        df = pd.DataFrame(res["results"]["bindings"])
+        df = df.applymap(lambda x: x["value"])
 
-            results_df_list.append(df)
-
-        except Exception as e:
-            print(e)
+        results_df_list.append(df)
 
     # Record the end time
     end_time = datetime.datetime.now()
@@ -105,13 +100,9 @@ def annotateGenesWithWikipathwaysPathways(bridgedb_df: pd.DataFrame):
 
     wikipathways_version = ""
 
-    try:
-        res = sparql.queryAndConvert()
+    res = sparql.queryAndConvert()
 
-        wikipathways_version = res["results"]["bindings"][0]["title"]["value"]
-
-    except Exception as e:
-        print("SPARQL query exception: " + str(e))
+    wikipathways_version = res["results"]["bindings"][0]["title"]["value"]
 
     # Add the datasource, query, query time, and the date to metadata
     wikipathways_metadata = {

@@ -4,7 +4,6 @@
 
 import csv
 import datetime
-import os
 from importlib import resources
 from typing import Optional, Tuple
 

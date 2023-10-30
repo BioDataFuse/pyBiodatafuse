@@ -2,8 +2,6 @@
 
 """Python utils file for global functions."""
 
-import json
-import os
 from typing import List
 
 import pandas as pd
@@ -15,7 +13,7 @@ def get_identifier_of_interest(bridgedb_df: pd.DataFrame, db_source: str) -> pd.
     """Get identifier of interest from BridgeDb output file.
 
     :param bridgedb_df: DataFrame containing the output from BridgeDb
-    :param source: identifier of interest from BridgeDB (e.g. "NCBI Gene")
+    :param db_source: identifier of interest from BridgeDB (e.g. "NCBI Gene")
     :returns: a DataFrame containing the identifiers of interest
     """
     # Load identifier options
@@ -28,11 +26,11 @@ def get_identifier_of_interest(bridgedb_df: pd.DataFrame, db_source: str) -> pd.
     return bridgedb_df[bridgedb_df["target.source"] == db_source]
 
 
-def create_or_append_to_metadata(data: dict, prev_entry: List[dict] = []) -> None:
+def create_or_append_to_metadata(data: dict, prev_entry: List[dict]) -> List[dict]:
     """Create and/or append data to a metadata file.
 
     :param data: dictionary of data to be saved to the metadata file.
-    :param data: prev_entry: list of dictionaries containing the previous data
+    :param prev_entry: list of dictionaries containing the previous data
         The metatdata file has the following schema:
         {
             "datasource": name_of_datasource,
@@ -49,6 +47,7 @@ def create_or_append_to_metadata(data: dict, prev_entry: List[dict] = []) -> Non
 
             }
         }
+    :returns: a metadata dictionary
     """
     # Create a metadata file if it doesn't exist
     prev_sources = [data["datasource"] for data in prev_entry if "datasource" in data.keys()]

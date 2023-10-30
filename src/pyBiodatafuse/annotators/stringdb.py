@@ -1,25 +1,40 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+"""Python file for queriying StringDB."""
+
 import datetime
 import io
-import json
-import os
-from string import Template
 
 import pandas as pd
 import requests
-from SPARQLWrapper import JSON, SPARQLWrapper
 
-from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interest
+from pyBiodatafuse.utils import get_identifier_of_interest
 
 
-def annotateGenesWithStringdbPPI(bridgedb_df: pd.DataFrame):
+def get_version_stringdb() -> dict:
+    """Get version of StringDB API.
+
+    :returns: a dictionary containing the version information
     """
+    string_api_url = "https://string-db.org/api"
+    output_format = "json"
+    method = "version"
 
-    @param bridgedb_df: BridgeDb output for creating the list of gene ids to query
+    request_url = "/".join([string_api_url, output_format, method])
+
+    version_call = requests.get(request_url)
+    stringdb_version = version_call.json()
+
+    return stringdb_version
+
+
+def annotate_genes_with_stringdb(bridgedb_df: pd.DataFrame):
+    """Annotate genes with protein-protein interactions from StringDB.
+
+    :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
+    :returns: a DataFrame containing the StringDB output and dictionary of the metadata.
     """
-
     # Record the start time
     start_time = datetime.datetime.now()
 
@@ -27,8 +42,6 @@ def annotateGenesWithStringdbPPI(bridgedb_df: pd.DataFrame):
     data_df = data_df.reset_index(drop=True)
 
     gene_list = list(set(data_df["target"].tolist()))
-
-    print("Number of identifiers to annotate: " + str(len(gene_list)))
 
     # --------- Get the String identifiers of the gene list --------#
     string_api_url = "https://string-db.org/api"
@@ -75,8 +88,6 @@ def annotateGenesWithStringdbPPI(bridgedb_df: pd.DataFrame):
 
     data_df["stringdb"] = data_df.apply(get_protein_interactions, network_df=network_df, axis=1)
 
-    # data_df.drop(['queryIndex', 'stringId', 'ncbiTaxonId', 'taxonName', 'preferredName', 'annotation'],axis=1, inplace=True)
-
     # Record the end time
     end_time = datetime.datetime.now()
 
@@ -87,19 +98,12 @@ def annotateGenesWithStringdbPPI(bridgedb_df: pd.DataFrame):
     time_elapsed = str(end_time - start_time)
     # Add version to metadata file
 
-    output_format = "json"
-    method = "version"
-
-    request_url = "/".join([string_api_url, output_format, method])
-
-    version_call = requests.get(request_url)
-    version_call = json.loads(version_call.content)[0]
-    string_version = version_call["string_version"]
+    string_version = get_version_stringdb()
 
     # Add the datasource, query, query time, and the date to metadata
     string_metadata = {
         "datasource": "StringDB",
-        "metadata": {"source_version": str(string_version)},
+        "metadata": {"source_version": string_version},
         "query": {
             "size": len(gene_list),
             "time": time_elapsed,
@@ -112,11 +116,17 @@ def annotateGenesWithStringdbPPI(bridgedb_df: pd.DataFrame):
 
 
 def get_protein_interactions(row, network_df):
+    """Reformat StringDB response.
+
+    :param row: input_df row
+    :param network_df: StringDB response annotation DataFrame
+    :returns: StringDB reformatted annotation.
+    """
     gene_ppi_links = list()
 
     target_links_set = set()
 
-    for i, row_arr in network_df.iterrows():
+    for _i, row_arr in network_df.iterrows():
         if row_arr["preferredName_A"] == row["identifier"]:
             if row_arr["preferredName_B"] not in target_links_set:
                 gene_ppi_links.append(

@@ -2,7 +2,6 @@
 
 """Python script to conver a list of identifiers to a dataframe."""
 
-import os
 import re
 
 import pandas as pd
