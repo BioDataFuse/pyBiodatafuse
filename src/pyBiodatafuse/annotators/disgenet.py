@@ -11,6 +11,21 @@ import requests
 from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interest
 
 
+def get_version_disgenet() -> dict:
+    """Get version of DisGeNET API.
+
+    :returns: a dictionary containing the version information
+    """
+    # Set the DisGeNET API
+    api_host = "https://www.disgenet.org/api"
+    s = requests.Session()
+    # Get version
+    version_response = s.get(api_host + "/version/")
+    disgenet_version = version_response.json()
+
+    return disgenet_version
+
+
 def get_gene_disease(
     bridgedb_df: pd.DataFrame,
     api_key: str = "0209751bfa7b6a981a8f5fb5f062313067ecd36c",
@@ -112,8 +127,7 @@ def get_gene_disease(
         # Calculate the time elapsed
         time_elapsed = str(end_time - start_time)
         # Add version to metadata file
-        version_response = s.get(api_host + "/version/")
-        disgenet_version = version_response.json()
+        disgenet_version = get_version_disgenet()
         # Add the datasource, query, query time, and the date to metadata
         disgenet_metadata = {
             "datasource": "DisGeNET",
