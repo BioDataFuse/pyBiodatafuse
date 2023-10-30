@@ -5,6 +5,7 @@
 import json
 import os
 from typing import List
+from importlib import resources
 
 import pandas as pd
 
@@ -19,7 +20,10 @@ def get_identifier_of_interest(bridgedb_df: pd.DataFrame, source: str) -> pd.Dat
     :returns: a DataFrame containing the identifiers of interest
     """
     # Load identifier options
-    identifier_options = pd.read_csv(f"{RESOURCES_DIR}/datasources.Csv")["source"].tolist()
+    #identifier_options = pd.read_csv(f"{RESOURCES_DIR}/datasources.csv")["source"].tolist()
+    with resources.path('pyBiodatafuse.resources', 'datasources.csv') as df:
+        identifier_options = pd.read_csv(df)
+        identifier_options = identifier_options["source"].tolist()
 
     # Check if source is in identifier options
     assert source in identifier_options, f"Source {source} is not in identifier options"
