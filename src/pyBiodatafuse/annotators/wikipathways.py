@@ -1,31 +1,27 @@
-# coding: utf-8
-
-"""Python file for querying the WikiPathways database (https://www.wikipathways.org/)."""
-
-import datetime
-import logging
-import os
-from string import Template
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 import pandas as pd
-from SPARQLWrapper import JSON, SPARQLWrapper
+from SPARQLWrapper import SPARQLWrapper, JSON
+from string import Template
+from pyBiodatafuse.utils import (
+    get_identifier_of_interest, 
+    collapse_data_sources
+)
+import datetime
+import os
 
-from pyBiodatafuse.utils import create_or_append_to_metadata, get_identifier_of_interest
 
-logger = logging.getLogger(__name__)
-
-
-def get_gene_pathway(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
+def annotateGenesWithWikipathwaysPathways(bridgedb_df: pd.DataFrame):
     """Query WikiPathways for pathways associated with genes.
 
-    :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
-    :return: DataFrame with WikiPathways pathways associated with genes
-    :raises ValueError: if the query fails
+    @param bridgedb_df: BridgeDb output for creating the list of gene ids to query
     """
+
     # Record the start time
     start_time = datetime.datetime.now()
 
-    data_df = get_identifier_of_interest(bridgedb_df, "HGNC")
+    data_df = get_identifier_of_interest(bridgedb_df, "NCBI Gene")
     hgnc_gene_list = data_df["target"].tolist()
 
     hgnc_gene_list = list(set(hgnc_gene_list))
@@ -33,9 +29,8 @@ def get_gene_pathway(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
     query_gene_lists = []
 
     if len(hgnc_gene_list) > 25:
-        logger.info(
-            "The number of gene HGNC symbols is larger than 25. \
-            Therfore, multiple queries will be issued, each with a 25 symbols."
+        print(
+            "The number of gene IDs is larger than 25. Therfore, multiple queries will be issued, each with a 25 ID."
         )
 
         for i in range(0, len(hgnc_gene_list), 25):
@@ -58,7 +53,9 @@ def get_gene_pathway(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
     for gene_list in query_gene_lists:
         query_count += 1
 
-        sparql_query_template = Template(sparql_query).substitute(gene_list=gene_list)
+        sparql_query_template = Template(sparql_query)
+        sparql_query_template = sparql_query_template.substitute(gene_list=gene_list)
+
         sparql.setQuery(sparql_query_template)
 
         try:
@@ -70,19 +67,28 @@ def get_gene_pathway(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
             results_df_list.append(df)
 
         except Exception as e:
-            raise ValueError(e)
+            print(e)
 
     # Record the end time
     end_time = datetime.datetime.now()
 
+    # Organize the annotation results as an array of dictionaries
     intermediate_df = pd.concat(results_df_list)
-    intermediate_df = intermediate_df.groupby("geneId").agg(
-        WikiPathways=("pathwayId", lambda x: ",".join(x))
-    )
+
+    #intermediate_df = intermediate_df.groupby('geneId').apply(lambda x: x.to_dict(orient='r')).rename('WikiPathways')
+    #intermediate_df.drop(['pathwayId', 'pathwayLabel', 'geneCount'], axis=1, inplace=True)
+
+    intermediate_df.rename(columns={"geneId": "target", 'geneCount': 'pathwayGeneCount'}, inplace=True)
 
     # Merge the two DataFrames on the target column
-    # TODO: use collapse_data_sources function for the consistency
-    output_df = pd.merge(data_df, intermediate_df, how="left", left_on="target", right_on="geneId")
+    merged_df = collapse_data_sources(
+        data_df=data_df,
+        source_namespace="NCBI Gene",
+        target_df=intermediate_df,
+        common_cols=["target"],
+        target_specific_cols=['pathwayId', 'pathwayLabel', 'pathwayGeneCount'],
+        col_name="WikiPathways",
+    )
 
     # Metdata details
     # Get the current date and time
@@ -104,7 +110,7 @@ def get_gene_pathway(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
         wikipathways_version = res["results"]["bindings"][0]["title"]["value"]
 
     except Exception as e:
-        raise ValueError("SPARQL query exception: " + str(e))
+        print("SPARQL query exception: " + str(e))
 
     # Add the datasource, query, query time, and the date to metadata
     wikipathways_metadata = {
@@ -118,8 +124,4 @@ def get_gene_pathway(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
         },
     }
 
-    create_or_append_to_metadata(
-        wikipathways_metadata
-    )  # Call the function from the metadata module
-
-    return output_df
+    return merged_df, wikipathways_metadata
