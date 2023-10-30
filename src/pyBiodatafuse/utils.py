@@ -8,7 +8,7 @@ from typing import List
 
 import pandas as pd
 
-from pyBiodatafuse.constants import COMBINED_DIR, DATA_DIR, RESOURCES_DIR
+from pyBiodatafuse.constants import COMBINED_DIR, RESOURCES_DIR
 
 
 def get_identifier_of_interest(bridgedb_df: pd.DataFrame, source: str) -> pd.DataFrame:
@@ -49,7 +49,7 @@ def create_or_append_to_metadata(data: dict) -> None:
             }
         }
     """
-    metadata_file_path = f"{DATA_DIR}/metadata.json"
+    metadata_file_path = f"{COMBINED_DIR}/metadata.json"
 
     if os.path.exists(metadata_file_path):
         existing_data = json.load(open(metadata_file_path))
