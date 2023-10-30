@@ -1,15 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import pandas as pd
-from SPARQLWrapper import SPARQLWrapper, JSON
-from string import Template
-from pyBiodatafuse.utils import (
-    get_identifier_of_interest, 
-    collapse_data_sources
-)
 import datetime
 import os
+from string import Template
+
+import pandas as pd
+from SPARQLWrapper import JSON, SPARQLWrapper
+
+from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interest
 
 
 def annotateGenesWithWikipathwaysPathways(bridgedb_df: pd.DataFrame):
@@ -75,10 +74,12 @@ def annotateGenesWithWikipathwaysPathways(bridgedb_df: pd.DataFrame):
     # Organize the annotation results as an array of dictionaries
     intermediate_df = pd.concat(results_df_list)
 
-    #intermediate_df = intermediate_df.groupby('geneId').apply(lambda x: x.to_dict(orient='r')).rename('WikiPathways')
-    #intermediate_df.drop(['pathwayId', 'pathwayLabel', 'geneCount'], axis=1, inplace=True)
+    # intermediate_df = intermediate_df.groupby('geneId').apply(lambda x: x.to_dict(orient='r')).rename('WikiPathways')
+    # intermediate_df.drop(['pathwayId', 'pathwayLabel', 'geneCount'], axis=1, inplace=True)
 
-    intermediate_df.rename(columns={"geneId": "target", 'geneCount': 'pathwayGeneCount'}, inplace=True)
+    intermediate_df.rename(
+        columns={"geneId": "target", "geneCount": "pathwayGeneCount"}, inplace=True
+    )
 
     # Merge the two DataFrames on the target column
     merged_df = collapse_data_sources(
@@ -86,7 +87,7 @@ def annotateGenesWithWikipathwaysPathways(bridgedb_df: pd.DataFrame):
         source_namespace="NCBI Gene",
         target_df=intermediate_df,
         common_cols=["target"],
-        target_specific_cols=['pathwayId', 'pathwayLabel', 'pathwayGeneCount'],
+        target_specific_cols=["pathwayId", "pathwayLabel", "pathwayGeneCount"],
         col_name="WikiPathways",
     )
 

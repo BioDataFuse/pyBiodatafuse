@@ -396,8 +396,12 @@ def get_gene_drug_interactions(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame,
     for gene in r["data"]["targets"]:
         if not gene["knownDrugs"]:
             continue
+
         drug_info = gene["knownDrugs"]["rows"]
         drug_df = pd.DataFrame(drug_info)
+
+        if drug_df.empty:
+            continue
 
         drug_df[["chembl_id", "drug_name"]] = drug_df["drug"].apply(pd.Series)
         drug_df.drop(columns=["drug"], inplace=True)
@@ -483,6 +487,9 @@ def get_gene_disease_associations(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
             continue
         disease_info = gene["knownDrugs"]["rows"]
         disease_df = pd.DataFrame(disease_info)
+
+        if disease_df.empty:
+            continue
 
         disease_df[["disease_id", "disease_name", "therapeutic_area"]] = disease_df[
             "disease"
