@@ -74,8 +74,6 @@ def annotateGenesWithStringdbPPI(bridgedb_df: pd.DataFrame):
 
     network_df = pd.read_csv(io.StringIO(response.content.decode('utf-8')), sep='\t')
 
-    print(network_df)
-
 	#---------- Add the interactions of each protein (row) to a new column ('stringdb') ---------------#
 	
     data_df['stringdb'] = data_df.apply(get_protein_interactions, network_df=network_df, axis=1)
