@@ -11,14 +11,17 @@ import pandas as pd
 import requests
 
 from pyBiodatafuse.constants import BRIDGEDB_DIR, RESOURCES_DIR
-
+from importlib import resources
 
 def read_resource_files() -> pd.DataFrame:
     """Read the datasource file.
 
     :returns: a DataFrame containing the data from the datasource file
     """
-    return pd.read_csv(f"{RESOURCES_DIR}/datasources.csv")
+    with resources.path('pyBiodatafuse.resources', 'datasources.csv') as df:
+        identifier_options = pd.read_csv(df)
+    
+    return identifier_options
 
 
 def bridgedb_xref(
