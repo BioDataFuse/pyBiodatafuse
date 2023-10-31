@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""Python file for queriying Wikipathways SPARQL endpoint (https://sparql.wikipathways.org/sparql)."""
+"""Python file for queriying WikiPathways SPARQL endpoint (https://sparql.wikipathways.org/sparql)."""
 
 import datetime
 import os
@@ -14,7 +14,7 @@ from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interes
 
 
 def get_version_wikipathways() -> dict:
-    """Get version of Wikipathways.
+    """Get version of WikiPathways.
 
     :returns: a dictionary containing the version information
     """
