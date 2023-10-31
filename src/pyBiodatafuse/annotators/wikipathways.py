@@ -13,6 +13,26 @@ from SPARQLWrapper import JSON, SPARQLWrapper
 from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interest
 
 
+def get_version_wikipathways() -> dict:
+    """Get version of Wikipathways.
+
+    :returns: a dictionary containing the version information
+    """
+    with open(os.path.dirname(__file__) + "/queries/wikipathways-metadata.rq", "r") as fin:
+        sparql_query = fin.read()
+
+    sparql.setQuery(sparql_query)
+
+    wikipathways_version = ""
+
+    res = sparql.queryAndConvert()
+
+    wikipathways_version = res["results"]["bindings"][0]["title"]["value"]
+    wikipathways_version = str(wikipathways_version)
+
+    return wikipathways_version
+    
+
 def get_gene_wikipathway(bridgedb_df: pd.DataFrame):
     """Query WikiPathways for pathways associated with genes.
 
@@ -93,21 +113,12 @@ def get_gene_wikipathway(bridgedb_df: pd.DataFrame):
     time_elapsed = str(end_time - start_time)
     # Add version to metadata file
 
-    with open(os.path.dirname(__file__) + "/queries/wikipathways-metadata.rq", "r") as fin:
-        sparql_query = fin.read()
-
-    sparql.setQuery(sparql_query)
-
-    wikipathways_version = ""
-
-    res = sparql.queryAndConvert()
-
-    wikipathways_version = res["results"]["bindings"][0]["title"]["value"]
-
+    wikipathways_version = get_version_wikipathways()
+    
     # Add the datasource, query, query time, and the date to metadata
     wikipathways_metadata = {
         "datasource": "WikiPathways",
-        "metadata": {"source_version": str(wikipathways_version)},
+        "metadata": {"source_version": wikipathways_version},
         "query": {
             "size": len(hgnc_gene_list),
             "time": time_elapsed,
