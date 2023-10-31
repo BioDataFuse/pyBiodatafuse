@@ -21,17 +21,17 @@ def get_version_wikipathways() -> dict:
     with open(os.path.dirname(__file__) + "/queries/wikipathways-metadata.rq", "r") as fin:
         sparql_query = fin.read()
 
-    sparql.setQuery(sparql_query)
+    sparql = SPARQLWrapper("https://sparql.wikipathways.org/sparql")
+    sparql.setReturnFormat(JSON)
 
-    wikipathways_version = ""
+    sparql.setQuery(sparql_query)
 
     res = sparql.queryAndConvert()
 
-    wikipathways_version = res["results"]["bindings"][0]["title"]["value"]
-    wikipathways_version = str(wikipathways_version)
+    wikipathways_version = {"wikipathways_version": res["results"]["bindings"][0]["title"]["value"]}
 
     return wikipathways_version
-    
+
 
 def get_gene_wikipathway(bridgedb_df: pd.DataFrame):
     """Query WikiPathways for pathways associated with genes.
@@ -114,7 +114,7 @@ def get_gene_wikipathway(bridgedb_df: pd.DataFrame):
     # Add version to metadata file
 
     wikipathways_version = get_version_wikipathways()
-    
+
     # Add the datasource, query, query time, and the date to metadata
     wikipathways_metadata = {
         "datasource": "WikiPathways",
