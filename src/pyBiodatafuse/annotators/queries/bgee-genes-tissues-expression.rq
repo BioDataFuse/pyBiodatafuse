@@ -5,7 +5,7 @@ PREFIX lscr: <http://purl.org/lscr#>
 PREFIX genex: <http://purl.org/genex#>
 PREFIX obo: <http://purl.obolibrary.org/obo/>
 
-SELECT ?gene ?geneId ?anatomicalEntity ?expressionLevel
+SELECT ?gene ?geneId ?anatomicalEntity ?expressionLevel ?confidenceLevel
 WHERE {
   VALUES ?ensemblId { $gene_list }
   BIND(CONCAT("http://rdf.ebi.ac.uk/resource/ensembl/" , STR(?ensemblId))  AS ?geneIdStr )
@@ -14,11 +14,11 @@ WHERE {
   ?gene lscr:xrefEnsemblGene ?geneId .
   ?expr genex:hasSequenceUnit ?gene.
   ?expr a genex:Expression .
-  ?expr genex:hasConfidenceLevel obo:CIO_0000029 . # high confidence level
-  #?expr genex:hasConfidenceLevel ?confidenceLevel .
+  #?expr genex:hasConfidenceLevel obo:CIO_0000029 . # high confidence level
+  ?expr genex:hasConfidenceLevel ?confidenceLevel .
   ?expr genex:hasExpressionLevel ?expressionLevel .
   ?expr genex:hasExpressionCondition ?cond .
   ?cond genex:hasAnatomicalEntity ?anatomicalEntity . # tissue
   # can add label if needed ?anatomicalEntity rdfs:label ?anatEntityLabel.
-  # also can filter by expression level: e.g. FILTER (?exprLevel > 99) # highly expressed
+  # also can filter by expression level: e.g. FILTER (?expressionLevel > 99) # highly expressed
 }
