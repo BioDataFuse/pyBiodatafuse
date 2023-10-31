@@ -1,25 +1,8 @@
-SELECT ?geneId ?pathwayId ?pathwayLabel ?geneCount
+SELECT ?gene ?geneId ?article ?pubmed
 WHERE {
-	
-  	VALUES ?geneId { $gene_list }
-  	BIND(IRI(CONCAT("https://identifiers.org/ncbigene/", ?geneId)) AS ?geneIdUrl)
-	
-	?geneProduct a wp:GeneProduct .
-	?geneProduct rdfs:label ?geneLabel .
-    ?geneProduct wp:bdbEntrezGene ?geneIdUrl .
-	?geneProduct dcterms:isPartOf ?pathway .
-
-	?pathway a wp:Pathway .
-  	?pathway dc:title ?pathwayLabel .
-	?pathway dcterms:identifier ?pathwayId .
-  
-  	{
-    	SELECT ?pathway (count(distinct ?gene) AS ?geneCount) 
-        WHERE {
-          
-          ?gene a wp:GeneProduct .
-		  ?gene dcterms:isPartOf ?pathway .
-        
-        } GROUP BY ?pathway  
-    }
+  VALUES ?geneId { $gene_list }
+  ?gene wdt:P351 ?geneId .
+  { ?article wdt:P921 ?gene ; wdt:P698 ?pubmed }
+  UNION
+  { ?article wdt:P921/wdt:P702 ?gene ; wdt:P698 ?pubmed }
 }
