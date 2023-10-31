@@ -21,13 +21,47 @@ def get_version_wikidata() -> dict:
 def get_gene_literature(bridgedb_df: pd.DataFrame):
     # Record the start time
     start_time = datetime.datetime.now()
+    print(start_time)
 
     data_df = get_identifier_of_interest(bridgedb_df, "NCBI Gene")
     gene_list = data_df["target"].tolist()
-
     gene_list = list(set(gene_list))
 
     query_gene_lists = []
+    if len(gene_list) > 25:
+        for i in range(0, len(gene_list), 25):
+            tmp_list = gene_list[i : i + 25]
+            query_gene_lists.append(" ".join(f'"{g}"' for g in tmp_list))
+
+    else:
+        query_gene_lists.append(" ".join(f'"{g}"' for g in gene_list))
+
+    with open(os.path.dirname(__file__) + "/queries/wikidata-genes-literature.rq", "r") as fin:
+        sparql_query = fin.read()
+
+    sparql = SPARQLWrapper("https://sparql.wikidata.org/sparql")
+    sparql.setReturnFormat(JSON)
+
+    query_count = 0
+
+    results_df_list = list()
+
+    for gene_list_str in query_gene_lists:
+        query_count += 1
+
+        sparql_query_template = Template(sparql_query)
+        substit_dict = dict(gene_list=gene_list_str)
+        sparql_query_template_sub = sparql_query_template.substitute(substit_dict)
+        print(sparql_query_template_sub)
+
+        #sparql.setQuery(sparql_query_template_sub)
+        #res = sparql.queryAndConvert()
+
+        #df = pd.DataFrame(res["results"]["bindings"])
+        #df = df.applymap(lambda x: x["value"])
+
+        #results_df_list.append(df)
+
 
     # Metdata details
     # Get the current date and time
@@ -55,19 +89,6 @@ def get_gene_literature(bridgedb_df: pd.DataFrame):
     return data_df, wikidata_metadata
 
 def foo():
-    if len(gene_list) > 25:
-        for i in range(0, len(gene_list), 25):
-            tmp_list = gene_list[i : i + 25]
-            query_gene_lists.append(" ".join(f'"{g}"' for g in tmp_list))
-
-    else:
-        query_gene_lists.append(" ".join(f'"{g}"' for g in gene_list))
-
-    with open(os.path.dirname(__file__) + "/queries/wikidata-genes-literature.rq", "r") as fin:
-        sparql_query = fin.read()
-
-    print(sparql_query)
-
     sparql = SPARQLWrapper("https://sparql.wikidata.org/sparql")
     sparql.setReturnFormat(JSON)
 
