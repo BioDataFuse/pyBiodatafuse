@@ -13,7 +13,7 @@ from SPARQLWrapper import JSON, SPARQLWrapper
 from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interest
 
 
-def annotate_genes_with_wikipathways_pathways(bridgedb_df: pd.DataFrame):
+def get_gene_wikipathway(bridgedb_df: pd.DataFrame):
     """Query WikiPathways for pathways associated with genes.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
