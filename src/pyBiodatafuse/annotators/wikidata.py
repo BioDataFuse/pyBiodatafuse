@@ -39,7 +39,7 @@ def get_gene_literature(bridgedb_df: pd.DataFrame):
     with open(os.path.dirname(__file__) + "/queries/wikidata-genes-literature.rq", "r") as fin:
         sparql_query = fin.read()
 
-    sparql = SPARQLWrapper("https://sparql.wikidata.org/sparql")
+    sparql = SPARQLWrapper("https://query.wikidata.org/sparql")
     sparql.setReturnFormat(JSON)
 
     query_count = 0
@@ -54,20 +54,25 @@ def get_gene_literature(bridgedb_df: pd.DataFrame):
         sparql_query_template_sub = sparql_query_template.substitute(substit_dict)
         print(sparql_query_template_sub)
 
-        #sparql.setQuery(sparql_query_template_sub)
-        #res = sparql.queryAndConvert()
+        sparql.setQuery(sparql_query_template_sub)
+        res = sparql.queryAndConvert()
 
-        #df = pd.DataFrame(res["results"]["bindings"])
-        #df = df.applymap(lambda x: x["value"])
+        df = pd.DataFrame(res["results"]["bindings"])
+        df = df.applymap(lambda x: x["value"])
 
-        #results_df_list.append(df)
+        results_df_list.append(df)
 
+    # Organize the annotation results as an array of dictionaries
+    intermediate_df = pd.concat(results_df_list)
+    print(intermediate_df)
+
+    # Record the end time
+    end_time = datetime.datetime.now()
 
     # Metdata details
     # Get the current date and time
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    # Record the end time
-    end_time = datetime.datetime.now()
+
     # Calculate the time elapsed
     time_elapsed = str(end_time - start_time)
 
@@ -89,32 +94,6 @@ def get_gene_literature(bridgedb_df: pd.DataFrame):
     return data_df, wikidata_metadata
 
 def foo():
-    sparql = SPARQLWrapper("https://sparql.wikidata.org/sparql")
-    sparql.setReturnFormat(JSON)
-
-    query_count = 0
-
-    results_df_list = list()
-
-    for gene_list_str in query_gene_lists:
-        query_count += 1
-
-        sparql_query_template = Template(sparql_query)
-        substit_dict = dict(gene_list=gene_list_str)
-        sparql_query_template_sub = sparql_query_template.substitute(substit_dict)
-
-        sparql.setQuery(sparql_query_template_sub)
-
-        res = sparql.queryAndConvert()
-
-        df = pd.DataFrame(res["results"]["bindings"])
-        df = df.applymap(lambda x: x["value"])
-
-        results_df_list.append(df)
-
-    # Record the end time
-    end_time = datetime.datetime.now()
-
     # Organize the annotation results as an array of dictionaries
     intermediate_df = pd.concat(results_df_list)
 
