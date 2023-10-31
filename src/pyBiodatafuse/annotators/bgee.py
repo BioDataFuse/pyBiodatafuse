@@ -78,7 +78,7 @@ def get_gene_literature(bridgedb_df: pd.DataFrame):
     print(intermediate_df)
 
     intermediate_df.rename(
-        columns={"geneId": "target"}, inplace=True
+        columns={"ensemblId": "target"}, inplace=True
     )
 
     # Record the end time
@@ -112,7 +112,7 @@ def get_gene_literature(bridgedb_df: pd.DataFrame):
         source_namespace="Ensembl",
         target_df=intermediate_df,
         common_cols=["target"],
-        target_specific_cols=["anatomicalEntity", "expressionLevel", "confidenceLevel"],
+        target_specific_cols=["anatomicalEntity", "anatomicalEntityName", "expressionLevel", "confidenceLevel"],
         col_name="Bgee",
     )
 
