@@ -2,36 +2,35 @@
 
 """Python utils file for global functions."""
 
-import json
-import os
 from typing import List
 
 import pandas as pd
 
-from pyBiodatafuse.constants import COMBINED_DIR, DATA_DIR, RESOURCES_DIR
+from pyBiodatafuse.id_mapper import read_resource_files
 
 
-def get_identifier_of_interest(bridgedb_df: pd.DataFrame, source: str) -> pd.DataFrame:
+def get_identifier_of_interest(bridgedb_df: pd.DataFrame, db_source: str) -> pd.DataFrame:
     """Get identifier of interest from BridgeDb output file.
 
     :param bridgedb_df: DataFrame containing the output from BridgeDb
-    :param source: identifier of interest from BridgeDB (e.g. "NCBI Gene")
+    :param db_source: identifier of interest from BridgeDB (e.g. "NCBI Gene")
     :returns: a DataFrame containing the identifiers of interest
     """
     # Load identifier options
-    identifier_options = pd.read_csv(f"{RESOURCES_DIR}/datasources.Csv")["source"].tolist()
+    identifier_options = read_resource_files()["source"].tolist()
 
     # Check if source is in identifier options
-    assert source in identifier_options, f"Source {source} is not in identifier options"
+    assert db_source in identifier_options, f"Source {db_source} is not in identifier options"
 
     # Filter rows where "target.source" is specific datasource "NCBI Gene"
-    return bridgedb_df[bridgedb_df["target.source"] == source]
+    return bridgedb_df[bridgedb_df["target.source"] == db_source]
 
 
-def create_or_append_to_metadata(data: dict) -> None:
+def create_or_append_to_metadata(data: dict, prev_entry: List[dict]) -> List[dict]:
     """Create and/or append data to a metadata file.
 
     :param data: dictionary of data to be saved to the metadata file.
+    :param prev_entry: list of dictionaries containing the previous data
         The metatdata file has the following schema:
         {
             "datasource": name_of_datasource,
@@ -48,25 +47,17 @@ def create_or_append_to_metadata(data: dict) -> None:
 
             }
         }
+    :returns: a metadata dictionary
     """
-    metadata_file_path = f"{DATA_DIR}/metadata.json"
-
-    if os.path.exists(metadata_file_path):
-        existing_data = json.load(open(metadata_file_path))
-        prev_sources = [data["datasource"] for data in existing_data]
-    else:
-        # Initialize the existing data to an empty list
-        existing_data = []
-        prev_sources = []
+    # Create a metadata file if it doesn't exist
+    prev_sources = [data["datasource"] for data in prev_entry if "datasource" in data.keys()]
 
     assert isinstance(data, dict), "Unsupported data type. Only dict is supported."
 
     if data["datasource"] not in prev_sources:
-        existing_data.append(data)
+        prev_entry.append(data)
 
-    # Save the updated data back to the file
-    with open(metadata_file_path, "w") as file:
-        json.dump(list(existing_data), file, indent=4, ensure_ascii=False)
+    return prev_entry
 
 
 def collapse_data_sources(
@@ -121,8 +112,4 @@ def combine_sources(df_list: List[pd.DataFrame]) -> pd.DataFrame:
     m = pd.concat(df_list, axis=1)
     m = m.loc[:, ~m.columns.duplicated()]  # remove duplicate columns
 
-    # Create the directory to save combined data
-    os.makedirs(COMBINED_DIR, exist_ok=True)
-
-    m.to_csv(f"{COMBINED_DIR}/combined_annotated_data.tsv", index=False, sep="\t")
     return m

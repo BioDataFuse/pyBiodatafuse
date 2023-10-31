@@ -2,12 +2,9 @@
 
 """Python script to conver a list of identifiers to a dataframe."""
 
-import os
 import re
 
 import pandas as pd
-
-from pyBiodatafuse.constants import BRIDGEDB_DIR
 
 
 def create_df_from_file(file_path: str) -> pd.DataFrame:
@@ -29,12 +26,6 @@ def create_df_from_file(file_path: str) -> pd.DataFrame:
     # Create a DataFrame using pandas
     df = pd.DataFrame(data, columns=["identifier"])
 
-    # Create the directory to save DisGeNET output
-    os.makedirs(BRIDGEDB_DIR, exist_ok=True)
-
-    # Save the DataFrame to a CSV file
-    df.to_csv(f"{BRIDGEDB_DIR}/bridgedb_input.csv", index=False)
-
     return df
 
 
@@ -53,10 +44,5 @@ def create_df_from_text(text_input: str) -> pd.DataFrame:
 
     # Create a DataFrame using pandas
     df = pd.DataFrame(data, columns=["identifier"])
-
-    # Create the directory to save DisGeNET output
-    os.makedirs(BRIDGEDB_DIR, exist_ok=True)
-    # Save the DataFrame to a CSV file
-    df.to_csv(f"{BRIDGEDB_DIR}/bridgedb_input.csv", index=False)
 
     return df

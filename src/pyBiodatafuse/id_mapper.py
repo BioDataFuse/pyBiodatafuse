@@ -4,13 +4,11 @@
 
 import csv
 import datetime
-import os
+from importlib import resources
 from typing import Optional, Tuple
 
 import pandas as pd
 import requests
-
-from pyBiodatafuse.constants import BRIDGEDB_DIR, RESOURCES_DIR
 
 
 def read_resource_files() -> pd.DataFrame:
@@ -18,7 +16,10 @@ def read_resource_files() -> pd.DataFrame:
 
     :returns: a DataFrame containing the data from the datasource file
     """
-    return pd.read_csv(f"{RESOURCES_DIR}/datasources.csv")
+    with resources.path("pyBiodatafuse.resources", "datasources.csv") as df:
+        identifier_options = pd.read_csv(df)
+
+    return identifier_options
 
 
 def bridgedb_xref(
@@ -119,13 +120,7 @@ def bridgedb_xref(
 
     bridgedb = bridgedb.drop_duplicates()
 
-    # Save the output in a CSV file
-    # Specify the CSV file path for the BridgeDb output
-    bridgedb_file_path = os.path.join(BRIDGEDB_DIR, "bridgedb_output.csv")
-
-    bridgedb.to_csv(bridgedb_file_path, index=False)
-
-    """Metdata details"""
+    """Metadata details"""
     # Get the current date and time
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # Calculate the time elapsed

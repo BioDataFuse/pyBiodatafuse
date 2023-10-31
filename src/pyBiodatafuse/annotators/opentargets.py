@@ -3,6 +3,7 @@
 """Python file for querying the OpenTargets database (https://www.opentargets.org/)."""
 
 import datetime
+from typing import Tuple
 
 import pandas as pd
 import requests
@@ -57,11 +58,11 @@ def get_version() -> dict:
     return metadata
 
 
-def get_gene_location(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
+def get_gene_location(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
     """Get location of gene in human body.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
-    :returns: a DataFrame containing the OpenTargets output.
+    :returns: a DataFrame containing the OpenTargets output and dictionary of the query metadata.
     """
     data_df = get_identifier_of_interest(bridgedb_df, "Ensembl")
     gene_ids = data_df["target"].tolist()
@@ -89,6 +90,15 @@ def get_gene_location(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
     # Record the end time
     end_time = datetime.datetime.now()
 
+    # Update the metadata file
+    version_metadata["query"] = {
+        "size": len(gene_ids),
+        "input_type": "Ensembl",
+        "time": str(end_time - start_time),
+        "date": str(datetime.datetime.now()),
+        "url": base_url,
+    }
+
     # Generate the OpenTargets DataFrame
     data = []
 
@@ -98,10 +108,10 @@ def get_gene_location(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
         loc_df["target"] = gene_id
         data.append(loc_df)
 
-    if len(data) == 0:
-        opentargets_df = pd.DataFrame()
-    else:
-        opentargets_df = pd.concat(data)
+    if len(data) == 0:  # If no data is returned, return empty DataFrame
+        return pd.DataFrame(), version_metadata
+
+    opentargets_df = pd.concat(data)
     opentargets_df.dropna(
         subset=["termSL"], inplace=True
     )  # Drop rows where termSL is not available
@@ -123,23 +133,14 @@ def get_gene_location(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
         col_name="OpenTargets_Location",
     )
 
-    # Update the metadata file
-    version_metadata["query"] = {
-        "size": len(gene_ids),
-        "input_type": "Ensembl",
-        "time": str(end_time - start_time),
-        "date": str(datetime.datetime.now()),
-        "url": base_url,
-    }
-
     return merged_df, version_metadata
 
 
-def get_gene_go_process(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
+def get_gene_go_process(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
     """Get information about GO pathways associated with a genes of interest.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
-    :returns: a DataFrame containing the OpenTargets output.
+    :returns: a DataFrame containing the OpenTargets output and dictionary of the query metadata.
     """
     data_df = get_identifier_of_interest(bridgedb_df, "Ensembl")
     gene_ids = data_df["target"].tolist()
@@ -168,6 +169,15 @@ def get_gene_go_process(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
     # Record the end time
     end_time = datetime.datetime.now()
 
+    # Update the metadata file
+    version_metadata["query"] = {
+        "size": len(gene_ids),
+        "input_type": "Ensembl",
+        "time": str(end_time - start_time),
+        "date": str(datetime.datetime.now()),
+        "url": base_url,
+    }
+
     # Generate the OpenTargets DataFrame
     data = []
 
@@ -178,9 +188,9 @@ def get_gene_go_process(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
         data.append(path_df)
 
     if len(data) == 0:
-        opentargets_df = pd.DataFrame()
-    else:
-        opentargets_df = pd.concat(data)
+        return pd.DataFrame(), version_metadata
+
+    opentargets_df = pd.concat(data)
 
     opentargets_df.rename(
         columns={
@@ -200,23 +210,14 @@ def get_gene_go_process(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
         col_name="GO_Process",  # TODO: Cross-check if correct name
     )
 
-    # Update the metadata file
-    version_metadata["query"] = {
-        "size": len(gene_ids),
-        "input_type": "Ensembl",
-        "time": str(end_time - start_time),
-        "date": str(datetime.datetime.now()),
-        "url": base_url,
-    }
-
     return merged_df, version_metadata
 
 
-def get_gene_reactome_pathways(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
+def get_gene_reactome_pathways(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
     """Get information about Reactome pathways associated with a gene.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
-    :returns: a DataFrame containing the OpenTargets output.
+    :returns: a DataFrame containing the OpenTargets output and dictionary of the query metadata.
     """
     data_df = get_identifier_of_interest(bridgedb_df, "Ensembl")
     gene_ids = data_df["target"].tolist()
@@ -243,6 +244,15 @@ def get_gene_reactome_pathways(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
     # Record the end time
     end_time = datetime.datetime.now()
 
+    # Update the metadata file
+    version_metadata["query"] = {
+        "size": len(gene_ids),
+        "input_type": "Ensembl",
+        "time": str(end_time - start_time),
+        "date": str(datetime.datetime.now()),
+        "url": base_url,
+    }
+
     # Generate the OpenTargets DataFrame
     data = []
 
@@ -252,9 +262,9 @@ def get_gene_reactome_pathways(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
         data.append(path_df)
 
     if len(data) == 0:
-        opentargets_df = pd.DataFrame()
-    else:
-        opentargets_df = pd.concat(data)
+        return pd.DataFrame(), version_metadata
+
+    opentargets_df = pd.concat(data)
 
     opentargets_df.rename(
         columns={"pathway": "pathway_name", "pathwayId": "pathway_id"}, inplace=True
@@ -270,24 +280,15 @@ def get_gene_reactome_pathways(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
         col_name="Reactome_Pathways",  # TODO: Cross-check if correct name
     )
 
-    # Update the metadata file
-    version_metadata["query"] = {
-        "size": len(gene_ids),
-        "input_type": "Ensembl",
-        "time": str(end_time - start_time),
-        "date": str(datetime.datetime.now()),
-        "url": base_url,
-    }
-
     return merged_df, version_metadata
 
 
 # TODO: Look into the utility of this function while applying filters
-def get_gene_tractability(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
+def get_gene_tractability(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
     """Get tractability information about a gene.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
-    :returns: a DataFrame containing the OpenTargets output.
+    :returns: a DataFrame containing the OpenTargets output and dictionary of the query metadata.
 
     More metadata here- https://platform-docs.opentargets.org/target/tractability
     """
@@ -318,21 +319,6 @@ def get_gene_tractability(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
     # Record the end time
     end_time = datetime.datetime.now()
 
-    data = []
-
-    for gene in r["data"]["targets"]:
-        tract_df = pd.DataFrame(gene["tractability"])
-        tract_df["ensembl_id"] = gene["id"]
-        data.append(tract_df)
-
-    if len(data) == 0:
-        opentargets_df = pd.DataFrame()
-    else:
-        opentargets_df = pd.concat(data)
-
-    opentargets_df = opentargets_df[opentargets_df["value"] == True]
-    opentargets_df.drop(columns=["value"], inplace=True)
-
     # Update the metadata file
     version_metadata["query"] = {
         "size": len(gene_ids),
@@ -342,14 +328,29 @@ def get_gene_tractability(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
         "url": base_url,
     }
 
+    data = []
+
+    for gene in r["data"]["targets"]:
+        tract_df = pd.DataFrame(gene["tractability"])
+        tract_df["ensembl_id"] = gene["id"]
+        data.append(tract_df)
+
+    if len(data) == 0:
+        return pd.DataFrame(), version_metadata
+
+    opentargets_df = pd.concat(data)
+
+    opentargets_df = opentargets_df[opentargets_df["value"] == True]
+    opentargets_df.drop(columns=["value"], inplace=True)
+
     return opentargets_df, version_metadata
 
 
-def get_gene_drug_interactions(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
+def get_gene_drug_interactions(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
     """Get information about drugs associated with a genes of interest.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
-    :returns: a DataFrame containing the OpenTargets output.
+    :returns: a DataFrame containing the OpenTargets output and dictionary of the query metadata.
     """
     data_df = get_identifier_of_interest(bridgedb_df, "Ensembl")
     gene_ids = data_df["target"].tolist()
@@ -381,13 +382,26 @@ def get_gene_drug_interactions(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
     # Record the end time
     end_time = datetime.datetime.now()
 
+    # Update the metadata file
+    version_metadata["query"] = {
+        "size": len(gene_ids),
+        "input_type": "Ensembl",
+        "time": str(end_time - start_time),
+        "date": str(datetime.datetime.now()),
+        "url": base_url,
+    }
+
     data = []
 
     for gene in r["data"]["targets"]:
         if not gene["knownDrugs"]:
             continue
+
         drug_info = gene["knownDrugs"]["rows"]
         drug_df = pd.DataFrame(drug_info)
+
+        if drug_df.empty:
+            continue
 
         drug_df[["chembl_id", "drug_name"]] = drug_df["drug"].apply(pd.Series)
         drug_df.drop(columns=["drug"], inplace=True)
@@ -401,9 +415,9 @@ def get_gene_drug_interactions(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
         data.append(drug_df)
 
     if len(data) == 0:
-        opentargets_df = pd.DataFrame()
-    else:
-        opentargets_df = pd.concat(data)
+        return pd.DataFrame(), version_metadata
+
+    opentargets_df = pd.concat(data)
 
     # Merge the two DataFrames on the target column
     merged_df = collapse_data_sources(
@@ -415,23 +429,14 @@ def get_gene_drug_interactions(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
         col_name="ChEMBL_Drugs",  # TODO: Cross-check if correct name
     )
 
-    # Update the metadata file
-    version_metadata["query"] = {
-        "size": len(gene_ids),
-        "input_type": "Ensembl",
-        "time": str(end_time - start_time),
-        "date": str(datetime.datetime.now()),
-        "url": base_url,
-    }
-
     return merged_df, version_metadata
 
 
-def get_gene_disease_associations(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
+def get_gene_disease_associations(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
     """Get information about diseases associated with genes based on OpenTargets.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
-    :returns: a DataFrame containing the OpenTargets output.
+    :returns: a DataFrame containing the OpenTargets output and dictionary of the query metadata.
     """
     data_df = get_identifier_of_interest(bridgedb_df, "Ensembl")
     gene_ids = data_df["target"].tolist()
@@ -466,6 +471,15 @@ def get_gene_disease_associations(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
     # Record the end time
     end_time = datetime.datetime.now()
 
+    # Update the metadata file
+    version_metadata["query"] = {
+        "size": len(gene_ids),
+        "input_type": "Ensembl",
+        "time": str(end_time - start_time),
+        "date": str(datetime.datetime.now()),
+        "url": base_url,
+    }
+
     data = []
 
     for gene in r["data"]["targets"]:
@@ -473,6 +487,9 @@ def get_gene_disease_associations(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
             continue
         disease_info = gene["knownDrugs"]["rows"]
         disease_df = pd.DataFrame(disease_info)
+
+        if disease_df.empty:
+            continue
 
         disease_df[["disease_id", "disease_name", "therapeutic_area"]] = disease_df[
             "disease"
@@ -490,9 +507,9 @@ def get_gene_disease_associations(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
         data.append(disease_df)
 
     if len(data) == 0:
-        opentargets_df = pd.DataFrame()
-    else:
-        opentargets_df = pd.concat(data)
+        return pd.DataFrame(), version_metadata
+
+    opentargets_df = pd.concat(data)
 
     # Merge the two DataFrames on the target column
     merged_df = collapse_data_sources(
@@ -503,14 +520,5 @@ def get_gene_disease_associations(bridgedb_df: pd.DataFrame) -> pd.DataFrame:
         target_specific_cols=["disease_id", "disease_name", "therapeutic_areas"],
         col_name="OpenTargets_Diseases",
     )
-
-    # Update the metadata file
-    version_metadata["query"] = {
-        "size": len(gene_ids),
-        "input_type": "Ensembl",
-        "time": str(end_time - start_time),
-        "date": str(datetime.datetime.now()),
-        "url": base_url,
-    }
 
     return merged_df, version_metadata
