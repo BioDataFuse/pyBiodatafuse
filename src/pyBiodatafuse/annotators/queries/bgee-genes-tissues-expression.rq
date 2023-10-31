@@ -5,7 +5,7 @@ PREFIX lscr: <http://purl.org/lscr#>
 PREFIX genex: <http://purl.org/genex#>
 PREFIX obo: <http://purl.obolibrary.org/obo/>
 
-SELECT ?gene ?geneId ?anatomicalEntity ?expressionLevel ?confidenceLevel
+SELECT ?gene ?ensemblId ?geneId ?anatomicalEntity ?expressionLevel ?confidenceLevel
 WHERE {
   VALUES ?ensemblId { $gene_list }
   BIND(CONCAT("http://rdf.ebi.ac.uk/resource/ensembl/" , STR(?ensemblId))  AS ?geneIdStr )

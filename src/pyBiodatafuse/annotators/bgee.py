@@ -77,6 +77,10 @@ def get_gene_literature(bridgedb_df: pd.DataFrame):
     intermediate_df = pd.concat(results_df_list)
     print(intermediate_df)
 
+    intermediate_df.rename(
+        columns={"geneId": "target"}, inplace=True
+    )
+
     # Record the end time
     end_time = datetime.datetime.now()
 
@@ -102,4 +106,14 @@ def get_gene_literature(bridgedb_df: pd.DataFrame):
         },
     }
 
-    return data_df, bgee_metadata
+    # Merge the two DataFrames on the target column
+    merged_df = collapse_data_sources(
+        data_df=data_df,
+        source_namespace="Ensembl",
+        target_df=intermediate_df,
+        common_cols=["target"],
+        target_specific_cols=["anatomicalEntity", "expressionLevel", "confidenceLevel"],
+        col_name="Bgee",
+    )
+
+    return merged_df, bgee_metadata
