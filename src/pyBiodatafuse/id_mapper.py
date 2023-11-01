@@ -189,7 +189,7 @@ def check_smiles(smile: Optional[str]) -> Optional[str]:
     :returns: canonicalized smiles string
     """
     try:
-        return CanonSmiles(smi=smile)
+        return CanonSmiles(smile)
     except Exception:
         logger.info(f"Cannot canonicalize {smile}")
         return None

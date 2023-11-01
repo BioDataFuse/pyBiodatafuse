@@ -4,8 +4,7 @@
 
 The module contains special functions that are server expensive and can only be performed for smaller datasets.
 """
-
-from typing import Optional, Tuple
+from typing import Dict
 
 import pandas as pd
 import requests
@@ -14,13 +13,12 @@ from tqdm import tqdm
 from pyBiodatafuse.utils import get_identifier_of_interest
 
 
-def get_patent_data(data_input: pd.DataFrame) -> dict:
+def get_patent_data(data_input: pd.DataFrame) -> Dict[str, dict]:
     """Get patent data summary from PubChem.
 
     :param data_input: A dataframe with the BridgeDb or Pubchem harmonized output
     :returns: A dictionary with the PubChem Compound ID as key and the patent counts as value
-    The output is the following:
-    >> {CID: ["US: X", "EP: X", "WO: X", "Others: X"]}
+    The output is the following: {CID: ["US: X", "EP: X", "WO: X", "Others: X"]}
     """
     # Get column of interest
     data_df = get_identifier_of_interest(data_input, "PubChem Compound")
@@ -53,9 +51,9 @@ def get_patent_data(data_input: pd.DataFrame) -> dict:
                     patent_counter_dict["WO"].add(p)
                 else:
                     patent_counter_dict["Others"].add(p)
-            
+
         patent_counter_dict = [
-            f'{k}: {len(v)}' for k, v in patent_counter_dict.items() if len(v) > 0
+            f"{k}: {len(v)}" for k, v in patent_counter_dict.items() if len(v) > 0
         ]
 
         cid_pat_dict[cid] = patent_counter_dict
@@ -65,7 +63,6 @@ def get_patent_data(data_input: pd.DataFrame) -> dict:
 
 def _process_data_for_plot(data_dict: dict) -> pd.DataFrame:
     """Process data to map to plotting template."""
-
     data = []
 
     for cidx, pat_counter in data_dict.items():
