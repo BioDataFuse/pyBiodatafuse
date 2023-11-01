@@ -4,11 +4,16 @@
 
 import csv
 import datetime
+import logging
 from importlib import resources
 from typing import Optional, Tuple
 
 import pandas as pd
 import requests
+from pubchempy import BadRequestError, get_compounds
+from rdkit.Chem import CanonSmiles
+
+logger = logging.getLogger(__name__)
 
 
 def read_resource_files() -> pd.DataFrame:
@@ -172,3 +177,99 @@ def bridgedb_xref(
     }
 
     return bridgedb, bridgedb_metadata
+
+
+"""PubChem helper functions."""
+
+
+def check_smiles(smile: str) -> Optional[str]:
+    """Canonicalize the smiles of a compound.
+
+    :param smile: smiles string
+    :returns: canonicalized smiles string
+    """
+    try:
+        return CanonSmiles(smi=smile)
+    except Exception:
+        logger.info(f"Cannot canonicalize {smile}")
+        return None
+
+
+def get_cid_from_data(idx: str, idx_type: str) -> Optional[str]:
+    """Get PubChem ID from any query.
+
+    :param idx: identifier to query
+    :param idx_type: type of identifier to query. Potential curies include : smiles, inchikey, inchi, name
+    :returns: PubChem ID
+    """
+    if idx_type.lower() == "smiles":
+        idx = check_smiles(idx)
+
+    if not idx:
+        return None
+
+    try:
+        return get_compounds(idx, idx_type.lower())[0].cid
+    except BadRequestError:
+        logger.info(f"Issue with {idx}")
+        return None
+
+
+def pubchem_xref(
+    identifiers: pd.DataFrame, indentifier_type: str = "name"
+) -> Tuple[pd.DataFrame, dict]:
+    """Map chemical names or smiles or inchikeys to PubChem identifier.
+
+    :param identifiers: a dataframe with one column called identifier (the output of data_loader.py)
+    :param indentifier_type: type of identifier to query. Potential curies include : smiles, inchikey, inchi, name
+    :returns: a DataFrame containing the mapped identifiers and dictionary of the data resource metadata.
+    """
+    if len(identifiers) < 1:
+        raise ValueError("Please provide atleast one input.")
+
+    # Record the start time
+    start_time = datetime.datetime.now()
+
+    # Getting the response to the query
+    cid_data = []
+    for idx in identifiers:
+        cid = get_cid_from_data(idx, indentifier_type)
+        cid_data.append(
+            {
+                "identifier": idx,
+                "identifier.source": "name",
+                "target": cid,
+                "target.source": "PubChem Compound",
+            }
+        )
+
+    # Record the end time
+    end_time = datetime.datetime.now()
+
+    pubchem_df = pd.DataFrame(cid_data)
+    pubchem_df = pubchem_df.drop_duplicates()
+
+    """Metadata details"""
+    # Get the current date and time
+    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    # Calculate the time elapsed
+    time_elapsed = str(end_time - start_time)
+    # Add package version to metadata file
+    stable_package_version = "1.0.4"  # Stable version for PubChemPy
+
+    # Add the datasource, query, query time, and the date to metadata
+    pubchem_metadata = {
+        "datasource": "Pubchem python client",
+        "metadata": {
+            "package": "PubChemPy",
+            "data_version": stable_package_version,
+        },
+        "query": {
+            "size": len(identifiers),
+            "input_type": indentifier_type,
+            "time": time_elapsed,
+            "date": current_date,
+        },
+    }
+
+    return pubchem_df, pubchem_metadata

@@ -1,6 +1,7 @@
 graft src
 graft tests
 graft resources
+graft viz
 prune scripts
 prune notebooks
 prune tests/.pytest_cache
