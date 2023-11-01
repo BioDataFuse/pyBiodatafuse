@@ -4,7 +4,7 @@
 
 The module contains special functions that are server expensive and can only be performed for smaller datasets.
 """
-from typing import Dict, List
+# from typing import Any, Dict
 
 import pandas as pd
 import requests
@@ -13,7 +13,7 @@ from tqdm import tqdm
 from pyBiodatafuse.utils import get_identifier_of_interest
 
 
-def get_patent_data(data_input: pd.DataFrame) -> Dict[str, List[str]]:
+def get_patent_data(data_input: pd.DataFrame) -> dict:
     """Get patent data summary from PubChem.
 
     The output is the following: {CID: ["US: X", "EP: X", "WO: X", "Others: X"]}
@@ -52,7 +52,7 @@ def get_patent_data(data_input: pd.DataFrame) -> Dict[str, List[str]]:
                 else:
                     patent_detail_dict["Others"].add(p)
 
-        cid_pat_dict[cid] = [f"{k}: {len(v)}" for k, v in patent_detail_dict.items() if len(v) > 0]
+        cid_pat_dict[cid] = [f"{k}: {len(v)}" for k, v in patent_detail_dict.items() if len(v) > 0]  # type: ignore[assignment]
 
     return cid_pat_dict
 
