@@ -46,3 +46,41 @@ def create_df_from_text(text_input: str) -> pd.DataFrame:
     df = pd.DataFrame(data, columns=["identifier"])
 
     return df
+
+
+def create_df_from_dea(file_path: str) -> pd.DataFrame:
+    """Read a DataFrame containing the result of the differential expression analysis (DEA).
+
+    :param file_path: path to the file containing the result of DEA
+    :returns: the DEA table with proper column name
+    :raises ValueError: if the file is not value
+    """
+    # Get the file extension
+    file_extension = file_path.split(".")[-1].lower()
+    if file_extension == "xlsx":
+        # Read Excel file (xlsx)
+        try:
+            df = pd.read_excel(file_path)
+            df = df.rename(columns={df.columns[0]: "identifier"})
+            return df
+        except Exception as e:
+            raise ValueError(f"Error reading Excel file: {str(e)}")
+    if file_extension == "xls":
+        # Read Excel file (xls)
+        try:
+            df = pd.read_excel(file_path, engine="xlrd")
+            df = df.rename(columns={df.columns[0]: "identifier"})
+            return df
+        except Exception as e:
+            raise ValueError(f"Error reading Excel file: {str(e)}")
+    elif file_extension == "csv" or file_extension == "txt":
+        # Read CSV or text file
+        try:
+            delimiter = "," if file_extension == "csv" else "\t"
+            df = pd.read_csv(file_path, sep=delimiter)
+            df = df.rename(columns={df.columns[0]: "identifier"})
+            return df
+        except Exception as e:
+            raise ValueError(f"Error reading CSV/text file: {str(e)}")
+    else:
+        raise ValueError("Unsupported file format. Please provide an Excel, CSV, or TXT file.")
