@@ -12,7 +12,7 @@ from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interes
 
 
 def get_version_wikidata() -> dict:
-    wikidata_version = {"wikidata_version": "0"}
+    wikidata_version = {"wikidata_version": str(datetime.datetime.now())[0:16]}
 
     return wikidata_version
 
