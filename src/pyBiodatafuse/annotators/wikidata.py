@@ -12,7 +12,6 @@ from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interes
 
 
 def get_version_wikidata() -> dict:
-
     wikidata_version = {"wikidata_version": "0"}
 
     return wikidata_version
@@ -72,7 +71,11 @@ def get_gene_literature(bridgedb_df: pd.DataFrame):
     #            target  Wikidata_publication
     #         0    1103  [{'pubmed': '10861222', 'wikidata_id': 'Q22254...
     #         4   85365  [{'pubmed': '11278427', 'wikidata_id': 'Q24291...
-    intermediate_df = intermediate_df.groupby("target").apply(lambda x: x[["pubmed", "wikidata_id"]].to_dict(orient="records")).reset_index(name="Wikidata_publication")
+    intermediate_df = (
+        intermediate_df.groupby("target")
+        .apply(lambda x: x[["pubmed", "wikidata_id"]].to_dict(orient="records"))
+        .reset_index(name="Wikidata_publication")
+    )
 
     # Merge the two DataFrames on the target column
     merged_df = collapse_data_sources(
@@ -81,7 +84,8 @@ def get_gene_literature(bridgedb_df: pd.DataFrame):
         target_df=intermediate_df,
         common_cols=["target"],
         target_specific_cols=["Wikidata_publication"],
-        col_name="Wikidata_publication")
+        col_name="Wikidata_publication",
+    )
 
     # Record the end time
     end_time = datetime.datetime.now()
@@ -110,6 +114,7 @@ def get_gene_literature(bridgedb_df: pd.DataFrame):
 
     return merged_df, wikidata_metadata
 
+
 def foo():
     intermediate_df.rename(
         columns={"geneId": "target", "geneCount": "pathwayGeneCount"}, inplace=True
@@ -124,4 +129,3 @@ def foo():
         target_specific_cols=["pathwayId", "pathwayLabel", "pathwayGeneCount"],
         col_name="WikiPathways",
     )
-
