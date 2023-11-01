@@ -25,7 +25,7 @@ def read_resource_files() -> pd.DataFrame:
 def bridgedb_xref(
     identifiers: pd.DataFrame,
     input_species: Optional[str] = None,
-    input_datasource: Optional[str] = None,
+    input_datasource: str = None,
     output_datasource: Optional[list] = None,
 ) -> Tuple[pd.DataFrame, dict]:
     """Map input list using BridgeDb.
