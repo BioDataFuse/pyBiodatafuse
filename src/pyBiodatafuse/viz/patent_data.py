@@ -4,7 +4,6 @@
 
 The module contains special functions that are server expensive and can only be performed for smaller datasets.
 """
-# from typing import Any, Dict
 
 import pandas as pd
 import requests
@@ -68,7 +67,7 @@ def _process_data_for_plot(data_dict: dict) -> pd.DataFrame:
                 {
                     "cid": cidx,
                     "label": p,
-                    "value": c,
+                    "value": int(c),
                 }
             )
 
