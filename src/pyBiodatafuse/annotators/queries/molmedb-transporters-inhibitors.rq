@@ -1,0 +1,23 @@
+PREFIX sio: <http://semanticscience.org/resource/>
+PREFIX bao: <http://www.bioassayontology.org/bao#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX mmdbvoc: <https://rdf.molmedb.upol.cz/vocabulary#>
+PREFIX repr: <https://w3id.org/reproduceme#>
+
+SELECT ?transporterID ?inhibitor_InChIKey ?inhibitor_SMILES
+
+WHERE {
+VALUES ?transporterID { $transporter_list }
+  	BIND(IRI(CONCAT("http://purl.uniprot.org/uniprot/", ?transporterID)) AS ?transporterIDurl)
+  
+  ?transporterIDurl rdf:type bao:BAO_0000283 .
+  ?transporterAssay rdf:type bao:BAO_0000040 ;
+                    bao:BAO_0090012 ?transporterIDurl;
+                    bao:BAO_0090012 [rdf:type bao:BAO_0000076;
+                                     sio:SIO_000008 [rdf:type sio:CHEMINF_000059;
+                                                     sio:SIO_000300 ?inhibitor_InChIKey];
+                                     sio:SIO_000008 [rdf:type sio:CHEMINF_000018;
+                                                     sio:SIO_000300 ?inhibitor_SMILES]];
+                    bao:BAO_0000208 [rdf:type mmdbvoc:InhibitionAssay;
+                                     bao:BAO_0095007 repr:PositiveResult].                              
+}
