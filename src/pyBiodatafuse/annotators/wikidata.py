@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+"""Python file for querying the Wikidata database (https://www.wikidata.org/)."""
+
 import datetime
 import os
 from string import Template
@@ -12,9 +14,25 @@ from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interes
 
 
 def get_version_wikidata() -> dict:
-    wikidata_version = {"wikidata_version": str(datetime.datetime.now())[0:16]}
+    """Get version of Wikidata content.
 
-    return wikidata_version
+    :returns: a dictionary containing the (data) version information
+    """
+    now = str(datetime.datetime.now())
+
+    metadata = {
+        "datasource": "Wikidata",
+        "metadata": {
+            "data_version": {
+                "dataVersion": {
+                    "year": now[0:4],
+                    "month": now[5:7],
+                }
+            },
+        },
+    }
+
+    return metadata
 
 
 def get_gene_literature(bridgedb_df: pd.DataFrame):
