@@ -132,18 +132,3 @@ def get_gene_literature(bridgedb_df: pd.DataFrame):
 
     return merged_df, wikidata_metadata
 
-
-def foo():
-    intermediate_df.rename(
-        columns={"geneId": "target", "geneCount": "pathwayGeneCount"}, inplace=True
-    )
-
-    # Merge the two DataFrames on the target column
-    merged_df = collapse_data_sources(
-        data_df=data_df,
-        source_namespace="NCBI Gene",
-        target_df=intermediate_df,
-        common_cols=["target"],
-        target_specific_cols=["pathwayId", "pathwayLabel", "pathwayGeneCount"],
-        col_name="WikiPathways",
-    )
