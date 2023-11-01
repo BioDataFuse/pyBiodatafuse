@@ -36,6 +36,12 @@ def get_version_wikidata() -> dict:
 
 
 def get_gene_literature(bridgedb_df: pd.DataFrame):
+    """Get PubMed and Wikidata identifiers for literature about a gene or its encoded protein.
+
+    :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
+    :returns: a DataFrame containing the Wikidata output and dictionary of the query metadata.
+    """
+
     # Record the start time
     start_time = datetime.datetime.now()
 
