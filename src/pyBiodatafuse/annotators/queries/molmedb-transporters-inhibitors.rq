@@ -1,10 +1,15 @@
+PREFIX bibo: <http://purl.org/ontology/bibo/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX sio: <http://semanticscience.org/resource/>
 PREFIX bao: <http://www.bioassayontology.org/bao#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX mmdbvoc: <https://rdf.molmedb.upol.cz/vocabulary#>
 PREFIX repr: <https://w3id.org/reproduceme#>
+PREFIX cito: <http://purl.org/spar/cito/>
 
-SELECT ?transporterID ?inhibitor_InChIKey ?inhibitor_SMILES
+SELECT DISTINCT ?transporterID ?label ?InChIKey ?SMILES
+?chembl_id ?chebi_id ?pdb_ligand_id ?drugbank_id ?pubchem_compound_id ?molmedb_id
+?source_doi ?source_pmid
 
 WHERE {
 VALUES ?transporterID { $transporter_list }
@@ -13,11 +18,28 @@ VALUES ?transporterID { $transporter_list }
   ?transporterIDurl rdf:type bao:BAO_0000283 .
   ?transporterAssay rdf:type bao:BAO_0000040 ;
                     bao:BAO_0090012 ?transporterIDurl;
-                    bao:BAO_0090012 [rdf:type bao:BAO_0000076;
-                                     sio:SIO_000008 [rdf:type sio:CHEMINF_000059;
-                                                     sio:SIO_000300 ?inhibitor_InChIKey];
-                                     sio:SIO_000008 [rdf:type sio:CHEMINF_000018;
-                                                     sio:SIO_000300 ?inhibitor_SMILES]];
+                    bao:BAO_0000426 [cito:citesAsDataSource	?ref];
+                    bao:BAO_0090012 ?inhibitor;
                     bao:BAO_0000208 [rdf:type mmdbvoc:InhibitionAssay;
-                                     bao:BAO_0095007 repr:PositiveResult].                              
+                                     bao:BAO_0095007 repr:PositiveResult].
+  ?inhibitor rdf:type bao:BAO_0000076;
+             rdfs:label ?label;
+             sio:SIO_000008 [rdf:type sio:CHEMINF_000059;
+                             sio:SIO_000300 ?InChIKey];
+             sio:SIO_000008 [rdf:type sio:CHEMINF_000018;
+                             sio:SIO_000300 ?SMILES].             
+  ?ref bibo:doi ?source_doi;
+       bibo:pmid ?source_pmid
+  OPTIONAL {?inhibitor sio:SIO_000008 [rdf:type sio:CHEMINF_000421;
+                             sio:SIO_000300 ?chembl_id]}
+  OPTIONAL {?inhibitor sio:SIO_000008 [rdf:type sio:CHEMINF_000407;
+                             sio:SIO_000300 ?chebi_id]}
+  OPTIONAL {?inhibitor sio:SIO_000008 [rdf:type sio:CHEMINF_000572;
+                             sio:SIO_000300 ?pdb_ligand_id]}
+  OPTIONAL {?inhibitor sio:SIO_000008 [rdf:type sio:CHEMINF_000406;
+                             sio:SIO_000300 ?drugbank_id]}
+  OPTIONAL {?inhibitor sio:SIO_000008 [rdf:type sio:CHEMINF_000140;
+                             sio:SIO_000300 ?pubchem_compound_id]}
+  OPTIONAL {?inhibitor sio:SIO_000008 [rdf:type sio:CHEMINF_000571;
+                             sio:SIO_000300 ?molmedb_id]}
 }
