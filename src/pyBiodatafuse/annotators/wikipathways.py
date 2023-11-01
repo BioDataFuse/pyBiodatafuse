@@ -18,7 +18,9 @@ def get_version_wikipathways() -> dict:
 
     :returns: a dictionary containing the version information
     """
-    with open(os.path.dirname(__file__) + "/queries/wikipathways-metadata.rq", "r") as fin:
+    with open(
+        os.path.dirname(__file__) + "/queries/wikipathways-metadata.rq", "r"
+    ) as fin:
         sparql_query = fin.read()
 
     sparql = SPARQLWrapper("https://sparql.wikipathways.org/sparql")
@@ -28,7 +30,9 @@ def get_version_wikipathways() -> dict:
 
     res = sparql.queryAndConvert()
 
-    wikipathways_version = {"wikipathways_version": res["results"]["bindings"][0]["title"]["value"]}
+    wikipathways_version = {
+        "wikipathways_version": res["results"]["bindings"][0]["title"]["value"]
+    }
 
     return wikipathways_version
 
@@ -57,7 +61,9 @@ def get_gene_wikipathway(bridgedb_df: pd.DataFrame):
     else:
         query_gene_lists.append(" ".join(f'"{g}"' for g in hgnc_gene_list))
 
-    with open(os.path.dirname(__file__) + "/queries/wikipathways-genes-pathways.rq", "r") as fin:
+    with open(
+        os.path.dirname(__file__) + "/queries/wikipathways-genes-pathways.rq", "r"
+    ) as fin:
         sparql_query = fin.read()
 
     sparql = SPARQLWrapper("https://sparql.wikipathways.org/sparql")
