@@ -51,7 +51,9 @@ def get_patent_data(data_input: pd.DataFrame) -> dict:
                 else:
                     patent_detail_dict["Others"].add(p)
 
-        cid_pat_dict[cid] = [f"{k}: {len(v)}" for k, v in patent_detail_dict.items() if len(v) > 0]  # type: ignore[assignment]
+        cid_pat_dict[cid] = [
+            f"{k}: {len(v)}" for k, v in patent_detail_dict.items() if len(v) > 0
+        ]  # type: ignore[assignment]
 
     return cid_pat_dict
 

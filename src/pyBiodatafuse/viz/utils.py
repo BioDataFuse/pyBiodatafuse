@@ -4,10 +4,11 @@
 
 import matplotlib.pyplot as plt
 import pandas as pd
-import seaborn as sns
 import plotly.express as px
+import seaborn as sns
 
 """Matplotlib plotting functions."""
+
 
 def plot_pie_chart(
     template_df: pd.DataFrame,
@@ -20,7 +21,7 @@ def plot_pie_chart(
     :returns: A pie chart
     """
     plt.figure(figsize=fig_size)
-    colors = sns.color_palette("pastel")[:len(template_df)]
+    colors = sns.color_palette("pastel")[: len(template_df)]
     plt.pie(template_df["value"], labels=template_df["label"], colors=colors)
     return plt.show()
 
@@ -61,13 +62,11 @@ def plot_hbarplot_chart(
     return plt.show()
 
 
+"""Plotly based functions"""
 
-"""PLotly based functions"""
 
 def plotly_pie_chart(
     template_df: pd.DataFrame,
-    x_label: str = "label",
-    y_label: str = "value",
     fig_size: tuple = (10, 10),
 ) -> px:
     """Plot a pie chart using Plotly.
@@ -76,7 +75,7 @@ def plotly_pie_chart(
     :param fig_size: A tuple with the size of the figure
     :returns: A plotly pie chart
     """
-    fig = px.pie(template_df, values=y_label, names=x_label)
+    fig = px.pie(template_df, values="value", names="label")
     return fig.show()
 
 
