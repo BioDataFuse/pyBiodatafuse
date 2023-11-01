@@ -8,7 +8,8 @@ PREFIX obo: <http://purl.obolibrary.org/obo/>
 SELECT ?gene ?ensemblId ?geneId ?anatomicalEntity ?anatomicalEntityName ?expressionLevel ?confidenceLevel
 WHERE {
   VALUES ?ensemblId { $gene_list }
-  BIND(CONCAT("http://rdf.ebi.ac.uk/resource/ensembl/" , STR(?ensemblId))  AS ?geneIdStr )
+  VALUES ?anatomicalEntityName { $anat_entities_list }
+  BIND(CONCAT("http://rdf.ebi.ac.uk/resource/ensembl/", STR(?ensemblId)) AS ?geneIdStr)
   BIND(URI(?geneIdStr) AS ?geneId)
   ?gene a orth:Gene .
   ?gene lscr:xrefEnsemblGene ?geneId .
