@@ -51,8 +51,6 @@ def get_gene_literature(bridgedb_df: pd.DataFrame):
         sparql_query_template = Template(sparql_query)
         substit_dict = dict(gene_list=gene_list_str)
         sparql_query_template_sub = sparql_query_template.substitute(substit_dict)
-        print(sparql_query_template_sub)
-
         sparql.setQuery(sparql_query_template_sub)
         res = sparql.queryAndConvert()
 
@@ -64,8 +62,17 @@ def get_gene_literature(bridgedb_df: pd.DataFrame):
     # Organize the annotation results as an array of dictionaries
     intermediate_df = pd.concat(results_df_list)
     intermediate_df = intermediate_df.rename(columns={"article": "wikidata_id"})
-    intermediate_df = intermediate_df.groupby("geneId").apply(lambda x: x[["pubmed", "wikidata_id"]].to_dict(orient="records")).reset_index(name="Wikidata_publication")
     intermediate_df = intermediate_df.rename(columns={"geneId": "target"})
+    # the next line does some magic
+    # before:
+    #             target    pubmed       gene wikidata_id
+    #         0     1103  10861222  Q14863671   Q22254344
+    #         1    85365  11278427  Q18048007   Q24291011
+    # after (grouped by geneId):
+    #            target  Wikidata_publication
+    #         0    1103  [{'pubmed': '10861222', 'wikidata_id': 'Q22254...
+    #         4   85365  [{'pubmed': '11278427', 'wikidata_id': 'Q24291...
+    intermediate_df = intermediate_df.groupby("target").apply(lambda x: x[["pubmed", "wikidata_id"]].to_dict(orient="records")).reset_index(name="Wikidata_publication")
 
     # Merge the two DataFrames on the target column
     merged_df = collapse_data_sources(
