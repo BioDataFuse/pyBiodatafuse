@@ -46,14 +46,20 @@ def _format_data(row, network_df):
         if row_arr["preferredName_A"] == row["identifier"]:
             if row_arr["preferredName_B"] not in target_links_set:
                 gene_ppi_links.append(
-                    {"stringdb_link_to": row_arr["preferredName_B"], "score": row_arr["score"]}
+                    {
+                        "stringdb_link_to": row_arr["preferredName_B"],
+                        "score": row_arr["score"],
+                    }
                 )
                 target_links_set.add(row_arr["preferredName_B"])
 
         elif row_arr["preferredName_B"] == row["identifier"]:
             if row_arr["preferredName_A"] not in target_links_set:
                 gene_ppi_links.append(
-                    {"stringdb_link_to": row_arr["preferredName_A"], "score": row_arr["score"]}
+                    {
+                        "stringdb_link_to": row_arr["preferredName_A"],
+                        "score": row_arr["score"],
+                    }
                 )
                 target_links_set.add(row_arr["preferredName_A"])
 
@@ -140,4 +146,3 @@ def get_ppi(bridgedb_df: pd.DataFrame):
     }
 
     return data_df, string_metadata
-  
