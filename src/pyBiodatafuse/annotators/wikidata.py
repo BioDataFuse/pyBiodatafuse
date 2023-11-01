@@ -21,7 +21,6 @@ def get_version_wikidata() -> dict:
 def get_gene_literature(bridgedb_df: pd.DataFrame):
     # Record the start time
     start_time = datetime.datetime.now()
-    print(start_time)
 
     data_df = get_identifier_of_interest(bridgedb_df, "NCBI Gene")
     gene_list = data_df["target"].tolist()
@@ -64,6 +63,14 @@ def get_gene_literature(bridgedb_df: pd.DataFrame):
 
     # Organize the annotation results as an array of dictionaries
     intermediate_df = pd.concat(results_df_list)
+
+    intermediate_df = intermediate_df.groupby('geneId') # .apply(lambda x: x.to_dict(orient='r')).rename('Wikidata')
+    # intermediate_df.drop(['pathwayId', 'pathwayLabel', 'geneCount'], axis=1, inplace=True)
+
+    #intermediate_df.rename(
+    #    columns={"geneId": "target", "geneCount": "pathwayGeneCount"}, inplace=True
+    #)
+
     print(intermediate_df)
 
     # Record the end time
@@ -91,15 +98,9 @@ def get_gene_literature(bridgedb_df: pd.DataFrame):
         },
     }
 
-    return data_df, wikidata_metadata
+    return intermediate_df, wikidata_metadata
 
 def foo():
-    # Organize the annotation results as an array of dictionaries
-    intermediate_df = pd.concat(results_df_list)
-
-    # intermediate_df = intermediate_df.groupby('geneId').apply(lambda x: x.to_dict(orient='r')).rename('WikiPathways')
-    # intermediate_df.drop(['pathwayId', 'pathwayLabel', 'geneCount'], axis=1, inplace=True)
-
     intermediate_df.rename(
         columns={"geneId": "target", "geneCount": "pathwayGeneCount"}, inplace=True
     )
@@ -114,25 +115,3 @@ def foo():
         col_name="WikiPathways",
     )
 
-    # Metdata details
-    # Get the current date and time
-    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    # Calculate the time elapsed
-    time_elapsed = str(end_time - start_time)
-    # Add version to metadata file
-
-    wikidata_version = get_version_wikidata()
-
-    # Add the datasource, query, query time, and the date to metadata
-    wikidata_metadata = {
-        "datasource": "Wikidata",
-        "metadata": {"source_version": wikidata_version},
-        "query": {
-            "size": len(hgnc_gene_list),
-            "time": time_elapsed,
-            "date": current_date,
-            "url": "https://sparql.wikidata.org/sparql",
-        },
-    }
-
-    return merged_df, wikidata_metadata
