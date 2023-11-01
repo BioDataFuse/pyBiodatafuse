@@ -11,13 +11,15 @@ import requests
 
 from pyBiodatafuse.utils import get_identifier_of_interest
 
+string_api_url = "https://string-db.org/api"
+
 
 def get_version_stringdb() -> dict:
     """Get version of StringDB API.
 
     :returns: a dictionary containing the version information
     """
-    string_api_url = "https://string-db.org/api"
+
     output_format = "json"
     method = "version"
 
@@ -29,7 +31,36 @@ def get_version_stringdb() -> dict:
     return stringdb_version
 
 
-def annotate_genes_with_stringdb(bridgedb_df: pd.DataFrame):
+def _format_data(row, network_df):
+    """Helper function to reformat StringDB response.
+
+    :param row: input_df row
+    :param network_df: StringDB response annotation DataFrame
+    :returns: StringDB reformatted annotation.
+    """
+    gene_ppi_links = list()
+
+    target_links_set = set()
+
+    for _i, row_arr in network_df.iterrows():
+        if row_arr["preferredName_A"] == row["identifier"]:
+            if row_arr["preferredName_B"] not in target_links_set:
+                gene_ppi_links.append(
+                    {"stringdb_link_to": row_arr["preferredName_B"], "score": row_arr["score"]}
+                )
+                target_links_set.add(row_arr["preferredName_B"])
+
+        elif row_arr["preferredName_B"] == row["identifier"]:
+            if row_arr["preferredName_A"] not in target_links_set:
+                gene_ppi_links.append(
+                    {"stringdb_link_to": row_arr["preferredName_A"], "score": row_arr["score"]}
+                )
+                target_links_set.add(row_arr["preferredName_A"])
+
+    return gene_ppi_links
+
+
+def get_ppi(bridgedb_df: pd.DataFrame):
     """Annotate genes with protein-protein interactions from StringDB.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
@@ -44,7 +75,6 @@ def annotate_genes_with_stringdb(bridgedb_df: pd.DataFrame):
     gene_list = list(set(data_df["target"].tolist()))
 
     # --------- Get the String identifiers of the gene list --------#
-    string_api_url = "https://string-db.org/api"
     output_format = "tsv"
     method = "get_string_ids"
 
@@ -63,13 +93,6 @@ def annotate_genes_with_stringdb(bridgedb_df: pd.DataFrame):
         io.StringIO(results.content.decode("utf-8")), sep="\t"
     )
     stringdb_ids_df.queryIndex = stringdb_ids_df.queryIndex.astype(str)
-
-    # for i, row in stringdb_ids_df.iterrows():
-    # 	stringdb_ids_df.at[i, 'queryIndex'] = gene_list.at[gene_list.index[int(row['queryIndex'])],"identifier"]
-
-    # ----------- Merge the new identifiers frame with the original df --------------#
-
-    # data_df = data_df.merge(stringdb_ids_df, left_on='identifier', right_on='queryIndex', how='left')
 
     # ---------- Get String PPI network using the String identifiers ---------------#
 
@@ -90,9 +113,7 @@ def annotate_genes_with_stringdb(bridgedb_df: pd.DataFrame):
 
     # ---------- Add the interactions of each protein (row) to a new column ('stringdb') ---------------#
 
-    data_df["stringdb"] = data_df.apply(
-        get_protein_interactions, network_df=network_df, axis=1
-    )
+    data_df["stringdb"] = data_df.apply(_format_data, network_df=network_df, axis=1)
 
     # Record the end time
     end_time = datetime.datetime.now()
@@ -119,38 +140,4 @@ def annotate_genes_with_stringdb(bridgedb_df: pd.DataFrame):
     }
 
     return data_df, string_metadata
-
-
-def get_protein_interactions(row, network_df):
-    """Reformat StringDB response.
-
-    :param row: input_df row
-    :param network_df: StringDB response annotation DataFrame
-    :returns: StringDB reformatted annotation.
-    """
-    gene_ppi_links = list()
-
-    target_links_set = set()
-
-    for _i, row_arr in network_df.iterrows():
-        if row_arr["preferredName_A"] == row["identifier"]:
-            if row_arr["preferredName_B"] not in target_links_set:
-                gene_ppi_links.append(
-                    {
-                        "stringdb_link_to": row_arr["preferredName_B"],
-                        "score": row_arr["score"],
-                    }
-                )
-                target_links_set.add(row_arr["preferredName_B"])
-
-        elif row_arr["preferredName_B"] == row["identifier"]:
-            if row_arr["preferredName_A"] not in target_links_set:
-                gene_ppi_links.append(
-                    {
-                        "stringdb_link_to": row_arr["preferredName_A"],
-                        "score": row_arr["score"],
-                    }
-                )
-                target_links_set.add(row_arr["preferredName_A"])
-
-    return gene_ppi_links
+  
