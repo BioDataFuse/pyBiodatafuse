@@ -160,7 +160,9 @@ def get_gene_cellular_component(bridgedb_df: pd.DataFrame):
     else:
         query_gene_lists.append(" ".join(f'"{g}"' for g in gene_list))
 
-    with open(os.path.dirname(__file__) + "/queries/wikidata-genes-cellularComponent.rq", "r") as fin:
+    with open(
+        os.path.dirname(__file__) + "/queries/wikidata-genes-cellularComponent.rq", "r"
+    ) as fin:
         sparql_query = fin.read()
 
     sparql = SPARQLWrapper("https://query.wikidata.org/sparql")
@@ -186,7 +188,9 @@ def get_gene_cellular_component(bridgedb_df: pd.DataFrame):
 
     # Organize the annotation results as an array of dictionaries
     intermediate_df = pd.concat(results_df_list)
-    intermediate_df = intermediate_df.rename(columns={"cellularComp": "wikidata_id", "cellularCompLabel": "wikidata_label"})
+    intermediate_df = intermediate_df.rename(
+        columns={"cellularComp": "wikidata_id", "cellularCompLabel": "wikidata_label"}
+    )
     intermediate_df = intermediate_df.rename(columns={"geneId": "target"})
     # the next line does some magic
     intermediate_df = (
