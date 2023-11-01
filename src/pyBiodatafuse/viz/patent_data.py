@@ -4,7 +4,7 @@
 
 The module contains special functions that are server expensive and can only be performed for smaller datasets.
 """
-from typing import Dict
+from typing import Dict, List
 
 import pandas as pd
 import requests
@@ -13,12 +13,12 @@ from tqdm import tqdm
 from pyBiodatafuse.utils import get_identifier_of_interest
 
 
-def get_patent_data(data_input: pd.DataFrame) -> Dict[str, dict]:
+def get_patent_data(data_input: pd.DataFrame) -> Dict[str, List[str]]:
     """Get patent data summary from PubChem.
 
+    The output is the following: {CID: ["US: X", "EP: X", "WO: X", "Others: X"]}
     :param data_input: A dataframe with the BridgeDb or Pubchem harmonized output
     :returns: A dictionary with the PubChem Compound ID as key and the patent counts as value
-    The output is the following: {CID: ["US: X", "EP: X", "WO: X", "Others: X"]}
     """
     # Get column of interest
     data_df = get_identifier_of_interest(data_input, "PubChem Compound")
@@ -30,7 +30,7 @@ def get_patent_data(data_input: pd.DataFrame) -> Dict[str, dict]:
     # 2. Adding Granted, non-granted patent counts
 
     for cid in tqdm(data_df["target"]):
-        patent_counter_dict = {"US": set(), "EP": set(), "WO": set(), "Others": set()}
+        patent_detail_dict = {"US": set(), "EP": set(), "WO": set(), "Others": set()}  # type: ignore[var-annotated]
 
         patent_dict = requests.get(
             f"https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/{cid}/xrefs/PatentID/JSON"
@@ -44,19 +44,15 @@ def get_patent_data(data_input: pd.DataFrame) -> Dict[str, dict]:
             for patent in patents:
                 p = patent.replace("-", "")
                 if p.startswith("US"):
-                    patent_counter_dict["US"].add(p)
+                    patent_detail_dict["US"].add(p)
                 elif p.startswith("EP"):
-                    patent_counter_dict["EP"].add(p)
+                    patent_detail_dict["EP"].add(p)
                 elif p.startswith("WO"):
-                    patent_counter_dict["WO"].add(p)
+                    patent_detail_dict["WO"].add(p)
                 else:
-                    patent_counter_dict["Others"].add(p)
+                    patent_detail_dict["Others"].add(p)
 
-        patent_counter_dict = [
-            f"{k}: {len(v)}" for k, v in patent_counter_dict.items() if len(v) > 0
-        ]
-
-        cid_pat_dict[cid] = patent_counter_dict
+        cid_pat_dict[cid] = [f"{k}: {len(v)}" for k, v in patent_detail_dict.items() if len(v) > 0]
 
     return cid_pat_dict
 

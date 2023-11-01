@@ -21,12 +21,14 @@ def main():
     )
 
     m = get_patent_data(pubchem_df)
-    df = _process_data_for_plot(m)
+    print(m)
+    print(type(m))
+    # df = _process_data_for_plot(m)
 
-    entries = df.index.to_list()
-    test = df.loc[entries[0]]
-    print(test)
-    plot_barplot_chart(test)
+    # entries = df.index.to_list()
+    # test = df.loc[entries[0]]
+    # print(test)
+    # plot_barplot_chart(test)
 
 
 if __name__ == "__main__":
