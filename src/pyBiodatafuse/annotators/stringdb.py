@@ -19,7 +19,6 @@ def get_version_stringdb() -> dict:
 
     :returns: a dictionary containing the version information
     """
-
     output_format = "json"
     method = "version"
 
@@ -32,7 +31,7 @@ def get_version_stringdb() -> dict:
 
 
 def _format_data(row, network_df):
-    """Helper function to reformat StringDB response.
+    """Reformat StringDB response (Helper function).
 
     :param row: input_df row
     :param network_df: StringDB response annotation DataFrame
