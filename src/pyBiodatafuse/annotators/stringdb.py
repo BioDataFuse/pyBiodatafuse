@@ -15,7 +15,7 @@ string_api_url = "https://string-db.org/api"
 
 
 def get_version_stringdb() -> dict:
-    """Get version of StringDB API.
+    """Get version of STRING-DB API.
 
     :returns: a dictionary containing the version information
     """
@@ -32,11 +32,11 @@ def get_version_stringdb() -> dict:
 
 
 def _format_data(row, network_df):
-    """Helper function to reformat StringDB response.
+    """Helper function to reformat STRING-DB response.
 
     :param row: input_df row
-    :param network_df: StringDB response annotation DataFrame
-    :returns: StringDB reformatted annotation.
+    :param network_df: STRING-DB response annotation DataFrame
+    :returns: STRING-DB reformatted annotation.
     """
     gene_ppi_links = list()
 
@@ -67,10 +67,10 @@ def _format_data(row, network_df):
 
 
 def get_ppi(bridgedb_df: pd.DataFrame):
-    """Annotate genes with protein-protein interactions from StringDB.
+    """Annotate genes with protein-protein interactions from STRING-DB.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
-    :returns: a DataFrame containing the StringDB output and dictionary of the metadata.
+    :returns: a DataFrame containing the STRING-DB output and dictionary of the metadata.
     """
     # Record the start time
     start_time = datetime.datetime.now()
@@ -135,7 +135,7 @@ def get_ppi(bridgedb_df: pd.DataFrame):
 
     # Add the datasource, query, query time, and the date to metadata
     string_metadata = {
-        "datasource": "StringDB",
+        "datasource": "STRING-DB",
         "metadata": {"source_version": string_version},
         "query": {
             "size": len(gene_list),
