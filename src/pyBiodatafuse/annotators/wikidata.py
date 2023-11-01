@@ -137,4 +137,3 @@ def get_gene_literature(bridgedb_df: pd.DataFrame):
     }
 
     return merged_df, wikidata_metadata
-
