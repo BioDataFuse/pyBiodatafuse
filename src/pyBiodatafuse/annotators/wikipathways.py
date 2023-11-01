@@ -14,7 +14,7 @@ from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interes
 
 
 def get_version_wikipathways() -> dict:
-    """Get version of Wikipathways.
+    """Get version of WikiPathways.
 
     :returns: a dictionary containing the version information
     """
