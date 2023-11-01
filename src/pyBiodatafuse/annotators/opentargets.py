@@ -432,7 +432,9 @@ def get_gene_drug_interactions(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame,
     return merged_df, version_metadata
 
 
-def get_gene_disease_associations(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
+def get_gene_disease_associations(
+    bridgedb_df: pd.DataFrame,
+) -> Tuple[pd.DataFrame, dict]:
     """Get information about diseases associated with genes based on OpenTargets.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
