@@ -15,11 +15,10 @@ from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interes
 def get_version_bgee() -> dict:
     """Get version of Bgee RDF data from its SPARQL endpoint.
 
-       :returns: a dictionary containing the last modified date information
-       """
     # not sure if a version per-se can be retrieved, but the endpoint supports
     # http://purl.org/dc/terms/modified
-
+    :returns: a dictionary containing the last modified date information
+    """
     with open(os.path.dirname(__file__) + "/queries/bgee-get-last-modified.rq", "r") as fin:
         sparql_query = fin.read()
 
@@ -34,16 +33,15 @@ def get_version_bgee() -> dict:
     return bgee_version
 
 
-def get_gene_literature(bridgedb_df: pd.DataFrame, anatomical_entities : pd.DataFrame):
+def get_gene_literature(bridgedb_df: pd.DataFrame, anatomical_entities: pd.DataFrame):
     """Query gene-tissue expression information from Bgee.
 
-        :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
-        :param anatomical_entities: a dataframe containing the names of Anatomical entities of interest
-        :returns: a DataFrame containing the Bgee output and dictionary of the Bgee metadata.
-        """
+    :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
+    :param anatomical_entities: a dataframe containing the names of Anatomical entities of interest
+    :returns: a DataFrame containing the Bgee output and dictionary of the Bgee metadata.
+    """
     # Record the start time
     start_time = datetime.datetime.now()
-    print(start_time)
 
     data_df = get_identifier_of_interest(bridgedb_df, "Ensembl")
     gene_list = data_df["target"].tolist()
@@ -64,7 +62,7 @@ def get_gene_literature(bridgedb_df: pd.DataFrame, anatomical_entities : pd.Data
     query_anat_entities_lists = []
     if len(anat_entities_list) > 25:
         for i in range(0, len(anat_entities_list), 25):
-            tmp_list = anat_entities_list[i: i + 25]
+            tmp_list = anat_entities_list[i : i + 25]
             query_anat_entities_lists.append(" ".join(f'"{g}"' for g in tmp_list))
 
     else:
@@ -85,9 +83,8 @@ def get_gene_literature(bridgedb_df: pd.DataFrame, anatomical_entities : pd.Data
             query_count += 1
 
             sparql_query_template = Template(sparql_query)
-            substit_dict = dict(gene_list=gene_list_str, anat_entities_list = query_anat_entities_str)
+            substit_dict = dict(gene_list=gene_list_str, anat_entities_list=query_anat_entities_str)
             sparql_query_template_sub = sparql_query_template.substitute(substit_dict)
-            print(sparql_query_template_sub)
 
             sparql.setQuery(sparql_query_template_sub)
             res = sparql.queryAndConvert()
@@ -99,11 +96,8 @@ def get_gene_literature(bridgedb_df: pd.DataFrame, anatomical_entities : pd.Data
 
     # Organize the annotation results as an array of dictionaries
     intermediate_df = pd.concat(results_df_list)
-    print(intermediate_df)
 
-    intermediate_df.rename(
-        columns={"ensemblId": "target"}, inplace=True
-    )
+    intermediate_df.rename(columns={"ensemblId": "target"}, inplace=True)
 
     # Record the end time
     end_time = datetime.datetime.now()
@@ -136,7 +130,12 @@ def get_gene_literature(bridgedb_df: pd.DataFrame, anatomical_entities : pd.Data
         source_namespace="Ensembl",
         target_df=intermediate_df,
         common_cols=["target"],
-        target_specific_cols=["anatomicalEntity", "anatomicalEntityName", "expressionLevel", "confidenceLevel"],
+        target_specific_cols=[
+            "anatomicalEntity",
+            "anatomicalEntityName",
+            "expressionLevel",
+            "confidenceLevel",
+        ],
         col_name="Bgee",
     )
 
