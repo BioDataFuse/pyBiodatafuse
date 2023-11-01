@@ -63,15 +63,18 @@ def get_gene_literature(bridgedb_df: pd.DataFrame):
 
     # Organize the annotation results as an array of dictionaries
     intermediate_df = pd.concat(results_df_list)
+    intermediate_df = intermediate_df.rename(columns={"article": "wikidata_id"})
+    intermediate_df = intermediate_df.groupby("geneId").apply(lambda x: x[["pubmed", "wikidata_id"]].to_dict(orient="records")).reset_index(name="Wikidata_publication")
+    intermediate_df = intermediate_df.rename(columns={"geneId": "target"})
 
-    intermediate_df = intermediate_df.groupby('geneId') # .apply(lambda x: x.to_dict(orient='r')).rename('Wikidata')
-    # intermediate_df.drop(['pathwayId', 'pathwayLabel', 'geneCount'], axis=1, inplace=True)
-
-    #intermediate_df.rename(
-    #    columns={"geneId": "target", "geneCount": "pathwayGeneCount"}, inplace=True
-    #)
-
-    print(intermediate_df)
+    # Merge the two DataFrames on the target column
+    merged_df = collapse_data_sources(
+        data_df=data_df,
+        source_namespace="NCBI Gene",
+        target_df=intermediate_df,
+        common_cols=["target"],
+        target_specific_cols=["Wikidata_publication"],
+        col_name="Wikidata_publication")
 
     # Record the end time
     end_time = datetime.datetime.now()
@@ -98,7 +101,7 @@ def get_gene_literature(bridgedb_df: pd.DataFrame):
         },
     }
 
-    return intermediate_df, wikidata_metadata
+    return merged_df, wikidata_metadata
 
 def foo():
     intermediate_df.rename(
