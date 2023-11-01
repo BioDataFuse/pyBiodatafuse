@@ -182,7 +182,7 @@ def bridgedb_xref(
 """PubChem helper functions."""
 
 
-def check_smiles(smile: str) -> Optional[str]:
+def check_smiles(smile: Optional[str]) -> Optional[str]:
     """Canonicalize the smiles of a compound.
 
     :param smile: smiles string
@@ -195,7 +195,7 @@ def check_smiles(smile: str) -> Optional[str]:
         return None
 
 
-def get_cid_from_data(idx: str, idx_type: str) -> Optional[str]:
+def get_cid_from_data(idx: Optional[str], idx_type: str) -> Optional[str]:
     """Get PubChem ID from any query.
 
     :param idx: identifier to query
@@ -222,6 +222,7 @@ def pubchem_xref(
 
     :param identifiers: a dataframe with one column called identifier (the output of data_loader.py)
     :param indentifier_type: type of identifier to query. Potential curies include : smiles, inchikey, inchi, name
+    :raises ValueError: if the input_datasource is not provided or if the request fails
     :returns: a DataFrame containing the mapped identifiers and dictionary of the data resource metadata.
     """
     if len(identifiers) < 1:
