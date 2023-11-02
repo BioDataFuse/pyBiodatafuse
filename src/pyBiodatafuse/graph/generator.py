@@ -23,19 +23,19 @@ def load_dataframe_from_pickle(pickle_path: str) -> pd.DataFrame:
 
 def add_disgenet_disease_subgraph(
     g, gene_node_label, annot_list
-) -> nx.classes.multidigraph.MultiDigraph:
+):
     """Construct part of the graph by linking the gene to a list of annotation entities (disease, drug ..etc).
 
     :param g: the input graph to extend with new nodes and edges.
     :param gene_node_label: the gene node to be linked to annotation entities.
-    :param annot_list: list of annotations from a specific source (e.g. DisgeNET, WikiPathways ..etc).
-    :returns: a NetworkX MultiDigraph
+    :param annot_list: list of annotations from a specific source (e.g. DisGeNET, WikiPathways ..etc).
+    :returns: a NetworkX MultiDiGraph
     """
     for dg in annot_list:
         if not pd.isna(dg["disease_name"]):
             dg_node_label = dg["disease_name"]
             dg_node_attrs = {
-                "source": "DisgeNET",
+                "source": "DisGeNET",
                 "labels": dg["disease_name"],
                 "id": dg["diseaseid"],
                 "disease_id": dg["diseaseid"],
@@ -48,7 +48,7 @@ def add_disgenet_disease_subgraph(
             g.add_node(dg_node_label, attr_dict=dg_node_attrs)
 
             gene_dg_edge_attrs = {
-                "source": "DisgeNET",
+                "source": "DisGeNET",
                 "label": "associated_with",
                 "score": dg["score"],
                 "year_initial": dg["year_initial"] if not pd.isna(dg["year_initial"]) else "",
@@ -64,13 +64,13 @@ def add_disgenet_disease_subgraph(
 
 def add_opentargets_location_subgraph(
     g, gene_node_label, annot_list
-) -> nx.classes.multidigraph.MultiDigraph:
+):
     """Construct part of the graph by linking the gene to a list of annotation entities (disease, drug ..etc).
 
     :param g: the input graph to extend with new nodes and edges.
     :param gene_node_label: the gene node to be linked to annotation entities.
-    :param annot_list: list of annotations from a specific source (e.g. DisgeNET, WikiPathways ..etc).
-    :returns: a NetworkX MultiDigraph
+    :param annot_list: list of annotations from a specific source (e.g. DisGeNET, WikiPathways ..etc).
+    :returns: a NetworkX MultiDiGraph
     """
     for loc in annot_list:
         if not pd.isna(loc["location"]) and not pd.isna(loc["subcellular_loc"]):
@@ -93,13 +93,13 @@ def add_opentargets_location_subgraph(
 
 def add_opentargets_go_subgraph(
     g, gene_node_label, annot_list
-) -> nx.classes.multidigraph.MultiDigraph:
+):
     """Construct part of the graph by linking the gene to a list of annotation entities (disease, drug ..etc).
 
     :param g: the input graph to extend with new nodes and edges.
     :param gene_node_label: the gene node to be linked to annotation entities.
-    :param annot_list: list of annotations from a specific source (e.g. DisgeNET, WikiPathways ..etc).
-    :returns: a NetworkX MultiDigraph
+    :param annot_list: list of annotations from a specific source (e.g. DisGeNET, WikiPathways ..etc).
+    :returns: a NetworkX MultiDiGraph
     """
     for go in annot_list:
         go_node_label = go["go_name"]
@@ -116,13 +116,13 @@ def add_opentargets_go_subgraph(
 
 def add_opentargets_pathway_subgraph(
     g, gene_node_label, annot_list
-) -> nx.classes.multidigraph.MultiDigraph:
+):
     """Construct part of the graph by linking the gene to a list of annotation entities (disease, drug ..etc).
 
     :param g: the input graph to extend with new nodes and edges.
     :param gene_node_label: the gene node to be linked to annotation entities.
-    :param annot_list: list of annotations from a specific source (e.g. DisgeNET, WikiPathways ..etc).
-    :returns: a NetworkX MultiDigraph
+    :param annot_list: list of annotations from a specific source (e.g. DisGeNET, WikiPathways ..etc).
+    :returns: a NetworkX MultiDiGraph
     """
     for pathway in annot_list:
         if not pd.isna(pathway["pathway_id"]):
@@ -144,13 +144,13 @@ def add_opentargets_pathway_subgraph(
 
 def add_opentargets_drug_subgraph(
     g, gene_node_label, annot_list
-) -> nx.classes.multidigraph.MultiDigraph:
+):
     """Construct part of the graph by linking the gene to a list of annotation entities (disease, drug ..etc).
 
     :param g: the input graph to extend with new nodes and edges.
     :param gene_node_label: the gene node to be linked to annotation entities.
-    :param annot_list: list of annotations from a specific source (e.g. DisgeNET, WikiPathways ..etc).
-    :returns: a NetworkX MultiDigraph
+    :param annot_list: list of annotations from a specific source (e.g. DisGeNET, WikiPathways ..etc).
+    :returns: a NetworkX MultiDiGraph
     """
     for drug in annot_list:
         if not pd.isna(drug["relation"]):
@@ -172,13 +172,13 @@ def add_opentargets_drug_subgraph(
 
 def add_opentargets_disease_subgraph(
     g, gene_node_label, annot_list
-) -> nx.classes.multidigraph.MultiDigraph:
+):
     """Construct part of the graph by linking the gene to a list of annotation entities (disease, drug ..etc).
 
     :param g: the input graph to extend with new nodes and edges.
     :param gene_node_label: the gene node to be linked to annotation entities.
-    :param annot_list: list of annotations from a specific source (e.g. DisgeNET, WikiPathways ..etc).
-    :returns: a NetworkX MultiDigraph
+    :param annot_list: list of annotations from a specific source (e.g. DisGeNET, WikiPathways ..etc).
+    :returns: a NetworkX MultiDiGraph
     """
     for dg in annot_list:
         if not pd.isna(dg["disease_name"]):
@@ -201,13 +201,13 @@ def add_opentargets_disease_subgraph(
 
 def add_wikipathways_subgraph(
     g, gene_node_label, annot_list
-) -> nx.classes.multidigraph.MultiDigraph:
+):
     """Construct part of the graph by linking the gene to a list of annotation entities (disease, drug ..etc).
 
     :param g: the input graph to extend with new nodes and edges.
     :param gene_node_label: the gene node to be linked to annotation entities.
-    :param annot_list: list of annotations from a specific source (e.g. DisgeNET, WikiPathways ..etc).
-    :returns: a NetworkX MultiDigraph
+    :param annot_list: list of annotations from a specific source (e.g. DisGeNET, WikiPathways ..etc).
+    :returns: a NetworkX MultiDiGraph
     """
     for pathway in annot_list:
         if not pd.isna(pathway["pathwayLabel"]):
@@ -216,7 +216,7 @@ def add_wikipathways_subgraph(
                 "source": "WikiPathways",
                 "labels": pathway["pathwayLabel"],
                 "id": pathway["pathwayId"],
-                "gene_count": pathway["pathwaygeneCount"],
+                "gene_count": pathway["pathwayGeneCount"],
             }
 
             g.add_node(pathway_node_label, attr_dict=pathway_node_attrs)
@@ -228,29 +228,29 @@ def add_wikipathways_subgraph(
     return g
 
 
-def add_ppi_subgraph(g, gene_node_label, annot_list) -> nx.classes.multidigraph.MultiDigraph:
+def add_ppi_subgraph(g, gene_node_label, annot_list):
     """Construct part of the graph by linking the gene to a list of annotation entities (disease, drug ..etc).
 
     :param g: the input graph to extend with new nodes and edges.
     :param gene_node_label: the gene node to be linked to annotation entities.
-    :param annot_list: list of annotations from a specific source (e.g. DisgeNET, WikiPathways ..etc).
-    :returns: a NetworkX MultiDigraph
+    :param annot_list: list of annotations from a specific source (e.g. DisGeNET, WikiPathways ..etc).
+    :returns: a NetworkX MultiDiGraph
     """
     for ppi in annot_list:
-        gene_gene_edge_attrs = {"source": "STRINg", "label": "interacts_with"}
+        gene_gene_edge_attrs = {"source": "STRING", "label": "interacts_with"}
 
         g.add_edge(gene_node_label, ppi["stringdb_link_to"], attr_dict=gene_gene_edge_attrs)
 
     return g
 
 
-def generate_networkx_graph(fuse_df: pd.DataFrame) -> nx.classes.multidigraph.MultiDigraph:
+def generate_networkx_graph(fuse_df: pd.DataFrame):
     """Construct a NetWorkX graph from a Pandas DataFrame of genes and their multi-source annotations.
 
     :param fuse_df: the input dataframe to be converted into a graph.
-    :returns: a NetworkX MultiDigraph
+    :returns: a NetworkX MultiDiGraph
     """
-    g = nx.MultiDigraph()
+    g = nx.MultiDiGraph()
 
     for _i, row in fuse_df.iterrows():
         gene_node_label = row["identifier"]
@@ -263,13 +263,13 @@ def generate_networkx_graph(fuse_df: pd.DataFrame) -> nx.classes.multidigraph.Mu
 
         g.add_node(gene_node_label, attr_dict=gene_node_attrs)
 
-        disgenet_list = json.loads(json.dumps(row["DisgeNET"]))
+        disgenet_list = json.loads(json.dumps(row["DisGeNET"]))
         add_disgenet_disease_subgraph(g, gene_node_label, disgenet_list)
 
         location_list = json.loads(json.dumps(row["OpenTargets_Location"]))
         add_opentargets_location_subgraph(g, gene_node_label, location_list)
 
-        go_list = json.loads(json.dumps(row["gO_Process"]))
+        go_list = json.loads(json.dumps(row["GO_Process"]))
         add_opentargets_go_subgraph(g, gene_node_label, go_list)
 
         ot_pathway_list = json.loads(json.dumps(row["Reactome_Pathways"]))
