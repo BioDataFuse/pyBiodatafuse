@@ -1,0 +1,25 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX orth: <http://purl.org/net/orth#>
+PREFIX lscr: <http://purl.org/lscr#>
+PREFIX genex: <http://purl.org/genex#>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+
+SELECT ?gene ?ensemblId ?geneId ?anatomicalEntity ?anatomicalEntityName ?expressionLevel ?confidenceLevel
+WHERE {
+  VALUES ?ensemblId { $gene_list }
+  VALUES ?anatomicalEntityName { $anat_entities_list }
+  BIND(CONCAT("http://rdf.ebi.ac.uk/resource/ensembl/", STR(?ensemblId)) AS ?geneIdStr)
+  BIND(URI(?geneIdStr) AS ?geneId)
+  ?gene a orth:Gene .
+  ?gene lscr:xrefEnsemblGene ?geneId .
+  ?expr genex:hasSequenceUnit ?gene.
+  ?expr a genex:Expression .
+  #?expr genex:hasConfidenceLevel obo:CIO_0000029 . # high confidence level
+  ?expr genex:hasConfidenceLevel ?confidenceLevel .
+  ?expr genex:hasExpressionLevel ?expressionLevel .
+  ?expr genex:hasExpressionCondition ?cond .
+  ?cond genex:hasAnatomicalEntity ?anatomicalEntity . # tissue
+  ?anatomicalEntity rdfs:label ?anatomicalEntityName.
+  # also can filter by expression level: e.g. FILTER (?expressionLevel > 99) # highly expressed
+}

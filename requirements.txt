@@ -2,3 +2,9 @@ pandas==2.0.3
 tqdm==4.65.0
 SPARQLWrapper
 tox
+matplotlib==3.8.1
+seaborn==0.13.0
+plotly==5.18.0
+rdkit==2023.9.1
+pubchempy==1.0.4
+nbformat==5.9.2

@@ -12,10 +12,11 @@ model for code contributions. Follow these steps:
    on your GitHub account (or in one of your organizations)
 2. [Clone your fork](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository)
    with `git clone https://github.com/<your namespace here>/pyBiodatafuse.git`
-3. Make and commit changes to your fork with `git commit`
-4. Push changes to your fork with `git push`
-5. Repeat steps 3 and 4 as needed
-6. Submit a pull request back to the upstream repository
+3. Make a development branch
+4. Make and commit changes to your new branch with `git commit`
+5. Push changes to your fork with `git push`
+6. Repeat steps 3 and 4 as needed
+7. Submit a pull request back to the upstream repository
 
 ### Merge Model
 
