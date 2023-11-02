@@ -1,10 +1,10 @@
 pyBioDataFuse |release| Documentation
 =====================================
 
-Disclaimer
-------------
-This package was created with the `cookiecutter <https://github.com/cookiecutter/cookiecutter>`_
-package using `cookiecutter-snekpack <https://github.com/cthoyt/cookiecutter-snekpack>`_ template.
+
+## 💪 Getting Started
+
+> A python package for integrating data from multiple existsing biomedical resources and assist in generating a knowledge graph on the data. 
 
 
 Table of Contents
@@ -15,11 +15,17 @@ Table of Contents
    :name: start
 
    installation
-   usage
-   cli
+   datasources
+   graph_plotters
 
 Indices and Tables
 ------------------
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
+
+Disclaimer
+------------
+This package was created with the `cookiecutter <https://github.com/cookiecutter/cookiecutter>`_
+package using `cookiecutter-snekpack <https://github.com/cthoyt/cookiecutter-snekpack>`_ template.
