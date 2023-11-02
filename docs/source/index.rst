@@ -1,6 +1,7 @@
 pyBioDataFuse |release| Documentation
 =====================================
 
+.. automodule:: pyBioDataFuse
 
 ## 💪 Getting Started
 
