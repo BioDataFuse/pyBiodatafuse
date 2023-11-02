@@ -8,3 +8,4 @@ plotly==5.18.0
 rdkit==2023.9.1
 pubchempy==1.0.4
 nbformat==5.9.2
+networkx>=3.1
