@@ -1,12 +1,11 @@
 # coding: utf-8
 
-"""Python file for testing the workflow package."""
+"""Python file for testing the workflow package. This is just for internal testing purposes."""
 
-import pandas as pd
 
 from pyBiodatafuse import id_mapper
 from pyBiodatafuse.viz.patent_data import _process_data_for_plot, get_patent_data
-from pyBiodatafuse.viz.utils import plot_barplot_chart, plot_pie_chart
+from pyBiodatafuse.viz.utils import plot_barplot_chart
 
 
 def main():
@@ -25,7 +24,7 @@ def main():
 
     entries = df.index.to_list()
     test = df.loc[entries[0]]
-    # print(test)
+
     plot_barplot_chart(test)
 
 
