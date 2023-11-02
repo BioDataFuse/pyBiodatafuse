@@ -6,7 +6,7 @@ import csv
 import datetime
 import logging
 from importlib import resources
-from typing import Optional, Tuple
+from typing import List, Optional, Tuple
 
 import pandas as pd
 import requests
@@ -56,7 +56,7 @@ def get_version_webservice_bridgedb() -> dict:
     return bridgedb_version
 
 
-def get_version_datasource_bridgedb(input_species: Optional[str] = None) -> list[str]:
+def get_version_datasource_bridgedb(input_species: Optional[str] = None) -> List[str]:
     """Get version of BridgeDb datasource.
 
     :param input_species: specify the species, for now only human would be supported
