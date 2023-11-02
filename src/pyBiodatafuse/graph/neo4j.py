@@ -1,6 +1,6 @@
 # coding: utf-8
 
-"""Python module to export a NetworkX graph to cytoscape-compliant format and set the styling for cytoscape."""
+"""Python module to export a NetworkX graph to Neo4J graphml file."""
 
 import networkx as nx
 
