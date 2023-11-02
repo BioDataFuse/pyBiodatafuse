@@ -36,6 +36,7 @@ def add_disgenet_disease_subgraph(g, gene_node_label, annot_list):
                 "source": "DisGeNET",
                 "labels": dg["disease_name"],
                 "id": dg["diseaseid"],
+                "node_type": "disease",
                 "disease_id": dg["diseaseid"],
                 "disease_class": dg["disease_class"],
                 "disease_class_name": dg["disease_class_name"],
@@ -75,6 +76,7 @@ def add_opentargets_location_subgraph(g, gene_node_label, annot_list):
                 "source": "OpenTargets",
                 "labels": loc["location"],
                 "id": loc["loc_identifier"],
+                "node_type": "location",
                 "subcellular_loc": loc["subcellular_loc"],
             }
 
@@ -97,7 +99,12 @@ def add_opentargets_go_subgraph(g, gene_node_label, annot_list):
     """
     for go in annot_list:
         go_node_label = go["go_name"]
-        go_node_attrs = {"source": "OpenTargets", "labels": go["go_name"], "id": go["go_id"]}
+        go_node_attrs = {
+            "source": "OpenTargets",
+            "labels": go["go_name"],
+            "id": go["go_id"],
+            "node_type": "gene ontology",
+        }
 
         g.add_node(go_node_label, attr_dict=go_node_attrs)
 
@@ -123,6 +130,7 @@ def add_opentargets_pathway_subgraph(g, gene_node_label, annot_list):
                 "source": "OpenTargets",
                 "labels": pathway["pathway_name"],
                 "id": pathway["pathway_id"],
+                "node_type": "reactome pathways",
             }
 
             g.add_node(pathway_node_label, attr_dict=pathway_node_attrs)
@@ -149,6 +157,7 @@ def add_opentargets_drug_subgraph(g, gene_node_label, annot_list):
                 "source": "OpenTargets",
                 "labels": drug["drug_name"],
                 "id": drug["chembl_id"],
+                "node_type": "drug interactions",
             }
 
             g.add_node(drug_node_label, attr_dict=drug_node_attrs)
@@ -175,6 +184,7 @@ def add_opentargets_disease_subgraph(g, gene_node_label, annot_list):
                 "source": "OpenTargets",
                 "labels": dg["disease_name"],
                 "id": dg["disease_id"],
+                "node_type": "disease",
                 "therapeutic_areas": dg["therapeutic_areas"],
             }
 
@@ -202,6 +212,7 @@ def add_wikipathways_subgraph(g, gene_node_label, annot_list):
                 "source": "WikiPathways",
                 "labels": pathway["pathwayLabel"],
                 "id": pathway["pathwayId"],
+                "node_type": "wikipathways pathway",
                 "gene_count": pathway["pathwayGeneCount"],
             }
 
@@ -244,6 +255,7 @@ def generate_networkx_graph(fuse_df: pd.DataFrame):
             "source": "BridgeDB",
             "labels": row["identifier"],
             "id": row["target"],
+            "node_type": "gene",
             row["target.source"]: row["target"],
         }
 
