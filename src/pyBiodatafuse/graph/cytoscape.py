@@ -7,7 +7,7 @@ import json
 import networkx as nx
 
 
-def replace_graph_attrs_for_cytoscape(g: nx.MultiDiGraph):
+def _replace_graph_attrs_for_cytoscape(g: nx.MultiDiGraph):
     """Adapt the node and edge attributes keys to the cytoscape json structure.
 
     :param g: input NetworkX graph object.
@@ -37,14 +37,14 @@ def convert_graph_to_cytoscape_json(g: nx.MultiDiGraph):
     :param g: the NetworkX graph object.
     :returns: a cytoscape network json object.
     """
-    adj_g = replace_graph_attrs_for_cytoscape(g)
+    adj_g = _replace_graph_attrs_for_cytoscape(g)
 
     cytoscape_graph = nx.cytoscape_data(adj_g)
 
     return cytoscape_graph
 
 
-def write_cytoscape_graph_to_file(cytoscape_graph: dict, output_path: str):
+def save_cytoscape_json_to_file(cytoscape_graph: dict, output_path: str):
     """Write cytoscape graph to json file.
 
     :param cytoscape_graph: the cytoscape graph object.

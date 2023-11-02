@@ -16,12 +16,15 @@ Cytoscape
 .. autofunction:: pyBiodatafuse.graph.generator.convert_graph_to_cytoscape_json()
     :members:
 
-.. autofunction:: pyBiodatafuse.graph.cytoscape.write_cytoscape_graph_to_file()
+.. autofunction:: pyBiodatafuse.graph.cytoscape.save_cytoscape_json_to_file()
     :members:
 
 Neo4J
 ~~~~~~~~~~~~~~~
 
-.. autofunction:: pyBiodatafuse.graph.neo4j.write_graph_to_neo4j_graphml()
+.. autofunction:: pyBiodatafuse.graph.neo4j_exporter.save_graph_to_neo4j_graphml()
+    :members:
+
+.. autofunction:: pyBiodatafuse.graph.neo4j_exporter.export()
     :members:
 
