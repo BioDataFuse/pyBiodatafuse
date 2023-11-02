@@ -1,0 +1,8 @@
+SELECT (SUBSTR(STR(?gene_),32) AS ?gene) ?geneId (SUBSTR(STR(?article_),32) AS ?article) ?pubmed
+WHERE {
+  VALUES ?geneId { $gene_list }
+  ?gene_ wdt:P351 ?geneId .
+  { ?article_ wdt:P921 ?gene_ ; wdt:P698 ?pubmed }
+  UNION
+  { ?article_ wdt:P921/wdt:P702 ?gene_ ; wdt:P698 ?pubmed }
+}

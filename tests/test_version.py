@@ -5,6 +5,7 @@
 import unittest
 
 from pyBiodatafuse.annotators.opentargets import get_version as opentargets_version
+from pyBiodatafuse.annotators.wikidata import get_version_wikidata as wikidata_version
 from pyBiodatafuse.version import get_version
 
 
@@ -22,4 +23,9 @@ class TestVersion(unittest.TestCase):
     def test_opentargets_version_type(self):
         """Test the version from OpenTargets is a dictionary."""
         version = opentargets_version()
+        self.assertIsInstance(version, dict)
+
+    def test_wikidata_version_type(self):
+        """Test the version from Wikidata is a dictionary."""
+        version = wikidata_version()
         self.assertIsInstance(version, dict)
