@@ -21,9 +21,7 @@ def load_dataframe_from_pickle(pickle_path: str) -> pd.DataFrame:
     return df
 
 
-def add_disgenet_disease_subgraph(
-    g, gene_node_label, annot_list
-):
+def add_disgenet_disease_subgraph(g, gene_node_label, annot_list):
     """Construct part of the graph by linking the gene to a list of annotation entities (disease, drug ..etc).
 
     :param g: the input graph to extend with new nodes and edges.
@@ -62,9 +60,7 @@ def add_disgenet_disease_subgraph(
     return g
 
 
-def add_opentargets_location_subgraph(
-    g, gene_node_label, annot_list
-):
+def add_opentargets_location_subgraph(g, gene_node_label, annot_list):
     """Construct part of the graph by linking the gene to a list of annotation entities (disease, drug ..etc).
 
     :param g: the input graph to extend with new nodes and edges.
@@ -91,9 +87,7 @@ def add_opentargets_location_subgraph(
     return g
 
 
-def add_opentargets_go_subgraph(
-    g, gene_node_label, annot_list
-):
+def add_opentargets_go_subgraph(g, gene_node_label, annot_list):
     """Construct part of the graph by linking the gene to a list of annotation entities (disease, drug ..etc).
 
     :param g: the input graph to extend with new nodes and edges.
@@ -114,9 +108,7 @@ def add_opentargets_go_subgraph(
     return g
 
 
-def add_opentargets_pathway_subgraph(
-    g, gene_node_label, annot_list
-):
+def add_opentargets_pathway_subgraph(g, gene_node_label, annot_list):
     """Construct part of the graph by linking the gene to a list of annotation entities (disease, drug ..etc).
 
     :param g: the input graph to extend with new nodes and edges.
@@ -142,9 +134,7 @@ def add_opentargets_pathway_subgraph(
     return g
 
 
-def add_opentargets_drug_subgraph(
-    g, gene_node_label, annot_list
-):
+def add_opentargets_drug_subgraph(g, gene_node_label, annot_list):
     """Construct part of the graph by linking the gene to a list of annotation entities (disease, drug ..etc).
 
     :param g: the input graph to extend with new nodes and edges.
@@ -170,9 +160,7 @@ def add_opentargets_drug_subgraph(
     return g
 
 
-def add_opentargets_disease_subgraph(
-    g, gene_node_label, annot_list
-):
+def add_opentargets_disease_subgraph(g, gene_node_label, annot_list):
     """Construct part of the graph by linking the gene to a list of annotation entities (disease, drug ..etc).
 
     :param g: the input graph to extend with new nodes and edges.
@@ -199,9 +187,7 @@ def add_opentargets_disease_subgraph(
     return g
 
 
-def add_wikipathways_subgraph(
-    g, gene_node_label, annot_list
-):
+def add_wikipathways_subgraph(g, gene_node_label, annot_list):
     """Construct part of the graph by linking the gene to a list of annotation entities (disease, drug ..etc).
 
     :param g: the input graph to extend with new nodes and edges.
