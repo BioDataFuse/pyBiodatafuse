@@ -59,14 +59,12 @@ $ pyBiodatafuse --help
 
 ## 🚀 Installation
 
-<!-- Uncomment this section after your first ``tox -e finish``
 The most recent release can be installed from
 [PyPI](https://pypi.org/project/pyBiodatafuse/) with:
 
 ```shell
 $ pip install pyBiodatafuse
 ```
--->
 
 The most recent code and data can be installed directly from GitHub with:
 
