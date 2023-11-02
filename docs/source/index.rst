@@ -4,7 +4,8 @@ pyBioDataFuse |release| Documentation
 
 ## 💪 Getting Started
 
-> A python package for integrating data from multiple existsing biomedical resources and assist in generating a knowledge graph on the data. 
+pyBioDataFuse is a python package for integrating data from multiple existsing biomedical resources and
+assist in generating a knowledge graph on the data.
 
 
 Table of Contents

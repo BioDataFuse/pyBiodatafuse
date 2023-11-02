@@ -1,5 +1,5 @@
 Data sources
-=====
+============
 
 Here you can find the different data resources that you can successfully query with the pyBiodatafuse package.
 

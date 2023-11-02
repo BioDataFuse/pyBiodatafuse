@@ -95,11 +95,7 @@ def collapse_data_sources(
 
     # Group by the first 4 columns and aggregate the values into a list
     cols_of_interest = data_df.columns.tolist()
-    merged_df = (
-        merged_df.groupby(cols_of_interest)[col_name]
-        .agg(sum)
-        .reset_index()
-    )
+    merged_df = merged_df.groupby(cols_of_interest)[col_name].agg(sum).reset_index()
 
     return merged_df
 

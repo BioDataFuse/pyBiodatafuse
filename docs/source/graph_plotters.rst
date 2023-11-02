@@ -1,5 +1,5 @@
 Graph Plotters
-=====
+==============
 
 Here you can find the different graph loading, storing, and plotting functions in the package.
 
