@@ -4,6 +4,7 @@ graft resources
 graft viz
 prune scripts
 prune notebooks
+prune examples
 prune tests/.pytest_cache
 
 prune docs/build
@@ -13,8 +14,6 @@ recursive-include docs/source *.py
 recursive-include docs/source *.rst
 recursive-include docs/source *.png
 recursive-include resources *.csv
-recursive-include examples *.ipynb
-recursive-include examples *.py
 
 global-exclude *.py[cod] __pycache__ *.so *.dylib .DS_Store *.gpickle
 

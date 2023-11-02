@@ -902,3 +902,6 @@ scratch/
 
 # PyPi file
 .pypirc
+
+# Pickle dumps
+*.pkl
