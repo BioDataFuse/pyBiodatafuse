@@ -1,0 +1,10 @@
+SELECT DISTINCT (SUBSTR(STR(?gene_),32) AS ?gene) ?geneId (SUBSTR(STR(?cellularComp_),32) AS ?cellularComp) ?cellularCompLabel ?go
+WHERE {
+  VALUES ?geneId { $gene_list }
+  ?gene_ wdt:P351 ?geneId .
+  { ?gene_ wdt:P681 ?cellularComp_ }
+  UNION
+  { ?gene_ wdt:P688/wdt:P681 ?cellularComp_ }
+  ?cellularComp_ rdfs:label ?cellularCompLabel ; wdt:P686 ?go .
+  FILTER (lang(?cellularCompLabel) = "en")
+}
