@@ -17,7 +17,6 @@ recursive-include examples *.ipynb
 recursive-include examples *.py
 recursive-include examples *.xls
 
-
 global-exclude *.py[cod] __pycache__ *.so *.dylib .DS_Store *.gpickle
 
 include README.md LICENSE *.txt
