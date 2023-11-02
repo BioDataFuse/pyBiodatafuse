@@ -21,7 +21,6 @@ def get_version_wikidata() -> dict:
     now = str(datetime.datetime.now())
 
     metadata = {
-        "datasource": "Wikidata",
         "metadata": {
             "data_version": {
                 "dataVersion": {
