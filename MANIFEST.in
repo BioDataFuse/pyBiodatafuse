@@ -15,6 +15,8 @@ recursive-include docs/source *.png
 recursive-include resources *.csv
 recursive-include examples *.ipynb
 recursive-include examples *.py
+recursive-include examples *.xls
+
 
 global-exclude *.py[cod] __pycache__ *.so *.dylib .DS_Store *.gpickle
 
