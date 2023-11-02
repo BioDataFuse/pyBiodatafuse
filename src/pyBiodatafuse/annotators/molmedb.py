@@ -72,11 +72,10 @@ def get_transporter_inhibitor(bridgedb_df: pd.DataFrame):
     # Organize the annotation results as an array of dictionaries
     intermediate_df = pd.concat(results_df_list)
 
-    # intermediate_df = intermediate_df.groupby('geneId').apply(lambda x: x.to_dict(orient='r')).rename('WikiPathways')
-    # intermediate_df.drop(['pathwayId', 'pathwayLabel', 'geneCount'], axis=1, inplace=True)
-
     intermediate_df.rename(columns={"transporterID": "target"}, inplace=True)
-    intermediate_df["source_doi"] = intermediate_df["source_doi"].map(lambda x: "doi:"+x, na_action="ignore")
+    intermediate_df["source_doi"] = intermediate_df["source_doi"].map(
+        lambda x: "doi:" + x, na_action="ignore"
+    )
 
     target_columns = list(intermediate_df.columns)
     target_columns.remove("target")
@@ -109,6 +108,7 @@ def get_transporter_inhibitor(bridgedb_df: pd.DataFrame):
     }
 
     return merged_df, molmedb_metadata
+
 
 def get_transporter_inhibited(bridgedb_df: pd.DataFrame):
     """Query MolMeDB for transporters inhibited by molecule.
@@ -169,12 +169,11 @@ def get_transporter_inhibited(bridgedb_df: pd.DataFrame):
     # Organize the annotation results as an array of dictionaries
     intermediate_df = pd.concat(results_df_list)
 
-    # intermediate_df = intermediate_df.groupby('geneId').apply(lambda x: x.to_dict(orient='r')).rename('WikiPathways')
-    # intermediate_df.drop(['pathwayId', 'pathwayLabel', 'geneCount'], axis=1, inplace=True)
-
     intermediate_df.rename(columns={"inhibitorInChIKey": "target"}, inplace=True)
-    intermediate_df["source_doi"] = intermediate_df["source_doi"].map(lambda x: "doi:"+x, na_action="ignore")
-    
+    intermediate_df["source_doi"] = intermediate_df["source_doi"].map(
+        lambda x: "doi:" + x, na_action="ignore"
+    )
+
     target_columns = list(intermediate_df.columns)
     target_columns.remove("target")
 
