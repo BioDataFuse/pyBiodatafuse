@@ -27,6 +27,60 @@ def read_resource_files() -> pd.DataFrame:
     return identifier_options
 
 
+def get_version_webservice_bridgedb() -> dict:
+    """Get version of BridgeDb web service.
+
+    :returns: a dictionary containing the version information
+    :raises ValueError: if failed to retrieve data
+    """
+    # Set the BridgeDb API
+    url = "https://webservice.bridgedb.org"
+    version_response = requests.get(url=f"{url}/config")
+
+    # Check if the request was successful (status code 200)
+    if version_response.status_code == 200:
+        # Initialize an empty dictionary to store the data
+        bridgedb_version = {}
+        # Split the response content into lines and create a CSV reader
+        lines = version_response.text.strip().split("\n")
+        csv_reader = csv.reader(lines, delimiter="\t")
+
+        # Iterate over the rows in the CSV and populate the dictionary
+        for row in csv_reader:
+            if len(row) == 2:
+                key, value = row
+                bridgedb_version[key] = value
+    else:
+        raise ValueError(f"Failed to retrieve data. Status code: {version_response.status_code}")
+
+    return bridgedb_version
+
+
+def get_version_datasource_bridgedb(input_species: Optional[str] = None) -> list[str]:
+    """Get version of BridgeDb datasource.
+
+    :param input_species: specify the species, for now only human would be supported
+    :returns: a list containing the version information
+    :raises ValueError: if failed to retrieve data
+    """
+    if input_species is None:
+        input_species = "Human"
+    # Set the BridgeDb API
+    url = "https://webservice.bridgedb.org"
+
+    # Add datasource version to metadata file
+    datasource_response = requests.get(url=f"{url}/{input_species}/properties")
+
+    # Check if the request was successful (status code 200)
+    if datasource_response.status_code == 200:
+        datasource_version = datasource_response.text.strip().split("\n")
+        datasource_version = [line.replace("\t", ": ") for line in datasource_version]
+    else:
+        raise ValueError(f"Failed to retrieve data. Status code: {datasource_response.status_code}")
+
+    return datasource_version
+
+
 def bridgedb_xref(
     identifiers: pd.DataFrame,
     input_species: Optional[str] = None,
@@ -69,7 +123,10 @@ def bridgedb_xref(
     if len(identifiers) < 1:
         raise ValueError("Please provide atleast one identifier datasource, e.g. HGNC")
 
-    post_con = "\n".join([f"{identifier}\t{input_source}" for identifier in identifiers]) + "\n"
+    post_con = (
+        "\n".join([f"{identifier}\t{input_source}" for identifier in identifiers["identifier"]])
+        + "\n"
+    )
 
     # Setting up the query url
     url = "https://webservice.bridgedb.org"
@@ -124,6 +181,10 @@ def bridgedb_xref(
         bridgedb = bridgedb[bridgedb["target.source"].isin(output_datasource)]
 
     bridgedb = bridgedb.drop_duplicates()
+    identifiers.columns = [
+        "{}{}".format(c, "" if c in "identifier" else "_dea") for c in identifiers.columns
+    ]
+    bridgedb = bridgedb.merge(identifiers, on="identifier")
 
     """Metadata details"""
     # Get the current date and time
@@ -131,33 +192,8 @@ def bridgedb_xref(
     # Calculate the time elapsed
     time_elapsed = str(end_time - start_time)
     # Add BridgeDb version to metadata file
-    version_response = requests.get(url=f"{url}/config")
-
-    # Check if the request was successful (status code 200)
-    if version_response.status_code == 200:
-        # Initialize an empty dictionary to store the data
-        bridgedb_version = {}
-        # Split the response content into lines and create a CSV reader
-        lines = version_response.text.strip().split("\n")
-        csv_reader = csv.reader(lines, delimiter="\t")
-
-        # Iterate over the rows in the CSV and populate the dictionary
-        for row in csv_reader:
-            if len(row) == 2:
-                key, value = row
-                bridgedb_version[key] = value
-    else:
-        raise ValueError(f"Failed to retrieve data. Status code: {version_response.status_code}")
-
-    # Add datasource version to metadata file
-    datasource_response = requests.get(url=f"{url}/{input_species}/properties")
-
-    # Check if the request was successful (status code 200)
-    if datasource_response.status_code == 200:
-        datasource_version = datasource_response.text.strip().split("\n")
-        datasource_version = [line.replace("\t", ": ") for line in datasource_version]
-    else:
-        raise ValueError(f"Failed to retrieve data. Status code: {datasource_response.status_code}")
+    bridgedb_version = get_version_webservice_bridgedb()
+    datasource_version = get_version_datasource_bridgedb()
 
     # Add the datasource, query, query time, and the date to metadata
     bridgedb_metadata = {
