@@ -88,7 +88,7 @@ def get_gene_disease(
         # Drop the uniprotid column
         disgenet_df.drop("uniprotid", axis=1, inplace=True)
         # Add DisGeNET output as a new column to BridgeDb file
-        disgenet_df.rename(columns={"geneid": "target", "gene_symbol": "identifier"}, inplace=True)
+        disgenet_df.rename(columns={"geneid": "target"}, inplace=True)
         disgenet_df["target"] = disgenet_df["target"].values.astype(str)
 
         selected_columns = [
@@ -116,7 +116,7 @@ def get_gene_disease(
             data_df=data_df,
             source_namespace="NCBI Gene",
             target_df=disgenet_df,
-            common_cols=["target", "identifier"],
+            common_cols=["target"],
             target_specific_cols=selected_columns,
             col_name="DisGeNET",
         )
