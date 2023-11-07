@@ -33,7 +33,7 @@ def get_version_bgee() -> dict:
     return bgee_version
 
 
-def get_gene_literature(bridgedb_df: pd.DataFrame, anatomical_entities: pd.DataFrame):
+def get_gene_expression(bridgedb_df: pd.DataFrame, anatomical_entities: pd.DataFrame):
     """Query gene-tissue expression information from Bgee.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query

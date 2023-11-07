@@ -2,6 +2,7 @@ graft src
 graft tests
 graft resources
 graft viz
+graft graph
 prune scripts
 prune notebooks
 prune examples
@@ -14,6 +15,7 @@ recursive-include docs/source *.py
 recursive-include docs/source *.rst
 recursive-include docs/source *.png
 recursive-include resources *.csv
+recursive-include src *.py
 
 global-exclude *.py[cod] __pycache__ *.so *.dylib .DS_Store *.gpickle
 

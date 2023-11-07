@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""Python file for queriying StringDB."""
+"""Python file for queriying StringDB (https://string-db.org/)."""
 
 import datetime
 import io
