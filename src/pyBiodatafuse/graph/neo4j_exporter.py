@@ -6,8 +6,6 @@
 import networkx as nx
 from neo4j import GraphDatabase
 
-"""Python file for connecting and exporting data to Neo4j."""
-
 
 def save_graph_to_neo4j_graphml(g: nx.MultiDiGraph, output_path: str):
     """Convert a NetworkX graph to Neo4J graphml file.

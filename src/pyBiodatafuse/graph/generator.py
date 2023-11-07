@@ -46,7 +46,7 @@ def add_disgenet_disease_subgraph(g, gene_node_label, annot_list):
 
             g.add_node(dg_node_label, attr_dict=dg_node_attrs)
 
-            gene_dg_edge_attrs = {
+            edge_attrs = {
                 "source": "DisGeNET",
                 "label": "associated_with",
                 "score": dg["score"],
@@ -56,7 +56,16 @@ def add_disgenet_disease_subgraph(g, gene_node_label, annot_list):
                 "el": dg["el"] if not pd.isna(dg["el"]) else "",
             }
 
-            g.add_edge(gene_node_label, dg_node_label, attr_dict=gene_dg_edge_attrs)
+            edge_hash = hash(frozenset(edge_attrs.items()))
+            edge_attrs["edge_hash"] = edge_hash
+            edge_data = g.get_edge_data(gene_node_label, dg_node_label)
+            edge_data = {} if edge_data is None else edge_data
+            node_exists = [
+                x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash
+            ]
+
+            if len(node_exists) == 0:
+                g.add_edge(gene_node_label, dg_node_label, attr_dict=edge_attrs)
 
     return g
 
@@ -82,9 +91,18 @@ def add_opentargets_location_subgraph(g, gene_node_label, annot_list):
 
             g.add_node(loc_node_label, attr_dict=loc_node_attrs)
 
-            gene_loc_edge_attrs = {"source": "OpenTargets", "label": "localized_in"}
+            edge_attrs = {"source": "OpenTargets", "label": "localized_in"}
 
-            g.add_edge(gene_node_label, loc_node_label, attr_dict=gene_loc_edge_attrs)
+            edge_hash = hash(frozenset(edge_attrs.items()))
+            edge_attrs["edge_hash"] = edge_hash
+            edge_data = g.get_edge_data(gene_node_label, loc_node_label)
+            edge_data = {} if edge_data is None else edge_data
+            node_exists = [
+                x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash
+            ]
+
+            if len(node_exists) == 0:
+                g.add_edge(gene_node_label, loc_node_label, attr_dict=edge_attrs)
 
     return g
 
@@ -108,9 +126,16 @@ def add_opentargets_go_subgraph(g, gene_node_label, annot_list):
 
         g.add_node(go_node_label, attr_dict=go_node_attrs)
 
-        gene_go_edge_attrs = {"source": "OpenTargets", "label": "part_of_go"}
+        edge_attrs = {"source": "OpenTargets", "label": "part_of_go"}
 
-        g.add_edge(gene_node_label, go_node_label, attr_dict=gene_go_edge_attrs)
+        edge_hash = hash(frozenset(edge_attrs.items()))
+        edge_attrs["edge_hash"] = edge_hash
+        edge_data = g.get_edge_data(gene_node_label, go_node_label)
+        edge_data = {} if edge_data is None else edge_data
+        node_exists = [x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash]
+
+        if len(node_exists) == 0:
+            g.add_edge(gene_node_label, go_node_label, attr_dict=edge_attrs)
 
     return g
 
@@ -135,9 +160,18 @@ def add_opentargets_pathway_subgraph(g, gene_node_label, annot_list):
 
             g.add_node(pathway_node_label, attr_dict=pathway_node_attrs)
 
-            gene_pathway_edge_attrs = {"source": "OpenTargets", "label": "part_of_pathway"}
+            edge_attrs = {"source": "OpenTargets", "label": "part_of_pathway"}
 
-            g.add_edge(gene_node_label, pathway_node_label, attr_dict=gene_pathway_edge_attrs)
+            edge_hash = hash(frozenset(edge_attrs.items()))
+            edge_attrs["edge_hash"] = edge_hash
+            edge_data = g.get_edge_data(gene_node_label, pathway_node_label)
+            edge_data = {} if edge_data is None else edge_data
+            node_exists = [
+                x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash
+            ]
+
+            if len(node_exists) == 0:
+                g.add_edge(gene_node_label, pathway_node_label, attr_dict=edge_attrs)
 
     return g
 
@@ -162,9 +196,18 @@ def add_opentargets_drug_subgraph(g, gene_node_label, annot_list):
 
             g.add_node(drug_node_label, attr_dict=drug_node_attrs)
 
-            gene_drug_edge_attrs = {"source": "OpenTargets", "label": drug["relation"]}
+            edge_attrs = {"source": "OpenTargets", "label": drug["relation"]}
 
-            g.add_edge(gene_node_label, drug_node_label, attr_dict=gene_drug_edge_attrs)
+            edge_hash = hash(frozenset(edge_attrs.items()))
+            edge_attrs["edge_hash"] = edge_hash
+            edge_data = g.get_edge_data(gene_node_label, drug_node_label)
+            edge_data = {} if edge_data is None else edge_data
+            node_exists = [
+                x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash
+            ]
+
+            if len(node_exists) == 0:
+                g.add_edge(gene_node_label, drug_node_label, attr_dict=edge_attrs)
 
     return g
 
@@ -190,9 +233,18 @@ def add_opentargets_disease_subgraph(g, gene_node_label, annot_list):
 
             g.add_node(dg_node_label, attr_dict=dg_node_attrs)
 
-            gene_dg_edge_attrs = {"source": "OpenTargets", "label": "associated_with"}
+            edge_attrs = {"source": "OpenTargets", "label": "associated_with"}
 
-            g.add_edge(gene_node_label, dg_node_label, attr_dict=gene_dg_edge_attrs)
+            edge_hash = hash(frozenset(edge_attrs.items()))
+            edge_attrs["edge_hash"] = edge_hash
+            edge_data = g.get_edge_data(gene_node_label, dg_node_label)
+            edge_data = {} if edge_data is None else edge_data
+            node_exists = [
+                x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash
+            ]
+
+            if len(node_exists) == 0:
+                g.add_edge(gene_node_label, dg_node_label, attr_dict=edge_attrs)
 
     return g
 
@@ -218,9 +270,18 @@ def add_wikipathways_subgraph(g, gene_node_label, annot_list):
 
             g.add_node(pathway_node_label, attr_dict=pathway_node_attrs)
 
-            gene_pathway_edge_attrs = {"source": "WikiPathways", "label": "part_of_pathway"}
+            edge_attrs = {"source": "WikiPathways", "label": "part_of_pathway"}
 
-            g.add_edge(gene_node_label, pathway_node_label, attr_dict=gene_pathway_edge_attrs)
+            edge_hash = hash(frozenset(edge_attrs.items()))
+            edge_attrs["edge_hash"] = edge_hash
+            edge_data = g.get_edge_data(gene_node_label, pathway_node_label)
+            edge_data = {} if edge_data is None else edge_data
+            node_exists = [
+                x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash
+            ]
+
+            if len(node_exists) == 0:
+                g.add_edge(gene_node_label, pathway_node_label, attr_dict=edge_attrs)
 
     return g
 
@@ -234,9 +295,16 @@ def add_ppi_subgraph(g, gene_node_label, annot_list):
     :returns: a NetworkX MultiDiGraph
     """
     for ppi in annot_list:
-        gene_gene_edge_attrs = {"source": "STRING", "label": "interacts_with"}
+        edge_attrs = {"source": "STRING", "label": "interacts_with", "score": ppi["score"]}
 
-        g.add_edge(gene_node_label, ppi["stringdb_link_to"], attr_dict=gene_gene_edge_attrs)
+        edge_hash = hash(frozenset(edge_attrs.items()))
+        edge_attrs["edge_hash"] = edge_hash
+        edge_data = g.get_edge_data(gene_node_label, ppi["stringdb_link_to"])
+        edge_data = {} if edge_data is None else edge_data
+        node_exists = [x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash]
+
+        if len(node_exists) == 0:
+            g.add_edge(gene_node_label, ppi["stringdb_link_to"], attr_dict=edge_attrs)
 
     return g
 
@@ -296,7 +364,7 @@ def generate_networkx_graph(fuse_df: pd.DataFrame):
     for u, v, k in g.edges(keys=True):
         if "attr_dict" in g[u][v][k]:
             for x, y in g[u][v][k]["attr_dict"].items():
-                if y is not None:
+                if y is not None and x != "edge_hash":
                     g[u][v][k][x] = y
 
             del g[u][v][k]["attr_dict"]
