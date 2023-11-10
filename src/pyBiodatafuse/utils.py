@@ -88,17 +88,6 @@ def collapse_data_sources(
 
     merged_df = pd.merge(data_df, target_df, on=common_cols, how="left")
 
-    # droprows with duplicate identifiers with duplicate response
-    merged_df.drop_duplicates(subset=["identifier"] + list(merged_df.columns[4:]), inplace=True)
-
-    # drop rows with duplicate identifiers with empty response
-    identifiers = merged_df["identifier"].unique()
-    for identifier in identifiers:
-        checked_df = merged_df[merged_df["identifier"] == identifier]
-        if checked_df.shape[0] > 1:
-            checked_df = checked_df[list(checked_df.columns[4:])]
-            merged_df.drop(list(checked_df[checked_df.isnull().all(axis=1)].index), inplace=True)
-
     # Create a new source column with values from selected columns as a list
     merged_df[col_name] = merged_df[target_specific_cols].apply(lambda row: row.to_dict(), axis=1)
     # Convert source column from string to a list of strings
