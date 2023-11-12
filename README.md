@@ -38,12 +38,10 @@
     </a>
 </p>
 
-A python package for integrating data from multiple resources
 
 ## 💪 Getting Started
 
-> TODO show in a very small amount of space the **MOST** useful thing your package can do.
-> Make it as short as possible! You have an entire set of docs for later.
+> A python package for integrating data from multiple existsing biomedical resources and assist in generating a knowledge graph on the data. 
 
 ### Command Line Interface
 
