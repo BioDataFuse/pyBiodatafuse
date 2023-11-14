@@ -5,6 +5,7 @@
 
 import datetime
 import os
+from math import isnan
 from string import Template
 
 import pandas as pd
@@ -71,14 +72,16 @@ def get_gene_mol_inhibitor(bridgedb_df: pd.DataFrame):
 
     # Organize the annotation results as an array of dictionaries
     intermediate_df = pd.concat(results_df_list)
-
     intermediate_df.rename(columns={"transporterID": "target"}, inplace=True)
-    intermediate_df["source_doi"] = intermediate_df["source_doi"].map(
-        lambda x: "doi:" + x, na_action="ignore"
-    )
-
-    target_columns = list(intermediate_df.columns)
-    target_columns.remove("target")
+    
+    if not intermediate_df.empty:
+        intermediate_df["source_doi"] = intermediate_df["source_doi"].map(
+            lambda x: "doi:" + x, na_action="ignore"
+        )
+        target_columns = list(intermediate_df.columns)
+        target_columns.remove("target")
+    else:
+        target_columns = list(intermediate_df.columns)
 
     # Merge the two DataFrames on the target column
     merged_df = collapse_data_sources(
@@ -89,8 +92,46 @@ def get_gene_mol_inhibitor(bridgedb_df: pd.DataFrame):
         target_specific_cols=target_columns,
         col_name="transporter_inhibitor",
     )
+    
 
-    # Metdata details
+
+    if (not merged_df.empty) and merged_df["transporter_inhibitor"][0]==None:
+        merged_df.drop_duplicates(subset=["identifier", "transporter_inhibitor"], inplace=True)
+    elif not merged_df.empty:
+        res_keys = merged_df["transporter_inhibitor"][0][0].keys()
+        # remove duplicate identifier and response row
+        merged_df["transporter_inhibitor"] = merged_df["transporter_inhibitor"].map(
+            lambda x: tuple(frozenset(d.items()) for d in x), na_action="ignore"
+        )
+        merged_df.drop_duplicates(subset=["identifier", "transporter_inhibitor"], inplace=True)
+        merged_df["transporter_inhibitor"] = merged_df["transporter_inhibitor"].map(
+            lambda res_tup: list(dict((x, y) for x, y in res) for res in res_tup), na_action="ignore"
+        )
+
+        # drop rows with duplicate identifiers with empty response
+        identifiers = merged_df["identifier"].unique()
+        for identifier in identifiers:
+            if merged_df.loc[merged_df["identifier"] == identifier].shape[0] > 1:
+                mask = merged_df.apply(
+                    lambda x: all(
+                        all(pd.isna(v) for v in d.values()) for d in x["transporter_inhibitor"]
+                    )
+                    and x["identifier"] == identifier,
+                    axis=1,
+                )
+                merged_df.drop(merged_df[mask].index, inplace=True)
+
+        # set default order to response dictionaries to keep output consistency
+        merged_df["transporter_inhibitor"] = merged_df["transporter_inhibitor"].apply(
+            lambda res: list(dict((k, r[k]) for k in res_keys) for r in res)
+        )
+        # set numerical identifiers to int to kepp output consistency
+        merged_df["transporter_inhibitor"] = merged_df["transporter_inhibitor"].apply(
+            lambda res: int_response_value_types(res, ["pubchem_compound_id", "source_pmid"])
+        )
+    merged_df.reset_index(drop=True, inplace=True)
+
+    # Metadata details
     # Get the current date and time
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # Calculate the time elapsed
@@ -205,3 +246,19 @@ def get_mol_gene_inhibitor(bridgedb_df: pd.DataFrame):
     }
 
     return merged_df, molmedb_metadata
+
+
+def int_response_value_types(resp_list: list, key_list: list):
+    """Change values in response dictionaries to int to stay consistent woth other Annotators
+
+    param: resp_list: list of response dictionaries
+    param: key_list: list of keys to change to int
+    returns: resp_list with int values in response dictionaries on keys in key_list
+    """
+    for r in resp_list:
+        for k in key_list:
+            try:
+                r[k] = int(r[k])
+            except ValueError:
+                continue
+    return resp_list
