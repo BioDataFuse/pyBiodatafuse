@@ -5,8 +5,8 @@
 
 import datetime
 import os
-from math import isnan
 from string import Template
+from typing import Tuple
 
 import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
@@ -73,7 +73,7 @@ def get_gene_mol_inhibitor(bridgedb_df: pd.DataFrame):
     # Organize the annotation results as an array of dictionaries
     intermediate_df = pd.concat(results_df_list)
     intermediate_df.rename(columns={"transporterID": "target"}, inplace=True)
-    
+
     if not intermediate_df.empty:
         intermediate_df["source_doi"] = intermediate_df["source_doi"].map(
             lambda x: "doi:" + x, na_action="ignore"
@@ -92,10 +92,8 @@ def get_gene_mol_inhibitor(bridgedb_df: pd.DataFrame):
         target_specific_cols=target_columns,
         col_name="transporter_inhibitor",
     )
-    
 
-
-    if (not merged_df.empty) and merged_df["transporter_inhibitor"][0]==None:
+    if (not merged_df.empty) and merged_df["transporter_inhibitor"][0] is None:
         merged_df.drop_duplicates(subset=["identifier", "transporter_inhibitor"], inplace=True)
     elif not merged_df.empty:
         res_keys = merged_df["transporter_inhibitor"][0][0].keys()
@@ -105,7 +103,8 @@ def get_gene_mol_inhibitor(bridgedb_df: pd.DataFrame):
         )
         merged_df.drop_duplicates(subset=["identifier", "transporter_inhibitor"], inplace=True)
         merged_df["transporter_inhibitor"] = merged_df["transporter_inhibitor"].map(
-            lambda res_tup: list(dict((x, y) for x, y in res) for res in res_tup), na_action="ignore"
+            lambda res_tup: list(dict((x, y) for x, y in res) for res in res_tup),
+            na_action="ignore",
         )
 
         # drop rows with duplicate identifiers with empty response
@@ -113,10 +112,10 @@ def get_gene_mol_inhibitor(bridgedb_df: pd.DataFrame):
         for identifier in identifiers:
             if merged_df.loc[merged_df["identifier"] == identifier].shape[0] > 1:
                 mask = merged_df.apply(
-                    lambda x: all(
-                        all(pd.isna(v) for v in d.values()) for d in x["transporter_inhibitor"]
-                    )
-                    and x["identifier"] == identifier,
+                    lambda x, id=identifier: (
+                        all(pd.isna(v) for v in d.values()) and x["identifier"] == id
+                        for d in x["transporter_inhibitor"]
+                    ),
                     axis=1,
                 )
                 merged_df.drop(merged_df[mask].index, inplace=True)
@@ -151,10 +150,10 @@ def get_gene_mol_inhibitor(bridgedb_df: pd.DataFrame):
     return merged_df, molmedb_metadata
 
 
-def get_mol_gene_inhibitor(bridgedb_df: pd.DataFrame):
+def get_mol_gene_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
     """Query MolMeDB for transporters inhibited by molecule.
 
-    :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
+    :param bridgedb_df: BridgeDb output for creating the list of gene ids to query.
     :returns: a DataFrame containing the MolMeDB output and dictionary of the MolMeDB metadata.
     """
     # Record the start time
@@ -249,11 +248,11 @@ def get_mol_gene_inhibitor(bridgedb_df: pd.DataFrame):
 
 
 def int_response_value_types(resp_list: list, key_list: list):
-    """Change values in response dictionaries to int to stay consistent woth other Annotators
+    """Change values in response dictionaries to int to stay consistent woth other Annotators.
 
-    param: resp_list: list of response dictionaries
-    param: key_list: list of keys to change to int
-    returns: resp_list with int values in response dictionaries on keys in key_list
+    :param: resp_list: list of response dictionaries.
+    :param: key_list: list of keys to change to int.
+    :returns: resp_list with int values in response dictionaries on keys in key_list.
     """
     for r in resp_list:
         for k in key_list:
