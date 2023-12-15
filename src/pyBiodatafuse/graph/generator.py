@@ -329,30 +329,38 @@ def generate_networkx_graph(fuse_df: pd.DataFrame):
 
         g.add_node(gene_node_label, attr_dict=gene_node_attrs)
 
-        disgenet_list = json.loads(json.dumps(row["DisGeNET"]))
-        add_disgenet_disease_subgraph(g, gene_node_label, disgenet_list)
+        if "DisGeNET" in row:
+            disgenet_list = json.loads(json.dumps(row["DisGeNET"]))
+            add_disgenet_disease_subgraph(g, gene_node_label, disgenet_list)
 
-        location_list = json.loads(json.dumps(row["OpenTargets_Location"]))
-        add_opentargets_location_subgraph(g, gene_node_label, location_list)
+        if "OpenTargets_Location" in row:
+            location_list = json.loads(json.dumps(row["OpenTargets_Location"]))
+            add_opentargets_location_subgraph(g, gene_node_label, location_list)
 
-        go_list = json.loads(json.dumps(row["GO_Process"]))
-        add_opentargets_go_subgraph(g, gene_node_label, go_list)
+        if "GO_Process" in row:
+            go_list = json.loads(json.dumps(row["GO_Process"]))
+            add_opentargets_go_subgraph(g, gene_node_label, go_list)
 
-        ot_pathway_list = json.loads(json.dumps(row["Reactome_Pathways"]))
-        add_opentargets_pathway_subgraph(g, gene_node_label, ot_pathway_list)
+        if "Reactome_Pathways" in row:
+            ot_pathway_list = json.loads(json.dumps(row["Reactome_Pathways"]))
+            add_opentargets_pathway_subgraph(g, gene_node_label, ot_pathway_list)
 
-        drug_list = json.loads(json.dumps(row["ChEMBL_Drugs"]))
-        add_opentargets_drug_subgraph(g, gene_node_label, drug_list)
+        if "ChEMBL_Drugs" in row:
+            drug_list = json.loads(json.dumps(row["ChEMBL_Drugs"]))
+            add_opentargets_drug_subgraph(g, gene_node_label, drug_list)
 
-        ot_disease_list = json.loads(json.dumps(row["OpenTargets_Diseases"]))
-        add_opentargets_disease_subgraph(g, gene_node_label, ot_disease_list)
+        if "OpenTargets_Diseases" in row:
+            ot_disease_list = json.loads(json.dumps(row["OpenTargets_Diseases"]))
+            add_opentargets_disease_subgraph(g, gene_node_label, ot_disease_list)
 
-        wp_pathway_list = json.loads(json.dumps(row["WikiPathways"]))
-        add_wikipathways_subgraph(g, gene_node_label, wp_pathway_list)
+        if "WikiPathways" in row:
+            wp_pathway_list = json.loads(json.dumps(row["WikiPathways"]))
+            add_wikipathways_subgraph(g, gene_node_label, wp_pathway_list)
 
-    for _i, row in fuse_df.iterrows():
-        ppi_list = json.loads(json.dumps(row["stringdb"]))
-        add_ppi_subgraph(g, gene_node_label, ppi_list)
+    if "stringdb" in row:
+        for _i, row in fuse_df.iterrows():
+            ppi_list = json.loads(json.dumps(row["stringdb"]))
+            add_ppi_subgraph(g, gene_node_label, ppi_list)
 
     for node in g.nodes():
         for k, v in g.nodes[node]["attr_dict"].items():
