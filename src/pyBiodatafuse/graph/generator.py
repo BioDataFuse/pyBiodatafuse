@@ -317,6 +317,8 @@ def generate_networkx_graph(fuse_df: pd.DataFrame):
     """
     g = nx.MultiDiGraph()
 
+    dea_columns = [c for c in fuse_df.columns if c.endswith("_dea")]
+
     for _i, row in fuse_df.iterrows():
         gene_node_label = row["identifier"]
         gene_node_attrs = {
@@ -326,6 +328,9 @@ def generate_networkx_graph(fuse_df: pd.DataFrame):
             "node_type": "gene",
             row["target.source"]: row["target"],
         }
+
+        for c in dea_columns:
+            gene_node_attrs[c[:-4]] = row[c]
 
         g.add_node(gene_node_label, attr_dict=gene_node_attrs)
 
