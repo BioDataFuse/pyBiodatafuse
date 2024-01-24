@@ -2,6 +2,8 @@
 
 """Python file for queriying the MINERVA platform (https://minerva.pages.uni.lu/doc/)."""
 
+from typing import Tuple
+
 import pandas as pd
 import requests
 
@@ -31,7 +33,7 @@ def get_minerva_components(get_elements=True, get_reactions=True) -> pd.DataFram
     :returns: a DataFrame containing XXXX.
     """
     # Login
-    session = requests.Session()
+    # session = requests.Session()
     # INPUT YOUR CREDENTIALS TO LOGIN to PD map instance
     # login = "anonymous"
     # password = ""
@@ -49,10 +51,10 @@ def get_minerva_components(get_elements=True, get_reactions=True) -> pd.DataFram
         for option in conf_dict.get("options", [])
         if option.get("type") == "DEFAULT_MAP"
     ]
-    project_id = ", ".join(project_id)
+    project_txt = ", ".join(project_id)
 
     # Request project data using the extracted project ID
-    response = requests.get(base_url + "/projects/" + project_id + "/models/")
+    response = requests.get(base_url + "/projects/" + project_txt + "/models/")
     models = response.json()
     map_components = {"models": models}
 
@@ -64,7 +66,7 @@ def get_minerva_components(get_elements=True, get_reactions=True) -> pd.DataFram
             url = (
                 base_url
                 + "/projects/"
-                + project_id
+                + project_txt
                 + "/models/"
                 + model
                 + "/"
@@ -82,7 +84,7 @@ def get_minerva_components(get_elements=True, get_reactions=True) -> pd.DataFram
             url = (
                 base_url
                 + "/projects/"
-                + project_id
+                + project_txt
                 + "/models/"
                 + model
                 + "/"
@@ -99,7 +101,7 @@ def get_gene_minerva_pathways(
     bridgedb_df: pd.DataFrame,
     map_components: pd.DataFrame,
     input_type: str = "Protein",
-) -> pd.DataFrame():
+) -> Tuple[pd.DataFrame, dict]:
     """Get information about MINERVA pathways associated with a gene.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
