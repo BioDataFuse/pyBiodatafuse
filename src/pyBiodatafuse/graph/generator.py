@@ -349,7 +349,7 @@ def generate_networkx_graph(fuse_df: pd.DataFrame):
             if annot_key in row:
                 annot_list = json.loads(json.dumps(row[annot_key]))
 
-                if annot_list is None:
+                if not isinstance(annot_list, list):
                     annot_list = []
 
                 func_dict[annot_key](g, gene_node_label, annot_list)
