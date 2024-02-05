@@ -1,3 +1,11 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Jan 30 10:21:39 2024
+
+@author: alejandroadriaquelozano
+"""
+
 # coding: utf-8
 
 """Python file for queriying the MINERVA platform (https://minerva.pages.uni.lu/doc/)."""
@@ -10,10 +18,11 @@ import requests
 from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interest
 
 # URL of MINERVA's API endpoint
-base_url = "https://covid19map.elixir-luxembourg.org/minerva/api/"
+
 
 
 def get_version_minerva() -> dict:
+    base_url = "https://covid19map.elixir-luxembourg.org/minerva/api/" #
     """Get version of minerva API.
 
     :returns: a string containing the version information
@@ -23,39 +32,59 @@ def get_version_minerva() -> dict:
 
     return conf_dict["version"]
 
-
-def get_minerva_components(get_elements=True, get_reactions=True) -> pd.DataFrame:
-    """Get information about MINERVA componenets.
-
-    :param get_elements: XXXX
-    :param get_reactions: XXXX
-
-    :returns: a DataFrame containing XXXX.
+def list_projects()-> pd.DataFrame:
+    """Get information about MINERVA projects.
+    
+    :returns: a DataFrame containing url, names, and IDs from the different projects in minerva plattform
     """
-    # Login
-    # session = requests.Session()
-    # INPUT YOUR CREDENTIALS TO LOGIN to PD map instance
-    # login = "anonymous"
-    # password = ""
-    # login_request = session.post(base_url + "/doLogin", data={"login": login, "password": password})
-    # print(login_request.text, "\n")
-    # print(session.cookies.get_dict(), "\n")
+    base_url = "https://minerva-net.lcsb.uni.lu/api/"
+    
+    response = requests.get(base_url + "/machines/")
+    projects = response.json()
+    projects_ids= projects['pageContent']
+    project_df=pd.DataFrame()
+    for x in projects_ids:
+        entry = {'url':x['rootUrl'],'id': x['id']}
+        entry_df = pd.DataFrame([entry])
+        project_df = pd.concat([project_df, entry_df], ignore_index=True)
+        
+    map_id_list=[]
+    names_list=[]
+    for x in project_df['id']:
+        x=str(x)
+        map_id= requests.get(base_url + "/machines/"+ x+"/projects/").json()['pageContent'][0]['projectId']
+        name = requests.get(base_url + "/machines/"+ x+"/projects/").json()['pageContent'][0]['mapName']
+        map_id_list.append(map_id)
+        names_list.append(name)
+    project_df['map_id']=map_id_list
+    project_df['names']=names_list
+    return project_df
 
-    # Request configuration data
-    response = requests.get(base_url + "/configuration/")
-    conf_dict = response.json()
+def get_minerva_components(project_df ,map_name,get_elements=True, get_reactions=True) -> dict:
+    """Get information about MINERVA componenets from a specific project.
+    
+    :param project_df: dataframe containing information about all projects contained in Minerva plattform, it is the output from the list_projects() function
+    :param map_name: name of the map you want to retrieve the information from. At the moment the options are: 'Asthma Map' 'COVID19 Disease Map' 'Expobiome Map' 'Atlas of Inflammation Resolution' 'SYSCID map' 'Aging Map' 'Meniere's disease map' 'Parkinson's disease map' 'RA-Atlas'   
+    :param get_elements: if get_elements = True, the elements of the model will appear as a dictionary in the output of the function
+    :param get_reactions: if get_reactions = True, the reactions of the model will appear as a dictionary in the output of the function
 
-    # Extract project ID
-    project_id = [
-        option["value"]
-        for option in conf_dict.get("options", [])
-        if option.get("type") == "DEFAULT_MAP"
-    ]
-    project_txt = ", ".join(project_id)
+    :returns: a Dictionary containing two other dictionaries (map_elements and map_reactions) and a list (models).
+        - 'map_elements' contains a list for each of the pathways in the model. Those lists provide information about Compartment,Complex, Drug, Gene, Ion,Phenotype, Protein,RNA and Simple molecules involved in that pathway
+        - 'map_reactions' contains a list for each of the pathways in the model. Those lists provide information about the reactions involed in that pathway.
+        - 'models' is a list containing pathway-specific information for each of the pathways in the model
+    """
+    
+    #Get url from the project specified
+    condition = (project_df['names'] == map_name)
+    row= project_df.index[condition].tolist()
+    url= project_df.loc[row,'url'].to_string(index=False, header=False)
+    project_id = project_df.loc[row,'map_id'].to_string(index=False, header=False)
+    
+
 
     # Request project data using the extracted project ID
-    response = requests.get(base_url + "/projects/" + project_txt + "/models/")
-    models = response.json()
+    response = requests.get(url + "/api/projects/" + project_id + "/models/")
+    models = response.json() # pull down only models and then iterate over them to extract element of interest
     map_components = {"models": models}
 
     if get_elements:
@@ -63,16 +92,16 @@ def get_minerva_components(get_elements=True, get_reactions=True) -> pd.DataFram
         model_elements = {}
         for model in models:
             model = str(model["idObject"])
-            url = (
-                base_url
-                + "/projects/"
-                + project_txt
+            url_complete = (
+                url
+                + "api/projects/"
+                + project_id
                 + "/models/"
                 + model
                 + "/"
                 + "bioEntities/elements/"
             )
-            response_data = requests.get(url)
+            response_data = requests.get(url_complete)
             model_elements[model] = response_data.json()
         map_components["map_elements"] = model_elements
 
@@ -81,16 +110,16 @@ def get_minerva_components(get_elements=True, get_reactions=True) -> pd.DataFram
         model_reactions = {}
         for model in models:
             model = str(model["idObject"])
-            url = (
-                base_url
-                + "/projects/"
-                + project_txt
+            url_complete = (
+                url
+                + "api/projects/"
+                + project_id
                 + "/models/"
                 + model
                 + "/"
                 + "bioEntities/reactions/"
             )
-            response_data = requests.get(url)
+            response_data = requests.get(url_complete)
             model_reactions[model] = response_data.json()
         map_components["map_reactions"] = model_reactions
 
@@ -105,13 +134,12 @@ def get_gene_minerva_pathways(
     """Get information about MINERVA pathways associated with a gene.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
-    :param map_components: XXXX
-    :param input_type: XXXX
+    :param map_components: output of the function 'get_minerva_components'
+    :param input_type: 'Compartment','Complex', 'Drug', 'Gene', 'Ion','Phenotype','Protein','RNA','Simple molecule'
 
-    :returns: a DataFrame containing XXXX.
+    :returns: a DataFrame containing DataFrame containing the MINERVA output.
     """
-    # In the type parameter you can select which kind of informationyou want to get from:
-    # {'Compartment','Complex', 'Drug', 'Gene', 'Ion','Phenotype','Protein','RNA','Simple molecule'}
+   
     map_elements = map_components.get("map_elements", {})
     models = map_components.get("models", {})
 
@@ -163,7 +191,7 @@ def get_gene_minerva_pathways(
     if "symbol" not in combined_df:
         return pd.DataFrame()
     else:
-        # Add Minverva output as a new column to BridgeDb file
+        # Add MINERVA output as a new column to BridgeDb file
         combined_df.rename(columns={"symbol": "identifier"}, inplace=True)
         combined_df["identifier"] = combined_df["identifier"].values.astype(str)
 
@@ -176,11 +204,11 @@ def get_gene_minerva_pathways(
             target_df=combined_df,
             common_cols=["identifier"],
             target_specific_cols=selected_columns,
-            col_name="Minerva",
+            col_name="MINERVA",
         )
 
         # Remove duplicates
-        minerva_colum = dict(merged_df.Minerva)
+        minerva_colum = dict(merged_df.MINERVA)
         new_minerva_colum = []
         for key in minerva_colum:
             current_list = minerva_colum[key]
@@ -191,6 +219,33 @@ def get_gene_minerva_pathways(
                 one_gene.append(item)
             unique_list = list(set(one_gene))
             new_minerva_colum.append(unique_list)
+            
+        #
+        import ast
+        row=1
+        for x in new_minerva_colum:
+            if 'nan' in x[0]:
+                new_minerva_colum[row-1]=[]
+            else:
+                string_dict= x[0]
+                dic = ast.literal_eval(string_dict)
+                dic_list = [dic]
+                new_minerva_colum[row-1]= dic_list
+            row= 1  + row
+            
+        merged_df["MINERVA"] = new_minerva_colum
+        
+        # remove 
+        #new_minerva_colum_2 =[]
+        #or x in new_minerva_colum:
+          #  x= x[0].replace('"','')
+           # new_minerva_colum_2.append(x)
+            
+        #merged_df["MINERVA"] = new_minerva_colum_2
 
-        merged_df["Minverva"] = new_minerva_colum
+            
     return merged_df
+
+
+
+
