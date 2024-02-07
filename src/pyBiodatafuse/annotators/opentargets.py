@@ -3,6 +3,7 @@
 """Python file for querying the OpenTargets database (https://www.opentargets.org/)."""
 
 import datetime
+import math
 from typing import Tuple
 
 import pandas as pd
@@ -432,7 +433,7 @@ def get_gene_drug_interactions(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame,
     return merged_df, version_metadata
 
 
-def get_gene_disease_associations(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
+def get_genetargets_disease_associations(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
     """Get information about diseases associated with genes based on OpenTargets.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
@@ -522,3 +523,90 @@ def get_gene_disease_associations(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
     )
 
     return merged_df, version_metadata
+
+def get_drug_disease_interactions(drug_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
+    base_url = "https://api.platform.opentargets.org/api/v4/graphql"
+    """Get information about diseases associated with drugs of interest.
+
+    :param drug:df: 'get_gene_drug_interactions' output for creating the list of diseases ids to query
+    :returns: a DataFrame containing the associated diseases to the input drugs
+    """
+    # Drug-disease
+    drugs_all = dict(drug_df['ChEMBL_Drugs'])
+
+    # Iterate through the dictionary and remove entries with NaN values
+    drugs_list=[]
+    for key, value in drugs_all.items():
+        for lists in value:
+             drugs_list.append(lists['chembl_id'])
+
+    drugs_ids = [value for value in set(drugs_list) if not (math.isnan(value) if isinstance(value, float) else False)]
+  
+ 
+
+   
+    diseases_drugs_list= []
+    for x in drugs_ids:
+        query_string = """
+                        query KnownDrugsQuery(
+              $cursor: String
+              $freeTextQuery: String
+              $size: Int = 10
+            ) {
+              drug(chemblId: $chemblId) {
+                id
+                name
+                knownDrugs(cursor: $cursor, freeTextQuery: $freeTextQuery, size: $size) {
+                  count
+                  rows {
+                    disease {
+                      id
+                      name
+                      dbXRefs
+                    }
+                    target {
+                      id
+                      approvedName
+                      approvedSymbol
+                    }
+                  }
+                }
+              }
+            } 
+            
+            """
+        query_string = query_string.replace("$chemblId",  '"' + x + '"')
+        r = requests.post(base_url, json={"query": query_string}).json()
+        diseases_drugs_list.append(r['data'])
+    
+    
+    # Extracting and simplifying the structure
+    col_names = ['identifier','drug_name','OpenTargets_Diseases']
+    drug_disease_df = pd.DataFrame(columns=col_names)
+    
+    for entry in diseases_drugs_list:
+        entries =entry['drug']
+        drugs= entries['knownDrugs']['rows']
+        drugs_list=[]
+        for entry in drugs:
+            drugs_fixed=entry['disease']
+            other_IDs= drugs_fixed['dbXRefs']
+            for value in other_IDs:
+                if 'UMLS' in value:
+                    result_list = value.split(':')
+                    umls_id = result_list[1]
+            del drugs_fixed['dbXRefs']
+            
+            try:
+                drugs_fixed['umls']=umls_id
+            except Exception:
+                pass
+                
+            drugs_list.append(drugs_fixed)
+            
+        dict_new = {'identifier':entries['id'],'drug_name':entries['name'],'OpenTargets_Diseases':drugs_list}
+        
+        dict_new_df = pd.DataFrame([dict_new])
+        drug_disease_df = pd.concat([drug_disease_df, dict_new_df], ignore_index=True)
+    
+    return drug_disease_df
