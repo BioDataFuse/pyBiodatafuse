@@ -5,6 +5,7 @@
 
 import datetime
 import os
+import numpy as np
 from string import Template
 from typing import Tuple
 
@@ -93,6 +94,7 @@ def get_gene_mol_inhibitor(bridgedb_df: pd.DataFrame):
         col_name="transporter_inhibitor",
     )
 
+    # if mappings exist but SPARQL returns empty response
     if (not merged_df.empty) and merged_df["transporter_inhibitor"][0] is None:
         merged_df.drop_duplicates(subset=["identifier", "transporter_inhibitor"], inplace=True)
     elif not merged_df.empty:
@@ -111,14 +113,16 @@ def get_gene_mol_inhibitor(bridgedb_df: pd.DataFrame):
         identifiers = merged_df["identifier"].unique()
         for identifier in identifiers:
             if merged_df.loc[merged_df["identifier"] == identifier].shape[0] > 1:
-                mask = merged_df.apply(
-                    lambda x, id=identifier: (
-                        all(pd.isna(v) for v in d.values()) and x["identifier"] == id
-                        for d in x["transporter_inhibitor"]
-                    ),
-                    axis=1,
+                mask = merged_df["transporter_inhibitor"].apply(
+                    lambda lst: all(
+                        [
+                            all([isinstance(val, float) and np.isnan(val) for val in dct.values()])
+                            for dct in lst
+                        ]
+                    )
                 )
-                merged_df.drop(merged_df[mask].index, inplace=True)
+                mask2 = merged_df["identifier"].apply(lambda x: x == identifier)
+                merged_df.drop(merged_df[mask & mask2].index, inplace=True)
 
         # set default order to response dictionaries to keep output consistency
         merged_df["transporter_inhibitor"] = merged_df["transporter_inhibitor"].apply(
@@ -248,7 +252,7 @@ def get_mol_gene_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dic
 
 
 def int_response_value_types(resp_list: list, key_list: list):
-    """Change values in response dictionaries to int to stay consistent woth other Annotators.
+    """Change values in response dictionaries to int to stay consistent with other Annotators.
 
     :param: resp_list: list of response dictionaries.
     :param: key_list: list of keys to change to int.
