@@ -309,6 +309,60 @@ def add_ppi_subgraph(g, gene_node_label, annot_list):
     return g
 
 
+def add_gene_inhibitor(g, gene_node_label, annot_list):
+    """Construct part of the graph by linking the gene to a list of annotation entities (disease, drug ..etc).
+
+    :param g: the input graph to extend with new nodes and edges.
+    :param gene_node_label: the gene node to be linked to annotation entities.
+    :param annot_list: list of annotations from a specific source (e.g. DisGeNET, WikiPathways ..etc).
+    :returns: a NetworkX MultiDiGraph
+    """
+    for inhibitor in annot_list:
+        if not pd.isna(inhibitor["InChIKey"]):
+            inhibitor_node_label = inhibitor["label"]
+            inhibitor_node_attrs = {
+                "source": "MolMeDB",
+                "labels": inhibitor["label"],
+                "InChIKey": inhibitor["InChIKey"],
+                "MolMeDB_id": inhibitor["molmedb_id"],
+                "node_type": "inhibitor",
+            }
+
+            if not pd.isna(inhibitor["SMILES"]):
+                inhibitor_node_attrs["SMILES"] = inhibitor["SMILES"]
+            if not pd.isna(inhibitor["pubchem_compound_id"]):
+                inhibitor_node_attrs["PubChem_compound_id"] = inhibitor["pubchem_compound_id"]
+            if not pd.isna(inhibitor["chebi_id"]):
+                inhibitor_node_attrs["ChEBI_id"] = inhibitor["chebi_id"]
+            if not pd.isna(inhibitor["drugbank_id"]):
+                inhibitor_node_attrs["DrugBank_id"] = inhibitor["drugbank_id"]
+
+            g.add_node(inhibitor_node_label, attr_dict=inhibitor_node_attrs)
+
+            edge_attrs = {
+                "source": "MolMeDB",
+                "label": "is_inhibited_by",
+            }
+
+            if not pd.isna(inhibitor["source_doi"]):
+                inhibitor_node_attrs["reference_doi"] = inhibitor["source_doi"]
+            if not pd.isna(inhibitor["source_pmid"]):
+                inhibitor_node_attrs["reference_pmid"] = inhibitor["source_pmid"]
+
+            edge_hash = hash(frozenset(edge_attrs.items()))
+            edge_attrs["edge_hash"] = edge_hash
+            edge_data = g.get_edge_data(gene_node_label, inhibitor_node_label)
+            edge_data = {} if edge_data is None else edge_data
+            node_exists = [
+                x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash
+            ]
+
+            if len(node_exists) == 0:
+                g.add_edge(gene_node_label, inhibitor_node_label, attr_dict=edge_attrs)
+
+    return g
+
+
 def generate_networkx_graph(fuse_df: pd.DataFrame):
     """Construct a NetWorkX graph from a Pandas DataFrame of genes and their multi-source annotations.
 
@@ -327,6 +381,7 @@ def generate_networkx_graph(fuse_df: pd.DataFrame):
         "ChEMBL_Drugs": add_opentargets_drug_subgraph,
         "OpenTargets_Diseases": add_opentargets_disease_subgraph,
         "WikiPathways": add_wikipathways_subgraph,
+        "transporter_inhibitor": add_gene_inhibitor,
     }
 
     for _i, row in fuse_df.iterrows():
