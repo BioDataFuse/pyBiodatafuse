@@ -121,7 +121,7 @@ def get_gene_mol_inhibitor(bridgedb_df: pd.DataFrame):
                         ]
                     )
                 )
-                mask2 = merged_df["identifier"].apply(lambda x, id=identifier : x == id)
+                mask2 = merged_df["identifier"].apply(lambda x, id=identifier: x == id)
                 merged_df.drop(merged_df[mask & mask2].index, inplace=True)
 
         # set default order to response dictionaries to keep output consistency
