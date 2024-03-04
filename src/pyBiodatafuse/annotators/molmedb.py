@@ -5,10 +5,10 @@
 
 import datetime
 import os
-import numpy as np
 from string import Template
 from typing import Tuple
 
+import numpy as np
 import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
 
@@ -121,7 +121,7 @@ def get_gene_mol_inhibitor(bridgedb_df: pd.DataFrame):
                         ]
                     )
                 )
-                mask2 = merged_df["identifier"].apply(lambda x: x == identifier)
+                mask2 = merged_df["identifier"].apply(lambda x, id=identifier : x == id)
                 merged_df.drop(merged_df[mask & mask2].index, inplace=True)
 
         # set default order to response dictionaries to keep output consistency
