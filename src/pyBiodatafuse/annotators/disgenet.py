@@ -22,7 +22,7 @@ def test_api_disgenet(api_host: str) -> bool:
         response = requests.get(f"{api_host}/version/")
         response.raise_for_status()
         return True
-    except requests.RequestException as e:
+    except requests.RequestException:
         return False
 
 
