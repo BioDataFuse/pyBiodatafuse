@@ -130,7 +130,7 @@ def get_gene_literature(bridgedb_df: pd.DataFrame):
             "size": len(gene_list),
             "time": time_elapsed,
             "date": current_date,
-            "url": "https://sparql.wikidata.org/sparql",
+            "url": "https://query.wikidata.org/sparql",
         },
     }
 
@@ -229,7 +229,7 @@ def get_gene_cellular_component(bridgedb_df: pd.DataFrame):
             "size": len(gene_list),
             "time": time_elapsed,
             "date": current_date,
-            "url": "https://sparql.wikidata.org/sparql",
+            "url": "https://query.wikidata.org/sparql",
         },
     }
 
