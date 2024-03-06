@@ -5,7 +5,6 @@ Here you can find the different data resources that you can successfully query w
 
 .. module:: pyBiodatafuse.annotators
 
-
 Bgee
 ~~~~~~~~~~~~~~~
 
@@ -32,7 +31,7 @@ MolMeDB
 OpenTargets
 ~~~~~~~~~~~~~~~
 
-`OpenTargets database <https://www.opentargets.org/>` uses human genetics and genomics data for systematic drug target identification and prioritisation
+`OpenTargets database <https://www.opentargets.org/>` uses human genetics and genomics data for systematic drug target identification and prioritisation.
 
 .. autofunction:: pyBiodatafuse.annotators.opentargets.get_gene_location
 
@@ -72,8 +71,7 @@ WikiPathways
 MINERVA
 ~~~~~~~~~~~~~~~
 
-`MINERVA <https://minerva.pages.uni.lu/doc/>`  is a standalone webserver for visual exploration, analysis and management of molecular networks encoded in following systems biology formats.
+`MINERVA <https://minerva.pages.uni.lu/doc/>` is a standalone webserver for visual exploration, analysis and management of molecular networks encoded in following systems biology formats.
 
 .. autofunction:: pyBiodatafuse.annotators.minerva.get_minerva_components
 .. autofunction:: pyBiodatafuse.annotators.minerva.get_gene_minerva_pathways
-

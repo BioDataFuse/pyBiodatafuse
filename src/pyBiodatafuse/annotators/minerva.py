@@ -61,9 +61,9 @@ def get_minerva_components(project_df, map_name, get_elements=True, get_reaction
     """Get information about MINERVA componenets from a specific project.
 
     :param project_df: dataframe containing information about all projects contained
-             in Minerva plattform, it is the output from the list_projects() function
+            in Minerva plattform, it is the output from the list_projects() function
     :param map_name: name of the map you want to retrieve the information from.
-             At the moment the options are: 'Asthma Map' 'COVID19 Disease Map' 'Expobiome Map'
+            At the moment the options are: 'Asthma Map' 'COVID19 Disease Map' 'Expobiome Map'
             'Atlas of Inflammation Resolution' 'SYSCID map' 'Aging Map' 'Meniere's disease map'
             'Parkinson's disease map' 'RA-Atlas'
     :param get_elements: if get_elements = True, the elements of the model will appear as a
@@ -72,8 +72,11 @@ def get_minerva_components(project_df, map_name, get_elements=True, get_reaction
             a dictionary in the output of the function
 
     :returns: a Dictionary containing two other dictionaries (map_elements and map_reactions) and a list (models).
-        - 'map_elements' contains a list for each of the pathways in the model. Those lists provide information about Compartment,Complex, Drug, Gene, Ion,Phenotype, Protein,RNA and Simple molecules involved in that pathway
-        - 'map_reactions' contains a list for each of the pathways in the model. Those lists provide information about the reactions involed in that pathway.
+        - 'map_elements' contains a list for each of the pathways in the model. Those lists
+                provide information about Compartment,Complex, Drug, Gene, Ion,Phenotype, Protein,
+                RNA and Simple molecules involved in that pathway
+        - 'map_reactions' contains a list for each of the pathways in the model. Those lists
+                provide information about the reactions involed in that pathway.
         - 'models' is a list containing pathway-specific information for each of the pathways in the model
     """
     # Get url from the project specified
@@ -141,7 +144,6 @@ def get_gene_minerva_pathways(
 
     :returns: a DataFrame containing DataFrame containing the MINERVA output.
     """
-
     map_elements = map_components.get("map_elements", {})
     models = map_components.get("models", {})
 

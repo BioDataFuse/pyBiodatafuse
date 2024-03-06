@@ -23,4 +23,3 @@ Neo4J
 .. autofunction:: pyBiodatafuse.graph.neo4j_exporter.save_graph_to_neo4j_graphml
 
 .. autofunction:: pyBiodatafuse.graph.neo4j_exporter.export
-

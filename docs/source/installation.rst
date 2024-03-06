@@ -1,5 +1,6 @@
 Installation
 ============
+
 The most recent release can be installed from
 `PyPI <https://pypi.org/project/pyBiodatafuse>`_ with:
 
