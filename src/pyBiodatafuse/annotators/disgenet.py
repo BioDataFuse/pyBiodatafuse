@@ -3,6 +3,7 @@
 """Python file for queriying DisGeNet database (https://www.disgenet.org/home/)."""
 
 import datetime
+import warnings
 from typing import Optional, Tuple
 
 import pandas as pd
@@ -11,13 +12,27 @@ import requests
 from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interest
 
 
-def get_version_disgenet() -> dict:
+def test_api_disgenet(api_host: str) -> bool:
+    """Test the availability of the DisGeNET API.
+
+    :param api_host: DisGeNET API ("https://www.disgenet.org/api")
+    :returns: True if the API is available, False otherwise.
+    """
+    try:
+        response = requests.get(f"{api_host}/version/")
+        response.raise_for_status()
+        return True
+    except requests.RequestException as e:
+        return False
+
+
+def get_version_disgenet(api_host: str) -> dict:
     """Get version of DisGeNET API.
 
+    :param api_host: DisGeNET API ("https://www.disgenet.org/api")
     :returns: a dictionary containing the version information
     """
     # Set the DisGeNET API
-    api_host = "https://www.disgenet.org/api"
     s = requests.Session()
     # Get version
     version_response = s.get(api_host + "/version/")
@@ -40,12 +55,18 @@ def get_gene_disease(
     :returns: a DataFrame containing the DisGeNET output and dictionary of the DisGeNET metadata.
     :raises ValueError: if the DisGeNET API key is not provided
     """
+    # Check if the DisGeNET API is available
+    api_host = "https://www.disgenet.org/api"
+    api_available = test_api_disgenet(api_host=api_host)
+    if not api_available:
+        warnings.warn("DisGeNET API is not available. Unable to retrieve data.", stacklevel=2)
+        return pd.DataFrame(), {}
+
     # Extract the "target" values and join them into a single string separated by commas
     data_df = get_identifier_of_interest(bridgedb_df, "NCBI Gene")
     disgenet_input = ",".join(data_df["target"])
 
     # Set the DisGeNET API
-    api_host = "https://www.disgenet.org/api"
     s = requests.Session()
 
     if not api_key:
@@ -127,7 +148,7 @@ def get_gene_disease(
         # Calculate the time elapsed
         time_elapsed = str(end_time - start_time)
         # Add version to metadata file
-        disgenet_version = get_version_disgenet()
+        disgenet_version = get_version_disgenet(api_host=api_host)
         # Add the datasource, query, query time, and the date to metadata
         disgenet_metadata = {
             "datasource": "DisGeNET",
