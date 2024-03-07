@@ -1,11 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Jan 30 10:21:39 2024
-
-@author: alejandroadriaquelozano
-"""
-
 # coding: utf-8
 
 """Python file for queriying the MINERVA platform (https://minerva.pages.uni.lu/doc/)."""
@@ -17,78 +9,94 @@ import requests
 
 from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interest
 
-# URL of MINERVA's API endpoint
-
-
 
 def get_version_minerva() -> dict:
-    base_url = "https://covid19map.elixir-luxembourg.org/minerva/api/" #
     """Get version of minerva API.
 
     :returns: a string containing the version information
     """
+    # URL of MINERVA's API endpoint
+    base_url = "https://covid19map.elixir-luxembourg.org/minerva/api/"  #
     response = requests.get(base_url + "/configuration/")
+
     conf_dict = response.json()
 
     return conf_dict["version"]
 
-def list_projects()-> pd.DataFrame:
+
+def list_projects() -> pd.DataFrame:
     """Get information about MINERVA projects.
-    
+
     :returns: a DataFrame containing url, names, and IDs from the different projects in minerva plattform
     """
     base_url = "https://minerva-net.lcsb.uni.lu/api/"
-    
+
     response = requests.get(base_url + "/machines/")
     projects = response.json()
-    projects_ids= projects['pageContent']
-    project_df=pd.DataFrame()
+    projects_ids = projects["pageContent"]
+    project_df = pd.DataFrame()
     for x in projects_ids:
-        entry = {'url':x['rootUrl'],'id': x['id']}
+        entry = {"url": x["rootUrl"], "id": x["id"]}
         entry_df = pd.DataFrame([entry])
         project_df = pd.concat([project_df, entry_df], ignore_index=True)
-        
-    map_id_list=[]
-    names_list=[]
-    for x in project_df['id']:
-        x=str(x)
-        if len(requests.get(base_url + "/machines/"+ x+"/projects/").json()['pageContent'])!=0:
-            map_id= requests.get(base_url + "/machines/"+ x+"/projects/").json()['pageContent'][0]['projectId']
-            name = requests.get(base_url + "/machines/"+ x+"/projects/").json()['pageContent'][0]['mapName']
+
+    map_id_list = []
+    names_list = []
+    for x in project_df["id"]:
+        x = str(x)
+        if len(requests.get(base_url + "/machines/" + x + "/projects/").json()["pageContent"]) != 0:
+            map_id = requests.get(base_url + "/machines/" + x + "/projects/").json()["pageContent"][
+                0
+            ]["projectId"]
+            name = requests.get(base_url + "/machines/" + x + "/projects/").json()["pageContent"][
+                0
+            ]["mapName"]
             map_id_list.append(map_id)
             names_list.append(name)
         else:
-            project_df = project_df[project_df['id'] != int(x)] #If pageContent is not present, then delete this entry
-            
-    project_df['map_id']=map_id_list
-    project_df['names']=names_list
+            project_df = project_df[
+                project_df["id"] != int(x)
+            ]  # If pageContent is not present, then delete this entry
+
+    project_df["map_id"] = map_id_list
+    project_df["names"] = names_list
     return project_df
 
-def get_minerva_components(project_df ,map_name,get_elements=True, get_reactions=True) -> dict:
+
+def get_minerva_components(
+    project_df: pd.DataFrame, map_name: str, get_elements=True, get_reactions=True
+) -> dict:
     """Get information about MINERVA componenets from a specific project.
-    
-    :param project_df: dataframe containing information about all projects contained in Minerva plattform, it is the output from the list_projects() function
-    :param map_name: name of the map you want to retrieve the information from. At the moment the options are: 'Asthma Map' 'COVID19 Disease Map' 'Expobiome Map' 'Atlas of Inflammation Resolution' 'SYSCID map' 'Aging Map' 'Meniere's disease map' 'Parkinson's disease map' 'RA-Atlas'   
-    :param get_elements: if get_elements = True, the elements of the model will appear as a dictionary in the output of the function
-    :param get_reactions: if get_reactions = True, the reactions of the model will appear as a dictionary in the output of the function
+
+    :param project_df: dataframe containing information about all projects contained in Minerva plattform,
+        it is the output from the list_projects() function
+    :param map_name: name of the map you want to retrieve the information from. At the moment the options are:
+        'Asthma Map' 'COVID19 Disease Map' 'Expobiome Map' 'Atlas of Inflammation Resolution' 'SYSCID map'
+        'Aging Map' 'Meniere's disease map' 'Parkinson's disease map' 'RA-Atlas'
+    :param get_elements: if get_elements = True,
+        the elements of the model will appear as a dictionary in the output of the function
+    :param get_reactions: if get_reactions = True,
+        the reactions of the model will appear as a dictionary in the output of the function
 
     :returns: a Dictionary containing two other dictionaries (map_elements and map_reactions) and a list (models).
-        - 'map_elements' contains a list for each of the pathways in the model. Those lists provide information about Compartment,Complex, Drug, Gene, Ion,Phenotype, Protein,RNA and Simple molecules involved in that pathway
-        - 'map_reactions' contains a list for each of the pathways in the model. Those lists provide information about the reactions involed in that pathway.
+        - 'map_elements' contains a list for each of the pathways in the model.
+            Those lists provide information about Compartment, Complex, Drug, Gene, Ion, Phenotype,
+            Protein, RNA and Simple molecules involved in that pathway
+        - 'map_reactions' contains a list for each of the pathways in the model.
+            Those lists provide information about the reactions involed in that pathway.
         - 'models' is a list containing pathway-specific information for each of the pathways in the model
     """
-    
-    #Get url from the project specified
-    condition = (project_df['names'] == map_name)
-    row= project_df.index[condition].tolist()
-    url= project_df.loc[row,'url'].to_string(index=False, header=False)
-    project_id = project_df.loc[row,'map_id'].to_string(index=False, header=False)
-    
-
+    # Get url from the project specified
+    condition = project_df["names"] == map_name
+    row = project_df.index[condition].tolist()
+    url = project_df.loc[row, "url"].to_string(index=False, header=False)
+    project_id = project_df.loc[row, "map_id"].to_string(index=False, header=False)
 
     # Request project data using the extracted project ID
     response = requests.get(url + "/api/projects/" + project_id + "/models/")
-    models = response.json() # pull down only models and then iterate over them to extract element of interest
+    models = (
+        response.json()
+    )  # pull down only models and then iterate over them to extract element of interest
     map_components = {"models": models}
 
     if get_elements:
@@ -143,7 +151,6 @@ def get_gene_minerva_pathways(
 
     :returns: a DataFrame containing DataFrame containing the MINERVA output.
     """
-   
     map_elements = map_components.get("map_elements", {})
     models = map_components.get("models", {})
 
@@ -198,7 +205,7 @@ def get_gene_minerva_pathways(
         # Add MINERVA output as a new column to BridgeDb file
         combined_df.rename(columns={"symbol": "identifier"}, inplace=True)
         combined_df["identifier"] = combined_df["identifier"].values.astype(str)
-        combined_df=combined_df.drop_duplicates(subset=['identifier', 'pathwayId'])
+        combined_df = combined_df.drop_duplicates(subset=["identifier", "pathwayId"])
         selected_columns = ["pathwayId", "pathwayLabel", "pathwayGeneCount"]
 
         # Merge the two DataFrames based on 'geneid', 'gene_symbol', 'identifier', and 'target'
@@ -211,7 +218,3 @@ def get_gene_minerva_pathways(
             col_name="MINERVA",
         )
     return merged_df
-
-
-
-
