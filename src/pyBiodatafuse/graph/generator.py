@@ -200,14 +200,14 @@ def add_opentargets_drug_subgraph(g, gene_node_label, annot_list):
 
             edge_hash = hash(frozenset(edge_attrs.items()))
             edge_attrs["edge_hash"] = edge_hash
-            edge_data = g.get_edge_data(gene_node_label, drug_node_label)
+            edge_data = g.get_edge_data(drug_node_label, gene_node_label)
             edge_data = {} if edge_data is None else edge_data
             node_exists = [
                 x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash
             ]
 
             if len(node_exists) == 0:
-                g.add_edge(gene_node_label, drug_node_label, attr_dict=edge_attrs)
+                g.add_edge(drug_node_label, gene_node_label, attr_dict=edge_attrs)
 
     return g
 
