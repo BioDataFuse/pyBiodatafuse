@@ -16,8 +16,9 @@ def get_version_minerva() -> dict:
     :returns: a string containing the version information
     """
     # URL of MINERVA's API endpoint
-    base_url = "https://covid19map.elixir-luxembourg.org/minerva/api/"
+    base_url = "https://covid19map.elixir-luxembourg.org/minerva/api/"  #
     response = requests.get(base_url + "/configuration/")
+
     conf_dict = response.json()
 
     return conf_dict["version"]
@@ -28,7 +29,6 @@ def list_projects() -> pd.DataFrame:
 
     :returns: a DataFrame containing url, names, and IDs from the different projects in minerva plattform
     """
-    # URL of MINERVA's API endpoint
     base_url = "https://minerva-net.lcsb.uni.lu/api/"
 
     response = requests.get(base_url + "/machines/")
@@ -44,39 +44,46 @@ def list_projects() -> pd.DataFrame:
     names_list = []
     for x in project_df["id"]:
         x = str(x)
-        map_id = requests.get(base_url + "/machines/" + x + "/projects/").json()["pageContent"][0][
-            "projectId"
-        ]
-        name = requests.get(base_url + "/machines/" + x + "/projects/").json()["pageContent"][0][
-            "mapName"
-        ]
-        map_id_list.append(map_id)
-        names_list.append(name)
+        if len(requests.get(base_url + "/machines/" + x + "/projects/").json()["pageContent"]) != 0:
+            map_id = requests.get(base_url + "/machines/" + x + "/projects/").json()["pageContent"][
+                0
+            ]["projectId"]
+            name = requests.get(base_url + "/machines/" + x + "/projects/").json()["pageContent"][
+                0
+            ]["mapName"]
+            map_id_list.append(map_id)
+            names_list.append(name)
+        else:
+            project_df = project_df[
+                project_df["id"] != int(x)
+            ]  # If pageContent is not present, then delete this entry
+
     project_df["map_id"] = map_id_list
     project_df["names"] = names_list
     return project_df
 
 
-def get_minerva_components(project_df, map_name, get_elements=True, get_reactions=True) -> dict:
+def get_minerva_components(
+    project_df: pd.DataFrame, map_name: str, get_elements=True, get_reactions=True
+) -> dict:
     """Get information about MINERVA componenets from a specific project.
 
-    :param project_df: dataframe containing information about all projects contained
-            in Minerva plattform, it is the output from the list_projects() function
-    :param map_name: name of the map you want to retrieve the information from.
-            At the moment the options are: 'Asthma Map' 'COVID19 Disease Map' 'Expobiome Map'
-            'Atlas of Inflammation Resolution' 'SYSCID map' 'Aging Map' 'Meniere's disease map'
-            'Parkinson's disease map' 'RA-Atlas'
-    :param get_elements: if get_elements = True, the elements of the model will appear as a
-            dictionary in the output of the function
-    :param get_reactions: if get_reactions = True, the reactions of the model will appear as
-            a dictionary in the output of the function
+    :param project_df: dataframe containing information about all projects contained in Minerva plattform,
+        it is the output from the list_projects() function
+    :param map_name: name of the map you want to retrieve the information from. At the moment the options are:
+        'Asthma Map' 'COVID19 Disease Map' 'Expobiome Map' 'Atlas of Inflammation Resolution' 'SYSCID map'
+        'Aging Map' 'Meniere's disease map' 'Parkinson's disease map' 'RA-Atlas'
+    :param get_elements: if get_elements = True,
+        the elements of the model will appear as a dictionary in the output of the function
+    :param get_reactions: if get_reactions = True,
+        the reactions of the model will appear as a dictionary in the output of the function
 
     :returns: a Dictionary containing two other dictionaries (map_elements and map_reactions) and a list (models).
-        - 'map_elements' contains a list for each of the pathways in the model. Those lists
-                provide information about Compartment,Complex, Drug, Gene, Ion,Phenotype, Protein,
-                RNA and Simple molecules involved in that pathway
-        - 'map_reactions' contains a list for each of the pathways in the model. Those lists
-                provide information about the reactions involed in that pathway.
+        - 'map_elements' contains a list for each of the pathways in the model.
+            Those lists provide information about Compartment, Complex, Drug, Gene, Ion, Phenotype,
+            Protein, RNA and Simple molecules involved in that pathway
+        - 'map_reactions' contains a list for each of the pathways in the model.
+            Those lists provide information about the reactions involed in that pathway.
         - 'models' is a list containing pathway-specific information for each of the pathways in the model
     """
     # Get url from the project specified
@@ -198,7 +205,7 @@ def get_gene_minerva_pathways(
         # Add MINERVA output as a new column to BridgeDb file
         combined_df.rename(columns={"symbol": "identifier"}, inplace=True)
         combined_df["identifier"] = combined_df["identifier"].values.astype(str)
-
+        combined_df = combined_df.drop_duplicates(subset=["identifier", "pathwayId"])
         selected_columns = ["pathwayId", "pathwayLabel", "pathwayGeneCount"]
 
         # Merge the two DataFrames based on 'geneid', 'gene_symbol', 'identifier', and 'target'
@@ -210,42 +217,4 @@ def get_gene_minerva_pathways(
             target_specific_cols=selected_columns,
             col_name="MINERVA",
         )
-
-        # Remove duplicates
-        minerva_colum = dict(merged_df.MINERVA)
-        new_minerva_colum = []
-        for key in minerva_colum:
-            current_list = minerva_colum[key]
-
-            one_gene = []
-            for item in current_list:
-                item = str(item)
-                one_gene.append(item)
-            unique_list = list(set(one_gene))
-            new_minerva_colum.append(unique_list)
-
-        #
-        import ast
-
-        row = 1
-        for x in new_minerva_colum:
-            if "nan" in x[0]:
-                new_minerva_colum[row - 1] = []
-            else:
-                string_dict = x[0]
-                dic = ast.literal_eval(string_dict)
-                dic_list = [dic]
-                new_minerva_colum[row - 1] = dic_list
-            row = 1 + row
-
-        merged_df["MINERVA"] = new_minerva_colum
-
-        # remove
-        # new_minerva_colum_2 =[]
-        # or x in new_minerva_colum:
-        #  x= x[0].replace('"','')
-        # new_minerva_colum_2.append(x)
-
-        # merged_df["MINERVA"] = new_minerva_colum_2
-
     return merged_df
