@@ -121,7 +121,7 @@ def bridgedb_xref(
     ]
 
     if len(identifiers) < 1:
-        raise ValueError("Please provide atleast one identifier datasource, e.g. HGNC")
+        raise ValueError("Please provide at least one identifier datasource, e.g. HGNC")
 
     post_con = (
         "\n".join([f"{identifier}\t{input_source}" for identifier in identifiers["identifier"]])
