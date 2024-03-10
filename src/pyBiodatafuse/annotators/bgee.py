@@ -76,7 +76,7 @@ def get_gene_expression(bridgedb_df: pd.DataFrame, anatomical_entities: pd.DataF
 
     query_count = 0
 
-    results_df_list = list()
+    results_df = pd.DataFrame()
 
     for gene_list_str in query_gene_lists:
         for query_anat_entities_str in query_anat_entities_lists:
@@ -90,12 +90,13 @@ def get_gene_expression(bridgedb_df: pd.DataFrame, anatomical_entities: pd.DataF
             res = sparql.queryAndConvert()
 
             df = pd.DataFrame(res["results"]["bindings"])
+
             df = df.applymap(lambda x: x["value"])
 
-            results_df_list.append(df)
+            results_df = pd.concat([results_df, df])
 
     # Organize the annotation results as an array of dictionaries
-    intermediate_df = pd.concat(results_df_list)
+    intermediate_df = results_df
 
     intermediate_df.rename(columns={"ensembl_id": "target"}, inplace=True)
 
@@ -133,8 +134,10 @@ def get_gene_expression(bridgedb_df: pd.DataFrame, anatomical_entities: pd.DataF
         target_specific_cols=[
             "anatomical_entity_id",
             "anatomical_entity_name",
+            "developmental_stage_id",
+            "developmental_stage_name",
             "expression_level",
-            "confidence_level",
+            "confidence_level"
         ],
         col_name="Bgee",
     )
