@@ -15,7 +15,7 @@ WHERE {
   ?gene lscr:xrefEnsemblGene ?gene_id .
   ?expr genex:hasSequenceUnit ?gene.
   ?expr a genex:Expression .
-  #?expr genex:hasConfidenceLevel obo:CIO_0000029 . # high confidence level
+  ?expr genex:hasConfidenceLevel obo:CIO_0000029 . # high confidence level
   ?expr genex:hasConfidenceLevel ?confidence_level .
   ?expr genex:hasExpressionLevel ?expression_level .
   ?expr genex:hasExpressionCondition ?cond .
