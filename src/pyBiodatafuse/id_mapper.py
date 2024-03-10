@@ -257,12 +257,12 @@ def pubchem_xref(
     """Map chemical names or smiles or inchikeys to PubChem identifier.
 
     :param identifiers: a dataframe with one column called identifier (the output of data_loader.py)
-    :param indentifier_type: type of identifier to query. Potential curies include : smiles, inchikey, inchi, name
+    :param identifier_type: type of identifier to query. Potential curies include : smiles, inchikey, inchi, name
     :raises ValueError: if the input_datasource is not provided or if the request fails
     :returns: a DataFrame containing the mapped identifiers and dictionary of the data resource metadata.
     """
     if len(identifiers) < 1:
-        raise ValueError("Please provide atleast one input.")
+        raise ValueError("Please provide at least one input.")
 
     # Record the start time
     start_time = datetime.datetime.now()
