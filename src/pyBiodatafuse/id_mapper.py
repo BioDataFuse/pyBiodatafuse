@@ -252,7 +252,7 @@ def get_cid_from_data(idx: Optional[str], idx_type: str) -> Optional[str]:
 
 
 def pubchem_xref(
-    identifiers: pd.DataFrame, indentifier_type: str = "name"
+    identifiers: pd.DataFrame, identifier_type: str = "name"
 ) -> Tuple[pd.DataFrame, dict]:
     """Map chemical names or smiles or inchikeys to PubChem identifier.
 
@@ -270,7 +270,7 @@ def pubchem_xref(
     # Getting the response to the query
     cid_data = []
     for idx in identifiers:
-        cid = get_cid_from_data(idx, indentifier_type)
+        cid = get_cid_from_data(idx, identifier_type)
         cid_data.append(
             {
                 "identifier": idx,
@@ -303,7 +303,7 @@ def pubchem_xref(
         },
         "query": {
             "size": len(identifiers),
-            "input_type": indentifier_type,
+            "input_type": identifier_type,
             "time": time_elapsed,
             "date": current_date,
         },
