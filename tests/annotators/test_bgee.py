@@ -3,14 +3,16 @@
 
 """Tests for the Bgee annotator."""
 
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 
+import json
+import os
 import pandas as pd
 import pytest
-import os
-import json
+
 
 from pyBiodatafuse.annotators.bgee import get_gene_expression, get_version_bgee
+
 
 def test_sparql_get_version_bgee():
     """Test that the SPARQL endpoint returns the expected get_version_bgee results."""
@@ -24,6 +26,7 @@ def test_sparql_get_version_bgee():
         "bgee_version": expected["results"]["bindings"][0]["date_modified"]["value"]}
 
     assert obtained_version == expected_version
+
 
 @patch("pyBiodatafuse.annotators.bgee.SPARQLWrapper.queryAndConvert")
 def test_get_version_bgee(mock_sparql_request):
@@ -43,7 +46,6 @@ def test_get_version_bgee(mock_sparql_request):
 
 def test_sparql_get_gene_expression(bridgedb_dataframe):
     """Test that the SPARQL endpoint returns the expected get_gene_expression data."""
-
     anatomical_entities_of_interest = """
     respiratory system
     heart
@@ -54,26 +56,26 @@ def test_sparql_get_gene_expression(bridgedb_dataframe):
     anatomical_entities_list = [anat_entity.strip() for anat_entity in anatomical_entities_list if
                                 anat_entity.strip() != '']
 
-    anatomical_entities_df = pd.DataFrame(anatomical_entities_list, columns = ["AnatomicalEntityNames"])
+    anatomical_entities_df = pd.DataFrame(anatomical_entities_list, columns=["AnatomicalEntityNames"])
     
     data_file_folder = os.path.join(os.path.dirname(__file__), "data")
     obtained_data, metadata = get_gene_expression(bridgedb_dataframe, anatomical_entities_df)
     expected_data = pd.read_json(os.path.join(data_file_folder, "bgee_expected_data.json"))
     expected_data = expected_data.sort_values(by=['expression_level', "developmental_stage_id"], ascending=False)
-    expected_data = expected_data.astype({'expression_level':float})
+    expected_data = expected_data.astype({'expression_level': float})
     expected_data.reset_index(drop=True, inplace=True)
 
     obtained_sorted = pd.DataFrame(obtained_data["Bgee"][0])
     obtained_sorted = obtained_sorted.sort_values(by=['expression_level', "developmental_stage_id"], ascending=False)
-    obtained_sorted = obtained_sorted.astype({'expression_level':float})
+    obtained_sorted = obtained_sorted.astype({'expression_level': float})
     obtained_sorted.reset_index(drop=True, inplace=True)
 
     assert (obtained_sorted.equals(expected_data))
 
+
 @patch("pyBiodatafuse.annotators.bgee.SPARQLWrapper.queryAndConvert")
 def test_get_gene_expression(mock_sparql_request, bridgedb_dataframe):
     """Test the get_gene_expression function."""
-
     data_file_folder = os.path.join(os.path.dirname(__file__), "data")
     data_file_path = os.path.join(data_file_folder, "bgee_mock_data.json")
     with open(data_file_path) as f:
