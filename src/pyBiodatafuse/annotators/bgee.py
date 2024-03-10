@@ -28,7 +28,7 @@ def get_version_bgee() -> dict:
     sparql.setQuery(sparql_query)
     res = sparql.queryAndConvert()
 
-    bgee_version = {"bgee_version": res["results"]["bindings"][0]["dateModified"]["value"]}
+    bgee_version = {"bgee_version": res["results"]["bindings"][0]["date_modified"]["value"]}
 
     return bgee_version
 
@@ -97,7 +97,7 @@ def get_gene_expression(bridgedb_df: pd.DataFrame, anatomical_entities: pd.DataF
     # Organize the annotation results as an array of dictionaries
     intermediate_df = pd.concat(results_df_list)
 
-    intermediate_df.rename(columns={"ensemblId": "target"}, inplace=True)
+    intermediate_df.rename(columns={"ensembl_id": "target"}, inplace=True)
 
     # Record the end time
     end_time = datetime.datetime.now()
@@ -131,10 +131,10 @@ def get_gene_expression(bridgedb_df: pd.DataFrame, anatomical_entities: pd.DataF
         target_df=intermediate_df,
         common_cols=["target"],
         target_specific_cols=[
-            "anatomicalEntity",
-            "anatomicalEntityName",
-            "expressionLevel",
-            "confidenceLevel",
+            "anatomical_entity_id",
+            "anatomical_entity_name",
+            "expression_level",
+            "confidence_level",
         ],
         col_name="Bgee",
     )

@@ -1,6 +1,6 @@
-SELECT DISTINCT (str(?dateModified) as ?dateModified)
+SELECT DISTINCT (str(?date_modified) as ?date_modified)
 WHERE {
-   <http://purl.org/query/bioquery#BGEE>  <http://purl.org/dc/terms/modified> ?dateModified.
+   <http://purl.org/query/bioquery#BGEE>  <http://purl.org/dc/terms/modified> ?date_modified.
  }
  LIMIT 1
 
