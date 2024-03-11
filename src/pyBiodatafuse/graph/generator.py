@@ -323,6 +323,7 @@ def add_molmedb_gene_inhibitor(g, gene_node_label, annot_list):
             inhibitor_node_label = inhibitor["label"]
             inhibitor_node_attrs = {
                 "source": "MolMeDB",
+                "id": inhibitor["molmedb_id"],
                 "labels": inhibitor["label"],
                 "InChIKey": inhibitor["InChIKey"],
                 "MolMeDB_id": inhibitor["molmedb_id"],
