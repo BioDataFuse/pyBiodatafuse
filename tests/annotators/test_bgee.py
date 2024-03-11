@@ -22,7 +22,8 @@ def test_sparql_get_version_bgee():
     obtained_version = get_version_bgee()
 
     expected_version = {
-        "bgee_version": expected["results"]["bindings"][0]["date_modified"]["value"]}
+        "bgee_version": expected["results"]["bindings"][0]["date_modified"]["value"]
+    }
 
     assert obtained_version == expected_version
 
@@ -39,7 +40,10 @@ def test_get_version_bgee(mock_sparql_request):
     obtained_version = get_version_bgee()
 
     expected_version = {
-        "bgee_version": mock_sparql_request.return_value["results"]["bindings"][0]["date_modified"]["value"]}
+        "bgee_version": mock_sparql_request.return_value["results"]["bindings"][0]["date_modified"][
+            "value"
+        ]
+    }
 
     assert obtained_version == expected_version
 
@@ -53,24 +57,31 @@ def test_sparql_get_gene_expression(bridgedb_dataframe):
     """
 
     anatomical_entities_list = anatomical_entities_of_interest.split("\n")
-    anatomical_entities_list = [anat_entity.strip() for anat_entity in anatomical_entities_list if
-                                anat_entity.strip() != '']
+    anatomical_entities_list = [
+        anat_entity.strip() for anat_entity in anatomical_entities_list if anat_entity.strip() != ""
+    ]
 
-    anatomical_entities_df = pd.DataFrame(anatomical_entities_list, columns=["AnatomicalEntityNames"])
+    anatomical_entities_df = pd.DataFrame(
+        anatomical_entities_list, columns=["AnatomicalEntityNames"]
+    )
 
     data_file_folder = os.path.join(os.path.dirname(__file__), "data")
     obtained_data, metadata = get_gene_expression(bridgedb_dataframe, anatomical_entities_df)
     expected_data = pd.read_json(os.path.join(data_file_folder, "bgee_expected_data.json"))
-    expected_data = expected_data.sort_values(by=['expression_level', "developmental_stage_id"], ascending=False)
-    expected_data = expected_data.astype({'expression_level': float})
+    expected_data = expected_data.sort_values(
+        by=["expression_level", "developmental_stage_id"], ascending=False
+    )
+    expected_data = expected_data.astype({"expression_level": float})
     expected_data.reset_index(drop=True, inplace=True)
 
     obtained_sorted = pd.DataFrame(obtained_data["Bgee"][0])
-    obtained_sorted = obtained_sorted.sort_values(by=['expression_level', "developmental_stage_id"], ascending=False)
-    obtained_sorted = obtained_sorted.astype({'expression_level': float})
+    obtained_sorted = obtained_sorted.sort_values(
+        by=["expression_level", "developmental_stage_id"], ascending=False
+    )
+    obtained_sorted = obtained_sorted.astype({"expression_level": float})
     obtained_sorted.reset_index(drop=True, inplace=True)
 
-    assert (obtained_sorted.equals(expected_data))
+    assert obtained_sorted.equals(expected_data)
 
 
 @patch("pyBiodatafuse.annotators.bgee.SPARQLWrapper.queryAndConvert")
@@ -97,24 +108,31 @@ def test_get_gene_expression(mock_sparql_request, bridgedb_dataframe):
     """
 
     anatomical_entities_list = anatomical_entities_of_interest.split("\n")
-    anatomical_entities_list = [anat_entity.strip() for anat_entity in anatomical_entities_list if
-                                anat_entity.strip() != '']
+    anatomical_entities_list = [
+        anat_entity.strip() for anat_entity in anatomical_entities_list if anat_entity.strip() != ""
+    ]
 
-    anatomical_entities_df = pd.DataFrame(anatomical_entities_list, columns=["AnatomicalEntityNames"])
+    anatomical_entities_df = pd.DataFrame(
+        anatomical_entities_list, columns=["AnatomicalEntityNames"]
+    )
 
     obtained_data, metadata = get_gene_expression(bridgedb_dataframe, anatomical_entities_df)
 
     expected_data = pd.read_json(os.path.join(data_file_folder, "bgee_expected_data.json"))
-    expected_data = expected_data.sort_values(by=['expression_level', "developmental_stage_id"], ascending=False)
-    expected_data = expected_data.astype({'expression_level': float})
+    expected_data = expected_data.sort_values(
+        by=["expression_level", "developmental_stage_id"], ascending=False
+    )
+    expected_data = expected_data.astype({"expression_level": float})
     expected_data.reset_index(drop=True, inplace=True)
 
     obtained_sorted = pd.DataFrame(obtained_data["Bgee"][0])
-    obtained_sorted = obtained_sorted.sort_values(by=['expression_level', "developmental_stage_id"], ascending=False)
-    obtained_sorted = obtained_sorted.astype({'expression_level': float})
+    obtained_sorted = obtained_sorted.sort_values(
+        by=["expression_level", "developmental_stage_id"], ascending=False
+    )
+    obtained_sorted = obtained_sorted.astype({"expression_level": float})
     obtained_sorted.reset_index(drop=True, inplace=True)
 
-    assert(obtained_sorted.equals(expected_data))
+    assert obtained_sorted.equals(expected_data)
 
 
 @pytest.fixture(scope="module")

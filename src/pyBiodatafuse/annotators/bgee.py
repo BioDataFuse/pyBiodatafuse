@@ -137,7 +137,7 @@ def get_gene_expression(bridgedb_df: pd.DataFrame, anatomical_entities: pd.DataF
             "developmental_stage_id",
             "developmental_stage_name",
             "expression_level",
-            "confidence_level"
+            "confidence_level",
         ],
         col_name="Bgee",
     )
