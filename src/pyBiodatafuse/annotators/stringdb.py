@@ -5,11 +5,15 @@
 
 import datetime
 import io
+import logging
 
 import pandas as pd
 import requests
+from requests.exceptions import RequestException
 
 from pyBiodatafuse.utils import get_identifier_of_interest
+
+logger = logging.getLogger("stringdb")
 
 string_api_url = "https://string-db.org/api"
 
@@ -24,8 +28,17 @@ def get_version_stringdb() -> dict:
 
     request_url = "/".join([string_api_url, output_format, method])
 
-    version_call = requests.get(request_url)
-    stringdb_version = version_call.json()
+    try:
+        version_call = requests.get(request_url)
+        stringdb_version = version_call.json()
+    except RequestException as e:
+
+        logger.error(str(e))
+        logger.warning(
+            "\n\nDue to external call failure, the annotator returned an empty result set"
+        )
+
+        stringdb_version = {}
 
     return stringdb_version
 
@@ -86,9 +99,21 @@ def get_ppi(bridgedb_df: pd.DataFrame):
 
     request_url = "/".join([string_api_url, output_format, method])
 
-    results = requests.post(request_url, data=params)
+    try:
+        results = requests.post(request_url, data=params)
+        results_contents = results.content.decode("utf-8")
+    except RequestException as e:
 
-    stringdb_ids_df = pd.read_csv(io.StringIO(results.content.decode("utf-8")), sep="\t")
+        logger.error(str(e))
+        logger.warning(
+            "\n\nDue to external call failure, the annotator returned an empty result set"
+        )
+
+        results_contents = (
+            "queryIndex\tstringId\tncbiTaxonId\ttaxonName\tpreferredName\tannotation\n"
+        )
+
+    stringdb_ids_df = pd.read_csv(io.StringIO(results_contents), sep="\t")
     stringdb_ids_df.queryIndex = stringdb_ids_df.queryIndex.astype(str)
 
     # ---------- Get String PPI network using the String identifiers ---------------#
@@ -102,9 +127,30 @@ def get_ppi(bridgedb_df: pd.DataFrame):
         "caller_identity": "github.com",  # your app name
     }
 
-    response = requests.post(request_url, data=params)
+    try:
+        response = requests.post(request_url, data=params)
 
-    network_df = pd.read_csv(io.StringIO(response.content.decode("utf-8")), sep="\t")
+        if response.status_code == 400:
+
+            logger.warning(
+                "\n\nNo results found in STRING for the input identifiers, the annotator returned an empty result set"
+            )
+
+            results_contents = "stringId_A\tstringId_B\tpreferredName_A\tpreferredName_B\tncbiTaxonId\tscore\tnscore\tfscore\tpscore\tascore\tescore\tdscore\ttscore\n"  # noqa: E501
+
+        else:
+            results_contents = response.content.decode("utf-8")
+
+    except RequestException as e:
+
+        logger.error(str(e))
+        logger.warning(
+            "\n\nDue to external call failure, the annotator returned an empty result set"
+        )
+
+        results_contents = "stringId_A\tstringId_B\tpreferredName_A\tpreferredName_B\tncbiTaxonId\tscore\tnscore\tfscore\tpscore\tascore\tescore\tdscore\ttscore\n"  # noqa: E501
+
+    network_df = pd.read_csv(io.StringIO(results_contents), sep="\t")
 
     # ---------- Add the interactions of each protein (row) to a new column ('stringdb') ---------------#
 
