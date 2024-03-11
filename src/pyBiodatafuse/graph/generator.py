@@ -365,6 +365,56 @@ def add_molmedb_gene_inhibitor(g, gene_node_label, annot_list):
     return g
 
 
+def add_bgee_subgraph(g, gene_node_label, annot_list):
+    """Construct part of the graph by linking the gene to a list of annotation entities (disease, drug ..etc).
+
+    :param g: the input graph to extend with new nodes and edges.
+    :param gene_node_label: the gene node to be linked to annotation entities.
+    :param annot_list: list of annotations from a specific source (e.g. DisGeNET, WikiPathways ..etc).
+    :returns: a NetworkX MultiDiGraph
+    """
+    for annot in annot_list:
+        if not pd.isna(annot["anatomical_entity_name"]):
+            annot_node_label = annot["anatomical_entity_name"]
+            annot_node_attrs = {
+                "source": "Bgee",
+                "labels": annot["anatomical_entity_name"],
+                "id": annot["anatomical_entity_id"],
+                "node_type": "Anatomical Entity",
+                "anatomical_entity_id": annot["anatomical_entity_id"],
+                "anatomical_entity_name": annot["anatomical_entity_name"],
+            }
+
+            if not pd.isna(annot["developmental_stage_id"]):
+                annot_node_attrs["developmental_stage_id"] = annot["developmental_stage_id"]
+            if not pd.isna(annot["developmental_stage_name"]):
+                annot_node_attrs["developmental_stage_name"] = annot["developmental_stage_name"]
+            if not pd.isna(annot["expression_level"]):
+                annot_node_attrs["expression_level"] = annot["expression_level"]
+            if not pd.isna(annot["confidence_level"]):
+                annot_node_attrs["confidence_level"] = annot["drugbank_id"]
+
+            g.add_node(annot_node_label, attr_dict=annot_node_attrs)
+
+            edge_attrs = {
+                "source": "Bgee",
+                "label": "expressed_in",
+            }
+
+            edge_hash = hash(frozenset(edge_attrs.items()))
+            edge_attrs["edge_hash"] = edge_hash
+            edge_data = g.get_edge_data(gene_node_label, annot_node_label)
+            edge_data = {} if edge_data is None else edge_data
+            node_exists = [
+                x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash
+            ]
+
+            if len(node_exists) == 0:
+                g.add_edge(gene_node_label, annot_node_label, attr_dict=edge_attrs)
+
+    return g
+
+
 def generate_networkx_graph(fuse_df: pd.DataFrame):
     """Construct a NetWorkX graph from a Pandas DataFrame of genes and their multi-source annotations.
 
@@ -384,6 +434,7 @@ def generate_networkx_graph(fuse_df: pd.DataFrame):
         "OpenTargets_Diseases": add_opentargets_disease_subgraph,
         "WikiPathways": add_wikipathways_subgraph,
         "transporter_inhibitor": add_molmedb_gene_inhibitor,
+        "Bgee": add_bgee_subgraph,
     }
 
     for _i, row in fuse_df.iterrows():
