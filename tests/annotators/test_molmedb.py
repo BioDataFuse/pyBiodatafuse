@@ -73,8 +73,7 @@ def test_get_gene_mol_inhibitor(mock_sparql_request, bridgedb_dataframe_genes):
                         },
                         "SMILES": {
                             "type": "literal",
-                            "value": "CC(=O)OC1C2(C)OCC3(C(=O)C=CC(C(C)(C)OC(C)=O)\
-                                C23)C(OC(C)=O)C2C(OC(=O)C(C)C)C(C)CC21OC(C)=O",
+                            "value": "CC(=O)OC1C2(C)OCC3(C(=O)C=CC(C(C)(C)OC(C)=O)C23)C(OC(C)=O)C2C(OC(=O)C(C)C)C(C)CC21OC(C)=O",
                             "datatype": "http://www.w3.org/2001/XMLSchema#string",
                         },
                         "molmedb_id": {
@@ -111,8 +110,7 @@ def test_get_gene_mol_inhibitor(mock_sparql_request, bridgedb_dataframe_genes):
                         },
                         "SMILES": {
                             "type": "literal",
-                            "value": "CC(=O)OC1CC(OC(C)=O)C(C)(C)/C=C\\C(C)C(OC(C)=O)\
-                                C2(O)CC(C)C(OC(=O)c3ccccc3)C2/C=C\\1C",
+                            "value": "CC(=O)OC1CC(OC(C)=O)C(C)(C)/C=C\\C(C)C(OC(C)=O)C2(O)CC(C)C(OC(=O)c3ccccc3)C2/C=C\\1C",
                             "datatype": "http://www.w3.org/2001/XMLSchema#string",
                         },
                         "chebi_id": {
@@ -201,8 +199,7 @@ def test_get_gene_mol_inhibitor(mock_sparql_request, bridgedb_dataframe_genes):
                 {
                     "label": "Euphorbiaproliferin c",
                     "InChIKey": "MEMULCZBXUZFOZ-UHFFFAOYSA-N",
-                    "SMILES": "CC(=O)OC1C2(C)OCC3(C(=O)C=CC(C(C)(C)OC(C)=O)C23)\
-                        C(OC(C)=O)C2C(OC(=O)C(C)C)C(C)CC21OC(C)=O",
+                    "SMILES": "CC(=O)OC1C2(C)OCC3(C(=O)C=CC(C(C)(C)OC(C)=O)C23)C(OC(C)=O)C2C(OC(=O)C(C)C)C(C)CC21OC(C)=O",
                     "molmedb_id": "MM470852",
                     "source_doi": "doi:10.1021/acs.jnatprod.6b00260",
                     "source_pmid": 27441737,
