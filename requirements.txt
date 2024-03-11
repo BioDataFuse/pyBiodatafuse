@@ -11,3 +11,4 @@ nbformat==5.9.2
 networkx>=3.1
 xlrd>= 2.0.1
 neo4j>=5.14
+pytest==8.1.1

@@ -121,7 +121,7 @@ def bridgedb_xref(
     ]
 
     if len(identifiers) < 1:
-        raise ValueError("Please provide atleast one identifier datasource, e.g. HGNC")
+        raise ValueError("Please provide at least one identifier datasource, e.g. HGNC")
 
     post_con = (
         "\n".join([f"{identifier}\t{input_source}" for identifier in identifiers["identifier"]])
@@ -252,17 +252,17 @@ def get_cid_from_data(idx: Optional[str], idx_type: str) -> Optional[str]:
 
 
 def pubchem_xref(
-    identifiers: pd.DataFrame, indentifier_type: str = "name"
+    identifiers: pd.DataFrame, identifier_type: str = "name"
 ) -> Tuple[pd.DataFrame, dict]:
     """Map chemical names or smiles or inchikeys to PubChem identifier.
 
     :param identifiers: a dataframe with one column called identifier (the output of data_loader.py)
-    :param indentifier_type: type of identifier to query. Potential curies include : smiles, inchikey, inchi, name
+    :param identifier_type: type of identifier to query. Potential curies include : smiles, inchikey, inchi, name
     :raises ValueError: if the input_datasource is not provided or if the request fails
     :returns: a DataFrame containing the mapped identifiers and dictionary of the data resource metadata.
     """
     if len(identifiers) < 1:
-        raise ValueError("Please provide atleast one input.")
+        raise ValueError("Please provide at least one input.")
 
     # Record the start time
     start_time = datetime.datetime.now()
@@ -270,7 +270,7 @@ def pubchem_xref(
     # Getting the response to the query
     cid_data = []
     for idx in identifiers:
-        cid = get_cid_from_data(idx, indentifier_type)
+        cid = get_cid_from_data(idx, identifier_type)
         cid_data.append(
             {
                 "identifier": idx,
@@ -303,7 +303,7 @@ def pubchem_xref(
         },
         "query": {
             "size": len(identifiers),
-            "input_type": indentifier_type,
+            "input_type": identifier_type,
             "time": time_elapsed,
             "date": current_date,
         },
