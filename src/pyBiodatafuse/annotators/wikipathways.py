@@ -4,13 +4,17 @@
 """Python file for queriying Wikipathways SPARQL endpoint (https://sparql.wikipathways.org/sparql)."""
 
 import datetime
+import logging
 import os
 from string import Template
 
 import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
+from SPARQLWrapper.SPARQLExceptions import SPARQLWrapperException
 
 from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interest
+
+logger = logging.getLogger("wikipathways")
 
 
 def get_version_wikipathways() -> dict:
@@ -26,9 +30,22 @@ def get_version_wikipathways() -> dict:
 
     sparql.setQuery(sparql_query)
 
-    res = sparql.queryAndConvert()
+    try:
 
-    wikipathways_version = {"wikipathways_version": res["results"]["bindings"][0]["title"]["value"]}
+        res = sparql.queryAndConvert()
+
+        wikipathways_version = {
+            "wikipathways_version": res["results"]["bindings"][0]["title"]["value"]
+        }
+
+    except SPARQLWrapperException as e:
+
+        logger.error(str(e))
+        logger.warning(
+            "\n\nDue to external call failure, the annotator returned an empty result set"
+        )
+
+        wikipathways_version = {"wikipathways_version": ""}
 
     return wikipathways_version
 
@@ -76,9 +93,21 @@ def get_gene_wikipathway(bridgedb_df: pd.DataFrame):
 
         sparql.setQuery(sparql_query_template_sub)
 
-        res = sparql.queryAndConvert()
+        try:
+            res = sparql.queryAndConvert()
 
-        df = pd.DataFrame(res["results"]["bindings"])
+            res = res["results"]["bindings"]
+
+        except SPARQLWrapperException as e:
+
+            logger.error(str(e))
+            logger.warning(
+                "\n\nDue to external call failure, the annotator returned an empty result set"
+            )
+
+            res = []
+
+        df = pd.DataFrame(res)
         df = df.applymap(lambda x: x["value"])
 
         results_df_list.append(df)
