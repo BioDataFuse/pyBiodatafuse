@@ -13,7 +13,7 @@ from pyBiodatafuse.annotators.pubchem import get_protein_molecule_screened
 
 
 @patch("pyBiodatafuse.annotators.pubchem.SPARQLWrapper.queryAndConvert")
-def get_protein_molecule_screened(mock_sparql_request, bridgedb_dataframe):
+def test_get_protein_molecule_screened(mock_sparql_request, bridgedb_dataframe):
     """Test the get_protein_molecule_screened."""
     mock_sparql_request.side_effect = [
         {
