@@ -16,7 +16,7 @@ from SPARQLWrapper import JSON, SPARQLWrapper
 from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interest
 
 
-def test_molmedb_endpoint(endpoint: str) -> bool:
+def test_endpoint_molmedb(endpoint: str) -> bool:
     """Test the availability of the DisGeNET endpoint.
 
     :param endpoint: MolMeDB endpoint ("https://idsm.elixir-czech.cz/sparql/endpoint/molmedb")
@@ -44,7 +44,7 @@ def get_gene_mol_inhibitor(bridgedb_df: pd.DataFrame):
     """
     # Check if the MolMeDB endpoint is available
     endpoint = "https://idsm.elixir-czech.cz/sparql/endpoint/molmedb"
-    api_available = test_molmedb_endpoint(endpoint=endpoint)
+    api_available = test_endpoint_molmedb(endpoint=endpoint)
     if not api_available:
         warnings.warn("MolMeDB endpoint is not available. Unable to retrieve data.", stacklevel=2)
         return pd.DataFrame(), {}
@@ -190,7 +190,7 @@ def get_mol_gene_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dic
     """
     # Check if the MolMeDB endpoint is available
     endpoint = "https://idsm.elixir-czech.cz/sparql/endpoint/molmedb"
-    api_available = test_molmedb_endpoint(endpoint=endpoint)
+    api_available = test_endpoint_molmedb(endpoint=endpoint)
     if not api_available:
         warnings.warn("MolMeDB endpoint is not available. Unable to retrieve data.", stacklevel=2)
         return pd.DataFrame(), {}
