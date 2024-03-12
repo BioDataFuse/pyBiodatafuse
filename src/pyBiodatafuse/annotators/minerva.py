@@ -32,6 +32,14 @@ def list_projects() -> pd.DataFrame:
     base_url = "https://minerva-net.lcsb.uni.lu/api/"
 
     response = requests.get(base_url + "/machines/")
+    
+    #Check if API is down
+    if response.status_code >= 400:
+        print(f"Error: {response.status_code} - {response.reason}")
+        print(response.text)
+    else: 
+        print("Request successful")
+    
     projects = response.json()
     projects_ids = projects["pageContent"]
     project_df = pd.DataFrame()
@@ -94,6 +102,15 @@ def get_minerva_components(
 
     # Request project data using the extracted project ID
     response = requests.get(url + "/api/projects/" + project_id + "/models/")
+    
+    ###Check if API is down
+    if response.status_code >= 400:
+        print(f"Error: {response.status_code} - {response.reason}")
+        print(response.text)
+    else: 
+        print("Request successful")
+    ###
+    
     models = (
         response.json()
     )  # pull down only models and then iterate over them to extract element of interest
