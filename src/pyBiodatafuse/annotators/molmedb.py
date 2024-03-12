@@ -18,7 +18,6 @@ from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interes
 
 def test_molmedb_endpoint(endpoint: str) -> bool:
     """Test the availability of the DisGeNET endpoint.
-
     :param endpoint: MolMeDB endpoint ("https://idsm.elixir-czech.cz/sparql/endpoint/molmedb")
     :returns: True if the endpoint is available, False otherwise.
     """
@@ -39,7 +38,6 @@ def test_molmedb_endpoint(endpoint: str) -> bool:
 
 def get_gene_mol_inhibitor(bridgedb_df: pd.DataFrame):
     """Query MolMeDB for inhibitors of transporters encoded by genes.
-
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
     :returns: a DataFrame containing the MolMeDB output and dictionary of the MolMeDB metadata.
     """
@@ -186,7 +184,6 @@ def get_gene_mol_inhibitor(bridgedb_df: pd.DataFrame):
 
 def get_mol_gene_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
     """Query MolMeDB for transporters inhibited by molecule.
-
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query.
     :returns: a DataFrame containing the MolMeDB output and dictionary of the MolMeDB metadata.
     """
