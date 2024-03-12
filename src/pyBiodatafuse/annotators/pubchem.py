@@ -5,6 +5,7 @@
 
 import datetime
 import os
+import warnings
 from string import Template
 from typing import Tuple
 
@@ -15,12 +16,40 @@ from SPARQLWrapper import JSON, SPARQLWrapper
 from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interest
 
 
+def test_idsm_endpoint(endpoint: str) -> bool:
+    """Test the availability of the IDSM endpoint.
+
+    :param endpoint: IDSM endpoint ("https://idsm.elixir-czech.cz/sparql/endpoint/idsm")
+    :returns: True if the endpoint is available, False otherwise.
+    """
+    query_string = """SELECT * WHERE {
+        <http://rdf.ncbi.nlm.nih.gov/pubchem/taxonomy> ?p ?o
+        }
+        LIMIT 1
+        """
+    sparql = SPARQLWrapper(endpoint)
+    sparql.setOnlyConneg(True)
+    sparql.setQuery(query_string)
+    try:
+        sparql.query()
+        return True
+    except BaseException:
+        return False
+
+
 def get_protein_molecule_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
     """Query PubChem for molecules screened on proteins as targets.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query.
     :returns: a DataFrame containing the PubChem output and dictionary of the PubChem metadata.
     """
+    # Check if the IDSM endpoint is available
+    endpoint = "https://idsm.elixir-czech.cz/sparql/endpoint/idsm"
+    api_available = test_idsm_endpoint(endpoint=endpoint)
+    if not api_available:
+        warnings.warn("PubChem endpoint is not available. Unable to retrieve data.", stacklevel=2)
+        return pd.DataFrame(), {}
+
     # Record the start time
     start_time = datetime.datetime.now()
 
