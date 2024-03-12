@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""Tests for the WikiPathways annotator."""
+"""Tests for the MolMeDB annotator."""
 
 from unittest.mock import patch
 
@@ -13,21 +13,21 @@ from pyBiodatafuse.annotators.molmedb import get_gene_mol_inhibitor, get_mol_gen
 
 # MolMeDB still not versioned
 # TODO after MolMeDB update
-# @patch("pyBiodatafuse.annotators.wikipathways.SPARQLWrapper.queryAndConvert")
-# def test_wikipathways_version(mock_sparql_request):
-#     """Test the get_version_wikipathways."""
+# @patch("pyBiodatafuse.annotators.molmedb.SPARQLWrapper.queryAndConvert")
+# def test_molmedb_version(mock_sparql_request):
+#     """Test the get_version_molmedb."""
 #     mock_sparql_request.return_value = {
 #         "head": {"link": [], "vars": ["title"]},
 #         "results": {
 #             "distinct": False,
 #             "ordered": True,
-#             "bindings": [{"title": {"type": "literal", "value": "WikiPathways RDF 20231210"}}],
+#             "bindings": [{"title": {"type": "literal", "value": "XXX"}}],
 #         },
 #     }
 
-#     obtained_version = get_version_wikipathways()
+#     obtained_version = get_version_molmedb()
 
-#     expected_version = {"wikipathways_version": "WikiPathways RDF 20231210"}
+#     expected_version = {"molmedb_version": "XXX"}
 
 #     assert obtained_version == expected_version
 
