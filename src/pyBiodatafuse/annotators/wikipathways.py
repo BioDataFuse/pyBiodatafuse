@@ -31,7 +31,6 @@ def get_version_wikipathways() -> dict:
     sparql.setQuery(sparql_query)
 
     try:
-
         res = sparql.queryAndConvert()
 
         wikipathways_version = {
@@ -39,7 +38,6 @@ def get_version_wikipathways() -> dict:
         }
 
     except SPARQLWrapperException as e:
-
         logger.error(str(e))
         logger.warning(
             "\n\nDue to external call failure, the annotator returned an empty result set"
@@ -99,7 +97,6 @@ def get_gene_wikipathway(bridgedb_df: pd.DataFrame):
             res = res["results"]["bindings"]
 
         except SPARQLWrapperException as e:
-
             logger.error(str(e))
             logger.warning(
                 "\n\nDue to external call failure, the annotator returned an empty result set"
