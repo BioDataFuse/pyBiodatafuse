@@ -614,7 +614,6 @@ def get_drug_disease_interactions(
     :param disgenet_result: DisGeNET diseases dadtaframe
     :returns: a DataFrame containing the drug-disease relationships between drug and diseases included in your graph
     """
-
     # Iterate through the dictionary and remove entries with NaN values for drugs and diseases
     # Drugs
     drugs_all = dict(drug_df["ChEMBL_Drugs"])
