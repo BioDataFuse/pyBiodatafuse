@@ -4,8 +4,8 @@
 """Python file for queriying MolMeDB SPARQL endpoint (https://idsm.elixir-czech.cz/sparql/endpoint/molmedb."""
 
 import datetime
-import warnings
 import os
+import warnings
 from string import Template
 from typing import Tuple
 
@@ -20,15 +20,20 @@ def test_molmedb_endpoint(endpoint: str) -> bool:
     """Test the availability of the DisGeNET endpoint.
 
     :param endpoint: MolMeDB endpoint ("https://idsm.elixir-czech.cz/sparql/endpoint/molmedb")
-    :returns: True if the endpoint is available, False otherwise."""
-    query_string = "SELECT * WHERE { <https://identifiers.org/molmedb/MM00040> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?t }"
+    :returns: True if the endpoint is available, False otherwise.
+    """
+
+    query_string = """SELECT * WHERE {
+        <https://identifiers.org/molmedb/MM00040> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?t
+        }
+        """
     sparql = SPARQLWrapper(endpoint)
     sparql.setOnlyConneg(True)
     sparql.setQuery(query_string)
     try:
-        result = sparql.query()
+        sparql.query()
         return True
-    except:
+    except BaseException:
         return False
 
 
