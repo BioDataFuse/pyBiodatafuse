@@ -3,19 +3,16 @@
 """Python file for queriying DisGeNet database (https://www.disgenet.org/home/)."""
 
 import datetime
-import json
 import logging
 import os
 import warnings
 from string import Template
-from typing import Optional, Tuple
+from typing import Tuple
 
 import pandas as pd
-import requests
 from SPARQLWrapper import JSON, SPARQLWrapper
 from SPARQLWrapper.SPARQLExceptions import SPARQLWrapperException
 
-from pyBiodatafuse import id_mapper
 from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interest
 
 logger = logging.getLogger("disgenet")
@@ -69,13 +66,12 @@ def get_version_disgenet(endpoint: str) -> dict:
     return disgenet_version
 
 
-def get_gene_disease(bridgedb_df: pd.DataFrame, endpoint: str):
+def get_gene_disease(bridgedb_df: pd.DataFrame, endpoint: str) -> Tuple[pd.DataFrame, dict]:
     """Query gene-disease associations from DisGeNET.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query.
     :param endpoint: DisGeNET SAPRQL endpoint ("http://rdf.disgenet.org/sparql/").
     :returns: a DataFrame containing the DisGeNET output and dictionary of the DisGeNET metadata.
-    :raises ValueError: if the DisGeNET enpoint is not available.
     """
     # Check if the DisGeNET API is available
     api_available = test_endpoint_disgenet(endpoint=endpoint)
@@ -114,16 +110,11 @@ def get_gene_disease(bridgedb_df: pd.DataFrame, endpoint: str):
 
     for gene_list_str in query_gene_lists:
         query_count += 1
-        print("Iamhere 1")
         sparql_query_template = Template(sparql_query)
         substit_dict = dict(gene_list=gene_list_str)
         sparql_query_template_sub = sparql_query_template.substitute(substit_dict)
-        print("Iamhere 2")
-
         sparql.setQuery(sparql_query_template_sub)
         res = sparql.queryAndConvert()
-        print("Iamhere 3")
-
         res = res["results"]["bindings"]
         df = pd.DataFrame(res)
         df = df.applymap(lambda x: x["value"])
@@ -150,10 +141,9 @@ def get_gene_disease(bridgedb_df: pd.DataFrame, endpoint: str):
         disgenet_df = disgenet_df[["target", "disease_id", "disease_label", "score", "source"]]
 
         selected_columns = ["disease_id", "disease_label", "score", "source"]
-        print(disgenet_df)
 
         merged_df = collapse_data_sources(
-            data_df=bridgdb_df,
+            data_df=bridgedb_df,
             source_namespace="NCBI Gene",
             target_df=disgenet_df,
             common_cols=["target"],
