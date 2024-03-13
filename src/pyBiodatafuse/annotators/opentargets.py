@@ -118,7 +118,7 @@ def get_gene_location(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
     )  # Drop rows where termSL is not available
     opentargets_df.rename(
         columns={
-            "termSL": "loc_identifier",
+            "termSL": "loc_id",
             "labelSL": "subcellular_loc",
         },
         inplace=True,
@@ -130,7 +130,7 @@ def get_gene_location(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
         source_namespace="Ensembl",
         target_df=opentargets_df,
         common_cols=["target"],
-        target_specific_cols=["loc_identifier", "subcellular_loc", "location"],
+        target_specific_cols=["loc_id", "subcellular_loc", "location"],
         col_name="OpenTargets_Location",
     )
 
@@ -455,6 +455,7 @@ def get_targetgene_disease_associations(bridgedb_df: pd.DataFrame) -> Tuple[pd.D
               disease {
                 id
                 name
+                dbXRefs
                 therapeuticAreas {
                   id
                   name
