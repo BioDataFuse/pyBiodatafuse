@@ -30,11 +30,7 @@ def add_ppi_subgraph(g, gene_node_label, annot_list):
     :returns: a NetworkX MultiDiGraph
     """
     for ppi in annot_list:
-        edge_attrs = {
-            "source": "STRING",
-            "label": "string_ppi_interaction",
-            "score": ppi["score"]
-        }
+        edge_attrs = {"source": "STRING", "label": "string_ppi_interaction", "score": ppi["score"]}
 
         edge_hash = hash(frozenset(edge_attrs.items()))
         edge_attrs["edge_hash"] = edge_hash
@@ -74,10 +70,7 @@ def add_opentargets_location_subgraph(g, gene_node_label, annot_list):
 
             g.add_node(loc_node_label, attr_dict=loc_node_attrs)
 
-            edge_attrs = {
-                "source": "OpenTargets",
-                "label": "localized_in"
-            }
+            edge_attrs = {"source": "OpenTargets", "label": "localized_in"}
 
             edge_hash = hash(frozenset(edge_attrs.items()))
             edge_attrs["edge_hash"] = edge_hash
@@ -114,11 +107,8 @@ def add_opentargets_go_subgraph(g, gene_node_label, annot_list):
 
         g.add_node(go_node_label, attr_dict=go_node_attrs)
 
-        edge_attrs = {
-            "source": "OpenTargets",
-            "label": "part_of_go"
-        }
-        
+        edge_attrs = {"source": "OpenTargets", "label": "part_of_go"}
+
         edge_hash = hash(frozenset(edge_attrs.items()))
         edge_attrs["edge_hash"] = edge_hash
         edge_data = g.get_edge_data(gene_node_label, go_node_label)
@@ -129,7 +119,6 @@ def add_opentargets_go_subgraph(g, gene_node_label, annot_list):
             g.add_edge(gene_node_label, go_node_label, label="part_of_go", attr_dict=edge_attrs)
 
     return g
-
 
 
 def add_disgenet_disease_subgraph(g, gene_node_label, annot_list):
@@ -176,7 +165,6 @@ def add_disgenet_disease_subgraph(g, gene_node_label, annot_list):
     return g
 
 
-
 def add_opentargets_reactome_pathway_subgraph(g, gene_node_label, annot_list):
     """Construct part of the graph by linking the gene to a list of annotation entities (disease, drug ..etc).
 
@@ -197,10 +185,7 @@ def add_opentargets_reactome_pathway_subgraph(g, gene_node_label, annot_list):
 
             g.add_node(pathway_node_label, attr_dict=pathway_node_attrs)
 
-            edge_attrs = {
-                "source": "OpenTargets",
-                "label": "part_of_pathway"
-            }
+            edge_attrs = {"source": "OpenTargets", "label": "part_of_pathway"}
 
             edge_hash = hash(frozenset(edge_attrs.items()))
             edge_attrs["edge_hash"] = edge_hash
@@ -242,10 +227,7 @@ def add_opentargets_drug_subgraph(g, gene_node_label, annot_list):
 
             g.add_node(drug_node_label, attr_dict=drug_node_attrs)
 
-            edge_attrs = {
-                "source": "OpenTargets", 
-                "label": drug["relation"]
-            }
+            edge_attrs = {"source": "OpenTargets", "label": drug["relation"]}
 
             edge_hash = hash(frozenset(edge_attrs.items()))
             edge_attrs["edge_hash"] = edge_hash
