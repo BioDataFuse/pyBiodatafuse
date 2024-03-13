@@ -68,6 +68,11 @@ def test_get_protein_molecule_screened(mock_sparql_request, bridgedb_dataframe):
                             "value": "InChI=1S/C26H28Cl2N2O/c27",
                             "xml:lang": "en",
                         },
+                        "target_count": {
+                            "type": "literal",
+                            "value": "1",
+                            "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+                        },
                     },
                     {
                         "upProt": {
@@ -101,6 +106,11 @@ def test_get_protein_molecule_screened(mock_sparql_request, bridgedb_dataframe):
                             "value": "InChI=1S/C19H18N2O2/c1",
                             "xml:lang": "en",
                         },
+                        "target_count": {
+                            "type": "literal",
+                            "value": "1",
+                            "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+                        },
                     },
                     {
                         "upProt": {
@@ -133,6 +143,11 @@ def test_get_protein_molecule_screened(mock_sparql_request, bridgedb_dataframe):
                             "type": "literal",
                             "value": "InChI=1S/C15H11NO2/c1",
                             "xml:lang": "en",
+                        },
+                        "target_count": {
+                            "type": "literal",
+                            "value": "1",
+                            "datatype": "http://www.w3.org/2001/XMLSchema#integer",
                         },
                     },
                 ]

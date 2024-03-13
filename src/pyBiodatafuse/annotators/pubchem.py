@@ -111,32 +111,19 @@ def get_protein_molecule_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
         "http://www.bioassayontology.org/bao#BAO_0000186": "AC50",
         "http://www.bioassayontology.org/bao#BAO_0000187": "CC50",
         "http://www.bioassayontology.org/bao#BAO_0000188": "EC50",
-        "http://www.bioassayontology.org/bao#BAO_0000189": "GI50",
         "http://www.bioassayontology.org/bao#BAO_0000190": "IC50",
         "http://www.bioassayontology.org/bao#BAO_0000192": "Ki",
-        "http://www.bioassayontology.org/bao#BAO_0000194": "TGI",
-        "http://www.bioassayontology.org/bao#BAO_0000349": "50 percent cell viability",
-        "http://www.bioassayontology.org/bao#BAO_0000477": "km",
-        "http://www.bioassayontology.org/bao#BAO_0002117": "LD50",
-        "http://www.bioassayontology.org/bao#BAO_0002144": "IC90",
-        "http://www.bioassayontology.org/bao#BAO_0002145": "LC50",
         "http://www.bioassayontology.org/bao#BAO_0002146": "MIC",
-        "http://www.bioassayontology.org/bao#BAO_0002162": "concentration response endpoint",
-        "http://www.bioassayontology.org/bao#BAO_0002862": "EC 5 hour",
-        "http://www.bioassayontology.org/bao#BAO_0002877": "AC1000 absolute",
-        "http://www.bioassayontology.org/bao#BAO_0002878": "AC10 absolute",
-        "http://www.bioassayontology.org/bao#BAO_0002879": "AC26 absolute",
-        "http://www.bioassayontology.org/bao#BAO_0002880": "AC35 absolute",
-        "http://www.bioassayontology.org/bao#BAO_0002881": "AC40 absolute",
-        "http://www.bioassayontology.org/bao#BAO_0002882": "AC500 absolute",
-        "http://www.bioassayontology.org/bao#BAO_0002883": "ECMax",
-        "http://www.bioassayontology.org/bao#BAO_0002884": "ECMax_Tm",
-        "http://www.bioassayontology.org/bao#BAO_0002886": "ECMax_fold increase",
-        "http://www.bioassayontology.org/bao#BAO_0002887": "ECMax_percent inhibition",
-        "http://www.bioassayontology.org/bao#BAO_0003036": "ED50",
     }
 
     if not intermediate_df.empty:
+        # drop multitarget assays
+        intermediate_df["target_count"] = intermediate_df["target_count"].map(lambda x: int(x))
+        intermediate_df = intermediate_df.drop(
+            intermediate_df[intermediate_df["target_count"] > 1].index
+        )
+        intermediate_df = intermediate_df.drop(columns=["target_count"])
+        # identifiers to values
         intermediate_df["target"] = intermediate_df["target"].map(lambda x: x[32:])
         intermediate_df["outcome"] = intermediate_df["outcome"].map(lambda x: x[47:])
         intermediate_df["compound_cid"] = intermediate_df["compound_cid"].map(lambda x: x[48:])
