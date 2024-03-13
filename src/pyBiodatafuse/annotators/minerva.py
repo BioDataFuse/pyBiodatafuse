@@ -12,8 +12,8 @@ import requests
 from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interest
 
 
-def test_endpoint_minerva(endpoint: str) -> bool:
-    """Test the availability of the MINERVA API endpoint.
+def check_endpoint_minerva(endpoint: str) -> bool:
+    """Check the availability of the MINERVA API endpoint.
 
     :param endpoint: MINERVA API endpoint ("https://minerva-net.lcsb.uni.lu/api")
     :returns: True if the endpoint is available, False otherwise.
@@ -184,7 +184,7 @@ def get_gene_minerva_pathways(
     :returns: a DataFrame containing DataFrame containing the MINERVA output and dictionary of the MINERVA metadata.
     """
     # Check if the MINERVA API is available
-    api_available = test_endpoint_minerva(endpoint=endpoint)
+    api_available = check_endpoint_minerva(endpoint=endpoint)
     if not api_available:
         warnings.warn(
             "MINERVA API endpoint is not available. Unable to retrieve data.", stacklevel=2
