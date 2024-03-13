@@ -32,7 +32,6 @@ def get_version_stringdb() -> dict:
         version_call = requests.get(request_url)
         stringdb_version = version_call.json()
     except RequestException as e:
-
         logger.error(str(e))
         logger.warning(
             "\n\nDue to external call failure, the annotator returned an empty result set"
@@ -103,7 +102,6 @@ def get_ppi(bridgedb_df: pd.DataFrame):
         results = requests.post(request_url, data=params)
         results_contents = results.content.decode("utf-8")
     except RequestException as e:
-
         logger.error(str(e))
         logger.warning(
             "\n\nDue to external call failure, the annotator returned an empty result set"
@@ -131,7 +129,6 @@ def get_ppi(bridgedb_df: pd.DataFrame):
         response = requests.post(request_url, data=params)
 
         if response.status_code == 400:
-
             logger.warning(
                 "\n\nNo results found in STRING for the input identifiers, the annotator returned an empty result set"
             )
@@ -142,7 +139,6 @@ def get_ppi(bridgedb_df: pd.DataFrame):
             results_contents = response.content.decode("utf-8")
 
     except RequestException as e:
-
         logger.error(str(e))
         logger.warning(
             "\n\nDue to external call failure, the annotator returned an empty result set"
