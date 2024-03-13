@@ -21,7 +21,7 @@ def load_dataframe_from_pickle(pickle_path: str) -> pd.DataFrame:
     return df
 
 
-def add_disgenet_disease_subgraph(g, gene_node_label, annot_list):
+def add_ppi_subgraph(g, gene_node_label, annot_list):
     """Construct part of the graph by linking the gene to a list of annotation entities (disease, drug ..etc).
 
     :param g: the input graph to extend with new nodes and edges.
@@ -29,45 +29,26 @@ def add_disgenet_disease_subgraph(g, gene_node_label, annot_list):
     :param annot_list: list of annotations from a specific source (e.g. DisGeNET, WikiPathways ..etc).
     :returns: a NetworkX MultiDiGraph
     """
-    for dg in annot_list:
-        if not pd.isna(dg["disease_name"]):
-            dg_node_label = dg["disease_name"]
-            dg_node_attrs = {
-                "source": "DisGeNET",
-                "name": dg["disease_name"],
-                "id": dg["diseaseid"],
-                "labels": "Disease",
-                "disease_id": dg["diseaseid"],
-                "disease_class": dg["disease_class"],
-                "disease_class_name": dg["disease_class_name"],
-                "disease_type": dg["disease_type"],
-                "disease_semantic_type": dg["disease_semantic_type"],
-            }
+    for ppi in annot_list:
+        edge_attrs = {
+            "source": "STRING",
+            "label": "string_ppi_interaction",
+            "score": ppi["score"]
+        }
 
-            g.add_node(dg_node_label, attr_dict=dg_node_attrs)
+        edge_hash = hash(frozenset(edge_attrs.items()))
+        edge_attrs["edge_hash"] = edge_hash
+        edge_data = g.get_edge_data(gene_node_label, ppi["stringdb_link_to"])
+        edge_data = {} if edge_data is None else edge_data
+        node_exists = [x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash]
 
-            edge_attrs = {
-                "source": "DisGeNET",
-                "label": "associated_with",
-                "score": dg["score"],
-                "year_initial": dg["year_initial"] if not pd.isna(dg["year_initial"]) else "",
-                "year_final": dg["year_final"] if not pd.isna(dg["year_final"]) else "",
-                "ei": dg["ei"] if not pd.isna(dg["ei"]) else "",
-                "el": dg["el"] if not pd.isna(dg["el"]) else "",
-            }
-
-            edge_hash = hash(frozenset(edge_attrs.items()))
-            edge_attrs["edge_hash"] = edge_hash
-            edge_data = g.get_edge_data(gene_node_label, dg_node_label)
-            edge_data = {} if edge_data is None else edge_data
-            node_exists = [
-                x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash
-            ]
-
-            if len(node_exists) == 0:
-                g.add_edge(
-                    gene_node_label, dg_node_label, label="associated_with", attr_dict=edge_attrs
-                )
+        if len(node_exists) == 0:
+            g.add_edge(
+                gene_node_label,
+                ppi["stringdb_link_to"],
+                label="string_ppi_interaction",
+                attr_dict=edge_attrs,
+            )
 
     return g
 
@@ -86,14 +67,17 @@ def add_opentargets_location_subgraph(g, gene_node_label, annot_list):
             loc_node_attrs = {
                 "source": "OpenTargets",
                 "name": loc["location"],
-                "id": loc["loc_identifier"],
+                "id": loc["loc_id"],
                 "labels": "Location",
                 "subcellular_loc": loc["subcellular_loc"],
             }
 
             g.add_node(loc_node_label, attr_dict=loc_node_attrs)
 
-            edge_attrs = {"source": "OpenTargets", "label": "localized_in"}
+            edge_attrs = {
+                "source": "OpenTargets",
+                "label": "localized_in"
+            }
 
             edge_hash = hash(frozenset(edge_attrs.items()))
             edge_attrs["edge_hash"] = edge_hash
@@ -130,8 +114,11 @@ def add_opentargets_go_subgraph(g, gene_node_label, annot_list):
 
         g.add_node(go_node_label, attr_dict=go_node_attrs)
 
-        edge_attrs = {"source": "OpenTargets", "label": "part_of_go"}
-
+        edge_attrs = {
+            "source": "OpenTargets",
+            "label": "part_of_go"
+        }
+        
         edge_hash = hash(frozenset(edge_attrs.items()))
         edge_attrs["edge_hash"] = edge_hash
         edge_data = g.get_edge_data(gene_node_label, go_node_label)
@@ -144,7 +131,53 @@ def add_opentargets_go_subgraph(g, gene_node_label, annot_list):
     return g
 
 
-def add_opentargets_pathway_subgraph(g, gene_node_label, annot_list):
+
+def add_disgenet_disease_subgraph(g, gene_node_label, annot_list):
+    """Construct part of the graph by linking the gene to a list of annotation entities (disease, drug ..etc).
+
+    :param g: the input graph to extend with new nodes and edges.
+    :param gene_node_label: the gene node to be linked to annotation entities.
+    :param annot_list: list of annotations from a specific source (e.g. DisGeNET, WikiPathways ..etc).
+    :returns: a NetworkX MultiDiGraph
+    """
+    for dg in annot_list:
+        if not pd.isna(dg["disease_name"]):
+            dg_node_label = dg["disease_name"]
+            dg_node_attrs = {
+                "source": "DisGeNET",
+                "name": dg["disease_name"],
+                "id": dg["disease_id"],
+                "labels": "Disease",
+                "disease_id": dg["disease_id"],
+                "disease_source": dg["source"],
+            }
+
+            g.add_node(dg_node_label, attr_dict=dg_node_attrs)
+
+            edge_attrs = {
+                "source": "DisGeNET",
+                "label": "associated_with",
+                "score": dg["score"],
+            }
+
+            edge_hash = hash(frozenset(edge_attrs.items()))
+            edge_attrs["edge_hash"] = edge_hash
+            edge_data = g.get_edge_data(gene_node_label, dg_node_label)
+            edge_data = {} if edge_data is None else edge_data
+            node_exists = [
+                x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash
+            ]
+
+            if len(node_exists) == 0:
+                g.add_edge(
+                    gene_node_label, dg_node_label, label="associated_with", attr_dict=edge_attrs
+                )
+
+    return g
+
+
+
+def add_opentargets_reactome_pathway_subgraph(g, gene_node_label, annot_list):
     """Construct part of the graph by linking the gene to a list of annotation entities (disease, drug ..etc).
 
     :param g: the input graph to extend with new nodes and edges.
@@ -164,7 +197,10 @@ def add_opentargets_pathway_subgraph(g, gene_node_label, annot_list):
 
             g.add_node(pathway_node_label, attr_dict=pathway_node_attrs)
 
-            edge_attrs = {"source": "OpenTargets", "label": "part_of_pathway"}
+            edge_attrs = {
+                "source": "OpenTargets",
+                "label": "part_of_pathway"
+            }
 
             edge_hash = hash(frozenset(edge_attrs.items()))
             edge_attrs["edge_hash"] = edge_hash
@@ -206,7 +242,10 @@ def add_opentargets_drug_subgraph(g, gene_node_label, annot_list):
 
             g.add_node(drug_node_label, attr_dict=drug_node_attrs)
 
-            edge_attrs = {"source": "OpenTargets", "label": drug["relation"]}
+            edge_attrs = {
+                "source": "OpenTargets", 
+                "label": drug["relation"]
+            }
 
             edge_hash = hash(frozenset(edge_attrs.items()))
             edge_attrs["edge_hash"] = edge_hash
@@ -301,34 +340,6 @@ def add_wikipathways_subgraph(g, gene_node_label, annot_list):
                     label="part_of_pathway",
                     attr_dict=edge_attrs,
                 )
-
-    return g
-
-
-def add_ppi_subgraph(g, gene_node_label, annot_list):
-    """Construct part of the graph by linking the gene to a list of annotation entities (disease, drug ..etc).
-
-    :param g: the input graph to extend with new nodes and edges.
-    :param gene_node_label: the gene node to be linked to annotation entities.
-    :param annot_list: list of annotations from a specific source (e.g. DisGeNET, WikiPathways ..etc).
-    :returns: a NetworkX MultiDiGraph
-    """
-    for ppi in annot_list:
-        edge_attrs = {"source": "STRING", "label": "interacts_with", "score": ppi["score"]}
-
-        edge_hash = hash(frozenset(edge_attrs.items()))
-        edge_attrs["edge_hash"] = edge_hash
-        edge_data = g.get_edge_data(gene_node_label, ppi["stringdb_link_to"])
-        edge_data = {} if edge_data is None else edge_data
-        node_exists = [x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash]
-
-        if len(node_exists) == 0:
-            g.add_edge(
-                gene_node_label,
-                ppi["stringdb_link_to"],
-                label="interacts_with",
-                attr_dict=edge_attrs,
-            )
 
     return g
 
@@ -523,7 +534,7 @@ def generate_networkx_graph(fuse_df: pd.DataFrame, drug_disease=None):
         "DisGeNET": add_disgenet_disease_subgraph,
         "OpenTargets_Location": add_opentargets_location_subgraph,
         "GO_Process": add_opentargets_go_subgraph,
-        "Reactome_Pathways": add_opentargets_pathway_subgraph,
+        "Reactome_Pathways": add_opentargets_reactome_pathway_subgraph,
         "ChEMBL_Drugs": add_opentargets_drug_subgraph,
         "OpenTargets_Diseases": add_opentargets_disease_subgraph,
         "WikiPathways": add_wikipathways_subgraph,
