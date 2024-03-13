@@ -65,7 +65,9 @@ def add_disgenet_disease_subgraph(g, gene_node_label, annot_list):
             ]
 
             if len(node_exists) == 0:
-                g.add_edge(gene_node_label, dg_node_label,  label="associated_with", attr_dict=edge_attrs)
+                g.add_edge(
+                    gene_node_label, dg_node_label, label="associated_with", attr_dict=edge_attrs
+                )
 
     return g
 
@@ -102,7 +104,9 @@ def add_opentargets_location_subgraph(g, gene_node_label, annot_list):
             ]
 
             if len(node_exists) == 0:
-                g.add_edge(gene_node_label, loc_node_label,label="localized_in", attr_dict=edge_attrs)
+                g.add_edge(
+                    gene_node_label, loc_node_label, label="localized_in", attr_dict=edge_attrs
+                )
 
     return g
 
@@ -135,7 +139,7 @@ def add_opentargets_go_subgraph(g, gene_node_label, annot_list):
         node_exists = [x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash]
 
         if len(node_exists) == 0:
-            g.add_edge(gene_node_label, go_node_label, label="part_of_go",attr_dict=edge_attrs)
+            g.add_edge(gene_node_label, go_node_label, label="part_of_go", attr_dict=edge_attrs)
 
     return g
 
@@ -171,7 +175,12 @@ def add_opentargets_pathway_subgraph(g, gene_node_label, annot_list):
             ]
 
             if len(node_exists) == 0:
-                g.add_edge(gene_node_label, pathway_node_label, label="part_of_pathway",attr_dict=edge_attrs)
+                g.add_edge(
+                    gene_node_label,
+                    pathway_node_label,
+                    label="part_of_pathway",
+                    attr_dict=edge_attrs,
+                )
 
     return g
 
@@ -208,7 +217,9 @@ def add_opentargets_drug_subgraph(g, gene_node_label, annot_list):
             ]
 
             if len(node_exists) == 0:
-                g.add_edge(drug_node_label, gene_node_label, label=drug["relation"],attr_dict=edge_attrs)
+                g.add_edge(
+                    drug_node_label, gene_node_label, label=drug["relation"], attr_dict=edge_attrs
+                )
 
     return g
 
@@ -245,7 +256,9 @@ def add_opentargets_disease_subgraph(g, gene_node_label, annot_list):
             ]
 
             if len(node_exists) == 0:
-                g.add_edge(gene_node_label, dg_node_label,label="associated_with", attr_dict=edge_attrs)
+                g.add_edge(
+                    gene_node_label, dg_node_label, label="associated_with", attr_dict=edge_attrs
+                )
 
     return g
 
@@ -282,7 +295,12 @@ def add_wikipathways_subgraph(g, gene_node_label, annot_list):
             ]
 
             if len(node_exists) == 0:
-                g.add_edge(gene_node_label, pathway_node_label, label="part_of_pathway",attr_dict=edge_attrs)
+                g.add_edge(
+                    gene_node_label,
+                    pathway_node_label,
+                    label="part_of_pathway",
+                    attr_dict=edge_attrs,
+                )
 
     return g
 
@@ -305,7 +323,12 @@ def add_ppi_subgraph(g, gene_node_label, annot_list):
         node_exists = [x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash]
 
         if len(node_exists) == 0:
-            g.add_edge(gene_node_label, ppi["stringdb_link_to"],label= "interacts_with",attr_dict=edge_attrs)
+            g.add_edge(
+                gene_node_label,
+                ppi["stringdb_link_to"],
+                label="interacts_with",
+                attr_dict=edge_attrs,
+            )
 
     return g
 
@@ -360,7 +383,9 @@ def add_molmedb_gene_inhibitor(g, gene_node_label, annot_list):
             ]
 
             if len(node_exists) == 0:
-                g.add_edge(gene_node_label, inhibitor_node_label, label="inhibits",attr_dict=edge_attrs)
+                g.add_edge(
+                    gene_node_label, inhibitor_node_label, label="inhibits", attr_dict=edge_attrs
+                )
 
     return g
 
@@ -410,9 +435,12 @@ def add_bgee_subgraph(g, gene_node_label, annot_list):
             ]
 
             if len(node_exists) == 0:
-                g.add_edge(gene_node_label, annot_node_label,label="expressed_in" ,attr_dict=edge_attrs)
+                g.add_edge(
+                    gene_node_label, annot_node_label, label="expressed_in", attr_dict=edge_attrs
+                )
 
     return g
+
 
 def add_minerva_subgraph(g, gene_node_label, annot_list):
     """Construct part of the graph by linking the gene to a list of annotation entities (disease, drug ..etc).
@@ -446,15 +474,21 @@ def add_minerva_subgraph(g, gene_node_label, annot_list):
             ]
 
             if len(node_exists) == 0:
-                g.add_edge(gene_node_label, pathway_node_label, label="part_of_pathway",attr_dict=edge_attrs)
+                g.add_edge(
+                    gene_node_label,
+                    pathway_node_label,
+                    label="part_of_pathway",
+                    attr_dict=edge_attrs,
+                )
 
     return g
 
-def add_drug_disease_subgraph(g, gene_node_label_2, annot_list):
+
+def add_drug_disease_subgraph(g, drug_node_label, annot_list):
     """Construct part of the graph by linking the gene to a list of annotation entities (disease, drug ..etc).
 
     :param g: the input graph to extend with new nodes and edges.
-    :param gene_node_label: the gene node to be linked to annotation entities.
+    :param drug_node_label: the gene node to be linked to annotation entities.
     :param annot_list: list of annotations from a specific source (e.g. DisGeNET, WikiPathways ..etc).
     :returns: a NetworkX MultiDiGraph
     """
@@ -463,18 +497,18 @@ def add_drug_disease_subgraph(g, gene_node_label_2, annot_list):
 
         edge_hash = hash(frozenset(edge_attrs.items()))
         edge_attrs["edge_hash"] = edge_hash
-        
-        new_edge = (ddi["umls"],gene_node_label_2)
+
+        new_edge = (ddi["umls"], drug_node_label)
 
         # Check if the edge already exists
         if not g.has_edge(*new_edge):
             # Add the edge to the graph
-            g.add_edge(ddi["umls"],gene_node_label_2 ,label='treated_with', attr_dict=edge_attrs)
-       
+            g.add_edge(ddi["umls"], drug_node_label, label="treated_with", attr_dict=edge_attrs)
 
     return g
 
-def generate_networkx_graph(fuse_df: pd.DataFrame,drug_disease=None):
+
+def generate_networkx_graph(fuse_df: pd.DataFrame, drug_disease=None):
     """Construct a NetWorkX graph from a Pandas DataFrame of genes and their multi-source annotations.
 
     :param fuse_df: the input dataframe to be converted into a graph.
@@ -493,7 +527,7 @@ def generate_networkx_graph(fuse_df: pd.DataFrame,drug_disease=None):
         "ChEMBL_Drugs": add_opentargets_drug_subgraph,
         "OpenTargets_Diseases": add_opentargets_disease_subgraph,
         "WikiPathways": add_wikipathways_subgraph,
-        "MINERVA":add_minerva_subgraph,
+        "MINERVA": add_minerva_subgraph,
         "transporter_inhibitor": add_molmedb_gene_inhibitor,
         "Bgee": add_bgee_subgraph,
     }
@@ -530,19 +564,21 @@ def generate_networkx_graph(fuse_df: pd.DataFrame,drug_disease=None):
                 ppi_list = []
 
             add_ppi_subgraph(g, gene_node_label, ppi_list)
-            
+
     if drug_disease is not None:
-        fuse_df= pd.concat([fuse_df, drug_disease[['identifier','drug_diseases']]], ignore_index=True)
+        fuse_df = pd.concat(
+            [fuse_df, drug_disease[["identifier", "drug_diseases"]]], ignore_index=True
+        )
         if "drug_diseases" in row:
             for _i, row in fuse_df.iterrows():
-                gene_node_label_2= row['identifier']
+                gene_node_label_2 = row["identifier"]
                 ddi_list = json.loads(json.dumps(row["drug_diseases"]))
 
-                if type(ddi_list) == float :
+                if type(ddi_list) == float:
                     ddi_list = []
 
                 add_drug_disease_subgraph(g, gene_node_label_2, ddi_list)
-        
+
     for node in g.nodes():
         for k, v in g.nodes[node]["attr_dict"].items():
             if v is not None:
