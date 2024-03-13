@@ -133,14 +133,14 @@ def get_gene_disease(bridgedb_df: pd.DataFrame, endpoint: str) -> Tuple[pd.DataF
         disgenet_df["disease_id"] = disgenet_df["description"].apply(
             lambda x: x.split("[")[1].split("]")[0]
         )
-        disgenet_df["disease_label"] = disgenet_df["description"].apply(lambda x: x.split(" [")[0])
+        disgenet_df["disease_name"] = disgenet_df["description"].apply(lambda x: x.split(" [")[0])
         disgenet_df["score"] = disgenet_df["disease_score"].astype(float)
         disgenet_df["source"] = disgenet_df["source"].apply(lambda x: x.split("/")[-1])
 
         disgenet_df["target"] = disgenet_df["target"].values.astype(str)
-        disgenet_df = disgenet_df[["target", "disease_id", "disease_label", "score", "source"]]
+        disgenet_df = disgenet_df[["target", "disease_id", "disease_name", "score", "source"]]
 
-        selected_columns = ["disease_id", "disease_label", "score", "source"]
+        selected_columns = ["disease_id", "disease_name", "score", "source"]
 
         merged_df = collapse_data_sources(
             data_df=bridgedb_df,
