@@ -3,138 +3,147 @@
 """Python file for queriying DisGeNet database (https://www.disgenet.org/home/)."""
 
 import datetime
+import logging
+import os
 import warnings
-from typing import Optional, Tuple
+from string import Template
+from typing import Tuple
 
 import pandas as pd
-import requests
+from SPARQLWrapper import JSON, SPARQLWrapper
+from SPARQLWrapper.SPARQLExceptions import SPARQLWrapperException
 
 from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interest
 
+logger = logging.getLogger("disgenet")
 
-def test_api_disgenet(api_host: str) -> bool:
-    """Test the availability of the DisGeNET API.
 
-    :param api_host: DisGeNET API ("https://www.disgenet.org/api")
-    :returns: True if the API is available, False otherwise.
+def test_endpoint_disgenet(endpoint: str) -> bool:
+    """Test the availability of the DisGeNET SPARQL endpoint.
+
+    :param endpoint: DisGeNET SAPRQL endpoint ("http://rdf.disgenet.org/sparql/")
+    :returns: True if the endpoint is available, False otherwise.
     """
+    with open(os.path.dirname(__file__) + "/queries/disgenet-metadata.rq", "r") as fin:
+        sparql_query = fin.read()
+
+    sparql = SPARQLWrapper(endpoint)
+    sparql.setReturnFormat(JSON)
+
+    sparql.setQuery(sparql_query)
+
     try:
-        response = requests.get(f"{api_host}/version/")
-        response.raise_for_status()
+        sparql.queryAndConvert()
         return True
-    except requests.RequestException:
+    except SPARQLWrapperException:
         return False
 
 
-def get_version_disgenet(api_host: str) -> dict:
+def get_version_disgenet(endpoint: str) -> dict:
     """Get version of DisGeNET API.
 
-    :param api_host: DisGeNET API ("https://www.disgenet.org/api")
+    :param endpoint: DisGeNET SAPRQL endpoint ("http://rdf.disgenet.org/sparql/")
     :returns: a dictionary containing the version information
     """
-    # Set the DisGeNET API
-    s = requests.Session()
-    # Get version
-    version_response = s.get(api_host + "/version/")
-    disgenet_version = version_response.json()
+    with open(os.path.dirname(__file__) + "/queries/disgenet-metadata.rq", "r") as fin:
+        sparql_query = fin.read()
+
+    sparql = SPARQLWrapper(endpoint)
+    sparql.setReturnFormat(JSON)
+
+    sparql.setQuery(sparql_query)
+
+    version_response = sparql.queryAndConvert()
+    bindings = version_response["results"]["bindings"]
+    pattern = "RDF Distribution"
+    disgenet_version = {"disgenet_version": ""}  # Set default value
+
+    for binding in bindings:
+        title = binding["title"]["value"]
+        if pattern in title:
+            disgenet_version = {"disgenet_version": title}
 
     return disgenet_version
 
 
-def get_gene_disease(
-    bridgedb_df: pd.DataFrame,
-    api_key: str = "0209751bfa7b6a981a8f5fb5f062313067ecd36c",
-    params: Optional[dict] = None,
-) -> Tuple[pd.DataFrame, dict]:
+def get_gene_disease(bridgedb_df: pd.DataFrame, endpoint: str) -> Tuple[pd.DataFrame, dict]:
     """Query gene-disease associations from DisGeNET.
 
-    :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
-    :param api_key: DisGeNET API key (more details can be found at https://www.disgenet.org/api/#/Authorization)
-    :param params: dictionary of parameters to be passed to the DisGeNET API.
-                   More details can be found at https://www.disgenet.org/api/#/gene.
+    :param bridgedb_df: BridgeDb output for creating the list of gene ids to query.
+    :param endpoint: DisGeNET SAPRQL endpoint ("http://rdf.disgenet.org/sparql/").
     :returns: a DataFrame containing the DisGeNET output and dictionary of the DisGeNET metadata.
-    :raises ValueError: if the DisGeNET API key is not provided
     """
     # Check if the DisGeNET API is available
-    api_host = "https://www.disgenet.org/api"
-    api_available = test_api_disgenet(api_host=api_host)
+    api_available = test_endpoint_disgenet(endpoint=endpoint)
     if not api_available:
-        warnings.warn("DisGeNET API is not available. Unable to retrieve data.", stacklevel=2)
+        warnings.warn(
+            "DisGeNET SPARQL endpoint is not available. Unable to retrieve data.", stacklevel=2
+        )
         return pd.DataFrame(), {}
 
     # Extract the "target" values and join them into a single string separated by commas
     data_df = get_identifier_of_interest(bridgedb_df, "NCBI Gene")
-    disgenet_input = ",".join(data_df["target"])
+    hgnc_gene_list = data_df["target"].tolist()
+    hgnc_gene_list = list(set(hgnc_gene_list))
+    query_gene_lists = []
 
-    # Set the DisGeNET API
-    s = requests.Session()
+    if len(hgnc_gene_list) > 25:
+        for i in range(0, len(hgnc_gene_list), 25):
+            tmp_list = hgnc_gene_list[i : i + 25]
+            query_gene_lists.append(" ".join(f'"{g}"' for g in tmp_list))
 
-    if not api_key:
-        raise ValueError("Please provide a DisGeNET API key")
+    else:
+        query_gene_lists.append(" ".join(f'"{g}"' for g in hgnc_gene_list))
 
-    # Add the API key to the requests headers
-    s.headers.update({"Authorization": "Bearer %s" % api_key})
+    with open(os.path.dirname(__file__) + "/queries/disgenet-genes-disease.rq", "r") as fin:
+        sparql_query = fin.read()
+
     # Record the start time
     start_time = datetime.datetime.now()
 
-    # Split the targets into chunks of 99 or fewer
-    targets_list = disgenet_input.split(",")
-    chunk_size = 99
-    chunks = [targets_list[i : i + chunk_size] for i in range(0, len(targets_list), chunk_size)]
+    sparql = SPARQLWrapper(endpoint)
+    sparql.setReturnFormat(JSON)
 
-    disgenet_output = []
+    query_count = 0
 
-    if not params:
-        params = {"source": "CURATED", "format": "json"}
-    else:
-        params["format"] = "json"
-        params["source"] = "CURATED"
+    results_df_list = list()
 
-    for chunk in chunks:
-        # Join the chunked targets into a comma-separated string
-        chunked_input = ",".join(chunk)
-        # Get all the diseases associated with genes for the current chunk
-        gda_response = s.get(f"{api_host}/gda/gene/{chunked_input}", params=params)
-        chunk_output = gda_response.json()
-        disgenet_output.extend(chunk_output)
+    for gene_list_str in query_gene_lists:
+        query_count += 1
+        sparql_query_template = Template(sparql_query)
+        substit_dict = dict(gene_list=gene_list_str)
+        sparql_query_template_sub = sparql_query_template.substitute(substit_dict)
+        sparql.setQuery(sparql_query_template_sub)
+        res = sparql.queryAndConvert()
+        res = res["results"]["bindings"]
+        df = pd.DataFrame(res)
+        df = df.applymap(lambda x: x["value"])
+
+        results_df_list.append(df)
 
     # Record the end time
     end_time = datetime.datetime.now()
-
-    # Convert disgenet_output to a DataFrame
-    disgenet_df = pd.DataFrame(disgenet_output)
-    if "geneid" not in disgenet_df:
+    # Organize the annotation results as an array of dictionaries
+    disgenet_df = pd.concat(results_df_list)
+    if "gene_id" not in disgenet_df:
         return pd.DataFrame()
     else:
-        # Drop the uniprotid column
-        disgenet_df.drop("uniprotid", axis=1, inplace=True)
-        # Add DisGeNET output as a new column to BridgeDb file
-        disgenet_df.rename(columns={"geneid": "target"}, inplace=True)
+        disgenet_df.drop_duplicates(inplace=True)
+        disgenet_df["target"] = disgenet_df["gene_id"].apply(lambda x: x.split("/")[-1])
+        disgenet_df["disease_id"] = disgenet_df["description"].apply(
+            lambda x: x.split("[")[1].split("]")[0]
+        )
+        disgenet_df["disease_label"] = disgenet_df["description"].apply(lambda x: x.split(" [")[0])
+        disgenet_df["score"] = disgenet_df["disease_score"].astype(float)
+        disgenet_df["source"] = disgenet_df["source"].apply(lambda x: x.split("/")[-1])
+
         disgenet_df["target"] = disgenet_df["target"].values.astype(str)
+        disgenet_df = disgenet_df[["target", "disease_id", "disease_label", "score", "source"]]
 
-        selected_columns = [
-            "gene_dsi",
-            "gene_dpi",
-            "gene_pli",
-            "protein_class",
-            "protein_class_name",
-            "diseaseid",
-            "disease_name",
-            "disease_class",
-            "disease_class_name",
-            "disease_type",
-            "disease_semantic_type",
-            "score",
-            "ei",
-            "el",
-            "year_initial",
-            "year_final",
-            "source",
-        ]
+        selected_columns = ["disease_id", "disease_label", "score", "source"]
 
-        # Merge the two DataFrames based on 'geneid', 'gene_symbol', 'identifier', and 'target'
         merged_df = collapse_data_sources(
-            data_df=data_df,
+            data_df=bridgedb_df,
             source_namespace="NCBI Gene",
             target_df=disgenet_df,
             common_cols=["target"],
@@ -148,21 +157,18 @@ def get_gene_disease(
         # Calculate the time elapsed
         time_elapsed = str(end_time - start_time)
         # Add version to metadata file
-        disgenet_version = get_version_disgenet(api_host=api_host)
+        disgenet_version = get_version_disgenet(endpoint=endpoint)
         # Add the datasource, query, query time, and the date to metadata
         disgenet_metadata = {
             "datasource": "DisGeNET",
             "metadata": {"source_version": disgenet_version},
             "query": {
-                "size": len(disgenet_input.split(",")),
+                "size": len(hgnc_gene_list),
                 "input_type": "NCBI Gene",
                 "time": time_elapsed,
                 "date": current_date,
-                "url": gda_response.request.url,
+                "url": "http://rdf.disgenet.org/sparql/",
             },
         }
-
-        if s:
-            s.close()
 
         return merged_df, disgenet_metadata

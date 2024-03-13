@@ -1,0 +1,5 @@
+SELECT DISTINCT (str(?titleList) as ?title)
+WHERE {
+   ?dataset a void:Dataset ;
+   dcterms:title ?titleList .
+}
