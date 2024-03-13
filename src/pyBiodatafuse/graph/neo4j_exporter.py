@@ -69,10 +69,10 @@ def export(
 
     # assign node types
     driver.execute_query(
-        "MATCH (n) WITH COLLECT(DISTINCT n.node_type) AS propertyValues, n "
+        "MATCH (n) WITH COLLECT(DISTINCT n.labels) AS propertyValues, n "
         + "UNWIND propertyValues AS propValue "
         + "MATCH (n) "
-        + "WHERE n.node_type = propValue "
+        + "WHERE n.labels = propValue "
         + "WITH n, propValue AS newLabel "
         + "CALL apoc.create.addLabels(n, [newLabel]) YIELD node "
         + "RETURN node",
