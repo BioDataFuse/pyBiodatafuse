@@ -50,7 +50,6 @@ def test_get_version_bgee(mock_sparql_request):
 
 def test_sparql_get_gene_expression(bridgedb_dataframe):
     """Test that the SPARQL endpoint returns the expected get_gene_expression data."""
-
     data_file_folder = os.path.join(os.path.dirname(__file__), "data")
     obtained_data, metadata = get_gene_expression(bridgedb_dataframe)
     expected_data = pd.read_json(os.path.join(data_file_folder, "bgee_expected_data.json"))

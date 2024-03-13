@@ -76,8 +76,8 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
     """
 
     anatomical_entities_list = anat_entities_list.split("\n")
-    anatomical_entities_list = [anatEntity.strip() for anatEntity in anatomical_entities_list if
-                                anatEntity.strip() != '']
+    anatomical_entities_list = [anatomical_entity.strip() for anatomical_entity in anatomical_entities_list if
+                                anatomical_entity.strip() != '']
 
     query_anat_entities_lists = []
     if len(anatomical_entities_list) > 25:
