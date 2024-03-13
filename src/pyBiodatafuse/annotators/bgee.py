@@ -33,11 +33,10 @@ def get_version_bgee() -> dict:
     return bgee_version
 
 
-def get_gene_expression(bridgedb_df: pd.DataFrame, anatomical_entities: pd.DataFrame):
+def get_gene_expression(bridgedb_df: pd.DataFrame):
     """Query gene-tissue expression information from Bgee.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
-    :param anatomical_entities: a dataframe containing the names of Anatomical entities of interest
     :returns: a DataFrame containing the Bgee output and dictionary of the Bgee metadata.
     """
     # Record the start time
@@ -56,17 +55,41 @@ def get_gene_expression(bridgedb_df: pd.DataFrame, anatomical_entities: pd.DataF
     else:
         query_gene_lists.append(" ".join(f'"{g}"' for g in gene_list))
 
-    anat_entities_list = anatomical_entities["AnatomicalEntityNames"].tolist()
-    anat_entities_list = list(set(anat_entities_list))
+    anat_entities_list = """
+    blood
+    bone marrow
+    brain
+    breast
+    cardiovascular system
+    digestive system
+    heart
+    immune organ
+    kidney
+    liver
+    lung
+    nervous system
+    pancreas
+    placenta
+    reproductive system
+    respiratory system
+    skeletal system
+    """
+
+    anatomical_entities_list = anat_entities_list.split("\n")
+    anatomical_entities_list = [
+        anatomical_entity.strip()
+        for anatomical_entity in anatomical_entities_list
+        if anatomical_entity.strip() != ""
+    ]
 
     query_anat_entities_lists = []
-    if len(anat_entities_list) > 25:
-        for i in range(0, len(anat_entities_list), 25):
-            tmp_list = anat_entities_list[i : i + 25]
+    if len(anatomical_entities_list) > 25:
+        for i in range(0, len(anatomical_entities_list), 25):
+            tmp_list = anatomical_entities_list[i : i + 25]
             query_anat_entities_lists.append(" ".join(f'"{g}"' for g in tmp_list))
 
     else:
-        query_anat_entities_lists.append(" ".join(f'"{g}"' for g in anat_entities_list))
+        query_anat_entities_lists.append(" ".join(f'"{g}"' for g in anatomical_entities_list))
 
     with open(os.path.dirname(__file__) + "/queries/bgee-genes-tissues-expression.rq", "r") as fin:
         sparql_query = fin.read()
@@ -83,6 +106,7 @@ def get_gene_expression(bridgedb_df: pd.DataFrame, anatomical_entities: pd.DataF
             query_count += 1
 
             sparql_query_template = Template(sparql_query)
+
             substit_dict = dict(gene_list=gene_list_str, anat_entities_list=query_anat_entities_str)
             sparql_query_template_sub = sparql_query_template.substitute(substit_dict)
 
@@ -134,10 +158,6 @@ def get_gene_expression(bridgedb_df: pd.DataFrame, anatomical_entities: pd.DataF
         target_specific_cols=[
             "anatomical_entity_id",
             "anatomical_entity_name",
-            "developmental_stage_id",
-            "developmental_stage_name",
-            "expression_level",
-            "confidence_level",
         ],
         col_name="Bgee",
     )

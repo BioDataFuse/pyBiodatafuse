@@ -50,38 +50,15 @@ def test_get_version_bgee(mock_sparql_request):
 
 def test_sparql_get_gene_expression(bridgedb_dataframe):
     """Test that the SPARQL endpoint returns the expected get_gene_expression data."""
-    anatomical_entities_of_interest = """
-    respiratory system
-    heart
-    brain
-    """
-
-    anatomical_entities_list = anatomical_entities_of_interest.split("\n")
-    anatomical_entities_list = [
-        anat_entity.strip() for anat_entity in anatomical_entities_list if anat_entity.strip() != ""
-    ]
-
-    anatomical_entities_df = pd.DataFrame(
-        anatomical_entities_list, columns=["AnatomicalEntityNames"]
-    )
-
     data_file_folder = os.path.join(os.path.dirname(__file__), "data")
-    obtained_data, metadata = get_gene_expression(bridgedb_dataframe, anatomical_entities_df)
+    obtained_data, metadata = get_gene_expression(bridgedb_dataframe)
     expected_data = pd.read_json(os.path.join(data_file_folder, "bgee_expected_data.json"))
-    expected_data = expected_data.sort_values(
-        by=["expression_level", "developmental_stage_id"], ascending=False
-    )
-    expected_data = expected_data.astype({"expression_level": float})
-    expected_data.reset_index(drop=True, inplace=True)
+    expected_data = set(expected_data["anatomical_entity_id"].unique())
 
     obtained_sorted = pd.DataFrame(obtained_data["Bgee"][0])
-    obtained_sorted = obtained_sorted.sort_values(
-        by=["expression_level", "developmental_stage_id"], ascending=False
-    )
-    obtained_sorted = obtained_sorted.astype({"expression_level": float})
-    obtained_sorted.reset_index(drop=True, inplace=True)
+    obtained_sorted = set(obtained_sorted["anatomical_entity_id"].unique())
 
-    assert obtained_sorted.equals(expected_data)
+    assert obtained_sorted == expected_data
 
 
 @patch("pyBiodatafuse.annotators.bgee.SPARQLWrapper.queryAndConvert")
@@ -101,38 +78,15 @@ def test_get_gene_expression(mock_sparql_request, bridgedb_dataframe):
 
     mock_sparql_request.side_effect = mocked_data
 
-    anatomical_entities_of_interest = """
-    respiratory system
-    heart
-    brain
-    """
-
-    anatomical_entities_list = anatomical_entities_of_interest.split("\n")
-    anatomical_entities_list = [
-        anat_entity.strip() for anat_entity in anatomical_entities_list if anat_entity.strip() != ""
-    ]
-
-    anatomical_entities_df = pd.DataFrame(
-        anatomical_entities_list, columns=["AnatomicalEntityNames"]
-    )
-
-    obtained_data, metadata = get_gene_expression(bridgedb_dataframe, anatomical_entities_df)
+    obtained_data, metadata = get_gene_expression(bridgedb_dataframe)
 
     expected_data = pd.read_json(os.path.join(data_file_folder, "bgee_expected_data.json"))
-    expected_data = expected_data.sort_values(
-        by=["expression_level", "developmental_stage_id"], ascending=False
-    )
-    expected_data = expected_data.astype({"expression_level": float})
-    expected_data.reset_index(drop=True, inplace=True)
+    expected_data = set(expected_data["anatomical_entity_id"].unique())
 
     obtained_sorted = pd.DataFrame(obtained_data["Bgee"][0])
-    obtained_sorted = obtained_sorted.sort_values(
-        by=["expression_level", "developmental_stage_id"], ascending=False
-    )
-    obtained_sorted = obtained_sorted.astype({"expression_level": float})
-    obtained_sorted.reset_index(drop=True, inplace=True)
+    obtained_sorted = set(obtained_sorted["anatomical_entity_id"].unique())
 
-    assert obtained_sorted.equals(expected_data)
+    assert obtained_sorted == expected_data
 
 
 @pytest.fixture(scope="module")
