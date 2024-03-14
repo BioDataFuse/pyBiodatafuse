@@ -123,6 +123,9 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
     intermediate_df = results_df
 
     intermediate_df.rename(columns={"ensembl_id": "target"}, inplace=True)
+    intermediate_df["anatomical_entity_id"] = intermediate_df["anatomical_entity_id"].apply(
+        lambda x: x.split("/")[-1]
+    )
 
     # Record the end time
     end_time = datetime.datetime.now()
