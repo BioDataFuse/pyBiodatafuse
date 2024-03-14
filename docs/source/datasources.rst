@@ -24,9 +24,9 @@ MolMeDB
 
 `MolMeDB <https://molmedb.upol.cz/detail/intro>` is an open chemistry database about interactions of molecules with membranes.
 
-.. autofunction:: pyBiodatafuse.annotators.molmedb.get_gene_mol_inhibitor
+.. autofunction:: pyBiodatafuse.annotators.molmedb.get_gene_compound_inhibitor
 
-.. autofunction:: pyBiodatafuse.annotators.molmedb.get_mol_gene_inhibitor
+.. autofunction:: pyBiodatafuse.annotators.molmedb.get_compound_gene_inhibitor
 
 OpenTargets
 ~~~~~~~~~~~~~~~

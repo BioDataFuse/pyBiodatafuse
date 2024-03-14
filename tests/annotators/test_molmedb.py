@@ -9,7 +9,7 @@ import pandas as pd
 import pytest
 from numpy import nan
 
-from pyBiodatafuse.annotators.molmedb import get_gene_mol_inhibitor, get_mol_gene_inhibitor
+from pyBiodatafuse.annotators.molmedb import get_gene_compound_inhibitor, get_compound_gene_inhibitor
 
 # MolMeDB still not versioned
 # TODO after MolMeDB update
@@ -33,8 +33,8 @@ from pyBiodatafuse.annotators.molmedb import get_gene_mol_inhibitor, get_mol_gen
 
 
 @patch("pyBiodatafuse.annotators.molmedb.SPARQLWrapper.queryAndConvert")
-def test_get_gene_mol_inhibitor(mock_sparql_request, bridgedb_dataframe_genes):
-    """Test the get_gene_mol_inhibitor."""
+def test_get_gene_compound_inhibitor(mock_sparql_request, bridgedb_dataframe_genes):
+    """Test the get_gene_compound_inhibitor."""
     mock_sparql_request.side_effect = [
         {
             "head": {
@@ -191,7 +191,7 @@ def test_get_gene_mol_inhibitor(mock_sparql_request, bridgedb_dataframe_genes):
         }
     ]
 
-    obtained_data, metadata = get_gene_mol_inhibitor(bridgedb_dataframe_genes)
+    obtained_data, metadata = get_gene_compound_inhibitor(bridgedb_dataframe_genes)
 
     expected_data = pd.Series(
         [
@@ -253,8 +253,8 @@ def test_get_gene_mol_inhibitor(mock_sparql_request, bridgedb_dataframe_genes):
 
 
 @patch("pyBiodatafuse.annotators.molmedb.SPARQLWrapper.queryAndConvert")
-def test_get_mol_gene_inhibitor(mock_sparql_request, bridgedb_dataframe_compounds):
-    """Test the get_mol_gene_inhibitor."""
+def test_get_compound_gene_inhibitor(mock_sparql_request, bridgedb_dataframe_compounds):
+    """Test the get_compound_gene_inhibitor."""
     mock_sparql_request.side_effect = [
         {
             "head": {
@@ -354,7 +354,7 @@ def test_get_mol_gene_inhibitor(mock_sparql_request, bridgedb_dataframe_compound
         }
     ]
 
-    obtained_data, metadata = get_mol_gene_inhibitor(bridgedb_dataframe_compounds)
+    obtained_data, metadata = get_compound_gene_inhibitor(bridgedb_dataframe_compounds)
 
     expected_data = pd.Series(
         [

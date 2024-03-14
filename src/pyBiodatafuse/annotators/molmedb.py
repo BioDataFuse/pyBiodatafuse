@@ -36,7 +36,7 @@ def test_molmedb_endpoint(endpoint: str) -> bool:
         return False
 
 
-def get_gene_mol_inhibitor(bridgedb_df: pd.DataFrame):
+def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame):
     """Query MolMeDB for inhibitors of transporters encoded by genes.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
@@ -182,7 +182,7 @@ def get_gene_mol_inhibitor(bridgedb_df: pd.DataFrame):
     return merged_df, molmedb_metadata
 
 
-def get_mol_gene_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
+def get_compound_gene_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
     """Query MolMeDB for transporters inhibited by molecule.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query.
