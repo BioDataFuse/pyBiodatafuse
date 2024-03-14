@@ -270,9 +270,7 @@ def get_gene_reactome_pathways(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame,
 
     opentargets_df = pd.concat(data)
 
-    opentargets_df.rename(
-        columns={"pathway": "pathwayLabel"}, inplace=True
-    )
+    opentargets_df.rename(columns={"pathway": "pathwayLabel"}, inplace=True)
 
     # Merge the two DataFrames on the target column
     merged_df = collapse_data_sources(

@@ -12,12 +12,14 @@ import requests
 from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interest
 
 
-def check_endpoint_minerva(endpoint: Optional[str] = "https://minerva-net.lcsb.uni.lu/api") -> bool:
+def check_endpoint_minerva(endpoint: Optional[str] = None) -> bool:
     """Check the availability of the MINERVA API endpoint.
 
     :param endpoint: MINERVA API endpoint ("https://minerva-net.lcsb.uni.lu/api")
     :returns: True if the endpoint is available, False otherwise.
     """
+    endpoint = endpoint if endpoint is not None else "https://minerva-net.lcsb.uni.lu/api"
+
     response = requests.get(endpoint + "/machines/")
 
     # Check if API is down
@@ -30,7 +32,7 @@ def check_endpoint_minerva(endpoint: Optional[str] = "https://minerva-net.lcsb.u
 def get_version_minerva(map_endpoint: str) -> dict:
     """Get version of minerva API.
 
-    :param endpoint: MINERVA API endpoint ("https://covid19map.elixir-luxembourg.org/minerva/")
+    :param map_endpoint: MINERVA map API endpoint ("https://covid19map.elixir-luxembourg.org/minerva/")
     :returns: a dictionary containing the version information
     """
     response = requests.get(map_endpoint + "api/configuration/")
@@ -41,12 +43,14 @@ def get_version_minerva(map_endpoint: str) -> dict:
     return minerva_version
 
 
-def list_projects(endpoint: Optional[str] = "https://minerva-net.lcsb.uni.lu/api") -> pd.DataFrame:
+def list_projects(endpoint: Optional[str] = None) -> pd.DataFrame:
     """Get information about MINERVA projects.
 
     :param endpoint: MINERVA API endpoint ("https://minerva-net.lcsb.uni.lu/api/")
     :returns: a DataFrame containing url, names, and IDs from the different projects in MINERVA plattform
     """
+    endpoint = endpoint if endpoint is not None else "https://minerva-net.lcsb.uni.lu/api"
+
     response = requests.get(endpoint + "/machines/")
     projects = response.json()
     projects_ids = projects["pageContent"]
@@ -82,7 +86,7 @@ def list_projects(endpoint: Optional[str] = "https://minerva-net.lcsb.uni.lu/api
 
 def get_minerva_components(
     map_name: str,
-    endpoint: Optional[str] = "https://minerva-net.lcsb.uni.lu/api",
+    endpoint: Optional[str] = None,
     get_elements: Optional[bool] = True,
     get_reactions: Optional[bool] = True,
 ) -> Tuple[str, dict]:
@@ -105,6 +109,7 @@ def get_minerva_components(
             Those lists provide information about the reactions involed in that pathway.
         - 'models' is a list containing pathway-specific information for each of the pathways in the model
     """
+    endpoint = endpoint if endpoint is not None else "https://minerva-net.lcsb.uni.lu/api"
     # Get list of projects
     project_df = list_projects(endpoint)
     # Get url from the project specified
@@ -164,7 +169,7 @@ def get_gene_minerva_pathways(
     bridgedb_df: pd.DataFrame,
     map_name: str,
     input_type: Optional[str] = "Protein",
-    endpoint: Optional[str] = "https://minerva-net.lcsb.uni.lu/api",
+    endpoint: Optional[str] = None,
     get_elements: Optional[bool] = True,
     get_reactions: Optional[bool] = True,
 ) -> Tuple[pd.DataFrame, dict]:
@@ -183,6 +188,7 @@ def get_gene_minerva_pathways(
 
     :returns: a DataFrame containing DataFrame containing the MINERVA output and dictionary of the MINERVA metadata.
     """
+    endpoint = endpoint if endpoint is not None else "https://minerva-net.lcsb.uni.lu/api"
     # Check if the MINERVA API is available
     api_available = check_endpoint_minerva(endpoint=endpoint)
     if not api_available:

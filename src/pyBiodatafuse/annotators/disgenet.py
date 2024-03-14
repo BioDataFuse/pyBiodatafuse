@@ -7,7 +7,7 @@ import logging
 import os
 import warnings
 from string import Template
-from typing import Tuple, Optional
+from typing import Optional, Tuple
 
 import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
@@ -66,7 +66,9 @@ def get_version_disgenet(endpoint: Optional[str] = "http://rdf.disgenet.org/spar
     return disgenet_version
 
 
-def get_gene_disease(bridgedb_df: pd.DataFrame, endpoint: Optional[str] = "http://rdf.disgenet.org/sparql/") -> Tuple[pd.DataFrame, dict]:
+def get_gene_disease(
+    bridgedb_df: pd.DataFrame, endpoint: Optional[str] = "http://rdf.disgenet.org/sparql/"
+) -> Tuple[pd.DataFrame, dict]:
     """Query gene-disease associations from DisGeNET.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query.

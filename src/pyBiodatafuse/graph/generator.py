@@ -485,7 +485,10 @@ def add_pubchem_assay(g, gene_node_label, annot_list):
 
             if len(node_exists) == 0:
                 g.add_edge(
-                    gene_node_label, inhibitor_node_label, label=assay["outcome"], attr_dict=edge_attrs
+                    gene_node_label,
+                    inhibitor_node_label,
+                    label=assay["outcome"],
+                    attr_dict=edge_attrs,
                 )
 
     return g
