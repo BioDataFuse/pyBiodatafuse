@@ -41,9 +41,9 @@ OpenTargets
 
 .. autofunction:: pyBiodatafuse.annotators.opentargets.get_gene_tractability
 
-.. autofunction:: pyBiodatafuse.annotators.opentargets.get_gene_drug_interactions
+.. autofunction:: pyBiodatafuse.annotators.opentargets.get_gene_compound_interactions
 
-.. autofunction:: pyBiodatafuse.annotators.opentargets.get_targetgene_disease_associations
+.. autofunction:: pyBiodatafuse.annotators.opentargets.get_gene_disease_associations
 
 StringDB
 ~~~~~~~~~~~~~~~
