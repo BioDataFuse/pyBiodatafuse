@@ -21,7 +21,7 @@ logger = logging.getLogger("disgenet")
 def test_endpoint_disgenet(endpoint: Optional[str] = "http://rdf.disgenet.org/sparql/") -> bool:
     """Test the availability of the DisGeNET SPARQL endpoint.
 
-    :param endpoint: DisGeNET SAPRQL endpoint ("http://rdf.disgenet.org/sparql/")
+    :param endpoint: DisGeNET SPARQL endpoint ("http://rdf.disgenet.org/sparql/")
     :returns: True if the endpoint is available, False otherwise.
     """
     with open(os.path.dirname(__file__) + "/queries/disgenet-metadata.rq", "r") as fin:
