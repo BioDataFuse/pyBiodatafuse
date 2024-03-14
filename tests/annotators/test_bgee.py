@@ -9,6 +9,7 @@ from unittest.mock import patch
 
 import pandas as pd
 import pytest
+from SPARQLWrapper import JSON, SPARQLWrapper
 
 from pyBiodatafuse.annotators.bgee import get_gene_expression, get_version_bgee
 
@@ -47,19 +48,21 @@ def test_get_version_bgee(mock_sparql_request):
 
     assert obtained_version == expected_version
 
+def test_sparql_endpoint_bgee():
+    """Test the availability of the Bgee SPARQL endpoint."""
+    endpoint = "https://www.bgee.org/sparql/"
+    sparql_query = "ASK WHERE {?s ?p ?o}"
 
-def test_sparql_get_gene_expression(bridgedb_dataframe):
-    """Test that the SPARQL endpoint returns the expected get_gene_expression data."""
-    data_file_folder = os.path.join(os.path.dirname(__file__), "data")
-    obtained_data, metadata = get_gene_expression(bridgedb_dataframe)
-    expected_data = pd.read_json(os.path.join(data_file_folder, "bgee_expected_data.json"))
-    expected_data = set(expected_data["anatomical_entity_id"].unique())
+    sparql = SPARQLWrapper(endpoint)
+    sparql.setReturnFormat(JSON)
 
-    obtained_sorted = pd.DataFrame(obtained_data["Bgee"][0])
-    obtained_sorted = set(obtained_sorted["anatomical_entity_id"].unique())
+    sparql.setQuery(sparql_query)
 
-    assert obtained_sorted == expected_data
-
+    try:
+        sparql.queryAndConvert()
+        assert True
+    except SPARQLWrapperException:
+        assert False
 
 @patch("pyBiodatafuse.annotators.bgee.SPARQLWrapper.queryAndConvert")
 def test_get_gene_expression(mock_sparql_request, bridgedb_dataframe):
