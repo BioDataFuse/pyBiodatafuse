@@ -573,11 +573,12 @@ def generate_networkx_graph(fuse_df: pd.DataFrame, drug_disease=None):
                 add_drug_disease_subgraph(g, gene_node_label_2, ddi_list)
 
     for node in g.nodes():
-        for k, v in g.nodes[node]["attr_dict"].items():
-            if v is not None:
-                g.nodes[node][k] = v
+        if "attr_dict" in g.nodes[node]:
+            for k, v in g.nodes[node]["attr_dict"].items():
+                if v is not None:
+                    g.nodes[node][k] = v
 
-        del g.nodes[node]["attr_dict"]
+            del g.nodes[node]["attr_dict"]
 
     for u, v, k in g.edges(keys=True):
         if "attr_dict" in g[u][v][k]:
