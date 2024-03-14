@@ -453,7 +453,6 @@ def get_targetgene_disease_associations(bridgedb_df: pd.DataFrame) -> Tuple[pd.D
           knownDrugs {
             rows {
               disease {
-                id
                 name
                 dbXRefs
                 therapeuticAreas {
@@ -483,23 +482,29 @@ def get_targetgene_disease_associations(bridgedb_df: pd.DataFrame) -> Tuple[pd.D
     }
 
     data = []
-
     for gene in r["data"]["targets"]:
         if not gene["knownDrugs"]:
             continue
         disease_info = gene["knownDrugs"]["rows"]
         disease_df = pd.DataFrame(disease_info)
+        disease_df = disease_df.drop_duplicates()
 
         if disease_df.empty:
             continue
 
-        disease_df[["disease_id", "disease_name", "therapeutic_area"]] = disease_df[
+        disease_df[["disease_name", "dbXRefs", "therapeutic_area"]] = disease_df[
             "disease"
         ].apply(pd.Series)
+
         disease_df["therapeutic_areas"] = disease_df["therapeutic_area"].apply(
             lambda x: ", ".join([f"{i['id']}:{i['name']}" for i in x])
         )
-        disease_df.drop(columns=["disease", "therapeutic_area"], inplace=True)
+        
+        disease_df["disease_id"] = disease_df['dbXRefs'].apply(
+            lambda x: ", ".join(['ulms:' + i.split(':')[1] for i in x if i.startswith('UMLS:')])
+        )
+
+        disease_df.drop(columns=["disease", "therapeutic_area", "dbXRefs"], inplace=True)
 
         disease_df["target"] = gene["id"]
 
