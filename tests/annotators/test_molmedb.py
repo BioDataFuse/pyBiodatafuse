@@ -10,8 +10,8 @@ import pytest
 from numpy import nan
 
 from pyBiodatafuse.annotators.molmedb import (
-    get_gene_compound_inhibitor,
     get_compound_gene_inhibitor,
+    get_gene_compound_inhibitor,
 )
 
 # MolMeDB still not versioned

@@ -271,7 +271,7 @@ def get_gene_reactome_pathways(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame,
     opentargets_df = pd.concat(data)
 
     opentargets_df.rename(
-        columns={"pathway": "pathway_name", "pathwayId": "pathway_id"}, inplace=True
+        columns={"pathway": "pathwayLabel"}, inplace=True
     )
 
     # Merge the two DataFrames on the target column
@@ -280,7 +280,7 @@ def get_gene_reactome_pathways(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame,
         source_namespace="Ensembl",
         target_df=opentargets_df,
         common_cols=["target"],
-        target_specific_cols=["pathway_name", "pathway_id"],
+        target_specific_cols=["pathwayLabel", "pathwayId"],
         col_name="Reactome_Pathways",  # TODO: Cross-check if correct name
     )
 
@@ -405,6 +405,7 @@ def get_gene_compound_interactions(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
 
         drug_info = gene["knownDrugs"]["rows"]
         drug_df = pd.DataFrame(drug_info)
+        drug_df = drug_df.rename(columns={"isApproved": "is_approved"})
 
         if drug_df.empty:
             continue
@@ -505,13 +506,17 @@ def get_gene_disease_associations(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
         disease_df["therapeutic_areas"] = disease_df["therapeutic_area"].apply(
             lambda x: ", ".join([f"{i['id']}:{i['name']}" for i in x])
         )
-        
+
         # disease_df["disease_id"] = disease_df['dbXRefs'].apply(
         #     lambda x: ", ".join(['ulms:' + i.split(':')[1] for i in x if i.startswith('UMLS:')])
         # )
         disease_df["disease_id"] = disease_df.apply(
-            lambda row: ", ".join(['ulms:' + i.split(':')[1] for i in row['dbXRefs'] if i.startswith('UMLS:')] or [row['mondo_id']]), axis=1)
-
+            lambda row: ", ".join(
+                ["ulms:" + i.split(":")[1] for i in row["dbXRefs"] if i.startswith("UMLS:")]
+                or [row["mondo_id"]]
+            ),
+            axis=1,
+        )
 
         disease_df.drop(columns=["disease", "therapeutic_area", "dbXRefs"], inplace=True)
 
