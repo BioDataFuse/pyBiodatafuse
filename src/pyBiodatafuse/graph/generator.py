@@ -576,7 +576,7 @@ def generate_networkx_graph(fuse_df: pd.DataFrame, drug_disease=None):
             "source": "BridgeDB",
             "name": row["identifier"],
             "id": row["target"],
-            "node_type": "Gene",
+            "labels": "Gene",
             row["target.source"]: row["target"],
         }
 
