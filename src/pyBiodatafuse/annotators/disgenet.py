@@ -7,7 +7,7 @@ import logging
 import os
 import warnings
 from string import Template
-from typing import Tuple
+from typing import Tuple, Optional
 
 import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
@@ -18,7 +18,7 @@ from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interes
 logger = logging.getLogger("disgenet")
 
 
-def test_endpoint_disgenet(endpoint: str) -> bool:
+def test_endpoint_disgenet(endpoint: Optional[str] = "http://rdf.disgenet.org/sparql/") -> bool:
     """Test the availability of the DisGeNET SPARQL endpoint.
 
     :param endpoint: DisGeNET SAPRQL endpoint ("http://rdf.disgenet.org/sparql/")
@@ -39,7 +39,7 @@ def test_endpoint_disgenet(endpoint: str) -> bool:
         return False
 
 
-def get_version_disgenet(endpoint: str) -> dict:
+def get_version_disgenet(endpoint: Optional[str] = "http://rdf.disgenet.org/sparql/") -> dict:
     """Get version of DisGeNET API.
 
     :param endpoint: DisGeNET SAPRQL endpoint ("http://rdf.disgenet.org/sparql/")
@@ -66,7 +66,7 @@ def get_version_disgenet(endpoint: str) -> dict:
     return disgenet_version
 
 
-def get_gene_disease(bridgedb_df: pd.DataFrame, endpoint: str) -> Tuple[pd.DataFrame, dict]:
+def get_gene_disease(bridgedb_df: pd.DataFrame, endpoint: Optional[str] = "http://rdf.disgenet.org/sparql/") -> Tuple[pd.DataFrame, dict]:
     """Query gene-disease associations from DisGeNET.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query.
