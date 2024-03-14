@@ -12,7 +12,7 @@ import requests
 from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interest
 
 
-def check_endpoint_minerva(endpoint: str) -> bool:
+def check_endpoint_minerva(endpoint: Optional[str] = "https://minerva-net.lcsb.uni.lu/api") -> bool:
     """Check the availability of the MINERVA API endpoint.
 
     :param endpoint: MINERVA API endpoint ("https://minerva-net.lcsb.uni.lu/api")
@@ -27,13 +27,13 @@ def check_endpoint_minerva(endpoint: str) -> bool:
         return False
 
 
-def get_version_minerva(endpoint: str) -> dict:
+def get_version_minerva(map_endpoint: str) -> dict:
     """Get version of minerva API.
 
     :param endpoint: MINERVA API endpoint ("https://covid19map.elixir-luxembourg.org/minerva/")
     :returns: a dictionary containing the version information
     """
-    response = requests.get(endpoint + "api/configuration/")
+    response = requests.get(map_endpoint + "api/configuration/")
 
     conf_dict = response.json()
     minerva_version = {"minerva_version": conf_dict["version"]}
@@ -41,7 +41,7 @@ def get_version_minerva(endpoint: str) -> dict:
     return minerva_version
 
 
-def list_projects(endpoint: str) -> pd.DataFrame:
+def list_projects(endpoint: Optional[str] = "https://minerva-net.lcsb.uni.lu/api") -> pd.DataFrame:
     """Get information about MINERVA projects.
 
     :param endpoint: MINERVA API endpoint ("https://minerva-net.lcsb.uni.lu/api/")
@@ -81,8 +81,8 @@ def list_projects(endpoint: str) -> pd.DataFrame:
 
 
 def get_minerva_components(
-    endpoint: str,
     map_name: str,
+    endpoint: Optional[str] = "https://minerva-net.lcsb.uni.lu/api",
     get_elements: Optional[bool] = True,
     get_reactions: Optional[bool] = True,
 ) -> Tuple[str, dict]:
@@ -163,8 +163,8 @@ def get_minerva_components(
 def get_gene_minerva_pathways(
     bridgedb_df: pd.DataFrame,
     map_name: str,
-    endpoint: str,
     input_type: Optional[str] = "Protein",
+    endpoint: Optional[str] = "https://minerva-net.lcsb.uni.lu/api",
     get_elements: Optional[bool] = True,
     get_reactions: Optional[bool] = True,
 ) -> Tuple[pd.DataFrame, dict]:
@@ -236,9 +236,9 @@ def get_gene_minerva_pathways(
 
         data = pd.DataFrame()
         data["symbol"] = symbol
-        data["pathway_label"] = x
-        data["pathway_gene_count"] = len(symbol) - symbol.count(None)
-        data["pathway_id"] = models[index_to_extract - 1]["idObject"]
+        data["pathwayLabel"] = x
+        data["pathwayGeneCount"] = len(symbol) - symbol.count(None)
+        data["pathwayId"] = models[index_to_extract - 1]["idObject"]
         data["refs"] = refs
         data["type"] = type
 
@@ -254,8 +254,8 @@ def get_gene_minerva_pathways(
         # Add MINERVA output as a new column to BridgeDb file
         combined_df.rename(columns={"symbol": "identifier"}, inplace=True)
         combined_df["identifier"] = combined_df["identifier"].values.astype(str)
-        combined_df = combined_df.drop_duplicates(subset=["identifier", "pathway_id"])
-        selected_columns = ["pathway_id", "pathway_label", "pathway_gene_count"]
+        combined_df = combined_df.drop_duplicates(subset=["identifier", "pathwayId"])
+        selected_columns = ["pathwayId", "pathwayLabel", "pathwayGeneCount"]
 
         # Merge the two DataFrames based on 'gene_id', 'gene_symbol', 'identifier', and 'target'
         merged_df = collapse_data_sources(
@@ -273,7 +273,7 @@ def get_gene_minerva_pathways(
         # Calculate the time elapsed
         time_elapsed = str(end_time - start_time)
         # Add version to metadata file
-        minerva_version = get_version_minerva(endpoint=map_url)
+        minerva_version = get_version_minerva(map_endpoint=map_url)
         # Add the datasource, query, query time, and the date to metadata
         minerva_metadata = {
             "datasource": "MINERVA",
