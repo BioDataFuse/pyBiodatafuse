@@ -106,6 +106,7 @@ def get_gene_location(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
     for gene in r["data"]["targets"]:
         gene_id = gene["id"]
         loc_df = pd.DataFrame(gene["subcellularLocations"])
+        loc_df = loc_df.drop_duplicates()
         loc_df["target"] = gene_id
         data.append(loc_df)
 
@@ -185,6 +186,7 @@ def get_gene_go_process(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
     for gene in r["data"]["targets"]:
         terms = [i["term"] for i in gene["geneOntology"]]
         path_df = pd.DataFrame(terms)
+        path_df = path_df.drop_duplicates()
         path_df["target"] = gene["id"]
         data.append(path_df)
 
@@ -259,6 +261,7 @@ def get_gene_reactome_pathways(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame,
 
     for gene in r["data"]["targets"]:
         path_df = pd.DataFrame(gene["pathways"])
+        path_df = path_df.drop_duplicates()
         path_df["target"] = gene["id"]
         data.append(path_df)
 
@@ -333,6 +336,7 @@ def get_gene_tractability(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict
 
     for gene in r["data"]["targets"]:
         tract_df = pd.DataFrame(gene["tractability"])
+        tract_df = tract_df.drop_duplicates()
         tract_df["ensembl_id"] = gene["id"]
         data.append(tract_df)
 
@@ -347,7 +351,7 @@ def get_gene_tractability(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict
     return opentargets_df, version_metadata
 
 
-def get_gene_drug_interactions(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
+def get_gene_compound_interactions(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
     """Get information about drugs associated with a genes of interest.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
@@ -370,6 +374,7 @@ def get_gene_drug_interactions(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame,
               drug {
                 id
                 name
+                isApproved
               }
             }
           }
@@ -404,9 +409,9 @@ def get_gene_drug_interactions(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame,
         if drug_df.empty:
             continue
 
-        drug_df[["chembl_id", "drug_name"]] = drug_df["drug"].apply(pd.Series)
+        drug_df[["chembl_id", "drug_name", "isApproved"]] = drug_df["drug"].apply(pd.Series)
         drug_df.drop(columns=["drug"], inplace=True)
-
+        drug_df = drug_df.rename(columns={"isApproved": "is_approved"})
         drug_df["target"] = gene["id"]
 
         drug_df["mechanismOfAction"] = drug_df["mechanismOfAction"].apply(
@@ -426,7 +431,7 @@ def get_gene_drug_interactions(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame,
         source_namespace="Ensembl",
         target_df=opentargets_df,
         common_cols=["target"],
-        target_specific_cols=["chembl_id", "drug_name", "relation"],
+        target_specific_cols=["chembl_id", "drug_name", "is_approved", "relation"],
         col_name="ChEMBL_Drugs",  # TODO: Cross-check if correct name
     )
 
@@ -453,6 +458,7 @@ def get_targetgene_disease_associations(bridgedb_df: pd.DataFrame) -> Tuple[pd.D
           knownDrugs {
             rows {
               disease {
+                id
                 name
                 dbXRefs
                 therapeuticAreas {
@@ -492,7 +498,7 @@ def get_targetgene_disease_associations(bridgedb_df: pd.DataFrame) -> Tuple[pd.D
         if disease_df.empty:
             continue
 
-        disease_df[["disease_name", "dbXRefs", "therapeutic_area"]] = disease_df[
+        disease_df[["mondo_id", "disease_name", "dbXRefs", "therapeutic_area"]] = disease_df[
             "disease"
         ].apply(pd.Series)
 
@@ -500,9 +506,12 @@ def get_targetgene_disease_associations(bridgedb_df: pd.DataFrame) -> Tuple[pd.D
             lambda x: ", ".join([f"{i['id']}:{i['name']}" for i in x])
         )
         
-        disease_df["disease_id"] = disease_df['dbXRefs'].apply(
-            lambda x: ", ".join(['ulms:' + i.split(':')[1] for i in x if i.startswith('UMLS:')])
-        )
+        # disease_df["disease_id"] = disease_df['dbXRefs'].apply(
+        #     lambda x: ", ".join(['ulms:' + i.split(':')[1] for i in x if i.startswith('UMLS:')])
+        # )
+        disease_df["disease_id"] = disease_df.apply(
+            lambda row: ", ".join(['ulms:' + i.split(':')[1] for i in row['dbXRefs'] if i.startswith('UMLS:')] or [row['mondo_id']]), axis=1)
+
 
         disease_df.drop(columns=["disease", "therapeutic_area", "dbXRefs"], inplace=True)
 
