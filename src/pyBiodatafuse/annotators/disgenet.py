@@ -66,7 +66,9 @@ def get_version_disgenet(endpoint: str) -> dict:
     return disgenet_version
 
 
-def get_gene_disease(bridgedb_df: pd.DataFrame, endpoint: str) -> Tuple[pd.DataFrame, dict]:
+def get_gene_disease(
+    bridgedb_df: pd.DataFrame, endpoint: str = "http://rdf.disgenet.org/sparql/"
+) -> Tuple[pd.DataFrame, dict]:
     """Query gene-disease associations from DisGeNET.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query.
