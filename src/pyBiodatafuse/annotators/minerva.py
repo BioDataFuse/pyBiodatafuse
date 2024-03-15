@@ -13,13 +13,13 @@ from pyBiodatafuse.constants import MINERVA, MINERVA_ENDPOINT
 from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interest
 
 
-def check_endpoint_minerva(endpoint: Optional[str] = MINERVA_ENDPOINT) -> bool:
+def check_endpoint_minerva(endpoint: str) -> bool:
     """Check the availability of the MINERVA API endpoint.
 
     :param endpoint: MINERVA API endpoint
     :returns: True if the endpoint is available, False otherwise.
     """
-    response = requests.get(endpoint + "/machines/")
+    response = requests.get(f"{endpoint}/machines/")
 
     # Check if API is down
     if response.status_code == 200:
@@ -42,14 +42,14 @@ def get_version_minerva(map_endpoint: str) -> dict:
     return minerva_version
 
 
-def list_projects(endpoint: Optional[str] = MINERVA_ENDPOINT) -> pd.DataFrame:
+def list_projects(endpoint: str = MINERVA_ENDPOINT) -> pd.DataFrame:
     """Get information about MINERVA projects.
 
-    :param endpoint: MINERVA API endpoint
     :returns: a dataFrame containing url, names and IDs from the different projects in MINERVA plattform
     """
-    response = requests.get(endpoint + "/machines/")
-    projects = response.json()
+    base_endpoint = f"{endpoint}/machines/"
+    response = requests.get(base_endpoint).json()
+    projects = response
     projects_ids = projects["pageContent"]
 
     project_df = pd.DataFrame()
@@ -63,13 +63,13 @@ def list_projects(endpoint: Optional[str] = MINERVA_ENDPOINT) -> pd.DataFrame:
     names_list = []
     for x in project_df["id"]:
         x = str(x)
-        if len(requests.get(endpoint + "/machines/" + x + "/projects/").json()["pageContent"]) != 0:
-            map_id = requests.get(endpoint + "/machines/" + x + "/projects/").json()["pageContent"][
-                0
-            ]["projectId"]
-            name = requests.get(endpoint + "/machines/" + x + "/projects/").json()["pageContent"][
-                0
-            ]["mapName"]
+        if len(requests.get(f"{base_endpoint}/{x}/projects/").json()["pageContent"]) != 0:
+            map_id = requests.get(f"{base_endpoint}/{x}/projects/").json()["pageContent"][0][
+                "projectId"
+            ]
+            name = requests.get(f"{base_endpoint}/{x}/projects/").json()["pageContent"][0][
+                "mapName"
+            ]
             map_id_list.append(map_id)
             names_list.append(name)
         else:
@@ -85,7 +85,7 @@ def list_projects(endpoint: Optional[str] = MINERVA_ENDPOINT) -> pd.DataFrame:
 
 def get_minerva_components(
     map_name: str,
-    endpoint: Optional[str] = MINERVA_ENDPOINT,
+    endpoint: str = MINERVA_ENDPOINT,
     get_elements: Optional[bool] = True,
     get_reactions: Optional[bool] = True,
 ) -> Tuple[str, dict]:
@@ -105,6 +105,7 @@ def get_minerva_components(
     """
     # Get list of projects
     project_df = list_projects(endpoint)
+
     # Get url from the project specified
     condition = project_df["names"] == map_name
     row = project_df.index[condition].tolist()
