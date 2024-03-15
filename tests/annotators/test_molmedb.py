@@ -9,7 +9,10 @@ import pandas as pd
 import pytest
 from numpy import nan
 
-from pyBiodatafuse.annotators.molmedb import get_gene_mol_inhibitor, get_mol_gene_inhibitor
+from pyBiodatafuse.annotators.molmedb import (
+    get_compound_gene_inhibitor,
+    get_gene_compound_inhibitor,
+)
 
 # MolMeDB still not versioned
 # TODO after MolMeDB update
@@ -33,8 +36,8 @@ from pyBiodatafuse.annotators.molmedb import get_gene_mol_inhibitor, get_mol_gen
 
 
 @patch("pyBiodatafuse.annotators.molmedb.SPARQLWrapper.queryAndConvert")
-def test_get_gene_mol_inhibitor(mock_sparql_request, bridgedb_dataframe_genes):
-    """Test the get_gene_mol_inhibitor."""
+def test_get_gene_compound_inhibitor(mock_sparql_request, bridgedb_dataframe_genes):
+    """Test the get_gene_compound_inhibitor."""
     mock_sparql_request.side_effect = [
         {
             "head": {
@@ -191,58 +194,58 @@ def test_get_gene_mol_inhibitor(mock_sparql_request, bridgedb_dataframe_genes):
         }
     ]
 
-    obtained_data, metadata = get_gene_mol_inhibitor(bridgedb_dataframe_genes)
+    obtained_data, metadata = get_gene_compound_inhibitor(bridgedb_dataframe_genes)
 
     expected_data = pd.Series(
         [
             [
                 {
-                    "label": "Euphorbiaproliferin c",
+                    "compound_name": "Euphorbiaproliferin c",
                     "InChIKey": "MEMULCZBXUZFOZ-UHFFFAOYSA-N",
                     "SMILES": "CC(=O)OC1C2(C)OCC3(C(=O)C=CC(C(C)(C)OC",
+                    "compound_cid": nan,
                     "molmedb_id": "MM470852",
                     "source_doi": "doi:10.1021/acs.jnatprod.6b00260",
                     "source_pmid": 27441737,
                     "chebi_id": nan,
                     "drugbank_id": nan,
-                    "pubchem_compound_id": nan,
                 },
                 {
-                    "label": "Euphornin",
+                    "compound_name": "Euphornin",
                     "InChIKey": "BRVXVMOWTHQKHC-LVYIKVSWSA-N",
                     "SMILES": "CC(=O)OC1CC(OC(C)=O)C(C)(C)/C=C",
+                    "compound_cid": nan,
                     "molmedb_id": "MM470853",
                     "source_doi": "doi:10.1021/acs.jnatprod.8b00500",
                     "source_pmid": 30411614,
                     "chebi_id": "140105",
                     "drugbank_id": nan,
-                    "pubchem_compound_id": nan,
                 },
             ],
             [
                 {
-                    "label": "[dichloro(phosphono)methyl]phosphonic acid",
+                    "compound_name": "[dichloro(phosphono)methyl]phosphonic acid",
                     "InChIKey": "ACSIXWWBWUQEHA-UHFFFAOYSA-N",
                     "SMILES": "O=P(O)(O)C(Cl)(Cl)P(=O)(O)O",
+                    "compound_cid": 25419,
                     "molmedb_id": "MM17483",
                     "source_doi": "doi:10.1073/pnas.1704847114",
                     "source_pmid": 28720702,
                     "chebi_id": "110423",
                     "drugbank_id": "DB00720",
-                    "pubchem_compound_id": 25419,
                 }
             ],
             [
                 {
-                    "label": nan,
+                    "compound_name": nan,
                     "InChIKey": nan,
                     "SMILES": nan,
+                    "compound_cid": nan,
                     "molmedb_id": nan,
                     "source_doi": nan,
                     "source_pmid": nan,
                     "chebi_id": nan,
                     "drugbank_id": nan,
-                    "pubchem_compound_id": nan,
                 }
             ],
         ]
@@ -253,8 +256,8 @@ def test_get_gene_mol_inhibitor(mock_sparql_request, bridgedb_dataframe_genes):
 
 
 @patch("pyBiodatafuse.annotators.molmedb.SPARQLWrapper.queryAndConvert")
-def test_get_mol_gene_inhibitor(mock_sparql_request, bridgedb_dataframe_compounds):
-    """Test the get_mol_gene_inhibitor."""
+def test_get_compound_gene_inhibitor(mock_sparql_request, bridgedb_dataframe_compounds):
+    """Test the get_compound_gene_inhibitor."""
     mock_sparql_request.side_effect = [
         {
             "head": {
@@ -354,7 +357,7 @@ def test_get_mol_gene_inhibitor(mock_sparql_request, bridgedb_dataframe_compound
         }
     ]
 
-    obtained_data, metadata = get_mol_gene_inhibitor(bridgedb_dataframe_compounds)
+    obtained_data, metadata = get_compound_gene_inhibitor(bridgedb_dataframe_compounds)
 
     expected_data = pd.Series(
         [

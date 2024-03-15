@@ -36,7 +36,7 @@ def test_molmedb_endpoint(endpoint: str) -> bool:
         return False
 
 
-def get_gene_mol_inhibitor(bridgedb_df: pd.DataFrame):
+def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame):
     """Query MolMeDB for inhibitors of transporters encoded by genes.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
@@ -104,6 +104,14 @@ def get_gene_mol_inhibitor(bridgedb_df: pd.DataFrame):
     intermediate_df.rename(columns={"transporterID": "target"}, inplace=True)
 
     if not intermediate_df.empty:
+        intermediate_df.rename(
+            columns={
+                "transporterID": "target",
+                "pubchem_compound_id": "compound_cid",
+                "label": "compound_name",
+            },
+            inplace=True,
+        )
         intermediate_df["source_doi"] = intermediate_df["source_doi"].map(
             lambda x: "doi:" + x, na_action="ignore"
         )
@@ -158,7 +166,7 @@ def get_gene_mol_inhibitor(bridgedb_df: pd.DataFrame):
         )
         # set numerical identifiers to int to kepp output consistency
         merged_df["transporter_inhibitor"] = merged_df["transporter_inhibitor"].apply(
-            lambda res: int_response_value_types(res, ["pubchem_compound_id", "source_pmid"])
+            lambda res: int_response_value_types(res, ["compound_cid", "source_pmid"])
         )
     merged_df.reset_index(drop=True, inplace=True)
 
@@ -182,7 +190,7 @@ def get_gene_mol_inhibitor(bridgedb_df: pd.DataFrame):
     return merged_df, molmedb_metadata
 
 
-def get_mol_gene_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
+def get_compound_gene_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
     """Query MolMeDB for transporters inhibited by molecule.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query.
