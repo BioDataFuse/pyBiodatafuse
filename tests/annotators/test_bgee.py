@@ -69,27 +69,40 @@ def test_get_gene_expression(mock_sparql_request, bridgedb_dataframe):
     """Test the get_gene_expression function."""
     data_file_folder = os.path.join(os.path.dirname(__file__), "data")
     data_file_path = os.path.join(data_file_folder, "bgee_mock_data.json")
+
+    mock_data_list = []
     with open(data_file_path) as f:
         mock_data = json.load(f)
 
-    mock_bgee_data = pd.DataFrame(mock_data)
+    for json_response in mock_data:
+        mock_data_list.append(pd.DataFrame.from_dict(json_response))
 
     bgee_version_file_path = os.path.join(data_file_folder, "bgee_version_data.json")
     mock_version_data = pd.read_json(bgee_version_file_path)
 
-    mocked_data = [mock_bgee_data, mock_version_data]
+    mock_data_list.append(mock_version_data)
 
-    mock_sparql_request.side_effect = mocked_data
+    mock_sparql_request.side_effect = mock_data_list
 
     obtained_data, metadata = get_gene_expression(bridgedb_dataframe)
 
     expected_data = pd.read_json(os.path.join(data_file_folder, "bgee_expected_data.json"))
-    expected_data = set(expected_data["anatomical_entity_id"].unique())
+    expected_data = expected_data.sort_values(
+        by=["anatomical_entity_id", "expression_level", "developmental_stage_id"], ascending=False
+    )
+    expected_data = expected_data.astype({"expression_level": float})
+    expected_data.reset_index(drop=True, inplace=True)
 
     obtained_sorted = pd.DataFrame(obtained_data["Bgee"][0])
-    obtained_sorted = set(obtained_sorted["anatomical_entity_id"].unique())
+    obtained_sorted = obtained_sorted.sort_values(
+        by=["anatomical_entity_id", "expression_level", "developmental_stage_id"], ascending=False
+    )
+    obtained_sorted = obtained_sorted.astype({"expression_level": float})
+    obtained_sorted.reset_index(drop=True, inplace=True)
 
-    assert obtained_sorted == expected_data
+    print(obtained_sorted.compare(expected_data))
+
+    assert obtained_sorted.equals(expected_data)
 
 
 @pytest.fixture(scope="module")
