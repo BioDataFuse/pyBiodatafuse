@@ -7,7 +7,7 @@ import datetime
 import os
 import warnings
 from string import Template
-from typing import Optional, Tuple
+from typing import Tuple
 
 import numpy as np
 import pandas as pd
@@ -44,7 +44,6 @@ def get_protein_molecule_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
     """Query PubChem for molecules screened on proteins as targets.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query.
-    :param endpoint: Pubchem endpoint
     :returns: a DataFrame containing the PubChem output and dictionary of the PubChem metadata.
     """
     # Check if the IDSM endpoint is available
@@ -131,9 +130,9 @@ def get_protein_molecule_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
         intermediate_df["assay_type"] = intermediate_df["assay_type"].map(
             lambda x: assay_endpoint_types[x]
         )
+        intermediate_df.rename(columns={"compound_cid": "pubchem_compound_id"}, inplace=True)
         target_columns = list(intermediate_df.columns)
         target_columns.remove("target")
-        target_columns.rename(columns={"compound_cid": "pubchem_compound_id"}, inplace=True)
     else:
         target_columns = list(intermediate_df.columns)
 

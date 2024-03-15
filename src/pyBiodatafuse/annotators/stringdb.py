@@ -7,7 +7,6 @@ import datetime
 import io
 import logging
 import warnings
-from typing import Optional
 
 import pandas as pd
 import requests

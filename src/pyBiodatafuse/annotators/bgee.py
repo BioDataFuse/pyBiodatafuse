@@ -144,7 +144,7 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
 
             df = df.applymap(lambda x: x["value"])
 
-            results_df = pd.concat([results_df, df])
+            intermediate_df = pd.concat([intermediate_df, df], ignore_index=True)
 
     # Record the end time
     end_time = datetime.datetime.now()
@@ -157,7 +157,7 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
     intermediate_df["developmental_stage_id"] = intermediate_df["developmental_stage_id"].apply(
         lambda x: x.split("/")[-1]
     )
-  
+
     # Metadata details
     # Get the current date and time
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")

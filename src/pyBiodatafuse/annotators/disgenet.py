@@ -158,7 +158,7 @@ def get_gene_disease(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
     # Calculate the time elapsed
     time_elapsed = str(end_time - start_time)
     # Add version to metadata file
-    disgenet_version = get_version_disgenet(endpoint=DISGENET_ENDPOINT)
+    disgenet_version = get_version_disgenet()
     # Add the datasource, query, query time, and the date to metadata
     disgenet_metadata = {
         "datasource": DISGENET,

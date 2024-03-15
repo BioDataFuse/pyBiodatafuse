@@ -5,7 +5,7 @@
 import datetime
 import math
 import warnings
-from typing import Optional, Tuple
+from typing import Tuple
 
 import pandas as pd
 import requests

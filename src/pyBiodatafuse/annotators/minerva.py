@@ -170,7 +170,7 @@ def get_gene_minerva_pathways(
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
     :param map_name: name of the map you want to retrieve the information from. The extensive list
-    can be found at https://minerva-net.lcsb.uni.lu/table.html.
+        can be found at https://minerva-net.lcsb.uni.lu/table.html.
     :param endpoint: MINERVA API endpoint
     :param input_type: type of input gene. Default is "Protein"
     :param get_elements: boolean to get elements of the chosen diagram

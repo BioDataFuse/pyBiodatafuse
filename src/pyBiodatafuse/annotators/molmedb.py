@@ -7,7 +7,7 @@ import datetime
 import os
 import warnings
 from string import Template
-from typing import Optional, Tuple
+from typing import Tuple
 
 import numpy as np
 import pandas as pd
@@ -20,7 +20,6 @@ from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interes
 def check_endpoint_molmedb() -> bool:
     """Check the availability of the MolmeDB endpoint.
 
-    :param endpoint: MolMeDB endpoint
     :returns: True if the endpoint is available, False otherwise.
     """
     query_string = """SELECT * WHERE {
