@@ -602,20 +602,20 @@ def generate_networkx_graph(fuse_df: pd.DataFrame, drug_disease=None):
                 ppi_list = []
 
             add_ppi_subgraph(g, gene_node_label, ppi_list)
+    # TODO:
+    # if drug_disease is not None:
+    #     fuse_df = pd.concat(
+    #         [fuse_df, drug_disease[["identifier", "drug_diseases"]]], ignore_index=True
+    #     )
+    #     if "drug_diseases" in row:
+    #         for _i, row in fuse_df.iterrows():
+    #             gene_node_label_2 = row["identifier"]
+    #             ddi_list = json.loads(json.dumps(row["drug_diseases"]))
 
-    if drug_disease is not None:
-        fuse_df = pd.concat(
-            [fuse_df, drug_disease[["identifier", "drug_diseases"]]], ignore_index=True
-        )
-        if "drug_diseases" in row:
-            for _i, row in fuse_df.iterrows():
-                gene_node_label_2 = row["identifier"]
-                ddi_list = json.loads(json.dumps(row["drug_diseases"]))
+    #             if type(ddi_list) == float:
+    #                 ddi_list = []
 
-                if type(ddi_list) == float:
-                    ddi_list = []
-
-                add_drug_disease_subgraph(g, gene_node_label_2, ddi_list)
+    #             add_drug_disease_subgraph(g, gene_node_label_2, ddi_list)
 
     for node in g.nodes():
         if "attr_dict" in g.nodes[node]:
