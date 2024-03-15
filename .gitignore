@@ -905,3 +905,6 @@ scratch/
 
 # Pickle dumps
 *.pkl
+
+# Example data files
+examples/post-covid_syndrome/data/*
