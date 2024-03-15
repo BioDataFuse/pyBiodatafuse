@@ -5,10 +5,9 @@
 
 import json
 import os
-from unittest.mock import patch
-
 import pandas as pd
 import pytest
+from unittest.mock import patch
 
 from pyBiodatafuse.annotators.bgee import get_gene_expression, get_version_bgee
 
