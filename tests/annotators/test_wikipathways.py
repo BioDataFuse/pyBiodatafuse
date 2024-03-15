@@ -10,6 +10,7 @@ import pytest
 from numpy import nan
 
 from pyBiodatafuse.annotators.wikipathways import get_gene_wikipathway, get_version_wikipathways
+from pyBiodatafuse.constants import WIKIPATHWAY
 
 
 @patch("pyBiodatafuse.annotators.wikipathways.SPARQLWrapper.queryAndConvert")
@@ -103,9 +104,9 @@ def test_get_gene_wikipathway(mock_sparql_request, bridgedb_dataframe):
             [{"pathwayId": nan, "pathwayLabel": nan, "pathwayGeneCount": nan}],
         ]
     )
-    expected_data.name = "WikiPathways"
+    expected_data.name = WIKIPATHWAY
 
-    pd.testing.assert_series_equal(obtained_data["WikiPathways"], expected_data)
+    pd.testing.assert_series_equal(obtained_data[WIKIPATHWAY], expected_data)
 
 
 @pytest.fixture(scope="module")

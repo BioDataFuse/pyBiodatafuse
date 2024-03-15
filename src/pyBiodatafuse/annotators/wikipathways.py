@@ -1,20 +1,42 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""Python file for queriying Wikipathways SPARQL endpoint (https://sparql.wikipathways.org/sparql)."""
+"""Python file for queriying Wikipathways SPARQL endpoint ()."""
 
 import datetime
 import logging
 import os
+import warnings
 from string import Template
 
 import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
 from SPARQLWrapper.SPARQLExceptions import SPARQLWrapperException
 
+from pyBiodatafuse.constants import WIKIPATHWAY, WIKIPATHWAY_ENDPOINT
 from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interest
 
 logger = logging.getLogger("wikipathways")
+
+
+def check_endpoint_wikipathways() -> bool:
+    """Check the availability of the WikiPathways SPARQL endpoint.
+
+    :returns: True if the endpoint is available, False otherwise.
+    """
+    with open(os.path.dirname(__file__) + "/queries/wikipathways-metadata.rq", "r") as fin:
+        sparql_query = fin.read()
+
+    sparql = SPARQLWrapper(WIKIPATHWAY_ENDPOINT)
+    sparql.setReturnFormat(JSON)
+
+    sparql.setQuery(sparql_query)
+
+    try:
+        sparql.queryAndConvert()
+        return True
+    except SPARQLWrapperException:
+        return False
 
 
 def get_version_wikipathways() -> dict:
@@ -29,21 +51,9 @@ def get_version_wikipathways() -> dict:
     sparql.setReturnFormat(JSON)
 
     sparql.setQuery(sparql_query)
+    res = sparql.queryAndConvert()
 
-    try:
-        res = sparql.queryAndConvert()
-
-        wikipathways_version = {
-            "wikipathways_version": res["results"]["bindings"][0]["title"]["value"]
-        }
-
-    except SPARQLWrapperException as e:
-        logger.error(str(e))
-        logger.warning(
-            "\n\nDue to external call failure, the annotator returned an empty result set"
-        )
-
-        wikipathways_version = {"wikipathways_version": ""}
+    wikipathways_version = {"wikipathways_version": res["results"]["bindings"][0]["title"]["value"]}
 
     return wikipathways_version
 
@@ -54,6 +64,16 @@ def get_gene_wikipathway(bridgedb_df: pd.DataFrame):
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
     :returns: a DataFrame containing the WikiPathways output and dictionary of the WikiPathways metadata.
     """
+    # Check if the DisGeNET API is available
+    api_available = check_endpoint_wikipathways()
+
+    if not api_available:
+        warnings.warn(
+            f"{WIKIPATHWAY} SPARQL endpoint is not available. Unable to retrieve data.",
+            stacklevel=2,
+        )
+        return pd.DataFrame(), {}
+
     # Record the start time
     start_time = datetime.datetime.now()
 
@@ -75,12 +95,12 @@ def get_gene_wikipathway(bridgedb_df: pd.DataFrame):
     with open(os.path.dirname(__file__) + "/queries/wikipathways-genes-pathways.rq", "r") as fin:
         sparql_query = fin.read()
 
-    sparql = SPARQLWrapper("https://sparql.wikipathways.org/sparql")
+    sparql = SPARQLWrapper(WIKIPATHWAY_ENDPOINT)
     sparql.setReturnFormat(JSON)
 
     query_count = 0
 
-    results_df_list = list()
+    intermediate_df = pd.DataFrame()
 
     for gene_list_str in query_gene_lists:
         query_count += 1
@@ -91,32 +111,19 @@ def get_gene_wikipathway(bridgedb_df: pd.DataFrame):
 
         sparql.setQuery(sparql_query_template_sub)
 
-        try:
-            res = sparql.queryAndConvert()
+        res = sparql.queryAndConvert()
 
-            res = res["results"]["bindings"]
-
-        except SPARQLWrapperException as e:
-            logger.error(str(e))
-            logger.warning(
-                "\n\nDue to external call failure, the annotator returned an empty result set"
-            )
-
-            res = []
+        res = res["results"]["bindings"]
 
         df = pd.DataFrame(res)
         df = df.applymap(lambda x: x["value"])
 
-        results_df_list.append(df)
+        intermediate_df = pd.concat([intermediate_df, df], ignore_index=True)
 
     # Record the end time
     end_time = datetime.datetime.now()
 
     # Organize the annotation results as an array of dictionaries
-    intermediate_df = pd.concat(results_df_list)
-
-    # intermediate_df = intermediate_df.groupby('geneId').apply(lambda x: x.to_dict(orient='r')).rename('WikiPathways')
-    # intermediate_df.drop(['pathwayId', 'pathwayLabel', 'geneCount'], axis=1, inplace=True)
 
     intermediate_df.rename(
         columns={"geneId": "target", "geneCount": "pathwayGeneCount"}, inplace=True
@@ -129,7 +136,7 @@ def get_gene_wikipathway(bridgedb_df: pd.DataFrame):
         target_df=intermediate_df,
         common_cols=["target"],
         target_specific_cols=["pathwayId", "pathwayLabel", "pathwayGeneCount"],
-        col_name="WikiPathways",
+        col_name=WIKIPATHWAY,
     )
 
     # Metdata details
@@ -143,13 +150,13 @@ def get_gene_wikipathway(bridgedb_df: pd.DataFrame):
 
     # Add the datasource, query, query time, and the date to metadata
     wikipathways_metadata = {
-        "datasource": "WikiPathways",
+        "datasource": WIKIPATHWAY,
         "metadata": {"source_version": wikipathways_version},
         "query": {
             "size": len(hgnc_gene_list),
             "time": time_elapsed,
             "date": current_date,
-            "url": "https://sparql.wikipathways.org/sparql",
+            "url": WIKIPATHWAY_ENDPOINT,
         },
     }
 

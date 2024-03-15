@@ -13,6 +13,7 @@ from pyBiodatafuse.annotators.molmedb import (
     get_compound_gene_inhibitor,
     get_gene_compound_inhibitor,
 )
+from pyBiodatafuse.constants import MOLMEDB
 
 # MolMeDB still not versioned
 # TODO after MolMeDB update
@@ -250,9 +251,9 @@ def test_get_gene_compound_inhibitor(mock_sparql_request, bridgedb_dataframe_gen
             ],
         ]
     )
-    expected_data.name = "transporter_inhibitor"
+    expected_data.name = f"{MOLMEDB}_transporter_inhibitor"
 
-    pd.testing.assert_series_equal(obtained_data["transporter_inhibitor"], expected_data)
+    pd.testing.assert_series_equal(obtained_data[f"{MOLMEDB}_transporter_inhibitor"], expected_data)
 
 
 @patch("pyBiodatafuse.annotators.molmedb.SPARQLWrapper.queryAndConvert")
@@ -386,9 +387,9 @@ def test_get_compound_gene_inhibitor(mock_sparql_request, bridgedb_dataframe_com
             [{"uniprot_trembl_id": nan, "hgcn_id": nan, "source_doi": nan, "source_pmid": nan}],
         ]
     )
-    expected_data.name = "transporter_inhibited"
+    expected_data.name = f"{MOLMEDB}_transporter_inhibited"
 
-    pd.testing.assert_series_equal(obtained_data["transporter_inhibited"], expected_data)
+    pd.testing.assert_series_equal(obtained_data[f"{MOLMEDB}_transporter_inhibited"], expected_data)
 
 
 @pytest.fixture(scope="module")

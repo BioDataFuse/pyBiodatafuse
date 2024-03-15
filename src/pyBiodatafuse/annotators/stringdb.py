@@ -6,16 +6,30 @@
 import datetime
 import io
 import logging
+import warnings
+from typing import Optional
 
 import pandas as pd
 import requests
-from requests.exceptions import RequestException
 
+from pyBiodatafuse.constants import STRING, STRING_ENDPOINT
 from pyBiodatafuse.utils import get_identifier_of_interest
 
 logger = logging.getLogger("stringdb")
 
-string_api_url = "https://string-db.org/api"
+
+def check_endpoint_stringdb() -> bool:
+    """Check the availability of the STRING Db endpoint.
+
+    :returns: True if the endpoint is available, False otherwise.
+    """
+    response = requests.get(f"{STRING_ENDPOINT}/json/version")
+
+    # Check if API is down
+    if response.status_code == 200:
+        return True
+    else:
+        return False
 
 
 def get_version_stringdb() -> dict:
@@ -23,23 +37,8 @@ def get_version_stringdb() -> dict:
 
     :returns: a dictionary containing the version information
     """
-    output_format = "json"
-    method = "version"
-
-    request_url = "/".join([string_api_url, output_format, method])
-
-    try:
-        version_call = requests.get(request_url)
-        stringdb_version = version_call.json()
-    except RequestException as e:
-        logger.error(str(e))
-        logger.warning(
-            "\n\nDue to external call failure, the annotator returned an empty result set"
-        )
-
-        stringdb_version = {}
-
-    return stringdb_version
+    version_call = requests.get(f"{STRING_ENDPOINT}/json/version")
+    return version_call.json()
 
 
 def _format_data(row, network_df):
@@ -77,6 +76,12 @@ def get_ppi(bridgedb_df: pd.DataFrame):
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
     :returns: a DataFrame containing the StringDB output and dictionary of the metadata.
     """
+    # Check if the IDSM endpoint is available
+    api_available = check_endpoint_stringdb()
+    if not api_available:
+        warnings.warn(f"{STRING} endpoint is not available. Unable to retrieve data.", stacklevel=2)
+        return pd.DataFrame(), {}
+
     # Record the start time
     start_time = datetime.datetime.now()
 
@@ -96,20 +101,10 @@ def get_ppi(bridgedb_df: pd.DataFrame):
         "caller_identity": "github.com",  # your app name
     }
 
-    request_url = "/".join([string_api_url, output_format, method])
+    request_url = "/".join([STRING_ENDPOINT, output_format, method])
 
-    try:
-        results = requests.post(request_url, data=params)
-        results_contents = results.content.decode("utf-8")
-    except RequestException as e:
-        logger.error(str(e))
-        logger.warning(
-            "\n\nDue to external call failure, the annotator returned an empty result set"
-        )
-
-        results_contents = (
-            "queryIndex\tstringId\tncbiTaxonId\ttaxonName\tpreferredName\tannotation\n"
-        )
+    results = requests.post(request_url, data=params)
+    results_contents = results.content.decode("utf-8")
 
     stringdb_ids_df = pd.read_csv(io.StringIO(results_contents), sep="\t")
     stringdb_ids_df.queryIndex = stringdb_ids_df.queryIndex.astype(str)
@@ -117,7 +112,7 @@ def get_ppi(bridgedb_df: pd.DataFrame):
     # ---------- Get String PPI network using the String identifiers ---------------#
 
     method = "network"
-    request_url = "/".join([string_api_url, output_format, method])
+    request_url = "/".join([STRING_ENDPOINT, output_format, method])
 
     params = {
         "identifiers": "%0d".join(list(stringdb_ids_df.stringId.unique())),  # your protein
@@ -125,32 +120,14 @@ def get_ppi(bridgedb_df: pd.DataFrame):
         "caller_identity": "github.com",  # your app name
     }
 
-    try:
-        response = requests.post(request_url, data=params)
-
-        if response.status_code == 400:
-            logger.warning(
-                "\n\nNo results found in STRING for the input identifiers, the annotator returned an empty result set"
-            )
-
-            results_contents = "stringId_A\tstringId_B\tpreferredName_A\tpreferredName_B\tncbiTaxonId\tscore\tnscore\tfscore\tpscore\tascore\tescore\tdscore\ttscore\n"  # noqa: E501
-
-        else:
-            results_contents = response.content.decode("utf-8")
-
-    except RequestException as e:
-        logger.error(str(e))
-        logger.warning(
-            "\n\nDue to external call failure, the annotator returned an empty result set"
-        )
-
-        results_contents = "stringId_A\tstringId_B\tpreferredName_A\tpreferredName_B\tncbiTaxonId\tscore\tnscore\tfscore\tpscore\tascore\tescore\tdscore\ttscore\n"  # noqa: E501
+    response = requests.post(request_url, data=params)
+    results_contents = response.content.decode("utf-8")
 
     network_df = pd.read_csv(io.StringIO(results_contents), sep="\t")
 
     # ---------- Add the interactions of each protein (row) to a new column ('stringdb') ---------------#
 
-    data_df["stringdb"] = data_df.apply(_format_data, network_df=network_df, axis=1)
+    data_df[STRING] = data_df.apply(_format_data, network_df=network_df, axis=1)
 
     # Record the end time
     end_time = datetime.datetime.now()
@@ -166,13 +143,13 @@ def get_ppi(bridgedb_df: pd.DataFrame):
 
     # Add the datasource, query, query time, and the date to metadata
     string_metadata = {
-        "datasource": "StringDB",
+        "datasource": STRING,
         "metadata": {"source_version": string_version},
         "query": {
             "size": len(gene_list),
             "time": time_elapsed,
             "date": current_date,
-            "url": string_api_url,
+            "url": STRING_ENDPOINT,
         },
     }
 

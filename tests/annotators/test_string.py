@@ -9,6 +9,7 @@ import pandas as pd
 import pytest
 
 from pyBiodatafuse.annotators.stringdb import get_ppi, get_version_stringdb
+from pyBiodatafuse.constants import STRING
 
 
 @patch("pyBiodatafuse.annotators.stringdb.requests.get")
@@ -76,9 +77,9 @@ def test_get_ppi(mock_requests_get, mock_requests_post, bridgedb_dataframe):
             [{"stringdb_link_to": "ALG14", "score": 0.543}],
         ]
     )
-    expected_data.name = "stringdb"
+    expected_data.name = STRING
 
-    pd.testing.assert_series_equal(obtained_data["stringdb"], expected_data)
+    pd.testing.assert_series_equal(obtained_data[STRING], expected_data)
 
 
 @pytest.fixture(scope="module")

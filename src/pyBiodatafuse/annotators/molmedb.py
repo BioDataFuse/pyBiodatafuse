@@ -1,32 +1,33 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""Python file for queriying MolMeDB SPARQL endpoint (https://idsm.elixir-czech.cz/sparql/endpoint/molmedb."""
+"""Python file for queriying MolMeDB (https://molmedb.upol.cz/detail/intro)."""
 
 import datetime
 import os
 import warnings
 from string import Template
-from typing import Tuple
+from typing import Optional, Tuple
 
 import numpy as np
 import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
 
+from pyBiodatafuse.constants import MOLMEDB, MOLMEDB_ENDPOINT
 from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interest
 
 
-def test_molmedb_endpoint(endpoint: str) -> bool:
-    """Test the availability of the DisGeNET endpoint.
+def check_endpoint_molmedb() -> bool:
+    """Check the availability of the MolmeDB endpoint.
 
-    :param endpoint: MolMeDB endpoint ("https://idsm.elixir-czech.cz/sparql/endpoint/molmedb")
+    :param endpoint: MolMeDB endpoint
     :returns: True if the endpoint is available, False otherwise.
     """
     query_string = """SELECT * WHERE {
         <https://identifiers.org/molmedb/MM00040> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?t
         }
         """
-    sparql = SPARQLWrapper(endpoint)
+    sparql = SPARQLWrapper(MOLMEDB_ENDPOINT)
     sparql.setOnlyConneg(True)
     sparql.setQuery(query_string)
     try:
@@ -36,15 +37,17 @@ def test_molmedb_endpoint(endpoint: str) -> bool:
         return False
 
 
-def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame):
+# TODO - Add metadata function. Currently, no metadata is returned from IDSM servers
+
+
+def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
     """Query MolMeDB for inhibitors of transporters encoded by genes.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
     :returns: a DataFrame containing the MolMeDB output and dictionary of the MolMeDB metadata.
     """
     # Check if the MolMeDB endpoint is available
-    endpoint = "https://idsm.elixir-czech.cz/sparql/endpoint/molmedb"
-    api_available = test_molmedb_endpoint(endpoint=endpoint)
+    api_available = check_endpoint_molmedb()
     if not api_available:
         warnings.warn("MolMeDB endpoint is not available. Unable to retrieve data.", stacklevel=2)
         return pd.DataFrame(), {}
@@ -72,13 +75,13 @@ def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame):
     ) as fin:
         sparql_query = fin.read()
 
-    sparql = SPARQLWrapper("https://idsm.elixir-czech.cz/sparql/endpoint/molmedb")
+    sparql = SPARQLWrapper(MOLMEDB_ENDPOINT)
     sparql.setReturnFormat(JSON)
     sparql.setOnlyConneg(True)
 
     query_count = 0
 
-    results_df_list = list()
+    intermediate_df = pd.DataFrame()
 
     for transporter_list_str in query_transporter_list:
         query_count += 1
@@ -94,13 +97,12 @@ def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame):
         df = pd.DataFrame(res["results"]["bindings"])
         df = df.applymap(lambda x: x["value"], na_action="ignore")
 
-        results_df_list.append(df)
+        intermediate_df = pd.concat([intermediate_df, df], ignore_index=True)  # adds to the time
 
     # Record the end time
     end_time = datetime.datetime.now()
 
     # Organize the annotation results as an array of dictionaries
-    intermediate_df = pd.concat(results_df_list)
     intermediate_df.rename(columns={"transporterID": "target"}, inplace=True)
 
     if not intermediate_df.empty:
@@ -127,20 +129,27 @@ def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame):
         target_df=intermediate_df,
         common_cols=["target"],
         target_specific_cols=target_columns,
-        col_name="transporter_inhibitor",
+        col_name=f"{MOLMEDB}_transporter_inhibitor",
     )
 
     # if mappings exist but SPARQL returns empty response
-    if (not merged_df.empty) and merged_df["transporter_inhibitor"][0] is None:
-        merged_df.drop_duplicates(subset=["identifier", "transporter_inhibitor"], inplace=True)
-    elif not merged_df.empty:
-        res_keys = merged_df["transporter_inhibitor"][0][0].keys()
-        # remove duplicate identifier and response row
-        merged_df["transporter_inhibitor"] = merged_df["transporter_inhibitor"].map(
-            lambda x: tuple(frozenset(d.items()) for d in x), na_action="ignore"
+    if (not merged_df.empty) and merged_df[f"{MOLMEDB}_transporter_inhibitor"][0] is None:
+        merged_df.drop_duplicates(
+            subset=["identifier", f"{MOLMEDB}_transporter_inhibitor"], inplace=True
         )
-        merged_df.drop_duplicates(subset=["identifier", "transporter_inhibitor"], inplace=True)
-        merged_df["transporter_inhibitor"] = merged_df["transporter_inhibitor"].map(
+
+    elif not merged_df.empty:
+        res_keys = merged_df[f"{MOLMEDB}_transporter_inhibitor"][0][0].keys()
+        # remove duplicate identifier and response row
+        merged_df[f"{MOLMEDB}_transporter_inhibitor"] = merged_df[
+            f"{MOLMEDB}_transporter_inhibitor"
+        ].map(lambda x: tuple(frozenset(d.items()) for d in x), na_action="ignore")
+        merged_df.drop_duplicates(
+            subset=["identifier", f"{MOLMEDB}_transporter_inhibitor"], inplace=True
+        )
+        merged_df[f"{MOLMEDB}_transporter_inhibitor"] = merged_df[
+            f"{MOLMEDB}_transporter_inhibitor"
+        ].map(
             lambda res_tup: list(dict((x, y) for x, y in res) for res in res_tup),
             na_action="ignore",
         )
@@ -149,7 +158,7 @@ def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame):
         identifiers = merged_df["identifier"].unique()
         for identifier in identifiers:
             if merged_df.loc[merged_df["identifier"] == identifier].shape[0] > 1:
-                mask = merged_df["transporter_inhibitor"].apply(
+                mask = merged_df[f"{MOLMEDB}_transporter_inhibitor"].apply(
                     lambda lst: all(
                         [
                             all([isinstance(val, float) and np.isnan(val) for val in dct.values()])
@@ -161,13 +170,13 @@ def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame):
                 merged_df.drop(merged_df[mask & mask2].index, inplace=True)
 
         # set default order to response dictionaries to keep output consistency
-        merged_df["transporter_inhibitor"] = merged_df["transporter_inhibitor"].apply(
-            lambda res: list(dict((k, r[k]) for k in res_keys) for r in res)
-        )
+        merged_df[f"{MOLMEDB}_transporter_inhibitor"] = merged_df[
+            f"{MOLMEDB}_transporter_inhibitor"
+        ].apply(lambda res: list(dict((k, r[k]) for k in res_keys) for r in res))
         # set numerical identifiers to int to kepp output consistency
-        merged_df["transporter_inhibitor"] = merged_df["transporter_inhibitor"].apply(
-            lambda res: int_response_value_types(res, ["compound_cid", "source_pmid"])
-        )
+        merged_df[f"{MOLMEDB}_transporter_inhibitor"] = merged_df[
+            f"{MOLMEDB}_transporter_inhibitor"
+        ].apply(lambda res: int_response_value_types(res, ["compound_cid", "source_pmid"]))
     merged_df.reset_index(drop=True, inplace=True)
 
     # Metadata details
@@ -178,12 +187,12 @@ def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame):
 
     # Add the datasource, query, query time, and the date to metadata
     molmedb_metadata = {
-        "datasource": "MolMeDB",
+        "datasource": MOLMEDB,
         "query": {
             "size": len(molmedb_transporter_list),
             "time": time_elapsed,
             "date": current_date,
-            "url": "https://idsm.elixir-czech.cz/sparql/endpoint/molmedb",
+            "url": MOLMEDB_ENDPOINT,
         },
     }
 
@@ -197,8 +206,7 @@ def get_compound_gene_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
     :returns: a DataFrame containing the MolMeDB output and dictionary of the MolMeDB metadata.
     """
     # Check if the MolMeDB endpoint is available
-    endpoint = "https://idsm.elixir-czech.cz/sparql/endpoint/molmedb"
-    api_available = test_molmedb_endpoint(endpoint=endpoint)
+    api_available = check_endpoint_molmedb()
     if not api_available:
         warnings.warn("MolMeDB endpoint is not available. Unable to retrieve data.", stacklevel=2)
         return pd.DataFrame(), {}
@@ -226,13 +234,13 @@ def get_compound_gene_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
     ) as fin:
         sparql_query = fin.read()
 
-    sparql = SPARQLWrapper("https://idsm.elixir-czech.cz/sparql/endpoint/molmedb")
+    sparql = SPARQLWrapper(MOLMEDB_ENDPOINT)
     sparql.setReturnFormat(JSON)
     sparql.setOnlyConneg(True)
 
     query_count = 0
 
-    results_df_list = list()
+    intermediate_df = pd.DataFrame()
 
     for inhibitor_list_str in query_inhibitor_list:
         query_count += 1
@@ -248,14 +256,12 @@ def get_compound_gene_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
         df = pd.DataFrame(res["results"]["bindings"])
         df = df.applymap(lambda x: x["value"], na_action="ignore")
 
-        results_df_list.append(df)
+        intermediate_df = pd.concat([intermediate_df, df], ignore_index=True)  # adds to the time
 
     # Record the end time
     end_time = datetime.datetime.now()
 
     # Organize the annotation results as an array of dictionaries
-    intermediate_df = pd.concat(results_df_list)
-
     intermediate_df.rename(columns={"inhibitorInChIKey": "target"}, inplace=True)
     intermediate_df["source_doi"] = intermediate_df["source_doi"].map(
         lambda x: "doi:" + x, na_action="ignore"
@@ -271,7 +277,7 @@ def get_compound_gene_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
         target_df=intermediate_df,
         common_cols=["target"],
         target_specific_cols=target_columns,
-        col_name="transporter_inhibited",
+        col_name=f"{MOLMEDB}_transporter_inhibited",
     )
 
     # Metdata details
@@ -282,12 +288,12 @@ def get_compound_gene_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
 
     # Add the datasource, query, query time, and the date to metadata
     molmedb_metadata = {
-        "datasource": "MolMeDB",
+        "datasource": MOLMEDB,
         "query": {
             "size": len(inhibitor_list_str),
             "time": time_elapsed,
             "date": current_date,
-            "url": "https://idsm.elixir-czech.cz/sparql/endpoint/molmedb",
+            "url": MOLMEDB_ENDPOINT,
         },
     }
 

@@ -4,15 +4,42 @@
 
 import datetime
 import math
-from typing import Tuple
+import warnings
+from typing import Optional, Tuple
 
 import pandas as pd
 import requests
 
+from pyBiodatafuse.constants import OPENTARGET, OPENTARGET_ENDPOINT
 from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interest
 
-# URL of OpenTarget's GraphQL API endpoint
-base_url = "https://api.platform.opentargets.org/api/v4/graphql"
+
+def check_endpoint_opentargets() -> bool:
+    """Check the availability of the OpenTargets API endpoint.
+
+    :returns: a dictionary containing the version information
+    """
+    query = """
+        query MetaInfo {
+            meta{
+                name
+                apiVersion{
+                        x
+                        y
+                        z
+                }
+                dataVersion{
+                        year
+                        month
+                }
+            }
+        }"""
+    r = requests.post(OPENTARGET_ENDPOINT, json={"query": query}).json()
+
+    if not r["data"]:
+        return False
+
+    return True
 
 
 def get_version() -> dict:
@@ -35,7 +62,7 @@ def get_version() -> dict:
                 }
             }
         }"""
-    r = requests.post(base_url, json={"query": query}).json()
+    r = requests.post(OPENTARGET_ENDPOINT, json={"query": query}).json()
 
     metadata = {
         "datasource": r["data"]["meta"]["name"],
@@ -59,12 +86,23 @@ def get_version() -> dict:
     return metadata
 
 
-def get_gene_location(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
+def get_gene_location(
+    bridgedb_df: pd.DataFrame,
+) -> Tuple[pd.DataFrame, dict]:
     """Get location of gene in human body.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
     :returns: a DataFrame containing the OpenTargets output and dictionary of the query metadata.
     """
+    # Check if the API is available
+    api_available = check_endpoint_opentargets()
+    if not api_available:
+        warnings.warn(
+            f"{OPENTARGET} GraphQL endpoint is not available. Unable to retrieve data.",
+            stacklevel=2,
+        )
+        return pd.DataFrame(), {}
+
     data_df = get_identifier_of_interest(bridgedb_df, "Ensembl")
     gene_ids = data_df["target"].tolist()
 
@@ -86,7 +124,7 @@ def get_gene_location(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
     """
     query_string = query_string.replace("$ids", str(gene_ids).replace("'", '"'))
 
-    r = requests.post(base_url, json={"query": query_string}).json()
+    r = requests.post(OPENTARGET_ENDPOINT, json={"query": query_string}).json()
 
     # Record the end time
     end_time = datetime.datetime.now()
@@ -97,23 +135,22 @@ def get_gene_location(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
         "input_type": "Ensembl",
         "time": str(end_time - start_time),
         "date": str(datetime.datetime.now()),
-        "url": base_url,
+        "url": OPENTARGET_ENDPOINT,
     }
 
     # Generate the OpenTargets DataFrame
-    data = []
+    opentargets_df = pd.DataFrame()
 
     for gene in r["data"]["targets"]:
         gene_id = gene["id"]
         loc_df = pd.DataFrame(gene["subcellularLocations"])
         loc_df = loc_df.drop_duplicates()
         loc_df["target"] = gene_id
-        data.append(loc_df)
+        opentargets_df = pd.concat([opentargets_df, loc_df], ignore_index=True)
 
-    if len(data) == 0:  # If no data is returned, return empty DataFrame
+    if opentargets_df.empty:  # If no data is returned, return empty DataFrame
         return pd.DataFrame(), version_metadata
 
-    opentargets_df = pd.concat(data)
     opentargets_df.dropna(
         subset=["termSL"], inplace=True
     )  # Drop rows where termSL is not available
@@ -138,12 +175,24 @@ def get_gene_location(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
     return merged_df, version_metadata
 
 
-def get_gene_go_process(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
+# TODO: Potentially remove this section due to limited distictions in differtn GO terms
+def get_gene_go_process(
+    bridgedb_df: pd.DataFrame,
+) -> Tuple[pd.DataFrame, dict]:
     """Get information about GO pathways associated with a genes of interest.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
     :returns: a DataFrame containing the OpenTargets output and dictionary of the query metadata.
     """
+    # Check if the API is available
+    api_available = check_endpoint_opentargets()
+    if not api_available:
+        warnings.warn(
+            f"{OPENTARGET} GraphQL endpoint is not available. Unable to retrieve data.",
+            stacklevel=2,
+        )
+        return pd.DataFrame(), {}
+
     data_df = get_identifier_of_interest(bridgedb_df, "Ensembl")
     gene_ids = data_df["target"].tolist()
 
@@ -166,7 +215,7 @@ def get_gene_go_process(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
     """
     query_string = query_string.replace("$ids", str(gene_ids).replace("'", '"'))
 
-    r = requests.post(base_url, json={"query": query_string}).json()
+    r = requests.post(OPENTARGET_ENDPOINT, json={"query": query_string}).json()
 
     # Record the end time
     end_time = datetime.datetime.now()
@@ -177,23 +226,21 @@ def get_gene_go_process(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
         "input_type": "Ensembl",
         "time": str(end_time - start_time),
         "date": str(datetime.datetime.now()),
-        "url": base_url,
+        "url": OPENTARGET_ENDPOINT,
     }
 
     # Generate the OpenTargets DataFrame
-    data = []
+    opentargets_df = pd.DataFrame()
 
     for gene in r["data"]["targets"]:
         terms = [i["term"] for i in gene["geneOntology"]]
         path_df = pd.DataFrame(terms)
         path_df = path_df.drop_duplicates()
         path_df["target"] = gene["id"]
-        data.append(path_df)
+        opentargets_df = pd.concat([opentargets_df, path_df], ignore_index=True)
 
-    if len(data) == 0:
+    if opentargets_df.empty:
         return pd.DataFrame(), version_metadata
-
-    opentargets_df = pd.concat(data)
 
     opentargets_df.rename(
         columns={
@@ -216,12 +263,23 @@ def get_gene_go_process(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
     return merged_df, version_metadata
 
 
-def get_gene_reactome_pathways(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
+def get_gene_reactome_pathways(
+    bridgedb_df: pd.DataFrame,
+) -> Tuple[pd.DataFrame, dict]:
     """Get information about Reactome pathways associated with a gene.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
     :returns: a DataFrame containing the OpenTargets output and dictionary of the query metadata.
     """
+    # Check if the API is available
+    api_available = check_endpoint_opentargets()
+    if not api_available:
+        warnings.warn(
+            f"{OPENTARGET} GraphQL endpoint is not available. Unable to retrieve data.",
+            stacklevel=2,
+        )
+        return pd.DataFrame(), {}
+
     data_df = get_identifier_of_interest(bridgedb_df, "Ensembl")
     gene_ids = data_df["target"].tolist()
 
@@ -242,7 +300,7 @@ def get_gene_reactome_pathways(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame,
     """
     query_string = query_string.replace("$ids", str(gene_ids).replace("'", '"'))
 
-    r = requests.post(base_url, json={"query": query_string}).json()
+    r = requests.post(OPENTARGET_ENDPOINT, json={"query": query_string}).json()
 
     # Record the end time
     end_time = datetime.datetime.now()
@@ -253,22 +311,20 @@ def get_gene_reactome_pathways(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame,
         "input_type": "Ensembl",
         "time": str(end_time - start_time),
         "date": str(datetime.datetime.now()),
-        "url": base_url,
+        "url": OPENTARGET_ENDPOINT,
     }
 
     # Generate the OpenTargets DataFrame
-    data = []
+    opentargets_df = pd.DataFrame()
 
     for gene in r["data"]["targets"]:
         path_df = pd.DataFrame(gene["pathways"])
         path_df = path_df.drop_duplicates()
         path_df["target"] = gene["id"]
-        data.append(path_df)
+        opentargets_df = pd.concat([opentargets_df, path_df], ignore_index=True)
 
-    if len(data) == 0:
+    if opentargets_df.empty:
         return pd.DataFrame(), version_metadata
-
-    opentargets_df = pd.concat(data)
 
     opentargets_df.rename(columns={"pathway": "pathwayLabel"}, inplace=True)
 
@@ -279,14 +335,16 @@ def get_gene_reactome_pathways(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame,
         target_df=opentargets_df,
         common_cols=["target"],
         target_specific_cols=["pathwayLabel", "pathwayId"],
-        col_name="Reactome_Pathways",  # TODO: Cross-check if correct name
+        col_name=f"{OPENTARGET}_Reactome",
     )
 
     return merged_df, version_metadata
 
 
 # TODO: Look into the utility of this function while applying filters
-def get_gene_tractability(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
+def get_gene_tractability(
+    bridgedb_df: pd.DataFrame,
+) -> Tuple[pd.DataFrame, dict]:
     """Get tractability information about a gene.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
@@ -294,6 +352,15 @@ def get_gene_tractability(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict
 
     More metadata here- https://platform-docs.opentargets.org/target/tractability
     """
+    # Check if the API is available
+    api_available = check_endpoint_opentargets()
+    if not api_available:
+        warnings.warn(
+            f"{OPENTARGET} GraphQL endpoint is not available. Unable to retrieve data.",
+            stacklevel=2,
+        )
+        return pd.DataFrame(), {}
+
     query_string = """
       query targetTractability {
         targets (ensemblIds: $ids){
@@ -316,7 +383,7 @@ def get_gene_tractability(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict
 
     query_string = query_string.replace("$ids", str(gene_ids).replace("'", '"'))
 
-    r = requests.post(base_url, json={"query": query_string}).json()
+    r = requests.post(OPENTARGET_ENDPOINT, json={"query": query_string}).json()
 
     # Record the end time
     end_time = datetime.datetime.now()
@@ -327,34 +394,45 @@ def get_gene_tractability(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict
         "input_type": "Ensembl",
         "time": str(end_time - start_time),
         "date": str(datetime.datetime.now()),
-        "url": base_url,
+        "url": OPENTARGET_ENDPOINT,
     }
 
-    data = []
+    opentargets_df = pd.DataFrame()
 
     for gene in r["data"]["targets"]:
         tract_df = pd.DataFrame(gene["tractability"])
         tract_df = tract_df.drop_duplicates()
         tract_df["ensembl_id"] = gene["id"]
-        data.append(tract_df)
+        opentargets_df = pd.concat([opentargets_df, tract_df], ignore_index=True)
 
-    if len(data) == 0:
+    if opentargets_df.empty:
         return pd.DataFrame(), version_metadata
-
-    opentargets_df = pd.concat(data)
 
     opentargets_df = opentargets_df[opentargets_df["value"] == True]
     opentargets_df.drop(columns=["value"], inplace=True)
 
+    # TODO: Merge data wih main data_df
+
     return opentargets_df, version_metadata
 
 
-def get_gene_compound_interactions(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
+def get_gene_compound_interactions(
+    bridgedb_df: pd.DataFrame,
+) -> Tuple[pd.DataFrame, dict]:
     """Get information about drugs associated with a genes of interest.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
     :returns: a DataFrame containing the OpenTargets output and dictionary of the query metadata.
     """
+    # Check if the API is available
+    api_available = check_endpoint_opentargets()
+    if not api_available:
+        warnings.warn(
+            f"{OPENTARGET} GraphQL endpoint is not available. Unable to retrieve data.",
+            stacklevel=2,
+        )
+        return pd.DataFrame(), {}
+
     data_df = get_identifier_of_interest(bridgedb_df, "Ensembl")
     gene_ids = data_df["target"].tolist()
 
@@ -381,7 +459,7 @@ def get_gene_compound_interactions(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
     """
     query_string = query_string.replace("$ids", str(gene_ids).replace("'", '"'))
 
-    r = requests.post(base_url, json={"query": query_string}).json()
+    r = requests.post(OPENTARGET_ENDPOINT, json={"query": query_string}).json()
 
     # Record the end time
     end_time = datetime.datetime.now()
@@ -392,10 +470,10 @@ def get_gene_compound_interactions(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
         "input_type": "Ensembl",
         "time": str(end_time - start_time),
         "date": str(datetime.datetime.now()),
-        "url": base_url,
+        "url": OPENTARGET_ENDPOINT,
     }
 
-    data = []
+    opentargets_df = pd.DataFrame()
 
     for gene in r["data"]["targets"]:
         if not gene["knownDrugs"]:
@@ -417,12 +495,12 @@ def get_gene_compound_interactions(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
             lambda x: "inhibits" if "antagonist" in x else "activates"
         )
         drug_df.rename(columns={"mechanismOfAction": "relation"}, inplace=True)
-        data.append(drug_df)
+        opentargets_df = pd.concat([opentargets_df, drug_df], ignore_index=True)
 
-    if len(data) == 0:
+    if opentargets_df.empty:
         return pd.DataFrame(), version_metadata
 
-    opentargets_df = pd.concat(data)
+    # TODO: Covert the ChEMBL ids to Pubchem using BridgeDb
 
     # Merge the two DataFrames on the target column
     merged_df = collapse_data_sources(
@@ -431,18 +509,29 @@ def get_gene_compound_interactions(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
         target_df=opentargets_df,
         common_cols=["target"],
         target_specific_cols=["chembl_id", "drug_name", "is_approved", "relation"],
-        col_name="ChEMBL_Drugs",  # TODO: Cross-check if correct name
+        col_name=f"{OPENTARGET}_ChEMBL_Drugs",  # TODO: Cross-check if correct name
     )
 
     return merged_df, version_metadata
 
 
-def get_gene_disease_associations(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
+def get_gene_disease_associations(
+    bridgedb_df: pd.DataFrame,
+) -> Tuple[pd.DataFrame, dict]:
     """Get information about diseases associated with genes based on OpenTargets.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
     :returns: a DataFrame containing the OpenTargets output and dictionary of the query metadata.
     """
+    # Check if the API is available
+    api_available = check_endpoint_opentargets()
+    if not api_available:
+        warnings.warn(
+            f"{OPENTARGET} GraphQL endpoint is not available. Unable to retrieve data.",
+            stacklevel=2,
+        )
+        return pd.DataFrame(), {}
+
     data_df = get_identifier_of_interest(bridgedb_df, "Ensembl")
     gene_ids = data_df["target"].tolist()
 
@@ -472,7 +561,7 @@ def get_gene_disease_associations(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
     """
     query_string = query_string.replace("$ids", str(gene_ids).replace("'", '"'))
 
-    r = requests.post(base_url, json={"query": query_string}).json()
+    r = requests.post(OPENTARGET_ENDPOINT, json={"query": query_string}).json()
 
     # Record the end time
     end_time = datetime.datetime.now()
@@ -483,10 +572,11 @@ def get_gene_disease_associations(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
         "input_type": "Ensembl",
         "time": str(end_time - start_time),
         "date": str(datetime.datetime.now()),
-        "url": base_url,
+        "url": OPENTARGET_ENDPOINT,
     }
 
-    data = []
+    opentargets_df = pd.DataFrame()
+
     for gene in r["data"]["targets"]:
         if not gene["knownDrugs"]:
             continue
@@ -505,9 +595,6 @@ def get_gene_disease_associations(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
             lambda x: ", ".join([f"{i['id']}:{i['name']}" for i in x])
         )
 
-        # disease_df["disease_id"] = disease_df['dbXRefs'].apply(
-        #     lambda x: ", ".join(['ulms:' + i.split(':')[1] for i in x if i.startswith('UMLS:')])
-        # )
         disease_df["disease_id"] = disease_df.apply(
             lambda row: ", ".join(
                 ["ulms:" + i.split(":")[1] for i in row["dbXRefs"] if i.startswith("UMLS:")]
@@ -520,15 +607,10 @@ def get_gene_disease_associations(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
 
         disease_df["target"] = gene["id"]
 
-        # disease_df['therapeuticAreas'] = disease_df['therapeuticAreas'].apply(
-        #   lambda x: ', '.join([i['therapeuticArea'] for i in x])
-        # )
-        data.append(disease_df)
+        opentargets_df = pd.concat([opentargets_df, disease_df], ignore_index=True)
 
-    if len(data) == 0:
+    if opentargets_df.empty:
         return pd.DataFrame(), version_metadata
-
-    opentargets_df = pd.concat(data)
 
     # Merge the two DataFrames on the target column
     merged_df = collapse_data_sources(
@@ -537,12 +619,13 @@ def get_gene_disease_associations(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
         target_df=opentargets_df,
         common_cols=["target"],
         target_specific_cols=["disease_id", "disease_name", "therapeutic_areas"],
-        col_name="OpenTargets_Diseases",
+        col_name=f"{OPENTARGET}_Diseases",
     )
 
     return merged_df, version_metadata
 
 
+# TODO: Fix the function; Modify to same format
 def get_drug_disease_interactions(
     drug_df: pd.DataFrame, disgenet_result: pd.DataFrame
 ) -> Tuple[pd.DataFrame, dict]:
@@ -552,6 +635,14 @@ def get_drug_disease_interactions(
     :param disgenet_result: DisGeNET diseases dadtaframe
     :returns: a DataFrame containing the drug-disease relationships between drug and diseases included in your graph
     """
+    # Check if the API is available
+    api_available = check_endpoint_opentargets()
+    if not api_available:
+        warnings.warn(
+            "OpenTargets GraphQL endpoint is not available. Unable to retrieve data.", stacklevel=2
+        )
+        return pd.DataFrame(), {}
+
     base_url = "https://api.platform.opentargets.org/api/v4/graphql"
 
     # Iterate through the dictionary and remove entries with NaN values for drugs and diseases

@@ -7,27 +7,27 @@ import logging
 import os
 import warnings
 from string import Template
-from typing import Optional, Tuple
+from typing import Tuple
 
 import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
 from SPARQLWrapper.SPARQLExceptions import SPARQLWrapperException
 
+from pyBiodatafuse.constants import DISGENET, DISGENET_ENDPOINT
 from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interest
 
 logger = logging.getLogger("disgenet")
 
 
-def test_endpoint_disgenet(endpoint: Optional[str] = "http://rdf.disgenet.org/sparql/") -> bool:
-    """Test the availability of the DisGeNET SPARQL endpoint.
+def check_endpoint_disgenet() -> bool:
+    """Check the availability of the DisGeNET SPARQL endpoint.
 
-    :param endpoint: DisGeNET SAPRQL endpoint ("http://rdf.disgenet.org/sparql/")
     :returns: True if the endpoint is available, False otherwise.
     """
     with open(os.path.dirname(__file__) + "/queries/disgenet-metadata.rq", "r") as fin:
         sparql_query = fin.read()
 
-    sparql = SPARQLWrapper(endpoint)
+    sparql = SPARQLWrapper(DISGENET_ENDPOINT)
     sparql.setReturnFormat(JSON)
 
     sparql.setQuery(sparql_query)
@@ -39,16 +39,15 @@ def test_endpoint_disgenet(endpoint: Optional[str] = "http://rdf.disgenet.org/sp
         return False
 
 
-def get_version_disgenet(endpoint: Optional[str] = "http://rdf.disgenet.org/sparql/") -> dict:
+def get_version_disgenet() -> dict:
     """Get version of DisGeNET API.
 
-    :param endpoint: DisGeNET SAPRQL endpoint ("http://rdf.disgenet.org/sparql/")
     :returns: a dictionary containing the version information
     """
     with open(os.path.dirname(__file__) + "/queries/disgenet-metadata.rq", "r") as fin:
         sparql_query = fin.read()
 
-    sparql = SPARQLWrapper(endpoint)
+    sparql = SPARQLWrapper(DISGENET_ENDPOINT)
     sparql.setReturnFormat(JSON)
 
     sparql.setQuery(sparql_query)
@@ -66,20 +65,18 @@ def get_version_disgenet(endpoint: Optional[str] = "http://rdf.disgenet.org/spar
     return disgenet_version
 
 
-def get_gene_disease(
-    bridgedb_df: pd.DataFrame, endpoint: Optional[str] = "http://rdf.disgenet.org/sparql/"
-) -> Tuple[pd.DataFrame, dict]:
+def get_gene_disease(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
     """Query gene-disease associations from DisGeNET.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query.
-    :param endpoint: DisGeNET SAPRQL endpoint ("http://rdf.disgenet.org/sparql/").
     :returns: a DataFrame containing the DisGeNET output and dictionary of the DisGeNET metadata.
     """
     # Check if the DisGeNET API is available
-    api_available = test_endpoint_disgenet(endpoint=endpoint)
+    api_available = check_endpoint_disgenet()
+
     if not api_available:
         warnings.warn(
-            "DisGeNET SPARQL endpoint is not available. Unable to retrieve data.", stacklevel=2
+            f"{DISGENET} SPARQL endpoint is not available. Unable to retrieve data.", stacklevel=2
         )
         return pd.DataFrame(), {}
 
@@ -103,12 +100,12 @@ def get_gene_disease(
     # Record the start time
     start_time = datetime.datetime.now()
 
-    sparql = SPARQLWrapper(endpoint)
+    sparql = SPARQLWrapper(DISGENET_ENDPOINT)
     sparql.setReturnFormat(JSON)
 
     query_count = 0
 
-    results_df_list = list()
+    disgenet_df = pd.DataFrame()
 
     for gene_list_str in query_gene_lists:
         query_count += 1
@@ -121,56 +118,58 @@ def get_gene_disease(
         df = pd.DataFrame(res)
         df = df.applymap(lambda x: x["value"])
 
-        results_df_list.append(df)
+        disgenet_df = pd.merge(
+            disgenet_df, df, ignore_index=True
+        )  # this is also adding to the time
 
     # Record the end time
     end_time = datetime.datetime.now()
+
     # Organize the annotation results as an array of dictionaries
-    disgenet_df = pd.concat(results_df_list)
     if "gene_id" not in disgenet_df:
         return pd.DataFrame()
-    else:
-        disgenet_df.drop_duplicates(inplace=True)
-        disgenet_df["target"] = disgenet_df["gene_id"].apply(lambda x: x.split("/")[-1])
-        disgenet_df["disease_id"] = disgenet_df["description"].apply(
-            lambda x: x.split("[")[1].split("]")[0]
-        )
-        disgenet_df["disease_name"] = disgenet_df["description"].apply(lambda x: x.split(" [")[0])
-        disgenet_df["score"] = disgenet_df["disease_score"].astype(float)
-        disgenet_df["source"] = disgenet_df["source"].apply(lambda x: x.split("/")[-1])
+    disgenet_df.drop_duplicates(inplace=True)
+    disgenet_df["target"] = disgenet_df["gene_id"].apply(lambda x: x.split("/")[-1])
+    disgenet_df["disease_id"] = disgenet_df["description"].apply(
+        lambda x: x.split("[")[1].split("]")[0]
+    )
+    disgenet_df["disease_name"] = disgenet_df["description"].apply(lambda x: x.split(" [")[0])
+    disgenet_df["score"] = disgenet_df["disease_score"].astype(float)
+    disgenet_df["source"] = disgenet_df["source"].apply(lambda x: x.split("/")[-1])
 
-        disgenet_df["target"] = disgenet_df["target"].values.astype(str)
-        disgenet_df = disgenet_df[["target", "disease_id", "disease_name", "score", "source"]]
+    disgenet_df["target"] = disgenet_df["target"].values.astype(str)
 
-        selected_columns = ["disease_id", "disease_name", "score", "source"]
+    disgenet_df = disgenet_df[["target", "disease_id", "disease_name", "score", "source"]]
 
-        merged_df = collapse_data_sources(
-            data_df=bridgedb_df,
-            source_namespace="NCBI Gene",
-            target_df=disgenet_df,
-            common_cols=["target"],
-            target_specific_cols=selected_columns,
-            col_name="DisGeNET",
-        )
+    selected_columns = ["disease_id", "disease_name", "score", "source"]
 
-        """Metdata details"""
-        # Get the current date and time
-        current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        # Calculate the time elapsed
-        time_elapsed = str(end_time - start_time)
-        # Add version to metadata file
-        disgenet_version = get_version_disgenet(endpoint=endpoint)
-        # Add the datasource, query, query time, and the date to metadata
-        disgenet_metadata = {
-            "datasource": "DisGeNET",
-            "metadata": {"source_version": disgenet_version},
-            "query": {
-                "size": len(hgnc_gene_list),
-                "input_type": "NCBI Gene",
-                "time": time_elapsed,
-                "date": current_date,
-                "url": "http://rdf.disgenet.org/sparql/",
-            },
-        }
+    merged_df = collapse_data_sources(
+        data_df=bridgedb_df,
+        source_namespace="NCBI Gene",
+        target_df=disgenet_df,
+        common_cols=["target"],
+        target_specific_cols=selected_columns,
+        col_name=DISGENET,
+    )
 
-        return merged_df, disgenet_metadata
+    """Metdata details"""
+    # Get the current date and time
+    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    # Calculate the time elapsed
+    time_elapsed = str(end_time - start_time)
+    # Add version to metadata file
+    disgenet_version = get_version_disgenet(endpoint=DISGENET_ENDPOINT)
+    # Add the datasource, query, query time, and the date to metadata
+    disgenet_metadata = {
+        "datasource": DISGENET,
+        "metadata": {"source_version": disgenet_version},
+        "query": {
+            "size": len(hgnc_gene_list),
+            "input_type": "NCBI Gene",
+            "time": time_elapsed,
+            "date": current_date,
+            "url": DISGENET_ENDPOINT,
+        },
+    }
+
+    return merged_df, disgenet_metadata
