@@ -114,16 +114,9 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
         if anatomical_entity.strip() != ""
     ]
 
-    query_anat_entities_lists = []
-    if len(anatomical_entities_list) > 25:
-        for i in range(0, len(anatomical_entities_list), 25):
-            tmp_list = anatomical_entities_list[i : i + 25]
-            query_anat_entities_lists.append(" ".join(f'"{g}"' for g in tmp_list))
-
-    else:
-        query_anat_entities_lists.append(" ".join(f'"{g}"' for g in anatomical_entities_list))
-
-    with open(os.path.dirname(__file__) + "/queries/bgee-genes-tissues-expression.rq", "r") as fin:
+    with open(
+        os.path.dirname(__file__) + "/queries/bgee-genes-tissues-expression-level.rq", "r"
+    ) as fin:
         sparql_query = fin.read()
 
     sparql = SPARQLWrapper(BGEE_ENDPOINT)
@@ -134,12 +127,14 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
     intermediate_df = pd.DataFrame()
 
     for gene_list_str in query_gene_lists:
-        for query_anat_entities_str in query_anat_entities_lists:
-            query_count += 1
+        query_count += 1
 
-            sparql_query_template = Template(sparql_query)
+        sparql_query_template = Template(sparql_query)
 
-            substit_dict = dict(gene_list=gene_list_str, anat_entities_list=query_anat_entities_str)
+        for anatomical_entity in anatomical_entities_list:
+            # for the query text, need to put each name in between quotes
+            anatomical_entity = f'"{anatomical_entity}"'
+            substit_dict = dict(gene_list=gene_list_str, anat_entities_list=anatomical_entity)
             sparql_query_template_sub = sparql_query_template.substitute(substit_dict)
 
             sparql.setQuery(sparql_query_template_sub)
@@ -159,7 +154,10 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
     intermediate_df["anatomical_entity_id"] = intermediate_df["anatomical_entity_id"].apply(
         lambda x: x.split("/")[-1]
     )
-
+    intermediate_df["developmental_stage_id"] = intermediate_df["developmental_stage_id"].apply(
+        lambda x: x.split("/")[-1]
+    )
+  
     # Metadata details
     # Get the current date and time
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -191,6 +189,10 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
         target_specific_cols=[
             "anatomical_entity_id",
             "anatomical_entity_name",
+            "developmental_stage_id",
+            "developmental_stage_name",
+            "expression_level",
+            "confidence_level",
         ],
         col_name=BGEE,
     )
