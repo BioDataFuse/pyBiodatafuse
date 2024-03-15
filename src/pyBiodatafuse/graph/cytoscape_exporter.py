@@ -30,6 +30,9 @@ def _replace_graph_attrs_for_cytoscape(g: nx.MultiDiGraph):
             if x == "label":
                 g[u][v][k]["interaction"] = y
                 del g[u][v][k]["label"]
+            elif x == "source":
+                g[u][v][k]["datasource"] = y
+                del g[u][v][k]["source"]
 
     return g
 

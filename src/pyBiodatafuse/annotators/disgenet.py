@@ -7,7 +7,7 @@ import logging
 import os
 import warnings
 from string import Template
-from typing import Tuple
+from typing import Optional, Tuple
 
 import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
@@ -18,7 +18,7 @@ from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interes
 logger = logging.getLogger("disgenet")
 
 
-def test_endpoint_disgenet(endpoint: str) -> bool:
+def test_endpoint_disgenet(endpoint: Optional[str] = "http://rdf.disgenet.org/sparql/") -> bool:
     """Test the availability of the DisGeNET SPARQL endpoint.
 
     :param endpoint: DisGeNET SAPRQL endpoint ("http://rdf.disgenet.org/sparql/")
@@ -39,7 +39,7 @@ def test_endpoint_disgenet(endpoint: str) -> bool:
         return False
 
 
-def get_version_disgenet(endpoint: str) -> dict:
+def get_version_disgenet(endpoint: Optional[str] = "http://rdf.disgenet.org/sparql/") -> dict:
     """Get version of DisGeNET API.
 
     :param endpoint: DisGeNET SAPRQL endpoint ("http://rdf.disgenet.org/sparql/")
@@ -66,7 +66,9 @@ def get_version_disgenet(endpoint: str) -> dict:
     return disgenet_version
 
 
-def get_gene_disease(bridgedb_df: pd.DataFrame, endpoint: str) -> Tuple[pd.DataFrame, dict]:
+def get_gene_disease(
+    bridgedb_df: pd.DataFrame, endpoint: Optional[str] = "http://rdf.disgenet.org/sparql/"
+) -> Tuple[pd.DataFrame, dict]:
     """Query gene-disease associations from DisGeNET.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query.
@@ -133,14 +135,14 @@ def get_gene_disease(bridgedb_df: pd.DataFrame, endpoint: str) -> Tuple[pd.DataF
         disgenet_df["disease_id"] = disgenet_df["description"].apply(
             lambda x: x.split("[")[1].split("]")[0]
         )
-        disgenet_df["disease_label"] = disgenet_df["description"].apply(lambda x: x.split(" [")[0])
+        disgenet_df["disease_name"] = disgenet_df["description"].apply(lambda x: x.split(" [")[0])
         disgenet_df["score"] = disgenet_df["disease_score"].astype(float)
         disgenet_df["source"] = disgenet_df["source"].apply(lambda x: x.split("/")[-1])
 
         disgenet_df["target"] = disgenet_df["target"].values.astype(str)
-        disgenet_df = disgenet_df[["target", "disease_id", "disease_label", "score", "source"]]
+        disgenet_df = disgenet_df[["target", "disease_id", "disease_name", "score", "source"]]
 
-        selected_columns = ["disease_id", "disease_label", "score", "source"]
+        selected_columns = ["disease_id", "disease_name", "score", "source"]
 
         merged_df = collapse_data_sources(
             data_df=bridgedb_df,
