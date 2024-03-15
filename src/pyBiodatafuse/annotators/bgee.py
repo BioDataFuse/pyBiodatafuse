@@ -8,6 +8,7 @@ from string import Template
 
 import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
+from SPARQLWrapper.SPARQLExceptions import SPARQLWrapperException
 
 from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interest
 
@@ -103,7 +104,9 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
         if anatomical_entity.strip() != ""
     ]
 
-    with open(os.path.dirname(__file__) + "/queries/bgee-genes-tissues-expression-level.rq", "r") as fin:
+    with open(
+        os.path.dirname(__file__) + "/queries/bgee-genes-tissues-expression-level.rq", "r"
+    ) as fin:
         sparql_query = fin.read()
 
     sparql = SPARQLWrapper("https://www.bgee.org/sparql/")
@@ -178,7 +181,7 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
             "developmental_stage_id",
             "developmental_stage_name",
             "expression_level",
-            "confidence_level"
+            "confidence_level",
         ],
         col_name="Bgee",
     )
