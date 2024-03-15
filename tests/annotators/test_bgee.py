@@ -10,6 +10,7 @@ from unittest.mock import patch
 import pandas as pd
 import pytest
 from SPARQLWrapper import JSON, SPARQLWrapper
+from SPARQLWrapper.SPARQLExceptions import SPARQLWrapperException
 
 from pyBiodatafuse.annotators.bgee import get_gene_expression, get_version_bgee
 
@@ -48,6 +49,7 @@ def test_get_version_bgee(mock_sparql_request):
 
     assert obtained_version == expected_version
 
+
 def test_sparql_endpoint_bgee():
     """Test the availability of the Bgee SPARQL endpoint."""
     endpoint = "https://www.bgee.org/sparql/"
@@ -62,7 +64,8 @@ def test_sparql_endpoint_bgee():
         sparql.queryAndConvert()
         assert True
     except SPARQLWrapperException:
-        assert False
+        raise AssertionError()
+
 
 @patch("pyBiodatafuse.annotators.bgee.SPARQLWrapper.queryAndConvert")
 def test_get_gene_expression(mock_sparql_request, bridgedb_dataframe):
@@ -99,8 +102,6 @@ def test_get_gene_expression(mock_sparql_request, bridgedb_dataframe):
     )
     obtained_sorted = obtained_sorted.astype({"expression_level": float})
     obtained_sorted.reset_index(drop=True, inplace=True)
-
-    print(obtained_sorted.compare(expected_data))
 
     assert obtained_sorted.equals(expected_data)
 
