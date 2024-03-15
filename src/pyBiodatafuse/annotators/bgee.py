@@ -144,6 +144,10 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
         lambda x: x.split("/")[-1]
     )
 
+    intermediate_df["developmental_stage_id"] = intermediate_df["developmental_stage_id"].apply(
+        lambda x: x.split("/")[-1]
+    )
+
     # Record the end time
     end_time = datetime.datetime.now()
 
