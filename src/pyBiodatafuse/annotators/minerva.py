@@ -45,6 +45,7 @@ def get_version_minerva(map_endpoint: str) -> dict:
 def list_projects(endpoint: str = MINERVA_ENDPOINT) -> pd.DataFrame:
     """Get information about MINERVA projects.
 
+    :param endpoint: MINERVA API endpoint
     :returns: a dataFrame containing url, names and IDs from the different projects in MINERVA plattform
     """
     base_endpoint = f"{endpoint}/machines/"
@@ -163,7 +164,7 @@ def get_gene_minerva_pathways(
     bridgedb_df: pd.DataFrame,
     map_name: str,
     input_type: Optional[str] = "Protein",
-    endpoint: Optional[str] = MINERVA_ENDPOINT,
+    endpoint: str = MINERVA_ENDPOINT,
     get_elements: Optional[bool] = True,
     get_reactions: Optional[bool] = True,
 ) -> Tuple[pd.DataFrame, dict]:

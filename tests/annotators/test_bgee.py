@@ -71,21 +71,12 @@ def test_get_gene_expression(mock_sparql_request, bridgedb_dataframe):
 
     obtained_data, metadata = get_gene_expression(bridgedb_dataframe)
 
-    expected_data = pd.read_json(os.path.join(data_file_folder, "bgee_expected_data.json"))
-    expected_data = expected_data.sort_values(
-        by=["anatomical_entity_id", "expression_level", "developmental_stage_id"], ascending=False
-    )
-    expected_data = expected_data.astype({"expression_level": float})
-    expected_data.reset_index(drop=True, inplace=True)
-
     obtained_sorted = pd.DataFrame(obtained_data[BGEE][0])
-    obtained_sorted = obtained_sorted.sort_values(
-        by=["anatomical_entity_id", "expression_level", "developmental_stage_id"], ascending=False
-    )
     obtained_sorted = obtained_sorted.astype({"expression_level": float})
-    obtained_sorted.reset_index(drop=True, inplace=True)
 
-    assert obtained_sorted.equals(expected_data)
+    expected_data = pd.read_csv("bgee_expected_data.tsv", sep="\t")
+
+    pd.testing.assert_series_equal(obtained_sorted, expected_data)
 
 
 @pytest.fixture(scope="module")
