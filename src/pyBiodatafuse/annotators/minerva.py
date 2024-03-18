@@ -13,13 +13,12 @@ from pyBiodatafuse.constants import MINERVA, MINERVA_ENDPOINT
 from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interest
 
 
-def check_endpoint_minerva(endpoint: str) -> bool:
+def check_endpoint_minerva() -> bool:
     """Check the availability of the MINERVA API endpoint.
 
-    :param endpoint: MINERVA API endpoint
     :returns: True if the endpoint is available, False otherwise.
     """
-    response = requests.get(f"{endpoint}/machines/")
+    response = requests.get(f"{MINERVA_ENDPOINT}/machines/")
 
     # Check if API is down
     if response.status_code == 200:
@@ -42,13 +41,12 @@ def get_version_minerva(map_endpoint: str) -> dict:
     return minerva_version
 
 
-def list_projects(endpoint: str = MINERVA_ENDPOINT) -> pd.DataFrame:
+def list_projects() -> pd.DataFrame:
     """Get information about MINERVA projects.
 
-    :param endpoint: MINERVA API endpoint
     :returns: a dataFrame containing url, names and IDs from the different projects in MINERVA plattform
     """
-    base_endpoint = f"{endpoint}/machines/"
+    base_endpoint = f"{MINERVA_ENDPOINT}/machines/"
     response = requests.get(base_endpoint).json()
     projects = response
     projects_ids = projects["pageContent"]
@@ -86,14 +84,12 @@ def list_projects(endpoint: str = MINERVA_ENDPOINT) -> pd.DataFrame:
 
 def get_minerva_components(
     map_name: str,
-    endpoint: str = MINERVA_ENDPOINT,
     get_elements: Optional[bool] = True,
     get_reactions: Optional[bool] = True,
 ) -> Tuple[str, dict]:
     """Get information about MINERVA componenets from a specific project.
 
     :param map_name: MINERVA map name. The extensive list can be found at https://minerva-net.lcsb.uni.lu/table.html.
-    :param endpoint: MINERVA API endpoint
     :param get_elements: boolean to get elements of the chosen diagram
     :param get_reactions: boolean to get reactions of the chosen diagram
     :returns: a tuple of map endpoint and dictionary containing:
@@ -105,7 +101,7 @@ def get_minerva_components(
         - 'models' is a list containing pathway-specific information for each of the pathways in the model
     """
     # Get list of projects
-    project_df = list_projects(endpoint)
+    project_df = list_projects()
 
     # Get url from the project specified
     condition = project_df["names"] == map_name
@@ -164,7 +160,6 @@ def get_gene_minerva_pathways(
     bridgedb_df: pd.DataFrame,
     map_name: str,
     input_type: Optional[str] = "Protein",
-    endpoint: str = MINERVA_ENDPOINT,
     get_elements: Optional[bool] = True,
     get_reactions: Optional[bool] = True,
 ) -> Tuple[pd.DataFrame, dict]:
@@ -180,10 +175,10 @@ def get_gene_minerva_pathways(
     :returns: a tuple containing MINERVA outputs and dictionary of the MINERVA metadata.
     """
     # Check if the MINERVA API is available
-    api_available = check_endpoint_minerva(endpoint=endpoint)
+    api_available = check_endpoint_minerva()
     if not api_available:
         warnings.warn(
-            "MINERVA API endpoint is not available. Unable to retrieve data.", stacklevel=2
+            f"{MINERVA} API endpoint is not available. Unable to retrieve data.", stacklevel=2
         )
         return pd.DataFrame(), {}
 
@@ -203,7 +198,7 @@ def get_gene_minerva_pathways(
     start_time = datetime.datetime.now()
 
     map_url, map_components = get_minerva_components(
-        endpoint=endpoint, map_name=map_name, get_elements=get_elements, get_reactions=get_reactions
+        map_name=map_name, get_elements=get_elements, get_reactions=get_reactions
     )
     map_elements = map_components.get("map_elements", {})
     models = map_components.get("models", {})
