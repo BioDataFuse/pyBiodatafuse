@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""Python file for queriying PubChem SPARQL endpoint at https://idsm.elixir-czech.cz/sparql/endpoint/idsm."""
+"""Python file for queriying PubChem (https://pubchem.ncbi.nlm.nih.gov/)."""
 
 import datetime
 import os
@@ -13,13 +13,13 @@ import numpy as np
 import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
 
+from pyBiodatafuse.constants import PUBCHEM, PUBCHEM_ENDPOINT
 from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interest
 
 
-def test_idsm_endpoint(endpoint: str) -> bool:
-    """Test the availability of the IDSM endpoint.
+def check_endpoint_pubchem() -> bool:
+    """Check the availability of the IDSM endpoint.
 
-    :param endpoint: IDSM endpoint ("https://idsm.elixir-czech.cz/sparql/endpoint/idsm")
     :returns: True if the endpoint is available, False otherwise.
     """
     query_string = """SELECT * WHERE {
@@ -27,7 +27,7 @@ def test_idsm_endpoint(endpoint: str) -> bool:
         }
         LIMIT 1
         """
-    sparql = SPARQLWrapper(endpoint)
+    sparql = SPARQLWrapper(PUBCHEM_ENDPOINT)
     sparql.setOnlyConneg(True)
     sparql.setQuery(query_string)
     try:
@@ -37,6 +37,9 @@ def test_idsm_endpoint(endpoint: str) -> bool:
         return False
 
 
+# TODO - Add metadata function. Currently, no metadata is returned from IDSM servers
+
+
 def get_protein_molecule_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
     """Query PubChem for molecules screened on proteins as targets.
 
@@ -44,10 +47,11 @@ def get_protein_molecule_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
     :returns: a DataFrame containing the PubChem output and dictionary of the PubChem metadata.
     """
     # Check if the IDSM endpoint is available
-    endpoint = "https://idsm.elixir-czech.cz/sparql/endpoint/idsm"
-    api_available = test_idsm_endpoint(endpoint=endpoint)
+    api_available = check_endpoint_pubchem()
     if not api_available:
-        warnings.warn("PubChem endpoint is not available. Unable to retrieve data.", stacklevel=2)
+        warnings.warn(
+            f"{PUBCHEM} endpoint is not available. Unable to retrieve data.", stacklevel=2
+        )
         return pd.DataFrame(), {}
 
     # Record the start time
@@ -75,13 +79,13 @@ def get_protein_molecule_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
     ) as fin:
         sparql_query = fin.read()
 
-    sparql = SPARQLWrapper("https://idsm.elixir-czech.cz/sparql/endpoint/idsm")
+    sparql = SPARQLWrapper(PUBCHEM_ENDPOINT)
     sparql.setReturnFormat(JSON)
     sparql.setOnlyConneg(True)
 
     query_count = 0
 
-    results_df_list = list()
+    intermediate_df = pd.DataFrame()
 
     for protein_list_str in query_protein_list:
         query_count += 1
@@ -96,17 +100,13 @@ def get_protein_molecule_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
         df = pd.DataFrame(res["results"]["bindings"])
         df = df.applymap(lambda x: x["value"], na_action="ignore")
 
-        results_df_list.append(df)
+        intermediate_df = pd.concat([intermediate_df, df], ignore_index=True)
 
     # Record the end time
     end_time = datetime.datetime.now()
 
     # Organize the annotation results as an array of dictionaries
-    intermediate_df = pd.concat(results_df_list)
-
-    intermediate_df.rename(columns={"upProt": "target"}, inplace=True)
-
-    endpoint_types = {
+    assay_endpoint_types = {
         "http://www.bioassayontology.org/bao#BAO_0000034": "Kd",
         "http://www.bioassayontology.org/bao#BAO_0000186": "AC50",
         "http://www.bioassayontology.org/bao#BAO_0000187": "CC50",
@@ -128,8 +128,9 @@ def get_protein_molecule_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
         intermediate_df["outcome"] = intermediate_df["outcome"].map(lambda x: x[47:])
         intermediate_df["compound_cid"] = intermediate_df["compound_cid"].map(lambda x: x[48:])
         intermediate_df["assay_type"] = intermediate_df["assay_type"].map(
-            lambda x: endpoint_types[x]
+            lambda x: assay_endpoint_types[x]
         )
+        intermediate_df.rename(columns={"compound_cid": "pubchem_compound_id"}, inplace=True)
         target_columns = list(intermediate_df.columns)
         target_columns.remove("target")
     else:
@@ -142,20 +143,21 @@ def get_protein_molecule_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
         target_df=intermediate_df,
         common_cols=["target"],
         target_specific_cols=target_columns,
-        col_name="compounds_screened",
+        col_name=f"{PUBCHEM}_assays",
     )
 
     # if mappings exist but SPARQL returns empty response
-    if (not merged_df.empty) and merged_df["compounds_screened"][0] is None:
-        merged_df.drop_duplicates(subset=["identifier", "compounds_screened"], inplace=True)
+    if (not merged_df.empty) and merged_df["{PUBCHEM}_assays"][0] is None:
+        merged_df.drop_duplicates(subset=["identifier", "{PUBCHEM}_assays"], inplace=True)
+
     elif not merged_df.empty:
-        res_keys = merged_df["compounds_screened"][0][0].keys()
+        res_keys = merged_df["{PUBCHEM}_assays"][0][0].keys()
         # remove duplicate identifier and response row
-        merged_df["compounds_screened"] = merged_df["compounds_screened"].map(
+        merged_df["{PUBCHEM}_assays"] = merged_df["{PUBCHEM}_assays"].map(
             lambda x: tuple(frozenset(d.items()) for d in x), na_action="ignore"
         )
-        merged_df.drop_duplicates(subset=["identifier", "compounds_screened"], inplace=True)
-        merged_df["compounds_screened"] = merged_df["compounds_screened"].map(
+        merged_df.drop_duplicates(subset=["identifier", "{PUBCHEM}_assays"], inplace=True)
+        merged_df["{PUBCHEM}_assays"] = merged_df["{PUBCHEM}_assays"].map(
             lambda res_tup: list(dict((x, y) for x, y in res) for res in res_tup),
             na_action="ignore",
         )
@@ -164,7 +166,7 @@ def get_protein_molecule_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
         identifiers = merged_df["identifier"].unique()
         for identifier in identifiers:
             if merged_df.loc[merged_df["identifier"] == identifier].shape[0] > 1:
-                mask = merged_df["compounds_screened"].apply(
+                mask = merged_df["{PUBCHEM}_assays"].apply(
                     lambda lst: all(
                         [
                             all([isinstance(val, float) and np.isnan(val) for val in dct.values()])
@@ -176,12 +178,12 @@ def get_protein_molecule_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
                 merged_df.drop(merged_df[mask & mask2].index, inplace=True)
 
         # set default order to response dictionaries to keep output consistency
-        merged_df["compounds_screened"] = merged_df["compounds_screened"].apply(
+        merged_df["{PUBCHEM}_assays"] = merged_df["{PUBCHEM}_assays"].apply(
             lambda res: list(dict((k, r[k]) for k in res_keys) for r in res)
         )
         # set numerical identifiers to int to kepp output consistency
-        merged_df["compounds_screened"] = merged_df["compounds_screened"].apply(
-            lambda res: int_response_value_types(res, ["compound_cid"])
+        merged_df["{PUBCHEM}_assays"] = merged_df["{PUBCHEM}_assays"].apply(
+            lambda res: int_response_value_types(res, ["pubchem_compound_id"])
         )
     merged_df.reset_index(drop=True, inplace=True)
 
@@ -193,12 +195,12 @@ def get_protein_molecule_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
 
     # Add the datasource, query, query time, and the date to metadata
     molmedb_metadata = {
-        "datasource": "PubChem",
+        "datasource": PUBCHEM,
         "query": {
             "size": len(protein_list_str),
             "time": time_elapsed,
             "date": current_date,
-            "url": "https://idsm.elixir-czech.cz/sparql/endpoint/idsm",
+            "url": PUBCHEM_ENDPOINT,
         },
     }
 
