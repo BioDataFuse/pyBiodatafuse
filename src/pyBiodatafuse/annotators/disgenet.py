@@ -118,8 +118,8 @@ def get_gene_disease(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
         df = pd.DataFrame(res)
         df = df.applymap(lambda x: x["value"])
 
-        disgenet_df = pd.merge(
-            disgenet_df, df, ignore_index=True
+        disgenet_df = pd.concat(
+            [disgenet_df, df], ignore_index=True
         )  # this is also adding to the time
 
     # Record the end time
