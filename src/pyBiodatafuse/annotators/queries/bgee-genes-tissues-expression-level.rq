@@ -5,7 +5,7 @@ PREFIX lscr: <http://purl.org/lscr#>
 PREFIX genex: <http://purl.org/genex#>
 PREFIX obo: <http://purl.obolibrary.org/obo/>
 
-SELECT ?gene ?ensembl_id ?gene_id ?anatomical_entity_id ?anatomical_entity_name ?developmental_stage_id ?developmental_stage_name ?expression_level ?confidence_level
+SELECT ?gene ?ensembl_id ?gene_id ?anatomical_entity_id ?anatomical_entity_name ?developmental_stage_id ?developmental_stage_name ?expression_level ?confidence_level_id
 WHERE {
   VALUES ?ensembl_id { $gene_list }
   VALUES ?anatomical_entity_name { $anat_entities_list }
@@ -16,7 +16,7 @@ WHERE {
   ?expr genex:hasSequenceUnit ?gene.
   ?expr a genex:Expression .
   #?expr genex:hasConfidenceLevel obo:CIO_0000029 . # high confidence level
-  ?expr genex:hasConfidenceLevel ?confidence_level .
+  ?expr genex:hasConfidenceLevel ?confidence_level_id .
   ?expr genex:hasExpressionLevel ?expression_level .
   ?expr genex:hasExpressionCondition ?cond .
   ?cond genex:hasDevelopmentalStage ?developmental_stage_id.

@@ -11,7 +11,7 @@ import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
 from SPARQLWrapper.SPARQLExceptions import SPARQLWrapperException
 
-from pyBiodatafuse.constants import BGEE, BGEE_ENDPOINT
+from pyBiodatafuse.constants import BGEE, BGEE_ENDPOINT, BGEE_INPUT_ID
 from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interest
 
 
@@ -74,7 +74,7 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
     # Record the start time
     start_time = datetime.datetime.now()
 
-    data_df = get_identifier_of_interest(bridgedb_df, "Ensembl")
+    data_df = get_identifier_of_interest(bridgedb_df, BGEE_INPUT_ID)
     gene_list = data_df["target"].tolist()
     gene_list = list(set(gene_list))
 
@@ -157,6 +157,9 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
     intermediate_df["developmental_stage_id"] = intermediate_df["developmental_stage_id"].apply(
         lambda x: x.split("/")[-1]
     )
+    intermediate_df["confidence_level_id"] = intermediate_df["confidence_level_id"].apply(
+        lambda x: x.split("/")[-1]
+    )
 
     # Metadata details
     # Get the current date and time
@@ -192,7 +195,7 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
             "developmental_stage_id",
             "developmental_stage_name",
             "expression_level",
-            "confidence_level",
+            "confidence_level_id",
         ],
         col_name=BGEE,
     )
