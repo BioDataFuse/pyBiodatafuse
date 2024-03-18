@@ -1,28 +1,29 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""Python file for queriying Bgee database (https://bgee.org) via its SPARQL endpoint (https://www.bgee.org/sparql/)."""
+"""Python file for queriying Bgee database (https://bgee.org)."""
 
 import datetime
 import os
+import warnings
 from string import Template
 
 import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
 from SPARQLWrapper.SPARQLExceptions import SPARQLWrapperException
 
+from pyBiodatafuse.constants import BGEE, BGEE_ENDPOINT
 from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interest
 
 
-def test_sparql_endpoint_bgee(endpoint: str) -> bool:
-    """Test the availability of the Bgee SPARQL endpoint.
+def check_endpoint_bgee() -> bool:
+    """Check the availability of the Bgee SPARQL endpoint.
 
-    :param endpoint: Bgee SPARQL endpoint ("https://www.bgee.org/sparql/")
     :returns: True if the endpoint is available, False otherwise.
     """
     with open(os.path.dirname(__file__) + "/queries/bgee-get-last-modified.rq", "r") as fin:
         sparql_query = fin.read()
 
-    sparql = SPARQLWrapper(endpoint)
+    sparql = SPARQLWrapper(BGEE_ENDPOINT)
     sparql.setReturnFormat(JSON)
 
     sparql.setQuery(sparql_query)
@@ -44,7 +45,7 @@ def get_version_bgee() -> dict:
     with open(os.path.dirname(__file__) + "/queries/bgee-get-last-modified.rq", "r") as fin:
         sparql_query = fin.read()
 
-    sparql = SPARQLWrapper("https://www.bgee.org/sparql/")
+    sparql = SPARQLWrapper(BGEE_ENDPOINT)
     sparql.setReturnFormat(JSON)
 
     sparql.setQuery(sparql_query)
@@ -61,6 +62,15 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
     :returns: a DataFrame containing the Bgee output and dictionary of the Bgee metadata.
     """
+    # Check if the DisGeNET API is available
+    api_available = check_endpoint_bgee()
+
+    if not api_available:
+        warnings.warn(
+            f"{BGEE} SPARQL endpoint is not available. Unable to retrieve data.", stacklevel=2
+        )
+        return pd.DataFrame(), {}
+
     # Record the start time
     start_time = datetime.datetime.now()
 
@@ -109,12 +119,12 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
     ) as fin:
         sparql_query = fin.read()
 
-    sparql = SPARQLWrapper("https://www.bgee.org/sparql/")
+    sparql = SPARQLWrapper(BGEE_ENDPOINT)
     sparql.setReturnFormat(JSON)
 
     query_count = 0
 
-    results_df = pd.DataFrame()
+    intermediate_df = pd.DataFrame()
 
     for gene_list_str in query_gene_lists:
         query_count += 1
@@ -134,22 +144,19 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
 
             df = df.applymap(lambda x: x["value"])
 
-            results_df = pd.concat([results_df, df])
+            intermediate_df = pd.concat([intermediate_df, df], ignore_index=True)
+
+    # Record the end time
+    end_time = datetime.datetime.now()
 
     # Organize the annotation results as an array of dictionaries
-    intermediate_df = results_df
-
     intermediate_df.rename(columns={"ensembl_id": "target"}, inplace=True)
     intermediate_df["anatomical_entity_id"] = intermediate_df["anatomical_entity_id"].apply(
         lambda x: x.split("/")[-1]
     )
-
     intermediate_df["developmental_stage_id"] = intermediate_df["developmental_stage_id"].apply(
         lambda x: x.split("/")[-1]
     )
-
-    # Record the end time
-    end_time = datetime.datetime.now()
 
     # Metadata details
     # Get the current date and time
@@ -163,13 +170,13 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
 
     # Add the datasource, query, query time, and the date to metadata
     bgee_metadata = {
-        "datasource": "Bgee",
+        "datasource": BGEE,
         "metadata": {"source_version": bgee_version},
         "query": {
             "size": len(gene_list),
             "time": time_elapsed,
             "date": current_date,
-            "url": "https://www.bgee.org/sparql/",
+            "url": BGEE_ENDPOINT,
         },
     }
 
@@ -187,7 +194,7 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
             "expression_level",
             "confidence_level",
         ],
-        col_name="Bgee",
+        col_name=BGEE,
     )
 
     return merged_df, bgee_metadata

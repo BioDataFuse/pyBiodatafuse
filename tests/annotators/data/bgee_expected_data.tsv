@@ -1,0 +1,347 @@
+anatomical_entity_id	anatomical_entity_name	developmental_stage_id	developmental_stage_name	expression_level	confidence_level
+UBERON_0000178	blood	UBERON_0018241	prime adult stage	67.5756	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000178	blood	UBERON_0000066	fully formed stage	67.2335	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000178	blood	HsapDv_0000272	60-79 year-old stage (human)	69.5341	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000178	blood	HsapDv_0000237	third decade stage (human)	66.2313	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000178	blood	HsapDv_0000240	sixth decade stage (human)	69.6469	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000178	blood	HsapDv_0000242	eighth decade stage (human)	72.1843	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000178	blood	HsapDv_0000238	fourth decade stage (human)	65.5315	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000178	blood	HsapDv_0000239	fifth decade stage (human)	68.1552	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000178	blood	UBERON_0000104	life cycle	67.3533	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000178	blood	HsapDv_0000266	young adult stage (human)	65.7393	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000178	blood	HsapDv_0000270	2-4 year-old child stage (human)	66.5705	http://purl.obolibrary.org/obo/CIO_0000030
+UBERON_0000178	blood	UBERON_0000112	sexually immature stage	63.0405	http://purl.obolibrary.org/obo/CIO_0000030
+UBERON_0000178	blood	UBERON_0034919	juvenile stage	61.7527	http://purl.obolibrary.org/obo/CIO_0000030
+UBERON_0000178	blood	HsapDv_0000241	seventh decade stage (human)	69.3928	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000178	blood	UBERON_0000092	post-embryonic stage	67.2335	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000178	blood	UBERON_0007222	late adult stage	69.5341	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000178	blood	UBERON_0000113	post-juvenile	67.6245	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002371	bone marrow	UBERON_0000092	post-embryonic stage	70.7829	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002371	bone marrow	HsapDv_0000239	fifth decade stage (human)	77.8876	http://purl.obolibrary.org/obo/CIO_0000030
+UBERON_0002371	bone marrow	UBERON_0000104	life cycle	71.3253	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002371	bone marrow	UBERON_0000113	post-juvenile	75.0605	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002371	bone marrow	UBERON_0000066	fully formed stage	70.7829	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002371	bone marrow	HsapDv_0000238	fourth decade stage (human)	78.8003	http://purl.obolibrary.org/obo/CIO_0000030
+UBERON_0000955	brain	HsapDv_0000243	ninth decade stage (human)	83.5735	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000955	brain	HsapDv_0000238	fourth decade stage (human)	89.0968	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000955	brain	UBERON_0018685	nursing stage	86.1697	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000955	brain	HsapDv_0000199	fifth LMP month stage (human)	88.2098	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000955	brain	HsapDv_0000266	young adult stage (human)	88.6501	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000955	brain	HsapDv_0000200	sixth LMP month stage (human)	88.7343	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000955	brain	UBERON_0000104	life cycle	88.2124	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000955	brain	UBERON_0000112	sexually immature stage	83.4142	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000955	brain	HsapDv_0000197	third LMP month stage (human)	87.0351	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000955	brain	HsapDv_0000244	tenth decade stage (human)	90.8868	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000955	brain	UBERON_0000092	post-embryonic stage	88.2573	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000955	brain	HsapDv_0000239	fifth decade stage (human)	89.2697	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000955	brain	UBERON_0000068	embryo stage	90.0984	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000955	brain	HsapDv_0000270	2-4 year-old child stage (human)	82.2421	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000955	brain	UBERON_0000113	post-juvenile	88.3367	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000955	brain	HsapDv_0000246	1-year-old stage (human)	88.1516	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000955	brain	UBERON_0034920	infant stage	86.1697	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000955	brain	UBERON_0018241	prime adult stage	88.8589	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000955	brain	HsapDv_0000245	eleventh decade stage (human)	76.9338	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000955	brain	HsapDv_0000241	seventh decade stage (human)	88.3749	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000955	brain	UBERON_0034919	juvenile stage	79.8451	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000955	brain	UBERON_0007222	late adult stage	87.7472	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000955	brain	HsapDv_0000240	sixth decade stage (human)	89.1709	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000955	brain	UBERON_0000066	fully formed stage	88.2573	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000955	brain	UBERON_0007220	late embryonic stage	90.0984	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000955	brain	HsapDv_0000198	fourth LMP month stage (human)	93.7414	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000955	brain	HsapDv_0000242	eighth decade stage (human)	85.6319	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000955	brain	HsapDv_0000237	third decade stage (human)	88.664	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000955	brain	HsapDv_0000272	60-79 year-old stage (human)	87.9509	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000955	brain	HsapDv_0000095	80 year-old and over stage (human)	85.7325	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000955	brain	HsapDv_0000268	15-19 year-old (human)	85.9252	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000310	breast	HsapDv_0000266	young adult stage (human)	87.8008	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000310	breast	HsapDv_0000239	fifth decade stage (human)	88.4495	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000310	breast	UBERON_0000092	post-embryonic stage	87.8472	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000310	breast	UBERON_0000104	life cycle	85.3975	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000310	breast	UBERON_0000113	post-juvenile	87.8472	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000310	breast	UBERON_0007222	late adult stage	84.9181	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000310	breast	HsapDv_0000242	eighth decade stage (human)	80.671	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000310	breast	HsapDv_0000240	sixth decade stage (human)	88.0357	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000310	breast	HsapDv_0000241	seventh decade stage (human)	85.2815	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000310	breast	HsapDv_0000272	60-79 year-old stage (human)	84.9181	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000310	breast	UBERON_0018241	prime adult stage	88.101	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000310	breast	UBERON_0000066	fully formed stage	87.8472	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000310	breast	HsapDv_0000238	fourth decade stage (human)	87.225	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000310	breast	HsapDv_0000237	third decade stage (human)	88.1872	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0004535	cardiovascular system	UBERON_0007220	late embryonic stage	74.5292	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0004535	cardiovascular system	HsapDv_0000199	fifth LMP month stage (human)	70.4085	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0004535	cardiovascular system	HsapDv_0000238	fourth decade stage (human)	85.5764	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0004535	cardiovascular system	UBERON_0018685	nursing stage	81.9243	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0004535	cardiovascular system	HsapDv_0000239	fifth decade stage (human)	84.4863	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0004535	cardiovascular system	UBERON_0000104	life cycle	84.489	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0004535	cardiovascular system	HsapDv_0000197	third LMP month stage (human)	83.4335	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0004535	cardiovascular system	HsapDv_0000266	young adult stage (human)	84.2103	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0004535	cardiovascular system	UBERON_0000112	sexually immature stage	81.6984	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0004535	cardiovascular system	UBERON_0000068	embryo stage	74.5292	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0004535	cardiovascular system	UBERON_0034919	juvenile stage	75.8093	http://purl.obolibrary.org/obo/CIO_0000030
+UBERON_0004535	cardiovascular system	HsapDv_0000241	seventh decade stage (human)	84.9103	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0004535	cardiovascular system	UBERON_0000113	post-juvenile	84.7245	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0004535	cardiovascular system	UBERON_0000092	post-embryonic stage	84.7069	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0004535	cardiovascular system	UBERON_0007222	late adult stage	84.7891	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0004535	cardiovascular system	HsapDv_0000246	1-year-old stage (human)	82.9901	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0004535	cardiovascular system	HsapDv_0000268	15-19 year-old (human)	76.6213	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0004535	cardiovascular system	UBERON_0018241	prime adult stage	84.7977	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0004535	cardiovascular system	UBERON_0034920	infant stage	81.9243	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0004535	cardiovascular system	HsapDv_0000242	eighth decade stage (human)	83.1669	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0004535	cardiovascular system	HsapDv_0000237	third decade stage (human)	83.0445	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0004535	cardiovascular system	UBERON_0000066	fully formed stage	84.7069	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0004535	cardiovascular system	HsapDv_0000272	60-79 year-old stage (human)	84.7891	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0004535	cardiovascular system	HsapDv_0000240	sixth decade stage (human)	85.406	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001007	digestive system	UBERON_0007220	late embryonic stage	80.1721	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001007	digestive system	HsapDv_0000238	fourth decade stage (human)	86.9835	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001007	digestive system	UBERON_0018685	nursing stage	80.4021	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001007	digestive system	HsapDv_0000199	fifth LMP month stage (human)	80.7349	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001007	digestive system	HsapDv_0000203	ninth LMP month stage (human)	82.8918	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001007	digestive system	HsapDv_0000243	ninth decade stage (human)	76.0472	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001007	digestive system	HsapDv_0000197	third LMP month stage (human)	76.2512	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001007	digestive system	UBERON_0000111	organogenesis stage	82.4168	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001007	digestive system	UBERON_0000112	sexually immature stage	73.7129	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001007	digestive system	HsapDv_0000270	2-4 year-old child stage (human)	88.3075	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001007	digestive system	UBERON_0000068	embryo stage	80.2651	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001007	digestive system	HsapDv_0000266	young adult stage (human)	86.5482	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001007	digestive system	HsapDv_0000239	fifth decade stage (human)	86.2978	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001007	digestive system	UBERON_0000104	life cycle	85.7185	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001007	digestive system	UBERON_0034919	juvenile stage	79.9003	http://purl.obolibrary.org/obo/CIO_0000030
+UBERON_0001007	digestive system	HsapDv_0000241	seventh decade stage (human)	87.0806	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001007	digestive system	UBERON_0018241	prime adult stage	86.5427	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001007	digestive system	UBERON_0034920	infant stage	80.4021	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001007	digestive system	HsapDv_0000246	1-year-old stage (human)	80.7206	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001007	digestive system	HsapDv_0000200	sixth LMP month stage (human)	85.8436	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001007	digestive system	UBERON_0000092	post-embryonic stage	86.2924	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001007	digestive system	UBERON_0000113	post-juvenile	86.3873	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001007	digestive system	UBERON_0007222	late adult stage	86.6857	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001007	digestive system	HsapDv_0000272	60-79 year-old stage (human)	87.0007	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001007	digestive system	HsapDv_0000268	15-19 year-old (human)	81.0544	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001007	digestive system	HsapDv_0000237	third decade stage (human)	87.0273	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001007	digestive system	HsapDv_0000240	sixth decade stage (human)	87.5538	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001007	digestive system	HsapDv_0000242	eighth decade stage (human)	84.3434	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001007	digestive system	HsapDv_0000095	80 year-old and over stage (human)	76.0472	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001007	digestive system	HsapDv_0000198	fourth LMP month stage (human)	76.9845	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001007	digestive system	UBERON_0000066	fully formed stage	86.2924	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000948	heart	HsapDv_0000238	fourth decade stage (human)	86.3203	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000948	heart	UBERON_0007220	late embryonic stage	74.5292	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000948	heart	UBERON_0018685	nursing stage	81.9243	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000948	heart	HsapDv_0000199	fifth LMP month stage (human)	70.4085	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000948	heart	UBERON_0000068	embryo stage	74.5292	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000948	heart	HsapDv_0000197	third LMP month stage (human)	83.4335	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000948	heart	HsapDv_0000239	fifth decade stage (human)	84.2507	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000948	heart	HsapDv_0000266	young adult stage (human)	83.9569	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000948	heart	UBERON_0000112	sexually immature stage	81.6984	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000948	heart	UBERON_0000104	life cycle	84.0824	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000948	heart	UBERON_0034920	infant stage	81.9243	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000948	heart	UBERON_0018241	prime adult stage	84.528	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000948	heart	UBERON_0000113	post-juvenile	84.448	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000948	heart	UBERON_0000092	post-embryonic stage	84.4111	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000948	heart	HsapDv_0000246	1-year-old stage (human)	82.9901	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000948	heart	HsapDv_0000241	seventh decade stage (human)	84.7119	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000948	heart	UBERON_0034919	juvenile stage	75.8093	http://purl.obolibrary.org/obo/CIO_0000030
+UBERON_0000948	heart	UBERON_0007222	late adult stage	84.4666	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000948	heart	HsapDv_0000272	60-79 year-old stage (human)	84.4666	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000948	heart	HsapDv_0000242	eighth decade stage (human)	82.9181	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000948	heart	HsapDv_0000240	sixth decade stage (human)	85.144	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000948	heart	HsapDv_0000237	third decade stage (human)	81.4776	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000948	heart	UBERON_0000066	fully formed stage	84.4111	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000948	heart	HsapDv_0000268	15-19 year-old (human)	76.6213	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0005057	immune organ	HsapDv_0000240	sixth decade stage (human)	81.0511	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0005057	immune organ	UBERON_0000066	fully formed stage	80.5165	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0005057	immune organ	HsapDv_0000095	80 year-old and over stage (human)	79.464	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0005057	immune organ	HsapDv_0000272	60-79 year-old stage (human)	80.9815	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0005057	immune organ	HsapDv_0000237	third decade stage (human)	83.2331	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0005057	immune organ	HsapDv_0000238	fourth decade stage (human)	80.4398	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0005057	immune organ	HsapDv_0000243	ninth decade stage (human)	79.464	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0005057	immune organ	UBERON_0000104	life cycle	80.202	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0005057	immune organ	HsapDv_0000266	young adult stage (human)	81.4735	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0005057	immune organ	HsapDv_0000239	fifth decade stage (human)	80.9617	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0005057	immune organ	UBERON_0000113	post-juvenile	80.5165	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0005057	immune organ	UBERON_0000092	post-embryonic stage	80.5165	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0005057	immune organ	UBERON_0007222	late adult stage	80.8432	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0005057	immune organ	HsapDv_0000241	seventh decade stage (human)	80.9815	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0005057	immune organ	UBERON_0018241	prime adult stage	81.1379	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002113	kidney	UBERON_0007220	late embryonic stage	89.2355	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002113	kidney	HsapDv_0000199	fifth LMP month stage (human)	91.8559	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002113	kidney	HsapDv_0000240	sixth decade stage (human)	95.8164	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002113	kidney	HsapDv_0000237	third decade stage (human)	94.3722	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002113	kidney	UBERON_0000066	fully formed stage	92.8155	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002113	kidney	HsapDv_0000198	fourth LMP month stage (human)	89.2652	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002113	kidney	UBERON_0000111	organogenesis stage	70.5164	http://purl.obolibrary.org/obo/CIO_0000030
+UBERON_0002113	kidney	HsapDv_0000239	fifth decade stage (human)	96.224	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002113	kidney	HsapDv_0000197	third LMP month stage (human)	86.2443	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002113	kidney	HsapDv_0000266	young adult stage (human)	94.6656	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002113	kidney	HsapDv_0000238	fourth decade stage (human)	94.9783	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002113	kidney	UBERON_0007222	late adult stage	94.233	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002113	kidney	UBERON_0000092	post-embryonic stage	92.8155	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002113	kidney	UBERON_0000104	life cycle	91.8018	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002113	kidney	UBERON_0000068	embryo stage	86.1751	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002113	kidney	UBERON_0000113	post-juvenile	92.8155	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002113	kidney	HsapDv_0000272	60-79 year-old stage (human)	94.233	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002113	kidney	UBERON_0018241	prime adult stage	95.3812	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002113	kidney	HsapDv_0000242	eighth decade stage (human)	91.778	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002113	kidney	HsapDv_0000241	seventh decade stage (human)	94.529	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002107	liver	UBERON_0034920	infant stage	81.2979	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002107	liver	UBERON_0000113	post-juvenile	86.1838	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002107	liver	UBERON_0018241	prime adult stage	88.2349	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002107	liver	UBERON_0034919	juvenile stage	83.6629	http://purl.obolibrary.org/obo/CIO_0000030
+UBERON_0002107	liver	HsapDv_0000241	seventh decade stage (human)	87.1234	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002107	liver	UBERON_0007222	late adult stage	86.6605	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002107	liver	HsapDv_0000246	1-year-old stage (human)	80.7206	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002107	liver	UBERON_0000066	fully formed stage	85.9052	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002107	liver	HsapDv_0000240	sixth decade stage (human)	89.3412	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002107	liver	HsapDv_0000237	third decade stage (human)	88.8069	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002107	liver	HsapDv_0000272	60-79 year-old stage (human)	87.1234	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002107	liver	UBERON_0007220	late embryonic stage	78.6711	http://purl.obolibrary.org/obo/CIO_0000030
+UBERON_0002107	liver	HsapDv_0000095	80 year-old and over stage (human)	82.4664	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002107	liver	UBERON_0000111	organogenesis stage	82.4168	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002107	liver	HsapDv_0000243	ninth decade stage (human)	82.4664	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002107	liver	UBERON_0018685	nursing stage	81.2979	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002107	liver	HsapDv_0000238	fourth decade stage (human)	86.1207	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002107	liver	UBERON_0000092	post-embryonic stage	85.9052	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002107	liver	UBERON_0000104	life cycle	84.2829	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002107	liver	UBERON_0000112	sexually immature stage	81.9364	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002107	liver	HsapDv_0000239	fifth decade stage (human)	88.8363	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002107	liver	HsapDv_0000197	third LMP month stage (human)	75.4938	http://purl.obolibrary.org/obo/CIO_0000030
+UBERON_0002107	liver	HsapDv_0000266	young adult stage (human)	87.448	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002107	liver	UBERON_0000068	embryo stage	79.6744	http://purl.obolibrary.org/obo/CIO_0000030
+UBERON_0002107	liver	HsapDv_0000270	2-4 year-old child stage (human)	88.3075	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002048	lung	HsapDv_0000241	seventh decade stage (human)	91.4943	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002048	lung	UBERON_0000113	post-juvenile	91.0865	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002048	lung	UBERON_0000092	post-embryonic stage	91.0865	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002048	lung	UBERON_0007222	late adult stage	91.8142	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002048	lung	HsapDv_0000268	15-19 year-old (human)	71.6854	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002048	lung	UBERON_0018241	prime adult stage	90.2412	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002048	lung	HsapDv_0000242	eighth decade stage (human)	93.242	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002048	lung	HsapDv_0000272	60-79 year-old stage (human)	91.773	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002048	lung	UBERON_0000066	fully formed stage	91.0865	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002048	lung	HsapDv_0000237	third decade stage (human)	88.355	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002048	lung	HsapDv_0000240	sixth decade stage (human)	90.5441	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002048	lung	UBERON_0007220	late embryonic stage	84.9038	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002048	lung	HsapDv_0000199	fifth LMP month stage (human)	85.7105	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002048	lung	HsapDv_0000095	80 year-old and over stage (human)	95.6624	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002048	lung	HsapDv_0000243	ninth decade stage (human)	95.6624	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002048	lung	HsapDv_0000238	fourth decade stage (human)	91.902	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002048	lung	HsapDv_0000239	fifth decade stage (human)	91.3362	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002048	lung	HsapDv_0000197	third LMP month stage (human)	79.0295	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002048	lung	UBERON_0000104	life cycle	90.1777	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002048	lung	HsapDv_0000266	young adult stage (human)	88.7476	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0002048	lung	UBERON_0000068	embryo stage	84.9038	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001016	nervous system	HsapDv_0000272	60-79 year-old stage (human)	87.597	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001016	nervous system	UBERON_0034920	infant stage	86.1697	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001016	nervous system	UBERON_0018241	prime adult stage	88.2577	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001016	nervous system	HsapDv_0000240	sixth decade stage (human)	88.5968	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001016	nervous system	HsapDv_0000241	seventh decade stage (human)	87.9579	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001016	nervous system	HsapDv_0000242	eighth decade stage (human)	85.4575	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001016	nervous system	UBERON_0034919	juvenile stage	79.8451	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001016	nervous system	HsapDv_0000095	80 year-old and over stage (human)	85.6058	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001016	nervous system	HsapDv_0000238	fourth decade stage (human)	88.6905	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001016	nervous system	HsapDv_0000243	ninth decade stage (human)	83.3952	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001016	nervous system	UBERON_0007220	late embryonic stage	89.993	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001016	nervous system	HsapDv_0000237	third decade stage (human)	87.8976	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001016	nervous system	UBERON_0000066	fully formed stage	87.8343	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001016	nervous system	HsapDv_0000198	fourth LMP month stage (human)	93.5392	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001016	nervous system	HsapDv_0000199	fifth LMP month stage (human)	88.079	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001016	nervous system	HsapDv_0000268	15-19 year-old (human)	85.9252	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001016	nervous system	UBERON_0018685	nursing stage	86.1697	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001016	nervous system	HsapDv_0000244	tenth decade stage (human)	90.8868	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001016	nervous system	HsapDv_0000197	third LMP month stage (human)	87.0351	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001016	nervous system	HsapDv_0000239	fifth decade stage (human)	88.2071	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001016	nervous system	HsapDv_0000266	young adult stage (human)	88.1774	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001016	nervous system	UBERON_0000112	sexually immature stage	83.4142	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001016	nervous system	HsapDv_0000270	2-4 year-old child stage (human)	82.2421	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001016	nervous system	UBERON_0000068	embryo stage	89.993	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001016	nervous system	HsapDv_0000245	eleventh decade stage (human)	76.9338	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001016	nervous system	UBERON_0007222	late adult stage	87.4403	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001016	nervous system	UBERON_0000092	post-embryonic stage	87.8343	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001016	nervous system	HsapDv_0000200	sixth LMP month stage (human)	90.6715	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001016	nervous system	UBERON_0000104	life cycle	87.8232	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001016	nervous system	UBERON_0000113	post-juvenile	87.8956	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001016	nervous system	HsapDv_0000246	1-year-old stage (human)	88.1516	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001264	pancreas	HsapDv_0000272	60-79 year-old stage (human)	87.1224	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001264	pancreas	UBERON_0000066	fully formed stage	90.1729	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001264	pancreas	HsapDv_0000242	eighth decade stage (human)	83.8214	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001264	pancreas	HsapDv_0000237	third decade stage (human)	93.1159	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001264	pancreas	HsapDv_0000240	sixth decade stage (human)	90.9215	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001264	pancreas	UBERON_0018241	prime adult stage	91.2987	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001264	pancreas	HsapDv_0000238	fourth decade stage (human)	89.8056	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001264	pancreas	UBERON_0000104	life cycle	89.9821	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001264	pancreas	HsapDv_0000266	young adult stage (human)	91.1729	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001264	pancreas	HsapDv_0000239	fifth decade stage (human)	91.9497	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001264	pancreas	UBERON_0007222	late adult stage	87.1224	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001264	pancreas	HsapDv_0000241	seventh decade stage (human)	87.6087	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001264	pancreas	UBERON_0000092	post-embryonic stage	90.1729	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001264	pancreas	UBERON_0000113	post-juvenile	90.1729	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001987	placenta	UBERON_0000066	fully formed stage	76.735	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001987	placenta	HsapDv_0000266	young adult stage (human)	90.1672	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001987	placenta	UBERON_0000092	post-embryonic stage	76.735	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001987	placenta	UBERON_0000104	life cycle	76.735	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001987	placenta	UBERON_0000113	post-juvenile	76.735	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001987	placenta	UBERON_0018241	prime adult stage	90.1672	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000990	reproductive system	HsapDv_0000199	fifth LMP month stage (human)	71.8305	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000990	reproductive system	UBERON_0018685	nursing stage	82.8853	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000990	reproductive system	HsapDv_0000198	fourth LMP month stage (human)	76.3089	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000990	reproductive system	UBERON_0007220	late embryonic stage	74.6287	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000990	reproductive system	HsapDv_0000243	ninth decade stage (human)	82.5292	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000990	reproductive system	HsapDv_0000238	fourth decade stage (human)	88.5238	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000990	reproductive system	HsapDv_0000095	80 year-old and over stage (human)	87.6915	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000990	reproductive system	HsapDv_0000268	15-19 year-old (human)	77.1162	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000990	reproductive system	HsapDv_0000266	young adult stage (human)	85.3136	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000990	reproductive system	UBERON_0000112	sexually immature stage	77.8534	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000990	reproductive system	UBERON_0000111	organogenesis stage	82.3971	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000990	reproductive system	UBERON_0000068	embryo stage	75.9438	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000990	reproductive system	HsapDv_0000197	third LMP month stage (human)	76.6022	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000990	reproductive system	HsapDv_0000239	fifth decade stage (human)	87.9365	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000990	reproductive system	HsapDv_0000246	1-year-old stage (human)	72.6461	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000990	reproductive system	UBERON_0000104	life cycle	85.26	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000990	reproductive system	UBERON_0007222	late adult stage	86.5606	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000990	reproductive system	HsapDv_0000241	seventh decade stage (human)	86.5402	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000990	reproductive system	UBERON_0000113	post-juvenile	85.8581	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000990	reproductive system	UBERON_0000092	post-embryonic stage	85.8262	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000990	reproductive system	HsapDv_0000240	sixth decade stage (human)	86.6857	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000990	reproductive system	HsapDv_0000272	60-79 year-old stage (human)	86.4677	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000990	reproductive system	UBERON_0034920	infant stage	82.8853	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000990	reproductive system	HsapDv_0000242	eighth decade stage (human)	85.5006	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000990	reproductive system	UBERON_0000066	fully formed stage	85.8262	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000990	reproductive system	UBERON_0018241	prime adult stage	86.4541	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0000990	reproductive system	HsapDv_0000237	third decade stage (human)	87.0824	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001004	respiratory system	UBERON_0000113	post-juvenile	88.5515	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001004	respiratory system	HsapDv_0000241	seventh decade stage (human)	90.686	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001004	respiratory system	HsapDv_0000272	60-79 year-old stage (human)	90.762	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001004	respiratory system	UBERON_0018241	prime adult stage	87.8818	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001004	respiratory system	HsapDv_0000240	sixth decade stage (human)	89.8293	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001004	respiratory system	HsapDv_0000242	eighth decade stage (human)	91.1678	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001004	respiratory system	HsapDv_0000199	fifth LMP month stage (human)	85.7105	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001004	respiratory system	HsapDv_0000237	third decade stage (human)	86.1562	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001004	respiratory system	HsapDv_0000243	ninth decade stage (human)	95.6624	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001004	respiratory system	UBERON_0000066	fully formed stage	88.5515	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001004	respiratory system	HsapDv_0000095	80 year-old and over stage (human)	95.6624	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001004	respiratory system	HsapDv_0000268	15-19 year-old (human)	70.8296	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001004	respiratory system	UBERON_0007220	late embryonic stage	84.9038	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001004	respiratory system	HsapDv_0000197	third LMP month stage (human)	79.0295	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001004	respiratory system	HsapDv_0000238	fourth decade stage (human)	87.6302	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001004	respiratory system	HsapDv_0000266	young adult stage (human)	86.0317	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001004	respiratory system	UBERON_0000092	post-embryonic stage	88.5515	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001004	respiratory system	HsapDv_0000239	fifth decade stage (human)	87.9398	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001004	respiratory system	UBERON_0007222	late adult stage	90.8073	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001004	respiratory system	UBERON_0000104	life cycle	87.1641	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001004	respiratory system	UBERON_0000068	embryo stage	84.9038	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001434	skeletal system	HsapDv_0000242	eighth decade stage (human)	60.4644	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001434	skeletal system	UBERON_0000066	fully formed stage	68.8389	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001434	skeletal system	HsapDv_0000240	sixth decade stage (human)	73.2885	http://purl.obolibrary.org/obo/CIO_0000030
+UBERON_0001434	skeletal system	HsapDv_0000268	15-19 year-old (human)	60.3609	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001434	skeletal system	HsapDv_0000237	third decade stage (human)	67.6153	http://purl.obolibrary.org/obo/CIO_0000030
+UBERON_0001434	skeletal system	HsapDv_0000272	60-79 year-old stage (human)	62.6237	http://purl.obolibrary.org/obo/CIO_0000030
+UBERON_0001434	skeletal system	HsapDv_0000238	fourth decade stage (human)	74.9352	http://purl.obolibrary.org/obo/CIO_0000030
+UBERON_0001434	skeletal system	UBERON_0007220	late embryonic stage	81.4145	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001434	skeletal system	UBERON_0000104	life cycle	70.5523	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001434	skeletal system	UBERON_0000112	sexually immature stage	66.487	http://purl.obolibrary.org/obo/CIO_0000030
+UBERON_0001434	skeletal system	UBERON_0000092	post-embryonic stage	68.8389	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001434	skeletal system	HsapDv_0000239	fifth decade stage (human)	71.7574	http://purl.obolibrary.org/obo/CIO_0000030
+UBERON_0001434	skeletal system	HsapDv_0000266	young adult stage (human)	68.3517	http://purl.obolibrary.org/obo/CIO_0000030
+UBERON_0001434	skeletal system	UBERON_0000068	embryo stage	81.4145	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001434	skeletal system	UBERON_0000113	post-juvenile	69.9659	http://purl.obolibrary.org/obo/CIO_0000029
+UBERON_0001434	skeletal system	UBERON_0007222	late adult stage	62.6237	http://purl.obolibrary.org/obo/CIO_0000030
+UBERON_0001434	skeletal system	HsapDv_0000241	seventh decade stage (human)	63.2433	http://purl.obolibrary.org/obo/CIO_0000030
+UBERON_0001434	skeletal system	UBERON_0034919	juvenile stage	64.8089	http://purl.obolibrary.org/obo/CIO_0000030
+UBERON_0001434	skeletal system	UBERON_0018241	prime adult stage	70.1117	http://purl.obolibrary.org/obo/CIO_0000030

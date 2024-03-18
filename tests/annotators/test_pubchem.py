@@ -10,6 +10,7 @@ import pytest
 from numpy import nan
 
 from pyBiodatafuse.annotators.pubchem import get_protein_molecule_screened
+from pyBiodatafuse.constants import PUBCHEM
 
 
 @patch("pyBiodatafuse.annotators.pubchem.SPARQLWrapper.queryAndConvert")
@@ -192,9 +193,9 @@ def test_get_protein_molecule_screened(mock_sparql_request, bridgedb_dataframe):
             ],
         ]
     )
-    expected_data.name = "compounds_screened"
+    expected_data.name = f"{PUBCHEM}_assays"
 
-    pd.testing.assert_series_equal(obtained_data["compounds_screened"], expected_data)
+    pd.testing.assert_series_equal(obtained_data[f"{PUBCHEM}_assays"], expected_data)
 
 
 @pytest.fixture(scope="module")
