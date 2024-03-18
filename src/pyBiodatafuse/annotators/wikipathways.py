@@ -124,10 +124,10 @@ def get_gene_wikipathway(bridgedb_df: pd.DataFrame):
     end_time = datetime.datetime.now()
 
     # Organize the annotation results as an array of dictionaries
-
     intermediate_df.rename(
         columns={"geneId": "target", "geneCount": "pathwayGeneCount"}, inplace=True
     )
+    intermediate_df = intermediate_df.drop_duplicates()
 
     # Merge the two DataFrames on the target column
     merged_df = collapse_data_sources(
