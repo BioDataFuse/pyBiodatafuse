@@ -66,7 +66,7 @@ WikiPathways
 
 `Wikipathways <https://www.wikipathways.org/>` is an open science platform for biological pathways contributed, updated, and used by the research community.
 
-.. autofunction:: pyBiodatafuse.annotators.wikipathways.get_gene_wikipathway
+.. autofunction:: pyBiodatafuse.annotators.wikipathways.get_gene_wikipathways
 
 MINERVA
 ~~~~~~~~~~~~~~~
