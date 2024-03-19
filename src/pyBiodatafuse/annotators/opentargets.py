@@ -534,7 +534,7 @@ def get_gene_compound_interactions(
         if drug_df.empty:
             continue
 
-        drug_df[["chembl_id", "drug_name", "isApproved"]] = drug_df["drug"].apply(pd.Series)
+        drug_df[["chembl_id", "compound_name", "isApproved"]] = drug_df["drug"].apply(pd.Series)
         drug_df.drop(columns=["drug"], inplace=True)
         drug_df = drug_df.rename(columns={"isApproved": "is_approved"})
         drug_df["target"] = gene["id"]
@@ -788,11 +788,11 @@ def get_drug_disease_interactions(
         diseases_drugs_list.append(r["data"])
 
     # Extracting and simplifying the structure
-    col_names = ["identifier", "drug_name", "drug_diseases"]
+    col_names = ["identifier", "compound_name", "drug_diseases"]
     drug_disease_df = pd.DataFrame(columns=col_names)
 
     # Extracting and simplifying the structure
-    col_names = ["identifier", "drug_name", "drug_diseases"]
+    col_names = ["identifier", "compound_name", "drug_diseases"]
     drug_disease_df = pd.DataFrame(columns=col_names)
 
     for entry in diseases_drugs_list:
@@ -825,7 +825,7 @@ def get_drug_disease_interactions(
         if drugs_list:
             dict_new = {
                 "identifier": entries["id"],
-                "drug_name": entries["name"],
+                "compound_name": entries["name"],
                 "drug_diseases": drugs_list,
             }
 
