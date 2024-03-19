@@ -13,8 +13,8 @@ import numpy as np
 import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
 
-from pyBiodatafuse.constants import PUBCHEM, PUBCHEM_ENDPOINT
-from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interest
+from pyBiodatafuse.constants import PUBCHEM, PUBCHEM_ENDPOINT, PUBCHEM_INPUT_ID, PUBCHEM_OUTPUT_DICT
+from pyBiodatafuse.utils import check_columns_against_constants, collapse_data_sources, get_identifier_of_interest
 
 
 def check_endpoint_pubchem() -> bool:
@@ -57,7 +57,7 @@ def get_protein_molecule_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
     # Record the start time
     start_time = datetime.datetime.now()
 
-    data_df = get_identifier_of_interest(bridgedb_df, "Uniprot-TrEMBL")
+    data_df = get_identifier_of_interest(bridgedb_df, PUBCHEM_INPUT_ID)
     protein_list_str = data_df["target"].tolist()
     for i in range(len(protein_list_str)):
         protein_list_str[i] = "<http://purl.uniprot.org/uniprot/" + protein_list_str[i] + ">"
@@ -124,40 +124,43 @@ def get_protein_molecule_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
         )
         intermediate_df = intermediate_df.drop(columns=["target_count"])
         # identifiers to values
-        intermediate_df["target"] = intermediate_df["target"].map(lambda x: x[32:])
+        intermediate_df["upProt"] = intermediate_df["upProt"].map(lambda x: x[32:])
         intermediate_df["outcome"] = intermediate_df["outcome"].map(lambda x: x[47:])
         intermediate_df["compound_cid"] = intermediate_df["compound_cid"].map(lambda x: x[48:])
         intermediate_df["assay_type"] = intermediate_df["assay_type"].map(
             lambda x: assay_endpoint_types[x]
         )
-        intermediate_df.rename(columns={"compound_cid": "pubchem_compound_id"}, inplace=True)
-        target_columns = list(intermediate_df.columns)
-        target_columns.remove("target")
-    else:
-        target_columns = list(intermediate_df.columns)
+        intermediate_df.rename(columns={"upProt": "target"}, inplace=True)
 
+    # Check if all keys in df match the keys in OUTPUT_DICT
+    check_columns_against_constants(
+        data_df=intermediate_df,
+        output_dict=PUBCHEM_OUTPUT_DICT,
+        check_values_in=["outcome", "InChI"],
+    )
+    
     # Merge the two DataFrames on the target column
     merged_df = collapse_data_sources(
         data_df=data_df,
-        source_namespace="Uniprot-TrEMBL",
+        source_namespace=PUBCHEM_INPUT_ID,
         target_df=intermediate_df,
         common_cols=["target"],
-        target_specific_cols=target_columns,
-        col_name=f"{PUBCHEM}_assays",
+        target_specific_cols=list(PUBCHEM_OUTPUT_DICT.keys()),
+        col_name=f"{PUBCHEM}_Assays",
     )
-
+    
     # if mappings exist but SPARQL returns empty response
-    if (not merged_df.empty) and merged_df["{PUBCHEM}_assays"][0] is None:
-        merged_df.drop_duplicates(subset=["identifier", "{PUBCHEM}_assays"], inplace=True)
+    if (not merged_df.empty) and merged_df[f"{PUBCHEM}_Assays"][0] is None:
+        merged_df.drop_duplicates(subset=["identifier", "{PUBCHEM}_Assays"], inplace=True)
 
     elif not merged_df.empty:
-        res_keys = merged_df["{PUBCHEM}_assays"][0][0].keys()
+        res_keys = merged_df[f"{PUBCHEM}_Assays"][0][0].keys()
         # remove duplicate identifier and response row
-        merged_df["{PUBCHEM}_assays"] = merged_df["{PUBCHEM}_assays"].map(
+        merged_df[f"{PUBCHEM}_Assays"] = merged_df[f"{PUBCHEM}_Assays"].map(
             lambda x: tuple(frozenset(d.items()) for d in x), na_action="ignore"
         )
-        merged_df.drop_duplicates(subset=["identifier", "{PUBCHEM}_assays"], inplace=True)
-        merged_df["{PUBCHEM}_assays"] = merged_df["{PUBCHEM}_assays"].map(
+        merged_df.drop_duplicates(subset=["identifier", f"{PUBCHEM}_Assays"], inplace=True)
+        merged_df[f"{PUBCHEM}_Assays"] = merged_df[f"{PUBCHEM}_Assays"].map(
             lambda res_tup: list(dict((x, y) for x, y in res) for res in res_tup),
             na_action="ignore",
         )
@@ -166,7 +169,7 @@ def get_protein_molecule_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
         identifiers = merged_df["identifier"].unique()
         for identifier in identifiers:
             if merged_df.loc[merged_df["identifier"] == identifier].shape[0] > 1:
-                mask = merged_df["{PUBCHEM}_assays"].apply(
+                mask = merged_df[f"{PUBCHEM}_Assays"].apply(
                     lambda lst: all(
                         [
                             all([isinstance(val, float) and np.isnan(val) for val in dct.values()])
@@ -178,16 +181,16 @@ def get_protein_molecule_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
                 merged_df.drop(merged_df[mask & mask2].index, inplace=True)
 
         # set default order to response dictionaries to keep output consistency
-        merged_df["{PUBCHEM}_assays"] = merged_df["{PUBCHEM}_assays"].apply(
+        merged_df[f"{PUBCHEM}_Assays"] = merged_df[f"{PUBCHEM}_Assays"].apply(
             lambda res: list(dict((k, r[k]) for k in res_keys) for r in res)
         )
         # set numerical identifiers to int to kepp output consistency
-        merged_df["{PUBCHEM}_assays"] = merged_df["{PUBCHEM}_assays"].apply(
-            lambda res: int_response_value_types(res, ["pubchem_compound_id"])
+        merged_df[f"{PUBCHEM}_Assays"] = merged_df[f"{PUBCHEM}_Assays"].apply(
+            lambda res: int_response_value_types(res, ["compound_cid"])
         )
     merged_df.reset_index(drop=True, inplace=True)
 
-    # Metdata details
+    """Metdata details"""
     # Get the current date and time
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # Calculate the time elapsed

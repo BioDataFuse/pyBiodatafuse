@@ -10,8 +10,8 @@ from typing import Tuple
 import pandas as pd
 import requests
 
-from pyBiodatafuse.constants import OPENTARGET, OPENTARGET_ENDPOINT
-from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interest
+from pyBiodatafuse.constants import OPENTARGETS, OPENTARGETS_COMPOUND_OUTPUT_DICT, OPENTARGETS_DISEASE_OUTPUT_DICT, OPENTARGETS_ENDPOINT, OPENTARGETS_GO_OUTPUT_DICT, OPENTARGETS_INPUT_ID, OPENTARGETS_LOCATION_OUTPUT_DICT, OPENTARGETS_REACTOME_OUTPUT_DICT
+from pyBiodatafuse.utils import check_columns_against_constants, collapse_data_sources, get_identifier_of_interest
 
 
 def check_endpoint_opentargets() -> bool:
@@ -34,7 +34,7 @@ def check_endpoint_opentargets() -> bool:
                 }
             }
         }"""
-    r = requests.post(OPENTARGET_ENDPOINT, json={"query": query}).json()
+    r = requests.post(OPENTARGETS_ENDPOINT, json={"query": query}).json()
 
     if not r["data"]:
         return False
@@ -42,7 +42,7 @@ def check_endpoint_opentargets() -> bool:
     return True
 
 
-def get_version() -> dict:
+def get_version_opentargets() -> dict:
     """Get version of OpenTargets API.
 
     :returns: a dictionary containing the version information
@@ -62,7 +62,7 @@ def get_version() -> dict:
                 }
             }
         }"""
-    r = requests.post(OPENTARGET_ENDPOINT, json={"query": query}).json()
+    r = requests.post(OPENTARGETS_ENDPOINT, json={"query": query}).json()
 
     metadata = {
         "datasource": r["data"]["meta"]["name"],
@@ -98,16 +98,16 @@ def get_gene_location(
     api_available = check_endpoint_opentargets()
     if not api_available:
         warnings.warn(
-            f"{OPENTARGET} GraphQL endpoint is not available. Unable to retrieve data.",
+            f"{OPENTARGETS} GraphQL endpoint is not available. Unable to retrieve data.",
             stacklevel=2,
         )
         return pd.DataFrame(), {}
 
-    data_df = get_identifier_of_interest(bridgedb_df, "Ensembl")
+    data_df = get_identifier_of_interest(bridgedb_df, OPENTARGETS_INPUT_ID)
     gene_ids = data_df["target"].tolist()
 
     # Record the start time
-    version_metadata = get_version()
+    opentargets_version = get_version_opentargets()
     start_time = datetime.datetime.now()
 
     query_string = """
@@ -124,55 +124,67 @@ def get_gene_location(
     """
     query_string = query_string.replace("$ids", str(gene_ids).replace("'", '"'))
 
-    r = requests.post(OPENTARGET_ENDPOINT, json={"query": query_string}).json()
+    r = requests.post(OPENTARGETS_ENDPOINT, json={"query": query_string}).json()
 
     # Record the end time
     end_time = datetime.datetime.now()
 
-    # Update the metadata file
-    version_metadata["query"] = {
-        "size": len(gene_ids),
-        "input_type": "Ensembl",
-        "time": str(end_time - start_time),
-        "date": str(datetime.datetime.now()),
-        "url": OPENTARGET_ENDPOINT,
-    }
-
     # Generate the OpenTargets DataFrame
-    opentargets_df = pd.DataFrame()
+    intermediate_df = pd.DataFrame()
 
     for gene in r["data"]["targets"]:
         gene_id = gene["id"]
         loc_df = pd.DataFrame(gene["subcellularLocations"])
         loc_df = loc_df.drop_duplicates()
         loc_df["target"] = gene_id
-        opentargets_df = pd.concat([opentargets_df, loc_df], ignore_index=True)
+        intermediate_df = pd.concat([intermediate_df, loc_df], ignore_index=True)
 
-    if opentargets_df.empty:  # If no data is returned, return empty DataFrame
-        return pd.DataFrame(), version_metadata
+    if intermediate_df.empty:  # If no data is returned, return empty DataFrame
+        return pd.DataFrame(), opentargets_version
 
-    opentargets_df.dropna(
+    intermediate_df.dropna(
         subset=["termSL"], inplace=True
     )  # Drop rows where termSL is not available
-    opentargets_df.rename(
+    intermediate_df.rename(
         columns={
-            "termSL": "loc_id",
-            "labelSL": "subcellular_loc",
+            "termSL": "location_id",
+            "labelSL": "subcellular_location",
         },
         inplace=True,
+    )
+
+    # Check if all keys in df match the keys in OUTPUT_DICT
+    check_columns_against_constants(
+        data_df=intermediate_df,
+        output_dict=OPENTARGETS_LOCATION_OUTPUT_DICT,
+        check_values_in=["location_id"],
     )
 
     # Merge the two DataFrames on the target column
     merged_df = collapse_data_sources(
         data_df=data_df,
-        source_namespace="Ensembl",
-        target_df=opentargets_df,
+        source_namespace=OPENTARGETS_INPUT_ID,
+        target_df=intermediate_df,
         common_cols=["target"],
-        target_specific_cols=["loc_id", "subcellular_loc", "location"],
-        col_name="OpenTargets_Location",
+        target_specific_cols=list(OPENTARGETS_LOCATION_OUTPUT_DICT.keys()),
+        col_name=f"{OPENTARGETS}_Location",
     )
 
-    return merged_df, version_metadata
+    """Metdata details"""
+    # Get the current date and time
+    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    # Calculate the time elapsed
+    time_elapsed = str(end_time - start_time)
+    # Add version, datasource, query, query time, and the date to metadata  
+    opentargets_version["query"] = {
+        "size": len(gene_ids),
+        "input_type": OPENTARGETS_INPUT_ID,
+        "time": time_elapsed,
+        "date": current_date,
+        "url": OPENTARGETS_ENDPOINT,
+    }
+
+    return merged_df, opentargets_version
 
 
 # TODO: Potentially remove this section due to limited distictions in differtn GO terms
@@ -188,16 +200,16 @@ def get_gene_go_process(
     api_available = check_endpoint_opentargets()
     if not api_available:
         warnings.warn(
-            f"{OPENTARGET} GraphQL endpoint is not available. Unable to retrieve data.",
+            f"{OPENTARGETS} GraphQL endpoint is not available. Unable to retrieve data.",
             stacklevel=2,
         )
         return pd.DataFrame(), {}
 
-    data_df = get_identifier_of_interest(bridgedb_df, "Ensembl")
+    data_df = get_identifier_of_interest(bridgedb_df, OPENTARGETS_INPUT_ID)
     gene_ids = data_df["target"].tolist()
 
     # Record the start time
-    version_metadata = get_version()
+    opentargets_version = get_version_opentargets()
     start_time = datetime.datetime.now()
 
     query_string = """
@@ -215,34 +227,25 @@ def get_gene_go_process(
     """
     query_string = query_string.replace("$ids", str(gene_ids).replace("'", '"'))
 
-    r = requests.post(OPENTARGET_ENDPOINT, json={"query": query_string}).json()
+    r = requests.post(OPENTARGETS_ENDPOINT, json={"query": query_string}).json()
 
     # Record the end time
     end_time = datetime.datetime.now()
 
-    # Update the metadata file
-    version_metadata["query"] = {
-        "size": len(gene_ids),
-        "input_type": "Ensembl",
-        "time": str(end_time - start_time),
-        "date": str(datetime.datetime.now()),
-        "url": OPENTARGET_ENDPOINT,
-    }
-
     # Generate the OpenTargets DataFrame
-    opentargets_df = pd.DataFrame()
+    intermediate_df = pd.DataFrame()
 
     for gene in r["data"]["targets"]:
         terms = [i["term"] for i in gene["geneOntology"]]
         path_df = pd.DataFrame(terms)
         path_df = path_df.drop_duplicates()
         path_df["target"] = gene["id"]
-        opentargets_df = pd.concat([opentargets_df, path_df], ignore_index=True)
+        intermediate_df = pd.concat([intermediate_df, path_df], ignore_index=True)
 
-    if opentargets_df.empty:
-        return pd.DataFrame(), version_metadata
+    if intermediate_df.empty:
+        return pd.DataFrame(), opentargets_version
 
-    opentargets_df.rename(
+    intermediate_df.rename(
         columns={
             "id": "go_id",
             "name": "go_name",
@@ -250,17 +253,38 @@ def get_gene_go_process(
         inplace=True,
     )
 
+    # Check if all keys in df match the keys in OUTPUT_DICT
+    check_columns_against_constants(
+        data_df=intermediate_df,
+        output_dict=OPENTARGETS_GO_OUTPUT_DICT,
+        check_values_in=["go_id"],
+    )
+
     # Merge the two DataFrames on the target column
     merged_df = collapse_data_sources(
         data_df=data_df,
-        source_namespace="Ensembl",
-        target_df=opentargets_df,
+        source_namespace=OPENTARGETS_INPUT_ID,
+        target_df=intermediate_df,
         common_cols=["target"],
-        target_specific_cols=["go_id", "go_name"],
-        col_name="GO_Process",  # TODO: Cross-check if correct name
+        target_specific_cols=list(OPENTARGETS_GO_OUTPUT_DICT.keys()),
+        col_name=f"{OPENTARGETS}_GO_Process",  # TODO: Cross-check if correct name
     )
 
-    return merged_df, version_metadata
+    """Metdata details"""
+    # Get the current date and time
+    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    # Calculate the time elapsed
+    time_elapsed = str(end_time - start_time)
+    # Add version, datasource, query, query time, and the date to metadata  
+    opentargets_version["query"] = {
+        "size": len(gene_ids),
+        "input_type": OPENTARGETS_INPUT_ID,
+        "time": time_elapsed,
+        "date": current_date,
+        "url": OPENTARGETS_ENDPOINT,
+    }
+    
+    return merged_df, opentargets_version
 
 
 def get_gene_reactome_pathways(
@@ -275,16 +299,16 @@ def get_gene_reactome_pathways(
     api_available = check_endpoint_opentargets()
     if not api_available:
         warnings.warn(
-            f"{OPENTARGET} GraphQL endpoint is not available. Unable to retrieve data.",
+            f"{OPENTARGETS} GraphQL endpoint is not available. Unable to retrieve data.",
             stacklevel=2,
         )
         return pd.DataFrame(), {}
 
-    data_df = get_identifier_of_interest(bridgedb_df, "Ensembl")
+    data_df = get_identifier_of_interest(bridgedb_df, OPENTARGETS_INPUT_ID)
     gene_ids = data_df["target"].tolist()
 
     # Record the start time
-    version_metadata = get_version()
+    opentargets_version = get_version_opentargets()
     start_time = datetime.datetime.now()
 
     query_string = """
@@ -300,45 +324,57 @@ def get_gene_reactome_pathways(
     """
     query_string = query_string.replace("$ids", str(gene_ids).replace("'", '"'))
 
-    r = requests.post(OPENTARGET_ENDPOINT, json={"query": query_string}).json()
+    r = requests.post(OPENTARGETS_ENDPOINT, json={"query": query_string}).json()
 
     # Record the end time
     end_time = datetime.datetime.now()
 
-    # Update the metadata file
-    version_metadata["query"] = {
-        "size": len(gene_ids),
-        "input_type": "Ensembl",
-        "time": str(end_time - start_time),
-        "date": str(datetime.datetime.now()),
-        "url": OPENTARGET_ENDPOINT,
-    }
-
     # Generate the OpenTargets DataFrame
-    opentargets_df = pd.DataFrame()
+    intermediate_df = pd.DataFrame()
 
     for gene in r["data"]["targets"]:
         path_df = pd.DataFrame(gene["pathways"])
         path_df = path_df.drop_duplicates()
         path_df["target"] = gene["id"]
-        opentargets_df = pd.concat([opentargets_df, path_df], ignore_index=True)
+        intermediate_df = pd.concat([intermediate_df, path_df], ignore_index=True)
 
-    if opentargets_df.empty:
-        return pd.DataFrame(), version_metadata
+    if intermediate_df.empty:
+        return pd.DataFrame(), opentargets_version
 
-    opentargets_df.rename(columns={"pathway": "pathwayLabel"}, inplace=True)
+    intermediate_df.rename(columns={"pathway": "pathway_label", "pathwayId": "pathway_id"}, inplace=True)
+
+    # Check if all keys in df match the keys in OUTPUT_DICT
+    check_columns_against_constants(
+        data_df=intermediate_df,
+        output_dict=OPENTARGETS_REACTOME_OUTPUT_DICT,
+        check_values_in=["pathway_id"],
+    )
 
     # Merge the two DataFrames on the target column
     merged_df = collapse_data_sources(
         data_df=data_df,
-        source_namespace="Ensembl",
-        target_df=opentargets_df,
+        source_namespace=OPENTARGETS_INPUT_ID,
+        target_df=intermediate_df,
         common_cols=["target"],
-        target_specific_cols=["pathwayLabel", "pathwayId"],
-        col_name=f"{OPENTARGET}_Reactome",
+        target_specific_cols=["pathway_label", "pathway_id"],
+        col_name=f"{OPENTARGETS}_Reactome",
     )
 
-    return merged_df, version_metadata
+    """Metdata details"""
+    # Get the current date and time
+    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    # Calculate the time elapsed
+    time_elapsed = str(end_time - start_time)
+    # Add version, datasource, query, query time, and the date to metadata  
+    opentargets_version["query"] = {
+        "size": len(gene_ids),
+        "input_type": OPENTARGETS_INPUT_ID,
+        "time": time_elapsed,
+        "date": current_date,
+        "url": OPENTARGETS_ENDPOINT,
+    }
+
+    return merged_df, opentargets_version
 
 
 # TODO: Look into the utility of this function while applying filters
@@ -356,7 +392,7 @@ def get_gene_tractability(
     api_available = check_endpoint_opentargets()
     if not api_available:
         warnings.warn(
-            f"{OPENTARGET} GraphQL endpoint is not available. Unable to retrieve data.",
+            f"{OPENTARGETS} GraphQL endpoint is not available. Unable to retrieve data.",
             stacklevel=2,
         )
         return pd.DataFrame(), {}
@@ -374,46 +410,52 @@ def get_gene_tractability(
       }
     """
 
-    data_df = get_identifier_of_interest(bridgedb_df, "Ensembl")
+    data_df = get_identifier_of_interest(bridgedb_df, OPENTARGETS_INPUT_ID)
     gene_ids = data_df["target"].tolist()
 
     # Record the start time
-    version_metadata = get_version()
+    opentargets_version = get_version_opentargets()
     start_time = datetime.datetime.now()
 
     query_string = query_string.replace("$ids", str(gene_ids).replace("'", '"'))
 
-    r = requests.post(OPENTARGET_ENDPOINT, json={"query": query_string}).json()
+    r = requests.post(OPENTARGETS_ENDPOINT, json={"query": query_string}).json()
 
     # Record the end time
     end_time = datetime.datetime.now()
 
-    # Update the metadata file
-    version_metadata["query"] = {
-        "size": len(gene_ids),
-        "input_type": "Ensembl",
-        "time": str(end_time - start_time),
-        "date": str(datetime.datetime.now()),
-        "url": OPENTARGET_ENDPOINT,
-    }
-
-    opentargets_df = pd.DataFrame()
+    intermediate_df = pd.DataFrame()
 
     for gene in r["data"]["targets"]:
         tract_df = pd.DataFrame(gene["tractability"])
         tract_df = tract_df.drop_duplicates()
         tract_df["ensembl_id"] = gene["id"]
-        opentargets_df = pd.concat([opentargets_df, tract_df], ignore_index=True)
+        intermediate_df = pd.concat([intermediate_df, tract_df], ignore_index=True)
 
-    if opentargets_df.empty:
-        return pd.DataFrame(), version_metadata
+    if intermediate_df.empty:
+        return pd.DataFrame(), opentargets_version
 
-    opentargets_df = opentargets_df[opentargets_df["value"] == True]
-    opentargets_df.drop(columns=["value"], inplace=True)
+    intermediate_df = intermediate_df[intermediate_df["value"] == True]
+    intermediate_df.drop(columns=["value"], inplace=True)
 
+    # TODO: Check if all keys in df match the keys in OUTPUT_DICT
     # TODO: Merge data wih main data_df
+    
+    """Metdata details"""
+    # Get the current date and time
+    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    # Calculate the time elapsed
+    time_elapsed = str(end_time - start_time)
+    # Add version, datasource, query, query time, and the date to metadata  
+    opentargets_version["query"] = {
+        "size": len(gene_ids),
+        "input_type": OPENTARGETS_INPUT_ID,
+        "time": time_elapsed,
+        "date": current_date,
+        "url": OPENTARGETS_ENDPOINT,
+    }
 
-    return opentargets_df, version_metadata
+    return intermediate_df, opentargets_version
 
 
 def get_gene_compound_interactions(
@@ -428,16 +470,16 @@ def get_gene_compound_interactions(
     api_available = check_endpoint_opentargets()
     if not api_available:
         warnings.warn(
-            f"{OPENTARGET} GraphQL endpoint is not available. Unable to retrieve data.",
+            f"{OPENTARGETS} GraphQL endpoint is not available. Unable to retrieve data.",
             stacklevel=2,
         )
         return pd.DataFrame(), {}
 
-    data_df = get_identifier_of_interest(bridgedb_df, "Ensembl")
+    data_df = get_identifier_of_interest(bridgedb_df, OPENTARGETS_INPUT_ID)
     gene_ids = data_df["target"].tolist()
 
     # Record the start time
-    version_metadata = get_version()
+    opentargets_version = get_version_opentargets()
     start_time = datetime.datetime.now()
 
     query_string = """
@@ -459,21 +501,12 @@ def get_gene_compound_interactions(
     """
     query_string = query_string.replace("$ids", str(gene_ids).replace("'", '"'))
 
-    r = requests.post(OPENTARGET_ENDPOINT, json={"query": query_string}).json()
+    r = requests.post(OPENTARGETS_ENDPOINT, json={"query": query_string}).json()
 
     # Record the end time
     end_time = datetime.datetime.now()
 
-    # Update the metadata file
-    version_metadata["query"] = {
-        "size": len(gene_ids),
-        "input_type": "Ensembl",
-        "time": str(end_time - start_time),
-        "date": str(datetime.datetime.now()),
-        "url": OPENTARGET_ENDPOINT,
-    }
-
-    opentargets_df = pd.DataFrame()
+    intermediate_df = pd.DataFrame()
 
     for gene in r["data"]["targets"]:
         if not gene["knownDrugs"]:
@@ -495,24 +528,44 @@ def get_gene_compound_interactions(
             lambda x: "inhibits" if "antagonist" in x else "activates"
         )
         drug_df.rename(columns={"mechanismOfAction": "relation"}, inplace=True)
-        opentargets_df = pd.concat([opentargets_df, drug_df], ignore_index=True)
+        intermediate_df = pd.concat([intermediate_df, drug_df], ignore_index=True)
 
-    if opentargets_df.empty:
-        return pd.DataFrame(), version_metadata
+    if intermediate_df.empty:
+        return pd.DataFrame(), opentargets_version
+
+    # Check if all keys in df match the keys in OUTPUT_DICT
+    check_columns_against_constants(
+        data_df=intermediate_df,
+        output_dict=OPENTARGETS_COMPOUND_OUTPUT_DICT,
+        check_values_in=["chembl_id", "relation"],
+    )
 
     # TODO: Covert the ChEMBL ids to Pubchem using BridgeDb
-
     # Merge the two DataFrames on the target column
     merged_df = collapse_data_sources(
         data_df=data_df,
-        source_namespace="Ensembl",
-        target_df=opentargets_df,
+        source_namespace=OPENTARGETS_INPUT_ID,
+        target_df=intermediate_df,
         common_cols=["target"],
-        target_specific_cols=["chembl_id", "drug_name", "is_approved", "relation"],
-        col_name=f"{OPENTARGET}_ChEMBL_Drugs",  # TODO: Cross-check if correct name
+        target_specific_cols=list(OPENTARGETS_COMPOUND_OUTPUT_DICT.keys()),
+        col_name=f"{OPENTARGETS}_ChEMBL_Drugs",  # TODO: Cross-check if correct name
     )
 
-    return merged_df, version_metadata
+    """Metdata details"""
+    # Get the current date and time
+    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    # Calculate the time elapsed
+    time_elapsed = str(end_time - start_time)
+    # Add version, datasource, query, query time, and the date to metadata  
+    opentargets_version["query"] = {
+        "size": len(gene_ids),
+        "input_type": OPENTARGETS_INPUT_ID,
+        "time": time_elapsed,
+        "date": current_date,
+        "url": OPENTARGETS_ENDPOINT,
+    }
+
+    return merged_df, opentargets_version
 
 
 def get_gene_disease_associations(
@@ -527,16 +580,16 @@ def get_gene_disease_associations(
     api_available = check_endpoint_opentargets()
     if not api_available:
         warnings.warn(
-            f"{OPENTARGET} GraphQL endpoint is not available. Unable to retrieve data.",
+            f"{OPENTARGETS} GraphQL endpoint is not available. Unable to retrieve data.",
             stacklevel=2,
         )
         return pd.DataFrame(), {}
 
-    data_df = get_identifier_of_interest(bridgedb_df, "Ensembl")
+    data_df = get_identifier_of_interest(bridgedb_df, OPENTARGETS_INPUT_ID)
     gene_ids = data_df["target"].tolist()
 
     # Record the start time
-    version_metadata = get_version()
+    opentargets_version = get_version_opentargets()
     start_time = datetime.datetime.now()
 
     query_string = """
@@ -561,21 +614,12 @@ def get_gene_disease_associations(
     """
     query_string = query_string.replace("$ids", str(gene_ids).replace("'", '"'))
 
-    r = requests.post(OPENTARGET_ENDPOINT, json={"query": query_string}).json()
+    r = requests.post(OPENTARGETS_ENDPOINT, json={"query": query_string}).json()
 
     # Record the end time
     end_time = datetime.datetime.now()
 
-    # Update the metadata file
-    version_metadata["query"] = {
-        "size": len(gene_ids),
-        "input_type": "Ensembl",
-        "time": str(end_time - start_time),
-        "date": str(datetime.datetime.now()),
-        "url": OPENTARGET_ENDPOINT,
-    }
-
-    opentargets_df = pd.DataFrame()
+    intermediate_df = pd.DataFrame()
 
     for gene in r["data"]["targets"]:
         if not gene["knownDrugs"]:
@@ -597,7 +641,7 @@ def get_gene_disease_associations(
 
         disease_df["disease_id"] = disease_df.apply(
             lambda row: ", ".join(
-                ["ulms:" + i.split(":")[1] for i in row["dbXRefs"] if i.startswith("UMLS:")]
+                ["umls:" + i.split(":")[1] for i in row["dbXRefs"] if i.startswith("UMLS:")]
                 or [row["mondo_id"]]
             ),
             axis=1,
@@ -607,25 +651,47 @@ def get_gene_disease_associations(
 
         disease_df["target"] = gene["id"]
 
-        opentargets_df = pd.concat([opentargets_df, disease_df], ignore_index=True)
+        intermediate_df = pd.concat([intermediate_df, disease_df], ignore_index=True)
 
-    if opentargets_df.empty:
-        return pd.DataFrame(), version_metadata
+    if intermediate_df.empty:
+        return pd.DataFrame(), opentargets_version
 
+    # Check if all keys in df match the keys in OUTPUT_DICT
+    check_columns_against_constants(
+        data_df=intermediate_df,
+        output_dict=OPENTARGETS_DISEASE_OUTPUT_DICT,
+        check_values_in=["disease_id"],
+    )
+    
     # Merge the two DataFrames on the target column
     merged_df = collapse_data_sources(
         data_df=data_df,
-        source_namespace="Ensembl",
-        target_df=opentargets_df,
+        source_namespace=OPENTARGETS_INPUT_ID,
+        target_df=intermediate_df,
         common_cols=["target"],
-        target_specific_cols=["disease_id", "disease_name", "therapeutic_areas"],
-        col_name=f"{OPENTARGET}_Diseases",
+        target_specific_cols=list(OPENTARGETS_DISEASE_OUTPUT_DICT.keys()),
+        col_name=f"{OPENTARGETS}_Diseases",
     )
 
-    return merged_df, version_metadata
+    """Metdata details"""
+    # Get the current date and time
+    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    # Calculate the time elapsed
+    time_elapsed = str(end_time - start_time)
+    # Add version, datasource, query, query time, and the date to metadata  
+    opentargets_version["query"] = {
+        "size": len(gene_ids),
+        "input_type": OPENTARGETS_INPUT_ID,
+        "time": time_elapsed,
+        "date": current_date,
+        "url": OPENTARGETS_ENDPOINT,
+    }
+    
+    return merged_df, opentargets_version
 
 
 # TODO: Fix the function; Modify to same format
+# TODO: Check if all keys in df match the keys in OUTPUT_DICT
 def get_drug_disease_interactions(
     drug_df: pd.DataFrame, disgenet_result: pd.DataFrame
 ) -> Tuple[pd.DataFrame, dict]:

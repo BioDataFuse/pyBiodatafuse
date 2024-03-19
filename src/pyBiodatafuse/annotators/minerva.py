@@ -1,5 +1,5 @@
-# coding: utf-8
-
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """Python file for queriying the MINERVA platform (https://minerva.pages.uni.lu/doc/)."""
 
 import datetime
@@ -9,8 +9,8 @@ from typing import Optional, Tuple
 import pandas as pd
 import requests
 
-from pyBiodatafuse.constants import MINERVA, MINERVA_ENDPOINT
-from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interest
+from pyBiodatafuse.constants import MINERVA, MINERVA_ENDPOINT, MINERVA_INPUT_ID, MINERVA_OUTPUT_DICT
+from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interest, check_columns_against_constants
 
 
 def check_endpoint_minerva() -> bool:
@@ -202,7 +202,7 @@ def get_gene_minerva_pathways(
     map_elements = map_components.get("map_elements", {})
     models = map_components.get("models", {})
 
-    data_df = get_identifier_of_interest(bridgedb_df, "NCBI Gene")
+    data_df = get_identifier_of_interest(bridgedb_df, MINERVA_INPUT_ID)
 
     names = []
     for value in models:
@@ -210,7 +210,7 @@ def get_gene_minerva_pathways(
         names.append(name)
 
     row = 1
-    combined_df = pd.DataFrame()
+    intermediate_df = pd.DataFrame()
     for x in names:
         index_to_extract = row
         row = 1 + row
@@ -238,36 +238,42 @@ def get_gene_minerva_pathways(
 
         data = pd.DataFrame()
         data["symbol"] = symbol
-        data["pathwayLabel"] = x
-        data["pathwayGeneCount"] = len(symbol) - symbol.count(None)
-        data["pathwayId"] = models[index_to_extract - 1]["idObject"]
+        data["pathway_label"] = x
+        data["pathway_gene_count"] = len(symbol) - symbol.count(None)
+        data["pathway_id"] = models[index_to_extract - 1]["idObject"]
         data["refs"] = refs
         data["type"] = type
 
-        combined_df = pd.concat([combined_df, data], ignore_index=True)
-        combined_df = combined_df[combined_df["type"] == input_type]
+        intermediate_df = pd.concat([intermediate_df, data], ignore_index=True)
+        intermediate_df = intermediate_df[intermediate_df["type"] == input_type]
 
     # Record the end time
     end_time = datetime.datetime.now()
 
-    if "symbol" not in combined_df:
-        return pd.DataFrame()
+    if "symbol" not in intermediate_df:
+        return pd.DataFrame(), {}
 
-    # Add MINERVA output as a new column to BridgeDb file
-    combined_df.rename(columns={"symbol": "identifier"}, inplace=True)
-    combined_df["identifier"] = combined_df["identifier"].values.astype(str)
+    # Organize the annotation results as an array of dictionaries
+    # TODO the merge is based on the gene symbol, what if another id is being used as input
+    intermediate_df.rename(columns={"symbol": "identifier"}, inplace=True)
+    intermediate_df["identifier"] = intermediate_df["identifier"].values.astype(str)
 
-    combined_df = combined_df.drop_duplicates(subset=["identifier", "pathwayId"])
+    intermediate_df = intermediate_df.drop_duplicates(subset=["identifier", "pathway_id", "pathway_label", "pathway_gene_count"])
 
-    selected_columns = ["pathwayId", "pathwayLabel", "pathwayGeneCount"]
+    # Check if all keys in df match the keys in OUTPUT_DICT
+    check_columns_against_constants(
+        data_df=intermediate_df,
+        output_dict=MINERVA_OUTPUT_DICT,
+        check_values_in=["pathway_id"],
+    )
 
-    # Merge the two DataFrames based on 'gene_id', 'gene_symbol', 'identifier', and 'target'
+    # Merge the two DataFrames on the target column
     merged_df = collapse_data_sources(
         data_df=data_df,
-        source_namespace="NCBI Gene",
-        target_df=combined_df,
+        source_namespace=MINERVA_INPUT_ID,
+        target_df=intermediate_df,
         common_cols=["identifier"],
-        target_specific_cols=selected_columns,
+        target_specific_cols=list(MINERVA_OUTPUT_DICT.keys()),
         col_name=MINERVA,
     )
 
@@ -284,7 +290,7 @@ def get_gene_minerva_pathways(
         "metadata": {"source_version": minerva_version},
         "query": {
             "size": data_df["target"].nunique(),
-            "input_type": "NCBI Gene",
+            "input_type": MINERVA_INPUT_ID,
             "MINERVA project": map_name,
             "time": time_elapsed,
             "date": current_date,

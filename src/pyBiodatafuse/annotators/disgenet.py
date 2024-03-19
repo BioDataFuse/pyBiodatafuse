@@ -13,8 +13,8 @@ import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
 from SPARQLWrapper.SPARQLExceptions import SPARQLWrapperException
 
-from pyBiodatafuse.constants import DISGENET, DISGENET_ENDPOINT
-from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interest
+from pyBiodatafuse.constants import DISGENET, DISGENET_ENDPOINT, DISGENET_INPUT_ID, DISGENET_OUTPUT_DICT
+from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interest, check_columns_against_constants
 
 logger = logging.getLogger("disgenet")
 
@@ -55,12 +55,12 @@ def get_version_disgenet() -> dict:
     version_response = sparql.queryAndConvert()
     bindings = version_response["results"]["bindings"]
     pattern = "RDF Distribution"
-    disgenet_version = {"disgenet_version": ""}  # Set default value
+    disgenet_version = {"version": ""}  # Set default value
 
     for binding in bindings:
         title = binding["title"]["value"]
         if pattern in title:
-            disgenet_version = {"disgenet_version": title}
+            disgenet_version = {"source_version": title}
 
     return disgenet_version
 
@@ -81,23 +81,26 @@ def get_gene_disease(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
         return pd.DataFrame(), {}
 
     # Extract the "target" values and join them into a single string separated by commas
-    data_df = get_identifier_of_interest(bridgedb_df, "NCBI Gene")
-    hgnc_gene_list = data_df["target"].tolist()
-    hgnc_gene_list = list(set(hgnc_gene_list))
-    query_gene_lists = []
+    data_df = get_identifier_of_interest(bridgedb_df, DISGENET_INPUT_ID)
+    gene_list = data_df["target"].tolist()
+    gene_list = list(set(gene_list))
 
-    if len(hgnc_gene_list) > 25:
-        for i in range(0, len(hgnc_gene_list), 25):
-            tmp_list = hgnc_gene_list[i : i + 25]
+    query_gene_lists = []
+    if len(gene_list) > 25:
+        for i in range(0, len(gene_list), 25):
+            tmp_list = gene_list[i : i + 25]
             query_gene_lists.append(" ".join(f'"{g}"' for g in tmp_list))
 
     else:
-        query_gene_lists.append(" ".join(f'"{g}"' for g in hgnc_gene_list))
+        query_gene_lists.append(" ".join(f'"{g}"' for g in gene_list))
 
-    with open(os.path.dirname(__file__) + "/queries/disgenet-genes-disease.rq", "r") as fin:
+    with open(
+        os.path.dirname(__file__) + "/queries/disgenet-genes-disease.rq", "r"
+    ) as fin:
         sparql_query = fin.read()
 
     # Record the start time
+    disgenet_version = get_version_disgenet()
     start_time = datetime.datetime.now()
 
     sparql = SPARQLWrapper(DISGENET_ENDPOINT)
@@ -105,7 +108,7 @@ def get_gene_disease(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
 
     query_count = 0
 
-    disgenet_df = pd.DataFrame()
+    intermediate_df = pd.DataFrame()
 
     for gene_list_str in query_gene_lists:
         query_count += 1
@@ -118,37 +121,44 @@ def get_gene_disease(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
         df = pd.DataFrame(res)
         df = df.applymap(lambda x: x["value"])
 
-        disgenet_df = pd.concat(
-            [disgenet_df, df], ignore_index=True
+        intermediate_df = pd.concat(
+            [intermediate_df, df], ignore_index=True
         )  # this is also adding to the time
 
     # Record the end time
     end_time = datetime.datetime.now()
 
     # Organize the annotation results as an array of dictionaries
-    if "gene_id" not in disgenet_df:
-        return pd.DataFrame()
-    disgenet_df.drop_duplicates(inplace=True)
-    disgenet_df["target"] = disgenet_df["gene_id"].apply(lambda x: x.split("/")[-1])
-    disgenet_df["disease_id"] = disgenet_df["description"].apply(
-        lambda x: x.split("[")[1].split("]")[0]
+    if "gene_id" not in intermediate_df:
+        return pd.DataFrame(), {"datasource": DISGENET, "metadata": disgenet_version}
+    intermediate_df.drop_duplicates(inplace=True)
+    intermediate_df["target"] = intermediate_df["gene_id"].apply(lambda x: x.split("/")[-1])
+    intermediate_df["disease_id"] = intermediate_df["description"].apply(
+        lambda x: "umls:" + x.split("umls:")[1].split("]")[0].strip()
     )
-    disgenet_df["disease_name"] = disgenet_df["description"].apply(lambda x: x.split(" [")[0])
-    disgenet_df["score"] = disgenet_df["disease_score"].astype(float)
-    disgenet_df["source"] = disgenet_df["source"].apply(lambda x: x.split("/")[-1])
+    intermediate_df["disease_name"] = intermediate_df["description"].apply(
+        lambda x: x.split("[umls:")[0].strip()
+    )
+    intermediate_df["score"] = intermediate_df["disease_score"].astype(float)
+    intermediate_df["source"] = intermediate_df["source"].apply(lambda x: x.split("/")[-1])
 
-    disgenet_df["target"] = disgenet_df["target"].values.astype(str)
+    intermediate_df["target"] = intermediate_df["target"].values.astype(str)
 
-    disgenet_df = disgenet_df[["target", "disease_id", "disease_name", "score", "source"]]
+    intermediate_df = intermediate_df[["target", "disease_id", "disease_name", "score", "source"]]
 
-    selected_columns = ["disease_id", "disease_name", "score", "source"]
+    # Check if all keys in df match the keys in OUTPUT_DICT
+    check_columns_against_constants(
+        data_df=intermediate_df,
+        output_dict=DISGENET_OUTPUT_DICT,
+        check_values_in=["disease_id"],
+    )
 
     merged_df = collapse_data_sources(
         data_df=bridgedb_df,
-        source_namespace="NCBI Gene",
-        target_df=disgenet_df,
+        source_namespace=DISGENET_INPUT_ID,
+        target_df=intermediate_df,
         common_cols=["target"],
-        target_specific_cols=selected_columns,
+        target_specific_cols=list(DISGENET_OUTPUT_DICT.keys()),
         col_name=DISGENET,
     )
 
@@ -157,15 +167,13 @@ def get_gene_disease(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # Calculate the time elapsed
     time_elapsed = str(end_time - start_time)
-    # Add version to metadata file
-    disgenet_version = get_version_disgenet()
-    # Add the datasource, query, query time, and the date to metadata
+    # Add version, datasource, query, query time, and the date to metadata
     disgenet_metadata = {
         "datasource": DISGENET,
-        "metadata": {"source_version": disgenet_version},
+        "metadata": disgenet_version,
         "query": {
-            "size": len(hgnc_gene_list),
-            "input_type": "NCBI Gene",
+            "size": len(gene_list),
+            "input_type": DISGENET_INPUT_ID,
             "time": time_elapsed,
             "date": current_date,
             "url": DISGENET_ENDPOINT,
