@@ -38,8 +38,8 @@ WIKIDATA_INPUT_ID = ""
 WIKIPATHWAY_INPUT_ID = "NCBI Gene"
 
 # Output annotation for each data source
-## Anatomical entity node
-### Bgee
+# Anatomical entity node
+# Bgee
 BGEE_OUTPUT_DICT = {
     "anatomical_entity_id": str,
     "anatomical_entity_name": str,
@@ -51,41 +51,41 @@ BGEE_OUTPUT_DICT = {
 ANATOMICAL_ENTITY_ID = "UBERON"
 DEVELOPMENTAL_STAGE_ID = ("HsapDv", "UBERON")
 CONFIDENCE_LEVEL_ID = "CIO"
-## Location node
-### Open Targets - Location
+# Location node
+# Open Targets - Location
 OPENTARGETS_LOCATION_OUTPUT_DICT = {
     "location_id": str,
     "location": str,
     "subcellular_location": str,
 }
 LOCATION_ID = "SL"
-## Disease node
-### DisGeNet
+# Disease node
+# DisGeNet
 DISGENET_OUTPUT_DICT = {"disease_id": str, "disease_name": str, "score": float, "source": str}
-### Open Targets - Disease
+# Open Targets - Disease
 OPENTARGETS_DISEASE_OUTPUT_DICT = {"disease_id": str, "disease_name": str, "therapeutic_areas": str}
 DISEASE_ID = "umls|EFO|MONDO"
-## Pathway node
-### MINERVA
+# Pathway node
+# MINERVA
 MINERVA_OUTPUT_DICT = {
     "pathway_id": int,
     "pathway_label": str,
     "pathway_gene_count": int,
 }
-### WikiPathways
+# WikiPathways
 WIKIPATHWAY_OUTPUT_DICT = {"pathway_id": str, "pathway_label": str, "pathway_gene_count": int}
-### Open Targets - Reactome
+# Open Targets - Reactome
 OPENTARGETS_REACTOME_OUTPUT_DICT = {
     "pathway_id": str,
     "pathway_label": str,
 }
-PATHWAY_ID = "WP|R-"
-## GO
-### Open Targets - GO processes
+PATHWAY_ID = "WPs|R-"
+# GO
+# Open Targets - GO processes
 OPENTARGETS_GO_OUTPUT_DICT = {"go_id": str, "go_name": str}
-GO_ID = "GO"
-## Compound
-### Open Targets - Compound
+GO_ID = "GOs"
+# Compound
+# Open Targets - Compound
 OPENTARGETS_COMPOUND_OUTPUT_DICT = {
     "chembl_id": str,
     "drug_name": str,
@@ -94,7 +94,7 @@ OPENTARGETS_COMPOUND_OUTPUT_DICT = {
 }
 CHEMBL_ID = "CHEMBL"
 RELATION = "inhibits|activates"
-### MolMeDB - Gene input
+# MolMeDB - Gene input
 MOLMEDB_GENE_OUTPUT_DICT = {
     "compound_name": str,
     "InChIKey": str,
@@ -110,7 +110,7 @@ MOLMEDB_GENE_OUTPUT_DICT = {
 MOLMEDB_ID = "MM"
 SOURCE_DOI = "doi"
 DRUGBANK_ID = "DB"
-### MolMeDB - Compound input
+# MolMeDB - Compound input
 MOLMEDB_COMPOUND_OUTPUT_DICT = {
     "uniprot_trembl_id": str,
     "hgnc_symbol": str,
@@ -118,11 +118,11 @@ MOLMEDB_COMPOUND_OUTPUT_DICT = {
     "source_pmid": str,
 }
 UNIPROT_TREMBL_ID = "P"
-## Gene Node
-### STRING
+# Gene Node
+# STRING
 # TODO: to be checked
 
-## Assay node
+# Assay node
 PUBCHEM_OUTPUT_DICT = {
     "assay_type": str,
     "outcome": str,
@@ -134,7 +134,7 @@ PUBCHEM_OUTPUT_DICT = {
 OUTCOME = "active|inactive"
 INCHI = "InChI"
 
-### Wikidata
+# Wikidata
 # TODO: to be checked
 
 # Node type output for each data source
