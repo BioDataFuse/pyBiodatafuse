@@ -13,7 +13,6 @@ from pyBiodatafuse.annotators.molmedb import (
     get_compound_gene_inhibitor,
     get_gene_compound_inhibitor,
 )
-
 from pyBiodatafuse.constants import MOLMEDB
 
 
@@ -24,7 +23,6 @@ class TestMolMeDb(unittest.TestCase):
     # @patch("pyBiodatafuse.annotators.molmedb.SPARQLWrapper.queryAndConvert")
     # def test_get_version_bgee(self, mock_sparql_request):
     #     """Test the get_version_bgee function."""
-
     #     version_data = '{"results": {"bindings": [{"date_modified": {"type": "literal", "value": "2023-11-01"}}]}}'
     #     mock_sparql_request.return_value = json.loads(version_data)
 
@@ -37,7 +35,6 @@ class TestMolMeDb(unittest.TestCase):
     @patch("pyBiodatafuse.annotators.molmedb.SPARQLWrapper.queryAndConvert")
     def test_get_gene_compound_inhibitor(self, mock_sparql_request):
         """Test the get_gene_compound_inhibitor."""
-
         bridgedb_dataframe_genes = pd.DataFrame(
             {
                 "identifier": ["SLC17A9", "SLC17A9", "SLC25A1", "SLC25A1", "KCNJ5", "KCNJ5"],
