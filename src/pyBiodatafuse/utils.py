@@ -113,7 +113,7 @@ def combine_sources(df_list: List[pd.DataFrame]) -> pd.DataFrame:
     return m
 
 
-def check_columns_against_constants(  # noqa: B023
+def check_columns_against_constants(
     data_df: pd.DataFrame, output_dict: dict, check_values_in: list
 ):
     """Check if columns in the data source output DataFrame match expected types and values from a dictionary of constants.
