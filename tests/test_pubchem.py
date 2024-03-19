@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""Tests for the WikiPathways annotator."""
+"""Tests for the Pubchem annotator."""
 import unittest
 from unittest.mock import patch
 
@@ -36,6 +36,7 @@ class TestPubchem(unittest.TestCase):
                 "head": {
                     "vars": [
                         "upProt",
+                        "assay",
                         "assay_type",
                         "outcome",
                         "compound_cid",
@@ -43,6 +44,7 @@ class TestPubchem(unittest.TestCase):
                         "compound_name",
                         "SMILES",
                         "InChI",
+                        "target_count",
                     ]
                 },
                 "results": {
@@ -51,6 +53,10 @@ class TestPubchem(unittest.TestCase):
                             "upProt": {
                                 "type": "uri",
                                 "value": "http://purl.uniprot.org/uniprot/P46098",
+                            },
+                            "assay": {
+                                "type": "uri",
+                                "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID1726",
                             },
                             "assay_type": {
                                 "type": "uri",
@@ -95,6 +101,10 @@ class TestPubchem(unittest.TestCase):
                                 "type": "uri",
                                 "value": "http://purl.uniprot.org/uniprot/P00533",
                             },
+                            "assay": {
+                                "type": "uri",
+                                "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID1727",
+                            },
                             "assay_type": {
                                 "type": "uri",
                                 "value": "http://www.bioassayontology.org/bao#BAO_0000186",
@@ -132,6 +142,10 @@ class TestPubchem(unittest.TestCase):
                             "upProt": {
                                 "type": "uri",
                                 "value": "http://purl.uniprot.org/uniprot/P00533",
+                            },
+                            "assay": {
+                                "type": "uri",
+                                "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID1731",
                             },
                             "assay_type": {
                                 "type": "uri",
@@ -192,33 +206,36 @@ class TestPubchem(unittest.TestCase):
             [
                 [
                     {
+                        "pubchem_assay_id": 1727,
                         "assay_type": "AC50",
                         "outcome": "inconclusive",
-                        "compound_cid": 5151543,
+                        "pubchem_compound_id": 5151543,
+                        "ref_cit": nan,
                         "compound_name": "1-(4-Methylpiperazin-1-yl)anthra-9,10-quinone",
                         "SMILES": "CN1CCN(CC1)C2=CC=CC3=C2C(=O)C4=CC=CC=C4C3=O",
                         "InChI": "InChI=1S/C19H18N2O2/c1",
-                        "ref_cit": nan,
                     },
                     {
+                        "pubchem_assay_id": 1731,
                         "assay_type": "AC50",
                         "outcome": "inconclusive",
-                        "compound_cid": 6706,
+                        "pubchem_compound_id": 6706,
+                        "ref_cit": nan,
                         "compound_name": "1-(Methylamino)anthraquinone",
                         "SMILES": "CNC1=CC=CC2=C1C(=O)C3=CC=CC=C3C2=O",
                         "InChI": "InChI=1S/C15H11NO2/c1",
-                        "ref_cit": nan,
                     },
                 ],
                 [
                     {
+                        "pubchem_assay_id": 1726,
                         "assay_type": "Ki",
                         "outcome": "active",
-                        "compound_cid": 9911844,
+                        "pubchem_compound_id": 9911844,
+                        "ref_cit": "Kikuchi C, Suzuki H, Hiranuma T, Koyama M.",
                         "compound_name": "DR-4485 free base",
                         "SMILES": "C1CC2=C(C=CC3=C2C(C1)(C(=O)N3)CCCCN4CCC(=CC4)C5=CC=C(C=C5)Cl)Cl",
                         "InChI": "InChI=1S/C26H28Cl2N2O/c27",
-                        "ref_cit": "Kikuchi C, Suzuki H, Hiranuma T, Koyama M.",
                     }
                 ],
             ]
