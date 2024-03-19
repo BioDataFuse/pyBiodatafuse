@@ -7,7 +7,7 @@ import networkx as nx
 from neo4j import GraphDatabase
 
 
-def save_graph_to_neo4j_graphml(g: nx.MultiDiGraph, output_path: str):
+def save_graph_to_graphml(g: nx.MultiDiGraph, output_path: str):
     """Convert a NetworkX graph to Neo4J graphml file.
 
     :param g: the NetworkX graph object.
@@ -16,7 +16,7 @@ def save_graph_to_neo4j_graphml(g: nx.MultiDiGraph, output_path: str):
     nx.write_graphml(g, output_path, named_key_ids=True)
 
 
-def export(
+def exporter(
     network,
     uri,
     username,

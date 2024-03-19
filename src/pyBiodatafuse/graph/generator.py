@@ -546,7 +546,7 @@ def add_drug_disease_subgraph(g, drug_node_label, annot_list):
     return g
 
 
-def generate_networkx_graph(fuse_df: pd.DataFrame, drug_disease=None):
+def networkx_graph(fuse_df: pd.DataFrame, drug_disease=None):
     """Construct a NetWorkX graph from a Pandas DataFrame of genes and their multi-source annotations.
 
     :param fuse_df: the input dataframe to be converted into a graph.

@@ -2,6 +2,7 @@
 
 """Python utils file for global functions."""
 
+import warnings
 from typing import List
 
 import pandas as pd
@@ -110,3 +111,43 @@ def combine_sources(df_list: List[pd.DataFrame]) -> pd.DataFrame:
     m = m.loc[:, ~m.columns.duplicated()]  # remove duplicate columns
 
     return m
+
+
+def check_columns_against_constants(
+    data_df: pd.DataFrame, output_dict: dict, check_values_in: list
+):
+    """Check if columns in the data source output DataFrame match expected types and values from a dictionary of constants.
+
+    :param data_df: DataFrame to check.
+    :param output_dict: Dictionary containing expected types for columns.
+    :param check_values_in: List of column names to check values against constants.
+    """
+    for col, expected_type in output_dict.items():
+        if col not in data_df.columns:
+            warnings.warn(f"Column '{col}' is missing in the DataFrame.", stacklevel=2)
+            continue
+
+        if not data_df[col].dropna().apply(type).eq(expected_type).all():
+            warnings.warn(
+                f"Not all values in column '{col}' have the correct type '{expected_type}'.",
+                stacklevel=2,
+            )
+        if col in check_values_in:
+            exec(f"from pyBiodatafuse.constants import {col.upper()}")  # noqa: S102
+            starts_with = locals()[col.upper()]
+            if not data_df[col].apply(type).eq(int).all():
+                prefixes = starts_with.split("|")
+                if (
+                    not data_df[col]
+                    .dropna()
+                    .apply(
+                        lambda value, prefixes=prefixes: any(
+                            value.startswith(prefix) for prefix in prefixes
+                        )
+                    )
+                    .all()
+                ):
+                    warnings.warn(
+                        f"All values in column '{col}' do not start with '{starts_with}'.",
+                        stacklevel=2,
+                    )

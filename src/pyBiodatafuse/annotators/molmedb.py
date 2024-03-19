@@ -13,8 +13,19 @@ import numpy as np
 import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
 
-from pyBiodatafuse.constants import MOLMEDB, MOLMEDB_ENDPOINT
-from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interest
+from pyBiodatafuse.constants import (
+    MOLMEDB,
+    MOLMEDB_COMPOUND_INPUT_ID,
+    MOLMEDB_COMPOUND_OUTPUT_DICT,
+    MOLMEDB_ENDPOINT,
+    MOLMEDB_GENE_INPUT_ID,
+    MOLMEDB_GENE_OUTPUT_DICT,
+)
+from pyBiodatafuse.utils import (
+    check_columns_against_constants,
+    collapse_data_sources,
+    get_identifier_of_interest,
+)
 
 
 def check_endpoint_molmedb() -> bool:
@@ -54,7 +65,7 @@ def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
     # Record the start time
     start_time = datetime.datetime.now()
 
-    data_df = get_identifier_of_interest(bridgedb_df, "Uniprot-TrEMBL")
+    data_df = get_identifier_of_interest(bridgedb_df, MOLMEDB_GENE_INPUT_ID)
     molmedb_transporter_list = data_df["target"].tolist()
 
     molmedb_transporter_list = list(set(molmedb_transporter_list))
@@ -116,18 +127,21 @@ def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
         intermediate_df["source_doi"] = intermediate_df["source_doi"].map(
             lambda x: "doi:" + x, na_action="ignore"
         )
-        target_columns = list(intermediate_df.columns)
-        target_columns.remove("target")
-    else:
-        target_columns = list(intermediate_df.columns)
+
+    # Check if all keys in df match the keys in OUTPUT_DICT
+    check_columns_against_constants(
+        data_df=intermediate_df,
+        output_dict=MOLMEDB_GENE_OUTPUT_DICT,
+        check_values_in=["molmedb_id", "source_doi", "drugbank_id"],
+    )
 
     # Merge the two DataFrames on the target column
     merged_df = collapse_data_sources(
         data_df=data_df,
-        source_namespace="Uniprot-TrEMBL",
+        source_namespace=MOLMEDB_GENE_INPUT_ID,
         target_df=intermediate_df,
         common_cols=["target"],
-        target_specific_cols=target_columns,
+        target_specific_cols=list(MOLMEDB_GENE_OUTPUT_DICT.keys()),
         col_name=f"{MOLMEDB}_transporter_inhibitor",
     )
 
@@ -213,7 +227,7 @@ def get_compound_gene_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
     # Record the start time
     start_time = datetime.datetime.now()
 
-    data_df = get_identifier_of_interest(bridgedb_df, "InChIKey")
+    data_df = get_identifier_of_interest(bridgedb_df, MOLMEDB_COMPOUND_INPUT_ID)
     inhibitor_list_str = data_df["target"].tolist()
 
     inhibitor_list_str = list(set(inhibitor_list_str))
@@ -261,21 +275,27 @@ def get_compound_gene_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
     end_time = datetime.datetime.now()
 
     # Organize the annotation results as an array of dictionaries
-    intermediate_df.rename(columns={"inhibitorInChIKey": "target"}, inplace=True)
+    intermediate_df.rename(
+        columns={"inhibitorInChIKey": "target", "hgcn_id": "hgnc_symbol"}, inplace=True
+    )
     intermediate_df["source_doi"] = intermediate_df["source_doi"].map(
         lambda x: "doi:" + x, na_action="ignore"
     )
 
-    target_columns = list(intermediate_df.columns)
-    target_columns.remove("target")
+    # Check if all keys in df match the keys in OUTPUT_DICT
+    check_columns_against_constants(
+        data_df=intermediate_df,
+        output_dict=MOLMEDB_COMPOUND_OUTPUT_DICT,
+        check_values_in=["UNIPROT_TREMBL_ID"],
+    )
 
     # Merge the two DataFrames on the target column
     merged_df = collapse_data_sources(
         data_df=data_df,
-        source_namespace="InChIKey",
+        source_namespace=MOLMEDB_COMPOUND_INPUT_ID,
         target_df=intermediate_df,
         common_cols=["target"],
-        target_specific_cols=target_columns,
+        target_specific_cols=list(MOLMEDB_COMPOUND_OUTPUT_DICT.keys()),
         col_name=f"{MOLMEDB}_transporter_inhibited",
     )
 
