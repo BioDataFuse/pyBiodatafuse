@@ -56,7 +56,7 @@ def get_version_bgee() -> dict:
     sparql.setQuery(sparql_query)
     res = sparql.queryAndConvert()
 
-    bgee_version = {"bgee_version": res["results"]["bindings"][0]["date_modified"]["value"]}
+    bgee_version = {"source_version": res["results"]["bindings"][0]["date_modified"]["value"]}
 
     return bgee_version
 
@@ -198,7 +198,7 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
     # Add the datasource, query, query time, and the date to metadata
     bgee_metadata = {
         "datasource": BGEE,
-        "metadata": {"source_version": bgee_version},
+        "metadata": bgee_version,
         "query": {
             "size": len(gene_list),
             "time": time_elapsed,

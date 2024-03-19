@@ -36,7 +36,7 @@ def get_version_minerva(map_endpoint: str) -> dict:
     response = requests.get(map_endpoint + "api/configuration/")
 
     conf_dict = response.json()
-    minerva_version = {"minerva_version": conf_dict["version"]}
+    minerva_version = {"source_version": conf_dict["version"]}
 
     return minerva_version
 
@@ -287,7 +287,7 @@ def get_gene_minerva_pathways(
     # Add the datasource, query, query time, and the date to metadata
     minerva_metadata = {
         "datasource": MINERVA,
-        "metadata": {"source_version": minerva_version},
+        "metadata": minerva_version,
         "query": {
             "size": data_df["target"].nunique(),
             "input_type": MINERVA_INPUT_ID,

@@ -53,7 +53,7 @@ def get_version_wikipathways() -> dict:
     sparql.setQuery(sparql_query)
     res = sparql.queryAndConvert()
 
-    wikipathways_version = {"wikipathways_version": res["results"]["bindings"][0]["title"]["value"]}
+    wikipathways_version = {"source_version": res["results"]["bindings"][0]["title"]["value"]}
 
     return wikipathways_version
 
@@ -159,7 +159,7 @@ def get_gene_wikipathway(bridgedb_df: pd.DataFrame):
     # Add the datasource, query, query time, and the date to metadata
     wikipathways_metadata = {
         "datasource": WIKIPATHWAY,
-        "metadata": {"source_version": wikipathways_version},
+        "metadata": wikipathways_version,
         "query": {
             "size": len(gene_list),
             "time": time_elapsed,
