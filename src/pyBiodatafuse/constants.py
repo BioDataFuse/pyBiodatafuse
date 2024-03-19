@@ -12,7 +12,7 @@ OPENTARGETS_ENDPOINT = "https://api.platform.opentargets.org/api/v4/graphql"
 PUBCHEM_ENDPOINT = "https://idsm.elixir-czech.cz/sparql/endpoint/idsm"
 STRING_ENDPOINT = "https://string-db.org/api"
 WIKIDATA_ENDPOINT = "https://query.wikidata.org/sparql"
-WIKIPATHWAY_ENDPOINT = "https://sparql.wikipathways.org/sparql"
+WIKIPATHWAYS_ENDPOINT = "https://sparql.wikipathways.org/sparql"
 
 # Data sources
 BGEE = "Bgee"
@@ -23,7 +23,7 @@ OPENTARGETS = "OpenTargets"
 PUBCHEM = "PubChem"
 STRING = "StringDB"
 WIKIDATA = "Wikidata"
-WIKIPATHWAY = "WikiPathways"
+WIKIPATHWAYS = "WikiPathways"
 
 # Input type for each data source
 BGEE_INPUT_ID = "Ensembl"
@@ -35,7 +35,7 @@ OPENTARGETS_INPUT_ID = "Ensembl"
 PUBCHEM_INPUT_ID = "Uniprot-TrEMBL"
 STRING_INPUT_ID = "Ensembl"
 WIKIDATA_INPUT_ID = ""
-WIKIPATHWAY_INPUT_ID = "NCBI Gene"
+WIKIPATHWAYS_INPUT_ID = "NCBI Gene"
 
 # Output annotation for each data source
 # Anatomical entity node
@@ -73,7 +73,7 @@ MINERVA_OUTPUT_DICT = {
     "pathway_gene_count": int,
 }
 # WikiPathways
-WIKIPATHWAY_OUTPUT_DICT = {"pathway_id": str, "pathway_label": str, "pathway_gene_count": int}
+WIKIPATHWAYS_OUTPUT_DICT = {"pathway_id": str, "pathway_label": str, "pathway_gene_count": int}
 # Open Targets - Reactome
 OPENTARGETS_REACTOME_OUTPUT_DICT = {
     "pathway_id": str,
@@ -88,7 +88,7 @@ GO_ID = "GO"
 # Open Targets - Compound
 OPENTARGETS_COMPOUND_OUTPUT_DICT = {
     "chembl_id": str,
-    "drug_name": str,
+    "compound_name": str,
     "is_approved": bool,
     "relation": str,
 }
@@ -137,24 +137,27 @@ INCHI = "InChI"
 # Wikidata
 # TODO: to be checked
 
-# Node type output for each data source
-BGEE_NODE_TYPE = ""
-DISGENET_NODE_TYPE = ""
-MINERVA_NODE_TYPE = ""
-MOLMEDB_NODE_TYPE = ""
-OPENTARGETS_NODE_TYPE = ""
-PUBCHEM_NODE_TYPE = ""
-STRING_NODE_TYPE = ""
-WIKIDATA_NODE_TYPE = ""
-WIKIPATHWAY_NODE_TYPE = ""
+# Node lables for each data source
+BGEE_NODE_LABELS = "Anatomical Entity"
+DISGENET_NODE_LABELS = "Disease"
+MINERVA_NODE_LABELS = "Pathway"
+MOLMEDB_NODE_LABELS = "Compound"
+OPENTARGETS_REACTOME_NODE_LABELS = "Pathway"
+OPENTARGETS_GO_NODE_LABELS = "Gene Ontology"
+OPENTARGETS_LOCATION_NODE_LABELS = "Location"
+OPENTARGETS_DISEASE_NODE_LABELS = "Disease"
+OPENTARGETS_COMPOUND_NODE_LABELS = "Compound"
+PUBCHEM_NODE_LABELS = "Compound"
+WIKIPATHWAYS_NODE_LABELS = "Pathway"
 
-# Edge type output for each data source
-BGEE_EDGE_TYPE = ""
-DISGENET_EDGE_TYPE = ""
-MINERVA_EDGE_TYPE = ""
-MOLMEDB_EDGE_TYPE = ""
-OPENTARGETS_EDGE_TYPE = ""
-PUBCHEM_EDGE_TYPE = ""
-STRING_EDGE_TYPE = ""
-WIKIDATA_EDGE_TYPE = ""
-WIKIPATHWAY_EDGE_TYPE = ""
+# Edge label output for each data source
+BGEE_EDGE_LABEL = "expressed_in"
+DISGENET_EDGE_LABEL = "associated_with"
+MINERVA_EDGE_LABEL = "part_of"
+MOLMEDB_EDGE_LABEL = "inhibits"
+OPENTARGETS_REACTOME_EDGE_LABEL = "part_of"
+OPENTARGETS_GO_EDGE_LABEL = "part_of"
+OPENTARGETS_LOCATION_EDGE_LABEL = "localized_in"
+OPENTARGETS_DISEASE_EDGE_LABEL = "associated_with"
+STRING_EDGE_LABEL = "StringDB_ppi_interaction"
+WIKIPATHWAYS_EDGE_LABEL = "part_of"

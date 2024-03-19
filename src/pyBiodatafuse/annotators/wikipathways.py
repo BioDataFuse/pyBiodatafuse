@@ -14,10 +14,10 @@ from SPARQLWrapper import JSON, SPARQLWrapper
 from SPARQLWrapper.SPARQLExceptions import SPARQLWrapperException
 
 from pyBiodatafuse.constants import (
-    WIKIPATHWAY,
-    WIKIPATHWAY_ENDPOINT,
-    WIKIPATHWAY_INPUT_ID,
-    WIKIPATHWAY_OUTPUT_DICT,
+    WIKIPATHWAYS,
+    WIKIPATHWAYS_ENDPOINT,
+    WIKIPATHWAYS_INPUT_ID,
+    WIKIPATHWAYS_OUTPUT_DICT,
 )
 from pyBiodatafuse.utils import (
     check_columns_against_constants,
@@ -36,7 +36,7 @@ def check_endpoint_wikipathways() -> bool:
     with open(os.path.dirname(__file__) + "/queries/wikipathways-metadata.rq", "r") as fin:
         sparql_query = fin.read()
 
-    sparql = SPARQLWrapper(WIKIPATHWAY_ENDPOINT)
+    sparql = SPARQLWrapper(WIKIPATHWAYS_ENDPOINT)
     sparql.setReturnFormat(JSON)
 
     sparql.setQuery(sparql_query)
@@ -56,7 +56,7 @@ def get_version_wikipathways() -> dict:
     with open(os.path.dirname(__file__) + "/queries/wikipathways-metadata.rq", "r") as fin:
         sparql_query = fin.read()
 
-    sparql = SPARQLWrapper(WIKIPATHWAY_ENDPOINT)
+    sparql = SPARQLWrapper(WIKIPATHWAYS_ENDPOINT)
     sparql.setReturnFormat(JSON)
 
     sparql.setQuery(sparql_query)
@@ -67,7 +67,7 @@ def get_version_wikipathways() -> dict:
     return wikipathways_version
 
 
-def get_gene_wikipathway(bridgedb_df: pd.DataFrame):
+def get_gene_wikipathways(bridgedb_df: pd.DataFrame):
     """Query WikiPathways for pathways associated with genes.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
@@ -78,12 +78,12 @@ def get_gene_wikipathway(bridgedb_df: pd.DataFrame):
 
     if not api_available:
         warnings.warn(
-            f"{WIKIPATHWAY} SPARQL endpoint is not available. Unable to retrieve data.",
+            f"{WIKIPATHWAYS} SPARQL endpoint is not available. Unable to retrieve data.",
             stacklevel=2,
         )
         return pd.DataFrame(), {}
 
-    data_df = get_identifier_of_interest(bridgedb_df, WIKIPATHWAY_INPUT_ID)
+    data_df = get_identifier_of_interest(bridgedb_df, WIKIPATHWAYS_INPUT_ID)
     gene_list = data_df["target"].tolist()
 
     gene_list = list(set(gene_list))
@@ -104,7 +104,7 @@ def get_gene_wikipathway(bridgedb_df: pd.DataFrame):
     # Record the start time
     start_time = datetime.datetime.now()
 
-    sparql = SPARQLWrapper(WIKIPATHWAY_ENDPOINT)
+    sparql = SPARQLWrapper(WIKIPATHWAYS_ENDPOINT)
     sparql.setReturnFormat(JSON)
 
     query_count = 0
@@ -140,18 +140,18 @@ def get_gene_wikipathway(bridgedb_df: pd.DataFrame):
     # Check if all keys in df match the keys in OUTPUT_DICT
     check_columns_against_constants(
         data_df=intermediate_df,
-        output_dict=WIKIPATHWAY_OUTPUT_DICT,
+        output_dict=WIKIPATHWAYS_OUTPUT_DICT,
         check_values_in=["pathway_id"],
     )
 
     # Merge the two DataFrames on the target column
     merged_df = collapse_data_sources(
         data_df=data_df,
-        source_namespace=WIKIPATHWAY_INPUT_ID,
+        source_namespace=WIKIPATHWAYS_INPUT_ID,
         target_df=intermediate_df,
         common_cols=["target"],
-        target_specific_cols=list(WIKIPATHWAY_OUTPUT_DICT.keys()),
-        col_name=WIKIPATHWAY,
+        target_specific_cols=list(WIKIPATHWAYS_OUTPUT_DICT.keys()),
+        col_name=WIKIPATHWAYS,
     )
 
     # Metdata details
@@ -165,13 +165,13 @@ def get_gene_wikipathway(bridgedb_df: pd.DataFrame):
 
     # Add the datasource, query, query time, and the date to metadata
     wikipathways_metadata = {
-        "datasource": WIKIPATHWAY,
+        "datasource": WIKIPATHWAYS,
         "metadata": wikipathways_version,
         "query": {
             "size": len(gene_list),
             "time": time_elapsed,
             "date": current_date,
-            "url": WIKIPATHWAY_ENDPOINT,
+            "url": WIKIPATHWAYS_ENDPOINT,
         },
     }
 
