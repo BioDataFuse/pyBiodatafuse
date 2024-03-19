@@ -79,11 +79,11 @@ OPENTARGETS_REACTOME_OUTPUT_DICT = {
     "pathway_id": str,
     "pathway_label": str,
 }
-PATHWAY_ID = "WPs|R-"
+PATHWAY_ID = "WP|R-"
 # GO
 # Open Targets - GO processes
 OPENTARGETS_GO_OUTPUT_DICT = {"go_id": str, "go_name": str}
-GO_ID = "GOs"
+GO_ID = "GO"
 # Compound
 # Open Targets - Compound
 OPENTARGETS_COMPOUND_OUTPUT_DICT = {

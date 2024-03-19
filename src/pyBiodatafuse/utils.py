@@ -7,23 +7,6 @@ from typing import List
 
 import pandas as pd
 
-from pyBiodatafuse.constants import (  # noqa: F401
-    ANATOMICAL_ENTITY_ID,
-    CHEMBL_ID,
-    CONFIDENCE_LEVEL_ID,
-    DEVELOPMENTAL_STAGE_ID,
-    DISEASE_ID,
-    DRUGBANK_ID,
-    GO_ID,
-    INCHI,
-    LOCATION_ID,
-    MOLMEDB_ID,
-    OUTCOME,
-    PATHWAY_ID,
-    RELATION,
-    SOURCE_DOI,
-    UNIPROT_TREMBL_ID,
-)
 from pyBiodatafuse.id_mapper import read_resource_files
 
 
@@ -130,7 +113,7 @@ def combine_sources(df_list: List[pd.DataFrame]) -> pd.DataFrame:
     return m
 
 
-def check_columns_against_constants(
+def check_columns_against_constants(  # noqa: B023
     data_df: pd.DataFrame, output_dict: dict, check_values_in: list
 ):
     """Check if columns in the data source output DataFrame match expected types and values from a dictionary of constants.
@@ -150,7 +133,8 @@ def check_columns_against_constants(
                 stacklevel=2,
             )
         if col in check_values_in:
-            starts_with = locals()[col.upper()]  # noqa: F401
+            exec(f"from pyBiodatafuse.constants import {col.upper()}")  # noqa: S102
+            starts_with = locals()[col.upper()]
             if not data_df[col].apply(type).eq(int).all():
                 prefixes = starts_with.split("|")
                 if (
@@ -160,7 +144,6 @@ def check_columns_against_constants(
                     .all()
                 ):
                     warnings.warn(
-                        f"All values in column '{col}' do not start with '{prefixes}'.",
+                        f"All values in column '{col}' do not start with '{starts_with}'.",
                         stacklevel=2,
                     )
-
