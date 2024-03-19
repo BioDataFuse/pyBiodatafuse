@@ -207,7 +207,7 @@ class TestMolMeDb(unittest.TestCase):
             }
         ]
 
-        obtained_data, metadata = get_gene_compound_inhibitor(bridgedb_dataframe_genes)
+        obtained_data, _ = get_gene_compound_inhibitor(bridgedb_dataframe_genes)
 
         expected_data = pd.Series(
             [
@@ -418,3 +418,5 @@ class TestMolMeDb(unittest.TestCase):
         pd.testing.assert_series_equal(
             obtained_data[f"{MOLMEDB}_transporter_inhibited"], expected_data
         )
+
+        self.assertIsInstance(metadata, dict)
