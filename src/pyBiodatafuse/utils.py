@@ -126,7 +126,7 @@ def check_columns_against_constants(
     for col, expected_type in output_dict.items():
         if col not in data_df.columns:
             warnings.warn(f"Column '{col}' is missing in the DataFrame.", stacklevel=2)
-        if not data_df[col].apply(type).eq(expected_type).all():
+        if not data_df[col].dropna().apply(type).eq(expected_type).all():
             warnings.warn(
                 f"Not all values in column '{col}' have the correct type.", stacklevel=2
             )
@@ -134,7 +134,7 @@ def check_columns_against_constants(
             exec(f"from pyBiodatafuse.constants import {col.upper()}")
             starts_with = locals()[col.upper()]
             if not data_df[col].apply(type).eq(int).all():
-                if not data_df[col].apply(lambda value: isinstance(value, str) and (any(value.startswith(prefix) for prefix in starts_with) and bool(re.match(starts_with, value)))).all():
+                if not data_df[col].dropna().apply(lambda value: isinstance(value, str) and (any(value.startswith(prefix) for prefix in starts_with) and bool(re.match(starts_with, value)))).all():
                     warnings.warn(
                         f"All values in column '{col}' do not start with '{starts_with}'.", stacklevel=2
                     )
