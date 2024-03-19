@@ -13,8 +13,17 @@ import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
 from SPARQLWrapper.SPARQLExceptions import SPARQLWrapperException
 
-from pyBiodatafuse.constants import DISGENET, DISGENET_ENDPOINT, DISGENET_INPUT_ID, DISGENET_OUTPUT_DICT
-from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interest, check_columns_against_constants
+from pyBiodatafuse.constants import (
+    DISGENET,
+    DISGENET_ENDPOINT,
+    DISGENET_INPUT_ID,
+    DISGENET_OUTPUT_DICT,
+)
+from pyBiodatafuse.utils import (
+    check_columns_against_constants,
+    collapse_data_sources,
+    get_identifier_of_interest,
+)
 
 logger = logging.getLogger("disgenet")
 
@@ -94,9 +103,7 @@ def get_gene_disease(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
     else:
         query_gene_lists.append(" ".join(f'"{g}"' for g in gene_list))
 
-    with open(
-        os.path.dirname(__file__) + "/queries/disgenet-genes-disease.rq", "r"
-    ) as fin:
+    with open(os.path.dirname(__file__) + "/queries/disgenet-genes-disease.rq", "r") as fin:
         sparql_query = fin.read()
 
     # Record the start time

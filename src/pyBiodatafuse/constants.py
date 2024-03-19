@@ -54,25 +54,16 @@ CONFIDENCE_LEVEL_ID = "CIO"
 ## Location node
 ### Open Targets - Location
 OPENTARGETS_LOCATION_OUTPUT_DICT = {
-  "location_id": str,
-  "location": str, 
-  "subcellular_location": str
+    "location_id": str,
+    "location": str,
+    "subcellular_location": str,
 }
 LOCATION_ID = "SL"
 ## Disease node
 ### DisGeNet
-DISGENET_OUTPUT_DICT = {
-    "disease_id": str,
-    "disease_name": str,
-    "score": float,
-    "source": str
-}
+DISGENET_OUTPUT_DICT = {"disease_id": str, "disease_name": str, "score": float, "source": str}
 ### Open Targets - Disease
-OPENTARGETS_DISEASE_OUTPUT_DICT = {
-  "disease_id": str,
-  "disease_name": str,
-  "therapeutic_areas": str
-}
+OPENTARGETS_DISEASE_OUTPUT_DICT = {"disease_id": str, "disease_name": str, "therapeutic_areas": str}
 DISEASE_ID = "umls|EFO|MONDO"
 ## Pathway node
 ### MINERVA
@@ -82,10 +73,7 @@ MINERVA_OUTPUT_DICT = {
     "pathway_gene_count": int,
 }
 ### WikiPathways
-WIKIPATHWAY_OUTPUT_DICT = {
-    "pathway_id": str,
-    "pathway_label": str,
-    "pathway_gene_count": int}
+WIKIPATHWAY_OUTPUT_DICT = {"pathway_id": str, "pathway_label": str, "pathway_gene_count": int}
 ### Open Targets - Reactome
 OPENTARGETS_REACTOME_OUTPUT_DICT = {
     "pathway_id": str,
@@ -94,10 +82,7 @@ OPENTARGETS_REACTOME_OUTPUT_DICT = {
 PATHWAY_ID = "WP|R-"
 ## GO
 ### Open Targets - GO processes
-OPENTARGETS_GO_OUTPUT_DICT = {
-    "go_id": str,
-    "go_name": str
-}
+OPENTARGETS_GO_OUTPUT_DICT = {"go_id": str, "go_name": str}
 GO_ID = "GO"
 ## Compound
 ### Open Targets - Compound
@@ -105,7 +90,7 @@ OPENTARGETS_COMPOUND_OUTPUT_DICT = {
     "chembl_id": str,
     "drug_name": str,
     "is_approved": bool,
-    "relation": str
+    "relation": str,
 }
 CHEMBL_ID = "CHEMBL"
 RELATION = "inhibits|activates"
@@ -120,7 +105,7 @@ MOLMEDB_GENE_OUTPUT_DICT = {
     "source_pmid": str,
     "chebi_id": str,
     "pdb_ligand_id": str,
-    "drugbank_id": str
+    "drugbank_id": str,
 }
 MOLMEDB_ID = "MM"
 SOURCE_DOI = "doi"
@@ -130,12 +115,12 @@ MOLMEDB_COMPOUND_OUTPUT_DICT = {
     "uniprot_trembl_id": str,
     "hgnc_symbol": str,
     "source_doi": str,
-    "source_pmid": str  
+    "source_pmid": str,
 }
 UNIPROT_TREMBL_ID = "P"
 ## Gene Node
 ### STRING
-# TODO: to be checked 
+# TODO: to be checked
 
 ## Assay node
 PUBCHEM_OUTPUT_DICT = {
@@ -144,13 +129,13 @@ PUBCHEM_OUTPUT_DICT = {
     "compound_cid": str,
     "compound_name": str,
     "SMILES": str,
-    "InChI": str
+    "InChI": str,
 }
 OUTCOME = "active|inactive"
 INCHI = "InChI"
 
 ### Wikidata
-# TODO: to be checked 
+# TODO: to be checked
 
 # Node type output for each data source
 BGEE_NODE_TYPE = ""

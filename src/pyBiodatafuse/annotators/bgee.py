@@ -11,8 +11,15 @@ import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
 from SPARQLWrapper.SPARQLExceptions import SPARQLWrapperException
 
-from pyBiodatafuse.constants import BGEE, BGEE_ENDPOINT, BGEE_INPUT_ID, BGEE_OUTPUT_DICT, ANATOMICAL_ENTITY_ID, CONFIDENCE_LEVEL_ID, DEVELOPMENTAL_STAGE_ID
-
+from pyBiodatafuse.constants import (
+    ANATOMICAL_ENTITY_ID,
+    BGEE,
+    BGEE_ENDPOINT,
+    BGEE_INPUT_ID,
+    BGEE_OUTPUT_DICT,
+    CONFIDENCE_LEVEL_ID,
+    DEVELOPMENTAL_STAGE_ID,
+)
 from pyBiodatafuse.utils import (
     check_columns_against_constants,
     collapse_data_sources,

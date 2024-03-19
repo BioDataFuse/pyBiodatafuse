@@ -10,8 +10,21 @@ from typing import Tuple
 import pandas as pd
 import requests
 
-from pyBiodatafuse.constants import OPENTARGETS, OPENTARGETS_COMPOUND_OUTPUT_DICT, OPENTARGETS_DISEASE_OUTPUT_DICT, OPENTARGETS_ENDPOINT, OPENTARGETS_GO_OUTPUT_DICT, OPENTARGETS_INPUT_ID, OPENTARGETS_LOCATION_OUTPUT_DICT, OPENTARGETS_REACTOME_OUTPUT_DICT
-from pyBiodatafuse.utils import check_columns_against_constants, collapse_data_sources, get_identifier_of_interest
+from pyBiodatafuse.constants import (
+    OPENTARGETS,
+    OPENTARGETS_COMPOUND_OUTPUT_DICT,
+    OPENTARGETS_DISEASE_OUTPUT_DICT,
+    OPENTARGETS_ENDPOINT,
+    OPENTARGETS_GO_OUTPUT_DICT,
+    OPENTARGETS_INPUT_ID,
+    OPENTARGETS_LOCATION_OUTPUT_DICT,
+    OPENTARGETS_REACTOME_OUTPUT_DICT,
+)
+from pyBiodatafuse.utils import (
+    check_columns_against_constants,
+    collapse_data_sources,
+    get_identifier_of_interest,
+)
 
 
 def check_endpoint_opentargets() -> bool:
@@ -175,7 +188,7 @@ def get_gene_location(
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # Calculate the time elapsed
     time_elapsed = str(end_time - start_time)
-    # Add version, datasource, query, query time, and the date to metadata  
+    # Add version, datasource, query, query time, and the date to metadata
     opentargets_version["query"] = {
         "size": len(gene_ids),
         "input_type": OPENTARGETS_INPUT_ID,
@@ -275,7 +288,7 @@ def get_gene_go_process(
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # Calculate the time elapsed
     time_elapsed = str(end_time - start_time)
-    # Add version, datasource, query, query time, and the date to metadata  
+    # Add version, datasource, query, query time, and the date to metadata
     opentargets_version["query"] = {
         "size": len(gene_ids),
         "input_type": OPENTARGETS_INPUT_ID,
@@ -283,7 +296,7 @@ def get_gene_go_process(
         "date": current_date,
         "url": OPENTARGETS_ENDPOINT,
     }
-    
+
     return merged_df, opentargets_version
 
 
@@ -341,7 +354,9 @@ def get_gene_reactome_pathways(
     if intermediate_df.empty:
         return pd.DataFrame(), opentargets_version
 
-    intermediate_df.rename(columns={"pathway": "pathway_label", "pathwayId": "pathway_id"}, inplace=True)
+    intermediate_df.rename(
+        columns={"pathway": "pathway_label", "pathwayId": "pathway_id"}, inplace=True
+    )
 
     # Check if all keys in df match the keys in OUTPUT_DICT
     check_columns_against_constants(
@@ -365,7 +380,7 @@ def get_gene_reactome_pathways(
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # Calculate the time elapsed
     time_elapsed = str(end_time - start_time)
-    # Add version, datasource, query, query time, and the date to metadata  
+    # Add version, datasource, query, query time, and the date to metadata
     opentargets_version["query"] = {
         "size": len(gene_ids),
         "input_type": OPENTARGETS_INPUT_ID,
@@ -440,13 +455,13 @@ def get_gene_tractability(
 
     # TODO: Check if all keys in df match the keys in OUTPUT_DICT
     # TODO: Merge data wih main data_df
-    
+
     """Metdata details"""
     # Get the current date and time
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # Calculate the time elapsed
     time_elapsed = str(end_time - start_time)
-    # Add version, datasource, query, query time, and the date to metadata  
+    # Add version, datasource, query, query time, and the date to metadata
     opentargets_version["query"] = {
         "size": len(gene_ids),
         "input_type": OPENTARGETS_INPUT_ID,
@@ -556,7 +571,7 @@ def get_gene_compound_interactions(
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # Calculate the time elapsed
     time_elapsed = str(end_time - start_time)
-    # Add version, datasource, query, query time, and the date to metadata  
+    # Add version, datasource, query, query time, and the date to metadata
     opentargets_version["query"] = {
         "size": len(gene_ids),
         "input_type": OPENTARGETS_INPUT_ID,
@@ -662,7 +677,7 @@ def get_gene_disease_associations(
         output_dict=OPENTARGETS_DISEASE_OUTPUT_DICT,
         check_values_in=["disease_id"],
     )
-    
+
     # Merge the two DataFrames on the target column
     merged_df = collapse_data_sources(
         data_df=data_df,
@@ -678,7 +693,7 @@ def get_gene_disease_associations(
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # Calculate the time elapsed
     time_elapsed = str(end_time - start_time)
-    # Add version, datasource, query, query time, and the date to metadata  
+    # Add version, datasource, query, query time, and the date to metadata
     opentargets_version["query"] = {
         "size": len(gene_ids),
         "input_type": OPENTARGETS_INPUT_ID,
@@ -686,7 +701,7 @@ def get_gene_disease_associations(
         "date": current_date,
         "url": OPENTARGETS_ENDPOINT,
     }
-    
+
     return merged_df, opentargets_version
 
 

@@ -13,8 +13,18 @@ import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
 from SPARQLWrapper.SPARQLExceptions import SPARQLWrapperException
 
-from pyBiodatafuse.constants import WIKIPATHWAY, WIKIPATHWAY_ENDPOINT, WIKIPATHWAY_INPUT_ID, WIKIPATHWAY_OUTPUT_DICT, PATHWAY_ID
-from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interest, check_columns_against_constants
+from pyBiodatafuse.constants import (
+    PATHWAY_ID,
+    WIKIPATHWAY,
+    WIKIPATHWAY_ENDPOINT,
+    WIKIPATHWAY_INPUT_ID,
+    WIKIPATHWAY_OUTPUT_DICT,
+)
+from pyBiodatafuse.utils import (
+    check_columns_against_constants,
+    collapse_data_sources,
+    get_identifier_of_interest,
+)
 
 logger = logging.getLogger("wikipathways")
 
@@ -94,7 +104,7 @@ def get_gene_wikipathway(bridgedb_df: pd.DataFrame):
 
     # Record the start time
     start_time = datetime.datetime.now()
-    
+
     sparql = SPARQLWrapper(WIKIPATHWAY_ENDPOINT)
     sparql.setReturnFormat(JSON)
 
@@ -124,9 +134,7 @@ def get_gene_wikipathway(bridgedb_df: pd.DataFrame):
     end_time = datetime.datetime.now()
 
     # Organize the annotation results as an array of dictionaries
-    intermediate_df.rename(
-        columns={"gene_id": "target"}, inplace=True
-    )
+    intermediate_df.rename(columns={"gene_id": "target"}, inplace=True)
     intermediate_df["pathway_gene_count"] = pd.to_numeric(intermediate_df["pathway_gene_count"])
     intermediate_df = intermediate_df.drop_duplicates()
 

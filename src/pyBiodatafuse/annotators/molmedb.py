@@ -13,8 +13,19 @@ import numpy as np
 import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
 
-from pyBiodatafuse.constants import MOLMEDB, MOLMEDB_ENDPOINT, MOLMEDB_GENE_INPUT_ID, MOLMEDB_GENE_OUTPUT_DICT, MOLMEDB_COMPOUND_INPUT_ID, MOLMEDB_COMPOUND_OUTPUT_DICT
-from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interest, check_columns_against_constants
+from pyBiodatafuse.constants import (
+    MOLMEDB,
+    MOLMEDB_COMPOUND_INPUT_ID,
+    MOLMEDB_COMPOUND_OUTPUT_DICT,
+    MOLMEDB_ENDPOINT,
+    MOLMEDB_GENE_INPUT_ID,
+    MOLMEDB_GENE_OUTPUT_DICT,
+)
+from pyBiodatafuse.utils import (
+    check_columns_against_constants,
+    collapse_data_sources,
+    get_identifier_of_interest,
+)
 
 
 def check_endpoint_molmedb() -> bool:
@@ -264,7 +275,9 @@ def get_compound_gene_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
     end_time = datetime.datetime.now()
 
     # Organize the annotation results as an array of dictionaries
-    intermediate_df.rename(columns={"inhibitorInChIKey": "target", "hgcn_id": "hgnc_symbol"}, inplace=True)
+    intermediate_df.rename(
+        columns={"inhibitorInChIKey": "target", "hgcn_id": "hgnc_symbol"}, inplace=True
+    )
     intermediate_df["source_doi"] = intermediate_df["source_doi"].map(
         lambda x: "doi:" + x, na_action="ignore"
     )
@@ -275,7 +288,7 @@ def get_compound_gene_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
         output_dict=MOLMEDB_COMPOUND_OUTPUT_DICT,
         check_values_in=["UNIPROT_TREMBL_ID"],
     )
-    
+
     # Merge the two DataFrames on the target column
     merged_df = collapse_data_sources(
         data_df=data_df,

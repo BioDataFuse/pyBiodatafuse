@@ -14,7 +14,11 @@ import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
 
 from pyBiodatafuse.constants import PUBCHEM, PUBCHEM_ENDPOINT, PUBCHEM_INPUT_ID, PUBCHEM_OUTPUT_DICT
-from pyBiodatafuse.utils import check_columns_against_constants, collapse_data_sources, get_identifier_of_interest
+from pyBiodatafuse.utils import (
+    check_columns_against_constants,
+    collapse_data_sources,
+    get_identifier_of_interest,
+)
 
 
 def check_endpoint_pubchem() -> bool:
@@ -138,7 +142,7 @@ def get_protein_molecule_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
         output_dict=PUBCHEM_OUTPUT_DICT,
         check_values_in=["outcome", "InChI"],
     )
-    
+
     # Merge the two DataFrames on the target column
     merged_df = collapse_data_sources(
         data_df=data_df,
@@ -148,7 +152,7 @@ def get_protein_molecule_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
         target_specific_cols=list(PUBCHEM_OUTPUT_DICT.keys()),
         col_name=f"{PUBCHEM}_Assays",
     )
-    
+
     # if mappings exist but SPARQL returns empty response
     if (not merged_df.empty) and merged_df[f"{PUBCHEM}_Assays"][0] is None:
         merged_df.drop_duplicates(subset=["identifier", "{PUBCHEM}_Assays"], inplace=True)

@@ -10,7 +10,11 @@ import pandas as pd
 import requests
 
 from pyBiodatafuse.constants import MINERVA, MINERVA_ENDPOINT, MINERVA_INPUT_ID, MINERVA_OUTPUT_DICT
-from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interest, check_columns_against_constants
+from pyBiodatafuse.utils import (
+    check_columns_against_constants,
+    collapse_data_sources,
+    get_identifier_of_interest,
+)
 
 
 def check_endpoint_minerva() -> bool:
@@ -258,7 +262,9 @@ def get_gene_minerva_pathways(
     intermediate_df.rename(columns={"symbol": "identifier"}, inplace=True)
     intermediate_df["identifier"] = intermediate_df["identifier"].values.astype(str)
 
-    intermediate_df = intermediate_df.drop_duplicates(subset=["identifier", "pathway_id", "pathway_label", "pathway_gene_count"])
+    intermediate_df = intermediate_df.drop_duplicates(
+        subset=["identifier", "pathway_id", "pathway_label", "pathway_gene_count"]
+    )
 
     # Check if all keys in df match the keys in OUTPUT_DICT
     check_columns_against_constants(
