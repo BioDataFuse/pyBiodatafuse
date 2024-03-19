@@ -391,7 +391,7 @@ class TestMolMeDb(unittest.TestCase):
                 [
                     {
                         "uniprot_trembl_id": "Q01959",
-                        "hgcn_id": "SLC6A3",
+                        "hgnc_symbol": "SLC6A3",
                         "source_doi": "doi:10.1021/jm980066t",
                         "source_pmid": "9703474",
                     }
@@ -399,18 +399,25 @@ class TestMolMeDb(unittest.TestCase):
                 [
                     {
                         "uniprot_trembl_id": "P23975",
-                        "hgcn_id": "SLC6A2",
+                        "hgnc_symbol": "SLC6A2",
                         "source_doi": "doi:10.1124/jpet.110.166264",
                         "source_pmid": "20223878",
                     },
                     {
                         "uniprot_trembl_id": "P31645",
-                        "hgcn_id": "SLC6A4",
+                        "hgnc_symbol": "SLC6A4",
                         "source_doi": "doi:10.1124/jpet.110.166264",
                         "source_pmid": "20223878",
                     },
                 ],
-                [{"uniprot_trembl_id": nan, "hgcn_id": nan, "source_doi": nan, "source_pmid": nan}],
+                [
+                    {
+                        "uniprot_trembl_id": nan,
+                        "hgnc_symbol": nan,
+                        "source_doi": nan,
+                        "source_pmid": nan,
+                    }
+                ],
             ]
         )
         expected_data.name = f"{MOLMEDB}_transporter_inhibited"
