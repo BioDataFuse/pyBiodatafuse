@@ -13,8 +13,17 @@ import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
 from SPARQLWrapper.SPARQLExceptions import SPARQLWrapperException
 
-from pyBiodatafuse.constants import WIKIPATHWAY, WIKIPATHWAY_ENDPOINT
-from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interest
+from pyBiodatafuse.constants import (
+    WIKIPATHWAY,
+    WIKIPATHWAY_ENDPOINT,
+    WIKIPATHWAY_INPUT_ID,
+    WIKIPATHWAY_OUTPUT_DICT,
+)
+from pyBiodatafuse.utils import (
+    check_columns_against_constants,
+    collapse_data_sources,
+    get_identifier_of_interest,
+)
 
 logger = logging.getLogger("wikipathways")
 
@@ -47,13 +56,13 @@ def get_version_wikipathways() -> dict:
     with open(os.path.dirname(__file__) + "/queries/wikipathways-metadata.rq", "r") as fin:
         sparql_query = fin.read()
 
-    sparql = SPARQLWrapper("https://sparql.wikipathways.org/sparql")
+    sparql = SPARQLWrapper(WIKIPATHWAY_ENDPOINT)
     sparql.setReturnFormat(JSON)
 
     sparql.setQuery(sparql_query)
     res = sparql.queryAndConvert()
 
-    wikipathways_version = {"wikipathways_version": res["results"]["bindings"][0]["title"]["value"]}
+    wikipathways_version = {"source_version": res["results"]["bindings"][0]["title"]["value"]}
 
     return wikipathways_version
 
@@ -74,26 +83,26 @@ def get_gene_wikipathway(bridgedb_df: pd.DataFrame):
         )
         return pd.DataFrame(), {}
 
-    # Record the start time
-    start_time = datetime.datetime.now()
+    data_df = get_identifier_of_interest(bridgedb_df, WIKIPATHWAY_INPUT_ID)
+    gene_list = data_df["target"].tolist()
 
-    data_df = get_identifier_of_interest(bridgedb_df, "NCBI Gene")
-    hgnc_gene_list = data_df["target"].tolist()
-
-    hgnc_gene_list = list(set(hgnc_gene_list))
+    gene_list = list(set(gene_list))
 
     query_gene_lists = []
 
-    if len(hgnc_gene_list) > 25:
-        for i in range(0, len(hgnc_gene_list), 25):
-            tmp_list = hgnc_gene_list[i : i + 25]
+    if len(gene_list) > 25:
+        for i in range(0, len(gene_list), 25):
+            tmp_list = gene_list[i : i + 25]
             query_gene_lists.append(" ".join(f'"{g}"' for g in tmp_list))
 
     else:
-        query_gene_lists.append(" ".join(f'"{g}"' for g in hgnc_gene_list))
+        query_gene_lists.append(" ".join(f'"{g}"' for g in gene_list))
 
     with open(os.path.dirname(__file__) + "/queries/wikipathways-genes-pathways.rq", "r") as fin:
         sparql_query = fin.read()
+
+    # Record the start time
+    start_time = datetime.datetime.now()
 
     sparql = SPARQLWrapper(WIKIPATHWAY_ENDPOINT)
     sparql.setReturnFormat(JSON)
@@ -124,18 +133,24 @@ def get_gene_wikipathway(bridgedb_df: pd.DataFrame):
     end_time = datetime.datetime.now()
 
     # Organize the annotation results as an array of dictionaries
-    intermediate_df.rename(
-        columns={"geneId": "target", "geneCount": "pathwayGeneCount"}, inplace=True
-    )
+    intermediate_df.rename(columns={"gene_id": "target"}, inplace=True)
+    intermediate_df["pathway_gene_count"] = pd.to_numeric(intermediate_df["pathway_gene_count"])
     intermediate_df = intermediate_df.drop_duplicates()
+
+    # Check if all keys in df match the keys in OUTPUT_DICT
+    check_columns_against_constants(
+        data_df=intermediate_df,
+        output_dict=WIKIPATHWAY_OUTPUT_DICT,
+        check_values_in=["pathway_id"],
+    )
 
     # Merge the two DataFrames on the target column
     merged_df = collapse_data_sources(
         data_df=data_df,
-        source_namespace="NCBI Gene",
+        source_namespace=WIKIPATHWAY_INPUT_ID,
         target_df=intermediate_df,
         common_cols=["target"],
-        target_specific_cols=["pathwayId", "pathwayLabel", "pathwayGeneCount"],
+        target_specific_cols=list(WIKIPATHWAY_OUTPUT_DICT.keys()),
         col_name=WIKIPATHWAY,
     )
 
@@ -151,9 +166,9 @@ def get_gene_wikipathway(bridgedb_df: pd.DataFrame):
     # Add the datasource, query, query time, and the date to metadata
     wikipathways_metadata = {
         "datasource": WIKIPATHWAY,
-        "metadata": {"source_version": wikipathways_version},
+        "metadata": wikipathways_version,
         "query": {
-            "size": len(hgnc_gene_list),
+            "size": len(gene_list),
             "time": time_elapsed,
             "date": current_date,
             "url": WIKIPATHWAY_ENDPOINT,

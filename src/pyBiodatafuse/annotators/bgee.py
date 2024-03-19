@@ -11,8 +11,12 @@ import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
 from SPARQLWrapper.SPARQLExceptions import SPARQLWrapperException
 
-from pyBiodatafuse.constants import BGEE, BGEE_ENDPOINT
-from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interest
+from pyBiodatafuse.constants import BGEE, BGEE_ENDPOINT, BGEE_INPUT_ID, BGEE_OUTPUT_DICT
+from pyBiodatafuse.utils import (
+    check_columns_against_constants,
+    collapse_data_sources,
+    get_identifier_of_interest,
+)
 
 
 def check_endpoint_bgee() -> bool:
@@ -51,7 +55,7 @@ def get_version_bgee() -> dict:
     sparql.setQuery(sparql_query)
     res = sparql.queryAndConvert()
 
-    bgee_version = {"bgee_version": res["results"]["bindings"][0]["date_modified"]["value"]}
+    bgee_version = {"source_version": res["results"]["bindings"][0]["date_modified"]["value"]}
 
     return bgee_version
 
@@ -71,10 +75,8 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
         )
         return pd.DataFrame(), {}
 
-    # Record the start time
-    start_time = datetime.datetime.now()
-
-    data_df = get_identifier_of_interest(bridgedb_df, "Ensembl")
+    # Extract the "target" values and join them into a single string separated by commas
+    data_df = get_identifier_of_interest(bridgedb_df, BGEE_INPUT_ID)
     gene_list = data_df["target"].tolist()
     gene_list = list(set(gene_list))
 
@@ -119,6 +121,9 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
     ) as fin:
         sparql_query = fin.read()
 
+    # Record the start time
+    start_time = datetime.datetime.now()
+
     sparql = SPARQLWrapper(BGEE_ENDPOINT)
     sparql.setReturnFormat(JSON)
 
@@ -157,8 +162,29 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
     intermediate_df["developmental_stage_id"] = intermediate_df["developmental_stage_id"].apply(
         lambda x: x.split("/")[-1]
     )
+    intermediate_df["confidence_level_id"] = intermediate_df["confidence_level_id"].apply(
+        lambda x: x.split("/")[-1]
+    )
+    intermediate_df["expression_level"] = pd.to_numeric(intermediate_df["expression_level"])
 
-    # Metadata details
+    # Check if all keys in df match the keys in OUTPUT_DICT
+    check_columns_against_constants(
+        data_df=intermediate_df,
+        output_dict=BGEE_OUTPUT_DICT,
+        check_values_in=["anatomical_entity_id", "developmental_stage_id", "confidence_level_id"],
+    )
+
+    # Merge the two DataFrames on the target column
+    merged_df = collapse_data_sources(
+        data_df=data_df,
+        source_namespace=BGEE_INPUT_ID,
+        target_df=intermediate_df,
+        common_cols=["target"],
+        target_specific_cols=list(BGEE_OUTPUT_DICT.keys()),
+        col_name=BGEE,
+    )
+
+    """Metdata details"""
     # Get the current date and time
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
@@ -171,7 +197,7 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
     # Add the datasource, query, query time, and the date to metadata
     bgee_metadata = {
         "datasource": BGEE,
-        "metadata": {"source_version": bgee_version},
+        "metadata": bgee_version,
         "query": {
             "size": len(gene_list),
             "time": time_elapsed,
@@ -179,22 +205,5 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
             "url": BGEE_ENDPOINT,
         },
     }
-
-    # Merge the two DataFrames on the target column
-    merged_df = collapse_data_sources(
-        data_df=data_df,
-        source_namespace="Ensembl",
-        target_df=intermediate_df,
-        common_cols=["target"],
-        target_specific_cols=[
-            "anatomical_entity_id",
-            "anatomical_entity_name",
-            "developmental_stage_id",
-            "developmental_stage_name",
-            "expression_level",
-            "confidence_level",
-        ],
-        col_name=BGEE,
-    )
 
     return merged_df, bgee_metadata

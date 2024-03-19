@@ -1,5 +1,5 @@
-# coding: utf-8
-
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """Python file for queriying the MINERVA platform (https://minerva.pages.uni.lu/doc/)."""
 
 import datetime
@@ -9,17 +9,20 @@ from typing import Optional, Tuple
 import pandas as pd
 import requests
 
-from pyBiodatafuse.constants import MINERVA, MINERVA_ENDPOINT
-from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interest
+from pyBiodatafuse.constants import MINERVA, MINERVA_ENDPOINT, MINERVA_INPUT_ID, MINERVA_OUTPUT_DICT
+from pyBiodatafuse.utils import (
+    check_columns_against_constants,
+    collapse_data_sources,
+    get_identifier_of_interest,
+)
 
 
-def check_endpoint_minerva(endpoint: str) -> bool:
+def check_endpoint_minerva() -> bool:
     """Check the availability of the MINERVA API endpoint.
 
-    :param endpoint: MINERVA API endpoint
     :returns: True if the endpoint is available, False otherwise.
     """
-    response = requests.get(f"{endpoint}/machines/")
+    response = requests.get(f"{MINERVA_ENDPOINT}/machines/")
 
     # Check if API is down
     if response.status_code == 200:
@@ -37,18 +40,17 @@ def get_version_minerva(map_endpoint: str) -> dict:
     response = requests.get(map_endpoint + "api/configuration/")
 
     conf_dict = response.json()
-    minerva_version = {"minerva_version": conf_dict["version"]}
+    minerva_version = {"source_version": conf_dict["version"]}
 
     return minerva_version
 
 
-def list_projects(endpoint: str = MINERVA_ENDPOINT) -> pd.DataFrame:
+def list_projects() -> pd.DataFrame:
     """Get information about MINERVA projects.
 
-    :param endpoint: MINERVA API endpoint
     :returns: a dataFrame containing url, names and IDs from the different projects in MINERVA plattform
     """
-    base_endpoint = f"{endpoint}/machines/"
+    base_endpoint = f"{MINERVA_ENDPOINT}/machines/"
     response = requests.get(base_endpoint).json()
     projects = response
     projects_ids = projects["pageContent"]
@@ -86,14 +88,12 @@ def list_projects(endpoint: str = MINERVA_ENDPOINT) -> pd.DataFrame:
 
 def get_minerva_components(
     map_name: str,
-    endpoint: str = MINERVA_ENDPOINT,
     get_elements: Optional[bool] = True,
     get_reactions: Optional[bool] = True,
 ) -> Tuple[str, dict]:
     """Get information about MINERVA componenets from a specific project.
 
     :param map_name: MINERVA map name. The extensive list can be found at https://minerva-net.lcsb.uni.lu/table.html.
-    :param endpoint: MINERVA API endpoint
     :param get_elements: boolean to get elements of the chosen diagram
     :param get_reactions: boolean to get reactions of the chosen diagram
     :returns: a tuple of map endpoint and dictionary containing:
@@ -105,7 +105,7 @@ def get_minerva_components(
         - 'models' is a list containing pathway-specific information for each of the pathways in the model
     """
     # Get list of projects
-    project_df = list_projects(endpoint)
+    project_df = list_projects()
 
     # Get url from the project specified
     condition = project_df["names"] == map_name
@@ -164,7 +164,6 @@ def get_gene_minerva_pathways(
     bridgedb_df: pd.DataFrame,
     map_name: str,
     input_type: Optional[str] = "Protein",
-    endpoint: str = MINERVA_ENDPOINT,
     get_elements: Optional[bool] = True,
     get_reactions: Optional[bool] = True,
 ) -> Tuple[pd.DataFrame, dict]:
@@ -173,17 +172,16 @@ def get_gene_minerva_pathways(
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
     :param map_name: name of the map you want to retrieve the information from. The extensive list
         can be found at https://minerva-net.lcsb.uni.lu/table.html.
-    :param endpoint: MINERVA API endpoint
     :param input_type: type of input gene. Default is "Protein"
     :param get_elements: boolean to get elements of the chosen diagram
     :param get_reactions: if get_reactions = boolean to get reactions of the chosen diagram
     :returns: a tuple containing MINERVA outputs and dictionary of the MINERVA metadata.
     """
     # Check if the MINERVA API is available
-    api_available = check_endpoint_minerva(endpoint=endpoint)
+    api_available = check_endpoint_minerva()
     if not api_available:
         warnings.warn(
-            "MINERVA API endpoint is not available. Unable to retrieve data.", stacklevel=2
+            f"{MINERVA} API endpoint is not available. Unable to retrieve data.", stacklevel=2
         )
         return pd.DataFrame(), {}
 
@@ -203,12 +201,12 @@ def get_gene_minerva_pathways(
     start_time = datetime.datetime.now()
 
     map_url, map_components = get_minerva_components(
-        endpoint=endpoint, map_name=map_name, get_elements=get_elements, get_reactions=get_reactions
+        map_name=map_name, get_elements=get_elements, get_reactions=get_reactions
     )
     map_elements = map_components.get("map_elements", {})
     models = map_components.get("models", {})
 
-    data_df = get_identifier_of_interest(bridgedb_df, "NCBI Gene")
+    data_df = get_identifier_of_interest(bridgedb_df, MINERVA_INPUT_ID)
 
     names = []
     for value in models:
@@ -216,7 +214,7 @@ def get_gene_minerva_pathways(
         names.append(name)
 
     row = 1
-    combined_df = pd.DataFrame()
+    intermediate_df = pd.DataFrame()
     for x in names:
         index_to_extract = row
         row = 1 + row
@@ -244,36 +242,44 @@ def get_gene_minerva_pathways(
 
         data = pd.DataFrame()
         data["symbol"] = symbol
-        data["pathwayLabel"] = x
-        data["pathwayGeneCount"] = len(symbol) - symbol.count(None)
-        data["pathwayId"] = models[index_to_extract - 1]["idObject"]
+        data["pathway_label"] = x
+        data["pathway_gene_count"] = len(symbol) - symbol.count(None)
+        data["pathway_id"] = models[index_to_extract - 1]["idObject"]
         data["refs"] = refs
         data["type"] = type
 
-        combined_df = pd.concat([combined_df, data], ignore_index=True)
-        combined_df = combined_df[combined_df["type"] == input_type]
+        intermediate_df = pd.concat([intermediate_df, data], ignore_index=True)
+        intermediate_df = intermediate_df[intermediate_df["type"] == input_type]
 
     # Record the end time
     end_time = datetime.datetime.now()
 
-    if "symbol" not in combined_df:
-        return pd.DataFrame()
+    if "symbol" not in intermediate_df:
+        return pd.DataFrame(), {}
 
-    # Add MINERVA output as a new column to BridgeDb file
-    combined_df.rename(columns={"symbol": "identifier"}, inplace=True)
-    combined_df["identifier"] = combined_df["identifier"].values.astype(str)
+    # Organize the annotation results as an array of dictionaries
+    # TODO the merge is based on the gene symbol, what if another id is being used as input
+    intermediate_df.rename(columns={"symbol": "identifier"}, inplace=True)
+    intermediate_df["identifier"] = intermediate_df["identifier"].values.astype(str)
 
-    combined_df = combined_df.drop_duplicates(subset=["identifier", "pathwayId"])
+    intermediate_df = intermediate_df.drop_duplicates(
+        subset=["identifier", "pathway_id", "pathway_label", "pathway_gene_count"]
+    )
 
-    selected_columns = ["pathwayId", "pathwayLabel", "pathwayGeneCount"]
+    # Check if all keys in df match the keys in OUTPUT_DICT
+    check_columns_against_constants(
+        data_df=intermediate_df,
+        output_dict=MINERVA_OUTPUT_DICT,
+        check_values_in=["pathway_id"],
+    )
 
-    # Merge the two DataFrames based on 'gene_id', 'gene_symbol', 'identifier', and 'target'
+    # Merge the two DataFrames on the target column
     merged_df = collapse_data_sources(
         data_df=data_df,
-        source_namespace="NCBI Gene",
-        target_df=combined_df,
+        source_namespace=MINERVA_INPUT_ID,
+        target_df=intermediate_df,
         common_cols=["identifier"],
-        target_specific_cols=selected_columns,
+        target_specific_cols=list(MINERVA_OUTPUT_DICT.keys()),
         col_name=MINERVA,
     )
 
@@ -287,10 +293,10 @@ def get_gene_minerva_pathways(
     # Add the datasource, query, query time, and the date to metadata
     minerva_metadata = {
         "datasource": MINERVA,
-        "metadata": {"source_version": minerva_version},
+        "metadata": minerva_version,
         "query": {
             "size": data_df["target"].nunique(),
-            "input_type": "NCBI Gene",
+            "input_type": MINERVA_INPUT_ID,
             "MINERVA project": map_name,
             "time": time_elapsed,
             "date": current_date,
