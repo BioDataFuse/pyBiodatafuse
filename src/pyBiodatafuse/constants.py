@@ -104,7 +104,6 @@ MOLMEDB_GENE_OUTPUT_DICT = {
     "source_doi": str,
     "source_pmid": str,
     "chebi_id": str,
-    "pdb_ligand_id": str,
     "drugbank_id": str,
 }
 MOLMEDB_ID = "MM"
