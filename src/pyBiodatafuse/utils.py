@@ -140,7 +140,7 @@ def check_columns_against_constants(  # noqa: B023
                 if (
                     not data_df[col]
                     .dropna()
-                    .apply(lambda value: any(value.startswith(prefix) for prefix in prefixes))
+                    .apply(lambda value, prefixes=prefixes: any(value.startswith(prefix) for prefix in prefixes))
                     .all()
                 ):
                     warnings.warn(
