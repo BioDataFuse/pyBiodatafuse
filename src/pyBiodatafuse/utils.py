@@ -2,12 +2,28 @@
 
 """Python utils file for global functions."""
 
-import re
 import warnings
 from typing import List
 
 import pandas as pd
 
+from pyBiodatafuse.constants import (  # noqa: F401
+    ANATOMICAL_ENTITY_ID,
+    CHEMBL_ID,
+    CONFIDENCE_LEVEL_ID,
+    DEVELOPMENTAL_STAGE_ID,
+    DISEASE_ID,
+    DRUGBANK_ID,
+    GO_ID,
+    INCHI,
+    LOCATION_ID,
+    MOLMEDB_ID,
+    OUTCOME,
+    PATHWAY_ID,
+    RELATION,
+    SOURCE_DOI,
+    UNIPROT_TREMBL_ID,
+)
 from pyBiodatafuse.id_mapper import read_resource_files
 
 
@@ -134,8 +150,7 @@ def check_columns_against_constants(
                 stacklevel=2,
             )
         if col in check_values_in:
-            exec(f"from pyBiodatafuse.constants import {col.upper()}")
-            starts_with = locals()[col.upper()]
+            starts_with = locals()[col.upper()]  # noqa: F401
             if not data_df[col].apply(type).eq(int).all():
                 prefixes = starts_with.split("|")
                 if (

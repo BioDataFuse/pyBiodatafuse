@@ -14,7 +14,6 @@ from SPARQLWrapper import JSON, SPARQLWrapper
 from SPARQLWrapper.SPARQLExceptions import SPARQLWrapperException
 
 from pyBiodatafuse.constants import (
-    PATHWAY_ID,
     WIKIPATHWAY,
     WIKIPATHWAY_ENDPOINT,
     WIKIPATHWAY_INPUT_ID,

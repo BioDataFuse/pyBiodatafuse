@@ -52,7 +52,6 @@ def _format_data(row, network_df):
     target_links_set = set()
 
     for _i, row_arr in network_df.iterrows():
-        print(row_arr)
         if row_arr["preferredName_A"] == row["identifier"]:
             if row_arr["preferredName_B"] not in target_links_set:
                 gene_ppi_links.append(
