@@ -156,10 +156,11 @@ def check_columns_against_constants(
                 if (
                     not data_df[col]
                     .dropna()
-                    .apply(lambda value: (any(value.startswith(prefix) for prefix in prefixes)))
+                    .apply(lambda value: any(value.startswith(prefix) for prefix in prefixes))
                     .all()
                 ):
                     warnings.warn(
                         f"All values in column '{col}' do not start with '{prefixes}'.",
                         stacklevel=2,
                     )
+
