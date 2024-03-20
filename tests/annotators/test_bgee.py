@@ -23,7 +23,7 @@ def test_sparql_get_version_bgee():
     obtained_version = get_version_bgee()
 
     expected_version = {
-        "bgee_version": expected["results"]["bindings"][0]["date_modified"]["value"]
+        "source_version": expected["results"]["bindings"][0]["date_modified"]["value"]
     }
 
     assert obtained_version == expected_version
@@ -41,7 +41,7 @@ def test_get_version_bgee(mock_sparql_request):
     obtained_version = get_version_bgee()
 
     expected_version = {
-        "bgee_version": mock_sparql_request.return_value["results"]["bindings"][0]["date_modified"][
+        "source_version": mock_sparql_request.return_value["results"]["bindings"][0]["date_modified"][
             "value"
         ]
     }
