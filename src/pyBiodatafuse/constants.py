@@ -49,7 +49,7 @@ BGEE_OUTPUT_DICT = {
     "confidence_level_id": str,
 }
 ANATOMICAL_ENTITY_ID = "UBERON"
-DEVELOPMENTAL_STAGE_ID = ("HsapDv", "UBERON")
+DEVELOPMENTAL_STAGE_ID = "HsapDv|UBERON"
 CONFIDENCE_LEVEL_ID = "CIO"
 # Location node
 # Open Targets - Location
