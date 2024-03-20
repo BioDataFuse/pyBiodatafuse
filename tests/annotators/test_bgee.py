@@ -41,9 +41,9 @@ def test_get_version_bgee(mock_sparql_request):
     obtained_version = get_version_bgee()
 
     expected_version = {
-        "source_version": mock_sparql_request.return_value["results"]["bindings"][0]["date_modified"][
-            "value"
-        ]
+        "source_version": mock_sparql_request.return_value["results"]["bindings"][0][
+            "date_modified"
+        ]["value"]
     }
 
     assert obtained_version == expected_version
@@ -52,10 +52,16 @@ def test_get_version_bgee(mock_sparql_request):
 @patch("pyBiodatafuse.annotators.bgee.SPARQLWrapper.queryAndConvert")
 def test_get_gene_expression(mock_sparql_request, bridgedb_dataframe):
     """Test the get_gene_expression function."""
+    mock_data_list = []
+    # we first use a "dummy" get version result to simulate the "api ready" call
     data_file_folder = os.path.join(os.path.dirname(__file__), "data")
+    bgee_version_file_path = os.path.join(data_file_folder, "bgee_version_data.json")
+    mock_version_data = pd.read_json(bgee_version_file_path)
+
+    mock_data_list.append(mock_version_data)
+
     data_file_path = os.path.join(data_file_folder, "bgee_mock_data.json")
 
-    mock_data_list = []
     with open(data_file_path) as f:
         mock_data = json.load(f)
 
@@ -71,12 +77,19 @@ def test_get_gene_expression(mock_sparql_request, bridgedb_dataframe):
 
     obtained_data, metadata = get_gene_expression(bridgedb_dataframe)
 
+    expected_data = pd.read_json(os.path.join(data_file_folder, "bgee_expected_data.json"))
+    expected_data = expected_data.sort_values(
+        by=["anatomical_entity_id", "expression_level", "developmental_stage_id"], ascending=False
+    )
+    expected_data.reset_index(drop=True, inplace=True)
+
     obtained_sorted = pd.DataFrame(obtained_data[BGEE][0])
-    obtained_sorted = obtained_sorted.astype({"expression_level": float})
+    obtained_sorted = obtained_sorted.sort_values(
+        by=["anatomical_entity_id", "expression_level", "developmental_stage_id"], ascending=False
+    )
+    obtained_sorted.reset_index(drop=True, inplace=True)
 
-    expected_data = pd.read_csv("bgee_expected_data.tsv", sep="\t")
-
-    pd.testing.assert_series_equal(obtained_sorted, expected_data)
+    assert obtained_sorted.equals(expected_data)
 
 
 @pytest.fixture(scope="module")

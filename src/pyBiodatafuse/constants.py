@@ -47,6 +47,7 @@ BGEE_OUTPUT_DICT = {
     "developmental_stage_name": str,
     "expression_level": float,
     "confidence_level_id": str,
+    "confidence_level_name": str,
 }
 ANATOMICAL_ENTITY_ID = "UBERON"
 DEVELOPMENTAL_STAGE_ID = "HsapDv|UBERON"
