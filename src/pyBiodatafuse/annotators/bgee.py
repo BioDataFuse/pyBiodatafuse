@@ -184,7 +184,7 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
         col_name=BGEE,
     )
 
-    """Metdata details"""
+    """Metadata details"""
     # Get the current date and time
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
