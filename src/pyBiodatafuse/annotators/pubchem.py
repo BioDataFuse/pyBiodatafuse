@@ -154,7 +154,6 @@ def get_protein_molecule_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
         lambda x: x.split("http://rdf.ncbi.nlm.nih.gov/pubchem/compound/")[-1]
     )
     intermediate_df["assay_type"] = intermediate_df["assay_type"].map(assay_endpoint_types)
-    print(intermediate_df)
 
     intermediate_df.drop_duplicates(
         subset=["target", "pubchem_assay_id", "compound_cid"], inplace=True
