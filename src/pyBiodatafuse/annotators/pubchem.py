@@ -9,11 +9,16 @@ import warnings
 from string import Template
 from typing import Tuple
 
-import numpy as np
 import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
 
-from pyBiodatafuse.constants import PUBCHEM, PUBCHEM_ENDPOINT, PUBCHEM_INPUT_ID, PUBCHEM_OUTPUT_DICT, PUBCHEM_Assays_COL
+from pyBiodatafuse.constants import (
+    PUBCHEM,
+    PUBCHEM_ENDPOINT,
+    PUBCHEM_INPUT_ID,
+    PUBCHEM_OUTPUT_DICT,
+    PUBCHEM_Assays_COL,
+)
 from pyBiodatafuse.utils import (
     check_columns_against_constants,
     collapse_data_sources,

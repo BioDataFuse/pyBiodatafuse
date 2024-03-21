@@ -149,22 +149,16 @@ def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
 
     # if mappings exist but SPARQL returns empty response
     if (not merged_df.empty) and merged_df[MOLMEDB_INHIBITOR_COL][0] is None:
-        merged_df.drop_duplicates(
-            subset=["identifier", MOLMEDB_INHIBITOR_COL], inplace=True
-        )
+        merged_df.drop_duplicates(subset=["identifier", MOLMEDB_INHIBITOR_COL], inplace=True)
 
     elif not merged_df.empty:
         res_keys = merged_df[MOLMEDB_INHIBITOR_COL][0][0].keys()
         # remove duplicate identifier and response row
-        merged_df[MOLMEDB_INHIBITOR_COL] = merged_df[
-            MOLMEDB_INHIBITOR_COL
-        ].map(lambda x: tuple(frozenset(d.items()) for d in x), na_action="ignore")
-        merged_df.drop_duplicates(
-            subset=["identifier", MOLMEDB_INHIBITOR_COL], inplace=True
+        merged_df[MOLMEDB_INHIBITOR_COL] = merged_df[MOLMEDB_INHIBITOR_COL].map(
+            lambda x: tuple(frozenset(d.items()) for d in x), na_action="ignore"
         )
-        merged_df[MOLMEDB_INHIBITOR_COL] = merged_df[
-            MOLMEDB_INHIBITOR_COL
-        ].map(
+        merged_df.drop_duplicates(subset=["identifier", MOLMEDB_INHIBITOR_COL], inplace=True)
+        merged_df[MOLMEDB_INHIBITOR_COL] = merged_df[MOLMEDB_INHIBITOR_COL].map(
             lambda res_tup: list(dict((x, y) for x, y in res) for res in res_tup),
             na_action="ignore",
         )
@@ -185,13 +179,13 @@ def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
                 merged_df.drop(merged_df[mask & mask2].index, inplace=True)
 
         # set default order to response dictionaries to keep output consistency
-        merged_df[MOLMEDB_INHIBITOR_COL] = merged_df[
-            MOLMEDB_INHIBITOR_COL
-        ].apply(lambda res: list(dict((k, r[k]) for k in res_keys) for r in res))
+        merged_df[MOLMEDB_INHIBITOR_COL] = merged_df[MOLMEDB_INHIBITOR_COL].apply(
+            lambda res: list(dict((k, r[k]) for k in res_keys) for r in res)
+        )
         # set numerical identifiers to int to kepp output consistency
-        merged_df[MOLMEDB_INHIBITOR_COL] = merged_df[
-            MOLMEDB_INHIBITOR_COL
-        ].apply(lambda res: int_response_value_types(res, ["compound_cid", "source_pmid"]))
+        merged_df[MOLMEDB_INHIBITOR_COL] = merged_df[MOLMEDB_INHIBITOR_COL].apply(
+            lambda res: int_response_value_types(res, ["compound_cid", "source_pmid"])
+        )
     merged_df.reset_index(drop=True, inplace=True)
 
     # Metadata details

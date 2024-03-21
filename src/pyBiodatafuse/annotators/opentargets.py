@@ -285,7 +285,7 @@ def get_gene_go_process(
         target_df=intermediate_df,
         common_cols=["target"],
         target_specific_cols=list(OPENTARGETS_GO_OUTPUT_DICT.keys()),
-        col_name=OPENTARGETS_GO_COL, 
+        col_name=OPENTARGETS_GO_COL,
     )
 
     """Metdata details"""

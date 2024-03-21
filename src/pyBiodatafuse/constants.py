@@ -17,7 +17,7 @@ WIKIPATHWAYS_ENDPOINT = "https://sparql.wikipathways.org/sparql"
 # Data sources
 BGEE = "Bgee"
 DISGENET = "DisGeNET"
-MINERVA = "MINERVA Net"
+MINERVA = "MINERVA"
 MOLMEDB = "MolMeDB"
 OPENTARGETS = "OpenTargets"
 PUBCHEM = "PubChem"
@@ -34,7 +34,7 @@ MOLMEDB_COMPOUND_INPUT_ID = "InChIKey"
 OPENTARGETS_INPUT_ID = "Ensembl"
 PUBCHEM_INPUT_ID = "Uniprot-TrEMBL"
 STRING_INPUT_ID = "Ensembl"
-WIKIDATA_INPUT_ID = "" # TODO
+WIKIDATA_INPUT_ID = ""  # TODO
 WIKIPATHWAYS_INPUT_ID = "NCBI Gene"
 
 # Output annotation for each data source
@@ -104,7 +104,7 @@ OPENTARGETS_COMPOUND_OUTPUT_DICT = {
 }
 CHEMBL_ID = "CHEMBL"
 RELATION = "inhibits|activates"
-OPENTARGETS_COMPOUND_COL = f"{OPENTARGETS}_Compounds",  # TODO: Cross-check if correct name
+OPENTARGETS_COMPOUND_COL = f"{OPENTARGETS}_Compounds"  # TODO: Cross-check if correct name
 # MolMeDB - Gene input
 MOLMEDB_GENE_OUTPUT_DICT = {
     "compound_name": str,
