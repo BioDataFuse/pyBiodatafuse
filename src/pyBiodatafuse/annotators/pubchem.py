@@ -124,7 +124,6 @@ def get_protein_molecule_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
         # drop multitarget assays
         intermediate_df.rename(
             columns={
-                "compound_cid": "pubchem_compound_id",
                 "upProt": "target",
                 "assay": "pubchem_assay_id",
             },
@@ -138,9 +137,7 @@ def get_protein_molecule_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
         # identifiers to values
         intermediate_df["upProt"] = intermediate_df["upProt"].map(lambda x: x[32:])
         intermediate_df["outcome"] = intermediate_df["outcome"].map(lambda x: x[47:])
-        intermediate_df["pubchem_compound_id"] = intermediate_df["pubchem_compound_id"].map(
-            lambda x: x[48:]
-        )
+        intermediate_df["compound_cid"] = intermediate_df["compound_cid"].map(lambda x: x[48:])
         intermediate_df["pubchem_assay_id"] = intermediate_df["pubchem_assay_id"].map(
             lambda x: x[48:]
         )
