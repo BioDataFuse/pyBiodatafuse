@@ -129,6 +129,7 @@ PUBCHEM_OUTPUT_DICT = {
     "compound_name": str,
     "SMILES": str,
     "InChI": str,
+    "pubchem_assay_id": str,
 }
 OUTCOME = "active|inactive"
 INCHI = "InChI"
