@@ -24,7 +24,6 @@ from pyBiodatafuse.constants import (
     OPENTARGETS_LOCATION_OUTPUT_DICT,
     OPENTARGETS_REACTOME_COL,
     OPENTARGETS_REACTOME_OUTPUT_DICT,
-    OPENTARGETS_Reactome_COL,
 )
 from pyBiodatafuse.utils import (
     check_columns_against_constants,
