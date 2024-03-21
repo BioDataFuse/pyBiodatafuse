@@ -47,9 +47,10 @@ BGEE_OUTPUT_DICT = {
     "developmental_stage_name": str,
     "expression_level": float,
     "confidence_level_id": str,
+    "confidence_level_name": str,
 }
 ANATOMICAL_ENTITY_ID = "UBERON"
-DEVELOPMENTAL_STAGE_ID = ("HsapDv", "UBERON")
+DEVELOPMENTAL_STAGE_ID = "HsapDv|UBERON"
 CONFIDENCE_LEVEL_ID = "CIO"
 # Location node
 # Open Targets - Location
@@ -124,6 +125,7 @@ UNIPROT_TREMBL_ID = "P"
 
 # Assay node
 PUBCHEM_OUTPUT_DICT = {
+    "pubchem_assay_id": str,
     "assay_type": str,
     "outcome": str,
     "compound_cid": str,
