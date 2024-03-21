@@ -13,7 +13,7 @@ import numpy as np
 import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
 
-from pyBiodatafuse.constants import PUBCHEM, PUBCHEM_ENDPOINT, PUBCHEM_INPUT_ID, PUBCHEM_OUTPUT_DICT
+from pyBiodatafuse.constants import PUBCHEM, PUBCHEM_ENDPOINT, PUBCHEM_INPUT_ID, PUBCHEM_OUTPUT_DICT, PUBCHEM_Assays_COL
 from pyBiodatafuse.utils import (
     check_columns_against_constants,
     collapse_data_sources,
@@ -173,7 +173,7 @@ def get_protein_molecule_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
         target_df=intermediate_df,
         common_cols=["target"],
         target_specific_cols=list(PUBCHEM_OUTPUT_DICT.keys()),
-        col_name=f"{PUBCHEM}_Assays",
+        col_name=PUBCHEM_Assays_COL,
     )
 
     merged_df.reset_index(drop=True, inplace=True)
