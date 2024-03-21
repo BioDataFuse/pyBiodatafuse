@@ -20,6 +20,8 @@ from pyBiodatafuse.constants import (
     MOLMEDB_ENDPOINT,
     MOLMEDB_GENE_INPUT_ID,
     MOLMEDB_GENE_OUTPUT_DICT,
+    MOLMEDB_ID_COL_COMPOUND_INPUT,
+    MOLMEDB_ID_COL_GENE_INPUT,
 )
 from pyBiodatafuse.utils import (
     check_columns_against_constants,
@@ -142,26 +144,26 @@ def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
         target_df=intermediate_df,
         common_cols=["target"],
         target_specific_cols=list(MOLMEDB_GENE_OUTPUT_DICT.keys()),
-        col_name=f"{MOLMEDB}_transporter_inhibitor",
+        col_name=MOLMEDB_ID_COL_GENE_INPUT,
     )
 
     # if mappings exist but SPARQL returns empty response
-    if (not merged_df.empty) and merged_df[f"{MOLMEDB}_transporter_inhibitor"][0] is None:
+    if (not merged_df.empty) and merged_df[MOLMEDB_ID_COL_GENE_INPUT][0] is None:
         merged_df.drop_duplicates(
-            subset=["identifier", f"{MOLMEDB}_transporter_inhibitor"], inplace=True
+            subset=["identifier", MOLMEDB_ID_COL_GENE_INPUT], inplace=True
         )
 
     elif not merged_df.empty:
-        res_keys = merged_df[f"{MOLMEDB}_transporter_inhibitor"][0][0].keys()
+        res_keys = merged_df[MOLMEDB_ID_COL_GENE_INPUT][0][0].keys()
         # remove duplicate identifier and response row
-        merged_df[f"{MOLMEDB}_transporter_inhibitor"] = merged_df[
-            f"{MOLMEDB}_transporter_inhibitor"
+        merged_df[MOLMEDB_ID_COL_GENE_INPUT] = merged_df[
+            MOLMEDB_ID_COL_GENE_INPUT
         ].map(lambda x: tuple(frozenset(d.items()) for d in x), na_action="ignore")
         merged_df.drop_duplicates(
-            subset=["identifier", f"{MOLMEDB}_transporter_inhibitor"], inplace=True
+            subset=["identifier", MOLMEDB_ID_COL_GENE_INPUT], inplace=True
         )
-        merged_df[f"{MOLMEDB}_transporter_inhibitor"] = merged_df[
-            f"{MOLMEDB}_transporter_inhibitor"
+        merged_df[MOLMEDB_ID_COL_GENE_INPUT] = merged_df[
+            MOLMEDB_ID_COL_GENE_INPUT
         ].map(
             lambda res_tup: list(dict((x, y) for x, y in res) for res in res_tup),
             na_action="ignore",
@@ -171,7 +173,7 @@ def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
         identifiers = merged_df["identifier"].unique()
         for identifier in identifiers:
             if merged_df.loc[merged_df["identifier"] == identifier].shape[0] > 1:
-                mask = merged_df[f"{MOLMEDB}_transporter_inhibitor"].apply(
+                mask = merged_df[MOLMEDB_ID_COL_GENE_INPUT].apply(
                     lambda lst: all(
                         [
                             all([isinstance(val, float) and np.isnan(val) for val in dct.values()])
@@ -183,12 +185,12 @@ def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
                 merged_df.drop(merged_df[mask & mask2].index, inplace=True)
 
         # set default order to response dictionaries to keep output consistency
-        merged_df[f"{MOLMEDB}_transporter_inhibitor"] = merged_df[
-            f"{MOLMEDB}_transporter_inhibitor"
+        merged_df[MOLMEDB_ID_COL_GENE_INPUT] = merged_df[
+            MOLMEDB_ID_COL_GENE_INPUT
         ].apply(lambda res: list(dict((k, r[k]) for k in res_keys) for r in res))
         # set numerical identifiers to int to kepp output consistency
-        merged_df[f"{MOLMEDB}_transporter_inhibitor"] = merged_df[
-            f"{MOLMEDB}_transporter_inhibitor"
+        merged_df[MOLMEDB_ID_COL_GENE_INPUT] = merged_df[
+            MOLMEDB_ID_COL_GENE_INPUT
         ].apply(lambda res: int_response_value_types(res, ["compound_cid", "source_pmid"]))
     merged_df.reset_index(drop=True, inplace=True)
 
@@ -296,7 +298,7 @@ def get_compound_gene_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
         target_df=intermediate_df,
         common_cols=["target"],
         target_specific_cols=list(MOLMEDB_COMPOUND_OUTPUT_DICT.keys()),
-        col_name=f"{MOLMEDB}_transporter_inhibited",
+        col_name=MOLMEDB_ID_COL_COMPOUND_INPUT,
     )
 
     # Metdata details

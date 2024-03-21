@@ -34,7 +34,7 @@ MOLMEDB_COMPOUND_INPUT_ID = "InChIKey"
 OPENTARGETS_INPUT_ID = "Ensembl"
 PUBCHEM_INPUT_ID = "Uniprot-TrEMBL"
 STRING_INPUT_ID = "Ensembl"
-WIKIDATA_INPUT_ID = ""
+WIKIDATA_INPUT_ID = "" # TODO
 WIKIPATHWAYS_INPUT_ID = "NCBI Gene"
 
 # Output annotation for each data source
@@ -111,6 +111,7 @@ MOLMEDB_GENE_OUTPUT_DICT = {
 MOLMEDB_ID = "MM"
 SOURCE_DOI = "doi"
 DRUGBANK_ID = "DB"
+MOLMEDB_ID_COL_GENE_INPUT = f"{MOLMEDB}_transporter_inhibitor"
 # MolMeDB - Compound input
 MOLMEDB_COMPOUND_OUTPUT_DICT = {
     "uniprot_trembl_id": str,
@@ -119,6 +120,7 @@ MOLMEDB_COMPOUND_OUTPUT_DICT = {
     "source_pmid": str,
 }
 UNIPROT_TREMBL_ID = "P"
+MOLMEDB_ID_COL_COMPOUND_INPUT = f"{MOLMEDB}_transporter_inhibited"
 # Gene Node
 # STRING
 # TODO: to be checked
