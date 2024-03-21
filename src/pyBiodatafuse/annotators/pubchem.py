@@ -154,6 +154,11 @@ def get_protein_molecule_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
         lambda x: x.split("http://rdf.ncbi.nlm.nih.gov/pubchem/compound/")[-1]
     )
     intermediate_df["assay_type"] = intermediate_df["assay_type"].map(assay_endpoint_types)
+    print(intermediate_df)
+
+    intermediate_df.drop_duplicates(
+        subset=["target", "pubchem_assay_id", "compound_cid"], inplace=True
+    )
 
     # Check if all keys in df match the keys in OUTPUT_DICT
     check_columns_against_constants(
@@ -172,48 +177,6 @@ def get_protein_molecule_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
         col_name=f"{PUBCHEM}_Assays",
     )
 
-    print(merged_df)
-
-    merged_df.drop_duplicates(subset=["identifier", "{PUBCHEM}_Assays"], inplace=True)
-
-    # elif not merged_df.empty:
-    #     res_keys = merged_df[f"{PUBCHEM}_Assays"][0][0].keys()
-    #     # remove duplicate identifier and response row
-    #     merged_df[f"{PUBCHEM}_Assays"] = merged_df[f"{PUBCHEM}_Assays"].map(
-    #         lambda x: tuple(frozenset(d.items()) for d in x), na_action="ignore"
-    #     )
-    #     merged_df.drop_duplicates(subset=["identifier", f"{PUBCHEM}_Assays"], inplace=True)
-    #     merged_df[f"{PUBCHEM}_Assays"] = merged_df[f"{PUBCHEM}_Assays"].map(
-    #         lambda res_tup: list(dict((x, y) for x, y in res) for res in res_tup),
-    #         na_action="ignore",
-    #     )
-
-    #     # drop rows with duplicate identifiers with empty response
-    #     identifiers = merged_df["identifier"].unique()
-    #     for identifier in identifiers:
-    #         if merged_df.loc[merged_df["identifier"] == identifier].shape[0] > 1:
-    #             mask = merged_df[f"{PUBCHEM}_Assays"].apply(
-    #                 lambda lst: all(
-    #                     [
-    #                         all([isinstance(val, float) and np.isnan(val) for val in dct.values()])
-    #                         for dct in lst
-    #                     ]
-    #                 )
-    #             )
-    #             mask2 = merged_df["identifier"].apply(lambda x, id=identifier: x == id)
-    #             merged_df.drop(merged_df[mask & mask2].index, inplace=True)
-
-    #     # set default order to response dictionaries to keep output consistency
-    #     merged_df[f"{PUBCHEM}_Assays"] = merged_df[f"{PUBCHEM}_Assays"].apply(
-    #         lambda res: list(dict((k, r[k]) for k in res_keys) for r in res)
-    #     )
-    #     # set numerical identifiers to int to kepp output consistency
-    #     merged_df[f"{PUBCHEM}_Assays"] = merged_df[f"{PUBCHEM}_Assays"].apply(
-    #         lambda res: int_response_value_types(res, ["compound_cid", "pubchem_assay_id"])
-    #     )
-
-    print("Changed")
-    print(merged_df)
     merged_df.reset_index(drop=True, inplace=True)
 
     """Metdata details"""
