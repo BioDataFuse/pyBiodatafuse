@@ -60,7 +60,7 @@ OPENTARGETS_LOCATION_OUTPUT_DICT = {
     "subcellular_location": str,
 }
 LOCATION_ID = "SL"
-f"{OPENTARGETS}_Location"
+OPENTARGETS_LOCATION_COL = f"{OPENTARGETS}_Location"
 # Disease node
 # DisGeNet
 DISGENET_OUTPUT_DICT = {"disease_id": str, "disease_name": str, "score": float, "source": str}
@@ -112,7 +112,7 @@ MOLMEDB_GENE_OUTPUT_DICT = {
 MOLMEDB_ID = "MM"
 SOURCE_DOI = "doi"
 DRUGBANK_ID = "DB"
-MOLMEDB_COL_GENE_INPUT = f"{MOLMEDB}_transporter_inhibitor"
+MOLMEDB_INHIBITOR_COL = f"{MOLMEDB}_transporter_inhibitor"
 # MolMeDB - Compound input
 MOLMEDB_COMPOUND_OUTPUT_DICT = {
     "uniprot_trembl_id": str,
@@ -121,7 +121,7 @@ MOLMEDB_COMPOUND_OUTPUT_DICT = {
     "source_pmid": str,
 }
 UNIPROT_TREMBL_ID = "P"
-MOLMEDB_COL_COMPOUND_INPUT = f"{MOLMEDB}_transporter_inhibited"
+MOLMEDB_INHIBITED_COL = f"{MOLMEDB}_transporter_inhibited"
 # Gene Node
 # STRING
 # TODO: to be checked
