@@ -12,13 +12,18 @@ import requests
 
 from pyBiodatafuse.constants import (
     OPENTARGETS,
+    OPENTARGETS_COMPOUND_COL,
     OPENTARGETS_COMPOUND_OUTPUT_DICT,
+    OPENTARGETS_DISEASE_COL,
     OPENTARGETS_DISEASE_OUTPUT_DICT,
     OPENTARGETS_ENDPOINT,
+    OPENTARGETS_GO_COL,
     OPENTARGETS_GO_OUTPUT_DICT,
     OPENTARGETS_INPUT_ID,
+    OPENTARGETS_LOCATION_COL,
     OPENTARGETS_LOCATION_OUTPUT_DICT,
     OPENTARGETS_REACTOME_OUTPUT_DICT,
+    OPENTARGETS_Reactome_COL,
 )
 from pyBiodatafuse.utils import (
     check_columns_against_constants,
@@ -180,7 +185,7 @@ def get_gene_location(
         target_df=intermediate_df,
         common_cols=["target"],
         target_specific_cols=list(OPENTARGETS_LOCATION_OUTPUT_DICT.keys()),
-        col_name=f"{OPENTARGETS}_Location",
+        col_name=OPENTARGETS_LOCATION_COL,
     )
 
     """Metdata details"""
@@ -280,7 +285,7 @@ def get_gene_go_process(
         target_df=intermediate_df,
         common_cols=["target"],
         target_specific_cols=list(OPENTARGETS_GO_OUTPUT_DICT.keys()),
-        col_name=f"{OPENTARGETS}_GO_Process",  # TODO: Cross-check if correct name
+        col_name=OPENTARGETS_GO_COL, 
     )
 
     """Metdata details"""
@@ -372,7 +377,7 @@ def get_gene_reactome_pathways(
         target_df=intermediate_df,
         common_cols=["target"],
         target_specific_cols=["pathway_label", "pathway_id"],
-        col_name=f"{OPENTARGETS}_Reactome",
+        col_name=OPENTARGETS_Reactome_COL,
     )
 
     """Metdata details"""
@@ -563,7 +568,7 @@ def get_gene_compound_interactions(
         target_df=intermediate_df,
         common_cols=["target"],
         target_specific_cols=list(OPENTARGETS_COMPOUND_OUTPUT_DICT.keys()),
-        col_name=f"{OPENTARGETS}_ChEMBL_Drugs",  # TODO: Cross-check if correct name
+        col_name=OPENTARGETS_COMPOUND_COL,  # TODO: Cross-check if correct name
     )
 
     """Metdata details"""
@@ -685,7 +690,7 @@ def get_gene_disease_associations(
         target_df=intermediate_df,
         common_cols=["target"],
         target_specific_cols=list(OPENTARGETS_DISEASE_OUTPUT_DICT.keys()),
-        col_name=f"{OPENTARGETS}_Diseases",
+        col_name=OPENTARGETS_DISEASE_COL,
     )
 
     """Metdata details"""
@@ -786,10 +791,6 @@ def get_drug_disease_interactions(
         query_string = query_string.replace("$chemblId", '"' + x + '"')
         r = requests.post(base_url, json={"query": query_string}).json()
         diseases_drugs_list.append(r["data"])
-
-    # Extracting and simplifying the structure
-    col_names = ["identifier", "compound_name", "drug_diseases"]
-    drug_disease_df = pd.DataFrame(columns=col_names)
 
     # Extracting and simplifying the structure
     col_names = ["identifier", "compound_name", "drug_diseases"]
