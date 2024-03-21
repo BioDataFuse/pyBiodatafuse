@@ -377,7 +377,7 @@ def get_gene_reactome_pathways(
         target_df=intermediate_df,
         common_cols=["target"],
         target_specific_cols=["pathway_label", "pathway_id"],
-        col_name=OPENTARGETS_Reactome_COL,
+        col_name=OPENTARGETS_REACTOME_COL,
     )
 
     """Metdata details"""
