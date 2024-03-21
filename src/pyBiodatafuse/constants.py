@@ -125,6 +125,7 @@ UNIPROT_TREMBL_ID = "P"
 
 # Assay node
 PUBCHEM_OUTPUT_DICT = {
+    "pubchem_assay_id": str,
     "assay_type": str,
     "outcome": str,
     "compound_cid": str,
