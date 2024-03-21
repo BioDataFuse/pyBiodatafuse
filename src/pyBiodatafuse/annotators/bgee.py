@@ -66,7 +66,7 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
     :returns: a DataFrame containing the Bgee output and dictionary of the Bgee metadata.
     """
-    # Check if the DisGeNET API is available
+    # Check if the Bgee SPARQL endpoint is available
     api_available = check_endpoint_bgee()
 
     if not api_available:
@@ -184,7 +184,7 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
         col_name=BGEE,
     )
 
-    """Metdata details"""
+    """Metadata details"""
     # Get the current date and time
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
