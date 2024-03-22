@@ -5,7 +5,6 @@
 import datetime
 import warnings
 from typing import Optional, Tuple
-import math
 
 import pandas as pd
 import requests
@@ -17,7 +16,6 @@ from pyBiodatafuse.utils import (
     get_identifier_of_interest,
 )
 
-MINERVA_INPUT_ID="Ensembl"
 
 def check_endpoint_minerva() -> bool:
     """Check the availability of the MINERVA API endpoint.
@@ -222,13 +220,13 @@ def get_gene_minerva_pathways(
         row = 1 + row
 
         list_at_index = list(map_elements.values())[index_to_extract - 1]
-        common_keys = ["type", "references", "symbol", "name","ensembl"]
+        common_keys = ["type", "references", "symbol", "name", "ensembl"]
         # Initialize empty lists to store values for each common key
         type = []
         refs = []
         symbol = []
         name = []
-        ensembl=[]
+        ensembl = []
 
         # Iterate through the list of dicts
         for d in list_at_index:
@@ -238,18 +236,19 @@ def get_gene_minerva_pathways(
                         type.append(d[key])
                     elif key == "references":
                         refs.append(d[key])
-                        ensembl_id=None
+                        ensembl_id = None
                         for p in d[key]:
-                            if p['type']=='ENSEMBL':
-                                ensembl_id=p['resource']
+                            if p["type"] == "ENSEMBL":
+                                ensembl_id = p["resource"]
                         try:
                             ensembl.append(ensembl_id)
-                        except:
-                            ensembl_id=None
+                        except Exception as e:
+                            ensembl_id = None
                     elif key == "symbol":
                         symbol.append(d[key])
                     elif key == "name":
                         name.append(d[key])
+            break
 
         data = pd.DataFrame()
         data["symbol"] = symbol
@@ -257,7 +256,7 @@ def get_gene_minerva_pathways(
         data["pathway_gene_count"] = len(symbol) - symbol.count(None)
         data["pathway_id"] = models[index_to_extract - 1]["idObject"]
         data["refs"] = refs
-        data["ensembl"]=ensembl
+        data["ensembl"] = ensembl
         data["type"] = type
 
         intermediate_df = pd.concat([intermediate_df, data], ignore_index=True)
@@ -270,7 +269,6 @@ def get_gene_minerva_pathways(
         return pd.DataFrame(), {}
 
     # Organize the annotation results as an array of dictionaries
-    # TODO the merge is based on the gene symbol, what if another id is being used as input
     intermediate_df.rename(columns={"ensembl": "target"}, inplace=True)
     intermediate_df["target"] = intermediate_df["target"].values.astype(str)
 
