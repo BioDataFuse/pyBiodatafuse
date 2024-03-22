@@ -28,7 +28,7 @@ WIKIPATHWAYS = "WikiPathways"
 # Input type for each data source
 BGEE_INPUT_ID = "Ensembl"
 DISGENET_INPUT_ID = "NCBI Gene"
-MINERVA_INPUT_ID = "NCBI Gene"
+MINERVA_INPUT_ID = "Ensembl"
 MOLMEDB_GENE_INPUT_ID = "Uniprot-TrEMBL"
 MOLMEDB_COMPOUND_INPUT_ID = "InChIKey"
 OPENTARGETS_INPUT_ID = "Ensembl"
