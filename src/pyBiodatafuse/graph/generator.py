@@ -561,16 +561,7 @@ def add_ppi_subgraph(g, gene_node_label, annot_list):
     :returns: a NetworkX MultiDiGraph
     """
     for ppi in annot_list:
-        if isinstance(ppi, float) and np.isnan(ppi):
-            continue  # Skip over nan values
-
-        if not isinstance(ppi, dict):
-            continue
-
         edge_attrs = {"source": STRING, "label": STRING_EDGE_LABEL, "score": ppi.get("score")}
-
-        if edge_attrs["score"] is None:
-            continue
 
         edge_hash = hash(frozenset(edge_attrs.items()))
         edge_attrs["edge_hash"] = edge_hash
