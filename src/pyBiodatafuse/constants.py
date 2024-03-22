@@ -65,7 +65,7 @@ OPENTARGETS_LOCATION_COL = f"{OPENTARGETS}_Location"
 
 # Disease node
 # DisGeNet
-DISGENET_OUTPUT_DICT = {"disease_id": str, "disease_name": str, "score": float, "source": str}
+DISGENET_OUTPUT_DICT = {"disease_id": str, "disease_name": str, "score": float, "evidence_source": str}
 # Open Targets - Disease
 OPENTARGETS_DISEASE_OUTPUT_DICT = {"disease_id": str, "disease_name": str, "therapeutic_areas": str}
 DISEASE_ID = "umls|EFO|MONDO"
