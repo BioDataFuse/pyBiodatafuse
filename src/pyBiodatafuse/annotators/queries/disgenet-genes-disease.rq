@@ -13,4 +13,8 @@ WHERE {
     ?gda sio:SIO_000253 ?evidence_source . 
     ?score sio:SIO_000300 ?disease_score .
     ?gene_id rdf:type ncit:C16612 . 
+    FILTER regex(
+	?evidence_source, 
+	"UNIPROT|CTD_human|PSYGENET|ORPHANET|CLINGEN|GENOMICS_ENGLAND|CGI|CLINGEN"
+	)
 }
