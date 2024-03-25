@@ -147,11 +147,15 @@ def get_gene_disease(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
         lambda x: x.split("[umls:")[0].strip()
     )
     intermediate_df["score"] = intermediate_df["disease_score"].astype(float)
-    intermediate_df["evidence_source"] = intermediate_df["evidence_source"].apply(lambda x: x.split("/")[-1])
+    intermediate_df["evidence_source"] = intermediate_df["evidence_source"].apply(
+        lambda x: x.split("/")[-1]
+    )
 
     intermediate_df["target"] = intermediate_df["target"].values.astype(str)
 
-    intermediate_df = intermediate_df[["target", "disease_id", "disease_name", "score", "evidence_source"]]
+    intermediate_df = intermediate_df[
+        ["target", "disease_id", "disease_name", "score", "evidence_source"]
+    ]
 
     # Check if all keys in df match the keys in OUTPUT_DICT
     check_columns_against_constants(
