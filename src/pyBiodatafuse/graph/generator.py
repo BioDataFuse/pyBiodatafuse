@@ -291,6 +291,7 @@ def add_opentargets_go_subgraph(g, gene_node_label, annot_list):
             "source": OPENTARGETS,
             "name": go["go_name"],
             "id": go["go_id"],
+            "go_type":go["go_type"],
             "labels": OPENTARGETS_GO_NODE_LABELS,
         }
 
@@ -415,6 +416,7 @@ def add_opentargets_compound_subgraph(g, gene_node_label, annot_list):
                 "name": compound["compound_name"],
                 "id": compound["chembl_id"],
                 "is_approved": compound["is_approved"],
+                "adverse_effect_count":compound["adverse_effect_count"],
                 "labels": OPENTARGETS_COMPOUND_NODE_LABELS,
             }
 
@@ -437,7 +439,23 @@ def add_opentargets_compound_subgraph(g, gene_node_label, annot_list):
                     label=compound["relation"],
                     attr_dict=edge_attrs,
                 )
+            
+            #Add side effects
+            if compound['adverse_effect']:
+                for effect in compound['adverse_effect']:
+                    effect_node_attrs={
+                        "source":"OpenTargets",
+                        "labels":"side effect",
+                        "name": effect['name'],
+                            }
+                    g.add_node(effect['name'],attr_dict=effect_node_attrs)
+                    
+                    new_edge = (compound_node_label,effect['name'])
 
+                    # Check if the edge already exists
+                    if not g.has_edge(*new_edge):
+                        # Add the edge to the graph
+                        g.add_edge(compound_node_label,effect['name'],label='has_side_affect')
     return g
 
 

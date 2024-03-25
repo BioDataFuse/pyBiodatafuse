@@ -95,7 +95,7 @@ OPENTARGETS_REACTOME_COL = f"{OPENTARGETS}_Reactome"
 
 # GO
 # Open Targets - GO processes
-OPENTARGETS_GO_OUTPUT_DICT = {"go_id": str, "go_name": str}
+OPENTARGETS_GO_OUTPUT_DICT = {"go_id": str, "go_name": str, "go_type":str}
 GO_ID = "GO"
 OPENTARGETS_GO_COL = f"{OPENTARGETS}_GO"  # TODO: Cross-check if correct name
 
@@ -106,6 +106,9 @@ OPENTARGETS_COMPOUND_OUTPUT_DICT = {
     "compound_name": str,
     "is_approved": bool,
     "relation": str,
+    "drugbank_id" : str,
+    "adverse_effect_count" : int,
+    "adverse_effect" : str,
 }
 CHEMBL_ID = "CHEMBL"
 RELATION = "inhibits|activates"
