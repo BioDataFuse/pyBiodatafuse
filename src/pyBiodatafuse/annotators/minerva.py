@@ -242,7 +242,7 @@ def get_gene_minerva_pathways(
                                 ensembl_id = p["resource"]
                         try:
                             ensembl.append(ensembl_id)
-                        except Exception as e:
+                        except Exception:
                             ensembl_id = None
                     elif key == "symbol":
                         symbol.append(d[key])
