@@ -12,6 +12,7 @@ import pytest
 
 from pyBiodatafuse.annotators.bgee import get_gene_expression, get_version_bgee
 from pyBiodatafuse.constants import BGEE
+from pandas.testing import assert_frame_equal
 
 
 def test_sparql_get_version_bgee():
@@ -78,18 +79,29 @@ def test_get_gene_expression(mock_sparql_request, bridgedb_dataframe):
     obtained_data, metadata = get_gene_expression(bridgedb_dataframe)
 
     expected_data = pd.read_json(os.path.join(data_file_folder, "bgee_expected_data.json"))
-    expected_data = expected_data.sort_values(
-        by=["anatomical_entity_id", "expression_level", "developmental_stage_id"], ascending=False
-    )
-    expected_data.reset_index(drop=True, inplace=True)
 
-    obtained_sorted = pd.DataFrame(obtained_data[BGEE][0])
-    obtained_sorted = obtained_sorted.sort_values(
-        by=["anatomical_entity_id", "expression_level", "developmental_stage_id"], ascending=False
-    )
-    obtained_sorted.reset_index(drop=True, inplace=True)
+    for index in range(len(expected_data[BGEE])):
+        expected_expression_data = pd.DataFrame.from_dict(
+            pd.json_normalize(expected_data[BGEE][index])
+        )
+        expected_expression_data = expected_expression_data.sort_values(
+            by=["anatomical_entity_id", "expression_level", "developmental_stage_id"],
+            ascending=False,
+        )
+        expected_expression_data = expected_expression_data.astype({"expression_level": float})
+        expected_expression_data.reset_index(drop=True, inplace=True)
 
-    assert obtained_sorted.equals(expected_data)
+        obtained_expression_sorted = pd.DataFrame(
+            pd.json_normalize(obtained_data[BGEE][index])
+        ).sort_values(
+            by=["anatomical_entity_id", "expression_level", "developmental_stage_id"],
+            ascending=False,
+        )
+        obtained_expression_sorted = obtained_expression_sorted.astype({"expression_level": float})
+        obtained_expression_sorted.reset_index(drop=True, inplace=True)
+        assert_frame_equal(expected_expression_data, obtained_expression_sorted)
+
+    assert True
 
 
 @pytest.fixture(scope="module")
@@ -97,9 +109,9 @@ def bridgedb_dataframe():
     """Reusable sample Pandas DataFrame to be used as input for the tests."""
     return pd.DataFrame(
         {
-            "identifier": ["AGRN"],
-            "identifier.source": ["HGNC"],
-            "target": ["ENSG00000188157"],
-            "target.source": ["Ensembl"],
+            "identifier": ["AGRN", "ATXN7"],
+            "identifier.source": ["HGNC", "HGNC"],
+            "target": ["ENSG00000188157", "ENSG00000163635"],
+            "target.source": ["Ensembl", "Ensembl"],
         }
     )
