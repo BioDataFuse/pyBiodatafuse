@@ -248,7 +248,6 @@ def get_gene_minerva_pathways(
                         symbol.append(d[key])
                     elif key == "name":
                         name.append(d[key])
-            break
 
         data = pd.DataFrame()
         data["symbol"] = symbol
