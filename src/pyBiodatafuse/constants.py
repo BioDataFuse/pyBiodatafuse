@@ -17,7 +17,7 @@ WIKIPATHWAYS_ENDPOINT = "https://sparql.wikipathways.org/sparql"
 # Data sources
 BGEE = "Bgee"
 DISGENET = "DisGeNET"
-MINERVA = "MINERVA Net"
+MINERVA = "MINERVA"
 MOLMEDB = "MolMeDB"
 OPENTARGETS = "OpenTargets"
 PUBCHEM = "PubChem"
@@ -34,7 +34,7 @@ MOLMEDB_COMPOUND_INPUT_ID = "InChIKey"
 OPENTARGETS_INPUT_ID = "Ensembl"
 PUBCHEM_INPUT_ID = "Uniprot-TrEMBL"
 STRING_INPUT_ID = "Ensembl"
-WIKIDATA_INPUT_ID = ""
+WIKIDATA_INPUT_ID = ""  # TODO
 WIKIPATHWAYS_INPUT_ID = "NCBI Gene"
 
 # Output annotation for each data source
@@ -52,6 +52,7 @@ BGEE_OUTPUT_DICT = {
 ANATOMICAL_ENTITY_ID = "UBERON"
 DEVELOPMENTAL_STAGE_ID = "HsapDv|UBERON"
 CONFIDENCE_LEVEL_ID = "CIO"
+
 # Location node
 # Open Targets - Location
 OPENTARGETS_LOCATION_OUTPUT_DICT = {
@@ -60,12 +61,21 @@ OPENTARGETS_LOCATION_OUTPUT_DICT = {
     "subcellular_location": str,
 }
 LOCATION_ID = "SL"
+OPENTARGETS_LOCATION_COL = f"{OPENTARGETS}_Location"
+
 # Disease node
 # DisGeNet
-DISGENET_OUTPUT_DICT = {"disease_id": str, "disease_name": str, "score": float, "source": str}
+DISGENET_OUTPUT_DICT = {
+    "disease_id": str,
+    "disease_name": str,
+    "score": float,
+    "evidence_source": str,
+}
 # Open Targets - Disease
 OPENTARGETS_DISEASE_OUTPUT_DICT = {"disease_id": str, "disease_name": str, "therapeutic_areas": str}
 DISEASE_ID = "umls|EFO|MONDO"
+OPENTARGETS_DISEASE_COL = f"{OPENTARGETS}_Diseases"
+
 # Pathway node
 # MINERVA
 MINERVA_OUTPUT_DICT = {
@@ -81,10 +91,14 @@ OPENTARGETS_REACTOME_OUTPUT_DICT = {
     "pathway_label": str,
 }
 PATHWAY_ID = "WP|R-"
+OPENTARGETS_REACTOME_COL = f"{OPENTARGETS}_Reactome"
+
 # GO
 # Open Targets - GO processes
 OPENTARGETS_GO_OUTPUT_DICT = {"go_id": str, "go_name": str}
 GO_ID = "GO"
+OPENTARGETS_GO_COL = f"{OPENTARGETS}_GO"  # TODO: Cross-check if correct name
+
 # Compound
 # Open Targets - Compound
 OPENTARGETS_COMPOUND_OUTPUT_DICT = {
@@ -95,6 +109,7 @@ OPENTARGETS_COMPOUND_OUTPUT_DICT = {
 }
 CHEMBL_ID = "CHEMBL"
 RELATION = "inhibits|activates"
+OPENTARGETS_COMPOUND_COL = f"{OPENTARGETS}_Compounds"  # TODO: Cross-check if correct name
 # MolMeDB - Gene input
 MOLMEDB_GENE_OUTPUT_DICT = {
     "compound_name": str,
@@ -111,6 +126,7 @@ MOLMEDB_GENE_OUTPUT_DICT = {
 MOLMEDB_ID = "MM"
 SOURCE_DOI = "doi"
 DRUGBANK_ID = "DB"
+MOLMEDB_INHIBITOR_COL = f"{MOLMEDB}_transporter_inhibitor"
 # MolMeDB - Compound input
 MOLMEDB_COMPOUND_OUTPUT_DICT = {
     "uniprot_trembl_id": str,
@@ -119,6 +135,8 @@ MOLMEDB_COMPOUND_OUTPUT_DICT = {
     "source_pmid": str,
 }
 UNIPROT_TREMBL_ID = "P"
+MOLMEDB_INHIBITED_COL = f"{MOLMEDB}_transporter_inhibited"
+
 # Gene Node
 # STRING
 # TODO: to be checked
@@ -135,6 +153,7 @@ PUBCHEM_OUTPUT_DICT = {
 }
 OUTCOME = "active|inactive"
 INCHI = "InChI"
+PUBCHEM_Assays_COL = f"{PUBCHEM}_Assays"
 
 # Wikidata
 # TODO: to be checked

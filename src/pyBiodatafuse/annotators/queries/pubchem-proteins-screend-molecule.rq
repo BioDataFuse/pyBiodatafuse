@@ -10,7 +10,7 @@ PREFIX obo: <http://purl.obolibrary.org/obo/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX pubchem: <http://rdf.ncbi.nlm.nih.gov/pubchem/>
 
-SELECT DISTINCT ?upProt ?assay_type ?outcome ?compound_cid ?ref_cit ?compound_name ?SMILES ?InChI (COUNT(DISTINCT ?target) AS ?target_count) WHERE {
+SELECT DISTINCT ?upProt ?assay ?assay_type ?outcome ?compound_cid ?ref_cit ?compound_name ?SMILES ?InChI (COUNT(DISTINCT ?target) AS ?target_count) WHERE {
   	#consider only ednpoints with = value or implicitly equal
 	VALUES ?bannedQualifier {obo:GENEPIO_0001002 obo:GENEPIO_0001003 obo:GENEPIO_0001005 obo:GENEPIO_0001006 }
     VALUES ?outcome {vocab:active vocab:inactive}
@@ -25,8 +25,10 @@ SELECT DISTINCT ?upProt ?assay_type ?outcome ?compound_cid ?ref_cit ?compound_na
   	}
   
   	?mg obo:OBI_0000299 ?ep ;
-		#only confirmatory assay
-    	^bao:BAO_0000209 [bao:BAO_0000540 ?b] .
+    	^bao:BAO_0000209 ?assay .
+	#only confirmatory assay
+	?assay bao:BAO_0000540 ?assay2 .
+	
   
   	?ep rdf:type ?assay_type ;
 		vocab:PubChemAssayOutcome ?outcome ;
@@ -50,4 +52,4 @@ SELECT DISTINCT ?upProt ?assay_type ?outcome ?compound_cid ?ref_cit ?compound_na
                            sio:SIO_000300 ?InChI]
   	}
   	#other Compound mappings badly defined ind PubChem
-} GROUP BY ?upProt ?assay_type ?outcome ?compound_cid ?ref_cit ?compound_name ?SMILES ?InChI
+} GROUP BY ?upProt ?assay_type ?outcome ?compound_cid ?ref_cit ?compound_name ?SMILES ?InChI ?assay
