@@ -20,15 +20,21 @@ from pyBiodatafuse.constants import (
     MINERVA_NODE_LABELS,
     MOLMEDB,
     MOLMEDB_EDGE_LABEL,
+    MOLMEDB_INHIBITOR_COL,
     MOLMEDB_NODE_LABELS,
     OPENTARGETS,
+    OPENTARGETS_COMPOUND_COL,
     OPENTARGETS_COMPOUND_NODE_LABELS,
+    OPENTARGETS_DISEASE_COL,
     OPENTARGETS_DISEASE_EDGE_LABEL,
     OPENTARGETS_DISEASE_NODE_LABELS,
+    OPENTARGETS_GO_COL,
     OPENTARGETS_GO_EDGE_LABEL,
     OPENTARGETS_GO_NODE_LABELS,
+    OPENTARGETS_LOCATION_COL,
     OPENTARGETS_LOCATION_EDGE_LABEL,
     OPENTARGETS_LOCATION_NODE_LABELS,
+    OPENTARGETS_REACTOME_COL,
     OPENTARGETS_REACTOME_EDGE_LABEL,
     OPENTARGETS_REACTOME_NODE_LABELS,
     PUBCHEM,
@@ -554,7 +560,7 @@ def add_ppi_subgraph(g, gene_node_label, annot_list):
     :returns: a NetworkX MultiDiGraph
     """
     for ppi in annot_list:
-        edge_attrs = {"source": STRING, "label": STRING_EDGE_LABEL, "score": ppi["score"]}
+        edge_attrs = {"source": STRING, "label": STRING_EDGE_LABEL, "score": ppi.get("score")}
 
         edge_hash = hash(frozenset(edge_attrs.items()))
         edge_attrs["edge_hash"] = edge_hash
@@ -609,16 +615,16 @@ def networkx_graph(fuse_df: pd.DataFrame, drug_disease=None):
     dea_columns = [c for c in fuse_df.columns if c.endswith("_dea")]
 
     func_dict = {
-        "DisGeNET": add_disgenet_disease_subgraph,
-        "OpenTargets_Location": add_opentargets_location_subgraph,
-        "GO_Process": add_opentargets_go_subgraph,
-        "Reactome_Pathways": add_opentargets_reactome_pathway_subgraph,
-        "ChEMBL_Drugs": add_opentargets_compound_subgraph,
-        "OpenTargets_Diseases": add_opentargets_disease_subgraph,
-        "WikiPathways": add_wikipathways_subgraph,
-        "MINERVA": add_minerva_subgraph,
-        "transporter_inhibitor": add_molmedb_gene_inhibitor,
-        "Bgee": add_bgee_subgraph,
+        DISGENET: add_disgenet_disease_subgraph,
+        OPENTARGETS_LOCATION_COL: add_opentargets_location_subgraph,
+        OPENTARGETS_GO_COL: add_opentargets_go_subgraph,
+        OPENTARGETS_REACTOME_COL: add_opentargets_reactome_pathway_subgraph,
+        OPENTARGETS_COMPOUND_COL: add_opentargets_compound_subgraph,
+        OPENTARGETS_DISEASE_COL: add_opentargets_disease_subgraph,
+        WIKIPATHWAYS: add_wikipathways_subgraph,
+        MINERVA: add_minerva_subgraph,
+        MOLMEDB_INHIBITOR_COL: add_molmedb_gene_inhibitor,
+        BGEE: add_bgee_subgraph,
     }
 
     for _i, row in fuse_df.iterrows():
@@ -639,7 +645,6 @@ def networkx_graph(fuse_df: pd.DataFrame, drug_disease=None):
         for annot_key in func_dict:
             if annot_key in row:
                 annot_list = json.loads(json.dumps(row[annot_key]))
-
                 if not isinstance(annot_list, list):
                     annot_list = []
 
@@ -652,7 +657,8 @@ def networkx_graph(fuse_df: pd.DataFrame, drug_disease=None):
             if ppi_list is None:
                 ppi_list = []
 
-            add_ppi_subgraph(g, gene_node_label, ppi_list)
+            if not isinstance(ppi_list, float):
+                add_ppi_subgraph(g, gene_node_label, ppi_list)
     # TODO:
     # if drug_disease is not None:
     #     fuse_df = pd.concat(

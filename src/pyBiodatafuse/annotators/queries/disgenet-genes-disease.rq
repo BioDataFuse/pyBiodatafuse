@@ -1,4 +1,4 @@
-SELECT DISTINCT ?gene_id ?description ?disease_score ?source #?xref #?sub_class_of
+SELECT DISTINCT ?gene_id ?description ?disease_score ?evidence_source #?xref #?sub_class_of
 FROM <http://rdf.disgenet.org> 
 WHERE {
     VALUES ?entrez_id { $gene_list }
@@ -10,7 +10,11 @@ WHERE {
     #?disease skos:exactMatch ?xref .
     #?disease rdfs:subClassOf ?sub_class_of .
     ?gda sio:SIO_000216 ?score . 
-    ?gda sio:SIO_000253 ?source . 
+    ?gda sio:SIO_000253 ?evidence_source . 
     ?score sio:SIO_000300 ?disease_score .
     ?gene_id rdf:type ncit:C16612 . 
+    FILTER regex(
+	?evidence_source, 
+	"UNIPROT|CTD_human|PSYGENET|ORPHANET|CLINGEN|GENOMICS_ENGLAND|CGI|CLINGEN"
+	)
 }
