@@ -220,12 +220,13 @@ def get_gene_minerva_pathways(
         row = 1 + row
 
         list_at_index = list(map_elements.values())[index_to_extract - 1]
-        common_keys = ["type", "references", "symbol", "name"]
+        common_keys = ["type", "references", "symbol", "name", "ensembl"]
         # Initialize empty lists to store values for each common key
         type = []
         refs = []
         symbol = []
         name = []
+        ensembl = []
 
         # Iterate through the list of dicts
         for d in list_at_index:
@@ -235,6 +236,14 @@ def get_gene_minerva_pathways(
                         type.append(d[key])
                     elif key == "references":
                         refs.append(d[key])
+                        ensembl_id = None
+                        for p in d[key]:
+                            if p["type"] == "ENSEMBL":
+                                ensembl_id = p["resource"]
+                        try:
+                            ensembl.append(ensembl_id)
+                        except Exception:
+                            ensembl_id = None
                     elif key == "symbol":
                         symbol.append(d[key])
                     elif key == "name":
@@ -246,6 +255,7 @@ def get_gene_minerva_pathways(
         data["pathway_gene_count"] = len(symbol) - symbol.count(None)
         data["pathway_id"] = models[index_to_extract - 1]["idObject"]
         data["refs"] = refs
+        data["ensembl"] = ensembl
         data["type"] = type
 
         intermediate_df = pd.concat([intermediate_df, data], ignore_index=True)
@@ -258,12 +268,11 @@ def get_gene_minerva_pathways(
         return pd.DataFrame(), {}
 
     # Organize the annotation results as an array of dictionaries
-    # TODO the merge is based on the gene symbol, what if another id is being used as input
-    intermediate_df.rename(columns={"symbol": "identifier"}, inplace=True)
-    intermediate_df["identifier"] = intermediate_df["identifier"].values.astype(str)
+    intermediate_df.rename(columns={"ensembl": "target"}, inplace=True)
+    intermediate_df["target"] = intermediate_df["target"].values.astype(str)
 
     intermediate_df = intermediate_df.drop_duplicates(
-        subset=["identifier", "pathway_id", "pathway_label", "pathway_gene_count"]
+        subset=["target", "pathway_id", "pathway_label", "pathway_gene_count"]
     )
 
     # Check if all keys in df match the keys in OUTPUT_DICT
@@ -278,7 +287,7 @@ def get_gene_minerva_pathways(
         data_df=data_df,
         source_namespace=MINERVA_INPUT_ID,
         target_df=intermediate_df,
-        common_cols=["identifier"],
+        common_cols=["target"],
         target_specific_cols=list(MINERVA_OUTPUT_DICT.keys()),
         col_name=MINERVA,
     )
