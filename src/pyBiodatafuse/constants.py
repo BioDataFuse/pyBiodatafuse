@@ -3,10 +3,9 @@
 """Python constant file."""
 
 
-# Endpoints / API
 from typing import Union
 
-
+# Endpoints / API
 BGEE_ENDPOINT = "https://www.bgee.org/sparql/"
 DISGENET_ENDPOINT = "http://rdf.disgenet.org/sparql/"
 MINERVA_ENDPOINT = "https://minerva-net.lcsb.uni.lu/api/"
