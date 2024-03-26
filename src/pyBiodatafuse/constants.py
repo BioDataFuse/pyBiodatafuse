@@ -3,6 +3,8 @@
 """Python constant file."""
 
 
+from typing import Union
+
 # Endpoints / API
 BGEE_ENDPOINT = "https://www.bgee.org/sparql/"
 DISGENET_ENDPOINT = "http://rdf.disgenet.org/sparql/"
@@ -95,7 +97,7 @@ OPENTARGETS_REACTOME_COL = f"{OPENTARGETS}_Reactome"
 
 # GO
 # Open Targets - GO processes
-OPENTARGETS_GO_OUTPUT_DICT = {"go_id": str, "go_name": str}
+OPENTARGETS_GO_OUTPUT_DICT = {"go_id": str, "go_name": str, "go_type": str}
 GO_ID = "GO"
 OPENTARGETS_GO_COL = f"{OPENTARGETS}_GO"  # TODO: Cross-check if correct name
 
@@ -103,9 +105,13 @@ OPENTARGETS_GO_COL = f"{OPENTARGETS}_GO"  # TODO: Cross-check if correct name
 # Open Targets - Compound
 OPENTARGETS_COMPOUND_OUTPUT_DICT = {
     "chembl_id": str,
+    "drugbank_id": Union[str, None, float],
+    "compound_cid": Union[str, None, float],
     "compound_name": str,
     "is_approved": bool,
     "relation": str,
+    "adverse_effect_count": Union[int, None, float],
+    "adverse_effect": Union[str, None, float],
 }
 CHEMBL_ID = "CHEMBL"
 RELATION = "inhibits|activates"
