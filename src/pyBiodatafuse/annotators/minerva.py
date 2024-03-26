@@ -261,7 +261,7 @@ def get_gene_minerva_pathways(
     end_time = datetime.datetime.now()
 
     if "symbol" not in intermediate_df:
-        return pd.DataFrame(), {}
+        return pd.DataFrame(), {"datasource": MINERVA, "metadata": minerva_version}
 
     # Organize the annotation results as an array of dictionaries
     intermediate_df.rename(columns={"ensembl": "target"}, inplace=True)

@@ -114,21 +114,23 @@ def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
     # Record the end time
     end_time = datetime.datetime.now()
 
+    if "transporterID" not in intermediate_df.columns:
+        return pd.DataFrame(), {"datasource": MOLMEDB, "metadata": ""}
+
     # Organize the annotation results as an array of dictionaries
     intermediate_df.rename(columns={"transporterID": "target"}, inplace=True)
 
-    if not intermediate_df.empty:
-        intermediate_df.rename(
-            columns={
-                "transporterID": "target",
-                "pubchem_compound_id": "compound_cid",
-                "label": "compound_name",
-            },
-            inplace=True,
-        )
-        intermediate_df["source_doi"] = intermediate_df["source_doi"].map(
-            lambda x: "doi:" + x, na_action="ignore"
-        )
+    intermediate_df.rename(
+        columns={
+            "transporterID": "target",
+            "pubchem_compound_id": "compound_cid",
+            "label": "compound_name",
+        },
+        inplace=True,
+    )
+    intermediate_df["source_doi"] = intermediate_df["source_doi"].map(
+        lambda x: "doi:" + x, na_action="ignore"
+    )
 
     # Check if all keys in df match the keys in OUTPUT_DICT
     check_columns_against_constants(
@@ -269,6 +271,9 @@ def get_compound_gene_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
 
     # Record the end time
     end_time = datetime.datetime.now()
+
+    if "inhibitorInChIKey" not in intermediate_df.columns:
+        return pd.DataFrame(), {"datasource": MOLMEDB, "metadata": ""}
 
     # Organize the annotation results as an array of dictionaries
     intermediate_df.rename(
