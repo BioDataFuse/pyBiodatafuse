@@ -256,9 +256,9 @@ def get_gene_go_process(
 
     for gene in r["data"]["targets"]:
         terms = [i["term"] for i in gene["geneOntology"]]
-        types= [i["aspect"] for i in gene["geneOntology"]]
+        types = [i["aspect"] for i in gene["geneOntology"]]
         path_df = pd.DataFrame(terms)
-        path_df['go_type']=types
+        path_df["go_type"] = types
         path_df = path_df.drop_duplicates()
         path_df["target"] = gene["id"]
         intermediate_df = pd.concat([intermediate_df, path_df], ignore_index=True)
@@ -549,7 +549,9 @@ def get_gene_compound_interactions(
         if drug_df.empty:
             continue
 
-        drug_df[["chembl_id", "compound_name", "isApproved","crossReferences","adverse_events"]] = drug_df["drug"].apply(pd.Series)
+        drug_df[
+            ["chembl_id", "compound_name", "isApproved", "crossReferences", "adverse_events"]
+        ] = drug_df["drug"].apply(pd.Series)
         drug_df.drop(columns=["drug"], inplace=True)
         drug_df = drug_df.rename(columns={"isApproved": "is_approved"})
         drug_df["target"] = gene["id"]
@@ -558,22 +560,24 @@ def get_gene_compound_interactions(
             lambda x: "inhibits" if "antagonist" in x else "activates"
         )
         drug_df.rename(columns={"mechanismOfAction": "relation"}, inplace=True)
-        
-        
-        drug_df['drugbank_id']=None
-        
-        drug_df['drugbank_id'] = drug_df['crossReferences'].apply(
-            lambda x: next((y['reference'][0] for y in x if y['source'] == 'drugbank'), None) if x else None
+
+        drug_df["drugbank_id"] = None
+
+        drug_df["drugbank_id"] = drug_df["crossReferences"].apply(
+            lambda x: next((y["reference"][0] for y in x if y["source"] == "drugbank"), None)
+            if x
+            else None
         )
-               
-        drug_df['adverse_effect_count']=None
-        drug_df['adverse_effect']=None
-        drug_df[['adverse_effect_count', 'adverse_effect']] = drug_df.apply(
-            lambda row: pd.Series([row['adverse_events']['count'], row['adverse_events']['rows']]) 
-                       if row['adverse_events'] else pd.Series([None, None]), 
-            axis=1
+
+        drug_df["adverse_effect_count"] = None
+        drug_df["adverse_effect"] = None
+        drug_df[["adverse_effect_count", "adverse_effect"]] = drug_df.apply(
+            lambda row: pd.Series([row["adverse_events"]["count"], row["adverse_events"]["rows"]])
+            if row["adverse_events"]
+            else pd.Series([None, None]),
+            axis=1,
         )
-        
+
         intermediate_df = pd.concat([intermediate_df, drug_df], ignore_index=True)
 
     if intermediate_df.empty:
