@@ -76,6 +76,8 @@ def get_gene_literature(bridgedb_df: pd.DataFrame):
     # Record the start time
     start_time = datetime.datetime.now()
 
+    wikidata_version = get_version_wikidata()
+
     data_df = get_identifier_of_interest(bridgedb_df, "NCBI Gene")
     gene_list = data_df["target"].tolist()
     gene_list = list(set(gene_list))
@@ -116,6 +118,9 @@ def get_gene_literature(bridgedb_df: pd.DataFrame):
     # Record the end time
     end_time = datetime.datetime.now()
 
+    if "article" not in intermediate_df.columns:
+        return pd.DataFrame(), {"datasource": WIKIDATA, "metadata": wikidata_version}
+
     # Organize the annotation results as an array of dictionaries
     intermediate_df = intermediate_df.rename(columns={"article": "wikidata_id"})
     intermediate_df = intermediate_df.rename(columns={"geneId": "target"})
@@ -151,9 +156,6 @@ def get_gene_literature(bridgedb_df: pd.DataFrame):
     # Calculate the time elapsed
     time_elapsed = str(end_time - start_time)
 
-    # Add version to metadata file
-    wikidata_version = get_version_wikidata()
-
     # Add the datasource, query, query time, and the date to metadata
     wikidata_metadata = {
         "datasource": WIKIDATA,
@@ -186,6 +188,9 @@ def get_gene_cellular_component(bridgedb_df: pd.DataFrame):
 
     # Record the start time
     start_time = datetime.datetime.now()
+
+    # Add version to metadata file
+    wikidata_version = get_version_wikidata()
 
     data_df = get_identifier_of_interest(bridgedb_df, "NCBI Gene")
     gene_list = data_df["target"].tolist()
@@ -229,6 +234,9 @@ def get_gene_cellular_component(bridgedb_df: pd.DataFrame):
     # Record the end time
     end_time = datetime.datetime.now()
 
+    if "cellularComp" not in intermediate_df.columns:
+        return pd.DataFrame(), {"datasource": WIKIDATA, "metadata": wikidata_version}
+
     # Organize the annotation results as an array of dictionaries
     intermediate_df = intermediate_df.rename(
         columns={"cellularComp": "wikidata_id", "cellularCompLabel": "wikidata_label"}
@@ -258,9 +266,6 @@ def get_gene_cellular_component(bridgedb_df: pd.DataFrame):
 
     # Calculate the time elapsed
     time_elapsed = str(end_time - start_time)
-
-    # Add version to metadata file
-    wikidata_version = get_version_wikidata()
 
     # Add the datasource, query, query time, and the date to metadata
     wikidata_metadata = {

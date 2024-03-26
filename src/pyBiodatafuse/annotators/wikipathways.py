@@ -84,8 +84,9 @@ def get_gene_wikipathways(bridgedb_df: pd.DataFrame):
         return pd.DataFrame(), {}
 
     data_df = get_identifier_of_interest(bridgedb_df, WIKIPATHWAYS_INPUT_ID)
-    gene_list = data_df["target"].tolist()
 
+    wikipathways_version = get_version_wikipathways()
+    gene_list = data_df["target"].tolist()
     gene_list = list(set(gene_list))
 
     query_gene_lists = []
@@ -132,6 +133,9 @@ def get_gene_wikipathways(bridgedb_df: pd.DataFrame):
     # Record the end time
     end_time = datetime.datetime.now()
 
+    if "gene_id" not in intermediate_df.columns:
+        return pd.DataFrame(), {"datasource": WIKIPATHWAYS, "metadata": wikipathways_version}
+
     # Organize the annotation results as an array of dictionaries
     intermediate_df.rename(columns={"gene_id": "target"}, inplace=True)
     intermediate_df["pathway_gene_count"] = pd.to_numeric(intermediate_df["pathway_gene_count"])
@@ -159,9 +163,6 @@ def get_gene_wikipathways(bridgedb_df: pd.DataFrame):
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # Calculate the time elapsed
     time_elapsed = str(end_time - start_time)
-    # Add version to metadata file
-
-    wikipathways_version = get_version_wikipathways()
 
     # Add the datasource, query, query time, and the date to metadata
     wikipathways_metadata = {
