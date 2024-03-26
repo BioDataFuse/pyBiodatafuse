@@ -9,10 +9,10 @@ from unittest.mock import patch
 
 import pandas as pd
 import pytest
+from pandas.testing import assert_frame_equal
 
 from pyBiodatafuse.annotators.bgee import get_gene_expression, get_version_bgee
 from pyBiodatafuse.constants import BGEE
-from pandas.testing import assert_frame_equal
 
 
 def test_sparql_get_version_bgee():
