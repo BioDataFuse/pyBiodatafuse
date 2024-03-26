@@ -205,7 +205,6 @@ def get_gene_location(
     return merged_df, opentargets_version
 
 
-# TODO: Potentially remove this section due to limited distictions in differtn GO terms
 def get_gene_go_process(
     bridgedb_df: pd.DataFrame,
 ) -> Tuple[pd.DataFrame, dict]:
@@ -544,16 +543,13 @@ def get_gene_compound_interactions(
 
         drug_info = gene["knownDrugs"]["rows"]
         drug_df = pd.DataFrame(drug_info)
-        drug_df = drug_df.rename(columns={"isApproved": "is_approved"})
 
         if drug_df.empty:
             continue
-
         drug_df[
-            ["chembl_id", "compound_name", "isApproved", "crossReferences", "adverse_events"]
+            ["chembl_id", "compound_name", "is_approved", "cross_references", "adverse_events"]
         ] = drug_df["drug"].apply(pd.Series)
         drug_df.drop(columns=["drug"], inplace=True)
-        drug_df = drug_df.rename(columns={"isApproved": "is_approved"})
         drug_df["target"] = gene["id"]
 
         drug_df["mechanismOfAction"] = drug_df["mechanismOfAction"].apply(
@@ -561,16 +557,16 @@ def get_gene_compound_interactions(
         )
         drug_df.rename(columns={"mechanismOfAction": "relation"}, inplace=True)
 
-        drug_df["drugbank_id"] = None
-
-        drug_df["drugbank_id"] = drug_df["crossReferences"].apply(
-            lambda x: next((y["reference"][0] for y in x if y["source"] == "drugbank"), None)
+        drug_df["drugbank_id"] = drug_df["cross_references"].apply(
+            lambda x: next((ref["reference"][0] for ref in x if ref["source"] == "drugbank"), None)
             if x
             else None
         )
-
-        drug_df["adverse_effect_count"] = None
-        drug_df["adverse_effect"] = None
+        drug_df["compound_cid"] = drug_df["cross_references"].apply(
+            lambda x: next((ref["reference"][0] for ref in x if ref["source"] == "PubChem"), None)
+            if x
+            else None
+        )
         drug_df[["adverse_effect_count", "adverse_effect"]] = drug_df.apply(
             lambda row: pd.Series([row["adverse_events"]["count"], row["adverse_events"]["rows"]])
             if row["adverse_events"]

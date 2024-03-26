@@ -4,6 +4,9 @@
 
 
 # Endpoints / API
+from typing import Union
+
+
 BGEE_ENDPOINT = "https://www.bgee.org/sparql/"
 DISGENET_ENDPOINT = "http://rdf.disgenet.org/sparql/"
 MINERVA_ENDPOINT = "https://minerva-net.lcsb.uni.lu/api/"
@@ -103,12 +106,13 @@ OPENTARGETS_GO_COL = f"{OPENTARGETS}_GO"  # TODO: Cross-check if correct name
 # Open Targets - Compound
 OPENTARGETS_COMPOUND_OUTPUT_DICT = {
     "chembl_id": str,
+    "drugbank_id": Union[str, None, float],
+    "compound_cid": Union[str, None, float],
     "compound_name": str,
     "is_approved": bool,
     "relation": str,
-    "drugbank_id": str,
-    "adverse_effect_count": int,
-    "adverse_effect": str,
+    "adverse_effect_count": Union[int, None, float],
+    "adverse_effect": Union[str, None, float],
 }
 CHEMBL_ID = "CHEMBL"
 RELATION = "inhibits|activates"
