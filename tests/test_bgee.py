@@ -54,6 +54,7 @@ class TestBgee(unittest.TestCase):
         bgee.get_version_bgee = Mock(
             return_value={"source_version": "2023-11-01"}
         )  # Mock the version call
+        bgee.check_endpoint_bgee = Mock(return_value=True)
 
         bridgedb_dataframe = pd.DataFrame(
             {

@@ -5,10 +5,11 @@
 import json
 import os
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 import pandas as pd
 from numpy import nan
 
+from pyBiodatafuse.annotators import pubchem
 from pyBiodatafuse.annotators.pubchem import get_protein_molecule_screened
 from pyBiodatafuse.constants import PUBCHEM
 
@@ -42,6 +43,7 @@ class TestPubchem(unittest.TestCase):
             mock_data_list.append(pd.DataFrame.from_dict(json_response))
 
         mock_sparql_request.side_effect = mock_data_list
+        pubchem.check_endpoint_pubchem = Mock(return_value=True)
 
         bridgedb_dataframe = pd.DataFrame(
             {

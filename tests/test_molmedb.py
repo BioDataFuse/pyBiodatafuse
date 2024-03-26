@@ -4,11 +4,12 @@
 """Tests for the MolMeDB annotator."""
 
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 
 import pandas as pd
 from numpy import nan
 
+from pyBiodatafuse.annotators import molmedb
 from pyBiodatafuse.annotators.molmedb import (
     get_compound_gene_inhibitor,
     get_gene_compound_inhibitor,
@@ -206,6 +207,8 @@ class TestMolMeDb(unittest.TestCase):
                 },
             }
         ]
+
+        molmedb.check_endpoint_molmedb = Mock(return_value=True)
 
         obtained_data, _ = get_gene_compound_inhibitor(bridgedb_dataframe_genes)
 
