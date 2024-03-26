@@ -11,7 +11,13 @@ import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
 from SPARQLWrapper.SPARQLExceptions import SPARQLWrapperException
 
-from pyBiodatafuse.constants import BGEE, BGEE_ENDPOINT, BGEE_INPUT_ID, BGEE_OUTPUT_DICT
+from pyBiodatafuse.constants import (
+    BGEE,
+    BGEE_ENDPOINT,
+    BGEE_INPUT_ID,
+    BGEE_OUTPUT_DICT,
+    ANATOMICAL_ENTITIES_LIST,
+)
 from pyBiodatafuse.utils import (
     check_columns_against_constants,
     collapse_data_sources,
@@ -54,7 +60,6 @@ def get_version_bgee() -> dict:
 
     sparql.setQuery(sparql_query)
     res = sparql.queryAndConvert()
-
     bgee_version = {"source_version": res["results"]["bindings"][0]["date_modified"]["value"]}
 
     return bgee_version
@@ -89,37 +94,15 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
     else:
         query_gene_lists.append(" ".join(f'"{g}"' for g in gene_list))
 
-    anat_entities_list = """
-    blood
-    bone marrow
-    brain
-    breast
-    cardiovascular system
-    digestive system
-    heart
-    immune organ
-    kidney
-    liver
-    lung
-    nervous system
-    pancreas
-    placenta
-    reproductive system
-    respiratory system
-    skeletal system
-    """
-
-    anatomical_entities_list = anat_entities_list.split("\n")
-    anatomical_entities_list = [
-        anatomical_entity.strip()
-        for anatomical_entity in anatomical_entities_list
-        if anatomical_entity.strip() != ""
-    ]
+    anatomical_entities_list = ANATOMICAL_ENTITIES_LIST.split("\n")
 
     with open(
         os.path.dirname(__file__) + "/queries/bgee-genes-tissues-expression-level.rq", "r"
     ) as fin:
         sparql_query = fin.read()
+
+    # Add version to metadata file
+    bgee_version = get_version_bgee()
 
     # Record the start time
     start_time = datetime.datetime.now()
@@ -150,12 +133,20 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
 
                 df = pd.DataFrame(res["results"]["bindings"])
 
-                df = df.applymap(lambda x: x["value"])
+                df = df.applymap(lambda x: x["value"], na_action="ignore")
+                if df.empty:
+                    continue
 
+                df.drop_duplicates(
+                    subset=["anatomical_entity_id", "developmental_stage_id"], inplace=True
+                )
                 intermediate_df = pd.concat([intermediate_df, df], ignore_index=True)
 
     # Record the end time
     end_time = datetime.datetime.now()
+
+    if "anatomical_entity_id" not in intermediate_df:
+        return pd.DataFrame(), {"datasource": BGEE, "metadata": bgee_version}
 
     # Organize the annotation results as an array of dictionaries
     intermediate_df.rename(columns={"ensembl_id": "target"}, inplace=True)
@@ -193,9 +184,6 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
 
     # Calculate the time elapsed
     time_elapsed = str(end_time - start_time)
-
-    # Add version to metadata file
-    bgee_version = get_version_bgee()
 
     # Add the datasource, query, query time, and the date to metadata
     bgee_metadata = {
