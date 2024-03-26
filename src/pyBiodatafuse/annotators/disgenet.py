@@ -69,7 +69,7 @@ def get_version_disgenet() -> dict:
     for binding in bindings:
         title = binding["title"]["value"]
         if pattern in title:
-            disgenet_version = {"source_version": title}
+            return {"source_version": title}
 
     return disgenet_version
 

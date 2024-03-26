@@ -54,6 +54,23 @@ BGEE_OUTPUT_DICT = {
 ANATOMICAL_ENTITY_ID = "UBERON"
 DEVELOPMENTAL_STAGE_ID = "HsapDv|UBERON"
 CONFIDENCE_LEVEL_ID = "CIO"
+ANATOMICAL_ENTITIES_LIST = """blood
+    bone marrow
+    brain
+    breast
+    cardiovascular system
+    digestive system
+    heart
+    immune organ
+    kidney
+    liver
+    lung
+    nervous system
+    pancreas
+    placenta
+    reproductive system
+    respiratory system
+    skeletal system"""
 
 # Location node
 # Open Targets - Location
@@ -126,7 +143,6 @@ MOLMEDB_GENE_OUTPUT_DICT = {
     "source_doi": str,
     "source_pmid": str,
     "chebi_id": str,
-    "pdb_ligand_id": str,
     "drugbank_id": str,
 }
 MOLMEDB_ID = "MM"
@@ -151,6 +167,7 @@ PUBCHEM_OUTPUT_DICT = {
     "compound_name": str,
     "SMILES": str,
     "InChI": str,
+    "pubchem_assay_id": str,
 }
 OUTCOME = "active|inactive"
 INCHI = "InChI"
@@ -159,6 +176,7 @@ PUBCHEM_ASSAYS_COL = f"{PUBCHEM}_Assays"
 # Gene Node
 # STRING
 # TODO: to be checked
+
 
 # Wikidata
 # TODO: to be checked
