@@ -4,7 +4,7 @@
 """Python file for queriying StringDB (https://string-db.org/)."""
 
 import datetime
-import io
+from ast import literal_eval
 import logging
 import warnings
 
@@ -36,8 +36,8 @@ def get_version_stringdb() -> dict:
 
     :returns: a dictionary containing the version information
     """
-    version_call = requests.get(f"{STRING_ENDPOINT}/json/version")
-    return version_call.json()
+    version_call = requests.get(f"{STRING_ENDPOINT}/json/version").json()
+    return {"source_version": version_call[0]["string_version"]}
 
 
 def _format_data(row, network_df):
@@ -77,17 +77,44 @@ def _format_data(row, network_df):
     return gene_ppi_links
 
 
+def get_string_ids(gene_list: list) -> str:
+    """Get the String identifiers of the gene list"""
+    params = {
+        "identifiers": "\r".join(gene_list),  # your protein list
+        "species": 9606,  # species NCBI identifier
+        "limit": 1,  # only one (best) identifier per input protein
+        "caller_identity": "github.com",  # your app name
+    }
+
+    results = requests.post(f"{STRING_ENDPOINT}/json/get_string_ids", data=params).json()
+    return results
+
+
+def _get_ppi_data(gene_ids: list) -> pd.DataFrame:
+    """Get the String PPI iteractions of the gene list"""
+    params = {
+        "identifiers": "%0d".join(gene_ids),  # your protein
+        "species": 9606,  # species NCBI identifier
+        "caller_identity": "github.com",  # your app name
+    }
+
+    response = requests.post(f"{STRING_ENDPOINT}/json/network", data=params).json()
+    return response
+
+
 def get_ppi(bridgedb_df: pd.DataFrame):
     """Annotate genes with protein-protein interactions from STRING-DB.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
     :returns: a DataFrame containing the StringDB output and dictionary of the metadata.
     """
-    # Check if the IDSM endpoint is available
+    # Check if the endpoint is available
     api_available = check_endpoint_stringdb()
     if not api_available:
         warnings.warn(f"{STRING} endpoint is not available. Unable to retrieve data.", stacklevel=2)
         return pd.DataFrame(), {}
+
+    string_version = get_version_stringdb()
 
     # Record the start time
     start_time = datetime.datetime.now()
@@ -97,43 +124,19 @@ def get_ppi(bridgedb_df: pd.DataFrame):
 
     gene_list = list(set(data_df["target"].tolist()))
 
-    # --------- Get the String identifiers of the gene list --------#
-    output_format = "tsv"
-    method = "get_string_ids"
-
-    params = {
-        "identifiers": "\r".join(gene_list),  # your protein list
-        "species": 9606,  # species NCBI identifier
-        "limit": 1,  # only one (best) identifier per input protein
-        "caller_identity": "github.com",  # your app name
-    }
-
-    request_url = "/".join([STRING_ENDPOINT, output_format, method])
-
-    results = requests.post(request_url, data=params)
-    results_contents = results.content.decode("utf-8")
-
-    stringdb_ids_df = pd.read_csv(io.StringIO(results_contents), sep="\t")
+    # Get ids
+    string_ids = get_string_ids(gene_list)
+    stringdb_ids_df = pd.DataFrame(string_ids)
     stringdb_ids_df.queryIndex = stringdb_ids_df.queryIndex.astype(str)
 
-    # ---------- Get String PPI network using the String identifiers ---------------#
+    # Get the PPI data
+    response = _get_ppi_data(list(stringdb_ids_df.stringId.unique()))
+    network_df = pd.DataFrame(response)
 
-    method = "network"
-    request_url = "/".join([STRING_ENDPOINT, output_format, method])
+    if "stringId_A" not in network_df.columns:
+        return pd.DataFrame(), {}
 
-    params = {
-        "identifiers": "%0d".join(list(stringdb_ids_df.stringId.unique())),  # your protein
-        "species": 9606,  # species NCBI identifier
-        "caller_identity": "github.com",  # your app name
-    }
-
-    response = requests.post(request_url, data=params)
-    results_contents = response.content.decode("utf-8")
-
-    network_df = pd.read_csv(io.StringIO(results_contents), sep="\t")
-
-    # ---------- Add the interactions of each protein (row) to a new column ('stringdb') ---------------#
-
+    # Format the data
     data_df[STRING] = data_df.apply(_format_data, network_df=network_df, axis=1)
 
     # Record the end time
@@ -146,9 +149,6 @@ def get_ppi(bridgedb_df: pd.DataFrame):
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # Calculate the time elapsed
     time_elapsed = str(end_time - start_time)
-    # Add version to metadata file
-
-    string_version = get_version_stringdb()
 
     # Add the datasource, query, query time, and the date to metadata
     string_metadata = {
