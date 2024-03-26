@@ -6,12 +6,13 @@
 import json
 import os
 import unittest
-from unittest.mock import patch, Mock
+from unittest.mock import Mock, patch
+
 import pandas as pd
 
 from pyBiodatafuse.annotators import bgee
 from pyBiodatafuse.annotators.bgee import get_gene_expression, get_version_bgee
-from pyBiodatafuse.constants import BGEE, ANATOMICAL_ENTITIES_LIST
+from pyBiodatafuse.constants import ANATOMICAL_ENTITIES_LIST, BGEE
 
 data_file_folder = os.path.join(os.path.dirname(__file__), "data")
 
@@ -46,7 +47,7 @@ class TestBgee(unittest.TestCase):
             mock_data = json.load(f)
 
         mock_data_list = []
-        for i in range(len(ANATOMICAL_ENTITIES_LIST)):
+        for _ in range(len(ANATOMICAL_ENTITIES_LIST)):
             for json_response in mock_data:
                 mock_data_list.append(pd.DataFrame.from_dict(json_response))
 

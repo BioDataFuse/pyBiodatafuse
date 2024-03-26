@@ -14,10 +14,10 @@ from SPARQLWrapper import JSON, SPARQLWrapper
 
 from pyBiodatafuse.constants import (
     PUBCHEM,
+    PUBCHEM_ASSAYS_COL,
     PUBCHEM_ENDPOINT,
     PUBCHEM_INPUT_ID,
     PUBCHEM_OUTPUT_DICT,
-    PUBCHEM_ASSAYS_COL,
 )
 from pyBiodatafuse.utils import (
     check_columns_against_constants,

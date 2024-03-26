@@ -12,11 +12,11 @@ from SPARQLWrapper import JSON, SPARQLWrapper
 from SPARQLWrapper.SPARQLExceptions import SPARQLWrapperException
 
 from pyBiodatafuse.constants import (
+    ANATOMICAL_ENTITIES_LIST,
     BGEE,
     BGEE_ENDPOINT,
     BGEE_INPUT_ID,
     BGEE_OUTPUT_DICT,
-    ANATOMICAL_ENTITIES_LIST,
 )
 from pyBiodatafuse.utils import (
     check_columns_against_constants,

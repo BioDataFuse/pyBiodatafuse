@@ -4,7 +4,6 @@
 """Python file for queriying StringDB (https://string-db.org/)."""
 
 import datetime
-from ast import literal_eval
 import logging
 import warnings
 
@@ -78,7 +77,7 @@ def _format_data(row, network_df):
 
 
 def get_string_ids(gene_list: list) -> str:
-    """Get the String identifiers of the gene list"""
+    """Get the String identifiers of the gene list."""
     params = {
         "identifiers": "\r".join(gene_list),  # your protein list
         "species": 9606,  # species NCBI identifier
@@ -91,7 +90,7 @@ def get_string_ids(gene_list: list) -> str:
 
 
 def _get_ppi_data(gene_ids: list) -> pd.DataFrame:
-    """Get the String PPI iteractions of the gene list"""
+    """Get the String PPI iteractions of the gene list."""
     params = {
         "identifiers": "%0d".join(gene_ids),  # your protein
         "species": 9606,  # species NCBI identifier

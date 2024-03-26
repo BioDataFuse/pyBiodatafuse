@@ -4,7 +4,7 @@
 """Tests for the WikiPathways annotator."""
 
 import unittest
-from unittest.mock import patch, Mock
+from unittest.mock import Mock, patch
 
 import pandas as pd
 from numpy import nan

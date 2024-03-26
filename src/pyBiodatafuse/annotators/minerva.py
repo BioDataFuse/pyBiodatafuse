@@ -204,6 +204,8 @@ def get_gene_minerva_pathways(
     map_url, map_components = get_minerva_components(
         map_name=map_name, get_elements=get_elements, get_reactions=get_reactions
     )
+    minerva_version = get_version_minerva(map_endpoint=map_url)
+
     map_elements = map_components.get("map_elements", {})
     models = map_components.get("models", {})
 
@@ -293,8 +295,7 @@ def get_gene_minerva_pathways(
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # Calculate the time elapsed
     time_elapsed = str(end_time - start_time)
-    # Add version to metadata file
-    minerva_version = get_version_minerva(map_endpoint=map_url)
+
     # Add the datasource, query, query time, and the date to metadata
     minerva_metadata = {
         "datasource": MINERVA,

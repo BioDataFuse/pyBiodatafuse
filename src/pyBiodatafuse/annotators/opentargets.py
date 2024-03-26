@@ -558,19 +558,25 @@ def get_gene_compound_interactions(
         drug_df.rename(columns={"mechanismOfAction": "relation"}, inplace=True)
 
         drug_df["drugbank_id"] = drug_df["cross_references"].apply(
-            lambda x: next((ref["reference"][0] for ref in x if ref["source"] == "drugbank"), None)
-            if x
-            else None
+            lambda x: (
+                next((ref["reference"][0] for ref in x if ref["source"] == "drugbank"), None)
+                if x
+                else None
+            )
         )
         drug_df["compound_cid"] = drug_df["cross_references"].apply(
-            lambda x: next((ref["reference"][0] for ref in x if ref["source"] == "PubChem"), None)
-            if x
-            else None
+            lambda x: (
+                next((ref["reference"][0] for ref in x if ref["source"] == "PubChem"), None)
+                if x
+                else None
+            )
         )
         drug_df[["adverse_effect_count", "adverse_effect"]] = drug_df.apply(
-            lambda row: pd.Series([row["adverse_events"]["count"], row["adverse_events"]["rows"]])
-            if row["adverse_events"]
-            else pd.Series([None, None]),
+            lambda row: (
+                pd.Series([row["adverse_events"]["count"], row["adverse_events"]["rows"]])
+                if row["adverse_events"]
+                else pd.Series([None, None])
+            ),
             axis=1,
         )
 

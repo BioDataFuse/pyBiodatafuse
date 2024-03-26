@@ -3,17 +3,15 @@
 
 """Tests for the MINERVA annotator."""
 
-import os
 import json
+import os
 import unittest
-from unittest.mock import patch, Mock
+from unittest.mock import Mock, patch
+
 import pandas as pd
 
 from pyBiodatafuse.annotators import minerva
-from pyBiodatafuse.annotators.minerva import (
-    get_version_minerva,
-    get_gene_minerva_pathways,
-)
+from pyBiodatafuse.annotators.minerva import get_gene_minerva_pathways, get_version_minerva
 from pyBiodatafuse.constants import MINERVA
 
 data_file_folder = os.path.join(os.path.dirname(__file__), "data")

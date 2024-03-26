@@ -42,7 +42,6 @@ class TestString(unittest.TestCase):
                     "ncbiTaxonId": 9606,
                     "taxonName": "Homo sapiens",
                     "preferredName": "ALG2",
-                    "annotation": "Alpha-1,3/1,6-mannosyltransferase ALG2; Mannosylates Man(2)GlcNAc(2)-dolichol diphosphate and Man(1)GlcNAc(2)-dolichol diphosphate to form Man(3)GlcNAc(2)-dolichol diphosphate; Belongs to the glycosyltransferase group 1 family. Glycosyltransferase 4 subfamily.",
                 },
                 {
                     "queryIndex": 1,
@@ -51,7 +50,6 @@ class TestString(unittest.TestCase):
                     "ncbiTaxonId": 9606,
                     "taxonName": "Homo sapiens",
                     "preferredName": "CHRNA1",
-                    "annotation": "Acetylcholine receptor subunit alpha; After binding acetylcholine, the AChR responds by an extensive change in conformation that affects all subunits and leads to opening of an ion-conducting channel across the plasma membrane.",
                 },
                 {
                     "queryIndex": 2,
@@ -60,7 +58,6 @@ class TestString(unittest.TestCase):
                     "ncbiTaxonId": 9606,
                     "taxonName": "Homo sapiens",
                     "preferredName": "ALG14",
-                    "annotation": "UDP-N-acetylglucosamine transferase subunit ALG14 homolog; May be involved in protein N-glycosylation. May play a role in the second step of the dolichol-linked oligosaccharide pathway. May anchor the catalytic subunit ALG13 to the ER. Belongs to the ALG14 family.",
                 },
             ]
         )
