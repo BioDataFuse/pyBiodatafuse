@@ -134,22 +134,25 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
     for gene_list_str in query_gene_lists:
         query_count += 1
 
-        sparql_query_template = Template(sparql_query)
+        gene_ids = gene_list_str.split(" ")
 
-        for anatomical_entity in anatomical_entities_list:
-            # for the query text, need to put each name in between quotes
-            anatomical_entity = f'"{anatomical_entity}"'
-            substit_dict = dict(gene_list=gene_list_str, anat_entities_list=anatomical_entity)
-            sparql_query_template_sub = sparql_query_template.substitute(substit_dict)
+        for gene_id in gene_ids:
+            sparql_query_template = Template(sparql_query)
 
-            sparql.setQuery(sparql_query_template_sub)
-            res = sparql.queryAndConvert()
+            for anatomical_entity in anatomical_entities_list:
+                # for the query text, need to put each name in between quotes
+                anatomical_entity = f'"{anatomical_entity}"'
+                substit_dict = dict(gene_list=gene_id, anat_entities_list=anatomical_entity)
+                sparql_query_template_sub = sparql_query_template.substitute(substit_dict)
 
-            df = pd.DataFrame(res["results"]["bindings"])
+                sparql.setQuery(sparql_query_template_sub)
+                res = sparql.queryAndConvert()
 
-            df = df.applymap(lambda x: x["value"])
+                df = pd.DataFrame(res["results"]["bindings"])
 
-            intermediate_df = pd.concat([intermediate_df, df], ignore_index=True)
+                df = df.applymap(lambda x: x["value"])
+
+                intermediate_df = pd.concat([intermediate_df, df], ignore_index=True)
 
     # Record the end time
     end_time = datetime.datetime.now()
