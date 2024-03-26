@@ -176,7 +176,7 @@ PUBCHEM_OUTPUT_DICT = {
 }
 OUTCOME = "active|inactive"
 INCHI = "InChI"
-PUBCHEM_Assays_COL = f"{PUBCHEM}_Assays"
+PUBCHEM_ASSAYS_COL = f"{PUBCHEM}_Assays"
 
 # Wikidata
 # TODO: to be checked

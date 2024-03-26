@@ -51,8 +51,7 @@ def list_projects() -> pd.DataFrame:
     :returns: a dataFrame containing url, names and IDs from the different projects in MINERVA plattform
     """
     base_endpoint = f"{MINERVA_ENDPOINT}/machines/"
-    response = requests.get(base_endpoint).json()
-    projects = response
+    projects = requests.get(base_endpoint).json()
     projects_ids = projects["pageContent"]
 
     project_df = pd.DataFrame()
@@ -197,6 +196,8 @@ def get_gene_minerva_pathways(
         "Simple molecule",
     ], "Incorrect Input_type provided. Please provide a valid input_type."
 
+    data_df = get_identifier_of_interest(bridgedb_df, MINERVA_INPUT_ID)
+
     # Record the start time
     start_time = datetime.datetime.now()
 
@@ -206,57 +207,52 @@ def get_gene_minerva_pathways(
     map_elements = map_components.get("map_elements", {})
     models = map_components.get("models", {})
 
-    data_df = get_identifier_of_interest(bridgedb_df, MINERVA_INPUT_ID)
-
     names = []
     for value in models:
         name = value["name"]
         names.append(name)
 
-    row = 1
     intermediate_df = pd.DataFrame()
-    for x in names:
-        index_to_extract = row
-        row = 1 + row
 
-        list_at_index = list(map_elements.values())[index_to_extract - 1]
-        common_keys = ["type", "references", "symbol", "name", "ensembl"]
+    for idx, pathway_name in enumerate(names):
+        pathway_data = list(map_elements.values())[idx]
+        interested_info = ["type", "references", "symbol", "name", "ensembl"]
+
         # Initialize empty lists to store values for each common key
-        type = []
+        entity_type = []
         refs = []
         symbol = []
-        name = []
         ensembl = []
 
         # Iterate through the list of dicts
-        for d in list_at_index:
-            for key in common_keys:
-                if key in d:
-                    if key == "type":
-                        type.append(d[key])
-                    elif key == "references":
-                        refs.append(d[key])
-                        ensembl_id = None
-                        for p in d[key]:
-                            if p["type"] == "ENSEMBL":
-                                ensembl_id = p["resource"]
-                        try:
-                            ensembl.append(ensembl_id)
-                        except Exception:
-                            ensembl_id = None
-                    elif key == "symbol":
-                        symbol.append(d[key])
-                    elif key == "name":
-                        name.append(d[key])
+        for data in pathway_data:
+            for col in interested_info:
+                if col not in data:
+                    continue
+
+                value = data[col]
+
+                if col == "type":
+                    entity_type.append(value)
+                elif col == "symbol":
+                    symbol.append(value)
+                elif col == "references":
+                    refs.append(value)
+
+                    ensembl_id = None
+                    for p in value:
+                        if p["type"] == "ENSEMBL":
+                            ensembl_id = p["resource"]
+                    ensembl.append(ensembl_id)
 
         data = pd.DataFrame()
         data["symbol"] = symbol
-        data["pathway_label"] = x
+        data["pathway_label"] = pathway_name
         data["pathway_gene_count"] = len(symbol) - symbol.count(None)
-        data["pathway_id"] = models[index_to_extract - 1]["idObject"]
+        data["pathway_id"] = models[idx]["idObject"]
         data["refs"] = refs
         data["ensembl"] = ensembl
-        data["type"] = type
+        data["type"] = entity_type
 
         intermediate_df = pd.concat([intermediate_df, data], ignore_index=True)
         intermediate_df = intermediate_df[intermediate_df["type"] == input_type]
