@@ -483,13 +483,13 @@ def add_molmedb_gene_inhibitor(g, gene_node_label, annot_list):
             if not pd.isna(annot[MOLMEDB_COMPOUND_NODE_MAIN_LABEL]):
                 annot_node_label = annot[MOLMEDB_COMPOUND_NODE_MAIN_LABEL]
             else:
-                annot_node_label = annot["chebi_id"]
+                annot_node_label = annot["molmedb_id"]
             annot_node_attrs = MOLMEDB_COMPOUND_NODE_ATTRS.copy()
             annot_node_attrs["name"] = annot["compound_name"]
             if not pd.isna(annot[MOLMEDB_COMPOUND_NODE_MAIN_LABEL]):
                 annot_node_attrs["id"] = annot[MOLMEDB_COMPOUND_NODE_MAIN_LABEL]
             else:
-                annot_node_attrs["id"] = annot["chebi_id"]
+                annot_node_attrs["id"] = annot["molmedb_id"]
             annot_node_attrs["MolMeDB_id"] = annot["molmedb_id"]
             if not pd.isna(annot["chebi_id"]):
                 annot_node_attrs["ChEBI_id"] = annot["chebi_id"]
@@ -653,27 +653,29 @@ def networkx_graph(fuse_df: pd.DataFrame, drug_disease=None):
     }
 
     for _i, row in fuse_df.iterrows():
-        gene_node_label = row["identifier"]
-        gene_node_attrs = {
-            "source": "BridgeDB",
-            "name": row["identifier"],
-            "id": row["target"],
-            "labels": "Gene",
-            row["target.source"]: row["target"],
-        }
+        if pd.notna(row["identifier"]) and pd.notna(row["target"]):
 
-        for c in dea_columns:
-            gene_node_attrs[c[:-4]] = row[c]
+            gene_node_label = row["identifier"]
+            gene_node_attrs = {
+                "source": "BridgeDB",
+                "name": row["identifier"],
+                "id": row["target"],
+                "labels": "Gene",
+                row["target.source"]: row["target"],
+            }
 
-        g.add_node(gene_node_label, attr_dict=gene_node_attrs)
+            for c in dea_columns:
+                gene_node_attrs[c[:-4]] = row[c]
 
-        for annot_key in func_dict:
-            if annot_key in row:
-                annot_list = json.loads(json.dumps(row[annot_key]))
-                if not isinstance(annot_list, list):
-                    annot_list = []
+            g.add_node(gene_node_label, attr_dict=gene_node_attrs)
 
-                func_dict[annot_key](g, gene_node_label, annot_list)
+            for annot_key in func_dict:
+                if annot_key in row:
+                    annot_list = json.loads(json.dumps(row[annot_key]))
+                    if not isinstance(annot_list, list):
+                        annot_list = []
+
+                    func_dict[annot_key](g, gene_node_label, annot_list)
 
     if STRING in row:
         for _i, row in fuse_df.iterrows():
