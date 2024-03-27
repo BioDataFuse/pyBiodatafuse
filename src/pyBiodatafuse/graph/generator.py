@@ -61,6 +61,7 @@ from pyBiodatafuse.constants import (
     PUBCHEM_NODE_ATTRS,
     PUBCHEM_NODE_MAIN_LABEL,
     STRING,
+    STRING_EDGE_ATTRS,
     STRING_EDGE_LABEL,
     STRING_EDGE_MAIN_LABEL,
     WIKIPATHWAYS,
@@ -584,14 +585,17 @@ def add_ppi_subgraph(g, gene_node_label, annot_list):
     :returns: a NetworkX MultiDiGraph
     """
     for ppi in annot_list:
-        edge_attrs = {"source": STRING, "label": STRING_EDGE_LABEL, "score": ppi.get("score")}
-
+        print("ppi: ",ppi)
+        edge_attrs = STRING_EDGE_ATTRS.copy()
+        edge_attrs["score"] = ppi["score"]
+        
         edge_hash = hash(frozenset(edge_attrs.items()))
         edge_attrs["edge_hash"] = edge_hash
         edge_data = g.get_edge_data(gene_node_label, ppi[STRING_EDGE_MAIN_LABEL])
+        
+        print("edge_data: ", edge_data)
         edge_data = {} if edge_data is None else edge_data
         node_exists = [x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash]
-
         if len(node_exists) == 0:
             g.add_edge(
                 gene_node_label,
@@ -654,7 +658,6 @@ def networkx_graph(fuse_df: pd.DataFrame, drug_disease=None):
 
     for _i, row in fuse_df.iterrows():
         if pd.notna(row["identifier"]) and pd.notna(row["target"]):
-
             gene_node_label = row["identifier"]
             gene_node_attrs = {
                 "source": "BridgeDB",
@@ -677,15 +680,16 @@ def networkx_graph(fuse_df: pd.DataFrame, drug_disease=None):
 
                     func_dict[annot_key](g, gene_node_label, annot_list)
 
-    if STRING in row:
-        for _i, row in fuse_df.iterrows():
-            ppi_list = json.loads(json.dumps(row[STRING]))
+            if STRING in row:
+                gene_node_label = row["identifier"]
+                ppi_list = json.loads(json.dumps(row[STRING]))
 
-            if ppi_list is None:
-                ppi_list = []
+                if ppi_list is None:
+                    ppi_list = []
 
-            if not isinstance(ppi_list, float):
-                add_ppi_subgraph(g, gene_node_label, ppi_list)
+                if not isinstance(ppi_list, float):
+                    print(ppi_list)
+                    add_ppi_subgraph(g, gene_node_label, ppi_list)
     # TODO:
     # if drug_disease is not None:
     #     fuse_df = pd.concat(

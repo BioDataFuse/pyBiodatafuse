@@ -380,8 +380,11 @@ PUBCHEM_EDGE_ATTRS = {
 # TODO: to be checked
 STRING_EDGE_MAIN_LABEL = "stringdb_link_to"
 STRING_EDGE_LABEL = "StringDB_ppi_interaction"
-
-# Assay node
+STRING_EDGE_ATTRS = {
+    "source": STRING,
+    "score": None,
+    "label": STRING_EDGE_LABEL,
+}
 
 # Wikidata
 # TODO: to be checked
