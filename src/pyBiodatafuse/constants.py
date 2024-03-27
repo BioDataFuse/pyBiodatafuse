@@ -143,6 +143,7 @@ MOLMEDB_GENE_OUTPUT_DICT = {
     "source_doi": str,
     "source_pmid": str,
     "chebi_id": str,
+    "pdb_ligand_id": str,
     "drugbank_id": str,
 }
 MOLMEDB_ID = "MM"
@@ -167,7 +168,6 @@ PUBCHEM_OUTPUT_DICT = {
     "compound_name": str,
     "SMILES": str,
     "InChI": str,
-    "pubchem_assay_id": str,
 }
 OUTCOME = "active|inactive"
 INCHI = "InChI"
@@ -177,9 +177,9 @@ PUBCHEM_ASSAYS_COL = f"{PUBCHEM}_Assays"
 # STRING
 # TODO: to be checked
 
-
 # Wikidata
 # TODO: to be checked
+
 
 # Node and edge main lable and attributes for each data source
 # Anatomical entity node
@@ -325,7 +325,7 @@ OPENTARGETS_SIDE_EFFECT_NODE_MAIN_LABEL = "adverse_effect"
 OPENTARGETS_SIDE_EFFECT_NODE_ATTRS = {
     "source": OPENTARGETS,
     "name": None,
-    "labels": OPENTARGETS_SIDE_EFFECT_NODE_MAIN_LABEL,
+    "labels": OPENTARGETS_SIDE_EFFECT_NODE_LABELS,
 }
 OPENTARGETS_SIDE_EFFECT_EDGE_LABEL = "has_side_effect"
 
