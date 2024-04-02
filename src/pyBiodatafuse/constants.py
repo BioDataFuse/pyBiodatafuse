@@ -197,6 +197,7 @@ BGEE_NODE_ATTRS = {
 BGEE_EDGE_LABEL = "expressed_in"
 BGEE_EDGE_ATTRS = {
     "source": BGEE,
+    "expression_level": None,
     "confidence_level_name": None,
     "confidence_level_id": None,
     "label": BGEE_EDGE_LABEL,
@@ -295,7 +296,7 @@ OPENTARGETS_GO_NODE_ATTRS = {
     "source": OPENTARGETS,
     "name": None,
     "id": None,
-    "type": None,
+    "categories": None,
     "labels": OPENTARGETS_GO_NODE_LABELS,
 }
 OPENTARGETS_GO_EDGE_LABEL = "part_of"
@@ -376,6 +377,7 @@ PUBCHEM_EDGE_ATTRS = {
 # TODO: to be checked
 
 # Gene Node
+GENE_NODE_LABELS = "Gene"
 # STRING
 # TODO: to be checked
 STRING_EDGE_MAIN_LABEL = "stringdb_link_to"
