@@ -378,7 +378,7 @@ def add_opentargets_go_subgraph(g, gene_node_label, annot_list):
         annot_node_attrs = OPENTARGETS_GO_NODE_ATTRS.copy()
         annot_node_attrs["name"] = annot["go_name"]
         annot_node_attrs["id"] = annot["go_id"]
-        annot_node_attrs["categories"] = annot["go_type"]
+        annot_node_attrs["category"] = annot["go_type"]
 
         g.add_node(annot_node_label, attr_dict=annot_node_attrs)
 

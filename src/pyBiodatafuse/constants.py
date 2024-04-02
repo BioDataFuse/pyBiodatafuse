@@ -296,7 +296,7 @@ OPENTARGETS_GO_NODE_ATTRS = {
     "source": OPENTARGETS,
     "name": None,
     "id": None,
-    "categories": None,
+    "category": None,
     "labels": OPENTARGETS_GO_NODE_LABELS,
 }
 OPENTARGETS_GO_EDGE_LABEL = "part_of"
