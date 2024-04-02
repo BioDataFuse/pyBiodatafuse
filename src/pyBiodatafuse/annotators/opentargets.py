@@ -581,6 +581,8 @@ def get_gene_compound_interactions(
         )
 
         intermediate_df = pd.concat([intermediate_df, drug_df], ignore_index=True)
+        intermediate_df.drop(["cross_references", "adverse_events"], axis=1, inplace=True)
+        intermediate_df = intermediate_df.drop_duplicates(subset=[col for col in intermediate_df.columns if col != "adverse_effect"])
 
     if intermediate_df.empty:
         return pd.DataFrame(), opentargets_version
