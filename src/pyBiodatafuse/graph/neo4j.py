@@ -48,7 +48,7 @@ def exporter(
 
     # write network to neo4j's import folder temporarily
     filename = network_name + ".graphml"
-    nx.write_graphml(network, path_to_neo4j_import_folder + filename)
+    nx.write_graphml(network, path_to_neo4j_import_folder + filename, named_key_ids=True)
 
     # connect to database
     with GraphDatabase.driver(uri_info, auth=auth_info) as driver:
