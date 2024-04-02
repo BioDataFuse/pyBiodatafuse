@@ -1,0 +1,924 @@
+[
+    {
+        "head": {
+            "link": [],
+            "vars": [
+                "gene",
+                "ensembl_id",
+                "gene_id",
+                "anatomical_entity_id",
+                "anatomical_entity_name",
+                "developmental_stage_id",
+                "developmental_stage_name",
+                "expression_level",
+                "confidence_level_id",
+                "confidence_level_name"
+            ]
+        },
+        "results": {
+            "distinct": "False",
+            "ordered": "True",
+            "bindings": [
+                {
+                    "gene": {
+                        "type": "uri",
+                        "value": "http: //omabrowser.org/ontology/oma#GENE_ENSG00000188157"
+                    },
+                    "ensembl_id": {
+                        "type": "literal",
+                        "value": "ENSG00000188157"
+                    },
+                    "gene_id": {
+                        "type": "uri",
+                        "value": "http://rdf.ebi.ac.uk/resource/ensembl/ENSG00000188157"
+                    },
+                    "anatomical_entity_id": {
+                        "type": "uri",
+                        "value": "http://purl.obolibrary.org/obo/UBERON_0000178"
+                    },
+                    "anatomical_entity_name": {
+                        "type": "literal",
+                        "value": "blood"
+                    },
+                    "developmental_stage_id": {
+                        "type": "uri",
+                        "value": "http://purl.obolibrary.org/obo/UBERON_0000104"
+                    },
+                    "developmental_stage_name": {
+                        "type": "literal",
+                        "value": "life cycle"
+                    },
+                    "expression_level": {
+                        "type": "typed-literal",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#double",
+                        "value": "67.3533"
+                    },
+                    "confidence_level_id": {
+                        "type": "uri",
+                        "value": "http://purl.obolibrary.org/obo/CIO_0000029"
+                    },
+                    "confidence_level_name": {
+                        "type": "literal",
+                        "value": "high confidence level"
+                    }
+                },
+                {
+                    "gene": {
+                        "type": "uri",
+                        "value": "http://omabrowser.org/ontology/oma#GENE_ENSG00000188157"
+                    },
+                    "ensembl_id": {
+                        "type": "literal",
+                        "value": "ENSG00000188157"
+                    },
+                    "gene_id": {
+                        "type": "uri",
+                        "value": "http://rdf.ebi.ac.uk/resource/ensembl/ENSG00000188157"
+                    },
+                    "anatomical_entity_id": {
+                        "type": "uri",
+                        "value": "http://purl.obolibrary.org/obo/UBERON_0000178"
+                    },
+                    "anatomical_entity_name": {
+                        "type": "literal",
+                        "value": "blood"
+                    },
+                    "developmental_stage_id": {
+                        "type": "uri",
+                        "value": "http://purl.obolibrary.org/obo/UBERON_0000104"
+                    },
+                    "developmental_stage_name": {
+                        "type": "literal",
+                        "value": "life cycle"
+                    },
+                    "expression_level": {
+                        "type": "typed-literal",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#double",
+                        "value": "67.3533"
+                    },
+                    "confidence_level_id": {
+                        "type": "uri",
+                        "value": "http://purl.obolibrary.org/obo/CIO_0000029"
+                    },
+                    "confidence_level_name": {
+                        "type": "literal",
+                        "value": "high confidence level"
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "head": {
+            "link": [],
+            "vars": [
+                "gene",
+                "ensembl_id",
+                "gene_id",
+                "anatomical_entity_id",
+                "anatomical_entity_name",
+                "developmental_stage_id",
+                "developmental_stage_name",
+                "expression_level",
+                "confidence_level_id",
+                "confidence_level_name"
+            ]
+        },
+        "results": {
+            "distinct": "False",
+            "ordered": "True",
+            "bindings": []
+        }
+    },
+    {
+        "head": {
+            "link": [],
+            "vars": [
+                "gene",
+                "ensembl_id",
+                "gene_id",
+                "anatomical_entity_id",
+                "anatomical_entity_name",
+                "developmental_stage_id",
+                "developmental_stage_name",
+                "expression_level",
+                "confidence_level_id",
+                "confidence_level_name"
+            ]
+        },
+        "results": {
+            "distinct": "False",
+            "ordered": "True",
+            "bindings": []
+        }
+    },
+    {
+        "head": {
+            "link": [],
+            "vars": [
+                "gene",
+                "ensembl_id",
+                "gene_id",
+                "anatomical_entity_id",
+                "anatomical_entity_name",
+                "developmental_stage_id",
+                "developmental_stage_name",
+                "expression_level",
+                "confidence_level_id",
+                "confidence_level_name"
+            ]
+        },
+        "results": {
+            "distinct": "False",
+            "ordered": "True",
+            "bindings": []
+        }
+    },
+    {
+        "head": {
+            "link": [],
+            "vars": [
+                "gene",
+                "ensembl_id",
+                "gene_id",
+                "anatomical_entity_id",
+                "anatomical_entity_name",
+                "developmental_stage_id",
+                "developmental_stage_name",
+                "expression_level",
+                "confidence_level_id",
+                "confidence_level_name"
+            ]
+        },
+        "results": {
+            "distinct": "False",
+            "ordered": "True",
+            "bindings": []
+        }
+    },
+    {
+        "head": {
+            "link": [],
+            "vars": [
+                "gene",
+                "ensembl_id",
+                "gene_id",
+                "anatomical_entity_id",
+                "anatomical_entity_name",
+                "developmental_stage_id",
+                "developmental_stage_name",
+                "expression_level",
+                "confidence_level_id",
+                "confidence_level_name"
+            ]
+        },
+        "results": {
+            "distinct": "False",
+            "ordered": "True",
+            "bindings": []
+        }
+    },
+    {
+        "head": {
+            "link": [],
+            "vars": [
+                "gene",
+                "ensembl_id",
+                "gene_id",
+                "anatomical_entity_id",
+                "anatomical_entity_name",
+                "developmental_stage_id",
+                "developmental_stage_name",
+                "expression_level",
+                "confidence_level_id",
+                "confidence_level_name"
+            ]
+        },
+        "results": {
+            "distinct": "False",
+            "ordered": "True",
+            "bindings": []
+        }
+    },
+    {
+        "head": {
+            "link": [],
+            "vars": [
+                "gene",
+                "ensembl_id",
+                "gene_id",
+                "anatomical_entity_id",
+                "anatomical_entity_name",
+                "developmental_stage_id",
+                "developmental_stage_name",
+                "expression_level",
+                "confidence_level_id",
+                "confidence_level_name"
+            ]
+        },
+        "results": {
+            "distinct": "False",
+            "ordered": "True",
+            "bindings": []
+        }
+    },
+    {
+        "head": {
+            "link": [],
+            "vars": [
+                "gene",
+                "ensembl_id",
+                "gene_id",
+                "anatomical_entity_id",
+                "anatomical_entity_name",
+                "developmental_stage_id",
+                "developmental_stage_name",
+                "expression_level",
+                "confidence_level_id",
+                "confidence_level_name"
+            ]
+        },
+        "results": {
+            "distinct": "False",
+            "ordered": "True",
+            "bindings": []
+        }
+    },
+    {
+        "head": {
+            "link": [],
+            "vars": [
+                "gene",
+                "ensembl_id",
+                "gene_id",
+                "anatomical_entity_id",
+                "anatomical_entity_name",
+                "developmental_stage_id",
+                "developmental_stage_name",
+                "expression_level",
+                "confidence_level_id",
+                "confidence_level_name"
+            ]
+        },
+        "results": {
+            "distinct": "False",
+            "ordered": "True",
+            "bindings": []
+        }
+    },
+    {
+        "head": {
+            "link": [],
+            "vars": [
+                "gene",
+                "ensembl_id",
+                "gene_id",
+                "anatomical_entity_id",
+                "anatomical_entity_name",
+                "developmental_stage_id",
+                "developmental_stage_name",
+                "expression_level",
+                "confidence_level_id",
+                "confidence_level_name"
+            ]
+        },
+        "results": {
+            "distinct": "False",
+            "ordered": "True",
+            "bindings": []
+        }
+    },
+    {
+        "head": {
+            "link": [],
+            "vars": [
+                "gene",
+                "ensembl_id",
+                "gene_id",
+                "anatomical_entity_id",
+                "anatomical_entity_name",
+                "developmental_stage_id",
+                "developmental_stage_name",
+                "expression_level",
+                "confidence_level_id",
+                "confidence_level_name"
+            ]
+        },
+        "results": {
+            "distinct": "False",
+            "ordered": "True",
+            "bindings": []
+        }
+    },
+    {
+        "head": {
+            "link": [],
+            "vars": [
+                "gene",
+                "ensembl_id",
+                "gene_id",
+                "anatomical_entity_id",
+                "anatomical_entity_name",
+                "developmental_stage_id",
+                "developmental_stage_name",
+                "expression_level",
+                "confidence_level_id",
+                "confidence_level_name"
+            ]
+        },
+        "results": {
+            "distinct": "False",
+            "ordered": "True",
+            "bindings": []
+        }
+    },
+    {
+        "head": {
+            "link": [],
+            "vars": [
+                "gene",
+                "ensembl_id",
+                "gene_id",
+                "anatomical_entity_id",
+                "anatomical_entity_name",
+                "developmental_stage_id",
+                "developmental_stage_name",
+                "expression_level",
+                "confidence_level_id",
+                "confidence_level_name"
+            ]
+        },
+        "results": {
+            "distinct": "False",
+            "ordered": "True",
+            "bindings": []
+        }
+    },
+    {
+        "head": {
+            "link": [],
+            "vars": [
+                "gene",
+                "ensembl_id",
+                "gene_id",
+                "anatomical_entity_id",
+                "anatomical_entity_name",
+                "developmental_stage_id",
+                "developmental_stage_name",
+                "expression_level",
+                "confidence_level_id",
+                "confidence_level_name"
+            ]
+        },
+        "results": {
+            "distinct": "False",
+            "ordered": "True",
+            "bindings": []
+        }
+    },
+    {
+        "head": {
+            "link": [],
+            "vars": [
+                "gene",
+                "ensembl_id",
+                "gene_id",
+                "anatomical_entity_id",
+                "anatomical_entity_name",
+                "developmental_stage_id",
+                "developmental_stage_name",
+                "expression_level",
+                "confidence_level_id",
+                "confidence_level_name"
+            ]
+        },
+        "results": {
+            "distinct": "False",
+            "ordered": "True",
+            "bindings": []
+        }
+    },
+    {
+        "head": {
+            "link": [],
+            "vars": [
+                "gene",
+                "ensembl_id",
+                "gene_id",
+                "anatomical_entity_id",
+                "anatomical_entity_name",
+                "developmental_stage_id",
+                "developmental_stage_name",
+                "expression_level",
+                "confidence_level_id",
+                "confidence_level_name"
+            ]
+        },
+        "results": {
+            "distinct": "False",
+            "ordered": "True",
+            "bindings": []
+        }
+    },
+    {
+        "head": {
+            "link": [],
+            "vars": [
+                "gene",
+                "ensembl_id",
+                "gene_id",
+                "anatomical_entity_id",
+                "anatomical_entity_name",
+                "developmental_stage_id",
+                "developmental_stage_name",
+                "expression_level",
+                "confidence_level_id",
+                "confidence_level_name"
+            ]
+        },
+        "results": {
+            "distinct": "False",
+            "ordered": "True",
+            "bindings": [
+                {
+                    "gene": {
+                        "type": "uri",
+                        "value": "http: //omabrowser.org/ontology/oma#GENE_ENSG00000163635"
+                    },
+                    "ensembl_id": {
+                        "type": "literal",
+                        "value": "ENSG00000163635"
+                    },
+                    "gene_id": {
+                        "type": "uri",
+                        "value": "http://rdf.ebi.ac.uk/resource/ensembl/ENSG00000163635"
+                    },
+                    "anatomical_entity_id": {
+                        "type": "uri",
+                        "value": "http://purl.obolibrary.org/obo/UBERON_0000178"
+                    },
+                    "anatomical_entity_name": {
+                        "type": "literal",
+                        "value": "blood"
+                    },
+                    "developmental_stage_id": {
+                        "type": "uri",
+                        "value": "http://purl.obolibrary.org/obo/UBERON_0000104"
+                    },
+                    "developmental_stage_name": {
+                        "type": "literal",
+                        "value": "life cycle"
+                    },
+                    "expression_level": {
+                        "type": "typed-literal",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#double",
+                        "value": "91.3264"
+                    },
+                    "confidence_level_id": {
+                        "type": "uri",
+                        "value": "http://purl.obolibrary.org/obo/CIO_0000029"
+                    },
+                    "confidence_level_name": {
+                        "type": "literal",
+                        "value": "high confidence level"
+                    }
+                },
+                {
+                    "gene": {
+                        "type": "uri",
+                        "value": "http://omabrowser.org/ontology/oma#GENE_ENSG00000163635"
+                    },
+                    "ensembl_id": {
+                        "type": "literal",
+                        "value": "ENSG00000163635"
+                    },
+                    "gene_id": {
+                        "type": "uri",
+                        "value": "http://rdf.ebi.ac.uk/resource/ensembl/ENSG00000163635"
+                    },
+                    "anatomical_entity_id": {
+                        "type": "uri",
+                        "value": "http://purl.obolibrary.org/obo/UBERON_0000178"
+                    },
+                    "anatomical_entity_name": {
+                        "type": "literal",
+                        "value": "blood"
+                    },
+                    "developmental_stage_id": {
+                        "type": "uri",
+                        "value": "http://purl.obolibrary.org/obo/UBERON_0000104"
+                    },
+                    "developmental_stage_name": {
+                        "type": "literal",
+                        "value": "life cycle"
+                    },
+                    "expression_level": {
+                        "type": "typed-literal",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#double",
+                        "value": "91.3264"
+                    },
+                    "confidence_level_id": {
+                        "type": "uri",
+                        "value": "http://purl.obolibrary.org/obo/CIO_0000029"
+                    },
+                    "confidence_level_name": {
+                        "type": "literal",
+                        "value": "high confidence level"
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "head": {
+            "link": [],
+            "vars": [
+                "gene",
+                "ensembl_id",
+                "gene_id",
+                "anatomical_entity_id",
+                "anatomical_entity_name",
+                "developmental_stage_id",
+                "developmental_stage_name",
+                "expression_level",
+                "confidence_level_id",
+                "confidence_level_name"
+            ]
+        },
+        "results": {
+            "distinct": "False",
+            "ordered": "True",
+            "bindings": []
+        }
+    },
+    {
+        "head": {
+            "link": [],
+            "vars": [
+                "gene",
+                "ensembl_id",
+                "gene_id",
+                "anatomical_entity_id",
+                "anatomical_entity_name",
+                "developmental_stage_id",
+                "developmental_stage_name",
+                "expression_level",
+                "confidence_level_id",
+                "confidence_level_name"
+            ]
+        },
+        "results": {
+            "distinct": "False",
+            "ordered": "True",
+            "bindings": []
+        }
+    },
+    {
+        "head": {
+            "link": [],
+            "vars": [
+                "gene",
+                "ensembl_id",
+                "gene_id",
+                "anatomical_entity_id",
+                "anatomical_entity_name",
+                "developmental_stage_id",
+                "developmental_stage_name",
+                "expression_level",
+                "confidence_level_id",
+                "confidence_level_name"
+            ]
+        },
+        "results": {
+            "distinct": "False",
+            "ordered": "True",
+            "bindings": []
+        }
+    },
+    {
+        "head": {
+            "link": [],
+            "vars": [
+                "gene",
+                "ensembl_id",
+                "gene_id",
+                "anatomical_entity_id",
+                "anatomical_entity_name",
+                "developmental_stage_id",
+                "developmental_stage_name",
+                "expression_level",
+                "confidence_level_id",
+                "confidence_level_name"
+            ]
+        },
+        "results": {
+            "distinct": "False",
+            "ordered": "True",
+            "bindings": []
+        }
+    },
+    {
+        "head": {
+            "link": [],
+            "vars": [
+                "gene",
+                "ensembl_id",
+                "gene_id",
+                "anatomical_entity_id",
+                "anatomical_entity_name",
+                "developmental_stage_id",
+                "developmental_stage_name",
+                "expression_level",
+                "confidence_level_id",
+                "confidence_level_name"
+            ]
+        },
+        "results": {
+            "distinct": "False",
+            "ordered": "True",
+            "bindings": []
+        }
+    },
+    {
+        "head": {
+            "link": [],
+            "vars": [
+                "gene",
+                "ensembl_id",
+                "gene_id",
+                "anatomical_entity_id",
+                "anatomical_entity_name",
+                "developmental_stage_id",
+                "developmental_stage_name",
+                "expression_level",
+                "confidence_level_id",
+                "confidence_level_name"
+            ]
+        },
+        "results": {
+            "distinct": "False",
+            "ordered": "True",
+            "bindings": []
+        }
+    },
+    {
+        "head": {
+            "link": [],
+            "vars": [
+                "gene",
+                "ensembl_id",
+                "gene_id",
+                "anatomical_entity_id",
+                "anatomical_entity_name",
+                "developmental_stage_id",
+                "developmental_stage_name",
+                "expression_level",
+                "confidence_level_id",
+                "confidence_level_name"
+            ]
+        },
+        "results": {
+            "distinct": "False",
+            "ordered": "True",
+            "bindings": []
+        }
+    },
+    {
+        "head": {
+            "link": [],
+            "vars": [
+                "gene",
+                "ensembl_id",
+                "gene_id",
+                "anatomical_entity_id",
+                "anatomical_entity_name",
+                "developmental_stage_id",
+                "developmental_stage_name",
+                "expression_level",
+                "confidence_level_id",
+                "confidence_level_name"
+            ]
+        },
+        "results": {
+            "distinct": "False",
+            "ordered": "True",
+            "bindings": []
+        }
+    },
+    {
+        "head": {
+            "link": [],
+            "vars": [
+                "gene",
+                "ensembl_id",
+                "gene_id",
+                "anatomical_entity_id",
+                "anatomical_entity_name",
+                "developmental_stage_id",
+                "developmental_stage_name",
+                "expression_level",
+                "confidence_level_id",
+                "confidence_level_name"
+            ]
+        },
+        "results": {
+            "distinct": "False",
+            "ordered": "True",
+            "bindings": []
+        }
+    },
+    {
+        "head": {
+            "link": [],
+            "vars": [
+                "gene",
+                "ensembl_id",
+                "gene_id",
+                "anatomical_entity_id",
+                "anatomical_entity_name",
+                "developmental_stage_id",
+                "developmental_stage_name",
+                "expression_level",
+                "confidence_level_id",
+                "confidence_level_name"
+            ]
+        },
+        "results": {
+            "distinct": "False",
+            "ordered": "True",
+            "bindings": []
+        }
+    },
+    {
+        "head": {
+            "link": [],
+            "vars": [
+                "gene",
+                "ensembl_id",
+                "gene_id",
+                "anatomical_entity_id",
+                "anatomical_entity_name",
+                "developmental_stage_id",
+                "developmental_stage_name",
+                "expression_level",
+                "confidence_level_id",
+                "confidence_level_name"
+            ]
+        },
+        "results": {
+            "distinct": "False",
+            "ordered": "True",
+            "bindings": []
+        }
+    },
+    {
+        "head": {
+            "link": [],
+            "vars": [
+                "gene",
+                "ensembl_id",
+                "gene_id",
+                "anatomical_entity_id",
+                "anatomical_entity_name",
+                "developmental_stage_id",
+                "developmental_stage_name",
+                "expression_level",
+                "confidence_level_id",
+                "confidence_level_name"
+            ]
+        },
+        "results": {
+            "distinct": "False",
+            "ordered": "True",
+            "bindings": []
+        }
+    },
+    {
+        "head": {
+            "link": [],
+            "vars": [
+                "gene",
+                "ensembl_id",
+                "gene_id",
+                "anatomical_entity_id",
+                "anatomical_entity_name",
+                "developmental_stage_id",
+                "developmental_stage_name",
+                "expression_level",
+                "confidence_level_id",
+                "confidence_level_name"
+            ]
+        },
+        "results": {
+            "distinct": "False",
+            "ordered": "True",
+            "bindings": []
+        }
+    },
+    {
+        "head": {
+            "link": [],
+            "vars": [
+                "gene",
+                "ensembl_id",
+                "gene_id",
+                "anatomical_entity_id",
+                "anatomical_entity_name",
+                "developmental_stage_id",
+                "developmental_stage_name",
+                "expression_level",
+                "confidence_level_id",
+                "confidence_level_name"
+            ]
+        },
+        "results": {
+            "distinct": "False",
+            "ordered": "True",
+            "bindings": []
+        }
+    },
+    {
+        "head": {
+            "link": [],
+            "vars": [
+                "gene",
+                "ensembl_id",
+                "gene_id",
+                "anatomical_entity_id",
+                "anatomical_entity_name",
+                "developmental_stage_id",
+                "developmental_stage_name",
+                "expression_level",
+                "confidence_level_id",
+                "confidence_level_name"
+            ]
+        },
+        "results": {
+            "distinct": "False",
+            "ordered": "True",
+            "bindings": []
+        }
+    },
+    {
+        "head": {
+            "link": [],
+            "vars": [
+                "gene",
+                "ensembl_id",
+                "gene_id",
+                "anatomical_entity_id",
+                "anatomical_entity_name",
+                "developmental_stage_id",
+                "developmental_stage_name",
+                "expression_level",
+                "confidence_level_id",
+                "confidence_level_name"
+            ]
+        },
+        "results": {
+            "distinct": "False",
+            "ordered": "True",
+            "bindings": []
+        }
+    }
+]

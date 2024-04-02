@@ -20,7 +20,7 @@ def _replace_graph_attrs(g: nx.MultiDiGraph):
         for k, v in list(g.nodes[node].items()):
             if k == "labels":
                 nx.set_node_attributes(g, {node: {"name": v}})
-                del g.nodes[node]["labels"]
+                # del g.nodes[node]["labels"]
             elif k == "source":
                 nx.set_node_attributes(g, {node: {"datasource": v}})
                 del g.nodes[node]["source"]
@@ -104,16 +104,38 @@ def load_graph(g: nx.MultiDiGraph, network_name: str):
     p4c.styles.create_visual_style(default)
 
     # Define node shape and color mapping
-    column = "node_type"
+    column = "labels"
     values = [
-        "gene",
-        "disease",
-        "gene ontology",
-        "reactome pathways",
-        "drug interactions",
+        "Gene",
+        "Location",
+        "Anatomical Entity",
+        "Disease",
+        "Gene Ontology",
+        "Pathway",
+        "Compound",
+        "Side Effect",
     ]
-    shapes = ["DIAMOND", "RECTANGLE", "OCTAGON", "HEXAGON", "ELLIPSE"]
-    colors = ["#AAFF88", "#B0C4DE", "pink", "yellow", "red"]
+    shapes = [
+        "ELLIPSE",
+        "HEXAGON",
+        "TRIANGLE",
+        "DIAMOND",
+        "PARALLELOGRAM",
+        "ROUND_RECTANGLE",
+        "RECTANGLE",
+        "OCTAGON",
+        "VEE",
+    ]
+    colors = [
+        "#42d4f4",  # Cyan
+        "#aaffc3",  # Mint
+        "#4363d8",  # Blue
+        "#a9a9a9",  # Grey
+        "#bfef45",  # Lime
+        "#3cb44b",  # Green
+        "#9A6324",  # Brown
+        "#800000",  # Maroon
+    ]
 
     # Apply node shape and color mappings
     p4c.set_node_color_mapping(column, values, colors, mapping_type="d", style_name="default")
