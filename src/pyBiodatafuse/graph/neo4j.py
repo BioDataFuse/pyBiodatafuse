@@ -37,10 +37,10 @@ def exporter(
     >> network = nxGraph
     >> uri = "neo4j://localhost:7687"
     >> username = "neo4j"
-    >> paasword = "biodatafuse"
+    >> password = "biodatafuse"
     >> path_to_neo4j_import_folder = "../../neo4j-community-5.13.0/import/"
     >> network_name = "Network"
-    >> importNetworkToCytoscape(network, uri, username, password, path_to_neo4j_import_folder, network_name)
+    >> exporter(network, uri, username, password, path_to_neo4j_import_folder, network_name)
     """
     # credentials
     uri_info = uri
