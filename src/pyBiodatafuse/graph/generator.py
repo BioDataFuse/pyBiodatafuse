@@ -670,6 +670,7 @@ def networkx_graph(fuse_df: pd.DataFrame, drug_disease=None):
 
     if STRING in row:
         for _i, row in fuse_df.iterrows():
+            gene_node_label = row["identifier"]
             ppi_list = json.loads(json.dumps(row[STRING]))
 
             if ppi_list is None:
