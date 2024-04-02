@@ -19,6 +19,7 @@ from pyBiodatafuse.constants import (
     DISGENET_EDGE_LABEL,
     DISGENET_NODE_ATTRS,
     DISGENET_NODE_MAIN_LABEL,
+    GENE_NODE_LABELS,
     MINERVA,
     MINERVA_EDGE_ATTRS,
     MINERVA_EDGE_LABEL,
@@ -103,8 +104,6 @@ def add_bgee_subgraph(g, gene_node_label, annot_list):
                 annot_node_attrs["developmental_stage_name"] = annot["developmental_stage_name"]
             if not pd.isna(annot["developmental_stage_id"]):
                 annot_node_attrs["developmental_stage_id"] = annot["developmental_stage_id"]
-            if not pd.isna(annot["expression_level"]):
-                annot_node_attrs["expression_level"] = annot["expression_level"]
 
             g.add_node(annot_node_label, attr_dict=annot_node_attrs)
 
@@ -112,6 +111,8 @@ def add_bgee_subgraph(g, gene_node_label, annot_list):
             if not pd.isna(annot["confidence_level_id"]):
                 edge_attrs["confidence_level_name"] = annot["confidence_level_name"]
                 edge_attrs["confidence_level_id"] = annot["confidence_level_id"]
+            if not pd.isna(annot["expression_level"]):
+                edge_attrs["expression_level"] = annot["expression_level"]
 
             edge_hash = hash(frozenset(edge_attrs.items()))
             edge_attrs["edge_hash"] = edge_hash
@@ -377,7 +378,7 @@ def add_opentargets_go_subgraph(g, gene_node_label, annot_list):
         annot_node_attrs = OPENTARGETS_GO_NODE_ATTRS.copy()
         annot_node_attrs["name"] = annot["go_name"]
         annot_node_attrs["id"] = annot["go_id"]
-        annot_node_attrs["type"] = annot["go_type"]
+        annot_node_attrs["categories"] = annot["go_type"]
 
         g.add_node(annot_node_label, attr_dict=annot_node_attrs)
 
@@ -661,7 +662,7 @@ def networkx_graph(fuse_df: pd.DataFrame, drug_disease=None):
                 "source": "BridgeDB",
                 "name": row["identifier"],
                 "id": row["target"],
-                "labels": "Gene",
+                "labels": GENE_NODE_LABELS,
                 row["target.source"]: row["target"],
             }
 
