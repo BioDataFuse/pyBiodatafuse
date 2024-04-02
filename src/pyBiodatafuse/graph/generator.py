@@ -501,7 +501,8 @@ def add_molmedb_gene_inhibitor(g, gene_node_label, annot_list):
                 annot_node_attrs["compound_cid"] = annot["compound_cid"]
             if not pd.isna(annot["pdb_ligand_id"]):
                 annot_node_attrs["pdb_ligand_id"] = annot["pdb_ligand_id"]
-            annot_node_attrs["InChIKey"] = annot["InChIKey"]
+            if not pd.isna(annot["InChIKey"]):
+                annot_node_attrs["InChIKey"] = annot["InChIKey"]
             if not pd.isna(annot["SMILES"]):
                 annot_node_attrs["SMILES"] = annot["SMILES"]
             if not pd.isna(annot["source_doi"]):
@@ -541,7 +542,7 @@ def add_pubchem_assay(g, gene_node_label, annot_list):
     :returns: a NetworkX MultiDiGraph
     """
     for annot in annot_list:
-        if not pd.isna(annot["InChIKey"]):
+        if not pd.isna(annot["pubchem_assay_id"]):
             annot_node_label = annot[PUBCHEM_NODE_MAIN_LABEL]
             annot_node_attrs = PUBCHEM_NODE_ATTRS.copy()
             annot_node_attrs["name"] = annot["compound_name"]
