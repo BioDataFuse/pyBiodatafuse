@@ -124,7 +124,8 @@ def load_graph(g: nx.MultiDiGraph, network_name: str):
         "ROUND_RECTANGLE",
         "RECTANGLE",
         "OCTAGON",
-        "VEE"]
+        "VEE",
+    ]
     colors = [
         "#42d4f4",  # Cyan
         "#aaffc3",  # Mint
@@ -133,7 +134,7 @@ def load_graph(g: nx.MultiDiGraph, network_name: str):
         "#bfef45",  # Lime
         "#3cb44b",  # Green
         "#9A6324",  # Brown
-        "#800000"   # Maroon
+        "#800000",  # Maroon
     ]
 
     # Apply node shape and color mappings
