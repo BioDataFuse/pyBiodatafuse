@@ -62,7 +62,6 @@ class TestMolMeDb(unittest.TestCase):
                         "SMILES",
                         "chembl_id",
                         "chebi_id",
-                        "pdb_ligand_id",
                         "drugbank_id",
                         "pubchem_compound_id",
                         "molmedb_id",
@@ -90,7 +89,7 @@ class TestMolMeDb(unittest.TestCase):
                             },
                             "SMILES": {
                                 "type": "literal",
-                                "value": "CC(=O)OC1C2(C)OCC3(C(=O)C=CC(C(C)(C)OC",
+                                "value": "CC(=O)OC1C2(C)OCC3(C(=O)C=CC(C(C)(C)OC(C)=O)C23)C(OC(C)=O)C2C(OC(=O)C(C)C)C(C)CC21OC(C)=O",
                                 "datatype": "http://www.w3.org/2001/XMLSchema#string",
                             },
                             "molmedb_id": {
@@ -127,7 +126,7 @@ class TestMolMeDb(unittest.TestCase):
                             },
                             "SMILES": {
                                 "type": "literal",
-                                "value": "CC(=O)OC1CC(OC(C)=O)C(C)(C)/C=C",
+                                "value": "CC(=O)OC1CC(OC(C)=O)C(C)(C)/C=C\\C(C)C(OC(C)=O)C2(O)CC(C)C(OC(=O)c3ccccc3)C2/C=C\\1C",
                                 "datatype": "http://www.w3.org/2001/XMLSchema#string",
                             },
                             "chebi_id": {
@@ -210,7 +209,7 @@ class TestMolMeDb(unittest.TestCase):
 
         molmedb.check_endpoint_molmedb = Mock(return_value=True)
 
-        obtained_data, _ = get_gene_compound_inhibitor(bridgedb_dataframe_genes)
+        obtained_data, metadata = get_gene_compound_inhibitor(bridgedb_dataframe_genes)
 
         expected_data = pd.Series(
             [
@@ -218,7 +217,7 @@ class TestMolMeDb(unittest.TestCase):
                     {
                         "compound_name": "Euphorbiaproliferin c",
                         "InChIKey": "MEMULCZBXUZFOZ-UHFFFAOYSA-N",
-                        "SMILES": "CC(=O)OC1C2(C)OCC3(C(=O)C=CC(C(C)(C)OC",
+                        "SMILES": "CC(=O)OC1C2(C)OCC3(C(=O)C=CC(C(C)(C)OC(C)=O)C23)C(OC(C)=O)C2C(OC(=O)C(C)C)C(C)CC21OC(C)=O",
                         "compound_cid": nan,
                         "molmedb_id": "MM470852",
                         "source_doi": "doi:10.1021/acs.jnatprod.6b00260",
@@ -229,7 +228,7 @@ class TestMolMeDb(unittest.TestCase):
                     {
                         "compound_name": "Euphornin",
                         "InChIKey": "BRVXVMOWTHQKHC-LVYIKVSWSA-N",
-                        "SMILES": "CC(=O)OC1CC(OC(C)=O)C(C)(C)/C=C",
+                        "SMILES": "CC(=O)OC1CC(OC(C)=O)C(C)(C)/C=C\\C(C)C(OC(C)=O)C2(O)CC(C)C(OC(=O)c3ccccc3)C2/C=C\\1C",
                         "compound_cid": nan,
                         "molmedb_id": "MM470853",
                         "source_doi": "doi:10.1021/acs.jnatprod.8b00500",
@@ -271,6 +270,7 @@ class TestMolMeDb(unittest.TestCase):
         pd.testing.assert_series_equal(
             obtained_data[f"{MOLMEDB}_transporter_inhibitor"], expected_data
         )
+        self.assertIsInstance(metadata, dict)
 
     @patch("pyBiodatafuse.annotators.molmedb.SPARQLWrapper.queryAndConvert")
     def test_get_compound_gene_inhibitor(self, mock_sparql_request):
