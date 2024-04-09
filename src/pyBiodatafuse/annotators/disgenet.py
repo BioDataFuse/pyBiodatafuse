@@ -64,12 +64,12 @@ def get_version_disgenet() -> dict:
     version_response = sparql.queryAndConvert()
     bindings = version_response["results"]["bindings"]
     pattern = "RDF Distribution"
-    disgenet_version = {"version": ""}  # Set default value
+    disgenet_version = {"version": ""}
 
     for binding in bindings:
         title = binding["title"]["value"]
         if pattern in title:
-            disgenet_version = {"source_version": title}
+            return {"source_version": title}
 
     return disgenet_version
 
