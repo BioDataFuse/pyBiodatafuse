@@ -7,8 +7,8 @@ import datetime
 import logging
 import warnings
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 import requests
 
 from pyBiodatafuse.constants import STRING, STRING_ENDPOINT, STRING_INPUT_ID
@@ -73,14 +73,6 @@ def _format_data(row, network_df):
                     }
                 )
                 target_links_set.add(row_arr["preferredName_A"])
-        else:
-            gene_ppi_links.append(
-                {
-                    "stringdb_link_to": np.nan,
-                    STRING_INPUT_ID: np.nan,
-                    "score": np.nan,
-                }
-            )
 
     return gene_ppi_links
 
@@ -146,6 +138,19 @@ def get_ppi(bridgedb_df: pd.DataFrame):
 
     # Format the data
     data_df[STRING] = data_df.apply(_format_data, network_df=network_df, axis=1)
+    data_df[STRING] = data_df[STRING].apply(
+        lambda x: (
+            [
+                {
+                    "stringdb_link_to": np.nan,
+                    STRING_INPUT_ID: np.nan,
+                    "score": np.nan,
+                }
+            ]
+            if len(x) == 0
+            else x
+        )
+    )
 
     # Record the end time
     end_time = datetime.datetime.now()
