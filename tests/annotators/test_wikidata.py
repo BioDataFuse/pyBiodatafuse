@@ -13,7 +13,7 @@ import pandas as pd
 
 from pyBiodatafuse.annotators import wikidata
 from pyBiodatafuse.annotators.wikidata import get_gene_cellular_component, get_version_wikidata
-from pyBiodatafuse.constants import WIKIDATA
+from pyBiodatafuse.constants import WIKIDATA_CC_COL
 
 data_file_folder = os.path.join(os.path.dirname(__file__), "data")
 
@@ -192,7 +192,7 @@ class TestWikidata(unittest.TestCase):
                 ],
             ]
         )
-        expected_data.name = WIKIDATA
+        expected_data.name = WIKIDATA_CC_COL
 
-        pd.testing.assert_series_equal(obtained_data[WIKIDATA], expected_data)
+        pd.testing.assert_series_equal(obtained_data[WIKIDATA_CC_COL], expected_data)
         self.assertIsInstance(metadata, dict)

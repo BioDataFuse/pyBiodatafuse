@@ -180,6 +180,7 @@ PUBCHEM_ASSAYS_COL = f"{PUBCHEM}_Assays"
 
 # Wikidata
 # TODO: to be checked
+WIKIDATA_CC_COL = f"{WIKIDATA}_cellular_components"
 
 
 # Node and edge main lable and attributes for each data source
@@ -390,4 +391,5 @@ STRING_EDGE_ATTRS = {
 }
 
 # Wikidata
+
 # TODO: to be checked

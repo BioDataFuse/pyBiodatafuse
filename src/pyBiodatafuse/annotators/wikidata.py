@@ -12,7 +12,7 @@ import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
 from SPARQLWrapper.SPARQLExceptions import SPARQLWrapperException
 
-from pyBiodatafuse.constants import WIKIDATA, WIKIDATA_ENDPOINT
+from pyBiodatafuse.constants import WIKIDATA, WIKIDATA_CC_COL, WIKIDATA_ENDPOINT
 from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interest
 
 
@@ -144,7 +144,7 @@ def get_gene_cellular_component(bridgedb_df: pd.DataFrame):
         target_df=intermediate_df,
         common_cols=["target"],
         target_specific_cols=["Wikidata_cellular_components"],
-        col_name=WIKIDATA,
+        col_name=WIKIDATA_CC_COL,
     )
 
     # Metdata details
