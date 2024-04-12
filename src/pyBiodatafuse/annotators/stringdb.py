@@ -8,6 +8,7 @@ import logging
 import warnings
 
 import pandas as pd
+import numpy as np
 import requests
 
 from pyBiodatafuse.constants import STRING, STRING_ENDPOINT, STRING_INPUT_ID
@@ -72,6 +73,14 @@ def _format_data(row, network_df):
                     }
                 )
                 target_links_set.add(row_arr["preferredName_A"])
+        else:
+            gene_ppi_links.append(
+                {
+                    "stringdb_link_to": np.nan,
+                    STRING_INPUT_ID: np.nan,
+                    "score": np.nan,
+                }
+            )
 
     return gene_ppi_links
 
