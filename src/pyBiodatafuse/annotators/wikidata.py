@@ -21,9 +21,7 @@ def check_endpoint_wikidata() -> bool:
 
     :returns: True if the endpoint is available, False otherwise.
     """
-    with open(
-        os.path.dirname(__file__) + "/queries/wikidata-genes-cellularComponent.rq", "r"
-    ) as fin:
+    with open(os.path.dirname(__file__) + "/queries/wikidata-test.rq", "r") as fin:
         sparql_query = fin.read()
 
     sparql = SPARQLWrapper(WIKIDATA_ENDPOINT)
@@ -146,7 +144,7 @@ def get_gene_cellular_component(bridgedb_df: pd.DataFrame):
         target_df=intermediate_df,
         common_cols=["target"],
         target_specific_cols=["Wikidata_cellular_components"],
-        col_name=f"{WIKIDATA}_cellular_components",
+        col_name=WIKIDATA,
     )
 
     # Metdata details
