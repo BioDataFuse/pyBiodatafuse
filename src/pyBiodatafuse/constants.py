@@ -54,24 +54,25 @@ BGEE_OUTPUT_DICT = {
 ANATOMICAL_ENTITY_ID = "UBERON"
 DEVELOPMENTAL_STAGE_ID = "HsapDv|UBERON"
 CONFIDENCE_LEVEL_ID = "CIO"
-ANATOMICAL_ENTITIES_LIST = """blood
-    bone marrow
-    brain
-    breast
-    cardiovascular system
-    digestive system
-    heart
-    immune organ
-    kidney
-    liver
-    lung
-    nervous system
-    pancreas
-    placenta
-    reproductive system
-    respiratory system
-    skeletal system"""
-
+ANATOMICAL_ENTITIES_LIST = [
+    "blood",
+    "bone marrow",
+    "brain",
+    "breast",
+    "cardiovascular system",
+    "digestive system",
+    "heart",
+    "immune organ",
+    "kidney",
+    "liver",
+    "lung",
+    "nervous system",
+    "pancreas",
+    "placenta",
+    "reproductive system",
+    "respiratory system",
+    "skeletal system",
+]
 # Location node
 # Open Targets - Location
 OPENTARGETS_LOCATION_OUTPUT_DICT = {
