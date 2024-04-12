@@ -499,8 +499,8 @@ def add_molmedb_gene_inhibitor(g, gene_node_label, annot_list):
                 annot_node_attrs["DrugBank_id"] = annot["drugbank_id"]
             if not pd.isna(annot["compound_cid"]):
                 annot_node_attrs["compound_cid"] = annot["compound_cid"]
-            if not pd.isna(annot["pdb_ligand_id"]):
-                annot_node_attrs["pdb_ligand_id"] = annot["pdb_ligand_id"]
+            # if not pd.isna(annot["pdb_ligand_id"]):
+            #     annot_node_attrs["pdb_ligand_id"] = annot["pdb_ligand_id"]
             if not pd.isna(annot["InChIKey"]):
                 annot_node_attrs["InChIKey"] = annot["InChIKey"]
             if not pd.isna(annot["SMILES"]):

@@ -8,7 +8,7 @@ PREFIX repr: <https://w3id.org/reproduceme#>
 PREFIX cito: <http://purl.org/spar/cito/>
 
 SELECT DISTINCT ?transporterID ?label ?InChIKey ?SMILES
-?chembl_id ?chebi_id ?pdb_ligand_id ?drugbank_id ?pubchem_compound_id ?molmedb_id
+?chembl_id ?chebi_id ?drugbank_id ?pubchem_compound_id ?molmedb_id
 ?source_doi ?source_pmid
 
 WHERE {
@@ -34,8 +34,6 @@ VALUES ?transporterID { $transporter_list }
                              sio:SIO_000300 ?chembl_id]}
   OPTIONAL {?inhibitor sio:SIO_000008 [rdf:type sio:CHEMINF_000407;
                              sio:SIO_000300 ?chebi_id]}
-  OPTIONAL {?inhibitor sio:SIO_000008 [rdf:type sio:CHEMINF_000572;
-                             sio:SIO_000300 ?pdb_ligand_id]}
   OPTIONAL {?inhibitor sio:SIO_000008 [rdf:type sio:CHEMINF_000406;
                              sio:SIO_000300 ?drugbank_id]}
   OPTIONAL {?inhibitor sio:SIO_000008 [rdf:type sio:CHEMINF_000140;
