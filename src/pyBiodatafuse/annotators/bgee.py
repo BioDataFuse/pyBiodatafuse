@@ -94,8 +94,6 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
     else:
         query_gene_lists.append(" ".join(f'"{g}"' for g in gene_list))
 
-    anatomical_entities_list = ANATOMICAL_ENTITIES_LIST.split("\n")
-
     with open(
         os.path.dirname(__file__) + "/queries/bgee-genes-tissues-expression-level.rq", "r"
     ) as fin:
@@ -122,7 +120,7 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
         for gene_id in gene_ids:
             sparql_query_template = Template(sparql_query)
 
-            for anatomical_entity in anatomical_entities_list:
+            for anatomical_entity in ANATOMICAL_ENTITIES_LIST:
                 # for the query text, need to put each name in between quotes
                 anatomical_entity = f'"{anatomical_entity}"'
                 substit_dict = dict(gene_list=gene_id, anat_entities_list=anatomical_entity)
