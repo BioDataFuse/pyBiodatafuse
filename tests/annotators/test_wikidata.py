@@ -3,17 +3,16 @@
 
 """Tests for the Wikidata annotator."""
 
+import datetime
+import json
+import os
 import unittest
 from unittest.mock import Mock, patch
 
-import json
-import os
-import datetime
 import pandas as pd
-from numpy import nan
 
 from pyBiodatafuse.annotators import wikidata
-from pyBiodatafuse.annotators.wikidata import get_version_wikidata, get_gene_cellular_component
+from pyBiodatafuse.annotators.wikidata import get_gene_cellular_component, get_version_wikidata
 from pyBiodatafuse.constants import WIKIDATA
 
 data_file_folder = os.path.join(os.path.dirname(__file__), "data")
