@@ -74,8 +74,6 @@ class TestBgee(unittest.TestCase):
                     {
                         "anatomical_entity_id": "UBERON_0000178",
                         "anatomical_entity_name": "blood",
-                        "developmental_stage_id": "UBERON_0000104",
-                        "developmental_stage_name": "life cycle",
                         "expression_level": 67.3533,
                         "confidence_level_id": "CIO_0000029",
                         "confidence_level_name": "high confidence level",
@@ -83,8 +81,6 @@ class TestBgee(unittest.TestCase):
                     {
                         "anatomical_entity_id": "UBERON_0002371",
                         "anatomical_entity_name": "bone marrow",
-                        "developmental_stage_id": "UBERON_0000104",
-                        "developmental_stage_name": "life cycle",
                         "expression_level": 71.3253,
                         "confidence_level_id": "CIO_0000029",
                         "confidence_level_name": "high confidence level",
@@ -92,8 +88,6 @@ class TestBgee(unittest.TestCase):
                     {
                         "anatomical_entity_id": "UBERON_0000955",
                         "anatomical_entity_name": "brain",
-                        "developmental_stage_id": "UBERON_0000104",
-                        "developmental_stage_name": "life cycle",
                         "expression_level": 88.2124,
                         "confidence_level_id": "CIO_0000029",
                         "confidence_level_name": "high confidence level",
@@ -101,8 +95,6 @@ class TestBgee(unittest.TestCase):
                     {
                         "anatomical_entity_id": "UBERON_0000310",
                         "anatomical_entity_name": "breast",
-                        "developmental_stage_id": "UBERON_0000104",
-                        "developmental_stage_name": "life cycle",
                         "expression_level": 85.3975,
                         "confidence_level_id": "CIO_0000029",
                         "confidence_level_name": "high confidence level",
@@ -110,8 +102,6 @@ class TestBgee(unittest.TestCase):
                     {
                         "anatomical_entity_id": "UBERON_0004535",
                         "anatomical_entity_name": "cardiovascular system",
-                        "developmental_stage_id": "UBERON_0000104",
-                        "developmental_stage_name": "life cycle",
                         "expression_level": 84.489,
                         "confidence_level_id": "CIO_0000029",
                         "confidence_level_name": "high confidence level",
@@ -119,8 +109,6 @@ class TestBgee(unittest.TestCase):
                     {
                         "anatomical_entity_id": "UBERON_0001007",
                         "anatomical_entity_name": "digestive system",
-                        "developmental_stage_id": "UBERON_0000104",
-                        "developmental_stage_name": "life cycle",
                         "expression_level": 85.7185,
                         "confidence_level_id": "CIO_0000029",
                         "confidence_level_name": "high confidence level",
@@ -128,8 +116,6 @@ class TestBgee(unittest.TestCase):
                     {
                         "anatomical_entity_id": "UBERON_0000948",
                         "anatomical_entity_name": "heart",
-                        "developmental_stage_id": "UBERON_0000104",
-                        "developmental_stage_name": "life cycle",
                         "expression_level": 84.0824,
                         "confidence_level_id": "CIO_0000029",
                         "confidence_level_name": "high confidence level",
@@ -137,8 +123,6 @@ class TestBgee(unittest.TestCase):
                     {
                         "anatomical_entity_id": "UBERON_0005057",
                         "anatomical_entity_name": "immune organ",
-                        "developmental_stage_id": "UBERON_0000104",
-                        "developmental_stage_name": "life cycle",
                         "expression_level": 80.202,
                         "confidence_level_id": "CIO_0000029",
                         "confidence_level_name": "high confidence level",
@@ -146,8 +130,6 @@ class TestBgee(unittest.TestCase):
                     {
                         "anatomical_entity_id": "UBERON_0002113",
                         "anatomical_entity_name": "kidney",
-                        "developmental_stage_id": "UBERON_0000104",
-                        "developmental_stage_name": "life cycle",
                         "expression_level": 91.8018,
                         "confidence_level_id": "CIO_0000029",
                         "confidence_level_name": "high confidence level",
@@ -155,8 +137,6 @@ class TestBgee(unittest.TestCase):
                     {
                         "anatomical_entity_id": "UBERON_0002107",
                         "anatomical_entity_name": "liver",
-                        "developmental_stage_id": "UBERON_0000104",
-                        "developmental_stage_name": "life cycle",
                         "expression_level": 84.2829,
                         "confidence_level_id": "CIO_0000029",
                         "confidence_level_name": "high confidence level",
@@ -164,8 +144,6 @@ class TestBgee(unittest.TestCase):
                     {
                         "anatomical_entity_id": "UBERON_0002048",
                         "anatomical_entity_name": "lung",
-                        "developmental_stage_id": "UBERON_0000104",
-                        "developmental_stage_name": "life cycle",
                         "expression_level": 90.1777,
                         "confidence_level_id": "CIO_0000029",
                         "confidence_level_name": "high confidence level",
@@ -173,8 +151,6 @@ class TestBgee(unittest.TestCase):
                     {
                         "anatomical_entity_id": "UBERON_0001016",
                         "anatomical_entity_name": "nervous system",
-                        "developmental_stage_id": "UBERON_0000104",
-                        "developmental_stage_name": "life cycle",
                         "expression_level": 87.8232,
                         "confidence_level_id": "CIO_0000029",
                         "confidence_level_name": "high confidence level",
@@ -182,8 +158,6 @@ class TestBgee(unittest.TestCase):
                     {
                         "anatomical_entity_id": "UBERON_0001264",
                         "anatomical_entity_name": "pancreas",
-                        "developmental_stage_id": "UBERON_0000104",
-                        "developmental_stage_name": "life cycle",
                         "expression_level": 89.9821,
                         "confidence_level_id": "CIO_0000029",
                         "confidence_level_name": "high confidence level",
@@ -191,8 +165,6 @@ class TestBgee(unittest.TestCase):
                     {
                         "anatomical_entity_id": "UBERON_0001987",
                         "anatomical_entity_name": "placenta",
-                        "developmental_stage_id": "UBERON_0000104",
-                        "developmental_stage_name": "life cycle",
                         "expression_level": 76.735,
                         "confidence_level_id": "CIO_0000029",
                         "confidence_level_name": "high confidence level",
@@ -200,8 +172,6 @@ class TestBgee(unittest.TestCase):
                     {
                         "anatomical_entity_id": "UBERON_0000990",
                         "anatomical_entity_name": "reproductive system",
-                        "developmental_stage_id": "UBERON_0000104",
-                        "developmental_stage_name": "life cycle",
                         "expression_level": 85.26,
                         "confidence_level_id": "CIO_0000029",
                         "confidence_level_name": "high confidence level",
@@ -209,8 +179,6 @@ class TestBgee(unittest.TestCase):
                     {
                         "anatomical_entity_id": "UBERON_0001004",
                         "anatomical_entity_name": "respiratory system",
-                        "developmental_stage_id": "UBERON_0000104",
-                        "developmental_stage_name": "life cycle",
                         "expression_level": 87.1641,
                         "confidence_level_id": "CIO_0000029",
                         "confidence_level_name": "high confidence level",
@@ -218,8 +186,6 @@ class TestBgee(unittest.TestCase):
                     {
                         "anatomical_entity_id": "UBERON_0001434",
                         "anatomical_entity_name": "skeletal system",
-                        "developmental_stage_id": "UBERON_0000104",
-                        "developmental_stage_name": "life cycle",
                         "expression_level": 70.5523,
                         "confidence_level_id": "CIO_0000029",
                         "confidence_level_name": "high confidence level",
@@ -229,8 +195,6 @@ class TestBgee(unittest.TestCase):
                     {
                         "anatomical_entity_id": "UBERON_0000178",
                         "anatomical_entity_name": "blood",
-                        "developmental_stage_id": "UBERON_0000104",
-                        "developmental_stage_name": "life cycle",
                         "expression_level": 91.3264,
                         "confidence_level_id": "CIO_0000029",
                         "confidence_level_name": "high confidence level",
@@ -238,8 +202,6 @@ class TestBgee(unittest.TestCase):
                     {
                         "anatomical_entity_id": "UBERON_0002371",
                         "anatomical_entity_name": "bone marrow",
-                        "developmental_stage_id": "UBERON_0000104",
-                        "developmental_stage_name": "life cycle",
                         "expression_level": 93.1996,
                         "confidence_level_id": "CIO_0000029",
                         "confidence_level_name": "high confidence level",
@@ -247,8 +209,6 @@ class TestBgee(unittest.TestCase):
                     {
                         "anatomical_entity_id": "UBERON_0000955",
                         "anatomical_entity_name": "brain",
-                        "developmental_stage_id": "UBERON_0000104",
-                        "developmental_stage_name": "life cycle",
                         "expression_level": 77.7268,
                         "confidence_level_id": "CIO_0000029",
                         "confidence_level_name": "high confidence level",
@@ -256,8 +216,6 @@ class TestBgee(unittest.TestCase):
                     {
                         "anatomical_entity_id": "UBERON_0000310",
                         "anatomical_entity_name": "breast",
-                        "developmental_stage_id": "UBERON_0000104",
-                        "developmental_stage_name": "life cycle",
                         "expression_level": 86.0681,
                         "confidence_level_id": "CIO_0000029",
                         "confidence_level_name": "high confidence level",
@@ -265,8 +223,6 @@ class TestBgee(unittest.TestCase):
                     {
                         "anatomical_entity_id": "UBERON_0004535",
                         "anatomical_entity_name": "cardiovascular system",
-                        "developmental_stage_id": "UBERON_0000104",
-                        "developmental_stage_name": "life cycle",
                         "expression_level": 82.8353,
                         "confidence_level_id": "CIO_0000029",
                         "confidence_level_name": "high confidence level",
@@ -274,8 +230,6 @@ class TestBgee(unittest.TestCase):
                     {
                         "anatomical_entity_id": "UBERON_0001007",
                         "anatomical_entity_name": "digestive system",
-                        "developmental_stage_id": "UBERON_0000104",
-                        "developmental_stage_name": "life cycle",
                         "expression_level": 84.0247,
                         "confidence_level_id": "CIO_0000029",
                         "confidence_level_name": "high confidence level",
@@ -283,8 +237,6 @@ class TestBgee(unittest.TestCase):
                     {
                         "anatomical_entity_id": "UBERON_0000948",
                         "anatomical_entity_name": "heart",
-                        "developmental_stage_id": "UBERON_0000104",
-                        "developmental_stage_name": "life cycle",
                         "expression_level": 81.5901,
                         "confidence_level_id": "CIO_0000029",
                         "confidence_level_name": "high confidence level",
@@ -292,8 +244,6 @@ class TestBgee(unittest.TestCase):
                     {
                         "anatomical_entity_id": "UBERON_0005057",
                         "anatomical_entity_name": "immune organ",
-                        "developmental_stage_id": "UBERON_0000104",
-                        "developmental_stage_name": "life cycle",
                         "expression_level": 82.4269,
                         "confidence_level_id": "CIO_0000029",
                         "confidence_level_name": "high confidence level",
@@ -301,8 +251,6 @@ class TestBgee(unittest.TestCase):
                     {
                         "anatomical_entity_id": "UBERON_0002113",
                         "anatomical_entity_name": "kidney",
-                        "developmental_stage_id": "UBERON_0000104",
-                        "developmental_stage_name": "life cycle",
                         "expression_level": 82.2336,
                         "confidence_level_id": "CIO_0000029",
                         "confidence_level_name": "high confidence level",
@@ -310,8 +258,6 @@ class TestBgee(unittest.TestCase):
                     {
                         "anatomical_entity_id": "UBERON_0002107",
                         "anatomical_entity_name": "liver",
-                        "developmental_stage_id": "UBERON_0000104",
-                        "developmental_stage_name": "life cycle",
                         "expression_level": 85.3249,
                         "confidence_level_id": "CIO_0000029",
                         "confidence_level_name": "high confidence level",
@@ -319,8 +265,6 @@ class TestBgee(unittest.TestCase):
                     {
                         "anatomical_entity_id": "UBERON_0002048",
                         "anatomical_entity_name": "lung",
-                        "developmental_stage_id": "UBERON_0000104",
-                        "developmental_stage_name": "life cycle",
                         "expression_level": 85.9283,
                         "confidence_level_id": "CIO_0000029",
                         "confidence_level_name": "high confidence level",
@@ -328,8 +272,6 @@ class TestBgee(unittest.TestCase):
                     {
                         "anatomical_entity_id": "UBERON_0001016",
                         "anatomical_entity_name": "nervous system",
-                        "developmental_stage_id": "UBERON_0000104",
-                        "developmental_stage_name": "life cycle",
                         "expression_level": 78.7556,
                         "confidence_level_id": "CIO_0000029",
                         "confidence_level_name": "high confidence level",
@@ -337,8 +279,6 @@ class TestBgee(unittest.TestCase):
                     {
                         "anatomical_entity_id": "UBERON_0001264",
                         "anatomical_entity_name": "pancreas",
-                        "developmental_stage_id": "UBERON_0000104",
-                        "developmental_stage_name": "life cycle",
                         "expression_level": 86.7489,
                         "confidence_level_id": "CIO_0000029",
                         "confidence_level_name": "high confidence level",
@@ -346,8 +286,6 @@ class TestBgee(unittest.TestCase):
                     {
                         "anatomical_entity_id": "UBERON_0001987",
                         "anatomical_entity_name": "placenta",
-                        "developmental_stage_id": "UBERON_0000104",
-                        "developmental_stage_name": "life cycle",
                         "expression_level": 87.9151,
                         "confidence_level_id": "CIO_0000029",
                         "confidence_level_name": "high confidence level",
@@ -355,8 +293,6 @@ class TestBgee(unittest.TestCase):
                     {
                         "anatomical_entity_id": "UBERON_0000990",
                         "anatomical_entity_name": "reproductive system",
-                        "developmental_stage_id": "UBERON_0000104",
-                        "developmental_stage_name": "life cycle",
                         "expression_level": 84.2724,
                         "confidence_level_id": "CIO_0000029",
                         "confidence_level_name": "high confidence level",
@@ -364,8 +300,6 @@ class TestBgee(unittest.TestCase):
                     {
                         "anatomical_entity_id": "UBERON_0001004",
                         "anatomical_entity_name": "respiratory system",
-                        "developmental_stage_id": "UBERON_0000104",
-                        "developmental_stage_name": "life cycle",
                         "expression_level": 86.3633,
                         "confidence_level_id": "CIO_0000029",
                         "confidence_level_name": "high confidence level",
@@ -373,8 +307,6 @@ class TestBgee(unittest.TestCase):
                     {
                         "anatomical_entity_id": "UBERON_0001434",
                         "anatomical_entity_name": "skeletal system",
-                        "developmental_stage_id": "UBERON_0000104",
-                        "developmental_stage_name": "life cycle",
                         "expression_level": 91.5179,
                         "confidence_level_id": "CIO_0000029",
                         "confidence_level_name": "high confidence level",
