@@ -85,6 +85,36 @@ def load_dataframe_from_pickle(pickle_path: str) -> pd.DataFrame:
     return df
 
 
+def merge_node(g, node_label, node_attrs):
+    """Merge the attr_dict of a newly added node to the graph on duplication, otherwise, add the new node.
+
+    :param g: the graph to which the node will be added.
+    :param node_label: node label.
+    :param node_attrs: dictionary of node attributes.
+    """
+    if node_label not in g.nodes():
+        g.add_node(node_label, attr_dict=node_attrs)
+    else:
+        if "attr_dict" in g.nodes[node_label]:
+
+            for k, v in node_attrs.items():
+
+                if k in g.nodes[node_label]["attr_dict"]:
+
+                    if g.nodes[node_label]["attr_dict"][k] is not None:
+
+                        if isinstance(v, str):
+                            v_list = g.nodes[node_label]["attr_dict"][k].split("|")
+                            v_list.append(v)
+                            g.nodes[node_label]["attr_dict"][k] = "|".join(list(set(v_list)))
+                    else:
+                        g.nodes[node_label]["attr_dict"][k] = v
+                else:
+                    g.nodes[node_label]["attr_dict"][k] = v
+        else:
+            g.add_node(node_label, attr_dict=node_attrs)
+
+
 def add_bgee_subgraph(g, gene_node_label, annot_list):
     """Construct part of the graph by linking the gene to a list of annotation entities (disease, drug ..etc).
 
@@ -430,7 +460,8 @@ def add_opentargets_compound_subgraph(g, gene_node_label, annot_list):
             if not pd.isna(annot["adverse_effect_count"]):
                 annot_node_attrs["adverse_effect_count"] = annot["adverse_effect_count"]
 
-            g.add_node(annot_node_label, attr_dict=annot_node_attrs)
+            # g.add_node(annot_node_label, attr_dict=annot_node_attrs)
+            merge_node(g, annot_node_label, annot_node_attrs)
 
             edge_attrs = OPENTARGETS_COMPOUND_EDGE_ATTRS.copy()
             edge_attrs["label"] = annot["relation"]
@@ -510,7 +541,8 @@ def add_molmedb_gene_inhibitor(g, gene_node_label, annot_list):
             if not pd.isna(annot["source_pmid"]):
                 annot_node_attrs["source_pmid"] = annot["source_pmid"]
 
-            g.add_node(annot_node_label, attr_dict=annot_node_attrs)
+            # g.add_node(annot_node_label, attr_dict=annot_node_attrs)
+            merge_node(g, annot_node_label, annot_node_attrs)
 
             edge_attrs = MOLMEDB_COMPOUND_EDGE_ATTRS.copy()
 
@@ -551,7 +583,8 @@ def add_pubchem_assay(g, gene_node_label, annot_list):
             if not pd.isna(annot["SMILES"]):
                 annot_node_attrs["SMILES"] = annot["SMILES"]
 
-            g.add_node(annot_node_label, attr_dict=annot_node_attrs)
+            # g.add_node(annot_node_label, attr_dict=annot_node_attrs)
+            merge_node(g, annot_node_label, annot_node_attrs)
 
             edge_attrs = PUBCHEM_EDGE_ATTRS.copy()
             edge_attrs["assay_type"] = annot["assay_type"]
