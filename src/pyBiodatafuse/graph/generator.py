@@ -217,7 +217,8 @@ def add_disgenet_disease_subgraph(g, gene_node_label, annot_list):
             annot_node_attrs["id"] = annot["disease_id"]
             annot_node_attrs["evidence_source"] = annot["evidence_source"]
 
-            g.add_node(annot_node_label, attr_dict=annot_node_attrs)
+            #g.add_node(annot_node_label, attr_dict=annot_node_attrs)
+            merge_node(g, annot_node_label, annot_node_attrs)
 
             edge_attrs = DISGENET_EDGE_ATTRS.copy()
             edge_attrs["score"] = edge_attrs["score"]
@@ -256,7 +257,8 @@ def add_opentargets_disease_subgraph(g, gene_node_label, annot_list):
             annot_node_attrs["id"] = annot["disease_id"]
             annot_node_attrs["therapeutic_areas"] = annot["therapeutic_areas"]
 
-            g.add_node(annot_node_label, attr_dict=annot_node_attrs)
+            #g.add_node(annot_node_label, attr_dict=annot_node_attrs)
+            merge_node(g, annot_node_label, annot_node_attrs)
 
             edge_attrs = OPENTARGETS_DISEASE_EDGE_ATTRS
 
