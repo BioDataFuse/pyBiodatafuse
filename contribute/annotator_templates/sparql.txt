@@ -1,0 +1,118 @@
+# -*- coding: utf-8 -*-
+"""Python file for querying [DataSource] using SPARQL."""
+
+import datetime
+import os
+import warnings
+from string import Template
+
+import pandas as pd
+from SPARQLWrapper import JSON, SPARQLWrapper
+from SPARQLWrapper.SPARQLExceptions import SPARQLWrapperException
+
+from pyBiodatafuse.constants import (
+    [CONSTANTS_USED],
+    [DATA_SOURCE_NAME],
+    [ENDPOINT_CONSTANT],
+    [INPUT_ID_CONSTANT],
+    [OUTPUT_DICT_CONSTANT],
+)
+from pyBiodatafuse.utils import (
+    check_columns_against_constants,
+    collapse_data_sources,
+    get_identifier_of_interest,
+)
+
+
+def check_endpoint_[datasource_name]() -> bool:
+    """Check the availability of the [DataSource] SPARQL endpoint."""
+    with open(os.path.dirname(__file__) + "/queries/[endpoint-check-query].rq", "r") as fin:
+        sparql_query = fin.read()
+
+    sparql = SPARQLWrapper([ENDPOINT_CONSTANT])
+    sparql.setReturnFormat(JSON)
+
+    sparql.setQuery(sparql_query)
+
+    try:
+        sparql.queryAndConvert()
+        return True
+    except SPARQLWrapperException:
+        return False
+
+
+def get_version_[datasource_name]() -> dict:
+    """Get version of [DataSource] RDF data from its SPARQL endpoint."""
+    with open(os.path.dirname(__file__) + "/queries/[version-query].rq", "r") as fin:
+        sparql_query = fin.read()
+
+    sparql = SPARQLWrapper([ENDPOINT_CONSTANT])
+    sparql.setReturnFormat(JSON)
+
+    sparql.setQuery(sparql_query)
+    res = sparql.queryAndConvert()
+
+    [version_info_extraction]
+
+    return [version_info]
+
+
+def get_[data_type]_[datasource_name](bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
+    """Query [data_type] information from [DataSource].
+
+    :param bridgedb_df: BridgeDb output for creating the list of identifiers to query.
+    :returns: a DataFrame containing the [DataSource] output and dictionary of metadata.
+    """
+    # Check if the [DataSource] SPARQL endpoint is available
+    api_available = check_endpoint_[datasource_name]()
+
+    if not api_available:
+        warnings.warn(
+            f"{[DATA_SOURCE_NAME]} SPARQL endpoint is not available. Unable to retrieve data.", stacklevel=2
+        )
+        return pd.DataFrame(), {}
+
+    # Extract the identifiers and format them for the query
+    data_df = get_identifier_of_interest(bridgedb_df, [INPUT_ID_CONSTANT])
+    [data_extraction_logic]
+
+    with open(
+        os.path.dirname(__file__) + "/queries/[query-file-name].rq", "r"
+    ) as fin:
+        sparql_query = fin.read()
+
+    # Add version to metadata
+    [version_extraction_logic]
+
+    # Record the start time
+    start_time = datetime.datetime.now()
+
+    sparql = SPARQLWrapper([ENDPOINT_CONSTANT])
+    sparql.setReturnFormat(JSON)
+
+    query_count = 0
+
+    intermediate_df = pd.DataFrame()
+
+    for [query_params] in [query_params_list]:
+        query_count += 1
+
+        sparql_query_template = Template(sparql_query)
+        substit_dict = dict([substitution_dictionary])
+        sparql_query_template_sub = sparql_query_template.substitute(substit_dict)
+
+        sparql.setQuery(sparql_query_template_sub)
+        res = sparql.queryAndConvert()
+
+        df = pd.DataFrame(res["results"]["bindings"])
+        [data_processing_logic]
+
+        intermediate_df = pd.concat([intermediate_df, df], ignore_index=True)
+
+    # Record the end time
+    end_time = datetime.datetime.now()
+
+    [data_post_processing_logic]
+
+    return merged_df, [datasource_metadata]
+
