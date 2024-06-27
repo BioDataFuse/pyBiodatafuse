@@ -1,0 +1,26 @@
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sio: <http://semanticscience.org/resource/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+sio:SIO_000983 sio:has_measured_value <http://purl.obolibrary.org/obo/NCIT_C25338> ;
+    sio:has_source <http://purl.obolibrary.org/obo/SLSO_0001122>,
+        dcat:Dataset ;
+    sio:refers_to <http://purl.obolibrary.org/obo/NCIT_C16612>,
+        <http://purl.obolibrary.org/obo/NCIT_C7057> .
+
+<http://purl.obolibrary.org/obo/NCIT_C16612> sio:is_represented_by <http://purl.obolibrary.org/obo/NCIT_C43568> ;
+    skos:exactMatch <https://identifiers.org/ensembl:ENSG00000139190> .
+
+<http://purl.obolibrary.org/obo/NCIT_C25338> sio:has_value 4.2e-01 .
+
+<http://purl.obolibrary.org/obo/NCIT_C43568> skos:exactMatch <http://bio2rdf.org/hgnc:VAMP1> .
+
+<http://purl.obolibrary.org/obo/NCIT_C7057> rdfs:label "Myasthenic Syndromes, Congenital"^^xsd:string ;
+    skos:exactMatch <http://linkedlifedata.com/resource/umls/id/C0751882> .
+
+<http://purl.obolibrary.org/obo/SLSO_0001122> sio:has_value "DisGeNET"^^xsd:string .
+
+dcat:Dataset sio:has_value "GENOMICS_ENGLAND"^^xsd:string .
+

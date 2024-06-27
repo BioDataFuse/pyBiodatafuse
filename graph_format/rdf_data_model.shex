@@ -1,0 +1,94 @@
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix xsd: <http://www.w3.org/2001/XMLSchema#> 
+prefix skos: <http://www.w3.org/2004/02/skos/core#>
+prefix gene: <http://purl.obolibrary.org/obo/NCIT_C16612>
+prefix gene_symbol: <http://purl.obolibrary.org/obo/NCIT_C43568>
+prefix hgnc: <http://bio2rdf.org/hgnc:>
+prefix disease_or_disorder: <http://purl.obolibrary.org/obo/NCIT_C2991>
+prefix anatomy: <http://purl.obolibrary.org/obo/UBERON_0001062>
+prefix life_cycle: <http://www.ebi.ac.uk/efo/EFO_0000399>
+prefix gene_disease_association: <http://semanticscience.org/resource/SIO_000983>
+prefix dataset: <http://www.w3.org/ns/dcat#Dataset>
+prefix description: <http://purl.org/dc/terms/description>
+prefix data_source: <http://purl.obolibrary.org/obo/SLSO_0001122>
+prefix score: <http://purl.obolibrary.org/obo/NCIT_C25338>
+prefix gene_expression_value: <http://semanticscience.org/resource/SIO_001077>
+prefix experimental_process: <http://www.ebi.ac.uk/efo/EFO_0002694>
+
+prefix has_measurement_value: <http://semanticscience.org/resource/SIO_000216>
+prefix is_represented_by: <http://semanticscience.org/resource/SIO_000205>
+prefix refers_to: <http://semanticscience.org/resource/SIO_000628> 
+prefix has_source: <http://semanticscience.org/resource/SIO_000253>
+prefix has_value: <http://semanticscience.org/resource/SIO_000300>
+prefix has_input: <http://semanticscience.org/resource/SIO_000230>
+prefix has_output: <http://semanticscience.org/resource/SIO_000229>
+prefix is_associated_with: <http://semanticscience.org/resource/SIO_001403>
+
+<Gene> {
+  a [ @gene ] ;
+  skos:exactMatch IRI ;
+  is_represented_by: @<GeneSymbol> ;
+  is_associated_with: @<GeneExpressionValue> ;
+  is_associated_with: @<AnatomicalEntity> ;
+  is_associated_with: @<LifeCycle> ; 
+}
+
+<GeneSymbol> {
+  a [ @gene-symbol ] ;
+  skos:exactMatch <hgnc> ;
+}
+
+<ExperimentalProcess> {
+  a [ @experimental-process ];
+  has_input: @<Gene> ;
+  has_input: @<AnatomicalEntity> ;
+  has_input: @<LifeCycle> ;
+  has_output: @<Expression>
+}
+
+<GeneExpressionValue> {
+  a [@gene-expression-value] ;
+  has_value: xsd:double ;
+}
+
+<AnatomicalEntity> {
+  a [ @anatomy ] ;
+  skos:exactMatch IRI ;
+  rdfs:label xsd:string ;  # AnatomicalEntity name
+}
+
+<LifeCycle> {
+  a [ @life-cycle ] ;
+  skos:exactMatch IRI ;
+  rdfs:label xsd:string ;  # AnatomicalEntity name
+}
+
+<DiseaseOrDisorder> {
+  a [ @disease @phenotype @group ] ;
+  a [ @disease-or-disorder ] ;
+  skos:exactMatch IRI ;
+  rdfs:label xsd:string ;  # Disease - name
+}
+
+<GeneDiseaseAssociation> {
+  a [ @gene-disease-association ] ;
+  refers_to: @<DiseaseOrDisorder> ;
+  refers_to: @<Gene> ;
+  has_source: @<Source> ;
+  has_source: @<DataSource> ;
+  has_measurement_value: @<Score> ;
+}
+
+<Source> {
+  a [ @dataset @description ] ;
+}
+
+<DataSource> {
+  a [ @data-source ] ;
+  rdfs:label xsd:string ;  # database name
+}
+
+<Score> {
+  a [ @score ] ;
+  has_value: xsd:double ; 
+}

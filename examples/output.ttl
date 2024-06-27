@@ -1,0 +1,6 @@
+@prefix ns1: <http://example.org/> .
+
+ns1:subject1 ns1:predicate1 ns1:object1 .
+
+ns1:subject2 ns1:predicate2 "Literal value" .
+

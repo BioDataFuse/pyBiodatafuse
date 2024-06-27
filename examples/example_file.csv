@@ -1,0 +1,3 @@
+subject,predicate,object
+http://example.org/subject1,http://example.org/predicate1,http://example.org/object1
+http://example.org/subject2,http://example.org/predicate2,Literal value
