@@ -1,0 +1,45 @@
+{
+    "data": {
+        "targets": [
+            {
+                "id": "ENSG00000172339",
+                "pathways": [
+                    {
+                        "pathway": "Biosynthesis of the N-glycan precursor (dolichol lipid-linked oligosaccharide, LLO) and transfer to a nascent protein",
+                        "pathwayId": "R-HSA-446193"
+                    },
+                    {
+                        "pathway": "Defective ALG14 causes ALG14-CMS",
+                        "pathwayId": "R-HSA-5633231"
+                    }
+                ]
+            },
+            {
+                "id": "ENSG00000119523",
+                "pathways": [
+                    {
+                        "pathway": "Biosynthesis of the N-glycan precursor (dolichol lipid-linked oligosaccharide, LLO) and transfer to a nascent protein",
+                        "pathwayId": "R-HSA-446193"
+                    },
+                    {
+                        "pathway": "Defective ALG2 causes CDG-1i",
+                        "pathwayId": "R-HSA-4549349"
+                    }
+                ]
+            },
+            {
+                "id": "ENSG00000138435",
+                "pathways": [
+                    {
+                        "pathway": "Highly calcium permeable nicotinic acetylcholine receptors",
+                        "pathwayId": "R-HSA-629597"
+                    },
+                    {
+                        "pathway": "Highly calcium permeable postsynaptic nicotinic acetylcholine receptors",
+                        "pathwayId": "R-HSA-629594"
+                    }
+                ]
+            }
+        ]
+    }
+}

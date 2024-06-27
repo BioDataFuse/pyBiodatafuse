@@ -58,6 +58,7 @@ def get_version_wikidata() -> dict:
     return metadata
 
 
+# TODO: Remove this functionabilty
 def get_gene_cellular_component(bridgedb_df: pd.DataFrame):
     """Get cellcular component information and Wikidata identifiers for a gene's encoded protein.
 
