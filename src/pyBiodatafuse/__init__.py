@@ -5,4 +5,3 @@
 from .analyzer import *  # noqa
 from .annotators import *  # noqa
 from .graph import *  # noqa
-from .viz import *  # noqa

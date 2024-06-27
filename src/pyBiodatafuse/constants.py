@@ -45,8 +45,6 @@ WIKIPATHWAYS_INPUT_ID = "NCBI Gene"
 BGEE_OUTPUT_DICT = {
     "anatomical_entity_id": str,
     "anatomical_entity_name": str,
-    "developmental_stage_id": str,
-    "developmental_stage_name": str,
     "expression_level": float,
     "confidence_level_id": str,
     "confidence_level_name": str,
@@ -54,24 +52,25 @@ BGEE_OUTPUT_DICT = {
 ANATOMICAL_ENTITY_ID = "UBERON"
 DEVELOPMENTAL_STAGE_ID = "HsapDv|UBERON"
 CONFIDENCE_LEVEL_ID = "CIO"
-ANATOMICAL_ENTITIES_LIST = """blood
-    bone marrow
-    brain
-    breast
-    cardiovascular system
-    digestive system
-    heart
-    immune organ
-    kidney
-    liver
-    lung
-    nervous system
-    pancreas
-    placenta
-    reproductive system
-    respiratory system
-    skeletal system"""
-
+ANATOMICAL_ENTITIES_LIST = [
+    "blood",
+    "bone marrow",
+    "brain",
+    "breast",
+    "cardiovascular system",
+    "digestive system",
+    "heart",
+    "immune organ",
+    "kidney",
+    "liver",
+    "lung",
+    "nervous system",
+    "pancreas",
+    "placenta",
+    "reproductive system",
+    "respiratory system",
+    "skeletal system",
+]
 # Location node
 # Open Targets - Location
 OPENTARGETS_LOCATION_OUTPUT_DICT = {
@@ -123,7 +122,7 @@ OPENTARGETS_GO_COL = f"{OPENTARGETS}_GO"  # TODO: Cross-check if correct name
 OPENTARGETS_COMPOUND_OUTPUT_DICT = {
     "chembl_id": str,
     "drugbank_id": Union[str, None, float],
-    "compound_cid": Union[str, None, float],
+    # "compound_cid": Union[str, None, float],
     "compound_name": str,
     "is_approved": bool,
     "relation": str,
@@ -179,6 +178,7 @@ PUBCHEM_ASSAYS_COL = f"{PUBCHEM}_Assays"
 
 # Wikidata
 # TODO: to be checked
+WIKIDATA_CC_COL = f"{WIKIDATA}_cellular_components"
 
 
 # Node and edge main lable and attributes for each data source
@@ -190,8 +190,6 @@ BGEE_NODE_ATTRS = {
     "source": BGEE,
     "name": None,
     "id": None,
-    "developmental_stage_name": None,
-    "developmental_stage_id": None,
     "labels": BGEE_NODE_LABELS,
 }
 BGEE_EDGE_LABEL = "expressed_in"
@@ -389,4 +387,8 @@ STRING_EDGE_ATTRS = {
 }
 
 # Wikidata
+
 # TODO: to be checked
+
+
+# Output from the explorers

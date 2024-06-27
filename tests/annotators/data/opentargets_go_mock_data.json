@@ -1,0 +1,679 @@
+{
+    "data": {
+        "targets": [
+            {
+                "id": "ENSG00000172339",
+                "geneOntology": [
+                    {
+                        "term": {
+                            "id": "GO:0031965",
+                            "name": "nuclear membrane"
+                        },
+                        "aspect": "C"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0005789",
+                            "name": "endoplasmic reticulum membrane"
+                        },
+                        "aspect": "C"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0043541",
+                            "name": "UDP-N-acetylglucosamine transferase complex"
+                        },
+                        "aspect": "C"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0005789",
+                            "name": "endoplasmic reticulum membrane"
+                        },
+                        "aspect": "C"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0004577",
+                            "name": "N-acetylglucosaminyldiphosphodolichol N-acetylglucosaminyltransferase activity"
+                        },
+                        "aspect": "F"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0006488",
+                            "name": "dolichol-linked oligosaccharide biosynthetic process"
+                        },
+                        "aspect": "P"
+                    }
+                ]
+            },
+            {
+                "id": "ENSG00000119523",
+                "geneOntology": [
+                    {
+                        "term": {
+                            "id": "GO:0046982",
+                            "name": "protein heterodimerization activity"
+                        },
+                        "aspect": "F"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0016020",
+                            "name": "membrane"
+                        },
+                        "aspect": "C"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0000033",
+                            "name": "alpha-1,3-mannosyltransferase activity"
+                        },
+                        "aspect": "F"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0005515",
+                            "name": "protein binding"
+                        },
+                        "aspect": "F"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0006490",
+                            "name": "oligosaccharide-lipid intermediate biosynthetic process"
+                        },
+                        "aspect": "P"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0005634",
+                            "name": "nucleus"
+                        },
+                        "aspect": "C"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0048306",
+                            "name": "calcium-dependent protein binding"
+                        },
+                        "aspect": "F"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0005789",
+                            "name": "endoplasmic reticulum membrane"
+                        },
+                        "aspect": "C"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0006486",
+                            "name": "protein glycosylation"
+                        },
+                        "aspect": "P"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0004378",
+                            "name": "GDP-Man:Man1GlcNAc2-PP-Dol alpha-1,3-mannosyltransferase activity"
+                        },
+                        "aspect": "F"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0102704",
+                            "name": "GDP-Man:Man2GlcNAc2-PP-dolichol alpha-1,6-mannosyltransferase activity"
+                        },
+                        "aspect": "F"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0048306",
+                            "name": "calcium-dependent protein binding"
+                        },
+                        "aspect": "F"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0005789",
+                            "name": "endoplasmic reticulum membrane"
+                        },
+                        "aspect": "C"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0005515",
+                            "name": "protein binding"
+                        },
+                        "aspect": "F"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0006488",
+                            "name": "dolichol-linked oligosaccharide biosynthetic process"
+                        },
+                        "aspect": "P"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0005737",
+                            "name": "cytoplasm"
+                        },
+                        "aspect": "C"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0005737",
+                            "name": "cytoplasm"
+                        },
+                        "aspect": "C"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0000033",
+                            "name": "alpha-1,3-mannosyltransferase activity"
+                        },
+                        "aspect": "F"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0102704",
+                            "name": "GDP-Man:Man2GlcNAc2-PP-dolichol alpha-1,6-mannosyltransferase activity"
+                        },
+                        "aspect": "F"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0051592",
+                            "name": "response to calcium ion"
+                        },
+                        "aspect": "P"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0005515",
+                            "name": "protein binding"
+                        },
+                        "aspect": "F"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0004378",
+                            "name": "GDP-Man:Man1GlcNAc2-PP-Dol alpha-1,3-mannosyltransferase activity"
+                        },
+                        "aspect": "F"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0048306",
+                            "name": "calcium-dependent protein binding"
+                        },
+                        "aspect": "F"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0005737",
+                            "name": "cytoplasm"
+                        },
+                        "aspect": "C"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0000033",
+                            "name": "alpha-1,3-mannosyltransferase activity"
+                        },
+                        "aspect": "F"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0102704",
+                            "name": "GDP-Man:Man2GlcNAc2-PP-dolichol alpha-1,6-mannosyltransferase activity"
+                        },
+                        "aspect": "F"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0005634",
+                            "name": "nucleus"
+                        },
+                        "aspect": "C"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0005737",
+                            "name": "cytoplasm"
+                        },
+                        "aspect": "C"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0000033",
+                            "name": "alpha-1,3-mannosyltransferase activity"
+                        },
+                        "aspect": "F"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0006488",
+                            "name": "dolichol-linked oligosaccharide biosynthetic process"
+                        },
+                        "aspect": "P"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0005737",
+                            "name": "cytoplasm"
+                        },
+                        "aspect": "C"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0016020",
+                            "name": "membrane"
+                        },
+                        "aspect": "C"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0004378",
+                            "name": "GDP-Man:Man1GlcNAc2-PP-Dol alpha-1,3-mannosyltransferase activity"
+                        },
+                        "aspect": "F"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0051592",
+                            "name": "response to calcium ion"
+                        },
+                        "aspect": "P"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0004378",
+                            "name": "GDP-Man:Man1GlcNAc2-PP-Dol alpha-1,3-mannosyltransferase activity"
+                        },
+                        "aspect": "F"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0048471",
+                            "name": "perinuclear region of cytoplasm"
+                        },
+                        "aspect": "C"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0048306",
+                            "name": "calcium-dependent protein binding"
+                        },
+                        "aspect": "F"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0005634",
+                            "name": "nucleus"
+                        },
+                        "aspect": "C"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0102704",
+                            "name": "GDP-Man:Man2GlcNAc2-PP-dolichol alpha-1,6-mannosyltransferase activity"
+                        },
+                        "aspect": "F"
+                    }
+                ]
+            },
+            {
+                "id": "ENSG00000138435",
+                "geneOntology": [
+                    {
+                        "term": {
+                            "id": "GO:0050905",
+                            "name": "neuromuscular process"
+                        },
+                        "aspect": "P"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0009986",
+                            "name": "cell surface"
+                        },
+                        "aspect": "C"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0070050",
+                            "name": "neuron cellular homeostasis"
+                        },
+                        "aspect": "P"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0043005",
+                            "name": "neuron projection"
+                        },
+                        "aspect": "C"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0034220",
+                            "name": "monoatomic ion transmembrane transport"
+                        },
+                        "aspect": "P"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0035094",
+                            "name": "response to nicotine"
+                        },
+                        "aspect": "P"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0048630",
+                            "name": "skeletal muscle tissue growth"
+                        },
+                        "aspect": "P"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0042391",
+                            "name": "regulation of membrane potential"
+                        },
+                        "aspect": "P"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0005886",
+                            "name": "plasma membrane"
+                        },
+                        "aspect": "C"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0005892",
+                            "name": "acetylcholine-gated channel complex"
+                        },
+                        "aspect": "C"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0031594",
+                            "name": "neuromuscular junction"
+                        },
+                        "aspect": "C"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0005892",
+                            "name": "acetylcholine-gated channel complex"
+                        },
+                        "aspect": "C"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0051899",
+                            "name": "membrane depolarization"
+                        },
+                        "aspect": "P"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0050881",
+                            "name": "musculoskeletal movement"
+                        },
+                        "aspect": "P"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0099634",
+                            "name": "postsynaptic specialization membrane"
+                        },
+                        "aspect": "C"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0022848",
+                            "name": "acetylcholine-gated monoatomic cation-selective channel activity"
+                        },
+                        "aspect": "F"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0022848",
+                            "name": "acetylcholine-gated monoatomic cation-selective channel activity"
+                        },
+                        "aspect": "F"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0019228",
+                            "name": "neuronal action potential"
+                        },
+                        "aspect": "P"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0031594",
+                            "name": "neuromuscular junction"
+                        },
+                        "aspect": "C"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:1904315",
+                            "name": "transmitter-gated monoatomic ion channel activity involved in regulation of postsynaptic membrane potential"
+                        },
+                        "aspect": "F"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0003009",
+                            "name": "skeletal muscle contraction"
+                        },
+                        "aspect": "P"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0060079",
+                            "name": "excitatory postsynaptic potential"
+                        },
+                        "aspect": "P"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:1904315",
+                            "name": "transmitter-gated monoatomic ion channel activity involved in regulation of postsynaptic membrane potential"
+                        },
+                        "aspect": "F"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0045211",
+                            "name": "postsynaptic membrane"
+                        },
+                        "aspect": "C"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0007271",
+                            "name": "synaptic transmission, cholinergic"
+                        },
+                        "aspect": "P"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0005886",
+                            "name": "plasma membrane"
+                        },
+                        "aspect": "C"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0005886",
+                            "name": "plasma membrane"
+                        },
+                        "aspect": "C"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0005886",
+                            "name": "plasma membrane"
+                        },
+                        "aspect": "C"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0042391",
+                            "name": "regulation of membrane potential"
+                        },
+                        "aspect": "P"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0031594",
+                            "name": "neuromuscular junction"
+                        },
+                        "aspect": "C"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0022848",
+                            "name": "acetylcholine-gated monoatomic cation-selective channel activity"
+                        },
+                        "aspect": "F"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0046716",
+                            "name": "muscle cell cellular homeostasis"
+                        },
+                        "aspect": "P"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0045202",
+                            "name": "synapse"
+                        },
+                        "aspect": "C"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0015464",
+                            "name": "acetylcholine receptor activity"
+                        },
+                        "aspect": "F"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0031594",
+                            "name": "neuromuscular junction"
+                        },
+                        "aspect": "C"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0042166",
+                            "name": "acetylcholine binding"
+                        },
+                        "aspect": "F"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0031594",
+                            "name": "neuromuscular junction"
+                        },
+                        "aspect": "C"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:1904315",
+                            "name": "transmitter-gated monoatomic ion channel activity involved in regulation of postsynaptic membrane potential"
+                        },
+                        "aspect": "F"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0006812",
+                            "name": "monoatomic cation transport"
+                        },
+                        "aspect": "P"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0031594",
+                            "name": "neuromuscular junction"
+                        },
+                        "aspect": "C"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0005886",
+                            "name": "plasma membrane"
+                        },
+                        "aspect": "C"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0007528",
+                            "name": "neuromuscular junction development"
+                        },
+                        "aspect": "P"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0095500",
+                            "name": "acetylcholine receptor signaling pathway"
+                        },
+                        "aspect": "P"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0005886",
+                            "name": "plasma membrane"
+                        },
+                        "aspect": "C"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0007274",
+                            "name": "neuromuscular synaptic transmission"
+                        },
+                        "aspect": "P"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0005886",
+                            "name": "plasma membrane"
+                        },
+                        "aspect": "C"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0022848",
+                            "name": "acetylcholine-gated monoatomic cation-selective channel activity"
+                        },
+                        "aspect": "F"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0015464",
+                            "name": "acetylcholine receptor activity"
+                        },
+                        "aspect": "F"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:1904315",
+                            "name": "transmitter-gated monoatomic ion channel activity involved in regulation of postsynaptic membrane potential"
+                        },
+                        "aspect": "F"
+                    }
+                ]
+            }
+        ]
+    }
+}

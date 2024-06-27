@@ -20,8 +20,6 @@ from pyBiodatafuse.constants import (
     OPENTARGETS_GO_COL,
     OPENTARGETS_GO_OUTPUT_DICT,
     OPENTARGETS_INPUT_ID,
-    OPENTARGETS_LOCATION_COL,
-    OPENTARGETS_LOCATION_OUTPUT_DICT,
     OPENTARGETS_REACTOME_COL,
     OPENTARGETS_REACTOME_OUTPUT_DICT,
 )
@@ -102,107 +100,6 @@ def get_version_opentargets() -> dict:
     }
 
     return metadata
-
-
-def get_gene_location(
-    bridgedb_df: pd.DataFrame,
-) -> Tuple[pd.DataFrame, dict]:
-    """Get location of gene in human body.
-
-    :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
-    :returns: a DataFrame containing the OpenTargets output and dictionary of the query metadata.
-    """
-    # Check if the API is available
-    api_available = check_endpoint_opentargets()
-    if not api_available:
-        warnings.warn(
-            f"{OPENTARGETS} GraphQL endpoint is not available. Unable to retrieve data.",
-            stacklevel=2,
-        )
-        return pd.DataFrame(), {}
-
-    data_df = get_identifier_of_interest(bridgedb_df, OPENTARGETS_INPUT_ID)
-    gene_ids = data_df["target"].tolist()
-
-    # Record the start time
-    opentargets_version = get_version_opentargets()
-    start_time = datetime.datetime.now()
-
-    query_string = """
-      query targetLocation {
-        targets (ensemblIds: $ids){
-          id
-          subcellularLocations {
-            location
-            termSL
-            labelSL
-          }
-        }
-      }
-    """
-    query_string = query_string.replace("$ids", str(gene_ids).replace("'", '"'))
-
-    r = requests.post(OPENTARGETS_ENDPOINT, json={"query": query_string}).json()
-
-    # Record the end time
-    end_time = datetime.datetime.now()
-
-    # Generate the OpenTargets DataFrame
-    intermediate_df = pd.DataFrame()
-
-    for gene in r["data"]["targets"]:
-        gene_id = gene["id"]
-        loc_df = pd.DataFrame(gene["subcellularLocations"])
-        loc_df = loc_df.drop_duplicates()
-        loc_df["target"] = gene_id
-        intermediate_df = pd.concat([intermediate_df, loc_df], ignore_index=True)
-
-    if intermediate_df.empty:  # If no data is returned, return empty DataFrame
-        return pd.DataFrame(), opentargets_version
-
-    intermediate_df.dropna(
-        subset=["termSL"], inplace=True
-    )  # Drop rows where termSL is not available
-    intermediate_df.rename(
-        columns={
-            "termSL": "location_id",
-            "labelSL": "subcellular_location",
-        },
-        inplace=True,
-    )
-
-    # Check if all keys in df match the keys in OUTPUT_DICT
-    check_columns_against_constants(
-        data_df=intermediate_df,
-        output_dict=OPENTARGETS_LOCATION_OUTPUT_DICT,
-        check_values_in=["location_id"],
-    )
-
-    # Merge the two DataFrames on the target column
-    merged_df = collapse_data_sources(
-        data_df=data_df,
-        source_namespace=OPENTARGETS_INPUT_ID,
-        target_df=intermediate_df,
-        common_cols=["target"],
-        target_specific_cols=list(OPENTARGETS_LOCATION_OUTPUT_DICT.keys()),
-        col_name=OPENTARGETS_LOCATION_COL,
-    )
-
-    """Metdata details"""
-    # Get the current date and time
-    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    # Calculate the time elapsed
-    time_elapsed = str(end_time - start_time)
-    # Add version, datasource, query, query time, and the date to metadata
-    opentargets_version["query"] = {
-        "size": len(gene_ids),
-        "input_type": OPENTARGETS_INPUT_ID,
-        "time": time_elapsed,
-        "date": current_date,
-        "url": OPENTARGETS_ENDPOINT,
-    }
-
-    return merged_df, opentargets_version
 
 
 def get_gene_go_process(
@@ -515,7 +412,6 @@ def get_gene_compound_interactions(
                 id
                 name
                 isApproved
-                crossReferences{source,reference}
                 adverseEvents{
                     count
                     rows{
@@ -564,13 +460,7 @@ def get_gene_compound_interactions(
                 else None
             )
         )
-        drug_df["compound_cid"] = drug_df["cross_references"].apply(
-            lambda x: (
-                next((ref["reference"][0] for ref in x if ref["source"] == "PubChem"), None)
-                if x
-                else None
-            )
-        )
+
         drug_df[["adverse_effect_count", "adverse_effect"]] = drug_df.apply(
             lambda row: (
                 pd.Series([row["adverse_events"]["count"], row["adverse_events"]["rows"]])

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""Tests for the Bgee annotator."""
+"""Tests for the Disgenet annotator."""
 
 import json
 import os
