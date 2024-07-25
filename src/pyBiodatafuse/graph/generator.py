@@ -96,13 +96,9 @@ def merge_node(g, node_label, node_attrs):
         g.add_node(node_label, attr_dict=node_attrs)
     else:
         if "attr_dict" in g.nodes[node_label]:
-
             for k, v in node_attrs.items():
-
                 if k in g.nodes[node_label]["attr_dict"]:
-
                     if g.nodes[node_label]["attr_dict"][k] is not None:
-
                         if isinstance(v, str):
                             v_list = g.nodes[node_label]["attr_dict"][k].split("|")
                             v_list.append(v)
@@ -217,7 +213,7 @@ def add_disgenet_disease_subgraph(g, gene_node_label, annot_list):
             annot_node_attrs["id"] = annot["disease_id"]
             annot_node_attrs["evidence_source"] = annot["evidence_source"]
 
-            #g.add_node(annot_node_label, attr_dict=annot_node_attrs)
+            # g.add_node(annot_node_label, attr_dict=annot_node_attrs)
             merge_node(g, annot_node_label, annot_node_attrs)
 
             edge_attrs = DISGENET_EDGE_ATTRS.copy()
@@ -257,7 +253,7 @@ def add_opentargets_disease_subgraph(g, gene_node_label, annot_list):
             annot_node_attrs["id"] = annot["disease_id"]
             annot_node_attrs["therapeutic_areas"] = annot["therapeutic_areas"]
 
-            #g.add_node(annot_node_label, attr_dict=annot_node_attrs)
+            # g.add_node(annot_node_label, attr_dict=annot_node_attrs)
             merge_node(g, annot_node_label, annot_node_attrs)
 
             edge_attrs = OPENTARGETS_DISEASE_EDGE_ATTRS
