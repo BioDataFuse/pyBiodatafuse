@@ -8,200 +8,167 @@
 
 <https://biodatafuse.org/experimental_process/000000/AHR> a sio:SIO_001077 ;
     sio:has_input obo:UBERON_0000178,
-        <https://biodatafuse.org/gene/000000/>,
-        <https://biodatafuse.org/life_cycle/000000/AHR> ;
+        <https://biodatafuse.org/gene/000000/> ;
     sio:has_output <https://biodatafuse.org/gene_expression_value/000000/AHR_UBERON_0000178> .
 
 <https://biodatafuse.org/experimental_process/000001/ALG14> a sio:SIO_001077 ;
     sio:has_input obo:UBERON_0000178,
-        <https://biodatafuse.org/gene/000001/>,
-        <https://biodatafuse.org/life_cycle/000001/ALG14> ;
+        <https://biodatafuse.org/gene/000001/> ;
     sio:has_output <https://biodatafuse.org/gene_expression_value/000001/ALG14_UBERON_0000178> .
 
 <https://biodatafuse.org/experimental_process/000002/ALG2> a sio:SIO_001077 ;
     sio:has_input obo:UBERON_0000178,
-        <https://biodatafuse.org/gene/000002/>,
-        <https://biodatafuse.org/life_cycle/000002/ALG2> ;
+        <https://biodatafuse.org/gene/000002/> ;
     sio:has_output <https://biodatafuse.org/gene_expression_value/000002/ALG2_UBERON_0000178> .
 
 <https://biodatafuse.org/experimental_process/000004/CHD8> a sio:SIO_001077 ;
     sio:has_input obo:UBERON_0000178,
-        <https://biodatafuse.org/gene/000004/>,
-        <https://biodatafuse.org/life_cycle/000004/CHD8> ;
+        <https://biodatafuse.org/gene/000004/> ;
     sio:has_output <https://biodatafuse.org/gene_expression_value/000004/CHD8_UBERON_0000178> .
 
 <https://biodatafuse.org/experimental_process/000005/CHRNA1> a sio:SIO_001077 ;
     sio:has_input obo:UBERON_0000178,
-        <https://biodatafuse.org/gene/000005/>,
-        <https://biodatafuse.org/life_cycle/000005/CHRNA1> ;
+        <https://biodatafuse.org/gene/000005/> ;
     sio:has_output <https://biodatafuse.org/gene_expression_value/000005/CHRNA1_UBERON_0000178> .
 
 <https://biodatafuse.org/experimental_process/000006/CHRNB1> a sio:SIO_001077 ;
     sio:has_input obo:UBERON_0000178,
-        <https://biodatafuse.org/gene/000006/>,
-        <https://biodatafuse.org/life_cycle/000006/CHRNB1> ;
+        <https://biodatafuse.org/gene/000006/> ;
     sio:has_output <https://biodatafuse.org/gene_expression_value/000006/CHRNB1_UBERON_0000178> .
 
 <https://biodatafuse.org/experimental_process/000007/CHRND> a sio:SIO_001077 ;
     sio:has_input obo:UBERON_0000178,
-        <https://biodatafuse.org/gene/000007/>,
-        <https://biodatafuse.org/life_cycle/000007/CHRND> ;
+        <https://biodatafuse.org/gene/000007/> ;
     sio:has_output <https://biodatafuse.org/gene_expression_value/000007/CHRND_UBERON_0000178> .
 
 <https://biodatafuse.org/experimental_process/000008/CHRNE> a sio:SIO_001077 ;
     sio:has_input obo:UBERON_0000178,
-        <https://biodatafuse.org/gene/000008/>,
-        <https://biodatafuse.org/life_cycle/000008/CHRNE> ;
+        <https://biodatafuse.org/gene/000008/> ;
     sio:has_output <https://biodatafuse.org/gene_expression_value/000008/CHRNE_UBERON_0000178> .
 
 <https://biodatafuse.org/experimental_process/000009/CHRNG> a sio:SIO_001077 ;
     sio:has_input obo:UBERON_0000178,
-        <https://biodatafuse.org/gene/000009/>,
-        <https://biodatafuse.org/life_cycle/000009/CHRNG> ;
+        <https://biodatafuse.org/gene/000009/> ;
     sio:has_output <https://biodatafuse.org/gene_expression_value/000009/CHRNG_UBERON_0000178> .
 
 <https://biodatafuse.org/experimental_process/000010/COL13A1> a sio:SIO_001077 ;
     sio:has_input obo:UBERON_0000178,
-        <https://biodatafuse.org/gene/000010/>,
-        <https://biodatafuse.org/life_cycle/000010/COL13A1> ;
+        <https://biodatafuse.org/gene/000010/> ;
     sio:has_output <https://biodatafuse.org/gene_expression_value/000010/COL13A1_UBERON_0000178> .
 
 <https://biodatafuse.org/experimental_process/000011/COLQ> a sio:SIO_001077 ;
     sio:has_input obo:UBERON_0000178,
-        <https://biodatafuse.org/gene/000011/>,
-        <https://biodatafuse.org/life_cycle/000011/COLQ> ;
+        <https://biodatafuse.org/gene/000011/> ;
     sio:has_output <https://biodatafuse.org/gene_expression_value/000011/COLQ_UBERON_0000178> .
 
 <https://biodatafuse.org/experimental_process/000012/DMD> a sio:SIO_001077 ;
     sio:has_input obo:UBERON_0000178,
-        <https://biodatafuse.org/gene/000012/>,
-        <https://biodatafuse.org/life_cycle/000012/DMD> ;
+        <https://biodatafuse.org/gene/000012/> ;
     sio:has_output <https://biodatafuse.org/gene_expression_value/000012/DMD_UBERON_0000178> .
 
 <https://biodatafuse.org/experimental_process/000013/DOK7> a sio:SIO_001077 ;
     sio:has_input obo:UBERON_0000178,
-        <https://biodatafuse.org/gene/000013/>,
-        <https://biodatafuse.org/life_cycle/000013/DOK7> ;
+        <https://biodatafuse.org/gene/000013/> ;
     sio:has_output <https://biodatafuse.org/gene_expression_value/000013/DOK7_UBERON_0000178> .
 
 <https://biodatafuse.org/experimental_process/000014/DPAGT1> a sio:SIO_001077 ;
     sio:has_input obo:UBERON_0000178,
-        <https://biodatafuse.org/gene/000014/>,
-        <https://biodatafuse.org/life_cycle/000014/DPAGT1> ;
+        <https://biodatafuse.org/gene/000014/> ;
     sio:has_output <https://biodatafuse.org/gene_expression_value/000014/DPAGT1_UBERON_0000178> .
 
 <https://biodatafuse.org/experimental_process/000015/GFPT1> a sio:SIO_001077 ;
     sio:has_input obo:UBERON_0000178,
-        <https://biodatafuse.org/gene/000015/>,
-        <https://biodatafuse.org/life_cycle/000015/GFPT1> ;
+        <https://biodatafuse.org/gene/000015/> ;
     sio:has_output <https://biodatafuse.org/gene_expression_value/000015/GFPT1_UBERON_0000178> .
 
 <https://biodatafuse.org/experimental_process/000016/GMPPB> a sio:SIO_001077 ;
     sio:has_input obo:UBERON_0000178,
-        <https://biodatafuse.org/gene/000016/>,
-        <https://biodatafuse.org/life_cycle/000016/GMPPB> ;
+        <https://biodatafuse.org/gene/000016/> ;
     sio:has_output <https://biodatafuse.org/gene_expression_value/000016/GMPPB_UBERON_0000178> .
 
 <https://biodatafuse.org/experimental_process/000017/HTR3A> a sio:SIO_001077 ;
     sio:has_input obo:UBERON_0000178,
-        <https://biodatafuse.org/gene/000017/>,
-        <https://biodatafuse.org/life_cycle/000017/HTR3A> ;
+        <https://biodatafuse.org/gene/000017/> ;
     sio:has_output <https://biodatafuse.org/gene_expression_value/000017/HTR3A_UBERON_0000178> .
 
 <https://biodatafuse.org/experimental_process/000018/LAMA5> a sio:SIO_001077 ;
     sio:has_input obo:UBERON_0000178,
-        <https://biodatafuse.org/gene/000018/>,
-        <https://biodatafuse.org/life_cycle/000018/LAMA5> ;
+        <https://biodatafuse.org/gene/000018/> ;
     sio:has_output <https://biodatafuse.org/gene_expression_value/000018/LAMA5_UBERON_0000178> .
 
 <https://biodatafuse.org/experimental_process/000019/LAMB2> a sio:SIO_001077 ;
     sio:has_input obo:UBERON_0000178,
-        <https://biodatafuse.org/gene/000019/>,
-        <https://biodatafuse.org/life_cycle/000019/LAMB2> ;
+        <https://biodatafuse.org/gene/000019/> ;
     sio:has_output <https://biodatafuse.org/gene_expression_value/000019/LAMB2_UBERON_0000178> .
 
 <https://biodatafuse.org/experimental_process/000020/LRP4> a sio:SIO_001077 ;
     sio:has_input obo:UBERON_0000178,
-        <https://biodatafuse.org/gene/000020/>,
-        <https://biodatafuse.org/life_cycle/000020/LRP4> ;
+        <https://biodatafuse.org/gene/000020/> ;
     sio:has_output <https://biodatafuse.org/gene_expression_value/000020/LRP4_UBERON_0000178> .
 
 <https://biodatafuse.org/experimental_process/000022/MYO9A> a sio:SIO_001077 ;
     sio:has_input obo:UBERON_0000178,
-        <https://biodatafuse.org/gene/000022/>,
-        <https://biodatafuse.org/life_cycle/000022/MYO9A> ;
+        <https://biodatafuse.org/gene/000022/> ;
     sio:has_output <https://biodatafuse.org/gene_expression_value/000022/MYO9A_UBERON_0000178> .
 
 <https://biodatafuse.org/experimental_process/000023/PLEC> a sio:SIO_001077 ;
     sio:has_input obo:UBERON_0000178,
-        <https://biodatafuse.org/gene/000023/>,
-        <https://biodatafuse.org/life_cycle/000023/PLEC> ;
+        <https://biodatafuse.org/gene/000023/> ;
     sio:has_output <https://biodatafuse.org/gene_expression_value/000023/PLEC_UBERON_0000178> .
 
 <https://biodatafuse.org/experimental_process/000024/PREPL> a sio:SIO_001077 ;
     sio:has_input obo:UBERON_0000178,
-        <https://biodatafuse.org/gene/000024/>,
-        <https://biodatafuse.org/life_cycle/000024/PREPL> ;
+        <https://biodatafuse.org/gene/000024/> ;
     sio:has_output <https://biodatafuse.org/gene_expression_value/000024/PREPL_UBERON_0000178> .
 
 <https://biodatafuse.org/experimental_process/000025/PURA> a sio:SIO_001077 ;
     sio:has_input obo:UBERON_0000178,
-        <https://biodatafuse.org/gene/000025/>,
-        <https://biodatafuse.org/life_cycle/000025/PURA> ;
+        <https://biodatafuse.org/gene/000025/> ;
     sio:has_output <https://biodatafuse.org/gene_expression_value/000025/PURA_UBERON_0000178> .
 
 <https://biodatafuse.org/experimental_process/000026/RAPSN> a sio:SIO_001077 ;
     sio:has_input obo:UBERON_0000178,
-        <https://biodatafuse.org/gene/000026/>,
-        <https://biodatafuse.org/life_cycle/000026/RAPSN> ;
+        <https://biodatafuse.org/gene/000026/> ;
     sio:has_output <https://biodatafuse.org/gene_expression_value/000026/RAPSN_UBERON_0000178> .
 
 <https://biodatafuse.org/experimental_process/000027/RPH3A> a sio:SIO_001077 ;
     sio:has_input obo:UBERON_0000178,
-        <https://biodatafuse.org/gene/000027/>,
-        <https://biodatafuse.org/life_cycle/000027/RPH3A> ;
+        <https://biodatafuse.org/gene/000027/> ;
     sio:has_output <https://biodatafuse.org/gene_expression_value/000027/RPH3A_UBERON_0000178> .
 
 <https://biodatafuse.org/experimental_process/000028/SCN4A> a sio:SIO_001077 ;
     sio:has_input obo:UBERON_0000178,
-        <https://biodatafuse.org/gene/000028/>,
-        <https://biodatafuse.org/life_cycle/000028/SCN4A> ;
+        <https://biodatafuse.org/gene/000028/> ;
     sio:has_output <https://biodatafuse.org/gene_expression_value/000028/SCN4A_UBERON_0000178> .
 
 <https://biodatafuse.org/experimental_process/000030/SLC25A1> a sio:SIO_001077 ;
     sio:has_input obo:UBERON_0000178,
-        <https://biodatafuse.org/gene/000030/>,
-        <https://biodatafuse.org/life_cycle/000030/SLC25A1> ;
+        <https://biodatafuse.org/gene/000030/> ;
     sio:has_output <https://biodatafuse.org/gene_expression_value/000030/SLC25A1_UBERON_0000178> .
 
 <https://biodatafuse.org/experimental_process/000032/SNAP25> a sio:SIO_001077 ;
     sio:has_input obo:UBERON_0000178,
-        <https://biodatafuse.org/gene/000032/>,
-        <https://biodatafuse.org/life_cycle/000032/SNAP25> ;
+        <https://biodatafuse.org/gene/000032/> ;
     sio:has_output <https://biodatafuse.org/gene_expression_value/000032/SNAP25_UBERON_0000178> .
 
 <https://biodatafuse.org/experimental_process/000033/SYT2> a sio:SIO_001077 ;
     sio:has_input obo:UBERON_0000178,
-        <https://biodatafuse.org/gene/000033/>,
-        <https://biodatafuse.org/life_cycle/000033/SYT2> ;
+        <https://biodatafuse.org/gene/000033/> ;
     sio:has_output <https://biodatafuse.org/gene_expression_value/000033/SYT2_UBERON_0000178> .
 
 <https://biodatafuse.org/experimental_process/000034/TOR1AIP1> a sio:SIO_001077 ;
     sio:has_input obo:UBERON_0000178,
-        <https://biodatafuse.org/gene/000034/>,
-        <https://biodatafuse.org/life_cycle/000034/TOR1AIP1> ;
+        <https://biodatafuse.org/gene/000034/> ;
     sio:has_output <https://biodatafuse.org/gene_expression_value/000034/TOR1AIP1_UBERON_0000178> .
 
 <https://biodatafuse.org/experimental_process/000035/UNC13A> a sio:SIO_001077 ;
     sio:has_input obo:UBERON_0000178,
-        <https://biodatafuse.org/gene/000035/>,
-        <https://biodatafuse.org/life_cycle/000035/UNC13A> ;
+        <https://biodatafuse.org/gene/000035/> ;
     sio:has_output <https://biodatafuse.org/gene_expression_value/000035/UNC13A_UBERON_0000178> .
 
 <https://biodatafuse.org/experimental_process/000036/VAMP1> a sio:SIO_001077 ;
     sio:has_input obo:UBERON_0000178,
-        <https://biodatafuse.org/gene/000036/>,
-        <https://biodatafuse.org/life_cycle/000036/VAMP1> ;
+        <https://biodatafuse.org/gene/000036/> ;
     sio:has_output <https://biodatafuse.org/gene_expression_value/000036/VAMP1_UBERON_0000178> .
 
 <https://biodatafuse.org/gene_disease_association/000000/AHR_assoc_umls:C0000786> a sio:SIO_000983 ;
@@ -3518,9 +3485,9 @@
 biodatafuse:life_cycle skos:exactMatch obo:UBERON_0000104 .
 
 <https://biodatafuse.org/gene/000027/> a obo:NCIT_C16612 ;
-    sio:is_associated_with obo:UBERON_0000178,
-        <https://biodatafuse.org/gene_expression_value/000027/RPH3A_UBERON_0000178>,
-        <https://biodatafuse.org/life_cycle/000027/RPH3A> .
+    sio:is_associated_with obo:UBERON_0000104,
+        obo:UBERON_0000178,
+        <https://biodatafuse.org/gene_expression_value/000027/RPH3A_UBERON_0000178> .
 
 <https://biodatafuse.org/score/000000/AHR_umls:C0000786> a obo:NCIT_C25338 ;
     sio:has_value 3e-01 .
@@ -6495,9 +6462,9 @@ biodatafuse:life_cycle skos:exactMatch obo:UBERON_0000104 .
         "ORPHANET"^^xsd:string .
 
 <https://biodatafuse.org/gene/000018/> a obo:NCIT_C16612 ;
-    sio:is_associated_with obo:UBERON_0000178,
-        <https://biodatafuse.org/gene_expression_value/000018/LAMA5_UBERON_0000178>,
-        <https://biodatafuse.org/life_cycle/000018/LAMA5> .
+    sio:is_associated_with obo:UBERON_0000104,
+        obo:UBERON_0000178,
+        <https://biodatafuse.org/gene_expression_value/000018/LAMA5_UBERON_0000178> .
 
 <https://biodatafuse.org/gene_expression_value/000000/AHR_UBERON_0000178> a sio:SIO_001077 ;
     sio:has_value 8.02387e+01 .
@@ -6597,105 +6564,6 @@ biodatafuse:life_cycle skos:exactMatch obo:UBERON_0000104 .
 
 <https://biodatafuse.org/gene_expression_value/000036/VAMP1_UBERON_0000178> a sio:SIO_001077 ;
     sio:has_value 9.05218e+01 .
-
-<https://biodatafuse.org/life_cycle/000000/AHR> a obo:UBERON_0000104 ;
-    skos:exactMatch obo:UBERON_0000104 .
-
-<https://biodatafuse.org/life_cycle/000001/ALG14> a obo:UBERON_0000104 ;
-    skos:exactMatch obo:UBERON_0000104 .
-
-<https://biodatafuse.org/life_cycle/000002/ALG2> a obo:UBERON_0000104 ;
-    skos:exactMatch obo:UBERON_0000104 .
-
-<https://biodatafuse.org/life_cycle/000004/CHD8> a obo:UBERON_0000104 ;
-    skos:exactMatch obo:UBERON_0000104 .
-
-<https://biodatafuse.org/life_cycle/000005/CHRNA1> a obo:UBERON_0000104 ;
-    skos:exactMatch obo:UBERON_0000104 .
-
-<https://biodatafuse.org/life_cycle/000006/CHRNB1> a obo:UBERON_0000104 ;
-    skos:exactMatch obo:UBERON_0000104 .
-
-<https://biodatafuse.org/life_cycle/000007/CHRND> a obo:UBERON_0000104 ;
-    skos:exactMatch obo:UBERON_0000104 .
-
-<https://biodatafuse.org/life_cycle/000008/CHRNE> a obo:UBERON_0000104 ;
-    skos:exactMatch obo:UBERON_0000104 .
-
-<https://biodatafuse.org/life_cycle/000009/CHRNG> a obo:UBERON_0000104 ;
-    skos:exactMatch obo:UBERON_0000104 .
-
-<https://biodatafuse.org/life_cycle/000010/COL13A1> a obo:UBERON_0000104 ;
-    skos:exactMatch obo:UBERON_0000104 .
-
-<https://biodatafuse.org/life_cycle/000011/COLQ> a obo:UBERON_0000104 ;
-    skos:exactMatch obo:UBERON_0000104 .
-
-<https://biodatafuse.org/life_cycle/000012/DMD> a obo:UBERON_0000104 ;
-    skos:exactMatch obo:UBERON_0000104 .
-
-<https://biodatafuse.org/life_cycle/000013/DOK7> a obo:UBERON_0000104 ;
-    skos:exactMatch obo:UBERON_0000104 .
-
-<https://biodatafuse.org/life_cycle/000014/DPAGT1> a obo:UBERON_0000104 ;
-    skos:exactMatch obo:UBERON_0000104 .
-
-<https://biodatafuse.org/life_cycle/000015/GFPT1> a obo:UBERON_0000104 ;
-    skos:exactMatch obo:UBERON_0000104 .
-
-<https://biodatafuse.org/life_cycle/000016/GMPPB> a obo:UBERON_0000104 ;
-    skos:exactMatch obo:UBERON_0000104 .
-
-<https://biodatafuse.org/life_cycle/000017/HTR3A> a obo:UBERON_0000104 ;
-    skos:exactMatch obo:UBERON_0000104 .
-
-<https://biodatafuse.org/life_cycle/000018/LAMA5> a obo:UBERON_0000104 ;
-    skos:exactMatch obo:UBERON_0000104 .
-
-<https://biodatafuse.org/life_cycle/000019/LAMB2> a obo:UBERON_0000104 ;
-    skos:exactMatch obo:UBERON_0000104 .
-
-<https://biodatafuse.org/life_cycle/000020/LRP4> a obo:UBERON_0000104 ;
-    skos:exactMatch obo:UBERON_0000104 .
-
-<https://biodatafuse.org/life_cycle/000022/MYO9A> a obo:UBERON_0000104 ;
-    skos:exactMatch obo:UBERON_0000104 .
-
-<https://biodatafuse.org/life_cycle/000023/PLEC> a obo:UBERON_0000104 ;
-    skos:exactMatch obo:UBERON_0000104 .
-
-<https://biodatafuse.org/life_cycle/000024/PREPL> a obo:UBERON_0000104 ;
-    skos:exactMatch obo:UBERON_0000104 .
-
-<https://biodatafuse.org/life_cycle/000025/PURA> a obo:UBERON_0000104 ;
-    skos:exactMatch obo:UBERON_0000104 .
-
-<https://biodatafuse.org/life_cycle/000026/RAPSN> a obo:UBERON_0000104 ;
-    skos:exactMatch obo:UBERON_0000104 .
-
-<https://biodatafuse.org/life_cycle/000027/RPH3A> a obo:UBERON_0000104 ;
-    skos:exactMatch obo:UBERON_0000104 .
-
-<https://biodatafuse.org/life_cycle/000028/SCN4A> a obo:UBERON_0000104 ;
-    skos:exactMatch obo:UBERON_0000104 .
-
-<https://biodatafuse.org/life_cycle/000030/SLC25A1> a obo:UBERON_0000104 ;
-    skos:exactMatch obo:UBERON_0000104 .
-
-<https://biodatafuse.org/life_cycle/000032/SNAP25> a obo:UBERON_0000104 ;
-    skos:exactMatch obo:UBERON_0000104 .
-
-<https://biodatafuse.org/life_cycle/000033/SYT2> a obo:UBERON_0000104 ;
-    skos:exactMatch obo:UBERON_0000104 .
-
-<https://biodatafuse.org/life_cycle/000034/TOR1AIP1> a obo:UBERON_0000104 ;
-    skos:exactMatch obo:UBERON_0000104 .
-
-<https://biodatafuse.org/life_cycle/000035/UNC13A> a obo:UBERON_0000104 ;
-    skos:exactMatch obo:UBERON_0000104 .
-
-<https://biodatafuse.org/life_cycle/000036/VAMP1> a obo:UBERON_0000104 ;
-    skos:exactMatch obo:UBERON_0000104 .
 
 <https://uts.nlm.nih.gov/uts/umls/concept/C0001969> a obo:NCIT_C7057 ;
     rdfs:label "Alcoholic Intoxication"^^xsd:string ;
@@ -7998,29 +7866,29 @@ biodatafuse:life_cycle skos:exactMatch obo:UBERON_0000104 .
     skos:exactMatch <https://uts.nlm.nih.gov/uts/umls/concept/C4552766> .
 
 <https://biodatafuse.org/gene/000022/> a obo:NCIT_C16612 ;
-    sio:is_associated_with obo:UBERON_0000178,
-        <https://biodatafuse.org/gene_expression_value/000022/MYO9A_UBERON_0000178>,
-        <https://biodatafuse.org/life_cycle/000022/MYO9A> .
+    sio:is_associated_with obo:UBERON_0000104,
+        obo:UBERON_0000178,
+        <https://biodatafuse.org/gene_expression_value/000022/MYO9A_UBERON_0000178> .
 
 <https://biodatafuse.org/gene/000030/> a obo:NCIT_C16612 ;
-    sio:is_associated_with obo:UBERON_0000178,
-        <https://biodatafuse.org/gene_expression_value/000030/SLC25A1_UBERON_0000178>,
-        <https://biodatafuse.org/life_cycle/000030/SLC25A1> .
+    sio:is_associated_with obo:UBERON_0000104,
+        obo:UBERON_0000178,
+        <https://biodatafuse.org/gene_expression_value/000030/SLC25A1_UBERON_0000178> .
 
 <https://biodatafuse.org/gene/000034/> a obo:NCIT_C16612 ;
-    sio:is_associated_with obo:UBERON_0000178,
-        <https://biodatafuse.org/gene_expression_value/000034/TOR1AIP1_UBERON_0000178>,
-        <https://biodatafuse.org/life_cycle/000034/TOR1AIP1> .
+    sio:is_associated_with obo:UBERON_0000104,
+        obo:UBERON_0000178,
+        <https://biodatafuse.org/gene_expression_value/000034/TOR1AIP1_UBERON_0000178> .
 
 <https://biodatafuse.org/gene/000035/> a obo:NCIT_C16612 ;
-    sio:is_associated_with obo:UBERON_0000178,
-        <https://biodatafuse.org/gene_expression_value/000035/UNC13A_UBERON_0000178>,
-        <https://biodatafuse.org/life_cycle/000035/UNC13A> .
+    sio:is_associated_with obo:UBERON_0000104,
+        obo:UBERON_0000178,
+        <https://biodatafuse.org/gene_expression_value/000035/UNC13A_UBERON_0000178> .
 
 <https://biodatafuse.org/gene/000036/> a obo:NCIT_C16612 ;
-    sio:is_associated_with obo:UBERON_0000178,
-        <https://biodatafuse.org/gene_expression_value/000036/VAMP1_UBERON_0000178>,
-        <https://biodatafuse.org/life_cycle/000036/VAMP1> .
+    sio:is_associated_with obo:UBERON_0000104,
+        obo:UBERON_0000178,
+        <https://biodatafuse.org/gene_expression_value/000036/VAMP1_UBERON_0000178> .
 
 <https://uts.nlm.nih.gov/uts/umls/concept/C0003886> a obo:NCIT_C7057 ;
     rdfs:label "Arthrogryposis"^^xsd:string ;
@@ -8051,14 +7919,14 @@ biodatafuse:life_cycle skos:exactMatch obo:UBERON_0000104 .
     skos:exactMatch <https://uts.nlm.nih.gov/uts/umls/concept/C1837122> .
 
 <https://biodatafuse.org/gene/000011/> a obo:NCIT_C16612 ;
-    sio:is_associated_with obo:UBERON_0000178,
-        <https://biodatafuse.org/gene_expression_value/000011/COLQ_UBERON_0000178>,
-        <https://biodatafuse.org/life_cycle/000011/COLQ> .
+    sio:is_associated_with obo:UBERON_0000104,
+        obo:UBERON_0000178,
+        <https://biodatafuse.org/gene_expression_value/000011/COLQ_UBERON_0000178> .
 
 <https://biodatafuse.org/gene/000013/> a obo:NCIT_C16612 ;
-    sio:is_associated_with obo:UBERON_0000178,
-        <https://biodatafuse.org/gene_expression_value/000013/DOK7_UBERON_0000178>,
-        <https://biodatafuse.org/life_cycle/000013/DOK7> .
+    sio:is_associated_with obo:UBERON_0000104,
+        obo:UBERON_0000178,
+        <https://biodatafuse.org/gene_expression_value/000013/DOK7_UBERON_0000178> .
 
 <https://uts.nlm.nih.gov/uts/umls/concept/C1276035> a obo:NCIT_C7057 ;
     rdfs:label "Pena-Shokeir syndrome type I"^^xsd:string ;
@@ -8081,114 +7949,114 @@ biodatafuse:life_cycle skos:exactMatch obo:UBERON_0000104 .
     skos:exactMatch <https://uts.nlm.nih.gov/uts/umls/concept/C4084823> .
 
 <https://biodatafuse.org/gene/000033/> a obo:NCIT_C16612 ;
-    sio:is_associated_with obo:UBERON_0000178,
-        <https://biodatafuse.org/gene_expression_value/000033/SYT2_UBERON_0000178>,
-        <https://biodatafuse.org/life_cycle/000033/SYT2> .
+    sio:is_associated_with obo:UBERON_0000104,
+        obo:UBERON_0000178,
+        <https://biodatafuse.org/gene_expression_value/000033/SYT2_UBERON_0000178> .
 
 <https://uts.nlm.nih.gov/uts/umls/concept/C0006142> a obo:NCIT_C7057 ;
     rdfs:label "Malignant neoplasm of breast"^^xsd:string ;
     skos:exactMatch <https://uts.nlm.nih.gov/uts/umls/concept/C0006142> .
 
 <https://biodatafuse.org/gene/000001/> a obo:NCIT_C16612 ;
-    sio:is_associated_with obo:UBERON_0000178,
-        <https://biodatafuse.org/gene_expression_value/000001/ALG14_UBERON_0000178>,
-        <https://biodatafuse.org/life_cycle/000001/ALG14> .
+    sio:is_associated_with obo:UBERON_0000104,
+        obo:UBERON_0000178,
+        <https://biodatafuse.org/gene_expression_value/000001/ALG14_UBERON_0000178> .
 
 <https://biodatafuse.org/gene/000002/> a obo:NCIT_C16612 ;
-    sio:is_associated_with obo:UBERON_0000178,
-        <https://biodatafuse.org/gene_expression_value/000002/ALG2_UBERON_0000178>,
-        <https://biodatafuse.org/life_cycle/000002/ALG2> .
+    sio:is_associated_with obo:UBERON_0000104,
+        obo:UBERON_0000178,
+        <https://biodatafuse.org/gene_expression_value/000002/ALG2_UBERON_0000178> .
 
 <https://biodatafuse.org/gene/000008/> a obo:NCIT_C16612 ;
-    sio:is_associated_with obo:UBERON_0000178,
-        <https://biodatafuse.org/gene_expression_value/000008/CHRNE_UBERON_0000178>,
-        <https://biodatafuse.org/life_cycle/000008/CHRNE> .
+    sio:is_associated_with obo:UBERON_0000104,
+        obo:UBERON_0000178,
+        <https://biodatafuse.org/gene_expression_value/000008/CHRNE_UBERON_0000178> .
 
 <https://biodatafuse.org/gene/000021/> a obo:NCIT_C16612 .
 
 <https://biodatafuse.org/gene/000029/> a obo:NCIT_C16612 .
 
 <https://biodatafuse.org/gene/000005/> a obo:NCIT_C16612 ;
-    sio:is_associated_with obo:UBERON_0000178,
-        <https://biodatafuse.org/gene_expression_value/000005/CHRNA1_UBERON_0000178>,
-        <https://biodatafuse.org/life_cycle/000005/CHRNA1> .
+    sio:is_associated_with obo:UBERON_0000104,
+        obo:UBERON_0000178,
+        <https://biodatafuse.org/gene_expression_value/000005/CHRNA1_UBERON_0000178> .
 
 <https://biodatafuse.org/gene/000025/> a obo:NCIT_C16612 ;
-    sio:is_associated_with obo:UBERON_0000178,
-        <https://biodatafuse.org/gene_expression_value/000025/PURA_UBERON_0000178>,
-        <https://biodatafuse.org/life_cycle/000025/PURA> .
+    sio:is_associated_with obo:UBERON_0000104,
+        obo:UBERON_0000178,
+        <https://biodatafuse.org/gene_expression_value/000025/PURA_UBERON_0000178> .
 
 <https://biodatafuse.org/gene/000006/> a obo:NCIT_C16612 ;
-    sio:is_associated_with obo:UBERON_0000178,
-        <https://biodatafuse.org/gene_expression_value/000006/CHRNB1_UBERON_0000178>,
-        <https://biodatafuse.org/life_cycle/000006/CHRNB1> .
+    sio:is_associated_with obo:UBERON_0000104,
+        obo:UBERON_0000178,
+        <https://biodatafuse.org/gene_expression_value/000006/CHRNB1_UBERON_0000178> .
 
 <https://biodatafuse.org/gene/000009/> a obo:NCIT_C16612 ;
-    sio:is_associated_with obo:UBERON_0000178,
-        <https://biodatafuse.org/gene_expression_value/000009/CHRNG_UBERON_0000178>,
-        <https://biodatafuse.org/life_cycle/000009/CHRNG> .
+    sio:is_associated_with obo:UBERON_0000104,
+        obo:UBERON_0000178,
+        <https://biodatafuse.org/gene_expression_value/000009/CHRNG_UBERON_0000178> .
 
 <https://biodatafuse.org/gene/000010/> a obo:NCIT_C16612 ;
-    sio:is_associated_with obo:UBERON_0000178,
-        <https://biodatafuse.org/gene_expression_value/000010/COL13A1_UBERON_0000178>,
-        <https://biodatafuse.org/life_cycle/000010/COL13A1> .
+    sio:is_associated_with obo:UBERON_0000104,
+        obo:UBERON_0000178,
+        <https://biodatafuse.org/gene_expression_value/000010/COL13A1_UBERON_0000178> .
 
 <https://biodatafuse.org/gene/000015/> a obo:NCIT_C16612 ;
-    sio:is_associated_with obo:UBERON_0000178,
-        <https://biodatafuse.org/gene_expression_value/000015/GFPT1_UBERON_0000178>,
-        <https://biodatafuse.org/life_cycle/000015/GFPT1> .
+    sio:is_associated_with obo:UBERON_0000104,
+        obo:UBERON_0000178,
+        <https://biodatafuse.org/gene_expression_value/000015/GFPT1_UBERON_0000178> .
 
 <https://biodatafuse.org/gene/000019/> a obo:NCIT_C16612 ;
-    sio:is_associated_with obo:UBERON_0000178,
-        <https://biodatafuse.org/gene_expression_value/000019/LAMB2_UBERON_0000178>,
-        <https://biodatafuse.org/life_cycle/000019/LAMB2> .
+    sio:is_associated_with obo:UBERON_0000104,
+        obo:UBERON_0000178,
+        <https://biodatafuse.org/gene_expression_value/000019/LAMB2_UBERON_0000178> .
 
 <https://biodatafuse.org/gene/000026/> a obo:NCIT_C16612 ;
-    sio:is_associated_with obo:UBERON_0000178,
-        <https://biodatafuse.org/gene_expression_value/000026/RAPSN_UBERON_0000178>,
-        <https://biodatafuse.org/life_cycle/000026/RAPSN> .
+    sio:is_associated_with obo:UBERON_0000104,
+        obo:UBERON_0000178,
+        <https://biodatafuse.org/gene_expression_value/000026/RAPSN_UBERON_0000178> .
 
 <https://biodatafuse.org/gene/000016/> a obo:NCIT_C16612 ;
-    sio:is_associated_with obo:UBERON_0000178,
-        <https://biodatafuse.org/gene_expression_value/000016/GMPPB_UBERON_0000178>,
-        <https://biodatafuse.org/life_cycle/000016/GMPPB> .
+    sio:is_associated_with obo:UBERON_0000104,
+        obo:UBERON_0000178,
+        <https://biodatafuse.org/gene_expression_value/000016/GMPPB_UBERON_0000178> .
 
 <https://biodatafuse.org/gene/000023/> a obo:NCIT_C16612 ;
-    sio:is_associated_with obo:UBERON_0000178,
-        <https://biodatafuse.org/gene_expression_value/000023/PLEC_UBERON_0000178>,
-        <https://biodatafuse.org/life_cycle/000023/PLEC> .
+    sio:is_associated_with obo:UBERON_0000104,
+        obo:UBERON_0000178,
+        <https://biodatafuse.org/gene_expression_value/000023/PLEC_UBERON_0000178> .
 
 <https://biodatafuse.org/gene/000004/> a obo:NCIT_C16612 ;
-    sio:is_associated_with obo:UBERON_0000178,
-        <https://biodatafuse.org/gene_expression_value/000004/CHD8_UBERON_0000178>,
-        <https://biodatafuse.org/life_cycle/000004/CHD8> .
+    sio:is_associated_with obo:UBERON_0000104,
+        obo:UBERON_0000178,
+        <https://biodatafuse.org/gene_expression_value/000004/CHD8_UBERON_0000178> .
 
 <https://biodatafuse.org/gene/000024/> a obo:NCIT_C16612 ;
-    sio:is_associated_with obo:UBERON_0000178,
-        <https://biodatafuse.org/gene_expression_value/000024/PREPL_UBERON_0000178>,
-        <https://biodatafuse.org/life_cycle/000024/PREPL> .
+    sio:is_associated_with obo:UBERON_0000104,
+        obo:UBERON_0000178,
+        <https://biodatafuse.org/gene_expression_value/000024/PREPL_UBERON_0000178> .
 
 <https://biodatafuse.org/gene/000031/> a obo:NCIT_C16612 .
 
 <https://biodatafuse.org/gene/000017/> a obo:NCIT_C16612 ;
-    sio:is_associated_with obo:UBERON_0000178,
-        <https://biodatafuse.org/gene_expression_value/000017/HTR3A_UBERON_0000178>,
-        <https://biodatafuse.org/life_cycle/000017/HTR3A> .
+    sio:is_associated_with obo:UBERON_0000104,
+        obo:UBERON_0000178,
+        <https://biodatafuse.org/gene_expression_value/000017/HTR3A_UBERON_0000178> .
 
 <https://biodatafuse.org/gene/000020/> a obo:NCIT_C16612 ;
-    sio:is_associated_with obo:UBERON_0000178,
-        <https://biodatafuse.org/gene_expression_value/000020/LRP4_UBERON_0000178>,
-        <https://biodatafuse.org/life_cycle/000020/LRP4> .
+    sio:is_associated_with obo:UBERON_0000104,
+        obo:UBERON_0000178,
+        <https://biodatafuse.org/gene_expression_value/000020/LRP4_UBERON_0000178> .
 
 <https://biodatafuse.org/gene/000007/> a obo:NCIT_C16612 ;
-    sio:is_associated_with obo:UBERON_0000178,
-        <https://biodatafuse.org/gene_expression_value/000007/CHRND_UBERON_0000178>,
-        <https://biodatafuse.org/life_cycle/000007/CHRND> .
+    sio:is_associated_with obo:UBERON_0000104,
+        obo:UBERON_0000178,
+        <https://biodatafuse.org/gene_expression_value/000007/CHRND_UBERON_0000178> .
 
 <https://biodatafuse.org/gene/000014/> a obo:NCIT_C16612 ;
-    sio:is_associated_with obo:UBERON_0000178,
-        <https://biodatafuse.org/gene_expression_value/000014/DPAGT1_UBERON_0000178>,
-        <https://biodatafuse.org/life_cycle/000014/DPAGT1> .
+    sio:is_associated_with obo:UBERON_0000104,
+        obo:UBERON_0000178,
+        <https://biodatafuse.org/gene_expression_value/000014/DPAGT1_UBERON_0000178> .
 
 <https://uts.nlm.nih.gov/uts/umls/concept/C0751883> a obo:NCIT_C7057 ;
     rdfs:label "Congenital Myasthenic Syndromes, Postsynaptic"^^xsd:string ;
@@ -8207,34 +8075,34 @@ biodatafuse:life_cycle skos:exactMatch obo:UBERON_0000104 .
     skos:exactMatch <https://uts.nlm.nih.gov/uts/umls/concept/C0751882> .
 
 <https://biodatafuse.org/gene/000028/> a obo:NCIT_C16612 ;
-    sio:is_associated_with obo:UBERON_0000178,
-        <https://biodatafuse.org/gene_expression_value/000028/SCN4A_UBERON_0000178>,
-        <https://biodatafuse.org/life_cycle/000028/SCN4A> .
+    sio:is_associated_with obo:UBERON_0000104,
+        obo:UBERON_0000178,
+        <https://biodatafuse.org/gene_expression_value/000028/SCN4A_UBERON_0000178> .
+
+obo:UBERON_0000104 rdfs:label "life cycle"^^xsd:string .
 
 <https://biodatafuse.org/gene/000003/> a obo:NCIT_C16612 .
 
 obo:NCIT_C16612 rdfs:label "Gene" .
 
 <https://biodatafuse.org/gene/000032/> a obo:NCIT_C16612 ;
-    sio:is_associated_with obo:UBERON_0000178,
-        <https://biodatafuse.org/gene_expression_value/000032/SNAP25_UBERON_0000178>,
-        <https://biodatafuse.org/life_cycle/000032/SNAP25> .
+    sio:is_associated_with obo:UBERON_0000104,
+        obo:UBERON_0000178,
+        <https://biodatafuse.org/gene_expression_value/000032/SNAP25_UBERON_0000178> .
 
 <https://biodatafuse.org/gene/000012/> a obo:NCIT_C16612 ;
-    sio:is_associated_with obo:UBERON_0000178,
-        <https://biodatafuse.org/gene_expression_value/000012/DMD_UBERON_0000178>,
-        <https://biodatafuse.org/life_cycle/000012/DMD> .
-
-obo:UBERON_0000104 rdfs:label "life cycle"^^xsd:string .
+    sio:is_associated_with obo:UBERON_0000104,
+        obo:UBERON_0000178,
+        <https://biodatafuse.org/gene_expression_value/000012/DMD_UBERON_0000178> .
 
 obo:UBERON_0000178 a obo:UBERON_0001062 ;
     rdfs:label "blood"^^xsd:string ;
     skos:exactMatch obo:UBERON_0000178 .
 
 <https://biodatafuse.org/gene/000000/> a obo:NCIT_C16612 ;
-    sio:is_associated_with obo:UBERON_0000178,
-        <https://biodatafuse.org/gene_expression_value/000000/AHR_UBERON_0000178>,
-        <https://biodatafuse.org/life_cycle/000000/AHR> .
+    sio:is_associated_with obo:UBERON_0000104,
+        obo:UBERON_0000178,
+        <https://biodatafuse.org/gene_expression_value/000000/AHR_UBERON_0000178> .
 
 <https://disgenet.com/> a obo:SLSO_0001122 ;
     rdfs:label "DisGeNET"^^xsd:string .
