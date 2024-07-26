@@ -8,7 +8,6 @@ import warnings
 from string import Template
 
 import pandas as pd
-from tqdm import tqdm
 from SPARQLWrapper import JSON, SPARQLWrapper
 from SPARQLWrapper.SPARQLExceptions import SPARQLWrapperException
 
@@ -141,11 +140,6 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
                 if df.empty:
                     continue
 
-                # Since these are always constant, we can drop them
-                df.drop(
-                    columns=["developmental_stage_name", "developmental_stage_id"], inplace=True
-                )
-
                 df.drop_duplicates(subset=["anatomical_entity_id"], inplace=True)
                 intermediate_df = pd.concat([intermediate_df, df], ignore_index=True)
 
@@ -163,13 +157,20 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
     intermediate_df["confidence_level_id"] = intermediate_df["confidence_level_id"].apply(
         lambda x: x.split("/")[-1]
     )
+    intermediate_df["developmental_stage_id"] = intermediate_df["developmental_stage_id"].apply(
+        lambda x: x.split("/")[-1]
+    )
     intermediate_df["expression_level"] = pd.to_numeric(intermediate_df["expression_level"])
 
     # Check if all keys in df match the keys in OUTPUT_DICT
     check_columns_against_constants(
         data_df=intermediate_df,
         output_dict=BGEE_OUTPUT_DICT,
-        check_values_in=["anatomical_entity_id", "confidence_level_id"],
+        check_values_in=[
+            "anatomical_entity_id",
+            "confidence_level_id",
+            "developmental_stage_id",
+        ],
     )
 
     # Merge the two DataFrames on the target column

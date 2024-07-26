@@ -48,6 +48,8 @@ BGEE_OUTPUT_DICT = {
     "expression_level": float,
     "confidence_level_id": str,
     "confidence_level_name": str,
+    "developmental_stage_id": str,
+    "developmental_stage_name": str,
 }
 ANATOMICAL_ENTITY_ID = "UBERON"
 DEVELOPMENTAL_STAGE_ID = "HsapDv|UBERON"
@@ -190,6 +192,8 @@ BGEE_NODE_ATTRS = {
     "source": BGEE,
     "name": None,
     "id": None,
+    "developmental_stage_name": None,
+    "developmental_stage_id": None,
     "labels": BGEE_NODE_LABELS,
 }
 BGEE_EDGE_LABEL = "expressed_in"
