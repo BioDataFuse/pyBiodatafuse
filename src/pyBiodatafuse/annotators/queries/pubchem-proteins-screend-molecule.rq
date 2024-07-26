@@ -11,7 +11,7 @@ PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX pubchem: <http://rdf.ncbi.nlm.nih.gov/pubchem/>
 
 SELECT DISTINCT ?upProt ?assay ?assay_type ?outcome ?compound_cid ?ref_cit ?compound_name ?SMILES ?InChI (COUNT(DISTINCT ?target) AS ?target_count) WHERE {
-  	#consider only ednpoints with = value or implicitly equal
+  	#consider only endpoints with = value or implicitly equal
 	VALUES ?bannedQualifier {obo:GENEPIO_0001002 obo:GENEPIO_0001003 obo:GENEPIO_0001005 obo:GENEPIO_0001006 }
     VALUES ?outcome {vocab:active vocab:inactive}
 	VALUES ?type {bao:BAO_0000034 bao:BAO_0000186 bao:BAO_0000187 bao:BAO_0000188 bao:BAO_0000190 bao:BAO_0000192 bao:BAO_0002146}
