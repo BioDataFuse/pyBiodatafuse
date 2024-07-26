@@ -3,8 +3,6 @@
 """Python constant file."""
 
 
-from typing import Union
-
 # Endpoints / API
 BGEE_ENDPOINT = "https://www.bgee.org/sparql/"
 DISGENET_ENDPOINT = "http://rdf.disgenet.org/sparql/"
@@ -33,7 +31,8 @@ DISGENET_INPUT_ID = "NCBI Gene"
 MINERVA_INPUT_ID = "Ensembl"
 MOLMEDB_GENE_INPUT_ID = "Uniprot-TrEMBL"
 MOLMEDB_COMPOUND_INPUT_ID = "InChIKey"
-OPENTARGETS_INPUT_ID = "Ensembl"
+OPENTARGETS_GENE_INPUT_ID = "Ensembl"
+OPENTARGETS_COMPOUND_INPUT_ID = "chembl"
 PUBCHEM_INPUT_ID = "Uniprot-TrEMBL"
 STRING_INPUT_ID = "Ensembl"
 WIKIDATA_INPUT_ID = ""  # TODO
@@ -92,8 +91,13 @@ DISGENET_OUTPUT_DICT = {
     "evidence_source": str,
 }
 # Open Targets - Disease
-OPENTARGETS_DISEASE_OUTPUT_DICT = {"disease_id": str, "disease_name": str, "therapeutic_areas": str}
-DISEASE_ID = "umls|EFO|MONDO"
+OPENTARGETS_DISEASE_OUTPUT_DICT = {
+    "disease_id": str,
+    "disease_name": str,
+    "therapeutic_areas": str,
+}  # TODO: Tooba please check if you want to add compound annotations too here in the dict
+DISEASE_ID = "umls|EFO|MONDO|MP"  # TODO: check if we want to keep MP (Mammalian Phenotype)
+DRUG_ID = "CHEMBL"
 OPENTARGETS_DISEASE_COL = f"{OPENTARGETS}_Diseases"
 
 # Pathway node
@@ -110,7 +114,7 @@ OPENTARGETS_REACTOME_OUTPUT_DICT = {
     "pathway_id": str,
     "pathway_label": str,
 }
-PATHWAY_ID = "WP|R-"
+PATHWAY_ID = "WP|R-"  # ID Start with WP or R-
 OPENTARGETS_REACTOME_COL = f"{OPENTARGETS}_Reactome"
 
 # GO
@@ -123,17 +127,19 @@ OPENTARGETS_GO_COL = f"{OPENTARGETS}_GO"  # TODO: Cross-check if correct name
 # Open Targets - Compound
 OPENTARGETS_COMPOUND_OUTPUT_DICT = {
     "chembl_id": str,
-    "drugbank_id": Union[str, None, float],
-    # "compound_cid": Union[str, None, float],
+    "drugbank_id": str,
+    "compound_cid": str,
     "compound_name": str,
     "is_approved": bool,
     "relation": str,
-    "adverse_effect_count": Union[int, None, float],
-    "adverse_effect": Union[str, None, float],
+    "adverse_effect_count": int,
+    "adverse_effect": dict,
 }
 CHEMBL_ID = "CHEMBL"
+DRUGBANK_ID = "DB"
 RELATION = "inhibits|activates"
-OPENTARGETS_COMPOUND_COL = f"{OPENTARGETS}_Compounds"  # TODO: Cross-check if correct name
+OPENTARGETS_COMPOUND_COL = f"{OPENTARGETS}_Compounds"
+
 # MolMeDB - Gene input
 MOLMEDB_GENE_OUTPUT_DICT = {
     "compound_name": str,
