@@ -362,7 +362,6 @@ class TestOpentarget(unittest.TestCase):
     @patch("pyBiodatafuse.annotators.opentargets.requests.post")
     def test_get_gene_compound_interactions(self, mock_post_compound):
         """Test that the GraphQL endpoint returns the expected results."""
-
         opentargets.check_endpoint_opentargets = Mock(return_value=True)
         opentargets.get_version_opentargets = Mock(
             return_value={
@@ -644,7 +643,6 @@ class TestOpentarget(unittest.TestCase):
     @patch("pyBiodatafuse.annotators.opentargets.requests.post")
     def test_get_compound_disease_interactions(self, mock_post_disease):
         """Test that the GraphQL endpoint returns the expected results."""
-
         opentargets.check_endpoint_opentargets = Mock(return_value=True)
         opentargets.get_version_opentargets = Mock(
             return_value={

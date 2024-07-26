@@ -8,16 +8,17 @@ The module contains special functions that could be server expensive and can onl
 import os
 import warnings
 from string import Template
+from typing import Dict, Set
 
 import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
 
 from pyBiodatafuse.annotators.wikidata import check_endpoint_wikidata
-from pyBiodatafuse.constants import WIKIDATA, WIKIDATA_ENDPOINT
+from pyBiodatafuse.constants import WIKIDATA, WIKIDATA_ENDPOINT, WIKIDATA_PUBLICATION_INPUT_ID
 from pyBiodatafuse.utils import get_identifier_of_interest
 
 
-def get_wikidata_gene_literature(bridgedb_df: pd.DataFrame) -> dict:
+def get_wikidata_gene_literature(bridgedb_df: pd.DataFrame) -> Dict[str, Set[str]]:
     """Get PubMed articles linked to a gene or its encoded protein.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
@@ -30,9 +31,9 @@ def get_wikidata_gene_literature(bridgedb_df: pd.DataFrame) -> dict:
         warnings.warn(
             f"{WIKIDATA} SPARQL endpoint is not available. Unable to retrieve data.", stacklevel=2
         )
-        return pd.DataFrame(), {}
+        return {}
 
-    data_df = get_identifier_of_interest(bridgedb_df, "NCBI Gene")
+    data_df = get_identifier_of_interest(bridgedb_df, WIKIDATA_PUBLICATION_INPUT_ID)
     gene_list = data_df["target"].tolist()
     gene_list = list(set(gene_list))
 
@@ -51,11 +52,9 @@ def get_wikidata_gene_literature(bridgedb_df: pd.DataFrame) -> dict:
     sparql = SPARQLWrapper(WIKIDATA_ENDPOINT)
     sparql.setReturnFormat(JSON)
 
-    gene_pmid_dict = {}
+    gene_pmid_dict = {}  # type: Dict[str, Set[str]]
 
     for gene_list_str in query_gene_lists:
-        query_count += 1
-
         sparql_query_template = Template(sparql_query)
         substit_dict = dict(gene_list=gene_list_str)
         sparql_query_template_sub = sparql_query_template.substitute(substit_dict)
@@ -68,6 +67,6 @@ def get_wikidata_gene_literature(bridgedb_df: pd.DataFrame) -> dict:
             if gene_idx not in gene_pmid_dict:
                 gene_pmid_dict[gene_idx] = set()
 
-            gene_pmid_dict[gene_idx].add(gene_result["pubmed"]["value"])
+            gene_pmid_dict[gene_idx].add("PMID:" + gene_result["pubmed"]["value"])
 
     return gene_pmid_dict
