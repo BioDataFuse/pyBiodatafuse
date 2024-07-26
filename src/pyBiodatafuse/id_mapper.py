@@ -251,12 +251,10 @@ def get_cid_from_data(idx: Optional[str], idx_type: str) -> Optional[str]:
         return None
 
 
-def pubchem_xref(
-    identifiers: pd.DataFrame, identifier_type: str = "name"
-) -> Tuple[pd.DataFrame, dict]:
+def pubchem_xref(identifiers: list, identifier_type: str = "name") -> Tuple[pd.DataFrame, dict]:
     """Map chemical names or smiles or inchikeys to PubChem identifier.
 
-    :param identifiers: a dataframe with one column called identifier (the output of data_loader.py)
+    :param identifiers: a list of identifiers to query
     :param identifier_type: type of identifier to query. Potential curies include : smiles, inchikey, inchi, name
     :raises ValueError: if the input_datasource is not provided or if the request fails
     :returns: a DataFrame containing the mapped identifiers and dictionary of the data resource metadata.
@@ -275,7 +273,7 @@ def pubchem_xref(
             {
                 "identifier": idx,
                 "identifier.source": "name",
-                "target": cid,
+                "target": str(cid).split(".")[0] if cid else None,
                 "target.source": "PubChem Compound",
             }
         )

@@ -7,6 +7,7 @@ import datetime
 import logging
 import warnings
 
+import numpy as np
 import pandas as pd
 import requests
 
@@ -137,6 +138,19 @@ def get_ppi(bridgedb_df: pd.DataFrame):
 
     # Format the data
     data_df[STRING] = data_df.apply(_format_data, network_df=network_df, axis=1)
+    data_df[STRING] = data_df[STRING].apply(
+        lambda x: (
+            [
+                {
+                    "stringdb_link_to": np.nan,
+                    STRING_INPUT_ID: np.nan,
+                    "score": np.nan,
+                }
+            ]
+            if len(x) == 0
+            else x
+        )
+    )
 
     # Record the end time
     end_time = datetime.datetime.now()

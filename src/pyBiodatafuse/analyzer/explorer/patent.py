@@ -1,6 +1,6 @@
 # coding: utf-8
 
-"""Python file for extracting patent data from PubChem.
+"""Python file for extracting patent data.
 
 The module contains special functions that are server expensive and can only be performed for smaller datasets.
 """
@@ -12,15 +12,15 @@ from tqdm import tqdm
 from pyBiodatafuse.utils import get_identifier_of_interest
 
 
-def get_patent_data(data_input: pd.DataFrame) -> dict:
-    """Get patent data summary from PubChem.
+def get_pubchem_data(bridgedb_df: pd.DataFrame) -> dict:
+    """Get patent data summary from PubChem compounds.
 
     The output is the following: {CID: ["US: X", "EP: X", "WO: X", "Others: X"]}
-    :param data_input: A dataframe with the BridgeDb or Pubchem harmonized output
+    :param bridgedb_df: A dataframe with the BridgeDb or Pubchem harmonized output
     :returns: A dictionary with the PubChem Compound ID as key and the patent counts as value
     """
     # Get column of interest
-    data_df = get_identifier_of_interest(data_input, "PubChem Compound")
+    data_df = get_identifier_of_interest(bridgedb_df, "PubChem Compound")
 
     cid_pat_dict = {}
 
@@ -51,28 +51,8 @@ def get_patent_data(data_input: pd.DataFrame) -> dict:
                 else:
                     patent_detail_dict["Others"].add(p)
 
-        cid_pat_dict[cid] = [
-            f"{k}: {len(v)}" for k, v in patent_detail_dict.items() if len(v) > 0
-        ]  # type: ignore[assignment]
+        # cid_pat_dict[cid] = [
+        #     f"{k}: {len(v)}" for k, v in patent_detail_dict.items() if len(v) > 0
+        # ]  # type: ignore[assignment]
 
     return cid_pat_dict
-
-
-def _process_data_for_plot(data_dict: dict) -> pd.DataFrame:
-    """Process data to map to plotting template."""
-    data = []
-
-    for cidx, pat_counter in data_dict.items():
-        for pat in pat_counter:
-            p, c = pat.split(": ")
-            data.append(
-                {
-                    "cid": cidx,
-                    "label": p,
-                    "value": int(c),
-                }
-            )
-
-    data_df = pd.DataFrame(data).set_index("cid")
-
-    return data_df

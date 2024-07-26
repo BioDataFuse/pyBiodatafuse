@@ -3,25 +3,24 @@
 """Python file for querying the OpenTargets database (https://www.opentargets.org/)."""
 
 import datetime
-import math
 import warnings
 from typing import Tuple
 
 import pandas as pd
 import requests
 
+from pyBiodatafuse import id_mapper
 from pyBiodatafuse.constants import (
     OPENTARGETS,
     OPENTARGETS_COMPOUND_COL,
+    OPENTARGETS_COMPOUND_INPUT_ID,
     OPENTARGETS_COMPOUND_OUTPUT_DICT,
     OPENTARGETS_DISEASE_COL,
     OPENTARGETS_DISEASE_OUTPUT_DICT,
     OPENTARGETS_ENDPOINT,
+    OPENTARGETS_GENE_INPUT_ID,
     OPENTARGETS_GO_COL,
     OPENTARGETS_GO_OUTPUT_DICT,
-    OPENTARGETS_INPUT_ID,
-    OPENTARGETS_LOCATION_COL,
-    OPENTARGETS_LOCATION_OUTPUT_DICT,
     OPENTARGETS_REACTOME_COL,
     OPENTARGETS_REACTOME_OUTPUT_DICT,
 )
@@ -104,107 +103,6 @@ def get_version_opentargets() -> dict:
     return metadata
 
 
-def get_gene_location(
-    bridgedb_df: pd.DataFrame,
-) -> Tuple[pd.DataFrame, dict]:
-    """Get location of gene in human body.
-
-    :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
-    :returns: a DataFrame containing the OpenTargets output and dictionary of the query metadata.
-    """
-    # Check if the API is available
-    api_available = check_endpoint_opentargets()
-    if not api_available:
-        warnings.warn(
-            f"{OPENTARGETS} GraphQL endpoint is not available. Unable to retrieve data.",
-            stacklevel=2,
-        )
-        return pd.DataFrame(), {}
-
-    data_df = get_identifier_of_interest(bridgedb_df, OPENTARGETS_INPUT_ID)
-    gene_ids = data_df["target"].tolist()
-
-    # Record the start time
-    opentargets_version = get_version_opentargets()
-    start_time = datetime.datetime.now()
-
-    query_string = """
-      query targetLocation {
-        targets (ensemblIds: $ids){
-          id
-          subcellularLocations {
-            location
-            termSL
-            labelSL
-          }
-        }
-      }
-    """
-    query_string = query_string.replace("$ids", str(gene_ids).replace("'", '"'))
-
-    r = requests.post(OPENTARGETS_ENDPOINT, json={"query": query_string}).json()
-
-    # Record the end time
-    end_time = datetime.datetime.now()
-
-    # Generate the OpenTargets DataFrame
-    intermediate_df = pd.DataFrame()
-
-    for gene in r["data"]["targets"]:
-        gene_id = gene["id"]
-        loc_df = pd.DataFrame(gene["subcellularLocations"])
-        loc_df = loc_df.drop_duplicates()
-        loc_df["target"] = gene_id
-        intermediate_df = pd.concat([intermediate_df, loc_df], ignore_index=True)
-
-    if intermediate_df.empty:  # If no data is returned, return empty DataFrame
-        return pd.DataFrame(), opentargets_version
-
-    intermediate_df.dropna(
-        subset=["termSL"], inplace=True
-    )  # Drop rows where termSL is not available
-    intermediate_df.rename(
-        columns={
-            "termSL": "location_id",
-            "labelSL": "subcellular_location",
-        },
-        inplace=True,
-    )
-
-    # Check if all keys in df match the keys in OUTPUT_DICT
-    check_columns_against_constants(
-        data_df=intermediate_df,
-        output_dict=OPENTARGETS_LOCATION_OUTPUT_DICT,
-        check_values_in=["location_id"],
-    )
-
-    # Merge the two DataFrames on the target column
-    merged_df = collapse_data_sources(
-        data_df=data_df,
-        source_namespace=OPENTARGETS_INPUT_ID,
-        target_df=intermediate_df,
-        common_cols=["target"],
-        target_specific_cols=list(OPENTARGETS_LOCATION_OUTPUT_DICT.keys()),
-        col_name=OPENTARGETS_LOCATION_COL,
-    )
-
-    """Metdata details"""
-    # Get the current date and time
-    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    # Calculate the time elapsed
-    time_elapsed = str(end_time - start_time)
-    # Add version, datasource, query, query time, and the date to metadata
-    opentargets_version["query"] = {
-        "size": len(gene_ids),
-        "input_type": OPENTARGETS_INPUT_ID,
-        "time": time_elapsed,
-        "date": current_date,
-        "url": OPENTARGETS_ENDPOINT,
-    }
-
-    return merged_df, opentargets_version
-
-
 def get_gene_go_process(
     bridgedb_df: pd.DataFrame,
 ) -> Tuple[pd.DataFrame, dict]:
@@ -222,7 +120,7 @@ def get_gene_go_process(
         )
         return pd.DataFrame(), {}
 
-    data_df = get_identifier_of_interest(bridgedb_df, OPENTARGETS_INPUT_ID)
+    data_df = get_identifier_of_interest(bridgedb_df, OPENTARGETS_GENE_INPUT_ID)
     gene_ids = data_df["target"].tolist()
 
     # Record the start time
@@ -283,7 +181,7 @@ def get_gene_go_process(
     # Merge the two DataFrames on the target column
     merged_df = collapse_data_sources(
         data_df=data_df,
-        source_namespace=OPENTARGETS_INPUT_ID,
+        source_namespace=OPENTARGETS_GENE_INPUT_ID,
         target_df=intermediate_df,
         common_cols=["target"],
         target_specific_cols=list(OPENTARGETS_GO_OUTPUT_DICT.keys()),
@@ -298,7 +196,7 @@ def get_gene_go_process(
     # Add version, datasource, query, query time, and the date to metadata
     opentargets_version["query"] = {
         "size": len(gene_ids),
-        "input_type": OPENTARGETS_INPUT_ID,
+        "input_type": OPENTARGETS_GENE_INPUT_ID,
         "time": time_elapsed,
         "date": current_date,
         "url": OPENTARGETS_ENDPOINT,
@@ -324,7 +222,7 @@ def get_gene_reactome_pathways(
         )
         return pd.DataFrame(), {}
 
-    data_df = get_identifier_of_interest(bridgedb_df, OPENTARGETS_INPUT_ID)
+    data_df = get_identifier_of_interest(bridgedb_df, OPENTARGETS_GENE_INPUT_ID)
     gene_ids = data_df["target"].tolist()
 
     # Record the start time
@@ -375,7 +273,7 @@ def get_gene_reactome_pathways(
     # Merge the two DataFrames on the target column
     merged_df = collapse_data_sources(
         data_df=data_df,
-        source_namespace=OPENTARGETS_INPUT_ID,
+        source_namespace=OPENTARGETS_GENE_INPUT_ID,
         target_df=intermediate_df,
         common_cols=["target"],
         target_specific_cols=["pathway_label", "pathway_id"],
@@ -390,7 +288,7 @@ def get_gene_reactome_pathways(
     # Add version, datasource, query, query time, and the date to metadata
     opentargets_version["query"] = {
         "size": len(gene_ids),
-        "input_type": OPENTARGETS_INPUT_ID,
+        "input_type": OPENTARGETS_GENE_INPUT_ID,
         "time": time_elapsed,
         "date": current_date,
         "url": OPENTARGETS_ENDPOINT,
@@ -432,7 +330,7 @@ def get_gene_tractability(
       }
     """
 
-    data_df = get_identifier_of_interest(bridgedb_df, OPENTARGETS_INPUT_ID)
+    data_df = get_identifier_of_interest(bridgedb_df, OPENTARGETS_GENE_INPUT_ID)
     gene_ids = data_df["target"].tolist()
 
     # Record the start time
@@ -471,7 +369,7 @@ def get_gene_tractability(
     # Add version, datasource, query, query time, and the date to metadata
     opentargets_version["query"] = {
         "size": len(gene_ids),
-        "input_type": OPENTARGETS_INPUT_ID,
+        "input_type": OPENTARGETS_GENE_INPUT_ID,
         "time": time_elapsed,
         "date": current_date,
         "url": OPENTARGETS_ENDPOINT,
@@ -497,7 +395,7 @@ def get_gene_compound_interactions(
         )
         return pd.DataFrame(), {}
 
-    data_df = get_identifier_of_interest(bridgedb_df, OPENTARGETS_INPUT_ID)
+    data_df = get_identifier_of_interest(bridgedb_df, OPENTARGETS_GENE_INPUT_ID)
     gene_ids = data_df["target"].tolist()
 
     # Record the start time
@@ -515,7 +413,10 @@ def get_gene_compound_interactions(
                 id
                 name
                 isApproved
-                crossReferences{source,reference}
+                crossReferences {
+                    source
+                    reference
+                }
                 adverseEvents{
                     count
                     rows{
@@ -546,10 +447,12 @@ def get_gene_compound_interactions(
 
         if drug_df.empty:
             continue
+
         drug_df[
             ["chembl_id", "compound_name", "is_approved", "cross_references", "adverse_events"]
         ] = drug_df["drug"].apply(pd.Series)
         drug_df.drop(columns=["drug"], inplace=True)
+
         drug_df["target"] = gene["id"]
 
         drug_df["mechanismOfAction"] = drug_df["mechanismOfAction"].apply(
@@ -564,13 +467,7 @@ def get_gene_compound_interactions(
                 else None
             )
         )
-        drug_df["compound_cid"] = drug_df["cross_references"].apply(
-            lambda x: (
-                next((ref["reference"][0] for ref in x if ref["source"] == "PubChem"), None)
-                if x
-                else None
-            )
-        )
+
         drug_df[["adverse_effect_count", "adverse_effect"]] = drug_df.apply(
             lambda row: (
                 pd.Series([row["adverse_events"]["count"], row["adverse_events"]["rows"]])
@@ -589,22 +486,27 @@ def get_gene_compound_interactions(
     if intermediate_df.empty:
         return pd.DataFrame(), opentargets_version
 
+    # Fixing chembl_id to pubchem_id
+    mapped_df, _ = id_mapper.pubchem_xref(
+        identifiers=intermediate_df["chembl_id"], identifier_type="name"
+    )
+    intermediate_df["compound_cid"] = mapped_df["target"]
+
     # Check if all keys in df match the keys in OUTPUT_DICT
     check_columns_against_constants(
         data_df=intermediate_df,
         output_dict=OPENTARGETS_COMPOUND_OUTPUT_DICT,
-        check_values_in=["chembl_id", "relation"],
+        check_values_in=["chembl_id", "drugbank_id", "relation"],
     )
 
-    # TODO: Covert the ChEMBL ids to Pubchem using BridgeDb
     # Merge the two DataFrames on the target column
     merged_df = collapse_data_sources(
         data_df=data_df,
-        source_namespace=OPENTARGETS_INPUT_ID,
+        source_namespace=OPENTARGETS_GENE_INPUT_ID,
         target_df=intermediate_df,
         common_cols=["target"],
         target_specific_cols=list(OPENTARGETS_COMPOUND_OUTPUT_DICT.keys()),
-        col_name=OPENTARGETS_COMPOUND_COL,  # TODO: Cross-check if correct name
+        col_name=OPENTARGETS_COMPOUND_COL,
     )
 
     """Metdata details"""
@@ -615,7 +517,7 @@ def get_gene_compound_interactions(
     # Add version, datasource, query, query time, and the date to metadata
     opentargets_version["query"] = {
         "size": len(gene_ids),
-        "input_type": OPENTARGETS_INPUT_ID,
+        "input_type": OPENTARGETS_GENE_INPUT_ID,
         "time": time_elapsed,
         "date": current_date,
         "url": OPENTARGETS_ENDPOINT,
@@ -624,12 +526,12 @@ def get_gene_compound_interactions(
     return merged_df, opentargets_version
 
 
-def get_gene_disease_associations(
-    bridgedb_df: pd.DataFrame,
+def get_compound_disease_interactions(
+    data_df: pd.DataFrame,
 ) -> Tuple[pd.DataFrame, dict]:
-    """Get information about diseases associated with genes based on OpenTargets.
+    """Get information about drugs associated with diseases of interest.
 
-    :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
+    :param data_df: Dataframe with list of ChEMBL ids to query.
     :returns: a DataFrame containing the OpenTargets output and dictionary of the query metadata.
     """
     # Check if the API is available
@@ -641,71 +543,73 @@ def get_gene_disease_associations(
         )
         return pd.DataFrame(), {}
 
-    data_df = get_identifier_of_interest(bridgedb_df, OPENTARGETS_INPUT_ID)
-    gene_ids = data_df["target"].tolist()
+    chembl_ids = data_df["target"].tolist()
 
     # Record the start time
     opentargets_version = get_version_opentargets()
     start_time = datetime.datetime.now()
 
     query_string = """
-      query targetDiseases {
-        targets (ensemblIds: $ids){
-          id
-          knownDrugs {
-            rows {
-              disease {
-                id
-                name
-                dbXRefs
-                therapeuticAreas {
-                  id
-                  name
+    query KnownDrugsQuery{
+        drugs (chemblIds: $chemblIds) {
+            id
+            name
+            maximumClinicalTrialPhase
+            hasBeenWithdrawn
+            linkedDiseases {
+                rows {
+                    id
+                    name
+                    dbXRefs
+                    therapeuticAreas {
+                        id
+                        name
+                    }
                 }
-              }
             }
-          }
         }
-      }
-    """
-    query_string = query_string.replace("$ids", str(gene_ids).replace("'", '"'))
+    }"""
+    query_string = query_string.replace("$chemblIds", str(chembl_ids).replace("'", '"'))
 
     r = requests.post(OPENTARGETS_ENDPOINT, json={"query": query_string}).json()
-
     # Record the end time
     end_time = datetime.datetime.now()
 
     intermediate_df = pd.DataFrame()
 
-    for gene in r["data"]["targets"]:
-        if not gene["knownDrugs"]:
+    for drug in r["data"]["drugs"]:
+        if not drug["linkedDiseases"]:
             continue
-        disease_info = gene["knownDrugs"]["rows"]
+
+        # Based on clinical trial data
+        disease_info = drug["linkedDiseases"]["rows"]
         disease_df = pd.DataFrame(disease_info)
-        disease_df = disease_df.drop_duplicates()
 
         if disease_df.empty:
             continue
 
-        disease_df[["mondo_id", "disease_name", "dbXRefs", "therapeutic_area"]] = disease_df[
-            "disease"
-        ].apply(pd.Series)
-
-        disease_df["therapeutic_areas"] = disease_df["therapeutic_area"].apply(
+        disease_df["therapeutic_areas"] = disease_df["therapeuticAreas"].apply(
             lambda x: ", ".join([f"{i['id']}:{i['name']}" for i in x])
+        )  # Multiple values separated by comma
+        disease_df.rename(
+            columns={"id": "opentarget_disease_id", "name": "disease_name"}, inplace=True
         )
 
         disease_df["disease_id"] = disease_df.apply(
             lambda row: ", ".join(
                 ["umls:" + i.split(":")[1] for i in row["dbXRefs"] if i.startswith("UMLS:")]
-                or [row["mondo_id"]]
+                or [row["opentarget_disease_id"]]
             ),
             axis=1,
         )
+        disease_df.drop(
+            columns=["therapeuticAreas", "dbXRefs"], inplace=True
+        )  # Xrefs has all other ids for diseases
 
-        disease_df.drop(columns=["disease", "therapeutic_area", "dbXRefs"], inplace=True)
-
-        disease_df["target"] = gene["id"]
+        disease_df["target"] = drug["id"]
+        disease_df["drug_name"] = drug["name"]
+        disease_df["max_clinical_trial_phase"] = drug["maximumClinicalTrialPhase"]
+        disease_df["is_withdrawn"] = drug["hasBeenWithdrawn"]
 
         intermediate_df = pd.concat([intermediate_df, disease_df], ignore_index=True)
 
@@ -716,13 +620,13 @@ def get_gene_disease_associations(
     check_columns_against_constants(
         data_df=intermediate_df,
         output_dict=OPENTARGETS_DISEASE_OUTPUT_DICT,
-        check_values_in=["disease_id"],
+        check_values_in=["disease_id", "drug_id"],
     )
 
     # Merge the two DataFrames on the target column
     merged_df = collapse_data_sources(
         data_df=data_df,
-        source_namespace=OPENTARGETS_INPUT_ID,
+        source_namespace=OPENTARGETS_COMPOUND_INPUT_ID,
         target_df=intermediate_df,
         common_cols=["target"],
         target_specific_cols=list(OPENTARGETS_DISEASE_OUTPUT_DICT.keys()),
@@ -736,138 +640,11 @@ def get_gene_disease_associations(
     time_elapsed = str(end_time - start_time)
     # Add version, datasource, query, query time, and the date to metadata
     opentargets_version["query"] = {
-        "size": len(gene_ids),
-        "input_type": OPENTARGETS_INPUT_ID,
+        "size": len(chembl_ids),
+        "input_type": OPENTARGETS_COMPOUND_INPUT_ID,
         "time": time_elapsed,
         "date": current_date,
         "url": OPENTARGETS_ENDPOINT,
     }
 
     return merged_df, opentargets_version
-
-
-# TODO: Fix the function; Modify to same format
-# TODO: Check if all keys in df match the keys in OUTPUT_DICT
-def get_drug_disease_interactions(
-    drug_df: pd.DataFrame, disgenet_result: pd.DataFrame
-) -> Tuple[pd.DataFrame, dict]:
-    """Get information about drugs associated with diseases of interest.
-
-    :param drug_df: get_gene_disease_associations output for creating the list of diseases ids to query
-    :param disgenet_result: DisGeNET diseases dadtaframe
-    :returns: a DataFrame containing the drug-disease relationships between drug and diseases included in your graph
-    """
-    # Check if the API is available
-    api_available = check_endpoint_opentargets()
-    if not api_available:
-        warnings.warn(
-            "OpenTargets GraphQL endpoint is not available. Unable to retrieve data.", stacklevel=2
-        )
-        return pd.DataFrame(), {}
-
-    base_url = "https://api.platform.opentargets.org/api/v4/graphql"
-
-    # Iterate through the dictionary and remove entries with NaN values for drugs and diseases
-    # Drugs
-    drugs_all = dict(drug_df["ChEMBL_Drugs"])
-    drugs_list = []
-    for _key, value in drugs_all.items():
-        for lists in value:
-            drugs_list.append(lists["chembl_id"])
-
-    drugs_ids = [
-        value
-        for value in set(drugs_list)
-        if not (math.isnan(value) if isinstance(value, float) else False)
-    ]
-
-    # Diseases
-    diseases_all = dict(disgenet_result["DisGeNET"])
-    diseases_list = []
-    for _key, value in diseases_all.items():
-        for lists in value:
-            diseases_list.append(lists["diseaseid"])
-
-    diseases_ids = [
-        value
-        for value in set(diseases_list)
-        if not (math.isnan(value) if isinstance(value, float) else False)
-    ]
-
-    diseases_drugs_list = []
-    for x in drugs_ids:
-        query_string = """
-                        query KnownDrugsQuery(
-              $cursor: String
-              $freeTextQuery: String
-              $size: Int = 10
-            ) {
-              drug(chemblId: $chemblId) {
-                id
-                name
-                knownDrugs(cursor: $cursor, freeTextQuery: $freeTextQuery, size: $size) {
-                  count
-                  rows {
-                    disease {
-                      id
-                      name
-                      dbXRefs
-                    }
-                    target {
-                      id
-                      approvedName
-                      approvedSymbol
-                    }
-                  }
-                }
-              }
-            }
-
-            """
-        query_string = query_string.replace("$chemblId", '"' + x + '"')
-        r = requests.post(base_url, json={"query": query_string}).json()
-        diseases_drugs_list.append(r["data"])
-
-    # Extracting and simplifying the structure
-    col_names = ["identifier", "compound_name", "drug_diseases"]
-    drug_disease_df = pd.DataFrame(columns=col_names)
-
-    for entry in diseases_drugs_list:
-        entries = entry["drug"]
-        drugs = entries["knownDrugs"]["rows"]
-        drugs_list = []
-        dict_new = None  # Initialize dict_new outside the loop
-
-        for entry in drugs:
-            drugs_fixed = entry["disease"]
-            other_ids = drugs_fixed["dbXRefs"]
-
-            umls_id = None  # Initialize umls_id before the loop
-
-            for value in other_ids:
-                if "UMLS" in value:
-                    result_list = value.split(":")
-                    umls_id = result_list[1]
-                    break  # Once we find the UMLS ID, we can exit the loop
-
-            if umls_id is None:
-                umls_id = math.nan
-
-            del drugs_fixed["dbXRefs"]
-            drugs_fixed["umls"] = umls_id
-
-            if drugs_fixed["umls"] in diseases_ids:  # only include diseases in my graph
-                drugs_list.append(drugs_fixed)
-
-        if drugs_list:
-            dict_new = {
-                "identifier": entries["id"],
-                "compound_name": entries["name"],
-                "drug_diseases": drugs_list,
-            }
-
-        if dict_new is not None:
-            dict_new_df = pd.DataFrame([dict_new])
-            drug_disease_df = pd.concat([drug_disease_df, dict_new_df], ignore_index=True)
-
-    return drug_disease_df

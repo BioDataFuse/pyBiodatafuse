@@ -94,7 +94,11 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
     else:
         query_gene_lists.append(" ".join(f'"{g}"' for g in gene_list))
 
-    anatomical_entities_list = ANATOMICAL_ENTITIES_LIST.split("\n")
+    anatomical_entities_list = [
+        anatomical_entity.strip()
+        for anatomical_entity in ANATOMICAL_ENTITIES_LIST
+        if anatomical_entity.strip() != ""
+    ]
 
     with open(
         os.path.dirname(__file__) + "/queries/bgee-genes-tissues-expression-level.rq", "r"
@@ -124,8 +128,7 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
 
             for anatomical_entity in anatomical_entities_list:
                 # for the query text, need to put each name in between quotes
-                anatomical_entity = f'"{anatomical_entity}"'
-                substit_dict = dict(gene_list=gene_id, anat_entities_list=anatomical_entity)
+                substit_dict = dict(gene_list=gene_id, anat_entities_list=f'"{anatomical_entity}"')
                 sparql_query_template_sub = sparql_query_template.substitute(substit_dict)
 
                 sparql.setQuery(sparql_query_template_sub)
@@ -137,9 +140,7 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
                 if df.empty:
                     continue
 
-                df.drop_duplicates(
-                    subset=["anatomical_entity_id", "developmental_stage_id"], inplace=True
-                )
+                df.drop_duplicates(subset=["anatomical_entity_id"], inplace=True)
                 intermediate_df = pd.concat([intermediate_df, df], ignore_index=True)
 
     # Record the end time
@@ -153,10 +154,10 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
     intermediate_df["anatomical_entity_id"] = intermediate_df["anatomical_entity_id"].apply(
         lambda x: x.split("/")[-1]
     )
-    intermediate_df["developmental_stage_id"] = intermediate_df["developmental_stage_id"].apply(
+    intermediate_df["confidence_level_id"] = intermediate_df["confidence_level_id"].apply(
         lambda x: x.split("/")[-1]
     )
-    intermediate_df["confidence_level_id"] = intermediate_df["confidence_level_id"].apply(
+    intermediate_df["developmental_stage_id"] = intermediate_df["developmental_stage_id"].apply(
         lambda x: x.split("/")[-1]
     )
     intermediate_df["expression_level"] = pd.to_numeric(intermediate_df["expression_level"])
@@ -165,7 +166,11 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
     check_columns_against_constants(
         data_df=intermediate_df,
         output_dict=BGEE_OUTPUT_DICT,
-        check_values_in=["anatomical_entity_id", "developmental_stage_id", "confidence_level_id"],
+        check_values_in=[
+            "anatomical_entity_id",
+            "confidence_level_id",
+            "developmental_stage_id",
+        ],
     )
 
     # Merge the two DataFrames on the target column
