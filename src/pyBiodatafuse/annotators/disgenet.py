@@ -3,8 +3,10 @@
 """Python file for queriying DisGeNet database (https://www.disgenet.org/home/)."""
 
 import datetime
+import json
 import logging
 import os
+import time
 import warnings
 from string import Template
 from typing import Tuple
@@ -86,158 +88,66 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
     
     # Add the API key to the requests headers
     HTTPheadersDict = {}
-    HTTPheadersDict['Authorization'] = API_KEY
+    HTTPheadersDict['Authorization'] = api_key
     HTTPheadersDict['accept'] = 'application/json'
     #Set the DisGeNET API
     s = requests.Session()
 
-    # Extract the "target" values and join them into a single string separated by commas
-    data_df = get_identifier_of_interest(bridgedb_df, "NCBI Gene")
-    disgenet_input = ",".join(data_df["target"])
-
-    # Record the start time
-    start_time = datetime.datetime.now()
-
-    # Split the targets into chunks of 99 or fewer
-    targets_list = disgenet_input.split(",")
-    chunk_size = 99
-    chunks = [targets_list[i : i + chunk_size] for i in range(0, len(targets_list), chunk_size)]
+    # Extract the "target" values
+    data_df = get_identifier_of_interest(bridgedb_df, DISGENET_INPUT_ID)
 
     disgenet_output = []
 
-    if not params:
-        params = {"source": "CURATED", "format": "json"}
-    else:
-        params["format"] = "json"
-        params["source"] = "CURATED"
-
-    for chunk in chunks:
-        # Join the chunked targets into a comma-separated string
-        chunked_input = ",".join(chunk)
-        # Get all the diseases associated with genes for the current chunk
-        gda_response = s.get(f"{api_host}/gda/gene/{chunked_input}", params=params)
-        chunk_output = gda_response.json()
-        disgenet_output.extend(chunk_output)
-
-    # Record the end time
-    end_time = datetime.datetime.now()
-
-    # Convert disgenet_output to a DataFrame
-    disgenet_df = pd.DataFrame(disgenet_output)
-    if "geneid" not in disgenet_df:
-        return pd.DataFrame()
-    else:
-        # Drop the uniprotid column
-        disgenet_df.drop("uniprotid", axis=1, inplace=True)
-        # Add DisGeNET output as a new column to BridgeDb file
-        disgenet_df.rename(columns={"geneid": "target"}, inplace=True)
-        disgenet_df["target"] = disgenet_df["target"].values.astype(str)
-
-        selected_columns = [
-            "gene_dsi",
-            "gene_dpi",
-            "gene_pli",
-            "protein_class",
-            "protein_class_name",
-            "diseaseid",
-            "disease_name",
-            "disease_class",
-            "disease_class_name",
-            "disease_type",
-            "disease_semantic_type",
-            "score",
-            "ei",
-            "el",
-            "year_initial",
-            "year_final",
-            "source",
-        ]
-
-        # Merge the two DataFrames based on 'geneid', 'gene_symbol', 'identifier', and 'target'
-        merged_df = collapse_data_sources(
-            data_df=data_df,
-            source_namespace="NCBI Gene",
-            target_df=disgenet_df,
-            common_cols=["target"],
-            target_specific_cols=selected_columns,
-            col_name="DisGeNET",
-        )
-
-        """Metdata details"""
-        # Get the current date and time
-        current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        # Calculate the time elapsed
-        time_elapsed = str(end_time - start_time)
-        # Add version to metadata file
-        disgenet_version = get_version_disgenet(api_host=api_host)
-        # Add the datasource, query, query time, and the date to metadata
-        disgenet_metadata = {
-            "datasource": "DisGeNET",
-            "metadata": {"source_version": disgenet_version},
-            "query": {
-                "size": len(disgenet_input.split(",")),
-                "input_type": "NCBI Gene",
-                "time": time_elapsed,
-                "date": current_date,
-                "url": gda_response.request.url,
-            },
-        }
-
-        if s:
-            s.close()
-
-        return merged_df, disgenet_metadata
-    # Extract the "target" values and join them into a single string separated by commas
-    data_df = get_identifier_of_interest(bridgedb_df, DISGENET_INPUT_ID)
-    gene_list = data_df["target"].tolist()
-    gene_list = list(set(gene_list))
-
-    query_gene_lists = []
-    if len(gene_list) > 25:
-        for i in range(0, len(gene_list), 25):
-            tmp_list = gene_list[i : i + 25]
-            query_gene_lists.append(" ".join(f'"{g}"' for g in tmp_list))
-
-    else:
-        query_gene_lists.append(" ".join(f'"{g}"' for g in gene_list))
-
-    with open(os.path.dirname(__file__) + "/queries/disgenet-genes-disease.rq", "r") as fin:
-        sparql_query = fin.read()
+    # Specify query parameters by means of a dictionary 
+    params = {}
+    params["format"] = "json"
+    params["source"] = "CURATED"
+    params["page_number"] = 0
 
     # Record the start time
-    disgenet_version = get_version_disgenet()
+    disgenet_version = get_version_disgenet(api_key)
     start_time = datetime.datetime.now()
 
-    sparql = SPARQLWrapper(DISGENET_ENDPOINT)
-    sparql.setReturnFormat(JSON)
+    for gene in data_df["target"]:
+        # Retrieve disease associated to gene with NCBI ID
+        params["gene_ncbi_id"] = gene
+        params["page_number"] = 0
+        # Get all the diseases associated with genes for the current chunk
+        gda_response = s.get(DISGENET_ENDPOINT,\
+                        params=params, headers=HTTPheadersDict, verify=False)
+        
+        # If the status code of gda_response is 429, it means you have reached one of your query limits 
+        # You can retrieve the time you need to wait until doing a new query in the response headers 
+        if not gda_response.ok:
+            if gda_response.status_code == 429:
+                while gda_response.ok is False:
+                    print("You have reached a query limit for your user. Please wait {} seconds until next query".format(\
+                    gda_response.headers['x-rate-limit-retry-after-seconds']))
+                    time.sleep(int(gda_response.headers['x-rate-limit-retry-after-seconds']))
+                    print("Your rate limit is now restored")
 
-    query_count = 0
+                    # Repeat your query
+                    gda_response = requests.get(DISGENET_ENDPOINT,\
+                                            params=params, headers=HTTPheadersDict, verify=False)
+                    if gda_response.ok is True:
+                        break
+                    else:
+                        continue
 
-    intermediate_df = pd.DataFrame()
-
-    for gene_list_str in query_gene_lists:
-        query_count += 1
-        sparql_query_template = Template(sparql_query)
-        substit_dict = dict(gene_list=gene_list_str)
-        sparql_query_template_sub = sparql_query_template.substitute(substit_dict)
-        sparql.setQuery(sparql_query_template_sub)
-        res = sparql.queryAndConvert()
-        res = res["results"]["bindings"]
-        df = pd.DataFrame(res)
-        df = df.applymap(lambda x: x["value"])
-
-        intermediate_df = pd.concat(
-            [intermediate_df, df], ignore_index=True
-        )  # this is also adding to the time
+        # Parse response content in JSON format since we set 'accept:application/json' as HTTP header 
+        response_parsed = json.loads(gda_response.text)
+        disgenet_output.extend(response_parsed["payload"])
 
     # Record the end time
     end_time = datetime.datetime.now()
 
     # Organize the annotation results as an array of dictionaries
-    if "gene_id" not in intermediate_df:
+    intermediate_df = pd.DataFrame(disgenet_output)
+    if "geneNcbiID" not in intermediate_df:
         return pd.DataFrame(), {"datasource": DISGENET, "metadata": disgenet_version}
+
     intermediate_df.drop_duplicates(inplace=True)
-    intermediate_df["target"] = intermediate_df["gene_id"].apply(lambda x: x.split("/")[-1])
+    intermediate_df["target"] = intermediate_df["geneNcbiID"].apply(lambda x: x.split("/")[-1])
     intermediate_df["disease_id"] = intermediate_df["description"].apply(
         lambda x: "umls:" + x.split("umls:")[1].split("]")[0].strip()
     )
@@ -251,8 +161,24 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
 
     intermediate_df["target"] = intermediate_df["target"].values.astype(str)
 
+    selected_columns = [
+        "geneDSI",
+        "geneDPI",
+        "genepLI",
+        "geneNcbiType",
+        "geneProteinClassIDs",
+        "geneProteinClassNames",
+        "diseaseVocabularies",
+        "diseaseName",
+        "diseaseType",
+        "diseaseUMLSCUI",
+        "score",
+        "ei",
+        "el"
+    ]
+
     intermediate_df = intermediate_df[
-        ["target", "disease_id", "disease_name", "score", "evidence_source"]
+        selected_columns
     ]
 
     # Check if all keys in df match the keys in OUTPUT_DICT
@@ -281,7 +207,7 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
         "datasource": DISGENET,
         "metadata": disgenet_version,
         "query": {
-            "size": len(gene_list),
+            "size": len(data_df["target"].drop_duplicates()),
             "input_type": DISGENET_INPUT_ID,
             "time": time_elapsed,
             "date": current_date,
