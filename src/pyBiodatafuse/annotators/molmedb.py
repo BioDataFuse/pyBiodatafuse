@@ -193,9 +193,9 @@ def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # Calculate the time elapsed
     time_elapsed = str(end_time - start_time)
-    # Calculate the number of disease nodes
+    # Calculate the number of new nodes
     num_new_nodes = intermediate_df["molmedb_id"].nunique()
-    # Calculate the number of edges between gene and disease nodes
+    # Calculate the number of new edges
     num_edges = len(intermediate_df[["target", "molmedb_id"]].drop_duplicates())
    
 
@@ -204,9 +204,9 @@ def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
         "datasource": MOLMEDB,
         "query": {
             "size": len(molmedb_transporter_list),
+            "input_type": MOLMEDB_GENE_INPUT_ID,
             "number_of_added_nodes": num_new_nodes,
             "number_of_added_edges": num_edges,
-            "input_type": MOLMEDB_GENE_INPUT_ID,
             "time": time_elapsed,
             "date": current_date,
             "url": MOLMEDB_ENDPOINT,

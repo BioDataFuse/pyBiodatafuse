@@ -162,7 +162,7 @@ def get_ppi(bridgedb_df: pd.DataFrame):
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # Calculate the time elapsed
     time_elapsed = str(end_time - start_time)
-    # Calculate the number of edges between gene and disease nodes
+    # Calculate the number of new edges
     num_edges = len(network_df)
 
     
@@ -173,8 +173,8 @@ def get_ppi(bridgedb_df: pd.DataFrame):
         "metadata": {"source_version": string_version},
         "query": {
             "size": len(gene_list),
-            "number_of_added_edges": num_edges,
             "input_type": STRING_INPUT_ID,
+            "number_of_added_edges": num_edges,
             "time": time_elapsed,
             "date": current_date,
             "url": STRING_ENDPOINT,

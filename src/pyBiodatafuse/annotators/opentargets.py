@@ -196,7 +196,7 @@ def get_gene_go_process(
     time_elapsed = str(end_time - start_time)
     # Calculate the number of new nodes
     num_new_nodes = intermediate_df["go_id"].nunique()
-    # Calculate the number of edges
+    # Calculate the number of new edges
     num_edges = len(intermediate_df)
 
     # Add version, datasource, query, query time, and the date to metadata
