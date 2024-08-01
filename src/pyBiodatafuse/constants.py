@@ -101,7 +101,7 @@ DISGENET_OUTPUT_DICT = {
     "disease_umlscui": str,
     "score": float,
     "ei": float,
-    "el": float
+    "el": float,
 }  # TODO: Yojana, we should align the disease extracted from the two sources
 # Open Targets - Disease
 OPENTARGETS_DISEASE_OUTPUT_DICT = {
