@@ -171,6 +171,7 @@ def get_gene_go_process(
         inplace=True,
     )
 
+    print(intermediate_df)
     # Check if all keys in df match the keys in OUTPUT_DICT
     check_columns_against_constants(
         data_df=intermediate_df,
@@ -193,10 +194,17 @@ def get_gene_go_process(
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # Calculate the time elapsed
     time_elapsed = str(end_time - start_time)
+    # Calculate the number of new nodes
+    num_new_nodes = intermediate_df["go_id"].nunique()
+    # Calculate the number of edges
+    num_edges = len(intermediate_df)
+
     # Add version, datasource, query, query time, and the date to metadata
     opentargets_version["query"] = {
         "size": len(gene_ids),
         "input_type": OPENTARGETS_GENE_INPUT_ID,
+        "number_of_added_nodes": num_new_nodes,
+        "number_of_added_edges": num_edges,
         "time": time_elapsed,
         "date": current_date,
         "url": OPENTARGETS_ENDPOINT,
