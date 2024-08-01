@@ -234,7 +234,7 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
     # Calculate the time elapsed
     time_elapsed = str(end_time - start_time)
     # Calculate the number of disease nodes
-    num_unique_disease = intermediate_df["disease_name"].nunique()
+    num_new_nodes = intermediate_df["disease_name"].nunique()
     # Calculate the number of edges between gene and disease nodes
     num_edges = len(intermediate_df)
 
@@ -244,8 +244,8 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
         "metadata": disgenet_version,
         "query": {
             "size": len(data_df["target"].drop_duplicates()),
-            "number_of_disease_nodes": num_unique_disease,
-            "number_of_gene_disease_edges": num_edges,
+            "number_of_added_nodes": num_new_nodes,
+            "number_of_added_edges": num_edges,
             "input_type": DISGENET_INPUT_ID,
             "time": time_elapsed,
             "date": current_date,
