@@ -146,32 +146,63 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
     if "geneNcbiID" not in intermediate_df:
         return pd.DataFrame(), {"datasource": DISGENET, "metadata": disgenet_version}
 
-    intermediate_df.drop_duplicates(inplace=True)
-    intermediate_df["target"] = intermediate_df["geneNcbiID"].apply(lambda x: x.split("/")[-1])
-    intermediate_df["disease_id"] = intermediate_df["description"].apply(
-        lambda x: "umls:" + x.split("umls:")[1].split("]")[0].strip()
-    )
-    intermediate_df["disease_name"] = intermediate_df["description"].apply(
-        lambda x: x.split("[umls:")[0].strip()
-    )
-    intermediate_df["score"] = intermediate_df["disease_score"].astype(float)
-    intermediate_df["evidence_source"] = intermediate_df["evidence_source"].apply(
-        lambda x: x.split("/")[-1]
-    )
+    # extract disease identifiers from diseaseVocabularies column
+    # Initialize dictionaries to store the columns
+    source_types = set()
+    # Process the 'diseaseVocabularies' column
+    for entry in intermediate_df["diseaseVocabularies"]:
+        for item in entry:
+            if isinstance(item, str):
+                # Remove everything after '_'
+                prefix = item.split("_")[0]
+                # Add to the set
+                source_types.add(prefix)
+    # Convert set to list
+    source_types = list(source_types)
+    # Add new columns for each identifier type and initialize with empty lists
+    for source in source_types:
+        intermediate_df[source] = None
+    # Populate the new columns with identifiers
+    for index, entry in intermediate_df.iterrows():
+        vocab_list = entry["diseaseVocabularies"]
+        # Create a dictionary to hold identifiers by type
+        identifiers_by_type = {source: [] for source in source_types}
+        for item in vocab_list:
+            if isinstance(item, str):
+                # Extract the type and identifier
+                parts = item.split("_")
+                if len(parts) > 1:
+                    source_type = parts[0]
+                    if source_type in identifiers_by_type:
+                        identifiers_by_type[source_type].append(item)
+        # Populate the DataFrame with the collected identifiers
+        for source in source_types:
+            # Join the identifiers with comma and format as a list
+            intermediate_df.at[index, source] = ', '.join(identifiers_by_type[source])
 
+
+    intermediate_df.rename(columns={
+        "geneNcbiID": "target",
+        "diseaseName": "disease_name",
+        "diseaseType": "disease_type",
+        "diseaseUMLSCUI": "disease_umlscui"
+
+        }, inplace=True)
     intermediate_df["target"] = intermediate_df["target"].values.astype(str)
+    intermediate_df.drop_duplicates(inplace=True)
 
     selected_columns = [
-        "geneDSI",
-        "geneDPI",
-        "genepLI",
-        "geneNcbiType",
-        "geneProteinClassIDs",
-        "geneProteinClassNames",
-        "diseaseVocabularies",
-        "diseaseName",
-        "diseaseType",
-        "diseaseUMLSCUI",
+        # "geneDSI", 
+        # "geneDPI",
+        # "genepLI",
+        # "geneNcbiType",
+        # "geneProteinClassIDs",
+        # "geneProteinClassNames",
+        # "diseaseVocabularies",
+        "disease_name",
+        source_types,
+        "disease_type",
+        "disease_umlscui",
         "score",
         "ei",
         "el"
@@ -185,7 +216,7 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
     check_columns_against_constants(
         data_df=intermediate_df,
         output_dict=DISGENET_OUTPUT_DICT,
-        check_values_in=["disease_id"],
+        check_values_in=["UMLS"], # TODO: which columns to check
     )
 
     merged_df = collapse_data_sources(
