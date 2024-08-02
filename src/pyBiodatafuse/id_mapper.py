@@ -249,6 +249,10 @@ def get_cid_from_data(idx: Optional[str], idx_type: str) -> Optional[str]:
     except BadRequestError:
         logger.info(f"Issue with {idx}")
         return None
+    
+    except IndexError:
+        logger.info(f"Issue with {idx}")
+        return None
 
 
 def pubchem_xref(identifiers: list, identifier_type: str = "name") -> Tuple[pd.DataFrame, dict]:
