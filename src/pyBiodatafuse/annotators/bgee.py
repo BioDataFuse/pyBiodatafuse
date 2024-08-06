@@ -186,9 +186,12 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
     """Metadata details"""
     # Get the current date and time
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
     # Calculate the time elapsed
     time_elapsed = str(end_time - start_time)
+    # Calculate the number of new nodes
+    num_new_nodes = intermediate_df["anatomical_entity_id"].nunique()
+    # Calculate the number of new edges
+    num_edges = len(intermediate_df)
 
     # Add the datasource, query, query time, and the date to metadata
     bgee_metadata = {
@@ -196,6 +199,9 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
         "metadata": bgee_version,
         "query": {
             "size": len(gene_list),
+            "input_type": BGEE_INPUT_ID,
+            "number_of_added_nodes": num_new_nodes,
+            "number_of_added_edges": num_edges,
             "time": time_elapsed,
             "date": current_date,
             "url": BGEE_ENDPOINT,
