@@ -23,6 +23,7 @@ from pyBiodatafuse.constants import (
     OPENTARGETS_GO_OUTPUT_DICT,
     OPENTARGETS_REACTOME_COL,
     OPENTARGETS_REACTOME_OUTPUT_DICT,
+    OPENTARGETS_COMPOUND_QUERY_INPUT_ID,
 )
 from pyBiodatafuse.utils import (
     check_columns_against_constants,
@@ -506,7 +507,6 @@ def get_gene_compound_interactions(
     )
     intermediate_df["compound_cid"] = mapped_df["target"]
 
-    
     # Check if all keys in df match the keys in OUTPUT_DICT
     check_columns_against_constants(
         data_df=intermediate_df,
@@ -542,11 +542,11 @@ def get_gene_compound_interactions(
 
 
 def get_compound_disease_interactions(
-    data_df: pd.DataFrame,
+    bridgedb_df: pd.DataFrame,
 ) -> Tuple[pd.DataFrame, dict]:
     """Get information about drugs associated with diseases of interest.
 
-    :param data_df: Dataframe with list of ChEMBL ids to query.
+    :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
     :returns: a DataFrame containing the OpenTargets output and dictionary of the query metadata.
     """
     # Check if the API is available
@@ -558,7 +558,14 @@ def get_compound_disease_interactions(
         )
         return pd.DataFrame(), {}
 
-    chembl_ids = data_df["target"].tolist()
+    if OPENTARGETS_COMPOUND_QUERY_INPUT_ID in bridgedb_df["target.source"].values:
+        data_df = get_identifier_of_interest(bridgedb_df, OPENTARGETS_COMPOUND_QUERY_INPUT_ID)
+        chembl_ids = data_df["target"].tolist()
+    else:
+        data_df = get_identifier_of_interest(bridgedb_df, OPENTARGETS_COMPOUND_INPUT_ID)
+        pubchem_ids = data_df["target"].tolist()
+        chembl_id_map = id_mapper.cid2chembl(pubchem_ids)  # Dict of chembl_id:pubchem_id
+        chembl_ids = list(chembl_id_map.keys())
 
     # Record the start time
     opentargets_version = get_version_opentargets()
@@ -592,6 +599,9 @@ def get_compound_disease_interactions(
 
     intermediate_df = pd.DataFrame()
 
+    if r["data"]["drugs"] is None:
+        return pd.DataFrame(), opentargets_version
+
     for drug in r["data"]["drugs"]:
         if not drug["linkedDiseases"]:
             continue
@@ -621,7 +631,7 @@ def get_compound_disease_interactions(
             columns=["therapeuticAreas", "dbXRefs"], inplace=True
         )  # Xrefs has all other ids for diseases
 
-        disease_df["target"] = drug["id"]
+        disease_df["target"] = chembl_id_map.get(drug["id"], None)
         disease_df["drug_name"] = drug["name"]
         disease_df["max_clinical_trial_phase"] = drug["maximumClinicalTrialPhase"]
         disease_df["is_withdrawn"] = drug["hasBeenWithdrawn"]
@@ -661,5 +671,50 @@ def get_compound_disease_interactions(
         "date": current_date,
         "url": OPENTARGETS_ENDPOINT,
     }
+
+    return merged_df, opentargets_version
+
+
+def get_gene_disease_interactions(
+    bridgedb_df: pd.DataFrame,
+) -> Tuple[pd.DataFrame, dict]:
+    """Get information about disease connected to drugs associated with a genes of interest.
+
+    :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
+    :returns: a DataFrame containing the OpenTargets output and dictionary of the query metadata.
+    """
+    # Get gene-compound interactions
+    merged_df, opentargets_version = get_gene_compound_interactions(bridgedb_df)
+
+    if merged_df.empty:
+        return pd.DataFrame(), opentargets_version
+
+    # Making a bridgeDb dataframe for the compound ids
+    gene_cmpd_data = []
+    for row in merged_df.values:
+        (
+            gene,
+            gene_namespace,
+            tar,
+            target_namespace,
+            cmpds,
+        ) = row
+        if len(cmpds) < 1:
+            continue
+
+        for cmpd in cmpds:
+            gene_cmpd_data.append(
+                {
+                    "identifier": gene,
+                    "identifier.source": gene_namespace,
+                    "target": cmpd["chembl_id"],
+                    "target.source": OPENTARGETS_COMPOUND_QUERY_INPUT_ID,
+                }
+            )
+
+    gene_cmpd_df = pd.DataFrame(gene_cmpd_data)
+
+    # Get compound-disease interactions
+    merged_df, opentargets_version = get_compound_disease_interactions(gene_cmpd_df)
 
     return merged_df, opentargets_version
