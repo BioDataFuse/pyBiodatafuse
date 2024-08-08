@@ -165,8 +165,6 @@ def get_ppi(bridgedb_df: pd.DataFrame):
     # Calculate the number of new edges
     num_edges = len(network_df)
 
-    
-
     # Add the datasource, query, query time, and the date to metadata
     string_metadata = {
         "datasource": STRING,

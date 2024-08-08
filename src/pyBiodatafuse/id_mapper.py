@@ -3,15 +3,15 @@
 """Python file for mapping identifiers using BridgeDb."""
 
 import csv
-import time
 import datetime
 import logging
+import time
 from importlib import resources
 from typing import List, Optional, Tuple
 
 import pandas as pd
 import requests
-from pubchempy import BadRequestError, get_compounds, get_synonyms, PubChemHTTPError
+from pubchempy import BadRequestError, PubChemHTTPError, get_compounds, get_synonyms
 from rdkit.Chem import CanonSmiles
 
 logger = logging.getLogger(__name__)

@@ -30,16 +30,17 @@ logger = logging.getLogger("disgenet")
 def check_endpoint_disgenet(api_key: str) -> bool:
     """Check the availability of the DisGeNET API.
 
+    :param api_key: DisGeNET API key (more details can be found at https://disgenet.com/plans)
     :returns: True if the endpoint is available, False otherwise.
     """
     # Set HTTP headers
-    HTTPheadersDict = {}
-    HTTPheadersDict["Authorization"] = api_key
-    HTTPheadersDict["accept"] = "application/json"
+    httpheadersdict = {}
+    httpheadersdict["Authorization"] = api_key
+    httpheadersdict["accept"] = "application/json"
     # Set the DisGeNET API
     s = requests.Session()
     # Get version
-    response = s.get("https://api.disgenet.com/api/v1/public/version", headers=HTTPheadersDict)
+    response = s.get("https://api.disgenet.com/api/v1/public/version", headers=httpheadersdict)
     # Check if API is down
     if response.json()["status"] == "OK":
         return True
@@ -50,17 +51,18 @@ def check_endpoint_disgenet(api_key: str) -> bool:
 def get_version_disgenet(api_key: str) -> dict:
     """Get version of DisGeNET API.
 
+    :param api_key: DisGeNET API key (more details can be found at https://disgenet.com/plans)
     :returns: a dictionary containing the version information
     """
     # Set HTTP headers
-    HTTPheadersDict = {}
-    HTTPheadersDict["Authorization"] = api_key
-    HTTPheadersDict["accept"] = "application/json"
+    httpheadersdict = {}
+    httpheadersdict["Authorization"] = api_key
+    httpheadersdict["accept"] = "application/json"
     # Set the DisGeNET API
     s = requests.Session()
     # Get version
     version_response = s.get(
-        "https://api.disgenet.com/api/v1/public/version", headers=HTTPheadersDict
+        "https://api.disgenet.com/api/v1/public/version", headers=httpheadersdict
     )
     disgenet_version = version_response.json()["payload"]
 
@@ -84,9 +86,9 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
         return pd.DataFrame(), {}
 
     # Add the API key to the requests headers
-    HTTPheadersDict = {}
-    HTTPheadersDict["Authorization"] = api_key
-    HTTPheadersDict["accept"] = "application/json"
+    httpheadersdict = {}
+    httpheadersdict["Authorization"] = api_key
+    httpheadersdict["accept"] = "application/json"
     # Set the DisGeNET API
     s = requests.Session()
 
@@ -111,7 +113,7 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
         params["page_number"] = 0
         # Get all the diseases associated with genes for the current chunk
         gda_response = s.get(
-            DISGENET_ENDPOINT, params=params, headers=HTTPheadersDict, verify=False
+            DISGENET_ENDPOINT, params=params, headers=httpheadersdict, verify=False
         )
 
         # If the status code of gda_response is 429, it means you have reached one of your query limits
@@ -119,17 +121,17 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
         if not gda_response.ok:
             if gda_response.status_code == 429:
                 while gda_response.ok is False:
-                    print(
-                        "You have reached a query limit for your user. Please wait {} seconds until next query".format(
-                            gda_response.headers["x-rate-limit-retry-after-seconds"]
-                        )
-                    )
+                    # print(
+                    #     "You have reached a query limit for your user. Please wait {} seconds until next query".format(
+                    #         gda_response.headers["x-rate-limit-retry-after-seconds"]
+                    #     )
+                    # )
                     time.sleep(int(gda_response.headers["x-rate-limit-retry-after-seconds"]))
-                    print("Your rate limit is now restored")
+                    # print("Your rate limit is now restored")
 
                     # Repeat your query
                     gda_response = requests.get(
-                        DISGENET_ENDPOINT, params=params, headers=HTTPheadersDict, verify=False
+                        DISGENET_ENDPOINT, params=params, headers=httpheadersdict, verify=False
                     )
                     if gda_response.ok is True:
                         break
@@ -139,7 +141,6 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
         # Parse response content in JSON format since we set 'accept:application/json' as HTTP header
         response_parsed = json.loads(gda_response.text)
         disgenet_output.extend(response_parsed["payload"])
-
     # Record the end time
     end_time = datetime.datetime.now()
 

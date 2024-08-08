@@ -15,6 +15,7 @@ from pyBiodatafuse.constants import (
     OPENTARGETS_COMPOUND_COL,
     OPENTARGETS_COMPOUND_INPUT_ID,
     OPENTARGETS_COMPOUND_OUTPUT_DICT,
+    OPENTARGETS_COMPOUND_QUERY_INPUT_ID,
     OPENTARGETS_DISEASE_COL,
     OPENTARGETS_DISEASE_OUTPUT_DICT,
     OPENTARGETS_ENDPOINT,
@@ -23,7 +24,6 @@ from pyBiodatafuse.constants import (
     OPENTARGETS_GO_OUTPUT_DICT,
     OPENTARGETS_REACTOME_COL,
     OPENTARGETS_REACTOME_OUTPUT_DICT,
-    OPENTARGETS_COMPOUND_QUERY_INPUT_ID,
 )
 from pyBiodatafuse.utils import (
     check_columns_against_constants,
@@ -534,7 +534,6 @@ def get_gene_compound_interactions(
     # Calculate the number of new edges
     num_edges = len(intermediate_df)
 
-
     # Add version, datasource, query, query time, and the date to metadata
     opentargets_version["query"] = {
         "size": len(gene_ids),
@@ -648,7 +647,7 @@ def get_compound_disease_interactions(
 
     if intermediate_df.empty:
         return pd.DataFrame(), opentargets_version
-    
+
     # Check if all keys in df match the keys in OUTPUT_DICT
     check_columns_against_constants(
         data_df=intermediate_df,

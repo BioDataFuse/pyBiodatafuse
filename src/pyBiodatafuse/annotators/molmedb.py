@@ -197,7 +197,6 @@ def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
     num_new_nodes = intermediate_df["molmedb_id"].nunique()
     # Calculate the number of new edges
     num_edges = len(intermediate_df[["target", "molmedb_id"]].drop_duplicates())
-   
 
     # Add the datasource, query, query time, and the date to metadata
     molmedb_metadata = {
