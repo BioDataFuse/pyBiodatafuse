@@ -7,7 +7,7 @@ import json
 import logging
 import time
 import warnings
-from typing import List, Set, Tuple
+from typing import Dict, List, Set, Tuple
 
 import pandas as pd
 import requests
@@ -169,7 +169,7 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
     for index, entry in intermediate_df.iterrows():
         vocab_list = entry["diseaseVocabularies"]
         # Create a dictionary to hold identifiers by type
-        identifiers_by_type = {source: [] for source in source_type_list}
+        identifiers_by_type: Dict[str, List[str]] = {source: [] for source in source_type_list}
         for item in vocab_list:
             if isinstance(item, str):
                 # Extract the type and identifier
