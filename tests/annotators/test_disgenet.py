@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""Tests for the Disgenet annotator."""
+"""Tests for the DISGENET annotator."""
 
 import json
 import os
@@ -18,55 +18,44 @@ data_file_folder = os.path.join(os.path.dirname(__file__), "data")
 
 
 class TestDisgenet(unittest.TestCase):
-    """Test the Disgenet class."""
+    """Test the DISGENET class."""
 
-    @patch("pyBiodatafuse.annotators.disgenet.SPARQLWrapper.queryAndConvert")
+    @patch("pyBiodatafuse.annotators.disgenet.requests.post")
     def test_get_version_disgenet(self, mock_sparql_version):
-        """Test that the SPARQL endpoint returns the expected get_version_bgee results."""
-        mock_sparql_version.side_effect = [
-            {
-                "head": {"link": [], "vars": ["title"]},
-                "results": {
-                    "distinct": False,
-                    "ordered": True,
-                    "bindings": [
-                        {"title": {"type": "literal", "value": "DisGeNET v7.0 RDF Distribution"}},
-                    ],
-                },
-            }
-        ]
+        """Test that the API endpoint returns the expected get_version_bgee results."""
+        mock_sparql_version.side_effect = {
+            "status": "OK",
+            "payload": {"lastUpdate": "10 Jul 2024", "version": "DISGENET v24.2"},
+        }
 
         obtained_version = get_version_disgenet()
 
-        expected_version = {"source_version": "DisGeNET v7.0 RDF Distribution"}
+        expected_version = {"lastUpdate": "10 Jul 2024", "version": "DISGENET v24.2"}
 
         assert obtained_version == expected_version
 
-    @patch("pyBiodatafuse.annotators.bgee.SPARQLWrapper.queryAndConvert")
-    def test_get_gene_disease(self, mock_sparql_request):
+    @patch("pyBiodatafuse.annotators.disgenet.requests.post")
+    def test_get_gene_disease(self, mock_post_gene_disease):
         """Test the get_gene_disease function."""
-        with open(os.path.join(data_file_folder, "disgenet_mock_data.json")) as f:
-            mock_data = json.load(f)
-
-        mock_data_list = []
-        for json_response in mock_data:
-            mock_data_list.append(pd.DataFrame.from_dict(json_response))
-
-        mock_sparql_request.side_effect = mock_data_list  # For the two queries
-
         disgenet.get_version_disgenet = Mock(
-            return_value={"source_version": "DisGeNET v7.0 RDF Distribution"}
+            return_value={
+                "status": "OK",
+                "payload": {"lastUpdate": "10 Jul 2024", "version": "DISGENET v24.2"},
+            }
         )  # Mock the version call
         disgenet.check_endpoint_disgenet = Mock(return_value=True)
 
         bridgedb_dataframe = pd.DataFrame(
             {
-                "identifier": ["SLC25A1", "ENSG00000005108"],
-                "identifier.source": ["HGNC", "Ensembl"],
-                "target": ["6576", "221981"],
-                "target.source": ["NCBI Gene", "NCBI Gene"],
+                "identifier": ["CHRNG"],
+                "identifier.source": ["HGNC"],
+                "target": ["1146"],
+                "target.source": ["NCBI Gene"],
             }
         )
+
+        with open(os.path.join(data_file_folder, "disgenet_mock_data.json")) as f:
+            mock_post_gene_disease.return_value.json.return_value = json.load(f)
 
         obtained_data, metadata = get_gene_disease(bridgedb_dataframe)
 
@@ -74,74 +63,44 @@ class TestDisgenet(unittest.TestCase):
             [
                 [
                     {
-                        "disease_id": "umls:C0338831",
-                        "disease_name": "Manic",
-                        "score": 0.3,
-                        "evidence_source": "CTD_human",
+                        "HPO": "",
+                        "NCI": "NCI_C101039",
+                        "OMIM": "OMIM_265000, OMIM_100730, OMIM_163950",
+                        "MONDO": "MONDO_0009926, MONDO_0020746, MONDO_0017415",
+                        "ORDO": "ORDO_2990, ORDO_294060",
+                        "ICD10": "",
+                        "EFO": "",
+                        "DO": "DO_0080110, DO_0081322",
+                        "MESH": "MESH_C537377",
+                        "UMLS": "UMLS_C0265261",
+                        "ICD9CM": "",
+                        "disease_name": "Multiple pterygium syndrome",
+                        "disease_type": "disease",
+                        "disease_umlscui": "C0265261",
+                        "score": 1.0,
+                        "ei": 1.0,
+                        "el": None,
                     },
                     {
-                        "disease_id": "umls:C0005587",
-                        "disease_name": "Depression, Bipolar",
-                        "score": 0.3,
-                        "evidence_source": "CTD_human",
+                        "HPO": "",
+                        "NCI": "NCI_C101038",
+                        "OMIM": "OMIM_253290, OMIM_100730, OMIM_100690, OMIM_100720",
+                        "MONDO": "MONDO_0009668, MONDO_0017415",
+                        "ORDO": "ORDO_294060, ORDO_33108",
+                        "ICD10": "",
+                        "EFO": "",
+                        "DO": "DO_0080110",
+                        "MESH": "MESH_C537377",
+                        "UMLS": "UMLS_C1854678",
+                        "ICD9CM": "",
+                        "disease_name": "MULTIPLE PTERYGIUM SYNDROME, LETHAL TYPE",
+                        "disease_type": "disease",
+                        "disease_umlscui": "C1854678",
+                        "score": 0.95,
+                        "ei": 1.0,
+                        "el": None,
                     },
-                    {
-                        "disease_id": "umls:C0005586",
-                        "disease_name": "Bipolar Disorder",
-                        "score": 0.4,
-                        "evidence_source": "CTD_human",
-                    },
-                    {
-                        "disease_id": "umls:C0024713",
-                        "disease_name": "Manic Disorder",
-                        "score": 0.3,
-                        "evidence_source": "CTD_human",
-                    },
-                ],
-                [
-                    {
-                        "disease_id": "umls:C2746066",
-                        "disease_name": "Combined D-2- and L-2-hydroxyglutaric aciduria",
-                        "score": 0.72,
-                        "evidence_source": "UNIPROT",
-                    },
-                    {
-                        "disease_id": "umls:C2746066",
-                        "disease_name": "Combined D-2- and L-2-hydroxyglutaric aciduria",
-                        "score": 0.72,
-                        "evidence_source": "ORPHANET",
-                    },
-                    {
-                        "disease_id": "umls:C2746066",
-                        "disease_name": "Combined D-2- and L-2-hydroxyglutaric aciduria",
-                        "score": 0.72,
-                        "evidence_source": "CTD_human",
-                    },
-                    {
-                        "disease_id": "umls:C2746066",
-                        "disease_name": "Combined D-2- and L-2-hydroxyglutaric aciduria",
-                        "score": 0.72,
-                        "evidence_source": "GENOMICS_ENGLAND",
-                    },
-                    {
-                        "disease_id": "umls:C0751884",
-                        "disease_name": "Congenital Myasthenic Syndromes, Presynaptic",
-                        "score": 0.3,
-                        "evidence_source": "ORPHANET",
-                    },
-                    {
-                        "disease_id": "umls:C4748678",
-                        "disease_name": "MYASTHENIC SYNDROME, CONGENITAL, 23, PRESYNAPTIC",
-                        "score": 0.6,
-                        "evidence_source": "UNIPROT",
-                    },
-                    {
-                        "disease_id": "umls:C4748678",
-                        "disease_name": "MYASTHENIC SYNDROME, CONGENITAL, 23, PRESYNAPTIC",
-                        "score": 0.6,
-                        "evidence_source": "GENOMICS_ENGLAND",
-                    },
-                ],
+                ]
             ]
         )
         expected_data.name = DISGENET
