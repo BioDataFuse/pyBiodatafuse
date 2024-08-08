@@ -131,7 +131,7 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
 
                     # Repeat your query
                     gda_response = requests.get(
-                        DISGENET_ENDPOINT, params=params, headers=httpheadersdict, verify=False
+                        DISGENET_ENDPOINT, params=params, headers=httpheadersdict
                     )
                     if gda_response.ok is True:
                         break
