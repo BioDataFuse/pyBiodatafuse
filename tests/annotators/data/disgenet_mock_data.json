@@ -1,237 +1,93 @@
 [
     {
-        "head": {
-            "link": [],
-            "vars": [
-                "gene_id",
-                "description",
-                "disease_score",
-                "evidence_source"
-            ]
-        },
-        "results": {
-            "bindings": [
-                {
-                    "gene_id": {
-                        "type": "uri",
-                        "value": "http: //identifiers.org/ncbigene/6576"
-                    },
-                    "description": {
-                        "type": "literal",
-                        "xml:lang": "en",
-                        "value": "Combined D-2- and L-2-hydroxyglutaric aciduria [umls:C2746066]"
-                    },
-                    "disease_score": {
-                        "type": "typed-literal",
-                        "datatype": "http://www.w3.org/2001/XMLSchema#double",
-                        "value": "0.72"
-                    },
-                    "evidence_source": {
-                        "type": "uri",
-                        "value": "http://rdf.disgenet.org/v7.0.0/void/UNIPROT"
-                    }
-                },
-                {
-                    "gene_id": {
-                        "type": "uri",
-                        "value": "http://identifiers.org/ncbigene/6576"
-                    },
-                    "description": {
-                        "type": "literal",
-                        "xml:lang": "en",
-                        "value": "Combined D-2- and L-2-hydroxyglutaric aciduria [umls:C2746066]"
-                    },
-                    "disease_score": {
-                        "type": "typed-literal",
-                        "datatype": "http://www.w3.org/2001/XMLSchema#double",
-                        "value": "0.72"
-                    },
-                    "evidence_source": {
-                        "type": "uri",
-                        "value": "http://rdf.disgenet.org/v7.0.0/void/ORPHANET"
-                    }
-                },
-                {
-                    "gene_id": {
-                        "type": "uri",
-                        "value": "http://identifiers.org/ncbigene/6576"
-                    },
-                    "description": {
-                        "type": "literal",
-                        "xml:lang": "en",
-                        "value": "Combined D-2- and L-2-hydroxyglutaric aciduria [umls:C2746066]"
-                    },
-                    "disease_score": {
-                        "type": "typed-literal",
-                        "datatype": "http://www.w3.org/2001/XMLSchema#double",
-                        "value": "0.72"
-                    },
-                    "evidence_source": {
-                        "type": "uri",
-                        "value": "http://rdf.disgenet.org/v7.0.0/void/CTD_human"
-                    }
-                },
-                {
-                    "gene_id": {
-                        "type": "uri",
-                        "value": "http://identifiers.org/ncbigene/6576"
-                    },
-                    "description": {
-                        "type": "literal",
-                        "xml:lang": "en",
-                        "value": "Combined D-2- and L-2-hydroxyglutaric aciduria [umls:C2746066]"
-                    },
-                    "disease_score": {
-                        "type": "typed-literal",
-                        "datatype": "http://www.w3.org/2001/XMLSchema#double",
-                        "value": "0.72"
-                    },
-                    "evidence_source": {
-                        "type": "uri",
-                        "value": "http://rdf.disgenet.org/v7.0.0/void/GENOMICS_ENGLAND"
-                    }
-                },
-                {
-                    "gene_id": {
-                        "type": "uri",
-                        "value": "http://identifiers.org/ncbigene/221981"
-                    },
-                    "description": {
-                        "type": "literal",
-                        "xml:lang": "en",
-                        "value": "Manic [umls:C0338831]"
-                    },
-                    "disease_score": {
-                        "type": "typed-literal",
-                        "datatype": "http://www.w3.org/2001/XMLSchema#double",
-                        "value": "0.3"
-                    },
-                    "evidence_source": {
-                        "type": "uri",
-                        "value": "http://rdf.disgenet.org/v7.0.0/void/CTD_human"
-                    }
-                },
-                {
-                    "gene_id": {
-                        "type": "uri",
-                        "value": "http://identifiers.org/ncbigene/6576"
-                    },
-                    "description": {
-                        "type": "literal",
-                        "xml:lang": "en",
-                        "value": "Congenital Myasthenic Syndromes, Presynaptic [umls:C0751884]"
-                    },
-                    "disease_score": {
-                        "type": "typed-literal",
-                        "datatype": "http://www.w3.org/2001/XMLSchema#double",
-                        "value": "0.3"
-                    },
-                    "evidence_source": {
-                        "type": "uri",
-                        "value": "http://rdf.disgenet.org/v7.0.0/void/ORPHANET"
-                    }
-                },
-                {
-                    "gene_id": {
-                        "type": "uri",
-                        "value": "http://identifiers.org/ncbigene/221981"
-                    },
-                    "description": {
-                        "type": "literal",
-                        "xml:lang": "en",
-                        "value": "Depression, Bipolar [umls:C0005587]"
-                    },
-                    "disease_score": {
-                        "type": "typed-literal",
-                        "datatype": "http://www.w3.org/2001/XMLSchema#double",
-                        "value": "0.3"
-                    },
-                    "evidence_source": {
-                        "type": "uri",
-                        "value": "http://rdf.disgenet.org/v7.0.0/void/CTD_human"
-                    }
-                },
-                {
-                    "gene_id": {
-                        "type": "uri",
-                        "value": "http://identifiers.org/ncbigene/6576"
-                    },
-                    "description": {
-                        "type": "literal",
-                        "xml:lang": "en",
-                        "value": "MYASTHENIC SYNDROME, CONGENITAL, 23, PRESYNAPTIC [umls:C4748678]"
-                    },
-                    "disease_score": {
-                        "type": "typed-literal",
-                        "datatype": "http://www.w3.org/2001/XMLSchema#double",
-                        "value": "0.6"
-                    },
-                    "evidence_source": {
-                        "type": "uri",
-                        "value": "http://rdf.disgenet.org/v7.0.0/void/UNIPROT"
-                    }
-                },
-                {
-                    "gene_id": {
-                        "type": "uri",
-                        "value": "http://identifiers.org/ncbigene/6576"
-                    },
-                    "description": {
-                        "type": "literal",
-                        "xml:lang": "en",
-                        "value": "MYASTHENIC SYNDROME, CONGENITAL, 23, PRESYNAPTIC [umls:C4748678]"
-                    },
-                    "disease_score": {
-                        "type": "typed-literal",
-                        "datatype": "http://www.w3.org/2001/XMLSchema#double",
-                        "value": "0.6"
-                    },
-                    "evidence_source": {
-                        "type": "uri",
-                        "value": "http://rdf.disgenet.org/v7.0.0/void/GENOMICS_ENGLAND"
-                    }
-                },
-                {
-                    "gene_id": {
-                        "type": "uri",
-                        "value": "http://identifiers.org/ncbigene/221981"
-                    },
-                    "description": {
-                        "type": "literal",
-                        "xml:lang": "en",
-                        "value": "Bipolar Disorder [umls:C0005586]"
-                    },
-                    "disease_score": {
-                        "type": "typed-literal",
-                        "datatype": "http://www.w3.org/2001/XMLSchema#double",
-                        "value": "0.4"
-                    },
-                    "evidence_source": {
-                        "type": "uri",
-                        "value": "http://rdf.disgenet.org/v7.0.0/void/CTD_human"
-                    }
-                },
-                {
-                    "gene_id": {
-                        "type": "uri",
-                        "value": "http://identifiers.org/ncbigene/221981"
-                    },
-                    "description": {
-                        "type": "literal",
-                        "xml:lang": "en",
-                        "value": "Manic Disorder [umls:C0024713]"
-                    },
-                    "disease_score": {
-                        "type": "typed-literal",
-                        "datatype": "http://www.w3.org/2001/XMLSchema#double",
-                        "value": "0.3"
-                    },
-                    "evidence_source": {
-                        "type": "uri",
-                        "value": "http://rdf.disgenet.org/v7.0.0/void/CTD_human"
-                    }
-                }
-            ]
-        }
+        "assocID": 15637943,
+        "symbolOfGene": "CHRNG",
+        "geneNcbiID": 1146,
+        "geneEnsemblIDs": ["ENSG00000196811"],
+        "geneNcbiType": "protein-coding",
+        "geneDSI": 0.519,
+        "geneDPI": 0.833,
+        "genepLI": 4.1944e-25,
+        "geneProteinStrIDs": ["P07510", "A0A6F7YAP6"],
+        "geneProteinClassIDs": ["DTO_01300327"],
+        "geneProteinClassNames": ["Ion channel"],
+        "diseaseVocabularies": [
+            "MESH_C537377",
+            "OMIM_265000",
+            "NCI_C101039",
+            "OMIM_100730",
+            "OMIM_163950",
+            "ORDO_2990",
+            "ORDO_294060",
+            "DO_0080110",
+            "DO_0081322",
+            "MONDO_0009926",
+            "MONDO_0020746",
+            "MONDO_0017415",
+            "UMLS_C0265261"
+        ],
+        "diseaseName": "Multiple pterygium syndrome",
+        "diseaseType": "disease",
+        "diseaseUMLSCUI": "C0265261",
+        "diseaseClasses_MSH": [
+            "Congenital, Hereditary, and Neonatal Diseases and Abnormalities (C16)",
+            "Pathological Conditions, Signs and Symptoms (C23)",
+            "Skin and Connective Tissue Diseases (C17)"
+        ],
+        "diseaseClasses_UMLS_ST": ["Congenital Abnormality (T019)"],
+        "diseaseClasses_DO": [
+            "syndrome (225)",
+            "genetic disease (630)"
+        ],
+        "diseaseClasses_HPO": [],
+        "chemicalsIncludedInEvidence": None,
+        "numberPmidsWithChemsIncludedInEvidenceBySource": [],
+        "score": 1.0,
+        "yearInitial": 2005,
+        "yearFinal": 2019,
+        "el": None,
+        "ei": 1.0
+    },
+    {
+        "assocID": 25103559,
+        "symbolOfGene": "CHRNG",
+        "geneNcbiID": 1146,
+        "geneEnsemblIDs": ["ENSG00000196811"],
+        "geneNcbiType": "protein-coding","geneDSI": 0.519,
+        "geneDPI": 0.833,
+        "genepLI": 4.1944e-25,
+        "geneProteinStrIDs": ["A0A6F7YAP6", "P07510"],
+        "geneProteinClassIDs": ["DTO_01300327"],
+        "geneProteinClassNames": ["Ion channel"],
+        "diseaseVocabularies": [
+            "OMIM_253290",
+            "OMIM_100730",
+            "OMIM_100690",
+            "OMIM_100720",
+            "MESH_C537377",
+            "NCI_C101038",
+            "ORDO_294060",
+            "ORDO_33108",
+            "DO_0080110",
+            "MONDO_0009668",
+            "MONDO_0017415",
+            "UMLS_C1854678"
+        ],
+        "diseaseName": "MULTIPLE PTERYGIUM SYNDROME, LETHAL TYPE",
+        "diseaseType": "disease",
+        "diseaseUMLSCUI": "C1854678",
+        "diseaseClasses_MSH": [
+            "Pathological Conditions, Signs and Symptoms (C23)",
+            "Congenital, Hereditary, and Neonatal Diseases and Abnormalities (C16)",
+            "Skin and Connective Tissue Diseases (C17)"],
+            "diseaseClasses_UMLS_ST": ["Disease or Syndrome (T047)"],
+            "diseaseClasses_DO": ["genetic disease (630)", "syndrome (225)"],
+            "diseaseClasses_HPO": [],
+            "chemicalsIncludedInEvidence": None,
+            "numberPmidsWithChemsIncludedInEvidenceBySource": [],
+            "score": 0.95, "yearInitial": 2006,
+            "yearFinal": 2024,
+            "el": None,
+            "ei": 1.0
     }
 ]

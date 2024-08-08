@@ -5,12 +5,13 @@
 import csv
 import datetime
 import logging
+import time
 from importlib import resources
 from typing import List, Optional, Tuple
 
 import pandas as pd
 import requests
-from pubchempy import BadRequestError, get_compounds
+from pubchempy import BadRequestError, PubChemHTTPError, get_compounds, get_synonyms
 from rdkit.Chem import CanonSmiles
 
 logger = logging.getLogger(__name__)
@@ -250,6 +251,10 @@ def get_cid_from_data(idx: Optional[str], idx_type: str) -> Optional[str]:
         logger.info(f"Issue with {idx}")
         return None
 
+    except IndexError:
+        logger.info(f"Issue with {idx}")
+        return None
+
 
 def pubchem_xref(identifiers: list, identifier_type: str = "name") -> Tuple[pd.DataFrame, dict]:
     """Map chemical names or smiles or inchikeys to PubChem identifier.
@@ -308,3 +313,38 @@ def pubchem_xref(identifiers: list, identifier_type: str = "name") -> Tuple[pd.D
     }
 
     return pubchem_df, pubchem_metadata
+
+
+def cid2chembl(cids: list) -> dict:
+    """Map Pubchem CIDs to ChEMBL identifier.
+
+    :param cids: a list of CIDs identifiers to query
+    :raises ValueError: if the input_datasource is not provided or if the request fails
+    :returns: a dictonary of ChEMBL mapped to CID identifiers and dictionary of the data resource metadata.
+    """
+    if len(cids) < 1:
+        raise ValueError("Please provide at least one input.")
+
+    # Getting the response to the query
+    chembl_data = {}  # ChEMBL ids as keys and PubChem ids as values
+    for pubchem_idx in cids:
+        try:
+            other_idenfitiers = get_synonyms(identifier=pubchem_idx)
+        except (PubChemHTTPError, BadRequestError):  # too many request
+            time.sleep(3)
+            try:
+                other_idenfitiers = get_synonyms(identifier=pubchem_idx)
+            except BadRequestError:  # incorrect pubchem id
+                continue
+
+        if len(other_idenfitiers) < 1:
+            continue
+
+        other_idenfitiers = other_idenfitiers[0]
+
+        for idx in other_idenfitiers["Synonym"]:
+            if idx.startswith("CHEMBL"):
+                chembl_data[idx] = pubchem_idx
+                break
+
+    return chembl_data

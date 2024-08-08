@@ -5,7 +5,7 @@
 
 # Endpoints / API
 BGEE_ENDPOINT = "https://www.bgee.org/sparql/"
-DISGENET_ENDPOINT = "http://rdf.disgenet.org/sparql/"
+DISGENET_ENDPOINT = "https://api.disgenet.com/api/v1/gda/summary"
 MINERVA_ENDPOINT = "https://minerva-net.lcsb.uni.lu/api/"
 MOLMEDB_ENDPOINT = "https://idsm.elixir-czech.cz/sparql/endpoint/molmedb"
 OPENTARGETS_ENDPOINT = "https://api.platform.opentargets.org/api/v4/graphql"
@@ -16,7 +16,7 @@ WIKIPATHWAYS_ENDPOINT = "https://sparql.wikipathways.org/sparql"
 
 # Data sources
 BGEE = "Bgee"
-DISGENET = "DisGeNET"
+DISGENET = "DISGENET"
 MINERVA = "MINERVA"
 MOLMEDB = "MolMeDB"
 OPENTARGETS = "OpenTargets"
@@ -32,7 +32,8 @@ MINERVA_INPUT_ID = "Ensembl"
 MOLMEDB_GENE_INPUT_ID = "Uniprot-TrEMBL"
 MOLMEDB_COMPOUND_INPUT_ID = "InChIKey"
 OPENTARGETS_GENE_INPUT_ID = "Ensembl"
-OPENTARGETS_COMPOUND_INPUT_ID = "chembl"
+OPENTARGETS_COMPOUND_INPUT_ID = "PubChem Compound"  # If using bridgedb mapping
+OPENTARGETS_COMPOUND_QUERY_INPUT_ID = "chembl_id"
 PUBCHEM_INPUT_ID = "Uniprot-TrEMBL"
 STRING_INPUT_ID = "Ensembl"
 WIKIDATA_PUBLICATION_INPUT_ID = "NCBI Gene"
@@ -83,13 +84,26 @@ LOCATION_ID = "SL"
 OPENTARGETS_LOCATION_COL = f"{OPENTARGETS}_Location"
 
 # Disease node
-# DisGeNet
+# DISGENET
 DISGENET_OUTPUT_DICT = {
-    "disease_id": str,
+    "HPO": str,
+    "NCI": str,
+    "OMIM": str,
+    "MONDO": str,
+    "ORDO": str,
+    "ICD10": str,
+    "EFO": str,
+    "DO": str,
+    "MESH": str,
+    "UMLS": str,
+    "ICD9CM": str,
     "disease_name": str,
+    "disease_type": str,
+    "disease_umlscui": str,
     "score": float,
-    "evidence_source": str,
-}
+    "ei": float,
+    "el": float,
+}  # TODO: Yojana, we should align the disease extracted from the two sources
 # Open Targets - Disease
 OPENTARGETS_DISEASE_OUTPUT_DICT = {
     "disease_id": str,
@@ -226,7 +240,7 @@ OPENTARGETS_LOCATION_EDGE_LABEL = "localized_in"
 OPENTARGETS_LOCATION_EDGE_ATTRS = {"source": OPENTARGETS, "label": OPENTARGETS_LOCATION_EDGE_LABEL}
 
 # Disease node
-# DisGeNet
+# DISGENET
 DISGENET_NODE_LABELS = "Disease"
 DISGENET_NODE_MAIN_LABEL = "disease_id"
 DISGENET_NODE_ATTRS = {

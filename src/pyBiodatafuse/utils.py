@@ -23,7 +23,7 @@ def get_identifier_of_interest(bridgedb_df: pd.DataFrame, db_source: str) -> pd.
     # Check if source is in identifier options
     assert db_source in identifier_options, f"Source {db_source} is not in identifier options"
 
-    # Filter rows where "target.source" is specific datasource "NCBI Gene"
+    # Filter rows where "target.source" is specific datasource for eg. "NCBI Gene"
     return bridgedb_df[bridgedb_df["target.source"] == db_source]
 
 
@@ -96,7 +96,7 @@ def collapse_data_sources(
 
     # Group by the first 4 columns and aggregate the values into a list
     cols_of_interest = data_df.columns.tolist()
-    merged_df = merged_df.groupby(cols_of_interest)[col_name].agg(sum).reset_index()
+    merged_df = merged_df.groupby(cols_of_interest)[col_name].sum().reset_index()
 
     return merged_df
 
