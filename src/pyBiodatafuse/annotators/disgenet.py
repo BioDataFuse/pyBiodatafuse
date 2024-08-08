@@ -7,7 +7,7 @@ import json
 import logging
 import time
 import warnings
-from typing import Tuple
+from typing import List, Set, Tuple
 
 import pandas as pd
 import requests
@@ -101,7 +101,6 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
     params = {}
     params["format"] = "json"
     params["source"] = "CURATED"
-    params["page_number"] = 0
 
     # Record the start time
     disgenet_version = get_version_disgenet(api_key)
@@ -110,7 +109,7 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
     for gene in data_df["target"]:
         # Retrieve disease associated to gene with NCBI ID
         params["gene_ncbi_id"] = gene
-        params["page_number"] = 0
+        params["page_number"] = str(0)
         # Get all the diseases associated with genes for the current chunk
         gda_response = s.get(
             DISGENET_ENDPOINT, params=params, headers=httpheadersdict, verify=False
@@ -151,7 +150,7 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
 
     # extract disease identifiers from diseaseVocabularies column
     # Initialize dictionaries to store the columns
-    source_types = set()
+    source_types: Set[str] = set()
     # Process the 'diseaseVocabularies' column
     for entry in intermediate_df["diseaseVocabularies"]:
         for item in entry:
@@ -161,15 +160,16 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
                 # Add to the set
                 source_types.add(prefix)
     # Convert set to list
-    source_types = list(source_types)
+    source_type_list: List[str] = list(source_types)
+
     # Add new columns for each identifier type and initialize with empty lists
-    for source in source_types:
+    for source in source_type_list:
         intermediate_df[source] = None
     # Populate the new columns with identifiers
     for index, entry in intermediate_df.iterrows():
         vocab_list = entry["diseaseVocabularies"]
         # Create a dictionary to hold identifiers by type
-        identifiers_by_type = {source: [] for source in source_types}
+        identifiers_by_type = {source: [] for source in source_type_list}
         for item in vocab_list:
             if isinstance(item, str):
                 # Extract the type and identifier
@@ -179,7 +179,7 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
                     if source_type in identifiers_by_type:
                         identifiers_by_type[source_type].append(item)
         # Populate the DataFrame with the collected identifiers
-        for source in source_types:
+        for source in source_type_list:
             # Join the identifiers with comma and format as a list
             intermediate_df.at[index, source] = ", ".join(identifiers_by_type[source])
 
@@ -204,7 +204,7 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
         # "diseaseVocabularies",
         "target",
         "disease_name",
-        *source_types,
+        *source_type_list,
         "disease_type",
         "disease_umlscui",
         "score",
