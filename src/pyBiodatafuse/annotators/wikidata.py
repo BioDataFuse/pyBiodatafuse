@@ -115,7 +115,8 @@ def get_gene_cellular_component(bridgedb_df: pd.DataFrame):
         res = sparql.queryAndConvert()
 
         df = pd.DataFrame(res["results"]["bindings"])
-        df = df.applymap(lambda x: x["value"])
+        for col in df:
+            df[col] = df[col].map(lambda x: x["value"], na_action="ignore")
 
         intermediate_df = pd.concat([intermediate_df, df], ignore_index=True)
 

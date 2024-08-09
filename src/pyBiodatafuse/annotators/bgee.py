@@ -136,7 +136,9 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
 
                 df = pd.DataFrame(res["results"]["bindings"])
 
-                df = df.applymap(lambda x: x["value"], na_action="ignore")
+                for col in df:
+                    df[col] = df[col].map(lambda x: x["value"], na_action="ignore")
+
                 if df.empty:
                     continue
 

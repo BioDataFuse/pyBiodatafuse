@@ -105,7 +105,8 @@ def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
         res = sparql.queryAndConvert()
 
         df = pd.DataFrame(res["results"]["bindings"])
-        df = df.map(lambda x: x["value"], na_action="ignore")
+        for col in df:
+            df[col] = df[col].map(lambda x: x["value"], na_action="ignore")
         df.drop_duplicates(inplace=True)
 
         intermediate_df = pd.concat([intermediate_df, df], ignore_index=True)  # adds to the time
@@ -238,7 +239,9 @@ def get_compound_gene_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
         res = sparql.queryAndConvert()
 
         df = pd.DataFrame(res["results"]["bindings"])
-        df = df.map(lambda x: x["value"], na_action="ignore")
+
+        for col in df:
+            df[col] = df[col].map(lambda x: x["value"], na_action="ignore")
 
         # Merging the source_pmid values for each unique compound-gene pair
         df2 = (
@@ -305,7 +308,7 @@ def get_compound_gene_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
 
 
 def get_unique_dicts(list_of_list_of_dicts: list) -> list:
-    """Returns list of unique dictionaries."""
+    """Return list of unique dictionaries."""
     seen = set()
     unique_dicts = []
 

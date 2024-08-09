@@ -44,11 +44,6 @@ from pyBiodatafuse.constants import (
     OPENTARGETS_GO_EDGE_LABEL,
     OPENTARGETS_GO_NODE_ATTRS,
     OPENTARGETS_GO_NODE_MAIN_LABEL,
-    OPENTARGETS_LOCATION_COL,
-    OPENTARGETS_LOCATION_EDGE_ATTRS,
-    OPENTARGETS_LOCATION_EDGE_LABEL,
-    OPENTARGETS_LOCATION_NODE_ATTRS,
-    OPENTARGETS_LOCATION_NODE_MAIN_LABEL,
     OPENTARGETS_REACTOME_COL,
     OPENTARGETS_REACTOME_EDGE_ATTRS,
     OPENTARGETS_REACTOME_EDGE_LABEL,
@@ -150,47 +145,6 @@ def add_bgee_subgraph(g, gene_node_label, annot_list):
             if len(node_exists) == 0:
                 g.add_edge(
                     gene_node_label, annot_node_label, label=BGEE_EDGE_LABEL, attr_dict=edge_attrs
-                )
-
-    return g
-
-
-def add_opentargets_location_subgraph(g, gene_node_label, annot_list):
-    """Construct part of the graph by linking the gene to a list of annotation entities (disease, drug ..etc).
-
-    :param g: the input graph to extend with new nodes and edges.
-    :param gene_node_label: the gene node to be linked to annotation entities.
-    :param annot_list: list of annotations from a specific source (e.g. DisGeNET, WikiPathways ..etc).
-    :returns: a NetworkX MultiDiGraph
-    """
-    for annot in annot_list:
-        if not pd.isna(annot["location"]):
-            annot_node_label = annot[OPENTARGETS_LOCATION_NODE_MAIN_LABEL]
-            annot_node_attrs = OPENTARGETS_LOCATION_NODE_ATTRS.copy()
-            annot_node_attrs["name"] = annot["location"]
-            annot_node_attrs["id"] = annot["location_id"]
-
-            if not pd.isna(annot["subcellular_location"]):
-                annot_node_attrs["subcellular_location"] = annot["subcellular_location"]
-
-            g.add_node(annot_node_label, attr_dict=annot_node_attrs)
-
-            edge_attrs = OPENTARGETS_LOCATION_EDGE_ATTRS
-
-            edge_hash = hash(frozenset(edge_attrs.items()))
-            edge_attrs["edge_hash"] = edge_hash
-            edge_data = g.get_edge_data(gene_node_label, annot_node_label)
-            edge_data = {} if edge_data is None else edge_data
-            node_exists = [
-                x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash
-            ]
-
-            if len(node_exists) == 0:
-                g.add_edge(
-                    gene_node_label,
-                    annot_node_label,
-                    label=OPENTARGETS_LOCATION_EDGE_LABEL,
-                    attr_dict=edge_attrs,
                 )
 
     return g
@@ -674,7 +628,6 @@ def networkx_graph(fuse_df: pd.DataFrame, drug_disease=None):
 
     func_dict = {
         BGEE: add_bgee_subgraph,
-        OPENTARGETS_LOCATION_COL: add_opentargets_location_subgraph,
         DISGENET: add_disgenet_disease_subgraph,
         OPENTARGETS_DISEASE_COL: add_opentargets_disease_subgraph,
         MINERVA: add_minerva_subgraph,
