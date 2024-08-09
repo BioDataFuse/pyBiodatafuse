@@ -54,6 +54,7 @@ BGEE_OUTPUT_DICT = {
 ANATOMICAL_ENTITY_ID = "UBERON"
 DEVELOPMENTAL_STAGE_ID = "HsapDv|UBERON"
 CONFIDENCE_LEVEL_ID = "CIO"
+<<<<<<< Updated upstream
 ANATOMICAL_ENTITIES_LIST = """blood
     bone marrow
     brain
@@ -81,12 +82,35 @@ OPENTARGETS_LOCATION_OUTPUT_DICT = {
 }
 LOCATION_ID = "SL"
 OPENTARGETS_LOCATION_COL = f"{OPENTARGETS}_Location"
+=======
+ANATOMICAL_ENTITIES_LIST = [
+    "blood",
+    "bone marrow",
+    "brain",
+    "breast",
+    "cardiovascular system",
+    "digestive system",
+    "heart",
+    "immune organ",
+    "kidney",
+    "liver",
+    "lung",
+    "nervous system",
+    "pancreas",
+    "placenta",
+    "reproductive system",
+    "respiratory system",
+    "skeletal system",
+]
+BGEE_EXPRESSION_COL = f"{BGEE}_expression_level"
+>>>>>>> Stashed changes
 
 # Disease node
 # DisGeNet
 DISGENET_OUTPUT_DICT = {
     "disease_id": str,
     "disease_name": str,
+<<<<<<< Updated upstream
     "score": float,
     "evidence_source": str,
 }
@@ -94,6 +118,14 @@ DISGENET_OUTPUT_DICT = {
 OPENTARGETS_DISEASE_OUTPUT_DICT = {"disease_id": str, "disease_name": str, "therapeutic_areas": str}
 DISEASE_ID = "umls|EFO|MONDO"
 OPENTARGETS_DISEASE_COL = f"{OPENTARGETS}_Diseases"
+=======
+    "therapeutic_areas": str,
+}  # TODO: Tooba please check if you want to add compound annotations too here in the dict
+DISEASE_ID = "umls|EFO|MONDO|MP"  # TODO: check if we want to keep MP (Mammalian Phenotype)
+DRUG_ID = "CHEMBL"
+OPENTARGETS_DISEASE_COL = f"{OPENTARGETS}_diseases"
+DISGENET_DISEASE_COL = f"{DISGENET}_diseases"
+>>>>>>> Stashed changes
 
 # Pathway node
 # MINERVA
@@ -109,14 +141,19 @@ OPENTARGETS_REACTOME_OUTPUT_DICT = {
     "pathway_id": str,
     "pathway_label": str,
 }
+<<<<<<< Updated upstream
 PATHWAY_ID = "WP|R-"
 OPENTARGETS_REACTOME_COL = f"{OPENTARGETS}_Reactome"
+=======
+PATHWAY_ID = "WP|R-"  # ID Start with WP or R-
+OPENTARGETS_REACTOME_COL = f"{OPENTARGETS}_reactome"
+>>>>>>> Stashed changes
 
 # GO
 # Open Targets - GO processes
 OPENTARGETS_GO_OUTPUT_DICT = {"go_id": str, "go_name": str, "go_type": str}
 GO_ID = "GO"
-OPENTARGETS_GO_COL = f"{OPENTARGETS}_GO"  # TODO: Cross-check if correct name
+OPENTARGETS_GO_COL = f"{OPENTARGETS}_go"
 
 # Compound
 # Open Targets - Compound
@@ -132,7 +169,12 @@ OPENTARGETS_COMPOUND_OUTPUT_DICT = {
 }
 CHEMBL_ID = "CHEMBL"
 RELATION = "inhibits|activates"
+<<<<<<< Updated upstream
 OPENTARGETS_COMPOUND_COL = f"{OPENTARGETS}_Compounds"  # TODO: Cross-check if correct name
+=======
+OPENTARGETS_COMPOUND_COL = f"{OPENTARGETS}_compounds"
+
+>>>>>>> Stashed changes
 # MolMeDB - Gene input
 MOLMEDB_GENE_OUTPUT_DICT = {
     "compound_name": str,
@@ -140,21 +182,18 @@ MOLMEDB_GENE_OUTPUT_DICT = {
     "SMILES": str,
     "compound_cid": str,
     "molmedb_id": str,
-    "source_doi": str,
     "source_pmid": str,
     "chebi_id": str,
-    # "pdb_ligand_id": str,
     "drugbank_id": str,
+    "uniprot_trembl_id": str,  # uniprot id of isoform
 }
 MOLMEDB_ID = "MM"
-SOURCE_DOI = "doi"
 DRUGBANK_ID = "DB"
 MOLMEDB_INHIBITOR_COL = f"{MOLMEDB}_transporter_inhibitor"
 # MolMeDB - Compound input
 MOLMEDB_COMPOUND_OUTPUT_DICT = {
     "uniprot_trembl_id": str,
     "hgnc_symbol": str,
-    "source_doi": str,
     "source_pmid": str,
 }
 UNIPROT_TREMBL_ID = "P"
@@ -171,7 +210,7 @@ PUBCHEM_OUTPUT_DICT = {
 }
 OUTCOME = "active|inactive"
 INCHI = "InChI"
-PUBCHEM_ASSAYS_COL = f"{PUBCHEM}_Assays"
+PUBCHEM_ASSAYS_COL = f"{PUBCHEM}_assays"
 
 # Gene Node
 # STRING
@@ -341,10 +380,8 @@ MOLMEDB_COMPOUND_NODE_ATTRS = {
     "ChEBI_id": None,
     "drugbank_id": None,
     "compound_cid": None,
-    # "pdb_ligand_id": None,
     "InChIKey": None,
     "SMILES": None,
-    "source_doi": None,
     "source_pmid": None,
     "labels": MOLMEDB_COMPOUND_NODE_LABELS,
 }

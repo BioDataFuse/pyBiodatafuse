@@ -1,0 +1,121 @@
+[
+    {
+        "assocID": 15637943,
+        "symbolOfGene": "CHRNG",
+        "geneNcbiID": 1146,
+        "geneEnsemblIDs": [
+            "ENSG00000196811"
+        ],
+        "geneNcbiType": "protein-coding",
+        "geneDSI": 0.519,
+        "geneDPI": 0.833,
+        "genepLI": 4.1944e-25,
+        "geneProteinStrIDs": [
+            "P07510",
+            "A0A6F7YAP6"
+        ],
+        "geneProteinClassIDs": [
+            "DTO_01300327"
+        ],
+        "geneProteinClassNames": [
+            "Ion channel"
+        ],
+        "diseaseVocabularies": [
+            "MESH_C537377",
+            "OMIM_265000",
+            "NCI_C101039",
+            "OMIM_100730",
+            "OMIM_163950",
+            "ORDO_2990",
+            "ORDO_294060",
+            "DO_0080110",
+            "DO_0081322",
+            "MONDO_0009926",
+            "MONDO_0020746",
+            "MONDO_0017415",
+            "UMLS_C0265261"
+        ],
+        "diseaseName": "Multiple pterygium syndrome",
+        "diseaseType": "disease",
+        "diseaseUMLSCUI": "C0265261",
+        "diseaseClasses_MSH": [
+            "Congenital, Hereditary, and Neonatal Diseases and Abnormalities (C16)",
+            "Pathological Conditions, Signs and Symptoms (C23)",
+            "Skin and Connective Tissue Diseases (C17)"
+        ],
+        "diseaseClasses_UMLS_ST": [
+            "Congenital Abnormality (T019)"
+        ],
+        "diseaseClasses_DO": [
+            "syndrome (225)",
+            "genetic disease (630)"
+        ],
+        "diseaseClasses_HPO": [],
+        "chemicalsIncludedInEvidence": "None",
+        "numberPmidsWithChemsIncludedInEvidenceBySource": [],
+        "score": 1.0,
+        "yearInitial": 2005,
+        "yearFinal": 2019,
+        "el": "None",
+        "ei": 1.0
+    },
+    {
+        "assocID": 25103559,
+        "symbolOfGene": "CHRNG",
+        "geneNcbiID": 1146,
+        "geneEnsemblIDs": [
+            "ENSG00000196811"
+        ],
+        "geneNcbiType": "protein-coding",
+        "geneDSI": 0.519,
+        "geneDPI": 0.833,
+        "genepLI": 4.1944e-25,
+        "geneProteinStrIDs": [
+            "A0A6F7YAP6",
+            "P07510"
+        ],
+        "geneProteinClassIDs": [
+            "DTO_01300327"
+        ],
+        "geneProteinClassNames": [
+            "Ion channel"
+        ],
+        "diseaseVocabularies": [
+            "OMIM_253290",
+            "OMIM_100730",
+            "OMIM_100690",
+            "OMIM_100720",
+            "MESH_C537377",
+            "NCI_C101038",
+            "ORDO_294060",
+            "ORDO_33108",
+            "DO_0080110",
+            "MONDO_0009668",
+            "MONDO_0017415",
+            "UMLS_C1854678"
+        ],
+        "diseaseName": "MULTIPLE PTERYGIUM SYNDROME, LETHAL TYPE",
+        "diseaseType": "disease",
+        "diseaseUMLSCUI": "C1854678",
+        "diseaseClasses_MSH": [
+            "Pathological Conditions, Signs and Symptoms (C23)",
+            "Congenital, Hereditary, and Neonatal Diseases and Abnormalities (C16)",
+            "Skin and Connective Tissue Diseases (C17)"
+        ],
+        "diseaseClasses_UMLS_ST": [
+            "Disease or Syndrome (T047)"
+        ],
+        "diseaseClasses_DO": [
+            "genetic disease (630)",
+            "syndrome (225)"
+        ],
+        "diseaseClasses_HPO": [],
+        "chemicalsIncludedInEvidence": "None",
+        "numberPmidsWithChemsIncludedInEvidenceBySource": [],
+        "score": 0.95,
+        "yearInitial": 2006,
+        "yearFinal": 2024,
+        "el": "None",
+        "ei": 1.0
+    }
+]
