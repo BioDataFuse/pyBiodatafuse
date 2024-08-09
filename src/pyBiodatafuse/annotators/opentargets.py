@@ -4,7 +4,7 @@
 
 import datetime
 import warnings
-from typing import Tuple, List
+from typing import List, Tuple
 
 import numpy as np
 import pandas as pd
@@ -23,9 +23,9 @@ from pyBiodatafuse.constants import (
     OPENTARGETS_GENE_INPUT_ID,
     OPENTARGETS_GO_COL,
     OPENTARGETS_GO_OUTPUT_DICT,
+    OPENTARGETS_IGNORE_DISEASE_IDS,
     OPENTARGETS_REACTOME_COL,
     OPENTARGETS_REACTOME_OUTPUT_DICT,
-    OPENTARGETS_IGNORE_DISEASE_IDS,
 )
 from pyBiodatafuse.utils import (
     check_columns_against_constants,
