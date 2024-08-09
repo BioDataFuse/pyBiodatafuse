@@ -272,6 +272,7 @@ def get_gene_minerva_pathways(
     intermediate_df = intermediate_df.drop_duplicates(
         subset=["target", "pathway_id", "pathway_label", "pathway_gene_count"]
     )
+    intermediate_df = intermediate_df[intermediate_df["target"].isin(data_df["target"])]
 
     # Check if all keys in df match the keys in OUTPUT_DICT
     check_columns_against_constants(
@@ -295,6 +296,10 @@ def get_gene_minerva_pathways(
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # Calculate the time elapsed
     time_elapsed = str(end_time - start_time)
+    # Calculate the number of new nodes
+    num_new_nodes = intermediate_df["pathway_id"].nunique()
+    # Calculate the number of new edges
+    num_edges = len(intermediate_df)
 
     # Add the datasource, query, query time, and the date to metadata
     minerva_metadata = {
@@ -303,6 +308,8 @@ def get_gene_minerva_pathways(
         "query": {
             "size": data_df["target"].nunique(),
             "input_type": MINERVA_INPUT_ID,
+            "number_of_added_nodes": num_new_nodes,
+            "number_of_added_edges": num_edges,
             "MINERVA project": map_name,
             "time": time_elapsed,
             "date": current_date,

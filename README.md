@@ -9,9 +9,9 @@
 </h1>
 
 <p align="center">
-    <a href="https://github.com/BioDataFuse/pyBiodatafuse/actions/workflows/tests.yml">
+<!--     <a href="https://github.com/BioDataFuse/pyBiodatafuse/actions/workflows/tests.yml">
         <img alt="Tests" src="https://github.com/BioDataFuse/pyBiodatafuse/workflows/Tests/badge.svg" />
-    </a>
+    </a> -->
     <a href="https://pypi.org/project/pyBiodatafuse">
         <img alt="PyPI" src="https://img.shields.io/pypi/v/pyBiodatafuse" />
     </a>
@@ -21,9 +21,9 @@
     <a href="https://github.com/BioDataFuse/pyBiodatafuse/blob/main/LICENSE">
         <img alt="PyPI - License" src="https://img.shields.io/pypi/l/pyBiodatafuse" />
     </a>
-    <a href='https://pyBiodatafuse.readthedocs.io/en/latest/?badge=latest'>
+<!--     <a href='https://pyBiodatafuse.readthedocs.io/en/latest/?badge=latest'>
         <img src='https://readthedocs.org/projects/pyBiodatafuse/badge/?version=latest' alt='Documentation Status' />
-    </a>
+    </a> -->
     <a href="https://codecov.io/gh/BioDataFuse/pyBiodatafuse/branch/main">
         <img src="https://codecov.io/gh/BioDataFuse/pyBiodatafuse/branch/main/graph/badge.svg" alt="Codecov status" />
     </a>  

@@ -3,11 +3,9 @@
 """Python constant file."""
 
 
-from typing import Union
-
 # Endpoints / API
 BGEE_ENDPOINT = "https://www.bgee.org/sparql/"
-DISGENET_ENDPOINT = "http://rdf.disgenet.org/sparql/"
+DISGENET_ENDPOINT = "https://api.disgenet.com/api/v1/gda/summary"
 MINERVA_ENDPOINT = "https://minerva-net.lcsb.uni.lu/api/"
 MOLMEDB_ENDPOINT = "https://idsm.elixir-czech.cz/sparql/endpoint/molmedb"
 OPENTARGETS_ENDPOINT = "https://api.platform.opentargets.org/api/v4/graphql"
@@ -18,7 +16,7 @@ WIKIPATHWAYS_ENDPOINT = "https://sparql.wikipathways.org/sparql"
 
 # Data sources
 BGEE = "Bgee"
-DISGENET = "DisGeNET"
+DISGENET = "DISGENET"
 MINERVA = "MINERVA"
 MOLMEDB = "MolMeDB"
 OPENTARGETS = "OpenTargets"
@@ -33,10 +31,12 @@ DISGENET_INPUT_ID = "NCBI Gene"
 MINERVA_INPUT_ID = "Ensembl"
 MOLMEDB_GENE_INPUT_ID = "Uniprot-TrEMBL"
 MOLMEDB_COMPOUND_INPUT_ID = "InChIKey"
-OPENTARGETS_INPUT_ID = "Ensembl"
+OPENTARGETS_GENE_INPUT_ID = "Ensembl"
+OPENTARGETS_COMPOUND_INPUT_ID = "PubChem Compound"  # If using bridgedb mapping
+OPENTARGETS_COMPOUND_QUERY_INPUT_ID = "chembl_id"
 PUBCHEM_INPUT_ID = "Uniprot-TrEMBL"
 STRING_INPUT_ID = "Ensembl"
-WIKIDATA_INPUT_ID = ""  # TODO
+WIKIDATA_PUBLICATION_INPUT_ID = "NCBI Gene"
 WIKIPATHWAYS_INPUT_ID = "NCBI Gene"
 
 # Output annotation for each data source
@@ -45,44 +45,15 @@ WIKIPATHWAYS_INPUT_ID = "NCBI Gene"
 BGEE_OUTPUT_DICT = {
     "anatomical_entity_id": str,
     "anatomical_entity_name": str,
-    "developmental_stage_id": str,
-    "developmental_stage_name": str,
     "expression_level": float,
     "confidence_level_id": str,
     "confidence_level_name": str,
+    "developmental_stage_id": str,
+    "developmental_stage_name": str,
 }
 ANATOMICAL_ENTITY_ID = "UBERON"
 DEVELOPMENTAL_STAGE_ID = "HsapDv|UBERON"
 CONFIDENCE_LEVEL_ID = "CIO"
-<<<<<<< Updated upstream
-ANATOMICAL_ENTITIES_LIST = """blood
-    bone marrow
-    brain
-    breast
-    cardiovascular system
-    digestive system
-    heart
-    immune organ
-    kidney
-    liver
-    lung
-    nervous system
-    pancreas
-    placenta
-    reproductive system
-    respiratory system
-    skeletal system"""
-
-# Location node
-# Open Targets - Location
-OPENTARGETS_LOCATION_OUTPUT_DICT = {
-    "location_id": str,
-    "location": str,
-    "subcellular_location": str,
-}
-LOCATION_ID = "SL"
-OPENTARGETS_LOCATION_COL = f"{OPENTARGETS}_Location"
-=======
 ANATOMICAL_ENTITIES_LIST = [
     "blood",
     "bone marrow",
@@ -102,30 +73,46 @@ ANATOMICAL_ENTITIES_LIST = [
     "respiratory system",
     "skeletal system",
 ]
-BGEE_EXPRESSION_COL = f"{BGEE}_expression_level"
->>>>>>> Stashed changes
+# Location node
+# Open Targets - Location
+OPENTARGETS_LOCATION_OUTPUT_DICT = {
+    "location_id": str,
+    "location": str,
+    "subcellular_location": str,
+}
+LOCATION_ID = "SL"
+OPENTARGETS_LOCATION_COL = f"{OPENTARGETS}_Location"
 
 # Disease node
-# DisGeNet
+# DISGENET
 DISGENET_OUTPUT_DICT = {
+    "HPO": str,
+    "NCI": str,
+    "OMIM": str,
+    "MONDO": str,
+    "ORDO": str,
+    "ICD10": str,
+    "EFO": str,
+    "DO": str,
+    "MESH": str,
+    "UMLS": str,
+    "ICD9CM": str,
+    "disease_name": str,
+    "disease_type": str,
+    "disease_umlscui": str,
+    "score": float,
+    "ei": float,
+    "el": float,
+}  # TODO: Yojana, we should align the disease extracted from the two sources
+# Open Targets - Disease
+OPENTARGETS_DISEASE_OUTPUT_DICT = {
     "disease_id": str,
     "disease_name": str,
-<<<<<<< Updated upstream
-    "score": float,
-    "evidence_source": str,
-}
-# Open Targets - Disease
-OPENTARGETS_DISEASE_OUTPUT_DICT = {"disease_id": str, "disease_name": str, "therapeutic_areas": str}
-DISEASE_ID = "umls|EFO|MONDO"
-OPENTARGETS_DISEASE_COL = f"{OPENTARGETS}_Diseases"
-=======
     "therapeutic_areas": str,
 }  # TODO: Tooba please check if you want to add compound annotations too here in the dict
 DISEASE_ID = "umls|EFO|MONDO|MP"  # TODO: check if we want to keep MP (Mammalian Phenotype)
 DRUG_ID = "CHEMBL"
-OPENTARGETS_DISEASE_COL = f"{OPENTARGETS}_diseases"
-DISGENET_DISEASE_COL = f"{DISGENET}_diseases"
->>>>>>> Stashed changes
+OPENTARGETS_DISEASE_COL = f"{OPENTARGETS}_Diseases"
 
 # Pathway node
 # MINERVA
@@ -141,13 +128,8 @@ OPENTARGETS_REACTOME_OUTPUT_DICT = {
     "pathway_id": str,
     "pathway_label": str,
 }
-<<<<<<< Updated upstream
-PATHWAY_ID = "WP|R-"
-OPENTARGETS_REACTOME_COL = f"{OPENTARGETS}_Reactome"
-=======
 PATHWAY_ID = "WP|R-"  # ID Start with WP or R-
-OPENTARGETS_REACTOME_COL = f"{OPENTARGETS}_reactome"
->>>>>>> Stashed changes
+OPENTARGETS_REACTOME_COL = f"{OPENTARGETS}_Reactome"
 
 # GO
 # Open Targets - GO processes
@@ -159,22 +141,19 @@ OPENTARGETS_GO_COL = f"{OPENTARGETS}_go"
 # Open Targets - Compound
 OPENTARGETS_COMPOUND_OUTPUT_DICT = {
     "chembl_id": str,
-    "drugbank_id": Union[str, None, float],
-    "compound_cid": Union[str, None, float],
+    "drugbank_id": str,
+    "compound_cid": str,
     "compound_name": str,
     "is_approved": bool,
     "relation": str,
-    "adverse_effect_count": Union[int, None, float],
-    "adverse_effect": Union[str, None, float],
+    "adverse_effect_count": int,
+    "adverse_effect": dict,
 }
 CHEMBL_ID = "CHEMBL"
+DRUGBANK_ID = "DB"
 RELATION = "inhibits|activates"
-<<<<<<< Updated upstream
-OPENTARGETS_COMPOUND_COL = f"{OPENTARGETS}_Compounds"  # TODO: Cross-check if correct name
-=======
-OPENTARGETS_COMPOUND_COL = f"{OPENTARGETS}_compounds"
+OPENTARGETS_COMPOUND_COL = f"{OPENTARGETS}_Compounds"
 
->>>>>>> Stashed changes
 # MolMeDB - Gene input
 MOLMEDB_GENE_OUTPUT_DICT = {
     "compound_name": str,
@@ -218,6 +197,7 @@ PUBCHEM_ASSAYS_COL = f"{PUBCHEM}_assays"
 
 # Wikidata
 # TODO: to be checked
+WIKIDATA_CC_COL = f"{WIKIDATA}_cellular_components"
 
 
 # Node and edge main lable and attributes for each data source
@@ -242,22 +222,8 @@ BGEE_EDGE_ATTRS = {
     "label": BGEE_EDGE_LABEL,
 }
 
-# Location node
-# Open Targets - Location
-OPENTARGETS_LOCATION_NODE_LABELS = "Location"
-OPENTARGETS_LOCATION_NODE_MAIN_LABEL = "location_id"
-OPENTARGETS_LOCATION_NODE_ATTRS = {
-    "source": OPENTARGETS,
-    "name": None,
-    "id": None,
-    "subcellular_location": None,
-    "labels": OPENTARGETS_LOCATION_NODE_LABELS,
-}
-OPENTARGETS_LOCATION_EDGE_LABEL = "localized_in"
-OPENTARGETS_LOCATION_EDGE_ATTRS = {"source": OPENTARGETS, "label": OPENTARGETS_LOCATION_EDGE_LABEL}
-
 # Disease node
-# DisGeNet
+# DISGENET
 DISGENET_NODE_LABELS = "Disease"
 DISGENET_NODE_MAIN_LABEL = "disease_id"
 DISGENET_NODE_ATTRS = {
@@ -426,4 +392,8 @@ STRING_EDGE_ATTRS = {
 }
 
 # Wikidata
+
 # TODO: to be checked
+
+
+# Output from the explorers

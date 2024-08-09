@@ -117,8 +117,6 @@ def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
         return pd.DataFrame(), {"datasource": MOLMEDB, "metadata": ""}
 
     # Organize the annotation results as an array of dictionaries
-    intermediate_df.rename(columns={"transporterID": "target"}, inplace=True)
-
     intermediate_df.rename(
         columns={
             "transporterID": "target",
@@ -167,12 +165,19 @@ def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # Calculate the time elapsed
     time_elapsed = str(end_time - start_time)
+    # Calculate the number of new nodes
+    num_new_nodes = intermediate_df["molmedb_id"].nunique()
+    # Calculate the number of new edges
+    num_edges = len(intermediate_df[["target", "molmedb_id"]].drop_duplicates())
 
     # Add the datasource, query, query time, and the date to metadata
     molmedb_metadata = {
         "datasource": MOLMEDB,
         "query": {
             "size": len(molmedb_transporter_list),
+            "input_type": MOLMEDB_GENE_INPUT_ID,
+            "number_of_added_nodes": num_new_nodes,
+            "number_of_added_edges": num_edges,
             "time": time_elapsed,
             "date": current_date,
             "url": MOLMEDB_ENDPOINT,
@@ -277,12 +282,19 @@ def get_compound_gene_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # Calculate the time elapsed
     time_elapsed = str(end_time - start_time)
+    # Calculate the number of new nodes
+    num_new_nodes = intermediate_df["uniprot_trembl_id"].nunique()
+    # Calculate the number of new edges
+    num_edges = len(intermediate_df)
 
     # Add the datasource, query, query time, and the date to metadata
     molmedb_metadata = {
         "datasource": MOLMEDB,
         "query": {
             "size": len(inhibitor_list_str),
+            "input_type": MOLMEDB_COMPOUND_INPUT_ID,
+            "number_of_added_nodes": num_new_nodes,
+            "number_of_added_edges": num_edges,
             "time": time_elapsed,
             "date": current_date,
             "url": MOLMEDB_ENDPOINT,

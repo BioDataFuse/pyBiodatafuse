@@ -51,12 +51,12 @@
             "genetic disease (630)"
         ],
         "diseaseClasses_HPO": [],
-        "chemicalsIncludedInEvidence": "None",
+        "chemicalsIncludedInEvidence": None,
         "numberPmidsWithChemsIncludedInEvidenceBySource": [],
         "score": 1.0,
         "yearInitial": 2005,
         "yearFinal": 2019,
-        "el": "None",
+        "el": None,
         "ei": 1.0
     },
     {
@@ -110,12 +110,12 @@
             "syndrome (225)"
         ],
         "diseaseClasses_HPO": [],
-        "chemicalsIncludedInEvidence": "None",
+        "chemicalsIncludedInEvidence": None,
         "numberPmidsWithChemsIncludedInEvidenceBySource": [],
         "score": 0.95,
         "yearInitial": 2006,
         "yearFinal": 2024,
-        "el": "None",
+        "el": None,
         "ei": 1.0
     }
 ]

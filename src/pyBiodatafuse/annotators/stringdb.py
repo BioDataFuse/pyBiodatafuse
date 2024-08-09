@@ -7,6 +7,7 @@ import datetime
 import logging
 import warnings
 
+import numpy as np
 import pandas as pd
 import requests
 
@@ -118,7 +119,7 @@ def get_ppi(bridgedb_df: pd.DataFrame):
     # Record the start time
     start_time = datetime.datetime.now()
 
-    data_df = get_identifier_of_interest(bridgedb_df, "Ensembl")
+    data_df = get_identifier_of_interest(bridgedb_df, STRING_INPUT_ID)
     data_df = data_df.reset_index(drop=True)
 
     gene_list = list(set(data_df["target"].tolist()))
@@ -137,6 +138,19 @@ def get_ppi(bridgedb_df: pd.DataFrame):
 
     # Format the data
     data_df[STRING] = data_df.apply(_format_data, network_df=network_df, axis=1)
+    data_df[STRING] = data_df[STRING].apply(
+        lambda x: (
+            [
+                {
+                    "stringdb_link_to": np.nan,
+                    STRING_INPUT_ID: np.nan,
+                    "score": np.nan,
+                }
+            ]
+            if len(x) == 0
+            else x
+        )
+    )
 
     # Record the end time
     end_time = datetime.datetime.now()
@@ -148,6 +162,8 @@ def get_ppi(bridgedb_df: pd.DataFrame):
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # Calculate the time elapsed
     time_elapsed = str(end_time - start_time)
+    # Calculate the number of new edges
+    num_edges = len(network_df)
 
     # Add the datasource, query, query time, and the date to metadata
     string_metadata = {
@@ -155,6 +171,8 @@ def get_ppi(bridgedb_df: pd.DataFrame):
         "metadata": {"source_version": string_version},
         "query": {
             "size": len(gene_list),
+            "input_type": STRING_INPUT_ID,
+            "number_of_added_edges": num_edges,
             "time": time_elapsed,
             "date": current_date,
             "url": STRING_ENDPOINT,
