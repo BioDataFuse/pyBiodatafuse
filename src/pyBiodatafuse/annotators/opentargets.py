@@ -4,10 +4,10 @@
 
 import datetime
 import warnings
-from typing import Tuple
+from typing import Tuple, List
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 import requests
 
 from pyBiodatafuse import id_mapper
@@ -25,6 +25,7 @@ from pyBiodatafuse.constants import (
     OPENTARGETS_GO_OUTPUT_DICT,
     OPENTARGETS_REACTOME_COL,
     OPENTARGETS_REACTOME_OUTPUT_DICT,
+    OPENTARGETS_IGNORE_DISEASE_IDS,
 )
 from pyBiodatafuse.utils import (
     check_columns_against_constants,
@@ -549,6 +550,35 @@ def get_gene_compound_interactions(
     return merged_df, opentargets_version
 
 
+def _process_disease_xref(row) -> List[str]:
+    tmp = []
+    for val in row:
+        namespace, idx = val.split(":")
+        if namespace.lower() in OPENTARGETS_IGNORE_DISEASE_IDS:  # skipping non essential ones
+            continue
+        if namespace.lower() in ["mesh", "msh"]:
+            tmp.append(f"MESH_{idx}")
+        elif namespace.lower() in ["ncit"]:
+            tmp.append(f"NCI_{idx}")
+        elif namespace.lower() in ["omim"]:
+            tmp.append(f"OMIM_{idx}")
+        elif namespace.lower() in ["mondo"]:
+            tmp.append(f"MONDO_{idx}")
+        elif namespace.lower() in ["efo"]:
+            tmp.append(f"EFO_{idx}")
+        elif namespace.lower() in ["doid"]:
+            tmp.append(f"DO_{idx}")
+        elif namespace.lower() in ["umls"]:
+            tmp.append(f"UMLS_{idx}")
+        elif namespace.lower() in ["hp"]:
+            tmp.append(f"HPO_HP:{idx}")
+        elif namespace.lower() in ["orphanet", "ordo"]:
+            tmp.append(f"ORDO_{idx}")
+        else:
+            raise ValueError(f"Unknown namespace: {namespace}")
+    return tmp
+
+
 def get_compound_disease_interactions(
     bridgedb_df: pd.DataFrame,
 ) -> Tuple[pd.DataFrame, dict]:
@@ -649,66 +679,21 @@ def get_compound_disease_interactions(
         )
 
         # Fixing the xrefs
-        xrefs = []
+        xrefs = []  # type: ignore
 
         for row in disease_df["dbXRefs"]:
             if len(row) == 0:
                 xrefs.append([])
                 continue
-
-            tmp = []
-            for val in row:
-                namespace, idx = val.split(":")
-                if namespace.lower() in [
-                    "icd10cm",
-                    "icd9",
-                    "snomedct",
-                    "sctid",
-                    "meddra",
-                    "icd10",
-                    "wikipedia",
-                    "snomedct_us",
-                    "oncotree",
-                    "nifstd",
-                    "gard",
-                    "nord",
-                    "icdo",
-                    "hgnc",
-                    "cohd",
-                    "kegg",
-                    "decipher",
-                    "http",
-                    "omimps",
-                    "csp",
-                ]:  # skipping non essential ones
-                    continue
-                if namespace.lower() in ["mesh", "msh"]:
-                    tmp.append(f"MESH_{idx}")
-                elif namespace.lower() in ["ncit"]:
-                    tmp.append(f"NCI_{idx}")
-                elif namespace.lower() in ["omim"]:
-                    tmp.append(f"OMIM_{idx}")
-                elif namespace.lower() in ["mondo"]:
-                    tmp.append(f"MONDO_{idx}")
-                elif namespace.lower() in ["efo"]:
-                    tmp.append(f"EFO_{idx}")
-                elif namespace.lower() in ["doid"]:
-                    tmp.append(f"DO_{idx}")
-                elif namespace.lower() in ["umls"]:
-                    tmp.append(f"UMLS_{idx}")
-                elif namespace.lower() in ["hp"]:
-                    tmp.append(f"HPO_HP:{idx}")
-                elif namespace.lower() in ["orphanet", "ordo"]:
-                    tmp.append(f"ORDO_{idx}")
-                else:
-                    raise ValueError(f"Unknown namespace: {namespace}")
+            tmp = _process_disease_xref(row)
             xrefs.append(tmp)
         disease_df["disease_xrefs"] = xrefs
+
         if chembl_cid_map:
             disease_df["target"] = chembl_cid_map.get(drug["id"], None)
         else:
-            assert chembl_gene_map is not None
             disease_df["identifier"] = chembl_gene_map[drug["id"]]
+
         disease_df["drug_name"] = drug["name"]
         disease_df["max_clinical_trial_phase"] = drug["maximumClinicalTrialPhase"]
         disease_df["is_withdrawn"] = drug["hasBeenWithdrawn"]
