@@ -613,7 +613,7 @@ def get_compound_disease_interactions(
         chembl_ids = set(list(chembl_cid_map.keys()))
 
     # remove nan entries
-    chembl_ids = [x for x in chembl_ids if str(x) != "nan"]
+    chembl_ids = [x for x in chembl_ids if str(x) != "nan"]  # type: ignore
 
     # Record the start time
     opentargets_version = get_version_opentargets()
