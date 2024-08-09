@@ -73,15 +73,6 @@ ANATOMICAL_ENTITIES_LIST = [
     "respiratory system",
     "skeletal system",
 ]
-# Location node
-# Open Targets - Location
-OPENTARGETS_LOCATION_OUTPUT_DICT = {
-    "location_id": str,
-    "location": str,
-    "subcellular_location": str,
-}
-LOCATION_ID = "SL"
-OPENTARGETS_LOCATION_COL = f"{OPENTARGETS}_Location"
 
 # Disease node
 # DISGENET
@@ -112,7 +103,8 @@ OPENTARGETS_DISEASE_OUTPUT_DICT = {
 }  # TODO: Tooba please check if you want to add compound annotations too here in the dict
 DISEASE_ID = "umls|EFO|MONDO|MP"  # TODO: check if we want to keep MP (Mammalian Phenotype)
 DRUG_ID = "CHEMBL"
-OPENTARGETS_DISEASE_COL = f"{OPENTARGETS}_Diseases"
+OPENTARGETS_DISEASE_COL = f"{OPENTARGETS}_diseases"
+DISGENET_DISEASE_COL = f"{DISGENET}_diseases"
 
 # Pathway node
 # MINERVA
@@ -129,7 +121,7 @@ OPENTARGETS_REACTOME_OUTPUT_DICT = {
     "pathway_label": str,
 }
 PATHWAY_ID = "WP|R-"  # ID Start with WP or R-
-OPENTARGETS_REACTOME_COL = f"{OPENTARGETS}_Reactome"
+OPENTARGETS_REACTOME_COL = f"{OPENTARGETS}_reactome"
 
 # GO
 # Open Targets - GO processes
@@ -152,7 +144,7 @@ OPENTARGETS_COMPOUND_OUTPUT_DICT = {
 CHEMBL_ID = "CHEMBL"
 DRUGBANK_ID = "DB"
 RELATION = "inhibits|activates"
-OPENTARGETS_COMPOUND_COL = f"{OPENTARGETS}_Compounds"
+OPENTARGETS_COMPOUND_COL = f"{OPENTARGETS}_compounds"
 
 # MolMeDB - Gene input
 MOLMEDB_GENE_OUTPUT_DICT = {
