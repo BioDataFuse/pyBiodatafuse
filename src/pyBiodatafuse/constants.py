@@ -98,7 +98,30 @@ OPENTARGETS_DISEASE_OUTPUT_DICT = {
     "disease_id": str,
     "disease_name": str,
     "therapeutic_areas": str,
+    "disease_xrefs": list,
 }  # TODO: Tooba please check if you want to add compound annotations too here in the dict
+OPENTARGETS_IGNORE_DISEASE_IDS = [
+    "icd10cm",
+    "icd9",
+    "snomedct",
+    "sctid",
+    "meddra",
+    "icd10",
+    "wikipedia",
+    "snomedct_us",
+    "oncotree",
+    "nifstd",
+    "gard",
+    "nord",
+    "icdo",
+    "hgnc",
+    "cohd",
+    "kegg",
+    "decipher",
+    "http",
+    "omimps",
+    "csp",
+]
 DISEASE_ID = "umls|EFO|MONDO|MP"  # TODO: check if we want to keep MP (Mammalian Phenotype)
 DRUG_ID = "CHEMBL"
 OPENTARGETS_DISEASE_COL = f"{OPENTARGETS}_diseases"

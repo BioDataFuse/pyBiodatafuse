@@ -4,8 +4,9 @@
 
 import datetime
 import warnings
-from typing import Tuple
+from typing import List, Tuple
 
+import numpy as np
 import pandas as pd
 import requests
 
@@ -22,6 +23,7 @@ from pyBiodatafuse.constants import (
     OPENTARGETS_GENE_INPUT_ID,
     OPENTARGETS_GO_COL,
     OPENTARGETS_GO_OUTPUT_DICT,
+    OPENTARGETS_IGNORE_DISEASE_IDS,
     OPENTARGETS_REACTOME_COL,
     OPENTARGETS_REACTOME_OUTPUT_DICT,
 )
@@ -548,6 +550,35 @@ def get_gene_compound_interactions(
     return merged_df, opentargets_version
 
 
+def _process_disease_xref(row) -> List[str]:
+    tmp = []
+    for val in row:
+        namespace, idx = val.split(":")
+        if namespace.lower() in OPENTARGETS_IGNORE_DISEASE_IDS:  # skipping non essential ones
+            continue
+        if namespace.lower() in ["mesh", "msh"]:
+            tmp.append(f"MESH_{idx}")
+        elif namespace.lower() in ["ncit"]:
+            tmp.append(f"NCI_{idx}")
+        elif namespace.lower() in ["omim"]:
+            tmp.append(f"OMIM_{idx}")
+        elif namespace.lower() in ["mondo"]:
+            tmp.append(f"MONDO_{idx}")
+        elif namespace.lower() in ["efo"]:
+            tmp.append(f"EFO_{idx}")
+        elif namespace.lower() in ["doid"]:
+            tmp.append(f"DO_{idx}")
+        elif namespace.lower() in ["umls"]:
+            tmp.append(f"UMLS_{idx}")
+        elif namespace.lower() in ["hp"]:
+            tmp.append(f"HPO_HP:{idx}")
+        elif namespace.lower() in ["orphanet", "ordo"]:
+            tmp.append(f"ORDO_{idx}")
+        else:
+            raise ValueError(f"Unknown namespace: {namespace}")
+    return tmp
+
+
 def get_compound_disease_interactions(
     bridgedb_df: pd.DataFrame,
 ) -> Tuple[pd.DataFrame, dict]:
@@ -565,14 +596,24 @@ def get_compound_disease_interactions(
         )
         return pd.DataFrame(), {}
 
-    if OPENTARGETS_COMPOUND_QUERY_INPUT_ID in bridgedb_df["target.source"].values:
-        data_df = get_identifier_of_interest(bridgedb_df, OPENTARGETS_COMPOUND_QUERY_INPUT_ID)
-        chembl_ids = data_df["target"].tolist()
+    if (
+        OPENTARGETS_COMPOUND_QUERY_INPUT_ID in bridgedb_df["target.source"].values
+    ):  # for chembl_id in col
+        data_df = bridgedb_df[bridgedb_df["target.source"] == OPENTARGETS_COMPOUND_QUERY_INPUT_ID]
+        chembl_gene_map = data_df.set_index("target")[
+            "identifier"
+        ].to_dict()  # Dict of chembl_id:gene_id
+        chembl_cid_map = None
+        chembl_ids = set(data_df["target"].tolist())
     else:
         data_df = get_identifier_of_interest(bridgedb_df, OPENTARGETS_COMPOUND_INPUT_ID)
         pubchem_ids = data_df["target"].tolist()
-        chembl_id_map = id_mapper.cid2chembl(pubchem_ids)  # Dict of chembl_id:pubchem_id
-        chembl_ids = list(chembl_id_map.keys())
+        chembl_gene_map = None
+        chembl_cid_map = id_mapper.cid2chembl(pubchem_ids)  # Dict of chembl_id:pubchem_id
+        chembl_ids = set(list(chembl_cid_map.keys()))
+
+    # remove nan entries
+    chembl_ids = [x for x in chembl_ids if str(x) != "nan"]
 
     # Record the start time
     opentargets_version = get_version_opentargets()
@@ -623,6 +664,7 @@ def get_compound_disease_interactions(
         disease_df["therapeutic_areas"] = disease_df["therapeuticAreas"].apply(
             lambda x: ", ".join([f"{i['id']}:{i['name']}" for i in x])
         )  # Multiple values separated by comma
+
         disease_df.rename(
             columns={"id": "opentarget_disease_id", "name": "disease_name"}, inplace=True
         )
@@ -634,14 +676,28 @@ def get_compound_disease_interactions(
             ),
             axis=1,
         )
-        disease_df.drop(
-            columns=["therapeuticAreas", "dbXRefs"], inplace=True
-        )  # Xrefs has all other ids for diseases
 
-        disease_df["target"] = chembl_id_map.get(drug["id"], None)
+        # Fixing the xrefs
+        xrefs = []  # type: ignore
+
+        for row in disease_df["dbXRefs"]:
+            if len(row) == 0:
+                xrefs.append([])
+                continue
+            tmp = _process_disease_xref(row)
+            xrefs.append(tmp)
+        disease_df["disease_xrefs"] = xrefs
+
+        if chembl_cid_map:
+            disease_df["target"] = chembl_cid_map.get(drug["id"], None)
+        else:
+            disease_df["identifier"] = chembl_gene_map[drug["id"]]
+
         disease_df["drug_name"] = drug["name"]
         disease_df["max_clinical_trial_phase"] = drug["maximumClinicalTrialPhase"]
         disease_df["is_withdrawn"] = drug["hasBeenWithdrawn"]
+
+        disease_df.drop(columns=["therapeuticAreas", "dbXRefs"], inplace=True)
 
         intermediate_df = pd.concat([intermediate_df, disease_df], ignore_index=True)
 
@@ -653,16 +709,6 @@ def get_compound_disease_interactions(
         data_df=intermediate_df,
         output_dict=OPENTARGETS_DISEASE_OUTPUT_DICT,
         check_values_in=["disease_id", "drug_id"],
-    )
-
-    # Merge the two DataFrames on the target column
-    merged_df = collapse_data_sources(
-        data_df=data_df,
-        source_namespace=OPENTARGETS_COMPOUND_INPUT_ID,
-        target_df=intermediate_df,
-        common_cols=["target"],
-        target_specific_cols=list(OPENTARGETS_DISEASE_OUTPUT_DICT.keys()),
-        col_name=OPENTARGETS_DISEASE_COL,
     )
 
     """Metdata details"""
@@ -678,13 +724,37 @@ def get_compound_disease_interactions(
     # Add version, datasource, query, query time, and the date to metadata
     opentargets_version["query"] = {
         "size": len(chembl_ids),
-        "input_type": OPENTARGETS_COMPOUND_INPUT_ID,
         "number_of_added_nodes": num_new_nodes,
         "number_of_added_edges": num_edges,
         "time": time_elapsed,
         "date": current_date,
         "url": OPENTARGETS_ENDPOINT,
     }
+
+    # Merge the two DataFrames on the target column
+    if (
+        OPENTARGETS_COMPOUND_QUERY_INPUT_ID in bridgedb_df["target.source"].values
+    ):  # for chembl_id in col (with gene-compoud function)
+        merged_df = collapse_data_sources(
+            data_df=bridgedb_df,
+            source_namespace=OPENTARGETS_COMPOUND_QUERY_INPUT_ID,
+            target_df=intermediate_df,
+            common_cols=["identifier"],
+            target_specific_cols=list(OPENTARGETS_DISEASE_OUTPUT_DICT.keys()),
+            col_name=OPENTARGETS_DISEASE_COL,
+        )
+        opentargets_version["query"]["input_type"] = OPENTARGETS_COMPOUND_QUERY_INPUT_ID
+
+    else:
+        merged_df = collapse_data_sources(
+            data_df=bridgedb_df,
+            source_namespace=OPENTARGETS_COMPOUND_INPUT_ID,
+            target_df=intermediate_df,
+            common_cols=["target"],
+            target_specific_cols=list(OPENTARGETS_DISEASE_OUTPUT_DICT.keys()),
+            col_name=OPENTARGETS_DISEASE_COL,
+        )
+        opentargets_version["query"]["input_type"] = OPENTARGETS_COMPOUND_INPUT_ID
 
     return merged_df, opentargets_version
 
@@ -697,15 +767,24 @@ def get_gene_disease_interactions(
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
     :returns: a DataFrame containing the OpenTargets output and dictionary of the query metadata.
     """
-    # Get gene-compound interactions
-    merged_df, opentargets_version = get_gene_compound_interactions(bridgedb_df)
+    # Check if the API is available
+    api_available = check_endpoint_opentargets()
+    if not api_available:
+        warnings.warn(
+            f"{OPENTARGETS} GraphQL endpoint is not available. Unable to retrieve data.",
+            stacklevel=2,
+        )
+        return pd.DataFrame(), {}
 
-    if merged_df.empty:
+    # Get gene-compound interactions
+    cmp_merged_df, opentargets_version = get_gene_compound_interactions(bridgedb_df)
+
+    if cmp_merged_df.empty:
         return pd.DataFrame(), opentargets_version
 
     # Making a bridgeDb dataframe for the compound ids
     gene_cmpd_data = []
-    for row in merged_df.values:
+    for row in cmp_merged_df.values:
         (
             gene,
             gene_namespace,
@@ -729,6 +808,20 @@ def get_gene_disease_interactions(
     gene_cmpd_df = pd.DataFrame(gene_cmpd_data)
 
     # Get compound-disease interactions
-    merged_df, opentargets_version = get_compound_disease_interactions(gene_cmpd_df)
+    dis_merged_df, opentargets_version = get_compound_disease_interactions(gene_cmpd_df)
+
+    # Fixing merge to look like gene-disease
+    merged_df = bridgedb_df.copy(deep=True)
+
+    disease_col = []
+    for gene in merged_df["identifier"]:
+        tmp = dis_merged_df[dis_merged_df["identifier"] == gene]
+        if tmp.empty:
+            disease_col.append([{i: np.nan for i in OPENTARGETS_DISEASE_OUTPUT_DICT}])
+        else:
+            vals = tmp.iloc[0][OPENTARGETS_DISEASE_COL]
+            disease_col.append(vals)
+
+    merged_df[OPENTARGETS_DISEASE_COL] = disease_col
 
     return merged_df, opentargets_version
