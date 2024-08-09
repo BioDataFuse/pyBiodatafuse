@@ -126,7 +126,8 @@ def get_gene_wikipathways(bridgedb_df: pd.DataFrame):
         res = res["results"]["bindings"]
 
         df = pd.DataFrame(res)
-        df = df.applymap(lambda x: x["value"])
+        for col in df:
+            df[col] = df[col].map(lambda x: x["value"], na_action="ignore")
 
         intermediate_df = pd.concat([intermediate_df, df], ignore_index=True)
 

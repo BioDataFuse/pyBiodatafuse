@@ -73,15 +73,6 @@ ANATOMICAL_ENTITIES_LIST = [
     "respiratory system",
     "skeletal system",
 ]
-# Location node
-# Open Targets - Location
-OPENTARGETS_LOCATION_OUTPUT_DICT = {
-    "location_id": str,
-    "location": str,
-    "subcellular_location": str,
-}
-LOCATION_ID = "SL"
-OPENTARGETS_LOCATION_COL = f"{OPENTARGETS}_Location"
 
 # Disease node
 # DISGENET
@@ -112,7 +103,8 @@ OPENTARGETS_DISEASE_OUTPUT_DICT = {
 }  # TODO: Tooba please check if you want to add compound annotations too here in the dict
 DISEASE_ID = "umls|EFO|MONDO|MP"  # TODO: check if we want to keep MP (Mammalian Phenotype)
 DRUG_ID = "CHEMBL"
-OPENTARGETS_DISEASE_COL = f"{OPENTARGETS}_Diseases"
+OPENTARGETS_DISEASE_COL = f"{OPENTARGETS}_diseases"
+DISGENET_DISEASE_COL = f"{DISGENET}_diseases"
 
 # Pathway node
 # MINERVA
@@ -129,13 +121,13 @@ OPENTARGETS_REACTOME_OUTPUT_DICT = {
     "pathway_label": str,
 }
 PATHWAY_ID = "WP|R-"  # ID Start with WP or R-
-OPENTARGETS_REACTOME_COL = f"{OPENTARGETS}_Reactome"
+OPENTARGETS_REACTOME_COL = f"{OPENTARGETS}_reactome"
 
 # GO
 # Open Targets - GO processes
 OPENTARGETS_GO_OUTPUT_DICT = {"go_id": str, "go_name": str, "go_type": str}
 GO_ID = "GO"
-OPENTARGETS_GO_COL = f"{OPENTARGETS}_GO"  # TODO: Cross-check if correct name
+OPENTARGETS_GO_COL = f"{OPENTARGETS}_go"
 
 # Compound
 # Open Targets - Compound
@@ -152,7 +144,7 @@ OPENTARGETS_COMPOUND_OUTPUT_DICT = {
 CHEMBL_ID = "CHEMBL"
 DRUGBANK_ID = "DB"
 RELATION = "inhibits|activates"
-OPENTARGETS_COMPOUND_COL = f"{OPENTARGETS}_Compounds"
+OPENTARGETS_COMPOUND_COL = f"{OPENTARGETS}_compounds"
 
 # MolMeDB - Gene input
 MOLMEDB_GENE_OUTPUT_DICT = {
@@ -161,21 +153,18 @@ MOLMEDB_GENE_OUTPUT_DICT = {
     "SMILES": str,
     "compound_cid": str,
     "molmedb_id": str,
-    "source_doi": str,
     "source_pmid": str,
     "chebi_id": str,
-    # "pdb_ligand_id": str,
     "drugbank_id": str,
+    "uniprot_trembl_id": str,  # uniprot id of isoform
 }
 MOLMEDB_ID = "MM"
-SOURCE_DOI = "doi"
 DRUGBANK_ID = "DB"
 MOLMEDB_INHIBITOR_COL = f"{MOLMEDB}_transporter_inhibitor"
 # MolMeDB - Compound input
 MOLMEDB_COMPOUND_OUTPUT_DICT = {
     "uniprot_trembl_id": str,
     "hgnc_symbol": str,
-    "source_doi": str,
     "source_pmid": str,
 }
 UNIPROT_TREMBL_ID = "P"
@@ -192,7 +181,7 @@ PUBCHEM_OUTPUT_DICT = {
 }
 OUTCOME = "active|inactive"
 INCHI = "InChI"
-PUBCHEM_ASSAYS_COL = f"{PUBCHEM}_Assays"
+PUBCHEM_ASSAYS_COL = f"{PUBCHEM}_assays"
 
 # Gene Node
 # STRING
@@ -224,20 +213,6 @@ BGEE_EDGE_ATTRS = {
     "confidence_level_id": None,
     "label": BGEE_EDGE_LABEL,
 }
-
-# Location node
-# Open Targets - Location
-OPENTARGETS_LOCATION_NODE_LABELS = "Location"
-OPENTARGETS_LOCATION_NODE_MAIN_LABEL = "location_id"
-OPENTARGETS_LOCATION_NODE_ATTRS = {
-    "source": OPENTARGETS,
-    "name": None,
-    "id": None,
-    "subcellular_location": None,
-    "labels": OPENTARGETS_LOCATION_NODE_LABELS,
-}
-OPENTARGETS_LOCATION_EDGE_LABEL = "localized_in"
-OPENTARGETS_LOCATION_EDGE_ATTRS = {"source": OPENTARGETS, "label": OPENTARGETS_LOCATION_EDGE_LABEL}
 
 # Disease node
 # DISGENET
@@ -363,10 +338,8 @@ MOLMEDB_COMPOUND_NODE_ATTRS = {
     "ChEBI_id": None,
     "drugbank_id": None,
     "compound_cid": None,
-    # "pdb_ligand_id": None,
     "InChIKey": None,
     "SMILES": None,
-    "source_doi": None,
     "source_pmid": None,
     "labels": MOLMEDB_COMPOUND_NODE_LABELS,
 }

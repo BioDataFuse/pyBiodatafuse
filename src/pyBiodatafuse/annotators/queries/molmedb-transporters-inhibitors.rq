@@ -28,8 +28,7 @@ VALUES ?transporterID { $transporter_list }
                              sio:SIO_000300 ?InChIKey];
              sio:SIO_000008 [rdf:type sio:CHEMINF_000018;
                              sio:SIO_000300 ?SMILES].             
-  ?ref bibo:doi ?source_doi;
-       bibo:pmid ?source_pmid
+  ?ref bibo:pmid ?source_pmid
   OPTIONAL {?inhibitor sio:SIO_000008 [rdf:type sio:CHEMINF_000421;
                              sio:SIO_000300 ?chembl_id]}
   OPTIONAL {?inhibitor sio:SIO_000008 [rdf:type sio:CHEMINF_000407;

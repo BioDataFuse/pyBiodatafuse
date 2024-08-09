@@ -12,7 +12,7 @@ from numpy import nan
 
 from pyBiodatafuse.annotators import pubchem
 from pyBiodatafuse.annotators.pubchem import get_protein_molecule_screened
-from pyBiodatafuse.constants import PUBCHEM
+from pyBiodatafuse.constants import PUBCHEM_ASSAYS_COL
 
 data_file_folder = os.path.join(os.path.dirname(__file__), "data")
 
@@ -83,7 +83,7 @@ class TestPubchem(unittest.TestCase):
                 ],
             ]
         )
-        expected_data.name = f"{PUBCHEM}_Assays"
+        expected_data.name = PUBCHEM_ASSAYS_COL
 
-        pd.testing.assert_series_equal(obtained_data[f"{PUBCHEM}_Assays"], expected_data)
+        pd.testing.assert_series_equal(obtained_data[PUBCHEM_ASSAYS_COL], expected_data)
         self.assertIsInstance(metadata, dict)

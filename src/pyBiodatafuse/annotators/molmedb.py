@@ -29,6 +29,8 @@ from pyBiodatafuse.utils import (
     get_identifier_of_interest,
 )
 
+pd.set_option("mode.chained_assignment", None)
+
 
 def check_endpoint_molmedb() -> bool:
     """Check the availability of the MolmeDB endpoint.
@@ -91,13 +93,9 @@ def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
     sparql.setReturnFormat(JSON)
     sparql.setOnlyConneg(True)
 
-    query_count = 0
-
     intermediate_df = pd.DataFrame()
 
     for transporter_list_str in query_transporter_list:
-        query_count += 1
-
         sparql_query_template = Template(sparql_query)
         substit_dict = dict(transporter_list=transporter_list_str)
         sparql_query_template_sub = sparql_query_template.substitute(substit_dict)
@@ -107,7 +105,9 @@ def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
         res = sparql.queryAndConvert()
 
         df = pd.DataFrame(res["results"]["bindings"])
-        df = df.applymap(lambda x: x["value"], na_action="ignore")
+        for col in df:
+            df[col] = df[col].map(lambda x: x["value"], na_action="ignore")
+        df.drop_duplicates(inplace=True)
 
         intermediate_df = pd.concat([intermediate_df, df], ignore_index=True)  # adds to the time
 
@@ -126,9 +126,7 @@ def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
         },
         inplace=True,
     )
-    intermediate_df["source_doi"] = intermediate_df["source_doi"].map(
-        lambda x: "doi:" + x, na_action="ignore"
-    )
+    intermediate_df["uniprot_trembl_id"] = intermediate_df["target"]
 
     # Check if all keys in df match the keys in OUTPUT_DICT
     check_columns_against_constants(
@@ -147,46 +145,21 @@ def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
         col_name=MOLMEDB_INHIBITOR_COL,
     )
 
-    # if mappings exist but SPARQL returns empty response
-    if (not merged_df.empty) and merged_df[MOLMEDB_INHIBITOR_COL][0] is None:
-        merged_df.drop_duplicates(subset=["identifier", MOLMEDB_INHIBITOR_COL], inplace=True)
+    # Ensuring all the dictionaries in the MolMeDB_transporter_inhibitor column are same for multiple gene isoforms
+    main_df = []
 
-    elif not merged_df.empty:
-        res_keys = merged_df[MOLMEDB_INHIBITOR_COL][0][0].keys()
-        # remove duplicate identifier and response row
-        merged_df[MOLMEDB_INHIBITOR_COL] = merged_df[MOLMEDB_INHIBITOR_COL].map(
-            lambda x: tuple(frozenset(d.items()) for d in x), na_action="ignore"
-        )
-        merged_df.drop_duplicates(subset=["identifier", MOLMEDB_INHIBITOR_COL], inplace=True)
-        merged_df[MOLMEDB_INHIBITOR_COL] = merged_df[MOLMEDB_INHIBITOR_COL].map(
-            lambda res_tup: list(dict((x, y) for x, y in res) for res in res_tup),
-            na_action="ignore",
-        )
+    for source in merged_df["identifier"].unique():
+        mm = merged_df[merged_df["identifier"] == source]
+        if len(mm) < 2:
+            main_df.append(mm)
+            continue
 
-        # drop rows with duplicate identifiers with empty response
-        identifiers = merged_df["identifier"].unique()
-        for identifier in identifiers:
-            if merged_df.loc[merged_df["identifier"] == identifier].shape[0] > 1:
-                mask = merged_df[MOLMEDB_INHIBITOR_COL].apply(
-                    lambda lst: all(
-                        [
-                            all([isinstance(val, float) and np.isnan(val) for val in dct.values()])
-                            for dct in lst
-                        ]
-                    )
-                )
-                mask2 = merged_df["identifier"].apply(lambda x, id=identifier: x == id)
-                merged_df.drop(merged_df[mask & mask2].index, inplace=True)
+        molmedb_output = list(mm[MOLMEDB_INHIBITOR_COL].values)
+        unique_output = get_unique_dicts(molmedb_output)
+        mm[MOLMEDB_INHIBITOR_COL] = ([unique_output]) * len(mm)
+        main_df.append(mm)
 
-        # set default order to response dictionaries to keep output consistency
-        merged_df[MOLMEDB_INHIBITOR_COL] = merged_df[MOLMEDB_INHIBITOR_COL].apply(
-            lambda res: list(dict((k, r[k]) for k in res_keys) for r in res)
-        )
-        # set numerical identifiers to int to kepp output consistency
-        merged_df[MOLMEDB_INHIBITOR_COL] = merged_df[MOLMEDB_INHIBITOR_COL].apply(
-            lambda res: int_response_value_types(res, ["compound_cid", "source_pmid"])
-        )
-    merged_df.reset_index(drop=True, inplace=True)
+    main_df = pd.concat(main_df)
 
     # Metadata details
     # Get the current date and time
@@ -212,7 +185,7 @@ def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
         },
     }
 
-    return merged_df, molmedb_metadata
+    return main_df, molmedb_metadata
 
 
 def get_compound_gene_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
@@ -254,13 +227,9 @@ def get_compound_gene_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
     sparql.setReturnFormat(JSON)
     sparql.setOnlyConneg(True)
 
-    query_count = 0
-
     intermediate_df = pd.DataFrame()
 
     for inhibitor_list_str in query_inhibitor_list:
-        query_count += 1
-
         sparql_query_template = Template(sparql_query)
         substit_dict = dict(inhibitor_list=inhibitor_list_str)
         sparql_query_template_sub = sparql_query_template.substitute(substit_dict)
@@ -270,9 +239,18 @@ def get_compound_gene_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
         res = sparql.queryAndConvert()
 
         df = pd.DataFrame(res["results"]["bindings"])
-        df = df.applymap(lambda x: x["value"], na_action="ignore")
 
-        intermediate_df = pd.concat([intermediate_df, df], ignore_index=True)  # adds to the time
+        for col in df:
+            df[col] = df[col].map(lambda x: x["value"], na_action="ignore")
+
+        # Merging the source_pmid values for each unique compound-gene pair
+        df2 = (
+            df.groupby(["inhibitorInChIKey", "uniprot_trembl_id", "hgcn_id"])["source_pmid"]
+            .apply(lambda x: ", ".join(x))
+            .reset_index()
+        )
+
+        intermediate_df = pd.concat([intermediate_df, df2], ignore_index=True)  # adds to the time
 
     # Record the end time
     end_time = datetime.datetime.now()
@@ -283,9 +261,6 @@ def get_compound_gene_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
     # Organize the annotation results as an array of dictionaries
     intermediate_df.rename(
         columns={"inhibitorInChIKey": "target", "hgcn_id": "hgnc_symbol"}, inplace=True
-    )
-    intermediate_df["source_doi"] = intermediate_df["source_doi"].map(
-        lambda x: "doi:" + x, na_action="ignore"
     )
 
     # Check if all keys in df match the keys in OUTPUT_DICT
@@ -332,17 +307,18 @@ def get_compound_gene_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
     return merged_df, molmedb_metadata
 
 
-def int_response_value_types(resp_list: list, key_list: list):
-    """Change values in response dictionaries to int to stay consistent with other Annotators.
+def get_unique_dicts(list_of_list_of_dicts: list) -> list:
+    """Return list of unique dictionaries."""
+    seen = set()
+    unique_dicts = []
 
-    :param: resp_list: list of response dictionaries.
-    :param: key_list: list of keys to change to int.
-    :returns: resp_list with int values in response dictionaries on keys in key_list.
-    """
-    for r in resp_list:
-        for k in key_list:
-            try:
-                r[k] = int(r[k])
-            except ValueError:
-                continue
-    return resp_list
+    for list_of_dicts in list_of_list_of_dicts:
+        for d in list_of_dicts:
+            # Convert dictionary to frozenset of its items (which is hashable)
+            dict_items = frozenset(d.items())
+
+            if dict_items not in seen:
+                seen.add(dict_items)
+                unique_dicts.append(d)
+
+    return unique_dicts

@@ -14,6 +14,7 @@ import requests
 
 from pyBiodatafuse.constants import (
     DISGENET,
+    DISGENET_DISEASE_COL,
     DISGENET_ENDPOINT,
     DISGENET_INPUT_ID,
     DISGENET_OUTPUT_DICT,
@@ -226,7 +227,7 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
         target_df=intermediate_df,
         common_cols=["target"],
         target_specific_cols=list(DISGENET_OUTPUT_DICT.keys()),
-        col_name=DISGENET,
+        col_name=DISGENET_DISEASE_COL,
     )
 
     """Metdata details"""
