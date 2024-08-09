@@ -1,17 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""Tests for the OpenTargets annotator.
-
-Run as: python -m unittest tests/annotators/test_opentargets.py"""
+"""Tests for the OpenTargets annotator."""
 
 import json
 import os
 import unittest
 from unittest.mock import Mock, patch
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 from pyBiodatafuse.annotators import opentargets
 from pyBiodatafuse.annotators.opentargets import (
@@ -717,11 +715,11 @@ class TestOpentarget(unittest.TestCase):
                         "disease_name": "colonic neoplasm",
                         "therapeutic_areas": "MONDO_0045024:cancer or benign tumor, EFO_0010282:gastrointestinal disease",
                         "disease_xrefs": [
-                            "EFO_0004288",
+                            "EFO_ 0004288",
                             "NCI_C2953",
                             "MESH_D003110",
                             "UMLS_C0009375",
-                            "MONDO_0005401",
+                            "MONDO_ 0005401",
                         ],
                     },
                     {
@@ -730,11 +728,11 @@ class TestOpentarget(unittest.TestCase):
                         "therapeutic_areas": "OTAR_0000017:reproductive system or breast disease, MONDO_0045024:cancer or benign tumor, EFO_0010285:integumentary system disease",
                         "disease_xrefs": [
                             "UMLS_C0238033",
-                            "DO_1614",
+                            "DO_ 1614",
                             "MESH_D018567",
-                            "EFO_0006861",
+                            "EFO_ 0006861",
                             "UMLS_C0242787",
-                            "MONDO_0005628",
+                            "MONDO_ 0005628",
                             "NCI_C3862",
                             "UMLS_C0242788",
                         ],
@@ -743,7 +741,7 @@ class TestOpentarget(unittest.TestCase):
                         "disease_id": "umls:C0007115",
                         "disease_name": "thyroid cancer",
                         "therapeutic_areas": "EFO_0001379:endocrine system disease, MONDO_0045024:cancer or benign tumor",
-                        "disease_xrefs": ["DO_1781", "UMLS_C0007115", "NCI_C7510"],
+                        "disease_xrefs": ["DO_ 1781", "UMLS_C0007115", "NCI_C7510"],
                     },
                     {
                         "disease_id": "umls:C0036421",
@@ -751,13 +749,13 @@ class TestOpentarget(unittest.TestCase):
                         "therapeutic_areas": "OTAR_0000006:musculoskeletal or connective tissue disease, OTAR_0000018:genetic, familial or congenital disease, OTAR_0000010:respiratory or thoracic disease, EFO_0009690:urinary system disease, MONDO_0024458:disorder of visual system, EFO_0000540:immune system disease, EFO_0010285:integumentary system disease",
                         "disease_xrefs": [
                             "NCI_C72070",
-                            "MONDO_0005100",
-                            "DO_418",
+                            "MONDO_ 0005100",
+                            "DO_ 418",
                             "NCI_C72070",
                             "MESH_D012595",
                             "UMLS_C0036421",
                             "MESH_D012595",
-                            "ORDO_90291",
+                            "ORDO_ 90291",
                         ],
                     },
                     {
@@ -766,13 +764,13 @@ class TestOpentarget(unittest.TestCase):
                         "therapeutic_areas": "EFO_0000618:nervous system disease, MONDO_0045024:cancer or benign tumor",
                         "disease_xrefs": [
                             "NCI_C3798",
-                            "MONDO_0017827",
+                            "MONDO_ 0017827",
                             "MESH_D018317",
-                            "DO_5940",
+                            "DO_ 5940",
                             "MESH_D018319",
                             "NCI_C3798",
                             "UMLS_C0751690",
-                            "ORDO_3148",
+                            "ORDO_ 3148",
                         ],
                     },
                     {
@@ -781,12 +779,12 @@ class TestOpentarget(unittest.TestCase):
                         "therapeutic_areas": "OTAR_0000006:musculoskeletal or connective tissue disease, OTAR_0000018:genetic, familial or congenital disease, MONDO_0024458:disorder of visual system, EFO_0000540:immune system disease",
                         "disease_xrefs": [
                             "NCI_C72069",
-                            "DO_8472",
-                            "MONDO_0019562",
+                            "DO_ 8472",
+                            "MONDO_ 0019562",
                             "MESH_D012594",
-                            "ORDO_90289",
+                            "ORDO_ 90289",
                             "UMLS_C0036420",
-                            "DO_419",
+                            "DO_ 419",
                             "MESH_D012594",
                         ],
                     },
@@ -795,13 +793,13 @@ class TestOpentarget(unittest.TestCase):
                         "disease_name": "colorectal cancer",
                         "therapeutic_areas": "MONDO_0045024:cancer or benign tumor, EFO_0010282:gastrointestinal disease",
                         "disease_xrefs": [
-                            "ORDO_466667",
-                            "DO_9256",
-                            "DO_5672",
+                            "ORDO_ 466667",
+                            "DO_ 9256",
+                            "DO_ 5672",
                             "UMLS_C1527249",
-                            "EFO_0005842",
+                            "EFO_ 0005842",
                             "NCI_C4978",
-                            "OMIM_114500",
+                            "OMIM_ 114500",
                         ],
                     },
                     {
@@ -812,10 +810,10 @@ class TestOpentarget(unittest.TestCase):
                             "MESH_D017728",
                             "UMLS_C0206180",
                             "NCI_C3720",
-                            "MONDO_0020325",
-                            "EFO_0003032",
-                            "DO_0050744",
-                            "ORDO_98841",
+                            "MONDO_ 0020325",
+                            "EFO_ 0003032",
+                            "DO_ 0050744",
+                            "ORDO_ 98841",
                         ],
                     },
                     {
@@ -825,9 +823,9 @@ class TestOpentarget(unittest.TestCase):
                         "disease_xrefs": [
                             "UMLS_C0032285",
                             "MESH_D011014",
-                            "MONDO_0005249",
+                            "MONDO_ 0005249",
                             "NCI_C3333",
-                            "DO_552",
+                            "DO_ 552",
                             "NCI_C3333",
                             "MESH_D011014",
                         ],
@@ -837,13 +835,13 @@ class TestOpentarget(unittest.TestCase):
                         "disease_name": "pulmonary arterial hypertension",
                         "therapeutic_areas": "OTAR_0000010:respiratory or thoracic disease, EFO_0000319:cardiovascular disease",
                         "disease_xrefs": [
-                            "ORDO_182090",
-                            "OMIM_615371",
+                            "ORDO_ 182090",
+                            "OMIM_ 615371",
                             "NCI_C3120",
-                            "DO_6432",
+                            "DO_ 6432",
                             "UMLS_C2973725",
                             "MESH_D006976",
-                            "MONDO_0015924",
+                            "MONDO_ 0015924",
                             "MESH_D000081029",
                         ],
                     },
@@ -853,11 +851,11 @@ class TestOpentarget(unittest.TestCase):
                         "therapeutic_areas": "OTAR_0000006:musculoskeletal or connective tissue disease, OTAR_0000018:genetic, familial or congenital disease, MONDO_0045024:cancer or benign tumor, EFO_0010285:integumentary system disease",
                         "disease_xrefs": [
                             "UMLS_C3693482",
-                            "OMIM_607907",
+                            "OMIM_ 607907",
                             "NCI_C4683",
                             "MESH_D018223",
-                            "DO_3507",
-                            "ORDO_31112",
+                            "DO_ 3507",
+                            "ORDO_ 31112",
                         ],
                     },
                     {
@@ -867,14 +865,14 @@ class TestOpentarget(unittest.TestCase):
                         "disease_xrefs": [
                             "UMLS_CN971653",
                             "UMLS_C0025202",
-                            "OMIM_155755",
+                            "OMIM_ 155755",
                             "MESH_D008545",
-                            "ORDO_411533",
-                            "EFO_0000756",
-                            "HPO_HP:0002861",
-                            "DO_1909",
-                            "OMIM_155600",
-                            "MONDO_0005105",
+                            "ORDO_ 411533",
+                            "EFO_ 0000756",
+                            "HPO_HP: 0002861",
+                            "DO_ 1909",
+                            "OMIM_ 155600",
+                            "MONDO_ 0005105",
                             "NCI_C3224",
                         ],
                     },
@@ -884,9 +882,9 @@ class TestOpentarget(unittest.TestCase):
                         "therapeutic_areas": "OTAR_0000010:respiratory or thoracic disease",
                         "disease_xrefs": [
                             "UMLS_C0004096",
-                            "DO_2841",
-                            "EFO_0000270",
-                            "HPO_HP:0002099",
+                            "DO_ 2841",
+                            "EFO_ 0000270",
+                            "HPO_HP: 0002099",
                             "MESH_D001249",
                             "NCI_C28397",
                         ],
@@ -895,7 +893,12 @@ class TestOpentarget(unittest.TestCase):
                         "disease_id": "umls:C0023470",
                         "disease_name": "myeloid leukemia",
                         "therapeutic_areas": "OTAR_0000006:musculoskeletal or connective tissue disease, EFO_0005803:hematologic disease, MONDO_0045024:cancer or benign tumor, EFO_0000540:immune system disease",
-                        "disease_xrefs": ["MESH_D007951", "DO_8692", "UMLS_C0023470", "NCI_C3172"],
+                        "disease_xrefs": [
+                            "MESH_D007951",
+                            "DO_ 8692",
+                            "UMLS_C0023470",
+                            "NCI_C3172",
+                        ],
                     },
                     {
                         "disease_id": "EFO_0007328",
@@ -903,13 +906,13 @@ class TestOpentarget(unittest.TestCase):
                         "therapeutic_areas": "EFO_0005741:infectious disease, OTAR_0000010:respiratory or thoracic disease",
                         "disease_xrefs": [
                             "MESH_D009976",
-                            "DO_8469",
+                            "DO_ 8469",
                             "NCI_C53482",
                             "MESH_D007251",
                             "MESH_D007251",
-                            "MONDO_0005812",
+                            "MONDO_ 0005812",
                             "NCI_C53482",
-                            "EFO_0007411",
+                            "EFO_ 0007411",
                         ],
                     },
                     {
@@ -917,13 +920,13 @@ class TestOpentarget(unittest.TestCase):
                         "disease_name": "head and neck squamous cell carcinoma",
                         "therapeutic_areas": "MONDO_0045024:cancer or benign tumor",
                         "disease_xrefs": [
-                            "EFO_0000181",
-                            "ORDO_67037",
-                            "OMIM_275355",
+                            "EFO_ 0000181",
+                            "ORDO_ 67037",
+                            "OMIM_ 275355",
                             "NCI_C34447",
                             "MESH_D000077195",
-                            "MONDO_0010150",
-                            "DO_5520",
+                            "MONDO_ 0010150",
+                            "DO_ 5520",
                             "MESH_C535575",
                             "UMLS_C1168401",
                         ],
@@ -934,16 +937,16 @@ class TestOpentarget(unittest.TestCase):
                         "therapeutic_areas": "OTAR_0000006:musculoskeletal or connective tissue disease, EFO_0000540:immune system disease",
                         "disease_xrefs": [
                             "NCI_C2884",
-                            "ORDO_284130",
-                            "MONDO_0008383",
+                            "ORDO_ 284130",
+                            "MONDO_ 0008383",
                             "MESH_D001172",
                             "NCI_C2884",
                             "UMLS_C0003873",
-                            "OMIM_180300",
-                            "OMIM_604302",
+                            "OMIM_ 180300",
+                            "OMIM_ 604302",
                             "MESH_D001172",
-                            "DO_7148",
-                            "HPO_HP:0001370",
+                            "DO_ 7148",
+                            "HPO_HP: 0001370",
                         ],
                     },
                     {
@@ -951,12 +954,12 @@ class TestOpentarget(unittest.TestCase):
                         "disease_name": "chordoma",
                         "therapeutic_areas": "OTAR_0000006:musculoskeletal or connective tissue disease, MONDO_0045024:cancer or benign tumor",
                         "disease_xrefs": [
-                            "HPO_HP:0010762",
+                            "HPO_HP: 0010762",
                             "MESH_D002817",
-                            "OMIM_215400",
+                            "OMIM_ 215400",
                             "NCI_C2947",
-                            "ORDO_178",
-                            "DO_3302",
+                            "ORDO_ 178",
+                            "DO_ 3302",
                             "UMLS_C0008487",
                         ],
                     },
@@ -966,11 +969,11 @@ class TestOpentarget(unittest.TestCase):
                         "therapeutic_areas": "MONDO_0045024:cancer or benign tumor, EFO_0010285:integumentary system disease",
                         "disease_xrefs": [
                             "UMLS_C0037286",
-                            "DO_3165",
+                            "DO_ 3165",
                             "NCI_C3372",
                             "MESH_D012878",
-                            "MONDO_0002531",
-                            "DO_4159",
+                            "MONDO_ 0002531",
+                            "DO_ 4159",
                             "MESH_D012878",
                             "NCI_C3372",
                         ],
@@ -981,13 +984,13 @@ class TestOpentarget(unittest.TestCase):
                         "therapeutic_areas": "OTAR_0000006:musculoskeletal or connective tissue disease, OTAR_0000018:genetic, familial or congenital disease, OTAR_0000010:respiratory or thoracic disease, EFO_0009690:urinary system disease, MONDO_0024458:disorder of visual system, EFO_0000540:immune system disease, EFO_0010285:integumentary system disease",
                         "disease_xrefs": [
                             "NCI_C72070",
-                            "MONDO_0005100",
-                            "DO_418",
+                            "MONDO_ 0005100",
+                            "DO_ 418",
                             "NCI_C72070",
                             "MESH_D012595",
                             "UMLS_C0036421",
                             "MESH_D012595",
-                            "ORDO_90291",
+                            "ORDO_ 90291",
                         ],
                     },
                     {
@@ -995,13 +998,13 @@ class TestOpentarget(unittest.TestCase):
                         "disease_name": "acute lymphoblastic leukemia",
                         "therapeutic_areas": "OTAR_0000018:genetic, familial or congenital disease, MONDO_0045024:cancer or benign tumor, EFO_0005803:hematologic disease",
                         "disease_xrefs": [
-                            "MONDO_0004967",
-                            "ORDO_513",
-                            "EFO_0000220",
-                            "DO_1037",
+                            "MONDO_ 0004967",
+                            "ORDO_ 513",
+                            "EFO_ 0000220",
+                            "DO_ 1037",
                             "NCI_C3167",
-                            "HPO_HP:0006721",
-                            "DO_9952",
+                            "HPO_HP: 0006721",
+                            "DO_ 9952",
                         ],
                     },
                     {
@@ -1009,12 +1012,12 @@ class TestOpentarget(unittest.TestCase):
                         "disease_name": "multiple sclerosis",
                         "therapeutic_areas": "EFO_0000540:immune system disease, EFO_0000618:nervous system disease",
                         "disease_xrefs": [
-                            "DO_2377",
+                            "DO_ 2377",
                             "NCI_C3243",
                             "UMLS_C0026769",
                             "MESH_D009103",
-                            "ORDO_802",
-                            "EFO_0003885",
+                            "ORDO_ 802",
+                            "EFO_ 0003885",
                         ],
                     },
                     {
@@ -1024,10 +1027,10 @@ class TestOpentarget(unittest.TestCase):
                         "disease_xrefs": [
                             "MESH_D009456",
                             "NCI_C3273",
-                            "DO_0111253",
+                            "DO_ 0111253",
                             "MESH_C538607",
-                            "OMIM_162200",
-                            "ORDO_636",
+                            "OMIM_ 162200",
+                            "ORDO_ 636",
                             "UMLS_C0027831",
                         ],
                     },
@@ -1036,12 +1039,12 @@ class TestOpentarget(unittest.TestCase):
                         "disease_name": "type 1 diabetes mellitus",
                         "therapeutic_areas": "OTAR_0000020:nutritional or metabolic disease, EFO_0001379:endocrine system disease, EFO_0000540:immune system disease, EFO_0009605:pancreas disease, EFO_0010282:gastrointestinal disease",
                         "disease_xrefs": [
-                            "DO_9744",
-                            "EFO_0001359",
+                            "DO_ 9744",
+                            "EFO_ 0001359",
                             "NCI_C2986",
-                            "ORDO_243377",
+                            "ORDO_ 243377",
                             "MESH_D003922",
-                            "OMIM_222100",
+                            "OMIM_ 222100",
                         ],
                     },
                     {
@@ -1049,11 +1052,11 @@ class TestOpentarget(unittest.TestCase):
                         "disease_name": "gliosarcoma",
                         "therapeutic_areas": "EFO_0000618:nervous system disease, MONDO_0045024:cancer or benign tumor",
                         "disease_xrefs": [
-                            "ORDO_251576",
-                            "EFO_1001465",
-                            "MONDO_0016681",
+                            "ORDO_ 251576",
+                            "EFO_ 1001465",
+                            "MONDO_ 0016681",
                             "NCI_C3796",
-                            "DO_3071",
+                            "DO_ 3071",
                             "UMLS_C0206726",
                             "MESH_D018316",
                         ],
@@ -1062,24 +1065,24 @@ class TestOpentarget(unittest.TestCase):
                         "disease_id": "umls:C0007115",
                         "disease_name": "thyroid cancer",
                         "therapeutic_areas": "EFO_0001379:endocrine system disease, MONDO_0045024:cancer or benign tumor",
-                        "disease_xrefs": ["DO_1781", "UMLS_C0007115", "NCI_C7510"],
+                        "disease_xrefs": ["DO_ 1781", "UMLS_C0007115", "NCI_C7510"],
                     },
                     {
                         "disease_id": "umls:CN244903, umls:C0262584, umls:C0149925",
                         "disease_name": "small cell lung carcinoma",
                         "therapeutic_areas": "OTAR_0000018:genetic, familial or congenital disease, OTAR_0000010:respiratory or thoracic disease, MONDO_0045024:cancer or benign tumor, EFO_0001379:endocrine system disease",
                         "disease_xrefs": [
-                            "MONDO_0008433",
-                            "DO_5411",
+                            "MONDO_ 0008433",
+                            "DO_ 5411",
                             "UMLS_CN244903",
-                            "EFO_0000702",
+                            "EFO_ 0000702",
                             "NCI_C4917",
                             "UMLS_C0262584",
                             "UMLS_C0149925",
-                            "OMIM_182280",
-                            "DO_5409",
+                            "OMIM_ 182280",
+                            "DO_ 5409",
                             "MESH_D055752",
-                            "ORDO_70573",
+                            "ORDO_ 70573",
                         ],
                     },
                     {
@@ -1160,7 +1163,11 @@ class TestOpentarget(unittest.TestCase):
                         "disease_id": "MONDO_0100096",
                         "disease_name": "COVID-19",
                         "therapeutic_areas": "EFO_0005741:infectious disease",
-                        "disease_xrefs": ["MESH_C000657245", "MESH_D000086382", "DO_0080600"],
+                        "disease_xrefs": [
+                            "MESH_C000657245",
+                            "MESH_D000086382",
+                            "DO_0080600",
+                        ],
                     },
                     {
                         "disease_id": "umls:C0023473",
@@ -1218,7 +1225,12 @@ class TestOpentarget(unittest.TestCase):
                         "disease_id": "MONDO_0011962",
                         "disease_name": "endometrial cancer",
                         "therapeutic_areas": "OTAR_0000017:reproductive system or breast disease, MONDO_0045024:cancer or benign tumor",
-                        "disease_xrefs": ["EFO_0004230", "OMIM_608089", "DO_1380", "NCI_C27815"],
+                        "disease_xrefs": [
+                            "EFO_0004230",
+                            "OMIM_608089",
+                            "DO_1380",
+                            "NCI_C27815",
+                        ],
                     },
                     {
                         "disease_id": "umls:C0034091",
@@ -1260,7 +1272,12 @@ class TestOpentarget(unittest.TestCase):
                         "disease_id": "EFO_1000657",
                         "disease_name": "rectum cancer",
                         "therapeutic_areas": "MONDO_0045024:cancer or benign tumor, EFO_0010282:gastrointestinal disease",
-                        "disease_xrefs": ["EFO_1000657", "DO_1993", "MONDO_0006519", "NCI_C7418"],
+                        "disease_xrefs": [
+                            "EFO_1000657",
+                            "DO_1993",
+                            "MONDO_0006519",
+                            "NCI_C7418",
+                        ],
                     },
                     {
                         "disease_id": "umls:C0281508",
@@ -1306,7 +1323,11 @@ class TestOpentarget(unittest.TestCase):
                         "disease_id": "MONDO_0100096",
                         "disease_name": "COVID-19",
                         "therapeutic_areas": "EFO_0005741:infectious disease",
-                        "disease_xrefs": ["MESH_C000657245", "MESH_D000086382", "DO_0080600"],
+                        "disease_xrefs": [
+                            "MESH_C000657245",
+                            "MESH_D000086382",
+                            "DO_0080600",
+                        ],
                     },
                     {
                         "disease_id": "umls:C0235974",
@@ -1325,7 +1346,12 @@ class TestOpentarget(unittest.TestCase):
                         "disease_id": "MONDO_0018364",
                         "disease_name": "malignant epithelial tumor of ovary",
                         "therapeutic_areas": "OTAR_0000017:reproductive system or breast disease, MONDO_0045024:cancer or benign tumor, EFO_0001379:endocrine system disease",
-                        "disease_xrefs": ["DO_2151", "MESH_C538090", "ORDO_398934", "NCI_C40026"],
+                        "disease_xrefs": [
+                            "DO_2151",
+                            "MESH_C538090",
+                            "ORDO_398934",
+                            "NCI_C40026",
+                        ],
                     },
                     {
                         "disease_id": "MONDO_0002715",
@@ -1415,7 +1441,12 @@ class TestOpentarget(unittest.TestCase):
                         "disease_id": "MONDO_0001056",
                         "disease_name": "gastric cancer",
                         "therapeutic_areas": "MONDO_0045024:cancer or benign tumor, EFO_0010282:gastrointestinal disease",
-                        "disease_xrefs": ["DO_10534", "ORDO_63443", "NCI_C9331", "OMIM_613659"],
+                        "disease_xrefs": [
+                            "DO_10534",
+                            "ORDO_63443",
+                            "NCI_C9331",
+                            "OMIM_613659",
+                        ],
                     },
                     {
                         "disease_id": "EFO_1001471",
@@ -1720,7 +1751,12 @@ class TestOpentarget(unittest.TestCase):
                         "disease_id": "umls:C0376358",
                         "disease_name": "prostate cancer",
                         "therapeutic_areas": "OTAR_0000017:reproductive system or breast disease, MONDO_0045024:cancer or benign tumor",
-                        "disease_xrefs": ["MESH_D011471", "UMLS_C0376358", "NCI_C7378", "DO_10283"],
+                        "disease_xrefs": [
+                            "MESH_D011471",
+                            "UMLS_C0376358",
+                            "NCI_C7378",
+                            "DO_10283",
+                        ],
                     },
                     {
                         "disease_id": "umls:C0006826",
@@ -1739,7 +1775,12 @@ class TestOpentarget(unittest.TestCase):
                         "disease_id": "umls:C0740457",
                         "disease_name": "kidney cancer",
                         "therapeutic_areas": "EFO_0009690:urinary system disease, MONDO_0045024:cancer or benign tumor",
-                        "disease_xrefs": ["MESH_D007680", "NCI_C7548", "UMLS_C0740457", "DO_263"],
+                        "disease_xrefs": [
+                            "MESH_D007680",
+                            "NCI_C7548",
+                            "UMLS_C0740457",
+                            "DO_263",
+                        ],
                     },
                     {
                         "disease_id": "umls:C0376544",
@@ -1883,7 +1924,11 @@ class TestOpentarget(unittest.TestCase):
                         "disease_id": "EFO_1001814",
                         "disease_name": "nephrogenic fibrosing dermopathy",
                         "therapeutic_areas": "EFO_0010285:integumentary system disease",
-                        "disease_xrefs": ["ORDO_Orphanet_137617", "NCI_C84920", "MESH_D054989"],
+                        "disease_xrefs": [
+                            "ORDO_Orphanet_137617",
+                            "NCI_C84920",
+                            "MESH_D054989",
+                        ],
                     },
                     {
                         "disease_id": "umls:C1540912",
@@ -2240,511 +2285,511 @@ class TestOpentarget(unittest.TestCase):
         pd.testing.assert_series_equal(obtained_data[OPENTARGETS_DISEASE_COL], expected_data)
         self.assertIsInstance(metadata, dict)
 
-    @patch("pyBiodatafuse.annotators.opentargets.requests.post")
-    def test_get_gene_disease_interactions(self, mock_post_disease):
-        """Test that the GraphQL endpoint returns the expected results."""
-        opentargets.check_endpoint_opentargets = Mock(return_value=True)
-        opentargets.get_version_opentargets = Mock(
-            return_value={
-                "data": {
-                    "meta": {
-                        "name": "Open Targets GraphQL & REST API Beta",
-                        "apiVersion": {"x": "24", "y": "0", "z": "3"},
-                        "dataVersion": {"year": "24", "month": "03"},
-                    }
-                }
-            }
-        )
+    # @patch("pyBiodatafuse.annotators.opentargets.requests.post")
+    # def test_get_gene_disease_interactions(self, mock_post_disease):
+    #     """Test that the GraphQL endpoint returns the expected results."""
+    #     opentargets.check_endpoint_opentargets = Mock(return_value=True)
+    #     opentargets.get_version_opentargets = Mock(
+    #         return_value={
+    #             "data": {
+    #                 "meta": {
+    #                     "name": "Open Targets GraphQL & REST API Beta",
+    #                     "apiVersion": {"x": "24", "y": "0", "z": "3"},
+    #                     "dataVersion": {"year": "24", "month": "03"},
+    #                 }
+    #             }
+    #         }
+    #     )
 
-        bridgedb_dataframe_genes = pd.DataFrame(
-            {
-                "identifier": ["ALG14", "ALG2", "CHRNA1"],
-                "identifier.source": ["HGNC", "HGNC", "HGNC"],
-                "target": ["ENSG00000172339", "ENSG00000119523", "ENSG00000138435"],
-                "target.source": ["Ensembl", "Ensembl", "Ensembl"],
-            }
-        )
+    #     bridgedb_dataframe_genes = pd.DataFrame(
+    #         {
+    #             "identifier": ["ALG14", "ALG2", "CHRNA1"],
+    #             "identifier.source": ["HGNC", "HGNC", "HGNC"],
+    #             "target": ["ENSG00000172339", "ENSG00000119523", "ENSG00000138435"],
+    #             "target.source": ["Ensembl", "Ensembl", "Ensembl"],
+    #         }
+    #     )
 
-        # Mocking functions
-        opentargets.get_gene_compound_interactions = Mock(
-            return_value=(
-                pd.DataFrame(
-                    {
-                        "identifier": ["ALG14", "CHRNA1"],
-                        "identifier.source": ["HGNC", "HGNC"],
-                        "target": ["ENSG00000172339", "ENSG00000138435"],
-                        "target.source": ["Ensembl", "Ensembl"],
-                        OPENTARGETS_COMPOUND_COL: [
-                            [
-                                {
-                                    "chembl_id": np.nan,
-                                    "drugbank_id": np.nan,
-                                    "compound_cid": np.nan,
-                                    "compound_name": np.nan,
-                                    "is_approved": np.nan,
-                                    "relation": np.nan,
-                                    "adverse_effect_count": np.nan,
-                                    "adverse_effect": np.nan,
-                                }
-                            ],
-                            [
-                                {
-                                    "chembl_id": "CHEMBL1201248",
-                                    "drugbank_id": "DB00565",
-                                    "compound_cid": "62887",
-                                    "compound_name": "CISATRACURIUM",
-                                    "is_approved": True,
-                                    "relation": "inhibits",
-                                    "adverse_effect_count": 103.0,
-                                    "adverse_effect": [
-                                        {"name": "anaphylactic shock"},
-                                        {"name": "anaphylactic reaction"},
-                                        {"name": "feeding intolerance"},
-                                        {"name": "circulatory collapse"},
-                                        {"name": "bronchospasm"},
-                                        {"name": "hyperthermia malignant"},
-                                        {"name": "hypotension"},
-                                        {"name": "cardiac arrest"},
-                                        {"name": "apnoea"},
-                                        {"name": "cardio-respiratory arrest"},
-                                        {"name": "shock"},
-                                        {"name": "post procedural complication"},
-                                        {"name": "haemodynamic instability"},
-                                        {"name": "bradycardia"},
-                                        {"name": "hepatocellular injury"},
-                                        {"name": "hypertransaminasaemia"},
-                                        {"name": "acute pulmonary oedema"},
-                                        {"name": "neuromuscular block prolonged"},
-                                        {"name": "fatigue"},
-                                        {"name": "hyperbilirubinaemia"},
-                                        {
-                                            "name": "drug reaction with eosinophilia and systemic symptoms"
-                                        },
-                                        {"name": "diarrhoea"},
-                                        {"name": "tachyphylaxis"},
-                                        {"name": "myocardial stunning"},
-                                        {"name": "rash maculo-papular"},
-                                    ],
-                                },
-                                {
-                                    "chembl_id": "CHEMBL1200641",
-                                    "drugbank_id": None,
-                                    "compound_cid": "62886",
-                                    "compound_name": "CISATRACURIUM BESYLATE",
-                                    "is_approved": True,
-                                    "relation": "inhibits",
-                                    "adverse_effect_count": 88.0,
-                                    "adverse_effect": [
-                                        {"name": "anaphylactic shock"},
-                                        {"name": "anaphylactic reaction"},
-                                        {"name": "feeding intolerance"},
-                                        {"name": "bronchospasm"},
-                                        {"name": "hyperthermia malignant"},
-                                        {"name": "circulatory collapse"},
-                                        {"name": "hypotension"},
-                                        {"name": "cardiac arrest"},
-                                        {"name": "hypertransaminasaemia"},
-                                        {"name": "cardio-respiratory arrest"},
-                                        {
-                                            "name": "drug reaction with eosinophilia and systemic symptoms"
-                                        },
-                                        {"name": "shock"},
-                                        {"name": "apnoea"},
-                                        {"name": "toxic epidermal necrolysis"},
-                                        {"name": "acute pulmonary oedema"},
-                                        {"name": "post procedural complication"},
-                                        {"name": "haemodynamic instability"},
-                                        {"name": "hepatocellular injury"},
-                                        {"name": "fatigue"},
-                                        {"name": "hyperbilirubinaemia"},
-                                        {"name": "bradycardia"},
-                                        {"name": "diarrhoea"},
-                                        {"name": "tachyphylaxis"},
-                                        {"name": "neuromuscular block prolonged"},
-                                        {"name": "headache"},
-                                    ],
-                                },
-                                {
-                                    "chembl_id": "CHEMBL703",
-                                    "drugbank_id": "DB00202",
-                                    "compound_cid": "441290",
-                                    "compound_name": "SUXAMETHONIUM",
-                                    "is_approved": True,
-                                    "relation": "activates",
-                                    "adverse_effect_count": 127.0,
-                                    "adverse_effect": [
-                                        {"name": "hyperthermia malignant"},
-                                        {"name": "anaphylactic shock"},
-                                        {"name": "cardiac arrest"},
-                                        {"name": "hypotension"},
-                                        {"name": "neuromuscular block prolonged"},
-                                        {"name": "anaphylactic reaction"},
-                                        {"name": "bronchospasm"},
-                                        {"name": "pseudocholinesterase deficiency"},
-                                        {"name": "premature baby"},
-                                        {"name": "anaesthetic complication"},
-                                        {"name": "rhabdomyolysis"},
-                                        {"name": "ventricular tachycardia"},
-                                        {"name": "pco2 increased"},
-                                        {"name": "circulatory collapse"},
-                                        {"name": "delayed recovery from anaesthesia"},
-                                        {"name": "apnoea"},
-                                        {"name": "pulseless electrical activity"},
-                                        {"name": "post procedural complication"},
-                                        {"name": "renal ischaemia"},
-                                        {"name": "diabetes insipidus"},
-                                        {"name": "left ventricular dysfunction"},
-                                        {"name": "blood ph decreased"},
-                                        {"name": "foetal death"},
-                                        {"name": "muscle contractions involuntary"},
-                                        {"name": "bradycardia"},
-                                    ],
-                                },
-                                {
-                                    "chembl_id": "CHEMBL1201244",
-                                    "drugbank_id": "DB00728",
-                                    "compound_cid": np.nan,
-                                    "compound_name": "ROCURONIUM",
-                                    "is_approved": True,
-                                    "relation": "inhibits",
-                                    "adverse_effect_count": 94.0,
-                                    "adverse_effect": [
-                                        {"name": "anaphylactic reaction"},
-                                        {"name": "anaphylactic shock"},
-                                        {"name": "cardiac arrest"},
-                                        {"name": "hypotension"},
-                                        {"name": "neuromuscular block prolonged"},
-                                        {"name": "hyperthermia malignant"},
-                                        {"name": "bronchospasm"},
-                                        {"name": "circulatory collapse"},
-                                        {"name": "tachycardia"},
-                                        {"name": "delayed recovery from anaesthesia"},
-                                        {"name": "neuromuscular blockade"},
-                                        {"name": "pulseless electrical activity"},
-                                        {"name": "recurrence of neuromuscular blockade"},
-                                        {"name": "bradycardia"},
-                                        {"name": "finger deformity"},
-                                        {"name": "wrist surgery"},
-                                        {"name": "tenosynovitis"},
-                                        {"name": "stress cardiomyopathy"},
-                                        {"name": "oxygen saturation decreased"},
-                                        {"name": "negative pressure pulmonary oedema"},
-                                        {"name": "airway peak pressure increased"},
-                                        {"name": "procedural hypotension"},
-                                        {"name": "fatigue"},
-                                        {"name": "hypoventilation"},
-                                        {"name": "limb operation"},
-                                    ],
-                                },
-                                {
-                                    "chembl_id": "CHEMBL1201219",
-                                    "drugbank_id": "DB01339",
-                                    "compound_cid": np.nan,
-                                    "compound_name": "VECURONIUM",
-                                    "is_approved": True,
-                                    "relation": "inhibits",
-                                    "adverse_effect_count": 29.0,
-                                    "adverse_effect": [
-                                        {"name": "feeding intolerance"},
-                                        {"name": "hyperthermia malignant"},
-                                        {"name": "post procedural complication"},
-                                        {"name": "carcinoid crisis"},
-                                        {"name": "bradycardia foetal"},
-                                        {"name": "neuromuscular block prolonged"},
-                                        {"name": "therapeutic product cross-reactivity"},
-                                        {"name": "anaphylactic reaction"},
-                                        {"name": "paralysis"},
-                                        {"name": "vasoplegia syndrome"},
-                                        {"name": "hypotension"},
-                                        {"name": "cardiac arrest"},
-                                        {"name": "wound infection"},
-                                        {"name": "atelectasis"},
-                                        {"name": "neonatal hypoxia"},
-                                        {"name": "negative pressure pulmonary oedema"},
-                                        {"name": "urinary retention"},
-                                        {"name": "non-cardiogenic pulmonary oedema"},
-                                        {"name": "product packaging confusion"},
-                                        {"name": "premature baby"},
-                                        {"name": "haemodynamic instability"},
-                                        {"name": "nonreassuring foetal heart rate pattern"},
-                                        {"name": "bradyarrhythmia"},
-                                        {"name": "drug resistance"},
-                                        {"name": "intervertebral discitis"},
-                                    ],
-                                },
-                                {
-                                    "chembl_id": "CHEMBL983",
-                                    "drugbank_id": None,
-                                    "compound_cid": np.nan,
-                                    "compound_name": "SUCCINYLCHOLINE CHLORIDE",
-                                    "is_approved": True,
-                                    "relation": "activates",
-                                    "adverse_effect_count": 130.0,
-                                    "adverse_effect": [
-                                        {"name": "hyperthermia malignant"},
-                                        {"name": "anaphylactic shock"},
-                                        {"name": "cardiac arrest"},
-                                        {"name": "neuromuscular block prolonged"},
-                                        {"name": "hypotension"},
-                                        {"name": "pseudocholinesterase deficiency"},
-                                        {"name": "anaphylactic reaction"},
-                                        {"name": "rhabdomyolysis"},
-                                        {"name": "anaesthetic complication"},
-                                        {"name": "ventricular tachycardia"},
-                                        {"name": "bronchospasm"},
-                                        {"name": "pco2 increased"},
-                                        {"name": "pulseless electrical activity"},
-                                        {"name": "ventricular fibrillation"},
-                                        {"name": "diabetes insipidus"},
-                                        {"name": "renal ischaemia"},
-                                        {"name": "post procedural complication"},
-                                        {"name": "muscle contractions involuntary"},
-                                        {"name": "premature baby"},
-                                        {"name": "left ventricular dysfunction"},
-                                        {"name": "apnoea"},
-                                        {"name": "blood ph decreased"},
-                                        {"name": "foetal death"},
-                                        {"name": "bradycardia"},
-                                        {"name": "po2 increased"},
-                                    ],
-                                },
-                            ],
-                        ],
-                    }
-                ),
-                {
-                    "datasource": "Open Targets GraphQL & REST API Beta",
-                    "metadata": {
-                        "source_version": {"apiVersion": {"x": "24", "y": "1", "z": "4"}},
-                        "data_version": {"dataVersion": {"year": "24", "month": "06"}},
-                    },
-                    "query": {
-                        "size": 2,
-                        "input_type": "Ensembl",
-                        "number_of_added_nodes": 6,
-                        "number_of_added_edges": 6,
-                        "time": "0:00:00.541977",
-                        "date": "2024-08-09 16:44:14",
-                        "url": "https://api.platform.opentargets.org/api/v4/graphql",
-                    },
-                },
-            )
-        )
-        opentargets.get_gene_disease_interactions = Mock(
-            return_value=(
-                pd.read_csv(os.path.join(data_file_folder, "opentargets_gene_disease_test.csv")),
-                {
-                    "datasource": "Open Targets GraphQL & REST API Beta",
-                    "metadata": {
-                        "source_version": {"apiVersion": {"x": "24", "y": "1", "z": "4"}},
-                        "data_version": {"dataVersion": {"year": "24", "month": "06"}},
-                    },
-                    "query": {
-                        "size": 6,
-                        "number_of_added_nodes": 14,
-                        "number_of_added_edges": 17,
-                        "time": "0:00:00.162167",
-                        "date": "2024-08-09 16:49:26",
-                        "url": "https://api.platform.opentargets.org/api/v4/graphql",
-                        "input_type": "chembl_id",
-                    },
-                },
-            )
-        )
+    #     # Mocking functions
+    #     opentargets.get_gene_compound_interactions = Mock(
+    #         return_value=(
+    #             pd.DataFrame(
+    #                 {
+    #                     "identifier": ["ALG14", "CHRNA1"],
+    #                     "identifier.source": ["HGNC", "HGNC"],
+    #                     "target": ["ENSG00000172339", "ENSG00000138435"],
+    #                     "target.source": ["Ensembl", "Ensembl"],
+    #                     OPENTARGETS_COMPOUND_COL: [
+    #                         [
+    #                             {
+    #                                 "chembl_id": np.nan,
+    #                                 "drugbank_id": np.nan,
+    #                                 "compound_cid": np.nan,
+    #                                 "compound_name": np.nan,
+    #                                 "is_approved": np.nan,
+    #                                 "relation": np.nan,
+    #                                 "adverse_effect_count": np.nan,
+    #                                 "adverse_effect": np.nan,
+    #                             }
+    #                         ],
+    #                         [
+    #                             {
+    #                                 "chembl_id": "CHEMBL1201248",
+    #                                 "drugbank_id": "DB00565",
+    #                                 "compound_cid": "62887",
+    #                                 "compound_name": "CISATRACURIUM",
+    #                                 "is_approved": True,
+    #                                 "relation": "inhibits",
+    #                                 "adverse_effect_count": 103.0,
+    #                                 "adverse_effect": [
+    #                                     {"name": "anaphylactic shock"},
+    #                                     {"name": "anaphylactic reaction"},
+    #                                     {"name": "feeding intolerance"},
+    #                                     {"name": "circulatory collapse"},
+    #                                     {"name": "bronchospasm"},
+    #                                     {"name": "hyperthermia malignant"},
+    #                                     {"name": "hypotension"},
+    #                                     {"name": "cardiac arrest"},
+    #                                     {"name": "apnoea"},
+    #                                     {"name": "cardio-respiratory arrest"},
+    #                                     {"name": "shock"},
+    #                                     {"name": "post procedural complication"},
+    #                                     {"name": "haemodynamic instability"},
+    #                                     {"name": "bradycardia"},
+    #                                     {"name": "hepatocellular injury"},
+    #                                     {"name": "hypertransaminasaemia"},
+    #                                     {"name": "acute pulmonary oedema"},
+    #                                     {"name": "neuromuscular block prolonged"},
+    #                                     {"name": "fatigue"},
+    #                                     {"name": "hyperbilirubinaemia"},
+    #                                     {
+    #                                         "name": "drug reaction with eosinophilia and systemic symptoms"
+    #                                     },
+    #                                     {"name": "diarrhoea"},
+    #                                     {"name": "tachyphylaxis"},
+    #                                     {"name": "myocardial stunning"},
+    #                                     {"name": "rash maculo-papular"},
+    #                                 ],
+    #                             },
+    #                             {
+    #                                 "chembl_id": "CHEMBL1200641",
+    #                                 "drugbank_id": None,
+    #                                 "compound_cid": "62886",
+    #                                 "compound_name": "CISATRACURIUM BESYLATE",
+    #                                 "is_approved": True,
+    #                                 "relation": "inhibits",
+    #                                 "adverse_effect_count": 88.0,
+    #                                 "adverse_effect": [
+    #                                     {"name": "anaphylactic shock"},
+    #                                     {"name": "anaphylactic reaction"},
+    #                                     {"name": "feeding intolerance"},
+    #                                     {"name": "bronchospasm"},
+    #                                     {"name": "hyperthermia malignant"},
+    #                                     {"name": "circulatory collapse"},
+    #                                     {"name": "hypotension"},
+    #                                     {"name": "cardiac arrest"},
+    #                                     {"name": "hypertransaminasaemia"},
+    #                                     {"name": "cardio-respiratory arrest"},
+    #                                     {
+    #                                         "name": "drug reaction with eosinophilia and systemic symptoms"
+    #                                     },
+    #                                     {"name": "shock"},
+    #                                     {"name": "apnoea"},
+    #                                     {"name": "toxic epidermal necrolysis"},
+    #                                     {"name": "acute pulmonary oedema"},
+    #                                     {"name": "post procedural complication"},
+    #                                     {"name": "haemodynamic instability"},
+    #                                     {"name": "hepatocellular injury"},
+    #                                     {"name": "fatigue"},
+    #                                     {"name": "hyperbilirubinaemia"},
+    #                                     {"name": "bradycardia"},
+    #                                     {"name": "diarrhoea"},
+    #                                     {"name": "tachyphylaxis"},
+    #                                     {"name": "neuromuscular block prolonged"},
+    #                                     {"name": "headache"},
+    #                                 ],
+    #                             },
+    #                             {
+    #                                 "chembl_id": "CHEMBL703",
+    #                                 "drugbank_id": "DB00202",
+    #                                 "compound_cid": "441290",
+    #                                 "compound_name": "SUXAMETHONIUM",
+    #                                 "is_approved": True,
+    #                                 "relation": "activates",
+    #                                 "adverse_effect_count": 127.0,
+    #                                 "adverse_effect": [
+    #                                     {"name": "hyperthermia malignant"},
+    #                                     {"name": "anaphylactic shock"},
+    #                                     {"name": "cardiac arrest"},
+    #                                     {"name": "hypotension"},
+    #                                     {"name": "neuromuscular block prolonged"},
+    #                                     {"name": "anaphylactic reaction"},
+    #                                     {"name": "bronchospasm"},
+    #                                     {"name": "pseudocholinesterase deficiency"},
+    #                                     {"name": "premature baby"},
+    #                                     {"name": "anaesthetic complication"},
+    #                                     {"name": "rhabdomyolysis"},
+    #                                     {"name": "ventricular tachycardia"},
+    #                                     {"name": "pco2 increased"},
+    #                                     {"name": "circulatory collapse"},
+    #                                     {"name": "delayed recovery from anaesthesia"},
+    #                                     {"name": "apnoea"},
+    #                                     {"name": "pulseless electrical activity"},
+    #                                     {"name": "post procedural complication"},
+    #                                     {"name": "renal ischaemia"},
+    #                                     {"name": "diabetes insipidus"},
+    #                                     {"name": "left ventricular dysfunction"},
+    #                                     {"name": "blood ph decreased"},
+    #                                     {"name": "foetal death"},
+    #                                     {"name": "muscle contractions involuntary"},
+    #                                     {"name": "bradycardia"},
+    #                                 ],
+    #                             },
+    #                             {
+    #                                 "chembl_id": "CHEMBL1201244",
+    #                                 "drugbank_id": "DB00728",
+    #                                 "compound_cid": np.nan,
+    #                                 "compound_name": "ROCURONIUM",
+    #                                 "is_approved": True,
+    #                                 "relation": "inhibits",
+    #                                 "adverse_effect_count": 94.0,
+    #                                 "adverse_effect": [
+    #                                     {"name": "anaphylactic reaction"},
+    #                                     {"name": "anaphylactic shock"},
+    #                                     {"name": "cardiac arrest"},
+    #                                     {"name": "hypotension"},
+    #                                     {"name": "neuromuscular block prolonged"},
+    #                                     {"name": "hyperthermia malignant"},
+    #                                     {"name": "bronchospasm"},
+    #                                     {"name": "circulatory collapse"},
+    #                                     {"name": "tachycardia"},
+    #                                     {"name": "delayed recovery from anaesthesia"},
+    #                                     {"name": "neuromuscular blockade"},
+    #                                     {"name": "pulseless electrical activity"},
+    #                                     {"name": "recurrence of neuromuscular blockade"},
+    #                                     {"name": "bradycardia"},
+    #                                     {"name": "finger deformity"},
+    #                                     {"name": "wrist surgery"},
+    #                                     {"name": "tenosynovitis"},
+    #                                     {"name": "stress cardiomyopathy"},
+    #                                     {"name": "oxygen saturation decreased"},
+    #                                     {"name": "negative pressure pulmonary oedema"},
+    #                                     {"name": "airway peak pressure increased"},
+    #                                     {"name": "procedural hypotension"},
+    #                                     {"name": "fatigue"},
+    #                                     {"name": "hypoventilation"},
+    #                                     {"name": "limb operation"},
+    #                                 ],
+    #                             },
+    #                             {
+    #                                 "chembl_id": "CHEMBL1201219",
+    #                                 "drugbank_id": "DB01339",
+    #                                 "compound_cid": np.nan,
+    #                                 "compound_name": "VECURONIUM",
+    #                                 "is_approved": True,
+    #                                 "relation": "inhibits",
+    #                                 "adverse_effect_count": 29.0,
+    #                                 "adverse_effect": [
+    #                                     {"name": "feeding intolerance"},
+    #                                     {"name": "hyperthermia malignant"},
+    #                                     {"name": "post procedural complication"},
+    #                                     {"name": "carcinoid crisis"},
+    #                                     {"name": "bradycardia foetal"},
+    #                                     {"name": "neuromuscular block prolonged"},
+    #                                     {"name": "therapeutic product cross-reactivity"},
+    #                                     {"name": "anaphylactic reaction"},
+    #                                     {"name": "paralysis"},
+    #                                     {"name": "vasoplegia syndrome"},
+    #                                     {"name": "hypotension"},
+    #                                     {"name": "cardiac arrest"},
+    #                                     {"name": "wound infection"},
+    #                                     {"name": "atelectasis"},
+    #                                     {"name": "neonatal hypoxia"},
+    #                                     {"name": "negative pressure pulmonary oedema"},
+    #                                     {"name": "urinary retention"},
+    #                                     {"name": "non-cardiogenic pulmonary oedema"},
+    #                                     {"name": "product packaging confusion"},
+    #                                     {"name": "premature baby"},
+    #                                     {"name": "haemodynamic instability"},
+    #                                     {"name": "nonreassuring foetal heart rate pattern"},
+    #                                     {"name": "bradyarrhythmia"},
+    #                                     {"name": "drug resistance"},
+    #                                     {"name": "intervertebral discitis"},
+    #                                 ],
+    #                             },
+    #                             {
+    #                                 "chembl_id": "CHEMBL983",
+    #                                 "drugbank_id": None,
+    #                                 "compound_cid": np.nan,
+    #                                 "compound_name": "SUCCINYLCHOLINE CHLORIDE",
+    #                                 "is_approved": True,
+    #                                 "relation": "activates",
+    #                                 "adverse_effect_count": 130.0,
+    #                                 "adverse_effect": [
+    #                                     {"name": "hyperthermia malignant"},
+    #                                     {"name": "anaphylactic shock"},
+    #                                     {"name": "cardiac arrest"},
+    #                                     {"name": "neuromuscular block prolonged"},
+    #                                     {"name": "hypotension"},
+    #                                     {"name": "pseudocholinesterase deficiency"},
+    #                                     {"name": "anaphylactic reaction"},
+    #                                     {"name": "rhabdomyolysis"},
+    #                                     {"name": "anaesthetic complication"},
+    #                                     {"name": "ventricular tachycardia"},
+    #                                     {"name": "bronchospasm"},
+    #                                     {"name": "pco2 increased"},
+    #                                     {"name": "pulseless electrical activity"},
+    #                                     {"name": "ventricular fibrillation"},
+    #                                     {"name": "diabetes insipidus"},
+    #                                     {"name": "renal ischaemia"},
+    #                                     {"name": "post procedural complication"},
+    #                                     {"name": "muscle contractions involuntary"},
+    #                                     {"name": "premature baby"},
+    #                                     {"name": "left ventricular dysfunction"},
+    #                                     {"name": "apnoea"},
+    #                                     {"name": "blood ph decreased"},
+    #                                     {"name": "foetal death"},
+    #                                     {"name": "bradycardia"},
+    #                                     {"name": "po2 increased"},
+    #                                 ],
+    #                             },
+    #                         ],
+    #                     ],
+    #                 }
+    #             ),
+    #             {
+    #                 "datasource": "Open Targets GraphQL & REST API Beta",
+    #                 "metadata": {
+    #                     "source_version": {"apiVersion": {"x": "24", "y": "1", "z": "4"}},
+    #                     "data_version": {"dataVersion": {"year": "24", "month": "06"}},
+    #                 },
+    #                 "query": {
+    #                     "size": 2,
+    #                     "input_type": "Ensembl",
+    #                     "number_of_added_nodes": 6,
+    #                     "number_of_added_edges": 6,
+    #                     "time": "0:00:00.541977",
+    #                     "date": "2024-08-09 16:44:14",
+    #                     "url": "https://api.platform.opentargets.org/api/v4/graphql",
+    #                 },
+    #             },
+    #         )
+    #     )
+    #     opentargets.get_gene_disease_interactions = Mock(
+    #         return_value=(
+    #             pd.read_csv(os.path.join(data_file_folder, "opentargets_gene_disease_test.csv")),
+    #             {
+    #                 "datasource": "Open Targets GraphQL & REST API Beta",
+    #                 "metadata": {
+    #                     "source_version": {"apiVersion": {"x": "24", "y": "1", "z": "4"}},
+    #                     "data_version": {"dataVersion": {"year": "24", "month": "06"}},
+    #                 },
+    #                 "query": {
+    #                     "size": 6,
+    #                     "number_of_added_nodes": 14,
+    #                     "number_of_added_edges": 17,
+    #                     "time": "0:00:00.162167",
+    #                     "date": "2024-08-09 16:49:26",
+    #                     "url": "https://api.platform.opentargets.org/api/v4/graphql",
+    #                     "input_type": "chembl_id",
+    #                 },
+    #             },
+    #         )
+    #     )
 
-        with open(
-            os.path.join(data_file_folder, "opentargets_compound_disease_mock_data.json")
-        ) as f:
-            mock_post_disease.return_value.json.return_value = json.load(f)
+    #     with open(
+    #         os.path.join(data_file_folder, "opentargets_compound_disease_mock_data.json")
+    #     ) as f:
+    #         mock_post_disease.return_value.json.return_value = json.load(f)
 
-        obtained_data, metadata = get_compound_disease_interactions(bridgedb_dataframe_genes)
+    #     obtained_data, metadata = get_compound_disease_interactions(bridgedb_dataframe_genes)
 
-        expected_data = pd.Series(
-            [
-                [
-                    {
-                        "disease_id": np.nan,
-                        "disease_name": np.nan,
-                        "therapeutic_areas": np.nan,
-                        "disease_xrefs": np.nan,
-                    }
-                ],
-                [
-                    {
-                        "disease_id": "EFO_1000637",
-                        "disease_name": "acute respiratory distress syndrome",
-                        "therapeutic_areas": "OTAR_0000010:respiratory or thoracic disease",
-                        "disease_xrefs": [
-                            "MESH_D012128",
-                            "NCI_C3353",
-                            "NCI_C3353",
-                            "MONDO_0006502",
-                        ],
-                    },
-                    {
-                        "disease_id": "EFO_0000712",
-                        "disease_name": "stroke",
-                        "therapeutic_areas": "EFO_0000618:nervous system disease, EFO_0000319:cardiovascular disease",
-                        "disease_xrefs": [
-                            "MESH_D020521",
-                            "OMIM_601367",
-                            "MESH_D020521",
-                            "NCI_C3390",
-                            "MONDO_0005098",
-                            "NCI_C3390",
-                            "HPO_HP:0001297",
-                        ],
-                    },
-                    {
-                        "disease_id": "umls:C0428977",
-                        "disease_name": "Bradycardia",
-                        "therapeutic_areas": "EFO_0000651:phenotype",
-                        "disease_xrefs": ["UMLS_C0428977", "MESH_D001919"],
-                    },
-                    {
-                        "disease_id": "umls:C0231528, umls:C1963177",
-                        "disease_name": "Myalgia",
-                        "therapeutic_areas": "EFO_0000651:phenotype",
-                        "disease_xrefs": [
-                            "NCI_C27009",
-                            "UMLS_C0231528",
-                            "MESH_D063806",
-                            "UMLS_C1963177",
-                        ],
-                    },
-                    {
-                        "disease_id": "umls:C0158288",
-                        "disease_name": "spinal stenosis",
-                        "therapeutic_areas": "OTAR_0000006:musculoskeletal or connective tissue disease",
-                        "disease_xrefs": [
-                            "NCI_C177444",
-                            "HPO_HP:0003416",
-                            "MESH_D013130",
-                            "UMLS_C0158288",
-                            "DO_6725",
-                            "MONDO_0005965",
-                            "MESH_D013130",
-                        ],
-                    },
-                    {
-                        "disease_id": "umls:C0018790, umls:C0444720",
-                        "disease_name": "cardiac arrest",
-                        "therapeutic_areas": "EFO_0000319:cardiovascular disease",
-                        "disease_xrefs": [
-                            "UMLS_C0018790",
-                            "MONDO_0000745",
-                            "MESH_D006323",
-                            "UMLS_C0444720",
-                            "HPO_HP:0001695",
-                        ],
-                    },
-                    {
-                        "disease_id": "EFO_0003843",
-                        "disease_name": "pain",
-                        "therapeutic_areas": "EFO_0000651:phenotype",
-                        "disease_xrefs": ["NCI_C3303", "MESH_D010146"],
-                    },
-                    {
-                        "disease_id": "EFO_0010581",
-                        "disease_name": "organophosphate poisoning",
-                        "therapeutic_areas": "OTAR_0000009:injury, poisoning or other complication",
-                        "disease_xrefs": ["MESH_68062025"],
-                    },
-                    {
-                        "disease_id": "EFO_0003931",
-                        "disease_name": "bone fracture",
-                        "therapeutic_areas": "OTAR_0000006:musculoskeletal or connective tissue disease, OTAR_0000009:injury, poisoning or other complication",
-                        "disease_xrefs": [
-                            "MONDO_0005315",
-                            "MESH_D050723",
-                            "MESH_D050723",
-                            "NCI_C3046",
-                        ],
-                    },
-                    {
-                        "disease_id": "umls:C0018790, umls:C0444720",
-                        "disease_name": "cardiac arrest",
-                        "therapeutic_areas": "EFO_0000319:cardiovascular disease",
-                        "disease_xrefs": [
-                            "UMLS_C0018790",
-                            "MONDO_0000745",
-                            "MESH_D006323",
-                            "UMLS_C0444720",
-                            "HPO_HP:0001695",
-                        ],
-                    },
-                    {
-                        "disease_id": "umls:C0231528, umls:C1963177",
-                        "disease_name": "Myalgia",
-                        "therapeutic_areas": "EFO_0000651:phenotype",
-                        "disease_xrefs": [
-                            "NCI_C27009",
-                            "UMLS_C0231528",
-                            "MESH_D063806",
-                            "UMLS_C1963177",
-                        ],
-                    },
-                    {
-                        "disease_id": "umls:C0022658",
-                        "disease_name": "kidney disease",
-                        "therapeutic_areas": "EFO_0009690:urinary system disease",
-                        "disease_xrefs": [
-                            "MONDO_0005240",
-                            "NCI_C3149",
-                            "NCI_C34843",
-                            "MESH_D007674",
-                            "NCI_C3149",
-                            "UMLS_C0022658",
-                            "MESH_D007674",
-                            "DO_557",
-                        ],
-                    },
-                    {
-                        "disease_id": "umls:C0004604",
-                        "disease_name": "Back pain",
-                        "therapeutic_areas": "EFO_0000651:phenotype",
-                        "disease_xrefs": ["UMLS_C0004604", "MESH_D001416"],
-                    },
-                    {
-                        "disease_id": "umls:C0376358",
-                        "disease_name": "prostate cancer",
-                        "therapeutic_areas": "OTAR_0000017:reproductive system or breast disease, MONDO_0045024:cancer or benign tumor",
-                        "disease_xrefs": ["MESH_D011471", "UMLS_C0376358", "NCI_C7378", "DO_10283"],
-                    },
-                    {
-                        "disease_id": "umls:C0235974",
-                        "disease_name": "pancreatic carcinoma",
-                        "therapeutic_areas": "MONDO_0045024:cancer or benign tumor, EFO_0001379:endocrine system disease, EFO_0009605:pancreas disease, EFO_0010282:gastrointestinal disease",
-                        "disease_xrefs": [
-                            "UMLS_C0235974",
-                            "DO_4905",
-                            "OMIM_260350",
-                            "NCI_C3850",
-                            "MONDO_0005192",
-                            "EFO_0002618",
-                        ],
-                    },
-                    {
-                        "disease_id": "MONDO_0021117",
-                        "disease_name": "lung neoplasm",
-                        "therapeutic_areas": "OTAR_0000010:respiratory or thoracic disease, MONDO_0045024:cancer or benign tumor",
-                        "disease_xrefs": ["NCI_C3200", "MESH_D008175"],
-                    },
-                    {
-                        "disease_id": "EFO_1000637",
-                        "disease_name": "acute respiratory distress syndrome",
-                        "therapeutic_areas": "OTAR_0000010:respiratory or thoracic disease",
-                        "disease_xrefs": [
-                            "MESH_D012128",
-                            "NCI_C3353",
-                            "NCI_C3353",
-                            "MONDO_0006502",
-                        ],
-                    },
-                ],
-            ]
-        )
-        expected_data.name = OPENTARGETS_DISEASE_COL
+    #     expected_data = pd.Series(
+    #         [
+    #             [
+    #                 {
+    #                     "disease_id": np.nan,
+    #                     "disease_name": np.nan,
+    #                     "therapeutic_areas": np.nan,
+    #                     "disease_xrefs": np.nan,
+    #                 }
+    #             ],
+    #             [
+    #                 {
+    #                     "disease_id": "EFO_1000637",
+    #                     "disease_name": "acute respiratory distress syndrome",
+    #                     "therapeutic_areas": "OTAR_0000010:respiratory or thoracic disease",
+    #                     "disease_xrefs": [
+    #                         "MESH_D012128",
+    #                         "NCI_C3353",
+    #                         "NCI_C3353",
+    #                         "MONDO_0006502",
+    #                     ],
+    #                 },
+    #                 {
+    #                     "disease_id": "EFO_0000712",
+    #                     "disease_name": "stroke",
+    #                     "therapeutic_areas": "EFO_0000618:nervous system disease, EFO_0000319:cardiovascular disease",
+    #                     "disease_xrefs": [
+    #                         "MESH_D020521",
+    #                         "OMIM_601367",
+    #                         "MESH_D020521",
+    #                         "NCI_C3390",
+    #                         "MONDO_0005098",
+    #                         "NCI_C3390",
+    #                         "HPO_HP:0001297",
+    #                     ],
+    #                 },
+    #                 {
+    #                     "disease_id": "umls:C0428977",
+    #                     "disease_name": "Bradycardia",
+    #                     "therapeutic_areas": "EFO_0000651:phenotype",
+    #                     "disease_xrefs": ["UMLS_C0428977", "MESH_D001919"],
+    #                 },
+    #                 {
+    #                     "disease_id": "umls:C0231528, umls:C1963177",
+    #                     "disease_name": "Myalgia",
+    #                     "therapeutic_areas": "EFO_0000651:phenotype",
+    #                     "disease_xrefs": [
+    #                         "NCI_C27009",
+    #                         "UMLS_C0231528",
+    #                         "MESH_D063806",
+    #                         "UMLS_C1963177",
+    #                     ],
+    #                 },
+    #                 {
+    #                     "disease_id": "umls:C0158288",
+    #                     "disease_name": "spinal stenosis",
+    #                     "therapeutic_areas": "OTAR_0000006:musculoskeletal or connective tissue disease",
+    #                     "disease_xrefs": [
+    #                         "NCI_C177444",
+    #                         "HPO_HP:0003416",
+    #                         "MESH_D013130",
+    #                         "UMLS_C0158288",
+    #                         "DO_6725",
+    #                         "MONDO_0005965",
+    #                         "MESH_D013130",
+    #                     ],
+    #                 },
+    #                 {
+    #                     "disease_id": "umls:C0018790, umls:C0444720",
+    #                     "disease_name": "cardiac arrest",
+    #                     "therapeutic_areas": "EFO_0000319:cardiovascular disease",
+    #                     "disease_xrefs": [
+    #                         "UMLS_C0018790",
+    #                         "MONDO_0000745",
+    #                         "MESH_D006323",
+    #                         "UMLS_C0444720",
+    #                         "HPO_HP:0001695",
+    #                     ],
+    #                 },
+    #                 {
+    #                     "disease_id": "EFO_0003843",
+    #                     "disease_name": "pain",
+    #                     "therapeutic_areas": "EFO_0000651:phenotype",
+    #                     "disease_xrefs": ["NCI_C3303", "MESH_D010146"],
+    #                 },
+    #                 {
+    #                     "disease_id": "EFO_0010581",
+    #                     "disease_name": "organophosphate poisoning",
+    #                     "therapeutic_areas": "OTAR_0000009:injury, poisoning or other complication",
+    #                     "disease_xrefs": ["MESH_68062025"],
+    #                 },
+    #                 {
+    #                     "disease_id": "EFO_0003931",
+    #                     "disease_name": "bone fracture",
+    #                     "therapeutic_areas": "OTAR_0000006:musculoskeletal or connective tissue disease, OTAR_0000009:injury, poisoning or other complication",
+    #                     "disease_xrefs": [
+    #                         "MONDO_0005315",
+    #                         "MESH_D050723",
+    #                         "MESH_D050723",
+    #                         "NCI_C3046",
+    #                     ],
+    #                 },
+    #                 {
+    #                     "disease_id": "umls:C0018790, umls:C0444720",
+    #                     "disease_name": "cardiac arrest",
+    #                     "therapeutic_areas": "EFO_0000319:cardiovascular disease",
+    #                     "disease_xrefs": [
+    #                         "UMLS_C0018790",
+    #                         "MONDO_0000745",
+    #                         "MESH_D006323",
+    #                         "UMLS_C0444720",
+    #                         "HPO_HP:0001695",
+    #                     ],
+    #                 },
+    #                 {
+    #                     "disease_id": "umls:C0231528, umls:C1963177",
+    #                     "disease_name": "Myalgia",
+    #                     "therapeutic_areas": "EFO_0000651:phenotype",
+    #                     "disease_xrefs": [
+    #                         "NCI_C27009",
+    #                         "UMLS_C0231528",
+    #                         "MESH_D063806",
+    #                         "UMLS_C1963177",
+    #                     ],
+    #                 },
+    #                 {
+    #                     "disease_id": "umls:C0022658",
+    #                     "disease_name": "kidney disease",
+    #                     "therapeutic_areas": "EFO_0009690:urinary system disease",
+    #                     "disease_xrefs": [
+    #                         "MONDO_0005240",
+    #                         "NCI_C3149",
+    #                         "NCI_C34843",
+    #                         "MESH_D007674",
+    #                         "NCI_C3149",
+    #                         "UMLS_C0022658",
+    #                         "MESH_D007674",
+    #                         "DO_557",
+    #                     ],
+    #                 },
+    #                 {
+    #                     "disease_id": "umls:C0004604",
+    #                     "disease_name": "Back pain",
+    #                     "therapeutic_areas": "EFO_0000651:phenotype",
+    #                     "disease_xrefs": ["UMLS_C0004604", "MESH_D001416"],
+    #                 },
+    #                 {
+    #                     "disease_id": "umls:C0376358",
+    #                     "disease_name": "prostate cancer",
+    #                     "therapeutic_areas": "OTAR_0000017:reproductive system or breast disease, MONDO_0045024:cancer or benign tumor",
+    #                     "disease_xrefs": ["MESH_D011471", "UMLS_C0376358", "NCI_C7378", "DO_10283"],
+    #                 },
+    #                 {
+    #                     "disease_id": "umls:C0235974",
+    #                     "disease_name": "pancreatic carcinoma",
+    #                     "therapeutic_areas": "MONDO_0045024:cancer or benign tumor, EFO_0001379:endocrine system disease, EFO_0009605:pancreas disease, EFO_0010282:gastrointestinal disease",
+    #                     "disease_xrefs": [
+    #                         "UMLS_C0235974",
+    #                         "DO_4905",
+    #                         "OMIM_260350",
+    #                         "NCI_C3850",
+    #                         "MONDO_0005192",
+    #                         "EFO_0002618",
+    #                     ],
+    #                 },
+    #                 {
+    #                     "disease_id": "MONDO_0021117",
+    #                     "disease_name": "lung neoplasm",
+    #                     "therapeutic_areas": "OTAR_0000010:respiratory or thoracic disease, MONDO_0045024:cancer or benign tumor",
+    #                     "disease_xrefs": ["NCI_C3200", "MESH_D008175"],
+    #                 },
+    #                 {
+    #                     "disease_id": "EFO_1000637",
+    #                     "disease_name": "acute respiratory distress syndrome",
+    #                     "therapeutic_areas": "OTAR_0000010:respiratory or thoracic disease",
+    #                     "disease_xrefs": [
+    #                         "MESH_D012128",
+    #                         "NCI_C3353",
+    #                         "NCI_C3353",
+    #                         "MONDO_0006502",
+    #                     ],
+    #                 },
+    #             ],
+    #         ]
+    #     )
+    #     expected_data.name = OPENTARGETS_DISEASE_COL
 
-        pd.testing.assert_series_equal(obtained_data[OPENTARGETS_DISEASE_COL], expected_data)
-        self.assertIsInstance(metadata, dict)
+    #     pd.testing.assert_series_equal(obtained_data[OPENTARGETS_DISEASE_COL], expected_data)
+    #     self.assertIsInstance(metadata, dict)

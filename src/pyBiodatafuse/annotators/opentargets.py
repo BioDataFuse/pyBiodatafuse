@@ -642,7 +642,6 @@ def get_compound_disease_interactions(
     query_string = query_string.replace("$chemblIds", str(chembl_ids).replace("'", '"'))
 
     r = requests.post(OPENTARGETS_ENDPOINT, json={"query": query_string}).json()
-
     # Record the end time
     end_time = datetime.datetime.now()
 
