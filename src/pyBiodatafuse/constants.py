@@ -77,20 +77,18 @@ ANATOMICAL_ENTITIES_LIST = [
 # Disease node
 # DISGENET
 DISGENET_OUTPUT_DICT = {
-    "HPO": str,
-    "NCI": str,
-    "OMIM": str,
-    "MONDO": str,
-    "ORDO": str,
-    "ICD10": str,
-    "EFO": str,
-    "DO": str,
-    "MESH": str,
-    "UMLS": str,
-    "ICD9CM": str,
+    "HPO": str,  # "HPO_HP:0100013"
+    "NCI": str,  # "NCI_C2910"
+    "OMIM": str,  # "OMIM_607906"
+    "MONDO": str,  # "MONDO_0021100"
+    "ORDO": str,  # "ORDO_137"
+    "EFO": str,  # "EFO_0003756"
+    "DO": str,  # "DO_0060041"
+    "MESH": str,  # "MESH_D000067877"
+    "UMLS": str,  # "UMLS_C1510586"
     "disease_name": str,
     "disease_type": str,
-    "disease_umlscui": str,
+    "disease_umlscui": str,  # "C1510586"
     "score": float,
     "ei": float,
     "el": float,

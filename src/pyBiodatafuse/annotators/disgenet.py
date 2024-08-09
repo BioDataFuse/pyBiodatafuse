@@ -9,6 +9,7 @@ import time
 import warnings
 from typing import Dict, List, Set, Tuple
 
+import numpy as np
 import pandas as pd
 import requests
 
@@ -195,6 +196,12 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
     )
     intermediate_df["target"] = intermediate_df["target"].values.astype(str)
 
+    missing_cols = [
+        col for col in DISGENET_OUTPUT_DICT.keys() if col not in intermediate_df.columns
+    ]
+    for col in missing_cols:
+        intermediate_df[col] = None
+
     selected_columns = [
         # "geneDSI",
         # "geneDPI",
@@ -205,7 +212,7 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
         # "diseaseVocabularies",
         "target",
         "disease_name",
-        *source_type_list,
+        *DISGENET_OUTPUT_DICT.keys(),
         "disease_type",
         "disease_umlscui",
         "score",

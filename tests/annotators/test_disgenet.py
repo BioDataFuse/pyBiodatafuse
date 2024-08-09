@@ -48,9 +48,9 @@ class TestDisgenet(unittest.TestCase):
 
         bridgedb_dataframe = pd.DataFrame(
             {
-                "identifier": ["CHRNG"],
+                "identifier": ["ALG14"],
                 "identifier.source": ["HGNC"],
-                "target": ["1146"],
+                "target": ["199857"],
                 "target.source": ["NCBI Gene"],
             }
         )
