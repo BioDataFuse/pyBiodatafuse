@@ -11,7 +11,7 @@ import numpy as np
 import pandas as pd
 import requests
 
-from pyBiodatafuse.constants import STRING, STRING_ENDPOINT, STRING_INPUT_ID
+from pyBiodatafuse.constants import STRING, STRING_OUTPUT_DICT, STRING_PPI_COL, STRING_ENDPOINT, STRING_INPUT_ID
 from pyBiodatafuse.utils import get_identifier_of_interest
 
 logger = logging.getLogger("stringdb")
@@ -124,21 +124,29 @@ def get_ppi(bridgedb_df: pd.DataFrame):
 
     gene_list = list(set(data_df["target"].tolist()))
 
+    # Return empty dataframe when only one input submitted 
+    if len(gene_list) == 1:
+        df = pd.DataFrame({col: pd.Series(dtype=dt) for col, dt in STRING_OUTPUT_DICT.items()})
+        empthy_df = df.reindex(columns=STRING_OUTPUT_DICT.keys()).fillna(np.nan)
+        return empthy_df, {}
+    
     # Get ids
     string_ids = get_string_ids(gene_list)
     stringdb_ids_df = pd.DataFrame(string_ids)
     stringdb_ids_df.queryIndex = stringdb_ids_df.queryIndex.astype(str)
-
+    
     # Get the PPI data
     response = _get_ppi_data(list(stringdb_ids_df.stringId.unique()))
     network_df = pd.DataFrame(response)
 
     if "stringId_A" not in network_df.columns:
-        return pd.DataFrame(), {}
+        df = pd.DataFrame({col: pd.Series(dtype=dt) for col, dt in STRING_OUTPUT_DICT.items()})
+        empthy_df = df.reindex(columns=STRING_OUTPUT_DICT.keys()).fillna(np.nan)
+        return empthy_df, {}
 
     # Format the data
-    data_df[STRING] = data_df.apply(_format_data, network_df=network_df, axis=1)
-    data_df[STRING] = data_df[STRING].apply(
+    data_df[STRING_PPI_COL] = data_df.apply(_format_data, network_df=network_df, axis=1)
+    data_df[STRING_PPI_COL] = data_df[STRING_PPI_COL].apply(
         lambda x: (
             [
                 {
