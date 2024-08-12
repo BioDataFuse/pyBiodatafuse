@@ -206,7 +206,12 @@ PUBCHEM_ASSAYS_COL = f"{PUBCHEM}_assays"
 
 # Gene Node
 # STRING
-# TODO: to be checked
+STRING_OUTPUT_DICT = {
+    "stringdb_link_to": str,
+    "Ensembl": str,
+    "score": int
+}
+STRING_PPI_COL = f"{STRING}_ppi"
 
 # Wikidata
 # TODO: to be checked
@@ -397,7 +402,7 @@ GENE_NODE_LABELS = "Gene"
 # STRING
 # TODO: to be checked
 STRING_EDGE_MAIN_LABEL = "stringdb_link_to"
-STRING_EDGE_LABEL = "StringDB_ppi_interaction"
+STRING_EDGE_LABEL = "StringDB_ppi"
 STRING_EDGE_ATTRS = {
     "source": STRING,
     "score": None,
