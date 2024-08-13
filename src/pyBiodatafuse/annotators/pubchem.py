@@ -214,7 +214,7 @@ def get_protein_molecule_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
     # Check the intermediate_df
     if num_new_edges != len(intermediate_df):
         warnings.warn(
-            f"The intermediate_df in this annotatur should be checked, please create an issue for {PUBCHEM} annotator on https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
+            f"The intermediate_df in {PUBCHEM} annotatur should be checked, please create an issue on https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
             stacklevel=2,
         )
 

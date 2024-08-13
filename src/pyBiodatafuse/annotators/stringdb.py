@@ -161,7 +161,7 @@ def get_ppi(bridgedb_df: pd.DataFrame):
     # Check the network_df
     if num_new_edges != len(network_df):
         warnings.warn(
-            f"The network_df in this annotatur should be checked, please create an issue for {STRING} annotator on https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
+            f"The network_df in {STRING} annotatur should be checked, please create an issue https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
             stacklevel=2,
         )
 
