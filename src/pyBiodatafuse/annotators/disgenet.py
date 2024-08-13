@@ -170,7 +170,7 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
         warnings.warn(
             f"There is no annotation for your input list in {DISGENET}.",
             stacklevel=2,
-        )    
+        )
         return pd.DataFrame(), disgenet_metadata
 
     # extract disease identifiers from diseaseVocabularies column
@@ -234,7 +234,7 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
         # "geneProteinClassNames",
         # "diseaseVocabularies",
         "target",
-        *DISGENET_OUTPUT_DICT.keys()
+        *DISGENET_OUTPUT_DICT.keys(),
     ]
     intermediate_df = intermediate_df[selected_columns]
 
