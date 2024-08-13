@@ -10,7 +10,7 @@ import pandas as pd
 
 from pyBiodatafuse.annotators import stringdb
 from pyBiodatafuse.annotators.stringdb import get_ppi, get_version_stringdb
-from pyBiodatafuse.constants import STRING
+from pyBiodatafuse.constants import STRING, STRING_PPI_COL
 
 
 class TestString(unittest.TestCase):
@@ -118,7 +118,7 @@ class TestString(unittest.TestCase):
                 [{"stringdb_link_to": "ALG14", "Ensembl": "ENSP00000359224", "score": 0.543}],
             ]
         )
-        expected_data.name = STRING
+        expected_data.name = STRING_PPI_COL
 
-        pd.testing.assert_series_equal(obtained_data[STRING], expected_data)
+        pd.testing.assert_series_equal(obtained_data[STRING_PPI_COL], expected_data)
         self.assertIsInstance(metadata, dict)
