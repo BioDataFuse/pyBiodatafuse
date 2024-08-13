@@ -156,7 +156,14 @@ def get_ppi(bridgedb_df: pd.DataFrame):
     # Calculate the time elapsed
     time_elapsed = str(end_time - start_time)
     # Calculate the number of new edges
-    num_edges = len(network_df)
+    num_new_edges = network_df.drop_duplicates(subset=["stringId_A", "stringId_B"]).shape[0]
+
+    # Check the network_df
+    if num_new_edges != len(network_df):
+        warnings.warn(
+            f"The network_df in this annotatur should be checked, please create an issue for {STRING} annotator on https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
+            stacklevel=2,
+        )
 
     # Add the datasource, query, query time, and the date to metadata
     string_metadata = {
@@ -165,7 +172,7 @@ def get_ppi(bridgedb_df: pd.DataFrame):
         "query": {
             "size": len(gene_list),
             "input_type": STRING_INPUT_ID,
-            "number_of_added_edges": num_edges,
+            "number_of_added_edges": num_new_edges,
             "time": time_elapsed,
             "date": current_date,
             "url": STRING_ENDPOINT,
