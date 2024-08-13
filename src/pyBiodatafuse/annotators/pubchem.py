@@ -115,6 +115,31 @@ def get_protein_molecule_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
     # Record the end time
     end_time = datetime.datetime.now()
 
+    """Metdata details"""
+    # Get the current date and time
+    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    # Calculate the time elapsed
+    time_elapsed = str(end_time - start_time)
+
+    # Add the datasource, query, query time, and the date to metadata
+    pubchem_metadata = {
+        "datasource": PUBCHEM,
+        "query": {
+            "size": len(protein_list_str),
+            "input_type": PUBCHEM_INPUT_ID,
+            "time": time_elapsed,
+            "date": current_date,
+            "url": PUBCHEM_ENDPOINT,
+        },
+    }
+
+    if intermediate_df.empty:
+        warnings.warn(
+            f"There is no annotation for your input list in {PUBCHEM}.",
+            stacklevel=2,
+        )
+        return pd.DataFrame(), pubchem_metadata
+
     # Organize the annotation results as an array of dictionaries
     assay_endpoint_types = {
         "http://www.bioassayontology.org/bao#BAO_0000034": "Kd",
@@ -125,9 +150,6 @@ def get_protein_molecule_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
         "http://www.bioassayontology.org/bao#BAO_0000192": "Ki",
         "http://www.bioassayontology.org/bao#BAO_0002146": "MIC",
     }
-
-    if intermediate_df.empty:
-        return pd.DataFrame(), {"datasource": PUBCHEM}
 
     # drop multitarget assays
     intermediate_df.rename(
@@ -184,24 +206,23 @@ def get_protein_molecule_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
 
     merged_df.reset_index(drop=True, inplace=True)
 
-    """Metdata details"""
-    # Get the current date and time
-    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    # Calculate the time elapsed
-    time_elapsed = str(end_time - start_time)
+    # Calculate the number of new nodes
+    num_new_nodes = intermediate_df["compound_cid"].nunique()
+    # Calculate the number of new edges
+    num_new_edges = intermediate_df.drop_duplicates(subset=["target", "compound_cid"]).shape[0]
 
-    # Add the datasource, query, query time, and the date to metadata
-    molmedb_metadata = {
-        "datasource": PUBCHEM,
-        "query": {
-            "size": len(protein_list_str),
-            "time": time_elapsed,
-            "date": current_date,
-            "url": PUBCHEM_ENDPOINT,
-        },
-    }
+    # Check the intermediate_df
+    if num_new_edges != len(intermediate_df):
+        warnings.warn(
+            f"The intermediate_df in this annotatur should be checked, please create an issue for {PUBCHEM} annotator on https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
+            stacklevel=2,
+        )
 
-    return merged_df, molmedb_metadata
+    # Add the number of new nodes and edges to metadata
+    pubchem_metadata["query"]["number_of_added_nodes"] = num_new_nodes
+    pubchem_metadata["query"]["number_of_added_edges"] = num_new_edges
+
+    return merged_df, pubchem_metadata
 
 
 def int_response_value_types(resp_list: list, key_list: list):
