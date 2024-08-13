@@ -206,6 +206,7 @@ def get_protein_molecule_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
 
     merged_df.reset_index(drop=True, inplace=True)
 
+    """Update metadata"""
     # Calculate the number of new nodes
     num_new_nodes = intermediate_df["compound_cid"].nunique()
     # Calculate the number of new edges
