@@ -261,7 +261,7 @@ def get_gene_minerva_pathways(
 
     # Record the end time
     end_time = datetime.datetime.now()
-    
+
     """Metdata details"""
     # Get the current date and time
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -281,7 +281,7 @@ def get_gene_minerva_pathways(
             "url": map_url,
         },
     }
-    
+
     # Organize the annotation results as an array of dictionaries
     intermediate_df.rename(columns={"ensembl": "target"}, inplace=True)
     intermediate_df["target"] = intermediate_df["target"].values.astype(str)
