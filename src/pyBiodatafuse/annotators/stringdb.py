@@ -11,7 +11,13 @@ import numpy as np
 import pandas as pd
 import requests
 
-from pyBiodatafuse.constants import STRING, STRING_OUTPUT_DICT, STRING_PPI_COL, STRING_ENDPOINT, STRING_INPUT_ID
+from pyBiodatafuse.constants import (
+    STRING,
+    STRING_ENDPOINT,
+    STRING_INPUT_ID,
+    STRING_OUTPUT_DICT,
+    STRING_PPI_COL,
+)
 from pyBiodatafuse.utils import check_columns_against_constants, get_identifier_of_interest
 
 logger = logging.getLogger("stringdb")
@@ -124,16 +130,19 @@ def get_ppi(bridgedb_df: pd.DataFrame):
 
     gene_list = list(set(data_df["target"].tolist()))
 
-    # Return empty dataframe when only one input submitted 
+    # Return empty dataframe when only one input submitted
     if len(gene_list) == 1:
-        warnings.warn(f"There is only one input gene/protein. Provide at least two input to extract their interactions from {STRING}.", stacklevel=2)
+        warnings.warn(
+            f"There is only one input gene/protein. Provide at least two input to extract their interactions from {STRING}.",
+            stacklevel=2,
+        )
         return pd.DataFrame(), {}
 
     # Get ids
     string_ids = get_string_ids(gene_list)
     stringdb_ids_df = pd.DataFrame(string_ids)
     stringdb_ids_df.queryIndex = stringdb_ids_df.queryIndex.astype(str)
-    
+
     # Get the PPI data
     response = _get_ppi_data(list(stringdb_ids_df.stringId.unique()))
     network_df = pd.DataFrame(response)
@@ -164,20 +173,17 @@ def get_ppi(bridgedb_df: pd.DataFrame):
     }
 
     if "stringId_A" not in network_df.columns:
-        warnings.warn(f"There is no interaction between your input list based on {STRING}, {string_version}.", stacklevel=2)
+        warnings.warn(
+            f"There is no interaction between your input list based on {STRING}, {string_version}.",
+            stacklevel=2,
+        )
         return pd.DataFrame(), string_metadata
 
     # Format the data
     data_df[STRING_PPI_COL] = data_df.apply(_format_data, network_df=network_df, axis=1)
 
     data_df[STRING_PPI_COL] = data_df[STRING_PPI_COL].apply(
-        lambda x: (
-            [
-                {key: np.nan for key in STRING_OUTPUT_DICT.keys()}
-            ]
-            if len(x) == 0
-            else x
-        )
+        lambda x: ([{key: np.nan for key in STRING_OUTPUT_DICT.keys()}] if len(x) == 0 else x)
     )
 
     # Check if all keys in df match the keys in OUTPUT_DICT
@@ -188,6 +194,5 @@ def get_ppi(bridgedb_df: pd.DataFrame):
         output_dict=STRING_OUTPUT_DICT,
         check_values_in=[],
     )
-
 
     return data_df, string_metadata

@@ -206,11 +206,7 @@ PUBCHEM_ASSAYS_COL = f"{PUBCHEM}_assays"
 
 # Gene Node
 # STRING
-STRING_OUTPUT_DICT = {
-    "stringdb_link_to": str,
-    STRING_INPUT_ID: str,
-    "score": int
-}
+STRING_OUTPUT_DICT = {"stringdb_link_to": str, STRING_INPUT_ID: str, "score": int}
 STRING_PPI_COL = f"{STRING}_ppi"
 
 # Wikidata
