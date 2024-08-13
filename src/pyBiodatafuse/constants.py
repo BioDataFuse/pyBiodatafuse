@@ -208,7 +208,7 @@ PUBCHEM_ASSAYS_COL = f"{PUBCHEM}_assays"
 # STRING
 STRING_OUTPUT_DICT = {
     "stringdb_link_to": str,
-    "Ensembl": str,
+    STRING_INPUT_ID: str,
     "score": int
 }
 STRING_PPI_COL = f"{STRING}_ppi"
