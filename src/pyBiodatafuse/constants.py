@@ -77,6 +77,7 @@ ANATOMICAL_ENTITIES_LIST = [
 # Disease node
 # DISGENET
 DISGENET_OUTPUT_DICT = {
+    "disease_name": str,
     "HPO": str,  # "HPO_HP:0100013"
     "NCI": str,  # "NCI_C2910"
     "OMIM": str,  # "OMIM_607906"
@@ -86,7 +87,6 @@ DISGENET_OUTPUT_DICT = {
     "DO": str,  # "DO_0060041"
     "MESH": str,  # "MESH_D000067877"
     "UMLS": str,  # "UMLS_C1510586"
-    "disease_name": str,
     "disease_type": str,
     "disease_umlscui": str,  # "C1510586"
     "score": float,
