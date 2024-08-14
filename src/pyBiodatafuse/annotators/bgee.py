@@ -148,8 +148,31 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
     # Record the end time
     end_time = datetime.datetime.now()
 
+    """Metadata details"""
+    # Get the current date and time
+    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    # Calculate the time elapsed
+    time_elapsed = str(end_time - start_time)
+
+    # Add the datasource, query, query time, and the date to metadata
+    bgee_metadata = {
+        "datasource": BGEE,
+        "metadata": bgee_version,
+        "query": {
+            "size": len(gene_list),
+            "input_type": BGEE_INPUT_ID,
+            "time": time_elapsed,
+            "date": current_date,
+            "url": BGEE_ENDPOINT,
+        },
+    }
+
     if "anatomical_entity_id" not in intermediate_df:
-        return pd.DataFrame(), {"datasource": BGEE, "metadata": bgee_version}
+        warnings.warn(
+            f"There is no annotation for your input list in {BGEE}.",
+            stacklevel=2,
+        )
+        return pd.DataFrame(), bgee_metadata
 
     # Organize the annotation results as an array of dictionaries
     intermediate_df.rename(columns={"ensembl_id": "target"}, inplace=True)
@@ -185,29 +208,23 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
         col_name=BGEE,
     )
 
-    """Metadata details"""
-    # Get the current date and time
-    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    # Calculate the time elapsed
-    time_elapsed = str(end_time - start_time)
+    """Update metadata"""
     # Calculate the number of new nodes
     num_new_nodes = intermediate_df["anatomical_entity_id"].nunique()
     # Calculate the number of new edges
-    num_edges = len(intermediate_df)
+    num_new_edges = intermediate_df.drop_duplicates(
+        subset=["anatomical_entity_id", "gene_id"]
+    ).shape[0]
 
-    # Add the datasource, query, query time, and the date to metadata
-    bgee_metadata = {
-        "datasource": BGEE,
-        "metadata": bgee_version,
-        "query": {
-            "size": len(gene_list),
-            "input_type": BGEE_INPUT_ID,
-            "number_of_added_nodes": num_new_nodes,
-            "number_of_added_edges": num_edges,
-            "time": time_elapsed,
-            "date": current_date,
-            "url": BGEE_ENDPOINT,
-        },
-    }
+    # Check the intermediate_df
+    if num_new_edges != len(intermediate_df):
+        warnings.warn(
+            f"The intermediate_df in {BGEE} annotatur should be checked, please create an issue on https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
+            stacklevel=2,
+        )
+
+    # Add the number of new nodes and edges to metadata
+    bgee_metadata["query"]["number_of_added_nodes"] = num_new_nodes
+    bgee_metadata["query"]["number_of_added_edges"] = num_new_edges
 
     return merged_df, bgee_metadata

@@ -77,6 +77,7 @@ ANATOMICAL_ENTITIES_LIST = [
 # Disease node
 # DISGENET
 DISGENET_OUTPUT_DICT = {
+    "disease_name": str,
     "HPO": str,  # "HPO_HP:0100013"
     "NCI": str,  # "NCI_C2910"
     "OMIM": str,  # "OMIM_607906"
@@ -86,7 +87,6 @@ DISGENET_OUTPUT_DICT = {
     "DO": str,  # "DO_0060041"
     "MESH": str,  # "MESH_D000067877"
     "UMLS": str,  # "UMLS_C1510586"
-    "disease_name": str,
     "disease_type": str,
     "disease_umlscui": str,  # "C1510586"
     "score": float,
@@ -206,7 +206,8 @@ PUBCHEM_ASSAYS_COL = f"{PUBCHEM}_assays"
 
 # Gene Node
 # STRING
-# TODO: to be checked
+STRING_OUTPUT_DICT = {"stringdb_link_to": str, STRING_INPUT_ID: str, "score": int}
+STRING_PPI_COL = f"{STRING}_ppi"
 
 # Wikidata
 # TODO: to be checked
@@ -397,7 +398,7 @@ GENE_NODE_LABELS = "Gene"
 # STRING
 # TODO: to be checked
 STRING_EDGE_MAIN_LABEL = "stringdb_link_to"
-STRING_EDGE_LABEL = "StringDB_ppi_interaction"
+STRING_EDGE_LABEL = "StringDB_ppi"
 STRING_EDGE_ATTRS = {
     "source": STRING,
     "score": None,

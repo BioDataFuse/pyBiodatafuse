@@ -63,7 +63,9 @@ def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
     # Check if the MolMeDB endpoint is available
     api_available = check_endpoint_molmedb()
     if not api_available:
-        warnings.warn("MolMeDB endpoint is not available. Unable to retrieve data.", stacklevel=2)
+        warnings.warn(
+            f"{MOLMEDB} endpoint is not available. Unable to retrieve data.", stacklevel=2
+        )
         return pd.DataFrame(), {}
 
     # Record the start time
@@ -114,8 +116,30 @@ def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
     # Record the end time
     end_time = datetime.datetime.now()
 
+    """Metdata details"""
+    # Get the current date and time
+    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    # Calculate the time elapsed
+    time_elapsed = str(end_time - start_time)
+
+    # Add the datasource, query, query time, and the date to metadata
+    molmedb_metadata = {
+        "datasource": MOLMEDB,
+        "query": {
+            "size": len(molmedb_transporter_list),
+            "input_type": MOLMEDB_GENE_INPUT_ID,
+            "time": time_elapsed,
+            "date": current_date,
+            "url": MOLMEDB_ENDPOINT,
+        },
+    }
+
     if "transporterID" not in intermediate_df.columns:
-        return pd.DataFrame(), {"datasource": MOLMEDB, "metadata": ""}
+        warnings.warn(
+            f"There is no annotation for your input list in {MOLMEDB}.",
+            stacklevel=2,
+        )
+        return pd.DataFrame(), molmedb_metadata
 
     # Organize the annotation results as an array of dictionaries
     intermediate_df.rename(
@@ -161,29 +185,23 @@ def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
 
     main_df = pd.concat(main_df)
 
-    # Metadata details
-    # Get the current date and time
-    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    # Calculate the time elapsed
-    time_elapsed = str(end_time - start_time)
+    """Update metadata"""
     # Calculate the number of new nodes
     num_new_nodes = intermediate_df["molmedb_id"].nunique()
     # Calculate the number of new edges
-    num_edges = len(intermediate_df[["target", "molmedb_id"]].drop_duplicates())
+    num_new_edges = intermediate_df.drop_duplicates(subset=["target", "molmedb_id"]).shape[0]
 
-    # Add the datasource, query, query time, and the date to metadata
-    molmedb_metadata = {
-        "datasource": MOLMEDB,
-        "query": {
-            "size": len(molmedb_transporter_list),
-            "input_type": MOLMEDB_GENE_INPUT_ID,
-            "number_of_added_nodes": num_new_nodes,
-            "number_of_added_edges": num_edges,
-            "time": time_elapsed,
-            "date": current_date,
-            "url": MOLMEDB_ENDPOINT,
-        },
-    }
+    # TODO: the intemediate_df should be double checked when issue #153 is being addressed
+    # Check the intermediate_df
+    if num_new_edges != len(intermediate_df):
+        warnings.warn(
+            f"The intermediate_df in {MOLMEDB} annotatur should be checked, please create an issue on https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
+            stacklevel=2,
+        )
+
+    # Add the number of new nodes and edges to metadata
+    molmedb_metadata["query"]["number_of_added_nodes"] = num_new_nodes
+    molmedb_metadata["query"]["number_of_added_edges"] = num_new_edges
 
     return main_df, molmedb_metadata
 
@@ -197,7 +215,9 @@ def get_compound_gene_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
     # Check if the MolMeDB endpoint is available
     api_available = check_endpoint_molmedb()
     if not api_available:
-        warnings.warn("MolMeDB endpoint is not available. Unable to retrieve data.", stacklevel=2)
+        warnings.warn(
+            f"{MOLMEDB} endpoint is not available. Unable to retrieve data.", stacklevel=2
+        )
         return pd.DataFrame(), {}
 
     # Record the start time
@@ -254,9 +274,30 @@ def get_compound_gene_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
 
     # Record the end time
     end_time = datetime.datetime.now()
+    """Metdata details"""
+    # Get the current date and time
+    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    # Calculate the time elapsed
+    time_elapsed = str(end_time - start_time)
+
+    # Add the datasource, query, query time, and the date to metadata
+    molmedb_metadata = {
+        "datasource": MOLMEDB,
+        "query": {
+            "size": len(inhibitor_list_str),
+            "input_type": MOLMEDB_COMPOUND_INPUT_ID,
+            "time": time_elapsed,
+            "date": current_date,
+            "url": MOLMEDB_ENDPOINT,
+        },
+    }
 
     if "inhibitorInChIKey" not in intermediate_df.columns:
-        return pd.DataFrame(), {"datasource": MOLMEDB, "metadata": ""}
+        warnings.warn(
+            f"There is no annotation for your input list in {MOLMEDB}.",
+            stacklevel=2,
+        )
+        return pd.DataFrame(), molmedb_metadata
 
     # Organize the annotation results as an array of dictionaries
     intermediate_df.rename(
@@ -280,29 +321,22 @@ def get_compound_gene_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
         col_name=MOLMEDB_INHIBITED_COL,
     )
 
-    # Metdata details
-    # Get the current date and time
-    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    # Calculate the time elapsed
-    time_elapsed = str(end_time - start_time)
+    """Update metadata"""
     # Calculate the number of new nodes
     num_new_nodes = intermediate_df["uniprot_trembl_id"].nunique()
     # Calculate the number of new edges
-    num_edges = len(intermediate_df)
+    num_new_edges = intermediate_df.drop_duplicates(subset=["target", "uniprot_trembl_id"]).shape[0]
 
-    # Add the datasource, query, query time, and the date to metadata
-    molmedb_metadata = {
-        "datasource": MOLMEDB,
-        "query": {
-            "size": len(inhibitor_list_str),
-            "input_type": MOLMEDB_COMPOUND_INPUT_ID,
-            "number_of_added_nodes": num_new_nodes,
-            "number_of_added_edges": num_edges,
-            "time": time_elapsed,
-            "date": current_date,
-            "url": MOLMEDB_ENDPOINT,
-        },
-    }
+    # Check the intermediate_df
+    if num_new_edges != len(intermediate_df):
+        warnings.warn(
+            f"The intermediate_df in {MOLMEDB} annotatur should be checked, please create an issue on https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
+            stacklevel=2,
+        )
+
+    # Add the number of new nodes and edges to metadata
+    molmedb_metadata["query"]["number_of_added_nodes"] = num_new_nodes
+    molmedb_metadata["query"]["number_of_added_edges"] = num_new_edges
 
     return merged_df, molmedb_metadata
 

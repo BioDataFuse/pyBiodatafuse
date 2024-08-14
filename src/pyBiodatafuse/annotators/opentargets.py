@@ -151,6 +151,21 @@ def get_gene_go_process(
     # Record the end time
     end_time = datetime.datetime.now()
 
+    """Metdata details"""
+    # Get the current date and time
+    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    # Calculate the time elapsed
+    time_elapsed = str(end_time - start_time)
+
+    # Add version, datasource, query, query time, and the date to metadata
+    opentargets_version["query"] = {
+        "size": len(gene_ids),
+        "input_type": OPENTARGETS_GENE_INPUT_ID,
+        "time": time_elapsed,
+        "date": current_date,
+        "url": OPENTARGETS_ENDPOINT,
+    }
+
     # Generate the OpenTargets DataFrame
     intermediate_df = pd.DataFrame()
 
@@ -164,6 +179,10 @@ def get_gene_go_process(
         intermediate_df = pd.concat([intermediate_df, path_df], ignore_index=True)
 
     if intermediate_df.empty:
+        warnings.warn(
+            f"There is no annotation for your input list in {OPENTARGETS_GO_COL}.",
+            stacklevel=2,
+        )
         return pd.DataFrame(), opentargets_version
 
     intermediate_df.rename(
@@ -191,26 +210,22 @@ def get_gene_go_process(
         col_name=OPENTARGETS_GO_COL,
     )
 
-    """Metdata details"""
-    # Get the current date and time
-    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    # Calculate the time elapsed
-    time_elapsed = str(end_time - start_time)
+    """Update metadata"""
     # Calculate the number of new nodes
     num_new_nodes = intermediate_df["go_id"].nunique()
     # Calculate the number of new edges
-    num_edges = len(intermediate_df)
+    num_new_edges = intermediate_df.drop_duplicates(subset=["target", "go_id"]).shape[0]
 
-    # Add version, datasource, query, query time, and the date to metadata
-    opentargets_version["query"] = {
-        "size": len(gene_ids),
-        "input_type": OPENTARGETS_GENE_INPUT_ID,
-        "number_of_added_nodes": num_new_nodes,
-        "number_of_added_edges": num_edges,
-        "time": time_elapsed,
-        "date": current_date,
-        "url": OPENTARGETS_ENDPOINT,
-    }
+    # Check the intermediate_df
+    if num_new_edges != len(intermediate_df):
+        warnings.warn(
+            f"The intermediate_df in {OPENTARGETS_GO_COL} annotatur should be checked, please create an issue on https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
+            stacklevel=2,
+        )
+
+    # Add the number of new nodes and edges to metadata
+    opentargets_version["query"]["number_of_added_nodes"] = num_new_nodes
+    opentargets_version["query"]["number_of_added_edges"] = num_new_edges
 
     return merged_df, opentargets_version
 
@@ -257,6 +272,21 @@ def get_gene_reactome_pathways(
     # Record the end time
     end_time = datetime.datetime.now()
 
+    """Metdata details"""
+    # Get the current date and time
+    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    # Calculate the time elapsed
+    time_elapsed = str(end_time - start_time)
+
+    # Add version, datasource, query, query time, and the date to metadata
+    opentargets_version["query"] = {
+        "size": len(gene_ids),
+        "input_type": OPENTARGETS_GENE_INPUT_ID,
+        "time": time_elapsed,
+        "date": current_date,
+        "url": OPENTARGETS_ENDPOINT,
+    }
+
     # Generate the OpenTargets DataFrame
     intermediate_df = pd.DataFrame()
 
@@ -267,6 +297,10 @@ def get_gene_reactome_pathways(
         intermediate_df = pd.concat([intermediate_df, path_df], ignore_index=True)
 
     if intermediate_df.empty:
+        warnings.warn(
+            f"There is no annotation for your input list in {OPENTARGETS_REACTOME_COL}.",
+            stacklevel=2,
+        )
         return pd.DataFrame(), opentargets_version
 
     intermediate_df.rename(
@@ -290,26 +324,22 @@ def get_gene_reactome_pathways(
         col_name=OPENTARGETS_REACTOME_COL,
     )
 
-    """Metdata details"""
-    # Get the current date and time
-    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    # Calculate the time elapsed
-    time_elapsed = str(end_time - start_time)
+    """Update metadata"""
     # Calculate the number of new nodes
     num_new_nodes = intermediate_df["pathway_id"].nunique()
     # Calculate the number of new edges
-    num_edges = len(intermediate_df)
+    num_new_edges = intermediate_df.drop_duplicates(subset=["target", "pathway_id"]).shape[0]
 
-    # Add version, datasource, query, query time, and the date to metadata
-    opentargets_version["query"] = {
-        "size": len(gene_ids),
-        "input_type": OPENTARGETS_GENE_INPUT_ID,
-        "number_of_added_nodes": num_new_nodes,
-        "number_of_added_edges": num_edges,
-        "time": time_elapsed,
-        "date": current_date,
-        "url": OPENTARGETS_ENDPOINT,
-    }
+    # Check the intermediate_df
+    if num_new_edges != len(intermediate_df):
+        warnings.warn(
+            f"The intermediate_df in {OPENTARGETS_REACTOME_COL} annotatur should be checked, please create an issue on https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
+            stacklevel=2,
+        )
+
+    # Add the number of new nodes and edges to metadata
+    opentargets_version["query"]["number_of_added_nodes"] = num_new_nodes
+    opentargets_version["query"]["number_of_added_edges"] = num_new_edges
 
     return merged_df, opentargets_version
 
@@ -453,6 +483,22 @@ def get_gene_compound_interactions(
     # Record the end time
     end_time = datetime.datetime.now()
 
+    """Metdata details"""
+    # Get the current date and time
+    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    # Calculate the time elapsed
+    time_elapsed = str(end_time - start_time)
+
+    # Add version, datasource, query, query time, and the date to metadata
+    opentargets_version["query"] = {
+        "size": len(gene_ids),
+        "input_type": OPENTARGETS_GENE_INPUT_ID,
+        "time": time_elapsed,
+        "date": current_date,
+        "url": OPENTARGETS_ENDPOINT,
+    }
+
+    # Generate the OpenTargets DataFrame
     intermediate_df = pd.DataFrame()
 
     for gene in r["data"]["targets"]:
@@ -501,6 +547,10 @@ def get_gene_compound_interactions(
         )
 
     if intermediate_df.empty:
+        warnings.warn(
+            f"There is no annotation for your input list in {OPENTARGETS_COMPOUND_COL}.",
+            stacklevel=2,
+        )
         return pd.DataFrame(), opentargets_version
 
     # Fixing chembl_id to pubchem_id
@@ -526,26 +576,22 @@ def get_gene_compound_interactions(
         col_name=OPENTARGETS_COMPOUND_COL,
     )
 
-    """Metdata details"""
-    # Get the current date and time
-    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    # Calculate the time elapsed
-    time_elapsed = str(end_time - start_time)
+    """Update metadata"""
     # Calculate the number of new nodes
     num_new_nodes = intermediate_df["chembl_id"].nunique()
     # Calculate the number of new edges
-    num_edges = len(intermediate_df)
+    num_new_edges = intermediate_df.drop_duplicates(subset=["target", "chembl_id"]).shape[0]
 
-    # Add version, datasource, query, query time, and the date to metadata
-    opentargets_version["query"] = {
-        "size": len(gene_ids),
-        "input_type": OPENTARGETS_GENE_INPUT_ID,
-        "number_of_added_nodes": num_new_nodes,
-        "number_of_added_edges": num_edges,
-        "time": time_elapsed,
-        "date": current_date,
-        "url": OPENTARGETS_ENDPOINT,
-    }
+    # Check the intermediate_df
+    if num_new_edges != len(intermediate_df):
+        warnings.warn(
+            f"The intermediate_df in {OPENTARGETS_COMPOUND_COL} annotatur should be checked, please create an issue on https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
+            stacklevel=2,
+        )
+
+    # Add the number of new nodes and edges to metadata
+    opentargets_version["query"]["number_of_added_nodes"] = num_new_nodes
+    opentargets_version["query"]["number_of_added_edges"] = num_new_edges
 
     return merged_df, opentargets_version
 
@@ -645,9 +691,28 @@ def get_compound_disease_interactions(
     # Record the end time
     end_time = datetime.datetime.now()
 
+    """Metdata details"""
+    # Get the current date and time
+    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    # Calculate the time elapsed
+    time_elapsed = str(end_time - start_time)
+
+    # Add version, datasource, query, query time, and the date to metadata
+    opentargets_version["query"] = {
+        "size": len(chembl_ids),
+        "time": time_elapsed,
+        "date": current_date,
+        "url": OPENTARGETS_ENDPOINT,
+    }
+
+    # Generate the OpenTargets DataFrame
     intermediate_df = pd.DataFrame()
 
     if r["data"]["drugs"] is None:
+        warnings.warn(
+            f"There is no annotation for your input list in {OPENTARGETS_DISEASE_COL}.",
+            stacklevel=2,
+        )
         return pd.DataFrame(), opentargets_version
 
     for drug in r["data"]["drugs"]:
@@ -702,6 +767,10 @@ def get_compound_disease_interactions(
         intermediate_df = pd.concat([intermediate_df, disease_df], ignore_index=True)
 
     if intermediate_df.empty:
+        warnings.warn(
+            f"There is no annotation for your input list in {OPENTARGETS_DISEASE_COL}.",
+            stacklevel=2,
+        )
         return pd.DataFrame(), opentargets_version
 
     # Check if all keys in df match the keys in OUTPUT_DICT
@@ -710,26 +779,6 @@ def get_compound_disease_interactions(
         output_dict=OPENTARGETS_DISEASE_OUTPUT_DICT,
         check_values_in=["disease_id", "drug_id"],
     )
-
-    """Metdata details"""
-    # Get the current date and time
-    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    # Calculate the time elapsed
-    time_elapsed = str(end_time - start_time)
-    # Calculate the number of new nodes
-    num_new_nodes = intermediate_df["opentarget_disease_id"].nunique()
-    # Calculate the number of new edges
-    num_edges = len(intermediate_df)
-
-    # Add version, datasource, query, query time, and the date to metadata
-    opentargets_version["query"] = {
-        "size": len(chembl_ids),
-        "number_of_added_nodes": num_new_nodes,
-        "number_of_added_edges": num_edges,
-        "time": time_elapsed,
-        "date": current_date,
-        "url": OPENTARGETS_ENDPOINT,
-    }
 
     # Merge the two DataFrames on the target column
     if (
@@ -755,6 +804,24 @@ def get_compound_disease_interactions(
             col_name=OPENTARGETS_DISEASE_COL,
         )
         opentargets_version["query"]["input_type"] = OPENTARGETS_COMPOUND_INPUT_ID
+
+    # Calculate the number of new nodes
+    num_new_nodes = intermediate_df["opentarget_disease_id"].nunique()
+    # Calculate the number of new edges
+    num_new_edges = intermediate_df.drop_duplicates(
+        subset=["target", "opentarget_disease_id"]
+    ).shape[0]
+
+    # Check the intermediate_df
+    if num_new_edges != len(intermediate_df):
+        warnings.warn(
+            f"The intermediate_df in {OPENTARGETS_DISEASE_COL} annotatur should be checked, please create an issue on https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
+            stacklevel=2,
+        )
+
+    # Add the number of new nodes and edges to metadata
+    opentargets_version["query"]["number_of_added_nodes"] = num_new_nodes
+    opentargets_version["query"]["number_of_added_edges"] = num_new_edges
 
     return merged_df, opentargets_version
 

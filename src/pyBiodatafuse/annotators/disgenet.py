@@ -145,10 +145,33 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
     # Record the end time
     end_time = datetime.datetime.now()
 
+    """Metdata details"""
+    # Get the current date and time
+    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    # Calculate the time elapsed
+    time_elapsed = str(end_time - start_time)
+
+    # Add version, datasource, query, query time, and the date to metadata
+    disgenet_metadata = {
+        "datasource": DISGENET,
+        "metadata": disgenet_version,
+        "query": {
+            "size": len(data_df["target"].drop_duplicates()),
+            "input_type": DISGENET_INPUT_ID,
+            "time": time_elapsed,
+            "date": current_date,
+            "url": DISGENET_ENDPOINT,
+        },
+    }
+
     # Organize the annotation results as an array of dictionaries
     intermediate_df = pd.DataFrame(disgenet_output)
     if "geneNcbiID" not in intermediate_df:
-        return pd.DataFrame(), {"datasource": DISGENET, "metadata": disgenet_version}
+        warnings.warn(
+            f"There is no annotation for your input list in {DISGENET}.",
+            stacklevel=2,
+        )
+        return pd.DataFrame(), disgenet_metadata
 
     # extract disease identifiers from diseaseVocabularies column
     # Initialize dictionaries to store the columns
@@ -211,13 +234,7 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
         # "geneProteinClassNames",
         # "diseaseVocabularies",
         "target",
-        "disease_name",
         *DISGENET_OUTPUT_DICT.keys(),
-        "disease_type",
-        "disease_umlscui",
-        "score",
-        "ei",
-        "el",
     ]
     intermediate_df = intermediate_df[selected_columns]
 
@@ -237,29 +254,21 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
         col_name=DISGENET_DISEASE_COL,
     )
 
-    """Metdata details"""
-    # Get the current date and time
-    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    # Calculate the time elapsed
-    time_elapsed = str(end_time - start_time)
+    """Update metadata"""
     # Calculate the number of new nodes
     num_new_nodes = intermediate_df["disease_name"].nunique()
     # Calculate the number of new edges
-    num_edges = len(intermediate_df)
+    num_new_edges = intermediate_df.drop_duplicates(subset=["target", "disease_name"]).shape[0]
 
-    # Add version, datasource, query, query time, and the date to metadata
-    disgenet_metadata = {
-        "datasource": DISGENET,
-        "metadata": disgenet_version,
-        "query": {
-            "size": len(data_df["target"].drop_duplicates()),
-            "input_type": DISGENET_INPUT_ID,
-            "number_of_added_nodes": num_new_nodes,
-            "number_of_added_edges": num_edges,
-            "time": time_elapsed,
-            "date": current_date,
-            "url": DISGENET_ENDPOINT,
-        },
-    }
+    # Check the intermediate_df
+    if num_new_edges != len(intermediate_df):
+        warnings.warn(
+            f"The intermediate_df in {DISGENET} annotatur should be checked, please create an issue on https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
+            stacklevel=2,
+        )
+
+    # Add the number of new nodes and edges to metadata
+    disgenet_metadata["query"]["number_of_added_nodes"] = num_new_nodes
+    disgenet_metadata["query"]["number_of_added_edges"] = num_new_edges
 
     return merged_df, disgenet_metadata

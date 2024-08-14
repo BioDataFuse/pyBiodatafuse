@@ -11,8 +11,14 @@ import numpy as np
 import pandas as pd
 import requests
 
-from pyBiodatafuse.constants import STRING, STRING_ENDPOINT, STRING_INPUT_ID
-from pyBiodatafuse.utils import get_identifier_of_interest
+from pyBiodatafuse.constants import (
+    STRING,
+    STRING_ENDPOINT,
+    STRING_INPUT_ID,
+    STRING_OUTPUT_DICT,
+    STRING_PPI_COL,
+)
+from pyBiodatafuse.utils import check_columns_against_constants, get_identifier_of_interest
 
 logger = logging.getLogger("stringdb")
 
@@ -124,6 +130,14 @@ def get_ppi(bridgedb_df: pd.DataFrame):
 
     gene_list = list(set(data_df["target"].tolist()))
 
+    # Return empty dataframe when only one input submitted
+    if len(gene_list) == 1:
+        warnings.warn(
+            f"There is only one input gene/protein. Provide at least two input to extract their interactions from {STRING}.",
+            stacklevel=2,
+        )
+        return pd.DataFrame(), {}
+
     # Get ids
     string_ids = get_string_ids(gene_list)
     stringdb_ids_df = pd.DataFrame(string_ids)
@@ -133,29 +147,8 @@ def get_ppi(bridgedb_df: pd.DataFrame):
     response = _get_ppi_data(list(stringdb_ids_df.stringId.unique()))
     network_df = pd.DataFrame(response)
 
-    if "stringId_A" not in network_df.columns:
-        return pd.DataFrame(), {}
-
-    # Format the data
-    data_df[STRING] = data_df.apply(_format_data, network_df=network_df, axis=1)
-    data_df[STRING] = data_df[STRING].apply(
-        lambda x: (
-            [
-                {
-                    "stringdb_link_to": np.nan,
-                    STRING_INPUT_ID: np.nan,
-                    "score": np.nan,
-                }
-            ]
-            if len(x) == 0
-            else x
-        )
-    )
-
     # Record the end time
     end_time = datetime.datetime.now()
-
-    # TODO: Check if all keys in df match the keys in OUTPUT_DICT
 
     """Metdata details"""
     # Get the current date and time
@@ -163,7 +156,14 @@ def get_ppi(bridgedb_df: pd.DataFrame):
     # Calculate the time elapsed
     time_elapsed = str(end_time - start_time)
     # Calculate the number of new edges
-    num_edges = len(network_df)
+    num_new_edges = network_df.drop_duplicates(subset=["stringId_A", "stringId_B"]).shape[0]
+
+    # Check the network_df
+    if num_new_edges != len(network_df):
+        warnings.warn(
+            f"The network_df in {STRING} annotatur should be checked, please create an issue https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
+            stacklevel=2,
+        )
 
     # Add the datasource, query, query time, and the date to metadata
     string_metadata = {
@@ -172,11 +172,34 @@ def get_ppi(bridgedb_df: pd.DataFrame):
         "query": {
             "size": len(gene_list),
             "input_type": STRING_INPUT_ID,
-            "number_of_added_edges": num_edges,
+            "number_of_added_edges": num_new_edges,
             "time": time_elapsed,
             "date": current_date,
             "url": STRING_ENDPOINT,
         },
     }
+
+    if "stringId_A" not in network_df.columns:
+        warnings.warn(
+            f"There is no interaction between your input list based on {STRING}, {string_version}.",
+            stacklevel=2,
+        )
+        return pd.DataFrame(), string_metadata
+
+    # Format the data
+    data_df[STRING_PPI_COL] = data_df.apply(_format_data, network_df=network_df, axis=1)
+
+    data_df[STRING_PPI_COL] = data_df[STRING_PPI_COL].apply(
+        lambda x: ([{key: np.nan for key in STRING_OUTPUT_DICT.keys()}] if len(x) == 0 else x)
+    )
+
+    # Check if all keys in df match the keys in OUTPUT_DICT
+    exploded_df = data_df.explode(STRING_PPI_COL)
+    ppi_df = pd.json_normalize(exploded_df[STRING_PPI_COL])
+    check_columns_against_constants(
+        data_df=ppi_df,
+        output_dict=STRING_OUTPUT_DICT,
+        check_values_in=[],
+    )
 
     return data_df, string_metadata

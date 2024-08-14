@@ -262,8 +262,25 @@ def get_gene_minerva_pathways(
     # Record the end time
     end_time = datetime.datetime.now()
 
-    if "symbol" not in intermediate_df:
-        return pd.DataFrame(), {"datasource": MINERVA, "metadata": minerva_version}
+    """Metdata details"""
+    # Get the current date and time
+    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    # Calculate the time elapsed
+    time_elapsed = str(end_time - start_time)
+
+    # Add the datasource, query, query time, and the date to metadata
+    minerva_metadata = {
+        "datasource": MINERVA,
+        "metadata": minerva_version,
+        "query": {
+            "size": data_df["target"].nunique(),
+            "input_type": MINERVA_INPUT_ID,
+            "MINERVA project": map_name,
+            "time": time_elapsed,
+            "date": current_date,
+            "url": map_url,
+        },
+    }
 
     # Organize the annotation results as an array of dictionaries
     intermediate_df.rename(columns={"ensembl": "target"}, inplace=True)
@@ -273,6 +290,13 @@ def get_gene_minerva_pathways(
         subset=["target", "pathway_id", "pathway_label", "pathway_gene_count"]
     )
     intermediate_df = intermediate_df[intermediate_df["target"].isin(data_df["target"])]
+
+    if intermediate_df.empty:
+        warnings.warn(
+            f"There is no annotation for your input list in {MINERVA}, project {map_name}.",
+            stacklevel=2,
+        )
+        return pd.DataFrame(), minerva_metadata
 
     # Check if all keys in df match the keys in OUTPUT_DICT
     check_columns_against_constants(
@@ -291,30 +315,21 @@ def get_gene_minerva_pathways(
         col_name=MINERVA,
     )
 
-    """Metdata details"""
-    # Get the current date and time
-    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    # Calculate the time elapsed
-    time_elapsed = str(end_time - start_time)
+    """Update metadata"""
     # Calculate the number of new nodes
     num_new_nodes = intermediate_df["pathway_id"].nunique()
     # Calculate the number of new edges
-    num_edges = len(intermediate_df)
+    num_new_edges = intermediate_df.drop_duplicates(subset=["target", "pathway_id"]).shape[0]
 
-    # Add the datasource, query, query time, and the date to metadata
-    minerva_metadata = {
-        "datasource": MINERVA,
-        "metadata": minerva_version,
-        "query": {
-            "size": data_df["target"].nunique(),
-            "input_type": MINERVA_INPUT_ID,
-            "number_of_added_nodes": num_new_nodes,
-            "number_of_added_edges": num_edges,
-            "MINERVA project": map_name,
-            "time": time_elapsed,
-            "date": current_date,
-            "url": map_url,
-        },
-    }
+    # Check the intermediate_df
+    if num_new_edges != len(intermediate_df):
+        warnings.warn(
+            f"The intermediate_df in {MINERVA} annotatur should be checked, please create an issue on https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
+            stacklevel=2,
+        )
+
+    # Add the number of new nodes and edges to metadata
+    minerva_metadata["query"]["number_of_added_nodes"] = num_new_nodes
+    minerva_metadata["query"]["number_of_added_edges"] = num_new_edges
 
     return merged_df, minerva_metadata
