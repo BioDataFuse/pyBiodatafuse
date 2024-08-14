@@ -271,7 +271,7 @@ def get_gene_reactome_pathways(
 
     # Record the end time
     end_time = datetime.datetime.now()
-    
+
     """Metdata details"""
     # Get the current date and time
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -336,7 +336,7 @@ def get_gene_reactome_pathways(
             f"The intermediate_df in {OPENTARGETS_REACTOME_COL} annotatur should be checked, please create an issue on https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
             stacklevel=2,
         )
-        
+
     # Add the number of new nodes and edges to metadata
     opentargets_version["query"]["number_of_added_nodes"] = num_new_nodes
     opentargets_version["query"]["number_of_added_edges"] = num_new_edges
@@ -690,7 +690,7 @@ def get_compound_disease_interactions(
     r = requests.post(OPENTARGETS_ENDPOINT, json={"query": query_string}).json()
     # Record the end time
     end_time = datetime.datetime.now()
-    
+
     """Metdata details"""
     # Get the current date and time
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -704,7 +704,7 @@ def get_compound_disease_interactions(
         "date": current_date,
         "url": OPENTARGETS_ENDPOINT,
     }
-    
+
     # Generate the OpenTargets DataFrame
     intermediate_df = pd.DataFrame()
 
@@ -808,7 +808,9 @@ def get_compound_disease_interactions(
     # Calculate the number of new nodes
     num_new_nodes = intermediate_df["opentarget_disease_id"].nunique()
     # Calculate the number of new edges
-    num_new_edges = intermediate_df.drop_duplicates(subset=["target", "opentarget_disease_id"]).shape[0]
+    num_new_edges = intermediate_df.drop_duplicates(
+        subset=["target", "opentarget_disease_id"]
+    ).shape[0]
 
     # Check the intermediate_df
     if num_new_edges != len(intermediate_df):
