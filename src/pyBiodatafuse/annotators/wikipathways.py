@@ -134,8 +134,31 @@ def get_gene_wikipathways(bridgedb_df: pd.DataFrame):
     # Record the end time
     end_time = datetime.datetime.now()
 
+    """Metdata details"""
+    # Get the current date and time
+    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    # Calculate the time elapsed
+    time_elapsed = str(end_time - start_time)
+
+    # Add the datasource, query, query time, and the date to metadata
+    wikipathways_metadata = {
+        "datasource": WIKIPATHWAYS,
+        "metadata": wikipathways_version,
+        "query": {
+            "size": len(gene_list),
+            "input_type": WIKIPATHWAYS_INPUT_ID,
+            "time": time_elapsed,
+            "date": current_date,
+            "url": WIKIPATHWAYS_ENDPOINT,
+        },
+    }
+
     if "gene_id" not in intermediate_df.columns:
-        return pd.DataFrame(), {"datasource": WIKIPATHWAYS, "metadata": wikipathways_version}
+        warnings.warn(
+            f"There is no annotation for your input list in {WIKIPATHWAYS}.",
+            stacklevel=2,
+        )
+        return pd.DataFrame(), wikipathways_metadata
 
     # Organize the annotation results as an array of dictionaries
     intermediate_df.rename(columns={"gene_id": "target"}, inplace=True)
@@ -159,29 +182,21 @@ def get_gene_wikipathways(bridgedb_df: pd.DataFrame):
         col_name=WIKIPATHWAYS,
     )
 
-    # Metdata details
-    # Get the current date and time
-    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    # Calculate the time elapsed
-    time_elapsed = str(end_time - start_time)
+    """Update metadata"""
     # Calculate the number of new nodes
     num_new_nodes = intermediate_df["pathway_id"].nunique()
     # Calculate the number of new edges
-    num_edges = len(intermediate_df)
+    num_new_edges = intermediate_df.drop_duplicates(subset=["target", "pathway_id"]).shape[0]
 
-    # Add the datasource, query, query time, and the date to metadata
-    wikipathways_metadata = {
-        "datasource": WIKIPATHWAYS,
-        "metadata": wikipathways_version,
-        "query": {
-            "size": len(gene_list),
-            "input_type": WIKIPATHWAYS_INPUT_ID,
-            "number_of_added_nodes": num_new_nodes,
-            "number_of_added_edges": num_edges,
-            "time": time_elapsed,
-            "date": current_date,
-            "url": WIKIPATHWAYS_ENDPOINT,
-        },
-    }
+    # Check the intermediate_df
+    if num_new_edges != len(intermediate_df):
+        warnings.warn(
+            f"The intermediate_df in {WIKIPATHWAYS} annotatur should be checked, please create an issue on https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
+            stacklevel=2,
+        )
+
+    # Add the number of new nodes and edges to metadata
+    wikipathways_metadata["query"]["number_of_added_nodes"] = num_new_nodes
+    wikipathways_metadata["query"]["number_of_added_edges"] = num_new_edges
 
     return merged_df, wikipathways_metadata
