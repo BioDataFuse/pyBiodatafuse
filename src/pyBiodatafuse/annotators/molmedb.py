@@ -185,8 +185,6 @@ def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
 
     main_df = pd.concat(main_df)
 
-    print(intermediate_df)
-
     """Update metadata"""
     # Calculate the number of new nodes
     num_new_nodes = intermediate_df["molmedb_id"].nunique()
@@ -322,8 +320,6 @@ def get_compound_gene_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
         target_specific_cols=list(MOLMEDB_COMPOUND_OUTPUT_DICT.keys()),
         col_name=MOLMEDB_INHIBITED_COL,
     )
-
-    print(intermediate_df)
 
     """Update metadata"""
     # Calculate the number of new nodes
