@@ -63,7 +63,9 @@ def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
     # Check if the MolMeDB endpoint is available
     api_available = check_endpoint_molmedb()
     if not api_available:
-        warnings.warn(f"{MOLMEDB} endpoint is not available. Unable to retrieve data.", stacklevel=2)
+        warnings.warn(
+            f"{MOLMEDB} endpoint is not available. Unable to retrieve data.", stacklevel=2
+        )
         return pd.DataFrame(), {}
 
     # Record the start time
@@ -113,7 +115,7 @@ def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
 
     # Record the end time
     end_time = datetime.datetime.now()
-    
+
     """Metdata details"""
     # Get the current date and time
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -215,7 +217,9 @@ def get_compound_gene_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
     # Check if the MolMeDB endpoint is available
     api_available = check_endpoint_molmedb()
     if not api_available:
-        warnings.warn(f"{MOLMEDB} endpoint is not available. Unable to retrieve data.", stacklevel=2)
+        warnings.warn(
+            f"{MOLMEDB} endpoint is not available. Unable to retrieve data.", stacklevel=2
+        )
         return pd.DataFrame(), {}
 
     # Record the start time
