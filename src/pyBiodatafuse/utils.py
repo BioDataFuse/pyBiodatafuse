@@ -194,7 +194,6 @@ def process_selected_sources(
 
     for source in selected_sources_list:
         if source in data_source_functions:
-            print(source)
             tmp_data, tmp_metadata = data_source_functions[source](bridgedb_df)
             combined_metadata[source] = tmp_metadata
             if tmp_data.empty:
