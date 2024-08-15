@@ -3,13 +3,22 @@
 """Python utils file for global functions."""
 
 import warnings
+from collections import defaultdict
 from typing import List
 
 import pandas as pd
-from collections import defaultdict
 
+from pyBiodatafuse.annotators import (
+    bgee,
+    disgenet,
+    minerva,
+    molmedb,
+    opentargets,
+    pubchem,
+    stringdb,
+    wikipathways,
+)
 from pyBiodatafuse.id_mapper import read_resource_files
-from pyBiodatafuse.annotators import bgee, disgenet, minerva, molmedb, opentargets, pubchem, stringdb, wikipathways
 
 
 def get_identifier_of_interest(bridgedb_df: pd.DataFrame, db_source: str) -> pd.DataFrame:
