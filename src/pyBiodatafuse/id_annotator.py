@@ -20,6 +20,7 @@ def process_selected_sources(
     :param selected_sources_list: list of selected databases
     :param api_key: DisGeNET API key (more details can be found at https://disgenet.com/plans)
     :returns: a DataFrame containing the combined output and dictionary of the metadata.
+    :raises ValueError: If 'disgenet' is in the selected_sources_list and api_key is not provided.
     """
     # Check if 'disgenet' is in the selected sources and if API key is provided
     if "disgenet" in selected_sources_list and not api_key:
@@ -29,19 +30,10 @@ def process_selected_sources(
     combined_data = pd.DataFrame()
     combined_metadata: DefaultDict[str, dict] = defaultdict(dict)
 
-    # Wrapper function that returns a callable with the correct signature
-    def get_gene_disease_api_function(
-        api_key: str,
-    ) -> Callable[[pd.DataFrame], Tuple[pd.DataFrame, dict]]:
-        def wrapper(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
-            return disgenet.get_gene_disease(bridgedb_df, api_key)
-
-        return wrapper
-
     # Dictionary to map the datasource names to their corresponding functions
     data_source_functions: Dict[str, Callable[[pd.DataFrame], Tuple[pd.DataFrame, dict]]] = {
         # TODO: "bgee": bgee.get_gene_expression,
-        "disgenet": get_gene_disease_api_function(api_key),
+        "disgenet": _get_gene_disease_api_function(api_key),
         # TODO: "minerva": minera.get,
         # TODO: "molmedb": molmedb.get_mol_gene_inhibitor,
         # TODO: "pubchem"
@@ -65,3 +57,23 @@ def process_selected_sources(
                 combined_data = combine_sources([combined_data, tmp_data])
 
     return combined_data, combined_metadata
+
+
+def _get_gene_disease_api_function(
+    api_key: Optional[str] = None,
+) -> Callable[[pd.DataFrame], Tuple[pd.DataFrame, dict]]:
+    """Extract gene-disease data from DisGeNET using the provided API key.
+
+    :param api_key: DisGeNET API key (more details can be found at https://disgenet.com/plans)
+    :returns: A function that takes a DataFrame and returns a tuple containing the annotated DataFrame and metadata dictionary.
+    """
+
+    def wrapper(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
+        """Extract gene-disease data from DisGeNET using the provided API key.
+
+        :param bridgedb_df: BridgeDb output for creating the list of gene ids to query.
+        :returns: a DataFrame containing the DisGeNET output and dictionary of the DisGeNET metadata.
+        """
+        return disgenet.get_gene_disease(bridgedb_df, api_key)
+
+    return wrapper
