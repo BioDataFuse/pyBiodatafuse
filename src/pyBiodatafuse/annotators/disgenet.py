@@ -7,7 +7,7 @@ import json
 import logging
 import time
 import warnings
-from typing import Dict, List, Set, Tuple
+from typing import Any, Dict, List, Set, Tuple
 
 import numpy as np
 import pandas as pd
@@ -152,7 +152,7 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
     time_elapsed = str(end_time - start_time)
 
     # Add version, datasource, query, query time, and the date to metadata
-    disgenet_metadata = {
+    disgenet_metadata: Dict[str, Any] = {
         "datasource": DISGENET,
         "metadata": disgenet_version,
         "query": {

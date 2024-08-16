@@ -23,6 +23,7 @@
                                 "id": "CHEMBL1201248",
                                 "name": "CISATRACURIUM",
                                 "isApproved": true,
+                                "maximumClinicalTrialPhase": 4,
                                 "crossReferences": [
                                     {
                                         "source": "Wikipedia",
@@ -125,6 +126,7 @@
                                 "id": "CHEMBL1200641",
                                 "name": "CISATRACURIUM BESYLATE",
                                 "isApproved": true,
+                                "maximumClinicalTrialPhase": 4,
                                 "crossReferences": [
                                     {
                                         "source": "DailyMed",
@@ -233,6 +235,7 @@
                                 "id": "CHEMBL1200641",
                                 "name": "CISATRACURIUM BESYLATE",
                                 "isApproved": true,
+                                "maximumClinicalTrialPhase": 4,
                                 "crossReferences": [
                                     {
                                         "source": "DailyMed",
@@ -341,6 +344,7 @@
                                 "id": "CHEMBL703",
                                 "name": "SUXAMETHONIUM",
                                 "isApproved": true,
+                                "maximumClinicalTrialPhase": 4,
                                 "crossReferences": [
                                     {
                                         "source": "PubChem",
@@ -450,6 +454,7 @@
                                 "id": "CHEMBL1200641",
                                 "name": "CISATRACURIUM BESYLATE",
                                 "isApproved": true,
+                                "maximumClinicalTrialPhase": 4,
                                 "crossReferences": [
                                     {
                                         "source": "DailyMed",
@@ -558,6 +563,7 @@
                                 "id": "CHEMBL1201248",
                                 "name": "CISATRACURIUM",
                                 "isApproved": true,
+                                "maximumClinicalTrialPhase": 4,
                                 "crossReferences": [
                                     {
                                         "source": "Wikipedia",
@@ -660,6 +666,7 @@
                                 "id": "CHEMBL1201244",
                                 "name": "ROCURONIUM",
                                 "isApproved": true,
+                                "maximumClinicalTrialPhase": 4,
                                 "crossReferences": [
                                     {
                                         "source": "PubChem",
@@ -774,6 +781,7 @@
                                 "id": "CHEMBL1201244",
                                 "name": "ROCURONIUM",
                                 "isApproved": true,
+                                "maximumClinicalTrialPhase": 4,
                                 "crossReferences": [
                                     {
                                         "source": "PubChem",
@@ -888,6 +896,7 @@
                                 "id": "CHEMBL1201244",
                                 "name": "ROCURONIUM",
                                 "isApproved": true,
+                                "maximumClinicalTrialPhase": 4,
                                 "crossReferences": [
                                     {
                                         "source": "PubChem",
@@ -1002,6 +1011,7 @@
                                 "id": "CHEMBL1200641",
                                 "name": "CISATRACURIUM BESYLATE",
                                 "isApproved": true,
+                                "maximumClinicalTrialPhase": 4,
                                 "crossReferences": [
                                     {
                                         "source": "DailyMed",
@@ -1110,6 +1120,7 @@
                                 "id": "CHEMBL1201219",
                                 "name": "VECURONIUM",
                                 "isApproved": true,
+                                "maximumClinicalTrialPhase": 4,
                                 "crossReferences": [
                                     {
                                         "source": "PubChem",
@@ -1224,6 +1235,7 @@
                                 "id": "CHEMBL1201248",
                                 "name": "CISATRACURIUM",
                                 "isApproved": true,
+                                "maximumClinicalTrialPhase": 4,
                                 "crossReferences": [
                                     {
                                         "source": "Wikipedia",
@@ -1326,6 +1338,7 @@
                                 "id": "CHEMBL1201244",
                                 "name": "ROCURONIUM",
                                 "isApproved": true,
+                                "maximumClinicalTrialPhase": 4,
                                 "crossReferences": [
                                     {
                                         "source": "PubChem",
@@ -1440,6 +1453,7 @@
                                 "id": "CHEMBL1201219",
                                 "name": "VECURONIUM",
                                 "isApproved": true,
+                                "maximumClinicalTrialPhase": 4,
                                 "crossReferences": [
                                     {
                                         "source": "PubChem",
@@ -1554,6 +1568,7 @@
                                 "id": "CHEMBL1201244",
                                 "name": "ROCURONIUM",
                                 "isApproved": true,
+                                "maximumClinicalTrialPhase": 4,
                                 "crossReferences": [
                                     {
                                         "source": "PubChem",
@@ -1668,6 +1683,7 @@
                                 "id": "CHEMBL983",
                                 "name": "SUCCINYLCHOLINE CHLORIDE",
                                 "isApproved": true,
+                                "maximumClinicalTrialPhase": 4,
                                 "crossReferences": [
                                     {
                                         "source": "DailyMed",
@@ -1784,6 +1800,7 @@
                                 "id": "CHEMBL1201244",
                                 "name": "ROCURONIUM",
                                 "isApproved": true,
+                                "maximumClinicalTrialPhase": 4,
                                 "crossReferences": [
                                     {
                                         "source": "PubChem",
@@ -1898,6 +1915,7 @@
                                 "id": "CHEMBL1201219",
                                 "name": "VECURONIUM",
                                 "isApproved": true,
+                                "maximumClinicalTrialPhase": 4,
                                 "crossReferences": [
                                     {
                                         "source": "PubChem",
@@ -2012,6 +2030,7 @@
                                 "id": "CHEMBL1201248",
                                 "name": "CISATRACURIUM",
                                 "isApproved": true,
+                                "maximumClinicalTrialPhase": 4,
                                 "crossReferences": [
                                     {
                                         "source": "Wikipedia",
@@ -2114,6 +2133,7 @@
                                 "id": "CHEMBL1201244",
                                 "name": "ROCURONIUM",
                                 "isApproved": true,
+                                "maximumClinicalTrialPhase": 4,
                                 "crossReferences": [
                                     {
                                         "source": "PubChem",
@@ -2228,6 +2248,7 @@
                                 "id": "CHEMBL1201244",
                                 "name": "ROCURONIUM",
                                 "isApproved": true,
+                                "maximumClinicalTrialPhase": 4,
                                 "crossReferences": [
                                     {
                                         "source": "PubChem",
@@ -2342,6 +2363,7 @@
                                 "id": "CHEMBL1201244",
                                 "name": "ROCURONIUM",
                                 "isApproved": true,
+                                "maximumClinicalTrialPhase": 4,
                                 "crossReferences": [
                                     {
                                         "source": "PubChem",
@@ -2456,6 +2478,7 @@
                                 "id": "CHEMBL1201248",
                                 "name": "CISATRACURIUM",
                                 "isApproved": true,
+                                "maximumClinicalTrialPhase": 4,
                                 "crossReferences": [
                                     {
                                         "source": "Wikipedia",
@@ -2558,6 +2581,7 @@
                                 "id": "CHEMBL1201244",
                                 "name": "ROCURONIUM",
                                 "isApproved": true,
+                                "maximumClinicalTrialPhase": 4,
                                 "crossReferences": [
                                     {
                                         "source": "PubChem",
@@ -2672,6 +2696,7 @@
                                 "id": "CHEMBL1201244",
                                 "name": "ROCURONIUM",
                                 "isApproved": true,
+                                "maximumClinicalTrialPhase": 4,
                                 "crossReferences": [
                                     {
                                         "source": "PubChem",

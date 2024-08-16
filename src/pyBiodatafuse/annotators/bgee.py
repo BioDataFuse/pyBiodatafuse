@@ -6,6 +6,7 @@ import datetime
 import os
 import warnings
 from string import Template
+from typing import Any, Dict
 
 import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
@@ -155,7 +156,7 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
     time_elapsed = str(end_time - start_time)
 
     # Add the datasource, query, query time, and the date to metadata
-    bgee_metadata = {
+    bgee_metadata: Dict[str, Any] = {
         "datasource": BGEE,
         "metadata": bgee_version,
         "query": {

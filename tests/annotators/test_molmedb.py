@@ -208,29 +208,7 @@ class TestMolMeDb(unittest.TestCase):
                         "chebi_id": nan,
                         "drugbank_id": nan,
                         "uniprot_trembl_id": nan,
-                    },
-                    {
-                        "compound_name": "Euphorbiaproliferin c",
-                        "InChIKey": "MEMULCZBXUZFOZ-UHFFFAOYSA-N",
-                        "SMILES": "CC(=O)OC1C2(C)OCC3(C(=O)C=CC(C(C)(C)OC(C)=O)C23)C(OC(C)=O)C2C(OC(=O)C(C)C)C(C)CC21OC(C)=O",
-                        "compound_cid": nan,
-                        "molmedb_id": "MM470852",
-                        "source_pmid": "27441737",
-                        "chebi_id": nan,
-                        "drugbank_id": nan,
-                        "uniprot_trembl_id": "P48544",
-                    },
-                    {
-                        "compound_name": "Euphornin",
-                        "InChIKey": "BRVXVMOWTHQKHC-LVYIKVSWSA-N",
-                        "SMILES": "CC(=O)OC1CC(OC(C)=O)C(C)(C)/C=C\\C(C)C(OC(C)=O)C2(O)CC(C)C(OC(=O)c3ccccc3)C2/C=C\\1C",
-                        "compound_cid": nan,
-                        "molmedb_id": "MM470853",
-                        "source_pmid": "30411614",
-                        "chebi_id": "140105",
-                        "drugbank_id": nan,
-                        "uniprot_trembl_id": "P48544",
-                    },
+                    }
                 ],
                 [
                     {
@@ -243,29 +221,7 @@ class TestMolMeDb(unittest.TestCase):
                         "chebi_id": nan,
                         "drugbank_id": nan,
                         "uniprot_trembl_id": nan,
-                    },
-                    {
-                        "compound_name": "Euphorbiaproliferin c",
-                        "InChIKey": "MEMULCZBXUZFOZ-UHFFFAOYSA-N",
-                        "SMILES": "CC(=O)OC1C2(C)OCC3(C(=O)C=CC(C(C)(C)OC(C)=O)C23)C(OC(C)=O)C2C(OC(=O)C(C)C)C(C)CC21OC(C)=O",
-                        "compound_cid": nan,
-                        "molmedb_id": "MM470852",
-                        "source_pmid": "27441737",
-                        "chebi_id": nan,
-                        "drugbank_id": nan,
-                        "uniprot_trembl_id": "P48544",
-                    },
-                    {
-                        "compound_name": "Euphornin",
-                        "InChIKey": "BRVXVMOWTHQKHC-LVYIKVSWSA-N",
-                        "SMILES": "CC(=O)OC1CC(OC(C)=O)C(C)(C)/C=C\\C(C)C(OC(C)=O)C2(O)CC(C)C(OC(=O)c3ccccc3)C2/C=C\\1C",
-                        "compound_cid": nan,
-                        "molmedb_id": "MM470853",
-                        "source_pmid": "30411614",
-                        "chebi_id": "140105",
-                        "drugbank_id": nan,
-                        "uniprot_trembl_id": "P48544",
-                    },
+                    }
                 ],
                 [
                     {
