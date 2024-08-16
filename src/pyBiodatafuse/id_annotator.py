@@ -7,11 +7,11 @@ from typing import Callable, DefaultDict, Dict, Optional, Tuple
 
 import pandas as pd
 
-from pyBiodatafuse.annotators import disgenet, opentargets, stringdb, wikipathways
+from pyBiodatafuse.annotators import bgee, disgenet, minerva, molmedb, opentargets, pubchem, stringdb, wikipathways
 from pyBiodatafuse.utils import combine_sources
 
 
-def process_selected_sources(
+def run_gene_selected_sources(
     bridgedb_df: pd.DataFrame, selected_sources_list: list, api_key: Optional[str] = None
 ) -> Tuple[pd.DataFrame, DefaultDict[str, dict]]:
     """Query the selected databases and convert the output to a dataframe.
@@ -32,15 +32,15 @@ def process_selected_sources(
 
     # Dictionary to map the datasource names to their corresponding functions
     data_source_functions: Dict[str, Callable[[pd.DataFrame], Tuple[pd.DataFrame, dict]]] = {
-        # TODO: "bgee": bgee.get_gene_expression,
+        "bgee": bgee.get_gene_expression,
         "disgenet": _get_gene_disease_api_function(api_key),
-        # TODO: "minerva": minera.get,
-        # TODO: "molmedb": molmedb.get_mol_gene_inhibitor,
-        # TODO: "pubchem"
+        "minerva": minerva.get_gene_minerva_pathways,
+        "molmedb": molmedb.get_gene_compound_inhibitor,
         "opentarget.gene_ontology": opentargets.get_gene_go_process,
         "opentarget.reactome": opentargets.get_gene_reactome_pathways,
         "opentarget.drug_interactions": opentargets.get_gene_compound_interactions,
         "opentarget.disease_associations": opentargets.get_gene_disease_associations,
+        "pubchem": pubchem.get_protein_molecule_screened,
         "string": stringdb.get_ppi,
         "wikipathways": wikipathways.get_gene_wikipathways
         # TODO: "wikidata"
