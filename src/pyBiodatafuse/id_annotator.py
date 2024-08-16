@@ -3,6 +3,7 @@
 """Python file to annotate an input list with selected data sources."""
 
 from collections import defaultdict
+from typing import DefaultDict
 
 import pandas as pd
 
@@ -21,7 +22,9 @@ def process_selected_sources(
     """
     # Initialize variables
     combined_data = pd.DataFrame()
-    combined_metadata = defaultdict(lambda: defaultdict(str))
+    combined_metadata: DefaultDict[str, DefaultDict[str, str]] = defaultdict(
+        lambda: defaultdict(str)
+    )
     # Dictionary to map the datasource names to their corresponding functions
     data_source_functions = {
         # TODO: "bgee": bgee.get_gene_expression,
@@ -32,9 +35,9 @@ def process_selected_sources(
         "opentarget.gene_ontology": opentargets.get_gene_go_process,
         "opentarget.reactome": opentargets.get_gene_reactome_pathways,
         "opentarget.drug_interactions": opentargets.get_gene_compound_interactions,
-        "opentarget.disease_associations": opentargets.get_gene_disease_interactions,
+        "opentarget.disease_associations": opentargets.get_gene_disease_associations,
         "string": stringdb.get_ppi,
-        "wikipathways": wikipathways.get_gene_wikipathway
+        "wikipathways": wikipathways.get_gene_wikipathways
         # TODO: "wikidata"
     }
     warnings = []  # Initialize empty list for warnings
