@@ -3,7 +3,7 @@
 """Python file to annotate an input list with selected data sources."""
 
 from collections import defaultdict
-from typing import DefaultDict
+from typing import Callable, DefaultDict, Dict, Optional, Tuple
 
 import pandas as pd
 
@@ -12,23 +12,36 @@ from pyBiodatafuse.utils import combine_sources
 
 
 def process_selected_sources(
-    bridgedb_df: pd.DataFrame, selected_sources_list: list
-) -> pd.DataFrame:
+    bridgedb_df: pd.DataFrame, selected_sources_list: list, api_key: Optional[str] = None
+) -> Tuple[pd.DataFrame, DefaultDict[str, dict]]:
     """Query the selected databases and convert the output to a dataframe.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query.
     :param selected_sources_list: list of selected databases
+    :param api_key: DisGeNET API key (more details can be found at https://disgenet.com/plans)
     :returns: a DataFrame containing the combined output and dictionary of the metadata.
     """
+    # Check if 'disgenet' is in the selected sources and if API key is provided
+    if "disgenet" in selected_sources_list and not api_key:
+        raise ValueError("API key is required for the 'disgenet' data source.")
+
     # Initialize variables
     combined_data = pd.DataFrame()
-    combined_metadata: DefaultDict[str, DefaultDict[str, str]] = defaultdict(
-        lambda: defaultdict(str)
-    )
+    combined_metadata: DefaultDict[str, dict] = defaultdict(dict)
+
+    # Wrapper function that returns a callable with the correct signature
+    def get_gene_disease_api_function(
+        api_key: str,
+    ) -> Callable[[pd.DataFrame], Tuple[pd.DataFrame, dict]]:
+        def wrapper(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
+            return disgenet.get_gene_disease(bridgedb_df, api_key)
+
+        return wrapper
+
     # Dictionary to map the datasource names to their corresponding functions
-    data_source_functions = {
+    data_source_functions: Dict[str, Callable[[pd.DataFrame], Tuple[pd.DataFrame, dict]]] = {
         # TODO: "bgee": bgee.get_gene_expression,
-        "disgenet": disgenet.get_gene_disease,
+        "disgenet": get_gene_disease_api_function(api_key),
         # TODO: "minerva": minera.get,
         # TODO: "molmedb": molmedb.get_mol_gene_inhibitor,
         # TODO: "pubchem"
