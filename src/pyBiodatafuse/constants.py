@@ -40,7 +40,6 @@ WIKIDATA_PUBLICATION_INPUT_ID = "NCBI Gene"
 WIKIPATHWAYS_INPUT_ID = "NCBI Gene"
 
 # Output annotation for each data source
-# Anatomical entity node
 # Bgee
 BGEE_OUTPUT_DICT = {
     "anatomical_entity_id": str,
@@ -74,7 +73,6 @@ ANATOMICAL_ENTITIES_LIST = [
     "skeletal system",
 ]
 
-# Disease node
 # DISGENET
 DISGENET_OUTPUT_DICT = {
     "disease_name": str,
@@ -127,7 +125,6 @@ DRUG_ID = "CHEMBL"
 OPENTARGETS_DISEASE_COL = f"{OPENTARGETS}_diseases"
 DISGENET_DISEASE_COL = f"{DISGENET}_diseases"
 
-# Pathway node
 # MINERVA
 MINERVA_OUTPUT_DICT = {
     "pathway_id": int,
@@ -144,13 +141,11 @@ OPENTARGETS_REACTOME_OUTPUT_DICT = {
 PATHWAY_ID = "WP|R-"  # ID Start with WP or R-
 OPENTARGETS_REACTOME_COL = f"{OPENTARGETS}_reactome"
 
-# GO
 # Open Targets - GO processes
 OPENTARGETS_GO_OUTPUT_DICT = {"go_id": str, "go_name": str, "go_type": str}
 GO_ID = "GO"
 OPENTARGETS_GO_COL = f"{OPENTARGETS}_go"
 
-# Compound
 # Open Targets - Compound
 OPENTARGETS_COMPOUND_OUTPUT_DICT = {
     "chembl_id": str,
@@ -204,7 +199,6 @@ OUTCOME = "active|inactive"
 INCHI = "InChI"
 PUBCHEM_ASSAYS_COL = f"{PUBCHEM}_assays"
 
-# Gene Node
 # STRING
 STRING_OUTPUT_DICT = {"stringdb_link_to": str, STRING_INPUT_ID: str, "score": int}
 STRING_PPI_COL = f"{STRING}_ppi"
@@ -307,21 +301,22 @@ OPENTARGETS_REACTOME_NODE_ATTRS = {
 OPENTARGETS_REACTOME_EDGE_LABEL = "part_of"
 OPENTARGETS_REACTOME_EDGE_ATTRS = {"source": OPENTARGETS, "label": OPENTARGETS_REACTOME_EDGE_LABEL}
 
-# GO
+# GO nodes
 # Open Targets - GO processes
-OPENTARGETS_GO_NODE_LABELS = "Gene Ontology"
+OPENTARGETS_GO_BP_NODE_LABELS = "Biological Process"
+OPENTARGETS_GO_MF_NODE_LABELS = "Molecular Function"
+OPENTARGETS_GO_CC_NODE_LABELS = "Cellular Component"
 OPENTARGETS_GO_NODE_MAIN_LABEL = "go_id"
 OPENTARGETS_GO_NODE_ATTRS = {
     "source": OPENTARGETS,
     "name": None,
     "id": None,
-    "category": None,
-    "labels": OPENTARGETS_GO_NODE_LABELS,
+    "labels": None,
 }
 OPENTARGETS_GO_EDGE_LABEL = "part_of"
 OPENTARGETS_GO_EDGE_ATTRS = {"source": OPENTARGETS, "label": OPENTARGETS_GO_EDGE_LABEL}
 
-# Compound
+# Compound node
 # Open Targets - Compound
 OPENTARGETS_COMPOUND_NODE_LABELS = "Compound"
 OPENTARGETS_COMPOUND_NODE_MAIN_LABEL = "compound_cid"
@@ -393,7 +388,7 @@ PUBCHEM_EDGE_ATTRS = {
 # MolMeDB - Compound input
 # TODO: to be checked
 
-# Gene Node
+# Gene node
 GENE_NODE_LABELS = "Gene"
 # STRING
 # TODO: to be checked
