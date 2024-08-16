@@ -29,12 +29,13 @@ def run_gene_selected_sources(
     """Query the selected databases and convert the output to a dataframe.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query.
-    :param selected_sources_list: list of selected databases
-    :param api_key: DisGeNET API key (more details can be found at https://disgenet.com/plans)
+    :param selected_sources_list: list of selected databases.
+    :param api_key: DisGeNET API key (more details can be found at https://disgenet.com/plans).
     :param map_name: name of the map you want to retrieve the information from. The extensive list
        can be found at https://minerva-net.lcsb.uni.lu/table.html.
     :returns: a DataFrame containing the combined output and dictionary of the metadata.
     :raises ValueError: If 'disgenet' is in the selected_sources_list and api_key is not provided.
+       Or if 'minerva' is in the selected sources and if map name is not provided.
     """
     # Check if 'disgenet' is in the selected sources and if API key is provided
     if "disgenet" in selected_sources_list and not api_key:
@@ -55,7 +56,10 @@ def run_gene_selected_sources(
         "bgee": bgee.get_gene_expression,
         "disgenet": _get_gene_disease_disgenet_wrapper(api_key),
         "minerva": _get_gene_minerva_pathways_wrapper(
-            map_name=map_name, input_type="Protein", get_elements=True, get_reactions=True
+            map_name=map_name or "COVID19 Disease Map",
+            input_type="Protein",
+            get_elements=True,
+            get_reactions=True,
         ),
         "molmedb": molmedb.get_gene_compound_inhibitor,
         "opentarget.gene_ontology": opentargets.get_gene_go_process,
@@ -82,7 +86,7 @@ def run_gene_selected_sources(
 
 
 def _get_gene_disease_disgenet_wrapper(
-    api_key: str = None,
+    api_key: Optional[str] = None,
 ) -> Callable[[pd.DataFrame], Tuple[pd.DataFrame, dict]]:
     """Extract gene-disease data from DisGeNET using the provided API key.
 
