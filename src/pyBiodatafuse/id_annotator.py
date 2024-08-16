@@ -1,3 +1,7 @@
+# coding: utf-8
+
+"""Python file to annotate an input list with selected data sources."""
+
 from collections import defaultdict
 
 import pandas as pd
