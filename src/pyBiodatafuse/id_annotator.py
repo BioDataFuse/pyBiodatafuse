@@ -7,7 +7,16 @@ from typing import Callable, DefaultDict, Dict, Optional, Tuple
 
 import pandas as pd
 
-from pyBiodatafuse.annotators import bgee, disgenet, minerva, molmedb, opentargets, pubchem, stringdb, wikipathways
+from pyBiodatafuse.annotators import (
+    bgee,
+    disgenet,
+    minerva,
+    molmedb,
+    opentargets,
+    pubchem,
+    stringdb,
+    wikipathways,
+)
 from pyBiodatafuse.utils import combine_sources
 
 
