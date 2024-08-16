@@ -7,7 +7,7 @@ import datetime
 import os
 import warnings
 from string import Template
-from typing import Tuple, Dict, Any
+from typing import Any, Dict, Tuple
 
 import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
