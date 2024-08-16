@@ -34,6 +34,7 @@ MOLMEDB_COMPOUND_INPUT_ID = "InChIKey"
 OPENTARGETS_GENE_INPUT_ID = "Ensembl"
 OPENTARGETS_COMPOUND_INPUT_ID = "PubChem Compound"  # If using bridgedb mapping
 OPENTARGETS_COMPOUND_QUERY_INPUT_ID = "chembl_id"
+OPENTARGETS_DISEASE_INPUT_ID = "EFO"
 PUBCHEM_INPUT_ID = "Uniprot-TrEMBL"
 STRING_INPUT_ID = "Ensembl"
 WIKIDATA_PUBLICATION_INPUT_ID = "NCBI Gene"
@@ -90,13 +91,20 @@ DISGENET_OUTPUT_DICT = {
     "score": float,
     "ei": float,
     "el": float,
-}  # TODO: Yojana, we should align the disease extracted from the two sources
+}
 # Open Targets - Disease
 OPENTARGETS_DISEASE_OUTPUT_DICT = {
-    "disease_id": str,
     "disease_name": str,
     "therapeutic_areas": str,
-    "disease_xrefs": list,
+    "HPO": str,  # "HPO_HP:0100013"
+    "NCI": str,  # "NCI_C2910"
+    "OMIM": str,  # "OMIM_607906"
+    "MONDO": str,  # "MONDO_0021100"
+    "ORDO": str,  # "ORDO_137"
+    "EFO": str,  # "EFO_0003756"
+    "DO": str,  # "DO_0060041"
+    "MESH": str,  # "MESH_D000067877"
+    "UMLS": str,  # "UMLS_C1510586"
 }  # TODO: Tooba please check if you want to add compound annotations too here in the dict
 OPENTARGETS_IGNORE_DISEASE_IDS = [
     "icd10cm",
@@ -120,7 +128,6 @@ OPENTARGETS_IGNORE_DISEASE_IDS = [
     "omimps",
     "csp",
 ]
-DISEASE_ID = "umls|EFO|MONDO|MP"  # TODO: check if we want to keep MP (Mammalian Phenotype)
 DRUG_ID = "CHEMBL"
 OPENTARGETS_DISEASE_COL = f"{OPENTARGETS}_diseases"
 DISGENET_DISEASE_COL = f"{DISGENET}_diseases"
@@ -153,6 +160,7 @@ OPENTARGETS_COMPOUND_OUTPUT_DICT = {
     "compound_cid": str,
     "compound_name": str,
     "is_approved": bool,
+    "clincal_trial_phase": int,
     "relation": str,
     "adverse_effect_count": int,
     "adverse_effect": dict,
@@ -204,9 +212,7 @@ STRING_OUTPUT_DICT = {"stringdb_link_to": str, STRING_INPUT_ID: str, "score": in
 STRING_PPI_COL = f"{STRING}_ppi"
 
 # Wikidata
-# TODO: to be checked
 WIKIDATA_CC_COL = f"{WIKIDATA}_cellular_components"
-
 
 # Node and edge main lable and attributes for each data source
 # Anatomical entity node

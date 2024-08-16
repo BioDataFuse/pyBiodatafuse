@@ -8,6 +8,7 @@ import logging
 import os
 import warnings
 from string import Template
+from typing import Any, Dict
 
 import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
@@ -141,7 +142,7 @@ def get_gene_wikipathways(bridgedb_df: pd.DataFrame):
     time_elapsed = str(end_time - start_time)
 
     # Add the datasource, query, query time, and the date to metadata
-    wikipathways_metadata = {
+    wikipathways_metadata: Dict[str, Any] = {
         "datasource": WIKIPATHWAYS,
         "metadata": wikipathways_version,
         "query": {
