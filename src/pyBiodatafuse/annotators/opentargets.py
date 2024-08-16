@@ -1025,7 +1025,7 @@ def get_disease_compound_interactions(
         drug_df[["adverse_effect_count", "adverse_effect"]] = drug_df.apply(
             lambda row: (
                 pd.Series([row["adverse_events"]["count"], row["adverse_events"]["rows"]])
-                if row["adverse_events"]
+                if row["adverse_events"] and isinstance(row["adverse_events"], dict)
                 else pd.Series([None, None])
             ),
             axis=1,
