@@ -7,7 +7,7 @@ import datetime
 import os
 import warnings
 from string import Template
-from typing import Tuple
+from typing import Tuple, Dict, Any
 
 import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
@@ -122,7 +122,7 @@ def get_protein_molecule_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
     time_elapsed = str(end_time - start_time)
 
     # Add the datasource, query, query time, and the date to metadata
-    pubchem_metadata = {
+    pubchem_metadata: Dict[str, Any] = {
         "datasource": PUBCHEM,
         "query": {
             "size": len(protein_list_str),
