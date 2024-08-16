@@ -7,7 +7,7 @@ import datetime
 import os
 import warnings
 from string import Template
-from typing import Tuple
+from typing import Any, Dict, Tuple
 
 import numpy as np
 import pandas as pd
@@ -109,9 +109,13 @@ def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
         df = pd.DataFrame(res["results"]["bindings"])
         for col in df:
             df[col] = df[col].map(lambda x: x["value"], na_action="ignore")
-        df.drop_duplicates(inplace=True)
 
-        intermediate_df = pd.concat([intermediate_df, df], ignore_index=True)  # adds to the time
+        # Merging the source_pmid values for each unique compound-gene pair
+        cols = df.columns.to_list()
+        cols.remove("source_pmid")
+        df2 = df.groupby(cols)["source_pmid"].apply(lambda x: ", ".join(x)).reset_index()
+
+        intermediate_df = pd.concat([intermediate_df, df2], ignore_index=True)  # adds to the time
 
     # Record the end time
     end_time = datetime.datetime.now()
@@ -123,7 +127,7 @@ def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
     time_elapsed = str(end_time - start_time)
 
     # Add the datasource, query, query time, and the date to metadata
-    molmedb_metadata = {
+    molmedb_metadata: Dict[str, Any] = {
         "datasource": MOLMEDB,
         "query": {
             "size": len(molmedb_transporter_list),
@@ -191,11 +195,10 @@ def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
     # Calculate the number of new edges
     num_new_edges = intermediate_df.drop_duplicates(subset=["target", "molmedb_id"]).shape[0]
 
-    # TODO: the intemediate_df should be double checked when issue #153 is being addressed
     # Check the intermediate_df
     if num_new_edges != len(intermediate_df):
         warnings.warn(
-            f"The intermediate_df in {MOLMEDB} annotatur should be checked, please create an issue on https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
+            f"The intermediate_df in {MOLMEDB} annotator should be checked, please create an issue on https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
             stacklevel=2,
         )
 
@@ -281,7 +284,7 @@ def get_compound_gene_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
     time_elapsed = str(end_time - start_time)
 
     # Add the datasource, query, query time, and the date to metadata
-    molmedb_metadata = {
+    molmedb_metadata: Dict[str, Any] = {
         "datasource": MOLMEDB,
         "query": {
             "size": len(inhibitor_list_str),
@@ -330,13 +333,13 @@ def get_compound_gene_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
     # Check the intermediate_df
     if num_new_edges != len(intermediate_df):
         warnings.warn(
-            f"The intermediate_df in {MOLMEDB} annotatur should be checked, please create an issue on https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
+            f"The intermediate_df in {MOLMEDB} annotator should be checked, please create an issue on https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
             stacklevel=2,
         )
 
     # Add the number of new nodes and edges to metadata
-    molmedb_metadata["query"]["number_of_added_nodes"] = num_new_nodes
-    molmedb_metadata["query"]["number_of_added_edges"] = num_new_edges
+    molmedb_metadata["query"]["number_of_added_nodes"] = num_new_nodes  #
+    molmedb_metadata["query"]["number_of_added_edges"] = num_new_edges  # noqa
 
     return merged_df, molmedb_metadata
 

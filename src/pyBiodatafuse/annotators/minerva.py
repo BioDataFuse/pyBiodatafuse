@@ -4,7 +4,7 @@
 
 import datetime
 import warnings
-from typing import Optional, Tuple
+from typing import Any, Dict, Optional, Tuple
 
 import pandas as pd
 import requests
@@ -269,7 +269,7 @@ def get_gene_minerva_pathways(
     time_elapsed = str(end_time - start_time)
 
     # Add the datasource, query, query time, and the date to metadata
-    minerva_metadata = {
+    minerva_metadata: Dict[str, Any] = {
         "datasource": MINERVA,
         "metadata": minerva_version,
         "query": {
