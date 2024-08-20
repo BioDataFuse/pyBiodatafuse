@@ -39,9 +39,12 @@ from pyBiodatafuse.constants import (
     OPENTARGETS_DISEASE_EDGE_LABEL,
     OPENTARGETS_DISEASE_NODE_ATTRS,
     OPENTARGETS_DISEASE_NODE_MAIN_LABEL,
+    OPENTARGETS_GO_BP_NODE_LABELS,
+    OPENTARGETS_GO_CC_NODE_LABELS,
     OPENTARGETS_GO_COL,
     OPENTARGETS_GO_EDGE_ATTRS,
     OPENTARGETS_GO_EDGE_LABEL,
+    OPENTARGETS_GO_MF_NODE_LABELS,
     OPENTARGETS_GO_NODE_ATTRS,
     OPENTARGETS_GO_NODE_MAIN_LABEL,
     OPENTARGETS_REACTOME_COL,
@@ -359,7 +362,12 @@ def add_opentargets_go_subgraph(g, gene_node_label, annot_list):
         annot_node_attrs = OPENTARGETS_GO_NODE_ATTRS.copy()
         annot_node_attrs["name"] = annot["go_name"]
         annot_node_attrs["id"] = annot["go_id"]
-        annot_node_attrs["category"] = annot["go_type"]
+        if annot["go_type"] == "BP":
+            annot_node_attrs["labels"] = OPENTARGETS_GO_BP_NODE_LABELS
+        elif annot["go_type"] == "MF":
+            annot_node_attrs["labels"] = OPENTARGETS_GO_MF_NODE_LABELS
+        elif annot["go_type"] == "CC":
+            annot_node_attrs["labels"] = OPENTARGETS_GO_CC_NODE_LABELS
 
         g.add_node(annot_node_label, attr_dict=annot_node_attrs)
 
