@@ -227,7 +227,7 @@ BGEE_NODE_ATTRS = {
     "developmental_stage_id": None,
     "labels": BGEE_NODE_LABELS,
 }
-BGEE_EDGE_LABEL = "expressed_in"
+BGEE_EDGE_LABEL = "expressed_by"
 BGEE_EDGE_ATTRS = {
     "source": BGEE,
     "expression_level": None,
@@ -244,7 +244,9 @@ DISGENET_NODE_ATTRS = {
     "source": DISGENET,
     "name": None,
     "id": None,
-    "evidence_source": None,
+    "disease_type": None,
+    "ei": None,
+    "el": None,
     "labels": DISGENET_NODE_LABELS,
 }
 DISGENET_EDGE_LABEL = "associated_with"
@@ -278,7 +280,6 @@ MINERVA_NODE_ATTRS = {
     "gene_count": None,
     "labels": MINERVA_NODE_LABELS,
 }
-MOLMEDB_NODE_MAIN_LABEL = "Compound"
 MINERVA_EDGE_LABEL = "part_of"
 MINERVA_EDGE_ATTRS = {"source": MINERVA, "label": MINERVA_EDGE_LABEL}
 
