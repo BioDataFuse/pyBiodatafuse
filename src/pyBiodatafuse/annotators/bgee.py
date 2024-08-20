@@ -16,6 +16,7 @@ from pyBiodatafuse.constants import (
     ANATOMICAL_ENTITIES_LIST,
     BGEE,
     BGEE_ENDPOINT,
+    BGEE_EXPRESSION_LEVELS_COL,
     BGEE_INPUT_ID,
     BGEE_OUTPUT_DICT,
 )
@@ -206,7 +207,7 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
         target_df=intermediate_df,
         common_cols=["target"],
         target_specific_cols=list(BGEE_OUTPUT_DICT.keys()),
-        col_name=BGEE,
+        col_name=BGEE_EXPRESSION_LEVELS_COL,
     )
 
     """Update metadata"""

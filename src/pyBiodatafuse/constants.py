@@ -73,6 +73,7 @@ ANATOMICAL_ENTITIES_LIST = [
     "respiratory system",
     "skeletal system",
 ]
+BGEE_EXPRESSION_LEVELS_COL = f"{BGEE}_expression_levels"
 
 # DISGENET
 DISGENET_OUTPUT_DICT = {
@@ -92,6 +93,8 @@ DISGENET_OUTPUT_DICT = {
     "ei": float,
     "el": float,
 }
+DISGENET_DISEASE_COL = f"{DISGENET}_diseases"
+
 # Open Targets - Disease
 OPENTARGETS_DISEASE_OUTPUT_DICT = {
     "disease_name": str,
@@ -130,7 +133,6 @@ OPENTARGETS_IGNORE_DISEASE_IDS = [
 ]
 DRUG_ID = "CHEMBL"
 OPENTARGETS_DISEASE_COL = f"{OPENTARGETS}_diseases"
-DISGENET_DISEASE_COL = f"{DISGENET}_diseases"
 
 # MINERVA
 MINERVA_OUTPUT_DICT = {
