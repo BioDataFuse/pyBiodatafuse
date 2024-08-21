@@ -79,7 +79,6 @@ def get_protein_molecule_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
         for i in range(0, len(protein_list_str), 25):
             tmp_list = protein_list_str[i : i + 25]
             query_protein_list.append(" ".join(f"{g}" for g in tmp_list))
-
     else:
         query_protein_list.append(" ".join(f"{g}" for g in protein_list_str))
 
@@ -96,11 +95,11 @@ def get_protein_molecule_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
 
     intermediate_df = pd.DataFrame()
 
-    for protein_list_str in query_protein_list:
+    for protein_str in query_protein_list:
         query_count += 1
 
         sparql_query_template = Template(sparql_query)
-        substit_dict = dict(protein_list=protein_list_str)
+        substit_dict = dict(protein_list=protein_str)
         sparql_query_template_sub = sparql_query_template.substitute(substit_dict)
 
         sparql.setQuery(sparql_query_template_sub)

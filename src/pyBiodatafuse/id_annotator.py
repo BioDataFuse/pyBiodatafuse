@@ -31,11 +31,11 @@ def run_gene_selected_sources(
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query.
     :param selected_sources_list: list of selected databases.
     :param api_key: DisGeNET API key (more details can be found at https://disgenet.com/plans).
-    :param map_name: name of the map you want to retrieve the information from. The extensive list
-       can be found at https://minerva-net.lcsb.uni.lu/table.html.
+    :param map_name: name of the map you want to retrieve the information from. The extensive list \
+        can be found at https://minerva-net.lcsb.uni.lu/table.html.
     :returns: a DataFrame containing the combined output and dictionary of the metadata.
-    :raises ValueError: If 'disgenet' is in the selected_sources_list and api_key is not provided.
-       Or if 'minerva' is in the selected sources and if map name is not provided.
+    :raises ValueError: If 'disgenet' is in the selected_sources_list and api_key is not provided. \
+        Or if 'minerva' is in the selected sources and if map name is not provided.
     """
     # Check if 'disgenet' is in the selected sources and if API key is provided
     if "disgenet" in selected_sources_list and not api_key:
@@ -68,7 +68,7 @@ def run_gene_selected_sources(
         "opentarget.disease_associations": opentargets.get_gene_disease_associations,
         "pubchem": pubchem.get_protein_molecule_screened,
         "string": stringdb.get_ppi,
-        "wikipathways": wikipathways.get_gene_wikipathways
+        "wikipathways": wikipathways.get_gene_wikipathways,
         # TODO: "wikidata"
     }
     warnings = []  # Initialize empty list for warnings

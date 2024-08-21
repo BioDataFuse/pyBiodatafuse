@@ -11,6 +11,7 @@ from unittest.mock import Mock, patch
 import pandas as pd
 from numpy import nan
 
+from pyBiodatafuse import id_mapper
 from pyBiodatafuse.annotators import opentargets
 from pyBiodatafuse.annotators.opentargets import (
     get_compound_disease_interactions,
@@ -375,6 +376,34 @@ class TestOpentarget(unittest.TestCase):
                     }
                 }
             }
+        )
+
+        id_mapper.pubchem_xref = Mock(
+            return_value=(
+                pd.DataFrame(
+                    {
+                        "identifier": [
+                            "CHEMBL1201248",
+                            "CHEMBL1200641",
+                            "CHEMBL703",
+                            "CHEMBL1201244",
+                            "CHEMBL1201219",
+                            "CHEMBL983",
+                        ],
+                        "identifier.source": ["name", "name", "name", "name", "name", "name"],
+                        "target": ["62887", "62886", "5314", "441290", "39765", "22475"],
+                        "target.source": [
+                            "PubChem Compound",
+                            "PubChem Compound",
+                            "PubChem Compound",
+                            "PubChem Compound",
+                            "PubChem Compound",
+                            "PubChem Compound",
+                        ],
+                    }
+                ),
+                {},
+            )
         )
 
         bridgedb_dataframe_genes = pd.DataFrame(
@@ -2362,6 +2391,72 @@ class TestOpentarget(unittest.TestCase):
                     }
                 }
             }
+        )
+
+        id_mapper.pubchem_xref = Mock(
+            return_value=(
+                pd.DataFrame(
+                    {
+                        "identifier": [
+                            "CHEMBL762",
+                            "CHEMBL1161",
+                            "CHEMBL787",
+                            "CHEMBL70",
+                            "CHEMBL480",
+                            "CHEMBL596",
+                            "CHEMBL1201191",
+                            "CHEMBL131",
+                            "CHEMBL384467",
+                            "CHEMBL1504",
+                            "CHEMBL655",
+                            "CHEMBL778",
+                        ],
+                        "identifier.source": [
+                            "name",
+                            "name",
+                            "name",
+                            "name",
+                            "name",
+                            "name",
+                            "name",
+                            "name",
+                            "name",
+                            "name",
+                            "name",
+                            "name",
+                        ],
+                        "target": [
+                            "4636",
+                            "441336",
+                            "5281040",
+                            "5288826",
+                            "3883",
+                            "3345",
+                            "1549000",
+                            "5755",
+                            "5743",
+                            "6436",
+                            "4192",
+                            "5311068",
+                        ],
+                        "target.source": [
+                            "PubChem Compound",
+                            "PubChem Compound",
+                            "PubChem Compound",
+                            "PubChem Compound",
+                            "PubChem Compound",
+                            "PubChem Compound",
+                            "PubChem Compound",
+                            "PubChem Compound",
+                            "PubChem Compound",
+                            "PubChem Compound",
+                            "PubChem Compound",
+                            "PubChem Compound",
+                        ],
+                    }
+                ),
+                {},
+            )
         )
 
         bridge_df = pd.DataFrame(
