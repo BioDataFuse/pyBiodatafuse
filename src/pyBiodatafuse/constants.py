@@ -417,3 +417,63 @@ STRING_EDGE_ATTRS = {
 
 
 # Output from the explorers
+
+
+# RDF (rdflib constants and namespaces)
+
+# Dictionary to store namespace strings
+NAMESPACE_BINDINGS = {
+    "sio": "http://semanticscience.org/resource/",
+    "hgnc": "http://bio2rdf.org/hgnc:",
+    "obo": "http://purl.obolibrary.org/obo/",
+    "umls": "https://uts-ws.nlm.nih.gov/rest/semantic-network/2015AB/CUI/",
+    "ensembl": "https://identifiers.org/ensembl:",
+    "dcat": "http://www.w3.org/ns/dcat#",
+    "biodatafuse": "https://biodatafuse.org/",
+    "foaf": "http://xmlns.com/foaf/0.1/",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "owl": "http://www.w3.org/2002/07/owl#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#"
+}
+
+# BASE URI for all nodes 
+BASE_URI = NAMESPACE_BINDINGS["biodatafuse"] + "rdf/"
+
+# URIs for nodes (one for each node in the schema)
+URIS = {
+    "gene_disease_association": BASE_URI + "gene_disease_association",
+    "gene_base_node": BASE_URI + "gene",
+    "gene_symbol_base_node": BASE_URI + "gene_symbol",
+    "source_base_node": BASE_URI + "source",
+    "data_source_base_node": BASE_URI + "datasource",
+    "score_base_node": BASE_URI + "score",
+    "experimental_process_node": BASE_URI + "experimental_process",
+    "anatomical_entity_base_node": BASE_URI + "anatomical_entity",
+    "life_cycle_base_node": BASE_URI + "life_cycle",
+    "gene_expression_value_base_node": BASE_URI + "gene_expression_value",
+}
+
+# NODE TYPES
+NODE_TYPES = {
+    "gene_node" : f"{NAMESPACE_BINDINGS['obo']}NCIT_C16612",
+    "disease_node" : f"{NAMESPACE_BINDINGS['obo']}NCIT_C7057",
+    "gene-disease_association" : f"{NAMESPACE_BINDINGS['sio']}SIO_000983",
+    "score_node" : f"{NAMESPACE_BINDINGS['obo']}NCIT_C25338", 
+    "data_source_node" : f"{NAMESPACE_BINDINGS['obo']}SLSO_0001122" ,
+    "gene_expression_value_node" : f"{NAMESPACE_BINDINGS['sio']}SIO_001077",
+    "anatomical_entity_node" : f"{NAMESPACE_BINDINGS['sio']}UBERON_0001062",
+
+}
+
+# PREDICATES
+PREDICATES = {
+    "sio_refers_to" : f"{NAMESPACE_BINDINGS['sio']}SIO_000628",
+    "sio_has_measurement_value" : f"{NAMESPACE_BINDINGS['sio']}SIO_000216",
+    "sio_has_source" : f"{NAMESPACE_BINDINGS['sio']}SIO_000253",
+    "sio_is_associated_with" : f"{NAMESPACE_BINDINGS['sio']}SIO_001403",
+    "sio_has_value" : f"{NAMESPACE_BINDINGS['sio']}SIO_000300",
+    "sio_has_input" : f"{NAMESPACE_BINDINGS['sio']}SIO_000230",
+    "sio_has_output" : f"{NAMESPACE_BINDINGS['sio']}SIO_000229",
+}
