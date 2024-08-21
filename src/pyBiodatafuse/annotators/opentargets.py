@@ -780,6 +780,13 @@ def get_compound_disease_interactions(
         return pd.DataFrame(), opentargets_version
 
     intermediate_df.fillna("", inplace=True)
+
+    missing_cols = [
+        col for col in OPENTARGETS_DISEASE_OUTPUT_DICT.keys() if col not in intermediate_df.columns
+    ]
+    for col in missing_cols:
+        intermediate_df[col] = None
+
     # Check if all keys in df match the keys in OUTPUT_DICT
     check_columns_against_constants(
         data_df=intermediate_df,
