@@ -277,7 +277,7 @@ def pubchem_xref(identifiers: list, identifier_type: str = "name") -> Tuple[pd.D
         cid_data.append(
             {
                 "identifier": idx,
-                "identifier.source": "name",
+                "identifier.source": identifier_type,
                 "target": str(cid).split(".")[0] if cid else None,
                 "target.source": "PubChem Compound",
             }
