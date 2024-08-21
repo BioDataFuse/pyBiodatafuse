@@ -5,7 +5,7 @@
 import pandas as pd
 from rdflib import Graph, URIRef, Literal, Namespace
 from rdflib.namespace import RDF, RDFS, XSD, SKOS
-from pyBiodatafuse.constants import NAMESPACE_BINDINGS, URIS, NODE_TYPES, PREDICATES
+from pyBiodatafuse.constants import NAMESPACE_BINDINGS, URIS, NODE_TYPES, PREDICATES, DISGENET_OUTPUT_DICT, BGEE_EXPRESSION_LEVELS_COL, DISGENET_DISEASE_COL
 from bioregistry import get_iri, normalize_curie
 
 def create_gene_node(g, gene_base_node, id_number):
@@ -16,7 +16,7 @@ def create_gene_node(g, gene_base_node, id_number):
 
 def create_disease_node(g, disease_data):
     """Create and add a disease node to the RDF graph."""
-    disease_node = URIRef(get_iri(disease_data["disease_id"]))
+    disease_node = URIRef(get_iri(disease_data['disease_umlscui']))
     g.add((disease_node, RDF.type, URIRef(NODE_TYPES["disease_node"])))
     g.add((disease_node, RDFS.label, Literal(disease_data["disease_name"], datatype=XSD.string)))
     g.add((disease_node, SKOS.exactMatch, disease_node))
@@ -56,7 +56,7 @@ def create_data_source_node(g):
 def add_gene_disease_associations(g, id_number, source_idx, gene_node, disease_data):
     """Process and add gene-disease association data to the RDF graph."""
     for data in disease_data:
-        if pd.isna(data["disease_id"]):
+        if (data['disease_umlscui']) != str:
             continue
 
         disease_node = create_disease_node(g, data)
@@ -122,8 +122,8 @@ def generate_rdf(df: pd.DataFrame) -> Graph:
         source_namespace = row['identifier.source']
         target_idx = row['target']
         target_namespace = row['target.source']
-        expression_data = row['Bgee']
-        disease_data = row['DisGeNET']
+        expression_data = row[BGEE_EXPRESSION_LEVELS_COL]
+        disease_data = row[DISGENET_DISEASE_COL]
 
         # Check if any of the essential columns are NaN, and skip the iteration if so
         if pd.isna(source_idx) or pd.isna(source_namespace) or pd.isna(target_idx) or pd.isna(target_namespace):
