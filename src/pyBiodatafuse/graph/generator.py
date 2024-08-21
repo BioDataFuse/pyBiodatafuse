@@ -133,9 +133,9 @@ def add_bgee_subgraph(g, gene_node_label, annot_list):
             if not pd.isna(annot["expression_level"]):
                 edge_attrs["expression_level"] = annot["expression_level"]
             if not pd.isna(annot["developmental_stage_name"]):
-                annot_node_attrs["developmental_stage_name"] = annot["developmental_stage_name"]
+                edge_attrs["developmental_stage_name"] = annot["developmental_stage_name"]
             if not pd.isna(annot["developmental_stage_id"]):
-                annot_node_attrs["developmental_stage_id"] = annot["developmental_stage_id"]
+                edge_attrs["developmental_stage_id"] = annot["developmental_stage_id"]
 
             edge_hash = hash(frozenset(edge_attrs.items()))
             edge_attrs["edge_hash"] = edge_hash
