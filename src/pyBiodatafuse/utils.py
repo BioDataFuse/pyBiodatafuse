@@ -24,7 +24,9 @@ def get_identifier_of_interest(bridgedb_df: pd.DataFrame, db_source: str) -> pd.
     assert db_source in identifier_options, f"Source {db_source} is not in identifier options"
 
     # Filter rows where "target.source" is specific datasource for eg. "NCBI Gene"
-    return bridgedb_df[bridgedb_df["target.source"] == db_source]
+    subset_df = bridgedb_df[bridgedb_df["target.source"] == db_source]
+
+    return subset_df.reset_index(drop=True)
 
 
 def create_or_append_to_metadata(data: dict, prev_entry: List[dict]) -> List[dict]:
