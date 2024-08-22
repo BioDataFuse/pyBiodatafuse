@@ -478,31 +478,33 @@ def add_molmedb_gene_inhibitor(g, gene_node_label, annot_list):
                 annot_node_label = annot[MOLMEDB_PROTEIN_COMPOUND_NODE_MAIN_LABEL]
             else:
                 annot_node_label = annot["molmedb_id"]
+
             annot_node_attrs = MOLMEDB_PROTEIN_COMPOUND_NODE_ATTRS.copy()
             annot_node_attrs["name"] = annot["compound_name"]
+
             if not pd.isna(annot[MOLMEDB_PROTEIN_COMPOUND_NODE_MAIN_LABEL]):
                 annot_node_attrs["id"] = annot[MOLMEDB_PROTEIN_COMPOUND_NODE_MAIN_LABEL]
             else:
                 annot_node_attrs["id"] = annot["molmedb_id"]
-            annot_node_attrs["MolMeDB_id"] = annot["molmedb_id"]
+
+            annot_node_attrs["molmedb_id"] = annot["molmedb_id"]
             if not pd.isna(annot["chebi_id"]):
-                annot_node_attrs["ChEBI_id"] = annot["chebi_id"]
+                annot_node_attrs["chebi_id"] = annot["chebi_id"]
             if not pd.isna(annot["drugbank_id"]):
-                annot_node_attrs["DrugBank_id"] = annot["drugbank_id"]
+                annot_node_attrs["drugbank_id"] = annot["drugbank_id"]
             if not pd.isna(annot["compound_cid"]):
                 annot_node_attrs["compound_cid"] = annot["compound_cid"]
             # if not pd.isna(annot["pdb_ligand_id"]):
             #     annot_node_attrs["pdb_ligand_id"] = annot["pdb_ligand_id"]
-            if not pd.isna(annot["InChIKey"]):
-                annot_node_attrs["InChIKey"] = annot["InChIKey"]
-            if not pd.isna(annot["SMILES"]):
-                annot_node_attrs["SMILES"] = annot["SMILES"]
+            if not pd.isna(annot["inchikey"]):
+                annot_node_attrs["inchikey"] = annot["inchikey"]
+            if not pd.isna(annot["smiles"]):
+                annot_node_attrs["smiles"] = annot["smiles"]
             if not pd.isna(annot["source_doi"]):
                 annot_node_attrs["source_doi"] = annot["source_doi"]
             if not pd.isna(annot["source_pmid"]):
                 annot_node_attrs["source_pmid"] = annot["source_pmid"]
 
-            # g.add_node(annot_node_label, attr_dict=annot_node_attrs)
             merge_node(g, annot_node_label, annot_node_attrs)
 
             edge_attrs = MOLMEDB_PROTEIN_COMPOUND_EDGE_ATTRS.copy()
@@ -540,9 +542,9 @@ def add_pubchem_assay(g, gene_node_label, annot_list):
             annot_node_attrs = PUBCHEM_NODE_ATTRS.copy()
             annot_node_attrs["name"] = annot["compound_name"]
             annot_node_attrs["id"] = annot["compound_cid"]
-            annot_node_attrs["InChI"] = annot["InChI"]
-            if not pd.isna(annot["SMILES"]):
-                annot_node_attrs["SMILES"] = annot["SMILES"]
+            annot_node_attrs["inchi"] = annot["inchi"]
+            if not pd.isna(annot["smiles"]):
+                annot_node_attrs["smiles"] = annot["smiles"]
 
             # g.add_node(annot_node_label, attr_dict=annot_node_attrs)
             merge_node(g, annot_node_label, annot_node_attrs)

@@ -177,8 +177,8 @@ OPENTARGETS_COMPOUND_COL = f"{OPENTARGETS}_compounds"
 # MolMeDB - Gene/Protein input
 MOLMEDB_PROTEIN_COMPOUND_OUTPUT_DICT = {
     "compound_name": str,
-    "InChIKey": str,
-    "SMILES": str,
+    "inchikey": str,
+    "smiles": str,
     "compound_cid": str,
     "molmedb_id": str,
     "source_pmid": str,
@@ -206,8 +206,8 @@ PUBCHEM_OUTPUT_DICT = {
     "outcome": str,
     "compound_cid": str,
     "compound_name": str,
-    "SMILES": str,
-    "InChI": str,
+    "smiles": str,
+    "inchi": str,
 }
 OUTCOME = "active|inactive"
 INCHI = "InChI"
@@ -365,12 +365,12 @@ MOLMEDB_PROTEIN_COMPOUND_NODE_ATTRS = {
     "source": MOLMEDB,
     "name": None,
     "id": None,
-    "MolMeDB_id": None,
-    "ChEBI_id": None,
+    "molmedb_id": None,
+    "chebi_id": None,
     "drugbank_id": None,
     "compound_cid": None,
-    "InChIKey": None,
-    "SMILES": None,
+    "inchikey": None,
+    "smiles": None,
     "source_pmid": None,
     "labels": MOLMEDB_PROTEIN_COMPOUND_NODE_LABELS,
 }
@@ -387,8 +387,8 @@ PUBCHEM_NODE_ATTRS = {
     "source": PUBCHEM,
     "name": None,
     "id": None,
-    "InChI": None,
-    "SMILES": None,
+    "inchi": None,
+    "smiles": None,
     "labels": PUBCHEM_NODE_LABELS,
 }
 PUBCHEM_EDGE_ATTRS = {
