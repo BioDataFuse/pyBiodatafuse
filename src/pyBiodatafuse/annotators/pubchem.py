@@ -190,7 +190,7 @@ def get_protein_molecule_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
     check_columns_against_constants(
         data_df=intermediate_df,
         output_dict=PUBCHEM_OUTPUT_DICT,
-        check_values_in=["outcome", "InChI"],
+        check_values_in=["outcome", "inchi"],
     )
 
     # Merge the two DataFrames on the target column
