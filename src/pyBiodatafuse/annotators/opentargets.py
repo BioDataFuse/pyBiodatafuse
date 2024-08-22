@@ -897,7 +897,7 @@ def get_gene_disease_associations(
     dis_merged_df, opentargets_version = get_compound_disease_interactions(gene_cmpd_df)
 
     # Fixing merge to look like gene-disease
-    merged_df = bridgedb_df.copy(deep=True)
+    merged_df = get_identifier_of_interest(bridgedb_df, OPENTARGETS_GENE_INPUT_ID)
 
     disease_col = []
     for gene in merged_df["identifier"]:
