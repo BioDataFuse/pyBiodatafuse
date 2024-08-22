@@ -25,11 +25,11 @@ from pyBiodatafuse.constants import (
     MINERVA_EDGE_LABEL,
     MINERVA_NODE_ATTRS,
     MINERVA_NODE_MAIN_LABEL,
-    MOLMEDB_COMPOUND_EDGE_ATTRS,
-    MOLMEDB_COMPOUND_EDGE_LABEL,
-    MOLMEDB_COMPOUND_NODE_ATTRS,
-    MOLMEDB_COMPOUND_NODE_MAIN_LABEL,
     MOLMEDB_INHIBITOR_COL,
+    MOLMEDB_PROTEIN_COMPOUND_EDGE_ATTRS,
+    MOLMEDB_PROTEIN_COMPOUND_EDGE_LABEL,
+    MOLMEDB_PROTEIN_COMPOUND_NODE_ATTRS,
+    MOLMEDB_PROTEIN_COMPOUND_NODE_MAIN_LABEL,
     OPENTARGETS_COMPOUND_COL,
     OPENTARGETS_COMPOUND_EDGE_ATTRS,
     OPENTARGETS_COMPOUND_NODE_ATTRS,
@@ -153,7 +153,7 @@ def add_bgee_subgraph(g, gene_node_label, annot_list):
     return g
 
 
-def add_disgenet_disease_subgraph(g, gene_node_label, annot_list):
+def add_disgenet_disease_subgraph(g, gene_node_label, annot_list):  # TODO: should be updated
     """Construct part of the graph by linking the gene to a list of annotation entities (disease, drug ..etc).
 
     :param g: the input graph to extend with new nodes and edges.
@@ -193,7 +193,7 @@ def add_disgenet_disease_subgraph(g, gene_node_label, annot_list):
     return g
 
 
-def add_opentargets_disease_subgraph(g, gene_node_label, annot_list):
+def add_opentargets_disease_subgraph(g, gene_node_label, annot_list):  # TODO: should be updated
     """Construct part of the graph by linking the gene to a list of annotation entities (disease, drug ..etc).
 
     :param g: the input graph to extend with new nodes and edges.
@@ -412,9 +412,11 @@ def add_opentargets_compound_subgraph(g, gene_node_label, annot_list):
                 annot_node_attrs["id"] = annot["chembl_id"]
             annot_node_attrs["chembl_id"] = annot["chembl_id"]
             if not pd.isna(annot["drugbank_id"]):
-                annot_node_attrs["DrugBank_id"] = annot["drugbank_id"]
+                annot_node_attrs["drugbank_id"] = annot["drugbank_id"]
             if not pd.isna(annot["compound_cid"]):
                 annot_node_attrs["compound_cid"] = annot["compound_cid"]
+            if not pd.isna(annot["clincal_trial_phase"]):
+                annot_node_attrs["clincal_trial_phase"] = annot["clincal_trial_phase"]
             annot_node_attrs["is_approved"] = annot["is_approved"]
             if not pd.isna(annot["adverse_effect_count"]):
                 annot_node_attrs["adverse_effect_count"] = annot["adverse_effect_count"]
@@ -472,14 +474,14 @@ def add_molmedb_gene_inhibitor(g, gene_node_label, annot_list):
     """
     for annot in annot_list:
         if not pd.isna(annot["compound_name"]):
-            if not pd.isna(annot[MOLMEDB_COMPOUND_NODE_MAIN_LABEL]):
-                annot_node_label = annot[MOLMEDB_COMPOUND_NODE_MAIN_LABEL]
+            if not pd.isna(annot[MOLMEDB_PROTEIN_COMPOUND_NODE_MAIN_LABEL]):
+                annot_node_label = annot[MOLMEDB_PROTEIN_COMPOUND_NODE_MAIN_LABEL]
             else:
                 annot_node_label = annot["molmedb_id"]
-            annot_node_attrs = MOLMEDB_COMPOUND_NODE_ATTRS.copy()
+            annot_node_attrs = MOLMEDB_PROTEIN_COMPOUND_NODE_ATTRS.copy()
             annot_node_attrs["name"] = annot["compound_name"]
-            if not pd.isna(annot[MOLMEDB_COMPOUND_NODE_MAIN_LABEL]):
-                annot_node_attrs["id"] = annot[MOLMEDB_COMPOUND_NODE_MAIN_LABEL]
+            if not pd.isna(annot[MOLMEDB_PROTEIN_COMPOUND_NODE_MAIN_LABEL]):
+                annot_node_attrs["id"] = annot[MOLMEDB_PROTEIN_COMPOUND_NODE_MAIN_LABEL]
             else:
                 annot_node_attrs["id"] = annot["molmedb_id"]
             annot_node_attrs["MolMeDB_id"] = annot["molmedb_id"]
@@ -503,7 +505,7 @@ def add_molmedb_gene_inhibitor(g, gene_node_label, annot_list):
             # g.add_node(annot_node_label, attr_dict=annot_node_attrs)
             merge_node(g, annot_node_label, annot_node_attrs)
 
-            edge_attrs = MOLMEDB_COMPOUND_EDGE_ATTRS.copy()
+            edge_attrs = MOLMEDB_PROTEIN_COMPOUND_EDGE_ATTRS.copy()
 
             edge_hash = hash(frozenset(edge_attrs.items()))
             edge_attrs["edge_hash"] = edge_hash
@@ -517,7 +519,7 @@ def add_molmedb_gene_inhibitor(g, gene_node_label, annot_list):
                 g.add_edge(
                     gene_node_label,
                     annot_node_label,
-                    label=MOLMEDB_COMPOUND_EDGE_LABEL,
+                    label=MOLMEDB_PROTEIN_COMPOUND_EDGE_LABEL,
                     attr_dict=edge_attrs,
                 )
 
