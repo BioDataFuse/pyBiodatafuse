@@ -16,10 +16,10 @@ from SPARQLWrapper import JSON, SPARQLWrapper
 from pyBiodatafuse.constants import (
     MOLMEDB,
     MOLMEDB_COMPOUND_INPUT_ID,
-    MOLMEDB_COMPOUND_OUTPUT_DICT,
+    MOLMEDB_PROTEIN_COMPOUND_OUTPUT_DICT,
     MOLMEDB_ENDPOINT,
     MOLMEDB_GENE_INPUT_ID,
-    MOLMEDB_GENE_OUTPUT_DICT,
+    MOLMEDB_COMPOUND_PROTEIN_OUTPUT_DICT,
     MOLMEDB_INHIBITED_COL,
     MOLMEDB_INHIBITOR_COL,
 )
@@ -159,7 +159,7 @@ def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
     # Check if all keys in df match the keys in OUTPUT_DICT
     check_columns_against_constants(
         data_df=intermediate_df,
-        output_dict=MOLMEDB_GENE_OUTPUT_DICT,
+        output_dict=MOLMEDB_PROTEIN_COMPOUND_OUTPUT_DICT,
         check_values_in=["molmedb_id", "source_doi", "drugbank_id"],
     )
 
@@ -169,7 +169,7 @@ def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
         source_namespace=MOLMEDB_GENE_INPUT_ID,
         target_df=intermediate_df,
         common_cols=["target"],
-        target_specific_cols=list(MOLMEDB_GENE_OUTPUT_DICT.keys()),
+        target_specific_cols=list(MOLMEDB_PROTEIN_COMPOUND_OUTPUT_DICT.keys()),
         col_name=MOLMEDB_INHIBITOR_COL,
     )
 
@@ -310,7 +310,7 @@ def get_compound_gene_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
     # Check if all keys in df match the keys in OUTPUT_DICT
     check_columns_against_constants(
         data_df=intermediate_df,
-        output_dict=MOLMEDB_COMPOUND_OUTPUT_DICT,
+        output_dict=MOLMEDB_COMPOUND_PROTEIN_OUTPUT_DICT,
         check_values_in=["UNIPROT_TREMBL_ID"],
     )
 
@@ -320,7 +320,7 @@ def get_compound_gene_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
         source_namespace=MOLMEDB_COMPOUND_INPUT_ID,
         target_df=intermediate_df,
         common_cols=["target"],
-        target_specific_cols=list(MOLMEDB_COMPOUND_OUTPUT_DICT.keys()),
+        target_specific_cols=list(MOLMEDB_COMPOUND_PROTEIN_OUTPUT_DICT.keys()),
         col_name=MOLMEDB_INHIBITED_COL,
     )
 

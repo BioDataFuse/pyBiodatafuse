@@ -131,7 +131,7 @@ OPENTARGETS_IGNORE_DISEASE_IDS = [
     "omimps",
     "csp",
 ]
-DRUG_ID = "CHEMBL"
+DRUG_ID = "CHEMBL"  # TODO: Yojana, please check as this is not in the opentarget output dict
 OPENTARGETS_DISEASE_COL = f"{OPENTARGETS}_diseases"
 
 # MINERVA
@@ -140,8 +140,10 @@ MINERVA_OUTPUT_DICT = {
     "pathway_label": str,
     "pathway_gene_count": int,
 }
+
 # WikiPathways
 WIKIPATHWAYS_OUTPUT_DICT = {"pathway_id": str, "pathway_label": str, "pathway_gene_count": int}
+
 # Open Targets - Reactome
 OPENTARGETS_REACTOME_OUTPUT_DICT = {
     "pathway_id": str,
@@ -161,8 +163,8 @@ OPENTARGETS_COMPOUND_OUTPUT_DICT = {
     "drugbank_id": str,
     "compound_cid": str,
     "compound_name": str,
-    "is_approved": bool,
     "clincal_trial_phase": int,
+    "is_approved": bool,
     "relation": str,
     "adverse_effect_count": int,
     "adverse_effect": dict,
@@ -172,8 +174,8 @@ DRUGBANK_ID = "DB"
 RELATION = "inhibits|activates"
 OPENTARGETS_COMPOUND_COL = f"{OPENTARGETS}_compounds"
 
-# MolMeDB - Gene input
-MOLMEDB_GENE_OUTPUT_DICT = {
+# MolMeDB - Gene/Protein input
+MOLMEDB_PROTEIN_COMPOUND_OUTPUT_DICT = {
     "compound_name": str,
     "InChIKey": str,
     "SMILES": str,
@@ -187,14 +189,16 @@ MOLMEDB_GENE_OUTPUT_DICT = {
 MOLMEDB_ID = "MM"
 DRUGBANK_ID = "DB"
 MOLMEDB_INHIBITOR_COL = f"{MOLMEDB}_transporter_inhibitor"
+
 # MolMeDB - Compound input
-MOLMEDB_COMPOUND_OUTPUT_DICT = {
+MOLMEDB_COMPOUND_PROTEIN_OUTPUT_DICT = {
     "uniprot_trembl_id": str,
     "hgnc_symbol": str,
     "source_pmid": str,
 }
 UNIPROT_TREMBL_ID = "P"
 MOLMEDB_INHIBITED_COL = f"{MOLMEDB}_transporter_inhibited"
+
 # PubChem - Assays
 PUBCHEM_OUTPUT_DICT = {
     "pubchem_assay_id": str,
@@ -306,7 +310,7 @@ OPENTARGETS_REACTOME_NODE_ATTRS = {
     "name": None,
     "id": None,
     "labels": OPENTARGETS_REACTOME_NODE_LABELS,
-}
+}  # TODO: Yojana, would it be possible to add pathway size here (gene_count)
 OPENTARGETS_REACTOME_EDGE_LABEL = "part_of"
 OPENTARGETS_REACTOME_EDGE_ATTRS = {"source": OPENTARGETS, "label": OPENTARGETS_REACTOME_EDGE_LABEL}
 
@@ -334,8 +338,9 @@ OPENTARGETS_COMPOUND_NODE_ATTRS = {
     "name": None,
     "id": None,
     "chembl_id": None,
-    "DrugBank_id": None,
+    "drugbank_id": None,
     "compound_cid": None,
+    "clincal_trial_phase": None,
     "is_approved": None,
     "adverse_effect_count": None,
     "labels": OPENTARGETS_COMPOUND_NODE_LABELS,
@@ -353,10 +358,10 @@ OPENTARGETS_SIDE_EFFECT_NODE_ATTRS = {
 }
 OPENTARGETS_SIDE_EFFECT_EDGE_LABEL = "has_side_effect"
 
-# MolMeDB - Gene input
-MOLMEDB_COMPOUND_NODE_LABELS = "Compound"
-MOLMEDB_COMPOUND_NODE_MAIN_LABEL = "compound_cid"
-MOLMEDB_COMPOUND_NODE_ATTRS = {
+# MolMeDB - Gene/Protein input
+MOLMEDB_PROTEIN_COMPOUND_NODE_LABELS = "Compound"
+MOLMEDB_PROTEIN_COMPOUND_NODE_MAIN_LABEL = "compound_cid"
+MOLMEDB_PROTEIN_COMPOUND_NODE_ATTRS = {
     "source": MOLMEDB,
     "name": None,
     "id": None,
@@ -367,12 +372,12 @@ MOLMEDB_COMPOUND_NODE_ATTRS = {
     "InChIKey": None,
     "SMILES": None,
     "source_pmid": None,
-    "labels": MOLMEDB_COMPOUND_NODE_LABELS,
+    "labels": MOLMEDB_PROTEIN_COMPOUND_NODE_LABELS,
 }
-MOLMEDB_COMPOUND_EDGE_LABEL = "inhibits"
-MOLMEDB_COMPOUND_EDGE_ATTRS = {
+MOLMEDB_PROTEIN_COMPOUND_EDGE_LABEL = "inhibits"
+MOLMEDB_PROTEIN_COMPOUND_EDGE_ATTRS = {
     "source": MOLMEDB,
-    "label": MOLMEDB_COMPOUND_EDGE_LABEL,
+    "label": MOLMEDB_PROTEIN_COMPOUND_EDGE_LABEL,
 }
 
 # PubChem - Assays
