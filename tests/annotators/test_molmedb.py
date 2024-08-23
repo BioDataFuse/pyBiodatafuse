@@ -14,7 +14,7 @@ from pyBiodatafuse.annotators.molmedb import (
     get_compound_gene_inhibitor,
     get_gene_compound_inhibitor,
 )
-from pyBiodatafuse.constants import MOLMEDB_INHIBITED_COL, MOLMEDB_INHIBITOR_COL
+from pyBiodatafuse.constants import MOLMEDB_COMPOUND_PROTEIN_COL, MOLMEDB_PROTEIN_COMPOUND_COL
 
 
 class TestMolMeDb(unittest.TestCase):
@@ -299,9 +299,9 @@ class TestMolMeDb(unittest.TestCase):
                 ],
             ]
         )
-        expected_data.name = MOLMEDB_INHIBITOR_COL
+        expected_data.name = MOLMEDB_PROTEIN_COMPOUND_COL
 
-        pd.testing.assert_series_equal(obtained_data[MOLMEDB_INHIBITOR_COL], expected_data)
+        pd.testing.assert_series_equal(obtained_data[MOLMEDB_PROTEIN_COMPOUND_COL], expected_data)
         self.assertIsInstance(metadata, dict)
 
     @patch("pyBiodatafuse.annotators.molmedb.SPARQLWrapper.queryAndConvert")
@@ -430,8 +430,8 @@ class TestMolMeDb(unittest.TestCase):
                 [{"uniprot_trembl_id": nan, "hgnc_symbol": nan, "source_pmid": nan}],
             ]
         )
-        expected_data.name = MOLMEDB_INHIBITED_COL
+        expected_data.name = MOLMEDB_COMPOUND_PROTEIN_COL
 
-        pd.testing.assert_series_equal(obtained_data[MOLMEDB_INHIBITED_COL], expected_data)
+        pd.testing.assert_series_equal(obtained_data[MOLMEDB_COMPOUND_PROTEIN_COL], expected_data)
 
         self.assertIsInstance(metadata, dict)

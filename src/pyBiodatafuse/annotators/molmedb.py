@@ -16,12 +16,12 @@ from SPARQLWrapper import JSON, SPARQLWrapper
 from pyBiodatafuse.constants import (
     MOLMEDB,
     MOLMEDB_COMPOUND_INPUT_ID,
+    MOLMEDB_COMPOUND_PROTEIN_COL,
     MOLMEDB_COMPOUND_PROTEIN_OUTPUT_DICT,
     MOLMEDB_ENDPOINT,
-    MOLMEDB_GENE_INPUT_ID,
-    MOLMEDB_INHIBITED_COL,
-    MOLMEDB_INHIBITOR_COL,
+    MOLMEDB_PROTEIN_COMPOUND_COL,
     MOLMEDB_PROTEIN_COMPOUND_OUTPUT_DICT,
+    MOLMEDB_PROTEIN_INPUT_ID,
 )
 from pyBiodatafuse.utils import (
     check_columns_against_constants,
@@ -71,7 +71,7 @@ def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
     # Record the start time
     start_time = datetime.datetime.now()
 
-    data_df = get_identifier_of_interest(bridgedb_df, MOLMEDB_GENE_INPUT_ID)
+    data_df = get_identifier_of_interest(bridgedb_df, MOLMEDB_PROTEIN_INPUT_ID)
     molmedb_transporter_list = data_df["target"].tolist()
 
     molmedb_transporter_list = list(set(molmedb_transporter_list))
@@ -133,7 +133,7 @@ def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
         "datasource": MOLMEDB,
         "query": {
             "size": len(molmedb_transporter_list),
-            "input_type": MOLMEDB_GENE_INPUT_ID,
+            "input_type": MOLMEDB_PROTEIN_INPUT_ID,
             "time": time_elapsed,
             "date": current_date,
             "url": MOLMEDB_ENDPOINT,
@@ -170,11 +170,11 @@ def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
     # Merge the two DataFrames on the target column
     merged_df = collapse_data_sources(
         data_df=data_df,
-        source_namespace=MOLMEDB_GENE_INPUT_ID,
+        source_namespace=MOLMEDB_PROTEIN_INPUT_ID,
         target_df=intermediate_df,
         common_cols=["target"],
         target_specific_cols=list(MOLMEDB_PROTEIN_COMPOUND_OUTPUT_DICT.keys()),
-        col_name=MOLMEDB_INHIBITOR_COL,
+        col_name=MOLMEDB_PROTEIN_COMPOUND_COL,
     )
 
     # Ensuring all the dictionaries in the MolMeDB_transporter_inhibitor column are same for multiple gene isoforms
@@ -186,9 +186,9 @@ def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
             main_df.append(mm)
             continue
 
-        molmedb_output = list(mm[MOLMEDB_INHIBITOR_COL].values)
+        molmedb_output = list(mm[MOLMEDB_PROTEIN_COMPOUND_COL].values)
         unique_output = get_unique_dicts(molmedb_output)
-        mm[MOLMEDB_INHIBITOR_COL] = ([unique_output]) * len(mm)
+        mm[MOLMEDB_PROTEIN_COMPOUND_COL] = ([unique_output]) * len(mm)
         main_df.append(mm)
 
     main_df = pd.concat(main_df)
@@ -325,7 +325,7 @@ def get_compound_gene_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
         target_df=intermediate_df,
         common_cols=["target"],
         target_specific_cols=list(MOLMEDB_COMPOUND_PROTEIN_OUTPUT_DICT.keys()),
-        col_name=MOLMEDB_INHIBITED_COL,
+        col_name=MOLMEDB_COMPOUND_PROTEIN_COL,
     )
 
     """Update metadata"""

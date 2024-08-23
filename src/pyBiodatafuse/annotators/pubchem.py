@@ -14,10 +14,10 @@ from SPARQLWrapper import JSON, SPARQLWrapper
 
 from pyBiodatafuse.constants import (
     PUBCHEM,
-    PUBCHEM_ASSAYS_COL,
+    PUBCHEM_COMPOUND_ASSAYS_COL,
+    PUBCHEM_COMPOUND_INPUT_ID,
+    PUBCHEM_COMPOUND_OUTPUT_DICT,
     PUBCHEM_ENDPOINT,
-    PUBCHEM_INPUT_ID,
-    PUBCHEM_OUTPUT_DICT,
 )
 from pyBiodatafuse.utils import (
     check_columns_against_constants,
@@ -66,7 +66,7 @@ def get_protein_compound_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
     # Record the start time
     start_time = datetime.datetime.now()
 
-    data_df = get_identifier_of_interest(bridgedb_df, PUBCHEM_INPUT_ID)
+    data_df = get_identifier_of_interest(bridgedb_df, PUBCHEM_COMPOUND_INPUT_ID)
     protein_list_str = data_df["target"].tolist()
     for i in range(len(protein_list_str)):
         protein_list_str[i] = "<http://purl.uniprot.org/uniprot/" + protein_list_str[i] + ">"
@@ -125,7 +125,7 @@ def get_protein_compound_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
         "datasource": PUBCHEM,
         "query": {
             "size": len(protein_list_str),
-            "input_type": PUBCHEM_INPUT_ID,
+            "input_type": PUBCHEM_COMPOUND_INPUT_ID,
             "time": time_elapsed,
             "date": current_date,
             "url": PUBCHEM_ENDPOINT,
@@ -191,18 +191,18 @@ def get_protein_compound_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
     # Check if all keys in df match the keys in OUTPUT_DICT
     check_columns_against_constants(
         data_df=intermediate_df,
-        output_dict=PUBCHEM_OUTPUT_DICT,
+        output_dict=PUBCHEM_COMPOUND_OUTPUT_DICT,
         check_values_in=["outcome", "inchi"],
     )
 
     # Merge the two DataFrames on the target column
     merged_df = collapse_data_sources(
         data_df=data_df,
-        source_namespace=PUBCHEM_INPUT_ID,
+        source_namespace=PUBCHEM_COMPOUND_INPUT_ID,
         target_df=intermediate_df,
         common_cols=["target"],
-        target_specific_cols=list(PUBCHEM_OUTPUT_DICT.keys()),
-        col_name=PUBCHEM_ASSAYS_COL,
+        target_specific_cols=list(PUBCHEM_COMPOUND_OUTPUT_DICT.keys()),
+        col_name=PUBCHEM_COMPOUND_ASSAYS_COL,
     )
 
     merged_df.reset_index(drop=True, inplace=True)
