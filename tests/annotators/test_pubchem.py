@@ -11,7 +11,7 @@ import pandas as pd
 from numpy import nan
 
 from pyBiodatafuse.annotators import pubchem
-from pyBiodatafuse.annotators.pubchem import get_protein_molecule_screened
+from pyBiodatafuse.annotators.pubchem import get_protein_compound_screened
 from pyBiodatafuse.constants import PUBCHEM_ASSAYS_COL
 
 data_file_folder = os.path.join(os.path.dirname(__file__), "data")
@@ -34,8 +34,8 @@ class TestPubchem(unittest.TestCase):
     #     self.assertEqual(obtained_version, expected_version)
 
     @patch("pyBiodatafuse.annotators.pubchem.SPARQLWrapper.queryAndConvert")
-    def test_get_protein_molecule_screened(self, mock_sparql_request):
-        """Test the get_protein_molecule_screened."""
+    def test_get_protein_compound_screened(self, mock_sparql_request):
+        """Test the get_protein_compound_screened."""
         with open(os.path.join(data_file_folder, "pubchem_mock_data.json")) as f:
             mock_data = json.load(f)
 
@@ -55,7 +55,7 @@ class TestPubchem(unittest.TestCase):
             }
         )
 
-        obtained_data, metadata = get_protein_molecule_screened(bridgedb_dataframe)
+        obtained_data, metadata = get_protein_compound_screened(bridgedb_dataframe)
 
         expected_data = pd.Series(
             [
