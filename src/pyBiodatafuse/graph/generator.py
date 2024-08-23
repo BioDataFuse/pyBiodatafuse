@@ -153,7 +153,7 @@ def add_bgee_subgraph(g, gene_node_label, annot_list):
     return g
 
 
-def add_disgenet_disease_subgraph(g, gene_node_label, annot_list):  # TODO: should be updated
+def add_disgenet_disease_subgraph(g, gene_node_label, annot_list):
     """Construct part of the graph by linking the gene to a list of annotation entities (disease, drug ..etc).
 
     :param g: the input graph to extend with new nodes and edges.
@@ -166,14 +166,41 @@ def add_disgenet_disease_subgraph(g, gene_node_label, annot_list):  # TODO: shou
             annot_node_label = annot[DISGENET_NODE_MAIN_LABEL]
             annot_node_attrs = DISGENET_NODE_ATTRS.copy()
             annot_node_attrs["name"] = annot["disease_name"]
-            annot_node_attrs["id"] = annot["disease_id"]
-            annot_node_attrs["evidence_source"] = annot["evidence_source"]
+            annot_node_attrs["id"] = annot["UMLS"]
 
-            # g.add_node(annot_node_label, attr_dict=annot_node_attrs)
-            merge_node(g, annot_node_label, annot_node_attrs)
+            if not pd.isna(annot["HPO"]):
+                annot_node_attrs["HPO"] = annot["HPO"]
+            if not pd.isna(annot["NCI"]):
+                annot_node_attrs["NCI"] = annot["NCI"]
+            if not pd.isna(annot["OMIM"]):
+                annot_node_attrs["OMIM"] = annot["OMIM"]
+            if not pd.isna(annot["MONDO"]):
+                annot_node_attrs["MONDO"] = annot["MONDO"]
+            if not pd.isna(annot["ORDO"]):
+                annot_node_attrs["ORDO"] = annot["ORDO"]
+            if not pd.isna(annot["EFO"]):
+                annot_node_attrs["EFO"] = annot["EFO"]
+            if not pd.isna(annot["DO"]):
+                annot_node_attrs["DO"] = annot["DO"]
+            if not pd.isna(annot["MESH"]):
+                annot_node_attrs["MESH"] = annot["MESH"]
+            if not pd.isna(annot["UMLS"]):
+                annot_node_attrs["UMLS"] = annot["UMLS"]
+            if not pd.isna(annot["disease_type"]):
+                annot_node_attrs["disease_type"] = annot["disease_type"]
+            if not pd.isna(annot["disease_umlscui"]):
+                annot_node_attrs["disease_umlscui"] = annot["disease_umlscui"]
+
+            g.add_node(annot_node_label, attr_dict=annot_node_attrs)
 
             edge_attrs = DISGENET_EDGE_ATTRS.copy()
             edge_attrs["score"] = edge_attrs["score"]
+
+            if not pd.isna(annot["ei"]):
+                edge_attrs["ei"] = annot["ei"]
+            if not pd.isna(annot["el"]):
+                edge_attrs["el"] = annot["el"]
+
             edge_hash = hash(frozenset(edge_attrs.items()))
             edge_attrs["edge_hash"] = edge_hash
             edge_data = g.get_edge_data(gene_node_label, annot_node_label)
@@ -191,6 +218,7 @@ def add_disgenet_disease_subgraph(g, gene_node_label, annot_list):  # TODO: shou
                 )
 
     return g
+
 
 # TODO: The annotations are not curated and will be used again when the OpenTarget annotation improves.
 # def add_opentargets_disease_subgraph(g, gene_node_label, annot_list):  # TODO: should be updated

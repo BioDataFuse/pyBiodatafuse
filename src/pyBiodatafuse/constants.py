@@ -245,26 +245,36 @@ BGEE_EDGE_ATTRS = {
 # Disease node
 # DISGENET
 DISGENET_NODE_LABELS = "Disease"
-DISGENET_NODE_MAIN_LABEL = "disease_id"
+DISGENET_NODE_MAIN_LABEL = "UMLS"
 DISGENET_NODE_ATTRS = {
     "source": DISGENET,
     "name": None,
     "id": None,
+    "HPO": None,
+    "NCI": None,
+    "OMIM": None,
+    "MONDO": None,
+    "ORDO": None,
+    "EFO": None,
+    "DO": None,
+    "MESH": None,
+    "UMLS": None,
     "disease_type": None,
-    "ei": None,
-    "el": None,
+    "disease_umlscui": None,
     "labels": DISGENET_NODE_LABELS,
 }
 DISGENET_EDGE_LABEL = "associated_with"
 DISGENET_EDGE_ATTRS = {
     "source": DISGENET,
     "score": None,
+    "ei": None,
+    "el": None,
     "label": DISGENET_EDGE_LABEL,
 }
 
 # Open Targets - Disease
 OPENTARGETS_DISEASE_NODE_LABELS = "Disease"
-OPENTARGETS_DISEASE_NODE_MAIN_LABEL = "disease_id"
+OPENTARGETS_DISEASE_NODE_MAIN_LABEL = "UMLS"
 OPENTARGETS_DISEASE_NODE_ATTRS = {
     "source": OPENTARGETS,
     "name": None,
