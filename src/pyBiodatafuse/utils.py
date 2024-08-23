@@ -153,3 +153,43 @@ def check_columns_against_constants(
                         f"All values in column '{col}' do not start with '{starts_with}'.",
                         stacklevel=2,
                     )
+
+
+def create_harmonized_input_file(annotated_df: pd.DataFrame, target_col: str, target_source: str) -> pd.DataFrame:
+    """
+    Creates a harmonized input DataFrame by extracting specific identifiers from a complex nested structure 
+    within a target column.
+    
+    :param annotated_df: DataFrame containing the initial data with nested dictionaries.
+    :param target_col: Name of the column containing the nested dictionaries.
+    :param target_source: The specific identifier source to extract (e.g., 'EFO', 'OMIM').
+    :returns: A DataFrame with original identifiers and the extracted target identifiers.
+    """
+    
+    harmonized_data = []
+    
+    for _i, row in annotated_df.iterrows():
+        # Extract the identifier
+        identifier = row['identifier']
+        identifier_source = row['identifier.source']
+        
+        # Extract the the target column
+        target_data = row[target_col]
+        
+        # Loop through each dictionary in the target data
+        for entry in target_data:
+            # Extract the specific identifiers based on the target_source
+            identifiers = entry.get(target_source)
+            if identifiers:
+                for id in identifiers.split(', '):
+                    # Add a new row to the harmonized data list
+                    harmonized_data.append({
+                        'identifier': identifier,
+                        'identifier.source': identifier_source,
+                        'target': id,
+                        'target.source': target_source,
+                    })
+    
+    harmonized_df = pd.DataFrame(harmonized_data)
+    
+    return harmonized_df.drop_duplicates()
