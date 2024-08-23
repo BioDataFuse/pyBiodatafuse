@@ -192,45 +192,45 @@ def add_disgenet_disease_subgraph(g, gene_node_label, annot_list):  # TODO: shou
 
     return g
 
+# TODO: The annotations are not curated and will be used again when the OpenTarget annotation improves.
+# def add_opentargets_disease_subgraph(g, gene_node_label, annot_list):  # TODO: should be updated
+#     """Construct part of the graph by linking the gene to a list of annotation entities (disease, drug ..etc).
 
-def add_opentargets_disease_subgraph(g, gene_node_label, annot_list):  # TODO: should be updated
-    """Construct part of the graph by linking the gene to a list of annotation entities (disease, drug ..etc).
+#     :param g: the input graph to extend with new nodes and edges.
+#     :param gene_node_label: the gene node to be linked to annotation entities.
+#     :param annot_list: list of annotations from a specific source (e.g. DisGeNET, WikiPathways ..etc).
+#     :returns: a NetworkX MultiDiGraph
+#     """
+#     for annot in annot_list:
+#         if not pd.isna(annot["disease_name"]):
+#             annot_node_label = annot[OPENTARGETS_DISEASE_NODE_MAIN_LABEL]
+#             annot_node_attrs = OPENTARGETS_DISEASE_NODE_ATTRS.copy()
+#             annot_node_attrs["name"] = annot["disease_name"]
+#             annot_node_attrs["id"] = annot["disease_id"]
+#             annot_node_attrs["therapeutic_areas"] = annot["therapeutic_areas"]
 
-    :param g: the input graph to extend with new nodes and edges.
-    :param gene_node_label: the gene node to be linked to annotation entities.
-    :param annot_list: list of annotations from a specific source (e.g. DisGeNET, WikiPathways ..etc).
-    :returns: a NetworkX MultiDiGraph
-    """
-    for annot in annot_list:
-        if not pd.isna(annot["disease_name"]):
-            annot_node_label = annot[OPENTARGETS_DISEASE_NODE_MAIN_LABEL]
-            annot_node_attrs = OPENTARGETS_DISEASE_NODE_ATTRS.copy()
-            annot_node_attrs["name"] = annot["disease_name"]
-            annot_node_attrs["id"] = annot["disease_id"]
-            annot_node_attrs["therapeutic_areas"] = annot["therapeutic_areas"]
+#             # g.add_node(annot_node_label, attr_dict=annot_node_attrs)
+#             merge_node(g, annot_node_label, annot_node_attrs)
 
-            # g.add_node(annot_node_label, attr_dict=annot_node_attrs)
-            merge_node(g, annot_node_label, annot_node_attrs)
+#             edge_attrs = OPENTARGETS_DISEASE_EDGE_ATTRS
 
-            edge_attrs = OPENTARGETS_DISEASE_EDGE_ATTRS
+#             edge_hash = hash(frozenset(edge_attrs.items()))
+#             edge_attrs["edge_hash"] = edge_hash
+#             edge_data = g.get_edge_data(gene_node_label, annot_node_label)
+#             edge_data = {} if edge_data is None else edge_data
+#             node_exists = [
+#                 x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash
+#             ]
 
-            edge_hash = hash(frozenset(edge_attrs.items()))
-            edge_attrs["edge_hash"] = edge_hash
-            edge_data = g.get_edge_data(gene_node_label, annot_node_label)
-            edge_data = {} if edge_data is None else edge_data
-            node_exists = [
-                x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash
-            ]
+#             if len(node_exists) == 0:
+#                 g.add_edge(
+#                     gene_node_label,
+#                     annot_node_label,
+#                     label=OPENTARGETS_DISEASE_EDGE_LABEL,
+#                     attr_dict=edge_attrs,
+#                 )
 
-            if len(node_exists) == 0:
-                g.add_edge(
-                    gene_node_label,
-                    annot_node_label,
-                    label=OPENTARGETS_DISEASE_EDGE_LABEL,
-                    attr_dict=edge_attrs,
-                )
-
-    return g
+#     return g
 
 
 def add_minerva_subgraph(g, gene_node_label, annot_list):
