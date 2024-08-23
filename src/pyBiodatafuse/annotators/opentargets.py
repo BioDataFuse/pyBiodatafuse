@@ -844,73 +844,73 @@ def get_compound_disease_interactions(
 
     return merged_df, opentargets_version
 
+# TODO: The annotations are not curated and will be used again when the OpenTarget annotation improves.
+# def get_gene_disease_associations(
+#     bridgedb_df: pd.DataFrame,
+# ) -> Tuple[pd.DataFrame, dict]:
+#     """Get information about disease connected to drugs associated with a genes of interest.
 
-def get_gene_disease_associations(
-    bridgedb_df: pd.DataFrame,
-) -> Tuple[pd.DataFrame, dict]:
-    """Get information about disease connected to drugs associated with a genes of interest.
+#     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
+#     :returns: a DataFrame containing the OpenTargets output and dictionary of the query metadata.
+#     """
+#     # Check if the API is available
+#     api_available = check_endpoint_opentargets()
+#     if not api_available:
+#         warnings.warn(
+#             f"{OPENTARGETS} GraphQL endpoint is not available. Unable to retrieve data.",
+#             stacklevel=2,
+#         )
+#         return pd.DataFrame(), {}
 
-    :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
-    :returns: a DataFrame containing the OpenTargets output and dictionary of the query metadata.
-    """
-    # Check if the API is available
-    api_available = check_endpoint_opentargets()
-    if not api_available:
-        warnings.warn(
-            f"{OPENTARGETS} GraphQL endpoint is not available. Unable to retrieve data.",
-            stacklevel=2,
-        )
-        return pd.DataFrame(), {}
+#     # Get gene-compound interactions
+#     cmp_merged_df, opentargets_version = get_gene_compound_interactions(bridgedb_df)
 
-    # Get gene-compound interactions
-    cmp_merged_df, opentargets_version = get_gene_compound_interactions(bridgedb_df)
+#     if cmp_merged_df.empty:
+#         return pd.DataFrame(), opentargets_version
 
-    if cmp_merged_df.empty:
-        return pd.DataFrame(), opentargets_version
+#     # Making a bridgeDb dataframe for the compound ids
+#     gene_cmpd_data = []
+#     for row in cmp_merged_df.values:
+#         (
+#             gene,
+#             gene_namespace,
+#             tar,
+#             target_namespace,
+#             cmpds,
+#         ) = row
+#         if len(cmpds) < 1:
+#             continue
 
-    # Making a bridgeDb dataframe for the compound ids
-    gene_cmpd_data = []
-    for row in cmp_merged_df.values:
-        (
-            gene,
-            gene_namespace,
-            tar,
-            target_namespace,
-            cmpds,
-        ) = row
-        if len(cmpds) < 1:
-            continue
+#         for cmpd in cmpds:
+#             gene_cmpd_data.append(
+#                 {
+#                     "identifier": gene,
+#                     "identifier.source": gene_namespace,
+#                     "target": cmpd["chembl_id"],
+#                     "target.source": OPENTARGETS_COMPOUND_QUERY_INPUT_ID,
+#                 }
+#             )
 
-        for cmpd in cmpds:
-            gene_cmpd_data.append(
-                {
-                    "identifier": gene,
-                    "identifier.source": gene_namespace,
-                    "target": cmpd["chembl_id"],
-                    "target.source": OPENTARGETS_COMPOUND_QUERY_INPUT_ID,
-                }
-            )
+#     gene_cmpd_df = pd.DataFrame(gene_cmpd_data)
 
-    gene_cmpd_df = pd.DataFrame(gene_cmpd_data)
+#     # Get compound-disease interactions
+#     dis_merged_df, opentargets_version = get_compound_disease_interactions(gene_cmpd_df)
 
-    # Get compound-disease interactions
-    dis_merged_df, opentargets_version = get_compound_disease_interactions(gene_cmpd_df)
+#     # Fixing merge to look like gene-disease
+#     merged_df = get_identifier_of_interest(bridgedb_df, OPENTARGETS_GENE_INPUT_ID)
 
-    # Fixing merge to look like gene-disease
-    merged_df = get_identifier_of_interest(bridgedb_df, OPENTARGETS_GENE_INPUT_ID)
+#     disease_col = []
+#     for gene in merged_df["identifier"]:
+#         tmp = dis_merged_df[dis_merged_df["identifier"] == gene]
+#         if tmp.empty:
+#             disease_col.append([{i: np.nan for i in OPENTARGETS_DISEASE_OUTPUT_DICT}])
+#         else:
+#             vals = tmp.iloc[0][OPENTARGETS_DISEASE_COL]
+#             disease_col.append(vals)
 
-    disease_col = []
-    for gene in merged_df["identifier"]:
-        tmp = dis_merged_df[dis_merged_df["identifier"] == gene]
-        if tmp.empty:
-            disease_col.append([{i: np.nan for i in OPENTARGETS_DISEASE_OUTPUT_DICT}])
-        else:
-            vals = tmp.iloc[0][OPENTARGETS_DISEASE_COL]
-            disease_col.append(vals)
+#     merged_df[OPENTARGETS_DISEASE_COL] = disease_col
 
-    merged_df[OPENTARGETS_DISEASE_COL] = disease_col
-
-    return merged_df, opentargets_version
+#     return merged_df, opentargets_version
 
 
 def get_disease_compound_interactions(
