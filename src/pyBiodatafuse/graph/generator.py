@@ -220,7 +220,7 @@ def add_disgenet_disease_subgraph(g, gene_node_label, annot_list):
     return g
 
 
-# TODO: The annotations are not curated and will be used again when the OpenTarget annotation improves.
+# TODO: The disease annotations are not curated and will be used again when the OpenTarget annotation improves.
 # def add_opentargets_disease_subgraph(g, gene_node_label, annot_list):  # TODO: should be updated
 #     """Construct part of the graph by linking the gene to a list of annotation entities (disease, drug ..etc).
 
