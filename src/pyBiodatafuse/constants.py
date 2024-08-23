@@ -224,7 +224,7 @@ WIKIDATA_CC_COL = f"{WIKIDATA}_cellular_components"
 # Node and edge main lable and attributes for each data source
 # Anatomical entity node
 # Bgee
-BGEE_NODE_LABELS = "Anatomical Entity"
+ANATOMICAL_NODE_LABELS = "Anatomical Entity"
 BGEE_NODE_MAIN_LABEL = "anatomical_entity_id"
 BGEE_NODE_ATTRS = {
     "source": BGEE,
@@ -232,7 +232,7 @@ BGEE_NODE_ATTRS = {
     "id": None,
     "developmental_stage_name": None,
     "developmental_stage_id": None,
-    "labels": BGEE_NODE_LABELS,
+    "labels": ANATOMICAL_NODE_LABELS,
 }
 BGEE_EDGE_LABEL = "expressed_by"
 BGEE_EDGE_ATTRS = {
@@ -245,7 +245,7 @@ BGEE_EDGE_ATTRS = {
 
 # Disease node
 # DISGENET
-DISGENET_NODE_LABELS = "Disease"
+DISSEASE_NODE_LABELS = "Disease"
 DISGENET_NODE_MAIN_LABEL = "UMLS"
 DISGENET_NODE_ATTRS = {
     "source": DISGENET,
@@ -262,7 +262,7 @@ DISGENET_NODE_ATTRS = {
     "UMLS": None,
     "disease_type": None,
     "disease_umlscui": None,
-    "labels": DISGENET_NODE_LABELS,
+    "labels": DISSEASE_NODE_LABELS,
 }
 DISGENET_EDGE_LABEL = "associated_with"
 DISGENET_EDGE_ATTRS = {
@@ -274,62 +274,59 @@ DISGENET_EDGE_ATTRS = {
 }
 
 # Open Targets - Disease
-OPENTARGETS_DISEASE_NODE_LABELS = "Disease"
 OPENTARGETS_DISEASE_NODE_MAIN_LABEL = "UMLS"
 OPENTARGETS_DISEASE_NODE_ATTRS = {
     "source": OPENTARGETS,
     "name": None,
     "id": None,
     "therapeutic_areas": None,
-    "labels": OPENTARGETS_DISEASE_NODE_LABELS,
+    "labels": DISSEASE_NODE_LABELS,
 }
 OPENTARGETS_DISEASE_EDGE_LABEL = "associated_with"
 OPENTARGETS_DISEASE_EDGE_ATTRS = {"source": OPENTARGETS, "label": OPENTARGETS_DISEASE_EDGE_LABEL}
 
 # Pathway node
 # MINERVA
-MINERVA_NODE_LABELS = "Pathway"
+PATHWAY_NODE_LABELS = "Pathway"
 MINERVA_NODE_MAIN_LABEL = "pathway_id"
 MINERVA_NODE_ATTRS = {
     "source": MINERVA,
     "name": None,
     "id": None,
     "gene_count": None,
-    "labels": MINERVA_NODE_LABELS,
+    "labels": PATHWAY_NODE_LABELS,
 }
 MINERVA_EDGE_LABEL = "part_of"
 MINERVA_EDGE_ATTRS = {"source": MINERVA, "label": MINERVA_EDGE_LABEL}
 
 # WikiPathways
-WIKIPATHWAYS_NODE_LABELS = "Pathway"
 WIKIPATHWAYS_NODE_MAIN_LABEL = "pathway_id"
 WIKIPATHWAYS_NODE_ATTRS = {
     "source": WIKIPATHWAYS,
     "name": None,
     "id": None,
     "gene_count": None,
-    "labels": WIKIPATHWAYS_NODE_LABELS,
+    "labels": PATHWAY_NODE_LABELS,
 }
 WIKIPATHWAYS_EDGE_LABEL = "part_of"
 WIKIPATHWAYS_EDGE_ATTRS = {"source": WIKIPATHWAYS, "label": WIKIPATHWAYS_EDGE_LABEL}
 
 # Open Targets - Reactome
-OPENTARGETS_REACTOME_NODE_LABELS = "Pathway"
 OPENTARGETS_REACTOME_NODE_MAIN_LABEL = "pathway_id"
 OPENTARGETS_REACTOME_NODE_ATTRS = {
     "source": OPENTARGETS,
     "name": None,
     "id": None,
-    "labels": OPENTARGETS_REACTOME_NODE_LABELS,
+    "labels": PATHWAY_NODE_LABELS,
 }  # TODO: Yojana, would it be possible to add pathway size here (gene_count)
 OPENTARGETS_REACTOME_EDGE_LABEL = "part_of"
 OPENTARGETS_REACTOME_EDGE_ATTRS = {"source": OPENTARGETS, "label": OPENTARGETS_REACTOME_EDGE_LABEL}
 
 # GO nodes
 # Open Targets - GO processes
-OPENTARGETS_GO_BP_NODE_LABELS = "Biological Process"
-OPENTARGETS_GO_MF_NODE_LABELS = "Molecular Function"
-OPENTARGETS_GO_CC_NODE_LABELS = "Cellular Component"
+GO_BP_NODE_LABELS = "Biological Process"
+GO_MF_NODE_LABELS = "Molecular Function"
+GO_CC_NODE_LABELS = "Cellular Component"
 OPENTARGETS_GO_NODE_MAIN_LABEL = "go_id"
 OPENTARGETS_GO_NODE_ATTRS = {
     "source": OPENTARGETS,
@@ -342,7 +339,7 @@ OPENTARGETS_GO_EDGE_ATTRS = {"source": OPENTARGETS, "label": OPENTARGETS_GO_EDGE
 
 # Compound node
 # Open Targets - Compound
-OPENTARGETS_COMPOUND_NODE_LABELS = "Compound"
+COMPOUND_NODE_LABELS = "Compound"
 OPENTARGETS_COMPOUND_NODE_MAIN_LABEL = "compound_cid"
 OPENTARGETS_COMPOUND_NODE_ATTRS = {
     "source": OPENTARGETS,
@@ -354,23 +351,22 @@ OPENTARGETS_COMPOUND_NODE_ATTRS = {
     "clincal_trial_phase": None,
     "is_approved": None,
     "adverse_effect_count": None,
-    "labels": OPENTARGETS_COMPOUND_NODE_LABELS,
+    "labels": COMPOUND_NODE_LABELS,
 }
 OPENTARGETS_COMPOUND_EDGE_ATTRS = {"source": OPENTARGETS, "label": None}
 # Side effect
 # Open Targets - Compound
-OPENTARGETS_SIDE_EFFECT_NODE_LABELS = "Side Effect"
+SIDE_EFFECT_NODE_LABELS = "Side Effect"
 OPENTARGETS_SIDE_EFFECT_NODE_MAIN_LABEL = "adverse_effect"
 # TODO: add the side effect id (adverse_effect id)
 OPENTARGETS_SIDE_EFFECT_NODE_ATTRS = {
     "source": OPENTARGETS,
     "name": None,
-    "labels": OPENTARGETS_SIDE_EFFECT_NODE_LABELS,
+    "labels": SIDE_EFFECT_NODE_LABELS,
 }
 OPENTARGETS_SIDE_EFFECT_EDGE_LABEL = "has_side_effect"
 
 # MolMeDB - Gene/Protein input
-MOLMEDB_PROTEIN_COMPOUND_NODE_LABELS = "Compound"
 MOLMEDB_PROTEIN_COMPOUND_NODE_MAIN_LABEL = "compound_cid"
 MOLMEDB_PROTEIN_COMPOUND_NODE_ATTRS = {
     "source": MOLMEDB,
@@ -383,7 +379,7 @@ MOLMEDB_PROTEIN_COMPOUND_NODE_ATTRS = {
     "inchikey": None,
     "smiles": None,
     "source_pmid": None,
-    "labels": MOLMEDB_PROTEIN_COMPOUND_NODE_LABELS,
+    "labels": COMPOUND_NODE_LABELS,
 }
 MOLMEDB_PROTEIN_COMPOUND_EDGE_LABEL = "inhibits"
 MOLMEDB_PROTEIN_COMPOUND_EDGE_ATTRS = {
@@ -392,7 +388,6 @@ MOLMEDB_PROTEIN_COMPOUND_EDGE_ATTRS = {
 }
 
 # PubChem - Assays
-PUBCHEM_NODE_LABELS = "Compound"
 PUBCHEM_NODE_MAIN_LABEL = "compound_cid"
 PUBCHEM_NODE_ATTRS = {
     "source": PUBCHEM,
@@ -400,7 +395,7 @@ PUBCHEM_NODE_ATTRS = {
     "id": None,
     "inchi": None,
     "smiles": None,
-    "labels": PUBCHEM_NODE_LABELS,
+    "labels": COMPOUND_NODE_LABELS,
 }
 PUBCHEM_EDGE_ATTRS = {
     "source": PUBCHEM,

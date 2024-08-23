@@ -19,7 +19,10 @@ from pyBiodatafuse.constants import (
     DISGENET_EDGE_LABEL,
     DISGENET_NODE_ATTRS,
     DISGENET_NODE_MAIN_LABEL,
+    GENE_COMPOUND_COL,
     GENE_NODE_LABELS,
+    GO_BP_NODE_LABELS,
+    GO_CC_NODE_LABELS,
     MINERVA,
     MINERVA_EDGE_ATTRS,
     MINERVA_EDGE_LABEL,
@@ -41,9 +44,6 @@ from pyBiodatafuse.constants import (
     OPENTARGETS_DISEASE_EDGE_LABEL,
     OPENTARGETS_DISEASE_NODE_ATTRS,
     OPENTARGETS_DISEASE_NODE_MAIN_LABEL,
-    OPENTARGETS_GENE_COMPOUND_COL,
-    OPENTARGETS_GO_BP_NODE_LABELS,
-    OPENTARGETS_GO_CC_NODE_LABELS,
     OPENTARGETS_GO_COL,
     OPENTARGETS_GO_EDGE_ATTRS,
     OPENTARGETS_GO_EDGE_LABEL,
@@ -394,11 +394,11 @@ def add_opentargets_gene_go_subgraph(g, gene_node_label, annot_list):
         annot_node_attrs["name"] = annot["go_name"]
         annot_node_attrs["id"] = annot["go_id"]
         if annot["go_type"] == "BP":
-            annot_node_attrs["labels"] = OPENTARGETS_GO_BP_NODE_LABELS
+            annot_node_attrs["labels"] = GO_BP_NODE_LABELS
         elif annot["go_type"] == "MF":
-            annot_node_attrs["labels"] = OPENTARGETS_GO_MF_NODE_LABELS
+            annot_node_attrs["labels"] = GO_MF_NODE_LABELS
         elif annot["go_type"] == "CC":
-            annot_node_attrs["labels"] = OPENTARGETS_GO_CC_NODE_LABELS
+            annot_node_attrs["labels"] = GO_CC_NODE_LABELS
 
         g.add_node(annot_node_label, attr_dict=annot_node_attrs)
 
