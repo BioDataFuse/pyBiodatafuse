@@ -65,7 +65,7 @@ def run_gene_selected_sources(
         "opentarget.gene_ontology": opentargets.get_gene_go_process,
         "opentarget.reactome": opentargets.get_gene_reactome_pathways,
         "opentarget.drug_interactions": opentargets.get_gene_compound_interactions,
-        "opentarget.disease_associations": opentargets.get_gene_disease_associations,
+        # "opentarget.disease_associations": opentargets.get_gene_disease_associations,
         "pubchem": pubchem.get_protein_molecule_screened,
         "string": stringdb.get_ppi,
         "wikipathways": wikipathways.get_gene_wikipathways,

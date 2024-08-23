@@ -669,7 +669,7 @@ def networkx_graph(fuse_df: pd.DataFrame, drug_disease=None):
     func_dict = {
         BGEE: add_bgee_subgraph,
         DISGENET: add_disgenet_disease_subgraph,
-        OPENTARGETS_DISEASE_COL: add_opentargets_disease_subgraph,
+        # OPENTARGETS_DISEASE_COL: add_opentargets_disease_subgraph,
         MINERVA: add_minerva_subgraph,
         WIKIPATHWAYS: add_wikipathways_subgraph,
         OPENTARGETS_REACTOME_COL: add_opentargets_reactome_pathway_subgraph,
