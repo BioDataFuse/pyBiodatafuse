@@ -13,14 +13,15 @@ import requests
 from pyBiodatafuse import id_mapper
 from pyBiodatafuse.constants import (
     OPENTARGETS,
-    OPENTARGETS_COMPOUND_COL,
     OPENTARGETS_COMPOUND_INPUT_ID,
     OPENTARGETS_COMPOUND_OUTPUT_DICT,
     OPENTARGETS_COMPOUND_QUERY_INPUT_ID,
     OPENTARGETS_DISEASE_COL,
+    OPENTARGETS_DISEASE_COMPOUND_COL,
     OPENTARGETS_DISEASE_INPUT_ID,
     OPENTARGETS_DISEASE_OUTPUT_DICT,
     OPENTARGETS_ENDPOINT,
+    OPENTARGETS_GENE_COMPOUND_COL,
     OPENTARGETS_GENE_INPUT_ID,
     OPENTARGETS_GO_COL,
     OPENTARGETS_GO_OUTPUT_DICT,
@@ -557,7 +558,7 @@ def get_gene_compound_interactions(
 
     if intermediate_df.empty:
         warnings.warn(
-            f"There is no annotation for your input list in {OPENTARGETS_COMPOUND_COL}.",
+            f"There is no annotation for your input list in {OPENTARGETS_GENE_COMPOUND_COL}.",
             stacklevel=2,
         )
         return pd.DataFrame(), opentargets_version
@@ -582,7 +583,7 @@ def get_gene_compound_interactions(
         target_df=intermediate_df,
         common_cols=["target"],
         target_specific_cols=list(OPENTARGETS_COMPOUND_OUTPUT_DICT.keys()),
-        col_name=OPENTARGETS_COMPOUND_COL,
+        col_name=OPENTARGETS_GENE_COMPOUND_COL,
     )
 
     """Update metadata"""
@@ -594,7 +595,7 @@ def get_gene_compound_interactions(
     # Check the intermediate_df
     if num_new_edges != len(intermediate_df):
         warnings.warn(
-            f"The intermediate_df in {OPENTARGETS_COMPOUND_COL} annotatur should be checked, please create an issue on https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
+            f"The intermediate_df in {OPENTARGETS_GENE_COMPOUND_COL} annotatur should be checked, please create an issue on https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
             stacklevel=2,
         )
 
@@ -983,6 +984,7 @@ def get_disease_compound_interactions(
     # Add version, datasource, query, query time, and the date to metadata
     opentargets_version["query"] = {
         "size": len(efo_ids),
+        "input_type": OPENTARGETS_DISEASE_INPUT_ID,
         "time": time_elapsed,
         "date": current_date,
         "url": OPENTARGETS_ENDPOINT,
@@ -993,7 +995,7 @@ def get_disease_compound_interactions(
 
     if r["data"]["diseases"] is None:
         warnings.warn(
-            f"There is no annotation for your input list in {OPENTARGETS_COMPOUND_COL}.",
+            f"There is no annotation for your input list in {OPENTARGETS_DISEASE_COMPOUND_COL}.",
             stacklevel=2,
         )
         return pd.DataFrame(), opentargets_version
@@ -1048,7 +1050,7 @@ def get_disease_compound_interactions(
 
     if intermediate_df.empty:
         warnings.warn(
-            f"There is no annotation for your input list in {OPENTARGETS_COMPOUND_COL}.",
+            f"There is no annotation for your input list in {OPENTARGETS_DISEASE_COMPOUND_COL}.",
             stacklevel=2,
         )
         return pd.DataFrame(), opentargets_version
@@ -1075,7 +1077,7 @@ def get_disease_compound_interactions(
         target_df=intermediate_df,
         common_cols=["target"],
         target_specific_cols=list(OPENTARGETS_COMPOUND_OUTPUT_DICT.keys()),
-        col_name=OPENTARGETS_COMPOUND_COL,
+        col_name=OPENTARGETS_DISEASE_COMPOUND_COL,
     )
 
     """Update metadata"""
@@ -1087,7 +1089,7 @@ def get_disease_compound_interactions(
     # Check the intermediate_df
     if num_new_edges != len(intermediate_df):
         warnings.warn(
-            f"The intermediate_df in {OPENTARGETS_COMPOUND_COL} annotator should be checked, please create an issue on https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
+            f"The intermediate_df in {OPENTARGETS_DISEASE_COMPOUND_COL} annotator should be checked, please create an issue on https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
             stacklevel=2,
         )
 

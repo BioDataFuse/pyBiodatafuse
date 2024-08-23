@@ -21,7 +21,8 @@ from pyBiodatafuse.annotators.opentargets import (  # get_compound_disease_inter
     get_version_opentargets,
 )
 from pyBiodatafuse.constants import (  # OPENTARGETS_DISEASE_COL,
-    OPENTARGETS_COMPOUND_COL,
+    OPENTARGETS_DISEASE_COMPOUND_COL,
+    OPENTARGETS_GENE_COMPOUND_COL,
     OPENTARGETS_GO_COL,
     OPENTARGETS_REACTOME_COL,
 )
@@ -672,9 +673,9 @@ class TestOpentarget(unittest.TestCase):
                 ],
             ]
         )
-        expected_data.name = OPENTARGETS_COMPOUND_COL
+        expected_data.name = OPENTARGETS_GENE_COMPOUND_COL
 
-        pd.testing.assert_series_equal(obtained_data[OPENTARGETS_COMPOUND_COL], expected_data)
+        pd.testing.assert_series_equal(obtained_data[OPENTARGETS_GENE_COMPOUND_COL], expected_data)
         self.assertIsInstance(metadata, dict)
 
     # TODO: The disease annotations are not curated and will be used again when the OpenTarget annotation improves.
@@ -2875,7 +2876,9 @@ class TestOpentarget(unittest.TestCase):
                 ],
             ]
         )
-        expected_data.name = OPENTARGETS_COMPOUND_COL
+        expected_data.name = OPENTARGETS_DISEASE_COMPOUND_COL
 
-        pd.testing.assert_series_equal(obtained_data[OPENTARGETS_COMPOUND_COL], expected_data)
+        pd.testing.assert_series_equal(
+            obtained_data[OPENTARGETS_DISEASE_COMPOUND_COL], expected_data
+        )
         self.assertIsInstance(metadata, dict)
