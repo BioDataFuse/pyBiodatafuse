@@ -9,6 +9,18 @@ from pathlib import Path
 import networkx as nx
 import py4cytoscape as p4c
 
+from pyBiodatafuse.constants import (
+    ANATOMICAL_NODE_LABELS,
+    COMPOUND_NODE_LABELS,
+    DISEASE_NODE_LABELS,
+    GENE_NODE_LABELS,
+    GO_BP_NODE_LABELS,
+    GO_CC_NODE_LABELS,
+    GO_MF_NODE_LABELS,
+    PATHWAY_NODE_LABELS,
+    SIDE_EFFECT_NODE_LABELS,
+)
+
 
 def _replace_graph_attrs(g: nx.MultiDiGraph):
     """Adapt the node and edge attributes keys to the cytoscape json structure.
@@ -106,14 +118,15 @@ def load_graph(g: nx.MultiDiGraph, network_name: str):
     # Define node shape and color mapping
     column = "labels"
     values = [
-        "Gene",
-        "Location",
-        "Anatomical Entity",
-        "Disease",
-        "Gene Ontology",
-        "Pathway",
-        "Compound",
-        "Side Effect",
+        GENE_NODE_LABELS,
+        ANATOMICAL_NODE_LABELS,
+        DISEASE_NODE_LABELS,
+        GO_BP_NODE_LABELS,
+        GO_MF_NODE_LABELS,
+        GO_CC_NODE_LABELS,
+        PATHWAY_NODE_LABELS,
+        COMPOUND_NODE_LABELS,
+        SIDE_EFFECT_NODE_LABELS,
     ]
     shapes = [
         "ELLIPSE",

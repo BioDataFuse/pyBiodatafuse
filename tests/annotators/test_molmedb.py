@@ -82,12 +82,12 @@ class TestMolMeDb(unittest.TestCase):
                                 "value": "Euphorbiaproliferin c",
                                 "datatype": "http://www.w3.org/2001/XMLSchema#string",
                             },
-                            "InChIKey": {
+                            "inchikey": {
                                 "type": "literal",
                                 "value": "MEMULCZBXUZFOZ-UHFFFAOYSA-N",
                                 "datatype": "http://www.w3.org/2001/XMLSchema#string",
                             },
-                            "SMILES": {
+                            "smiles": {
                                 "type": "literal",
                                 "value": "CC(=O)OC1C2(C)OCC3(C(=O)C=CC(C(C)(C)OC(C)=O)C23)C(OC(C)=O)C2C(OC(=O)C(C)C)C(C)CC21OC(C)=O",
                                 "datatype": "http://www.w3.org/2001/XMLSchema#string",
@@ -114,12 +114,12 @@ class TestMolMeDb(unittest.TestCase):
                                 "value": "Euphornin",
                                 "datatype": "http://www.w3.org/2001/XMLSchema#string",
                             },
-                            "InChIKey": {
+                            "inchikey": {
                                 "type": "literal",
                                 "value": "BRVXVMOWTHQKHC-LVYIKVSWSA-N",
                                 "datatype": "http://www.w3.org/2001/XMLSchema#string",
                             },
-                            "SMILES": {
+                            "smiles": {
                                 "type": "literal",
                                 "value": "CC(=O)OC1CC(OC(C)=O)C(C)(C)/C=C\\C(C)C(OC(C)=O)C2(O)CC(C)C(OC(=O)c3ccccc3)C2/C=C\\1C",
                                 "datatype": "http://www.w3.org/2001/XMLSchema#string",
@@ -151,12 +151,12 @@ class TestMolMeDb(unittest.TestCase):
                                 "value": "[dichloro(phosphono)methyl]phosphonic acid",
                                 "datatype": "http://www.w3.org/2001/XMLSchema#string",
                             },
-                            "InChIKey": {
+                            "inchikey": {
                                 "type": "literal",
                                 "value": "ACSIXWWBWUQEHA-UHFFFAOYSA-N",
                                 "datatype": "http://www.w3.org/2001/XMLSchema#string",
                             },
-                            "SMILES": {
+                            "smiles": {
                                 "type": "literal",
                                 "value": "O=P(O)(O)C(Cl)(Cl)P(=O)(O)O",
                                 "datatype": "http://www.w3.org/2001/XMLSchema#string",
@@ -200,8 +200,8 @@ class TestMolMeDb(unittest.TestCase):
                 [
                     {
                         "compound_name": nan,
-                        "InChIKey": nan,
-                        "SMILES": nan,
+                        "inchikey": nan,
+                        "smiles": nan,
                         "compound_cid": nan,
                         "molmedb_id": nan,
                         "source_pmid": nan,
@@ -213,8 +213,8 @@ class TestMolMeDb(unittest.TestCase):
                 [
                     {
                         "compound_name": nan,
-                        "InChIKey": nan,
-                        "SMILES": nan,
+                        "inchikey": nan,
+                        "smiles": nan,
                         "compound_cid": nan,
                         "molmedb_id": nan,
                         "source_pmid": nan,
@@ -226,8 +226,8 @@ class TestMolMeDb(unittest.TestCase):
                 [
                     {
                         "compound_name": nan,
-                        "InChIKey": nan,
-                        "SMILES": nan,
+                        "inchikey": nan,
+                        "smiles": nan,
                         "compound_cid": nan,
                         "molmedb_id": nan,
                         "source_pmid": nan,
@@ -237,8 +237,8 @@ class TestMolMeDb(unittest.TestCase):
                     },
                     {
                         "compound_name": "[dichloro(phosphono)methyl]phosphonic acid",
-                        "InChIKey": "ACSIXWWBWUQEHA-UHFFFAOYSA-N",
-                        "SMILES": "O=P(O)(O)C(Cl)(Cl)P(=O)(O)O",
+                        "inchikey": "ACSIXWWBWUQEHA-UHFFFAOYSA-N",
+                        "smiles": "O=P(O)(O)C(Cl)(Cl)P(=O)(O)O",
                         "compound_cid": "25419",
                         "molmedb_id": "MM17483",
                         "source_pmid": "28720702",
@@ -250,8 +250,8 @@ class TestMolMeDb(unittest.TestCase):
                 [
                     {
                         "compound_name": nan,
-                        "InChIKey": nan,
-                        "SMILES": nan,
+                        "inchikey": nan,
+                        "smiles": nan,
                         "compound_cid": nan,
                         "molmedb_id": nan,
                         "source_pmid": nan,
@@ -261,8 +261,8 @@ class TestMolMeDb(unittest.TestCase):
                     },
                     {
                         "compound_name": "[dichloro(phosphono)methyl]phosphonic acid",
-                        "InChIKey": "ACSIXWWBWUQEHA-UHFFFAOYSA-N",
-                        "SMILES": "O=P(O)(O)C(Cl)(Cl)P(=O)(O)O",
+                        "inchikey": "ACSIXWWBWUQEHA-UHFFFAOYSA-N",
+                        "smiles": "O=P(O)(O)C(Cl)(Cl)P(=O)(O)O",
                         "compound_cid": "25419",
                         "molmedb_id": "MM17483",
                         "source_pmid": "28720702",
@@ -274,8 +274,8 @@ class TestMolMeDb(unittest.TestCase):
                 [
                     {
                         "compound_name": nan,
-                        "InChIKey": nan,
-                        "SMILES": nan,
+                        "inchikey": nan,
+                        "smiles": nan,
                         "compound_cid": nan,
                         "molmedb_id": nan,
                         "source_pmid": nan,
@@ -287,8 +287,8 @@ class TestMolMeDb(unittest.TestCase):
                 [
                     {
                         "compound_name": nan,
-                        "InChIKey": nan,
-                        "SMILES": nan,
+                        "inchikey": nan,
+                        "smiles": nan,
                         "compound_cid": nan,
                         "molmedb_id": nan,
                         "source_pmid": nan,

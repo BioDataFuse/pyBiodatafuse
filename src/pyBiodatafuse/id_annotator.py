@@ -53,25 +53,25 @@ def run_gene_selected_sources(
 
     # Dictionary to map the datasource names to their corresponding functions
     data_source_functions: Dict[str, Callable[[pd.DataFrame], Tuple[pd.DataFrame, dict]]] = {
-        "bgee": bgee.get_gene_expression,
-        "disgenet": _get_gene_disease_disgenet_wrapper(api_key),
-        "minerva": _get_gene_minerva_pathways_wrapper(
+        "bgee.gene_expression": bgee.get_gene_expression,
+        "disgenet.gene_disease": _get_gene_disease_disgenet_wrapper(api_key),
+        "minerva.gene_minerva_pathways": _get_gene_minerva_pathway_wrapper(
             map_name=map_name or "COVID19 Disease Map",
             input_type="Protein",
             get_elements=True,
             get_reactions=True,
         ),
-        "molmedb": molmedb.get_gene_compound_inhibitor,
-        "opentarget.gene_ontology": opentargets.get_gene_go_process,
-        "opentarget.reactome": opentargets.get_gene_reactome_pathways,
-        "opentarget.drug_interactions": opentargets.get_gene_compound_interactions,
-        "opentarget.disease_associations": opentargets.get_gene_disease_associations,
-        "pubchem": pubchem.get_protein_molecule_screened,
-        "string": stringdb.get_ppi,
-        "wikipathways": wikipathways.get_gene_wikipathways,
+        "molmedb.gene_compound": molmedb.get_gene_compound_inhibitor,
+        "opentarget.gene_go": opentargets.get_gene_go_process,
+        "opentarget.gene_reactome": opentargets.get_gene_reactome_pathways,
+        "opentarget.gene_compound": opentargets.get_gene_compound_interactions,
+        "opentarget.disease_compound": opentargets.get_disease_compound_interactions,
+        "pubchem.protein_compound": pubchem.get_protein_compound_screened,
+        "string.protein_protein": stringdb.get_ppi,
+        "wikipathways.gene_wikipathways": wikipathways.get_gene_wikipathways,
         # TODO: "wikidata"
     }
-    warnings = []  # Initialize empty list for warnings
+    warnings = []
 
     for source in selected_sources_list:
         if source in data_source_functions:
@@ -105,7 +105,7 @@ def _get_gene_disease_disgenet_wrapper(
     return wrapper
 
 
-def _get_gene_minerva_pathways_wrapper(
+def _get_gene_minerva_pathway_wrapper(
     map_name: str,
     input_type: Optional[str] = "Protein",
     get_elements: Optional[bool] = True,

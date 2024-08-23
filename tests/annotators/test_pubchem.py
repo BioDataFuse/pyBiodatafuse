@@ -11,7 +11,7 @@ import pandas as pd
 from numpy import nan
 
 from pyBiodatafuse.annotators import pubchem
-from pyBiodatafuse.annotators.pubchem import get_protein_molecule_screened
+from pyBiodatafuse.annotators.pubchem import get_protein_compound_screened
 from pyBiodatafuse.constants import PUBCHEM_ASSAYS_COL
 
 data_file_folder = os.path.join(os.path.dirname(__file__), "data")
@@ -34,8 +34,8 @@ class TestPubchem(unittest.TestCase):
     #     self.assertEqual(obtained_version, expected_version)
 
     @patch("pyBiodatafuse.annotators.pubchem.SPARQLWrapper.queryAndConvert")
-    def test_get_protein_molecule_screened(self, mock_sparql_request):
-        """Test the get_protein_molecule_screened."""
+    def test_get_protein_compound_screened(self, mock_sparql_request):
+        """Test the get_protein_compound_screened."""
         with open(os.path.join(data_file_folder, "pubchem_mock_data.json")) as f:
             mock_data = json.load(f)
 
@@ -55,7 +55,7 @@ class TestPubchem(unittest.TestCase):
             }
         )
 
-        obtained_data, metadata = get_protein_molecule_screened(bridgedb_dataframe)
+        obtained_data, metadata = get_protein_compound_screened(bridgedb_dataframe)
 
         expected_data = pd.Series(
             [
@@ -65,8 +65,8 @@ class TestPubchem(unittest.TestCase):
                         "outcome": nan,
                         "compound_cid": nan,
                         "compound_name": nan,
-                        "SMILES": nan,
-                        "InChI": nan,
+                        "smiles": nan,
+                        "inchi": nan,
                         "pubchem_assay_id": nan,
                     }
                 ],
@@ -76,8 +76,8 @@ class TestPubchem(unittest.TestCase):
                         "outcome": "active",
                         "compound_cid": "CID9911844",
                         "compound_name": "DR-4485 free base",
-                        "SMILES": "C1CC2=C(C=CC3=C2C(C1)(C(=O)N3)CCCCN4CCC(=CC4)C5=CC=C(C=C5)Cl)Cl",
-                        "InChI": "InChI=1S/C26H28Cl2N2O/c27-20-7-5-18(6-8-20)19-11-16-30(17-12-19)15-2-1-13-26-14-3-4-21-22(28)9-10-23(24(21)26)29-25(26)31/h5-11H,1-4,12-17H2,(H,29,31)",
+                        "smiles": "C1CC2=C(C=CC3=C2C(C1)(C(=O)N3)CCCCN4CCC(=CC4)C5=CC=C(C=C5)Cl)Cl",
+                        "inchi": "InChI=1S/C26H28Cl2N2O/c27-20-7-5-18(6-8-20)19-11-16-30(17-12-19)15-2-1-13-26-14-3-4-21-22(28)9-10-23(24(21)26)29-25(26)31/h5-11H,1-4,12-17H2,(H,29,31)",
                         "pubchem_assay_id": "AID6505",
                     }
                 ],
