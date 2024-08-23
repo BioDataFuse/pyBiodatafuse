@@ -266,6 +266,9 @@ def get_compound_gene_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
         for col in df:
             df[col] = df[col].map(lambda x: x["value"], na_action="ignore")
 
+        if df.empty:
+            continue
+
         # Merging the source_pmid values for each unique compound-gene pair
         df2 = (
             df.groupby(["inhibitorInChIKey", "uniprot_trembl_id", "hgcn_id"])["source_pmid"]
