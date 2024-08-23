@@ -415,9 +415,8 @@ PUBCHEM_EDGE_ATTRS = {
 # Gene node
 GENE_NODE_LABELS = "Gene"
 # STRING
-# TODO: to be checked
 STRING_EDGE_MAIN_LABEL = "stringdb_link_to"
-STRING_EDGE_LABEL = "StringDB_ppi"
+STRING_EDGE_LABEL = "interacts_with"
 STRING_EDGE_ATTRS = {
     "source": STRING,
     "score": None,
