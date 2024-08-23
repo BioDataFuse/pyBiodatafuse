@@ -844,6 +844,7 @@ def get_compound_disease_interactions(
 
     return merged_df, opentargets_version
 
+
 # TODO: The annotations are not curated and will be used again when the OpenTarget annotation improves.
 # def get_gene_disease_associations(
 #     bridgedb_df: pd.DataFrame,

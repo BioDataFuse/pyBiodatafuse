@@ -114,7 +114,7 @@ def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
             continue
         # Merging the source_pmid values for each unique compound-gene pair
         cols = [col for col in df.columns.to_list() if col != "source_pmid"]
-        
+
         df2 = df.groupby(cols)["source_pmid"].apply(lambda x: ", ".join(x)).reset_index()
 
         intermediate_df = pd.concat([intermediate_df, df2], ignore_index=True)  # adds to the time
@@ -147,8 +147,6 @@ def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
         )
         return pd.DataFrame(), molmedb_metadata
 
-
-    
     # Organize the annotation results as an array of dictionaries
     intermediate_df.rename(
         columns={
@@ -156,12 +154,11 @@ def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
             "pubchem_compound_id": "compound_cid",
             "label": "compound_name",
             "SMILES": "smiles",
-            "InChIKey": "inchikey"
+            "InChIKey": "inchikey",
         },
         inplace=True,
     )
     intermediate_df["uniprot_trembl_id"] = intermediate_df["target"]
-
 
     # Check if all keys in df match the keys in OUTPUT_DICT
     check_columns_against_constants(
