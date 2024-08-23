@@ -172,7 +172,8 @@ OPENTARGETS_COMPOUND_OUTPUT_DICT = {
 CHEMBL_ID = "CHEMBL"
 DRUGBANK_ID = "DB"
 RELATION = "inhibits|activates"
-OPENTARGETS_COMPOUND_COL = f"{OPENTARGETS}_compounds"
+OPENTARGETS_GENE_COMPOUND_COL = f"{OPENTARGETS}_gene_compounds"
+OPENTARGETS_DISEASE_COMPOUND_COL = f"{OPENTARGETS}_disease_compounds"
 
 # MolMeDB - Gene/Protein input
 MOLMEDB_PROTEIN_COMPOUND_OUTPUT_DICT = {
@@ -421,6 +422,12 @@ STRING_EDGE_ATTRS = {
     "source": STRING,
     "score": None,
     "label": STRING_EDGE_LABEL,
+}
+
+# Disease - Compound edge
+OPENTARGETS_DISEASE_COMPOUND_EDGE_ATTRS = {
+    "source": OPENTARGETS,
+    "label": None,
 }
 
 # Wikidata
