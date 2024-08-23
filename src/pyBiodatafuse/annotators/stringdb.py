@@ -14,7 +14,7 @@ import requests
 from pyBiodatafuse.constants import (
     STRING,
     STRING_ENDPOINT,
-    STRING_INPUT_ID,
+    STRING_GENE_INPUT_ID,
     STRING_OUTPUT_DICT,
     STRING_PPI_COL,
 )
@@ -63,7 +63,7 @@ def _format_data(row, network_df):
                 gene_ppi_links.append(
                     {
                         "stringdb_link_to": row_arr["preferredName_B"],
-                        STRING_INPUT_ID: row_arr["stringId_B"].split(".")[1],
+                        STRING_GENE_INPUT_ID: row_arr["stringId_B"].split(".")[1],
                         "score": row_arr["score"],
                     }
                 )
@@ -74,7 +74,7 @@ def _format_data(row, network_df):
                 gene_ppi_links.append(
                     {
                         "stringdb_link_to": row_arr["preferredName_A"],
-                        STRING_INPUT_ID: row_arr["stringId_A"].split(".")[1],
+                        STRING_GENE_INPUT_ID: row_arr["stringId_A"].split(".")[1],
                         "score": row_arr["score"],
                     }
                 )
@@ -125,7 +125,7 @@ def get_ppi(bridgedb_df: pd.DataFrame):
     # Record the start time
     start_time = datetime.datetime.now()
 
-    data_df = get_identifier_of_interest(bridgedb_df, STRING_INPUT_ID)
+    data_df = get_identifier_of_interest(bridgedb_df, STRING_GENE_INPUT_ID)
     data_df = data_df.reset_index(drop=True)
 
     gene_list = list(set(data_df["target"].tolist()))
@@ -171,7 +171,7 @@ def get_ppi(bridgedb_df: pd.DataFrame):
         "metadata": {"source_version": string_version},
         "query": {
             "size": len(gene_list),
-            "input_type": STRING_INPUT_ID,
+            "input_type": STRING_GENE_INPUT_ID,
             "number_of_added_edges": num_new_edges,
             "time": time_elapsed,
             "date": current_date,

@@ -17,8 +17,8 @@ from SPARQLWrapper.SPARQLExceptions import SPARQLWrapperException
 from pyBiodatafuse.constants import (
     WIKIPATHWAYS,
     WIKIPATHWAYS_ENDPOINT,
-    WIKIPATHWAYS_INPUT_ID,
-    WIKIPATHWAYS_OUTPUT_DICT,
+    WIKIPATHWAYS_GENE_INPUT_ID,
+    WIKIPATHWAYS_PATHWAYS_OUTPUT_DICT,
 )
 from pyBiodatafuse.utils import (
     check_columns_against_constants,
@@ -84,7 +84,7 @@ def get_gene_wikipathways(bridgedb_df: pd.DataFrame):
         )
         return pd.DataFrame(), {}
 
-    data_df = get_identifier_of_interest(bridgedb_df, WIKIPATHWAYS_INPUT_ID)
+    data_df = get_identifier_of_interest(bridgedb_df, WIKIPATHWAYS_GENE_INPUT_ID)
 
     wikipathways_version = get_version_wikipathways()
     gene_list = data_df["target"].tolist()
@@ -147,7 +147,7 @@ def get_gene_wikipathways(bridgedb_df: pd.DataFrame):
         "metadata": wikipathways_version,
         "query": {
             "size": len(gene_list),
-            "input_type": WIKIPATHWAYS_INPUT_ID,
+            "input_type": WIKIPATHWAYS_GENE_INPUT_ID,
             "time": time_elapsed,
             "date": current_date,
             "url": WIKIPATHWAYS_ENDPOINT,
@@ -169,17 +169,17 @@ def get_gene_wikipathways(bridgedb_df: pd.DataFrame):
     # Check if all keys in df match the keys in OUTPUT_DICT
     check_columns_against_constants(
         data_df=intermediate_df,
-        output_dict=WIKIPATHWAYS_OUTPUT_DICT,
+        output_dict=WIKIPATHWAYS_PATHWAYS_OUTPUT_DICT,
         check_values_in=["pathway_id"],
     )
 
     # Merge the two DataFrames on the target column
     merged_df = collapse_data_sources(
         data_df=data_df,
-        source_namespace=WIKIPATHWAYS_INPUT_ID,
+        source_namespace=WIKIPATHWAYS_GENE_INPUT_ID,
         target_df=intermediate_df,
         common_cols=["target"],
-        target_specific_cols=list(WIKIPATHWAYS_OUTPUT_DICT.keys()),
+        target_specific_cols=list(WIKIPATHWAYS_PATHWAYS_OUTPUT_DICT.keys()),
         col_name=WIKIPATHWAYS,
     )
 

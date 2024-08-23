@@ -12,7 +12,7 @@ import pandas as pd
 
 from pyBiodatafuse.annotators import bgee
 from pyBiodatafuse.annotators.bgee import get_gene_expression, get_version_bgee
-from pyBiodatafuse.constants import ANATOMICAL_ENTITIES_LIST, BGEE_EXPRESSION_LEVELS_COL
+from pyBiodatafuse.constants import ANATOMICAL_ENTITIES_LIST, BGEE_GENE_EXPRESSION_LEVELS_COL
 
 data_file_folder = os.path.join(os.path.dirname(__file__), "data")
 
@@ -382,7 +382,9 @@ class TestBgee(unittest.TestCase):
                 ],
             ]
         )
-        expected_data.name = BGEE_EXPRESSION_LEVELS_COL
+        expected_data.name = BGEE_GENE_EXPRESSION_LEVELS_COL
 
-        pd.testing.assert_series_equal(obtained_data[BGEE_EXPRESSION_LEVELS_COL], expected_data)
+        pd.testing.assert_series_equal(
+            obtained_data[BGEE_GENE_EXPRESSION_LEVELS_COL], expected_data
+        )
         self.assertIsInstance(metadata, dict)
