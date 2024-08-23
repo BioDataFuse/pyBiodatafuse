@@ -13,17 +13,15 @@ from numpy import nan
 
 from pyBiodatafuse import id_mapper
 from pyBiodatafuse.annotators import opentargets
-from pyBiodatafuse.annotators.opentargets import (
-    get_compound_disease_interactions,
+from pyBiodatafuse.annotators.opentargets import (  # get_compound_disease_interactions,
     get_disease_compound_interactions,
     get_gene_compound_interactions,
     get_gene_go_process,
     get_gene_reactome_pathways,
     get_version_opentargets,
 )
-from pyBiodatafuse.constants import (
+from pyBiodatafuse.constants import (  # OPENTARGETS_DISEASE_COL,
     OPENTARGETS_COMPOUND_COL,
-    OPENTARGETS_DISEASE_COL,
     OPENTARGETS_GO_COL,
     OPENTARGETS_REACTOME_COL,
 )
