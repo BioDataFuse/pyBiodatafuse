@@ -161,19 +161,19 @@ def create_harmonized_input_file(
     target_source: str,
     identifier_source: Optional[str] = None,
 ) -> pd.DataFrame:
-    """Creates a harmonized input DataFrame by extracting specific identifiers from a complex nested structure within a target column.
+    """Create a harmonized input DataFrame by extracting specific identifiers from a complex nested structure within a target column.
 
     :param annotated_df: DataFrame containing the initial data with nested dictionaries.
     :param target_col: Name of the column containing the nested dictionaries.
     :param target_source: The specific identifier source to extract (e.g., 'EFO', 'OMIM').
+    :param identifier_source: The main identifier in the output.
     :returns: A DataFrame with original identifiers and the extracted target identifiers.
     """
-
     harmonized_data = []
 
     for _i, row in annotated_df.iterrows():
         # Extract the identifier
-        if identifier_source == None:
+        if identifier_source is None:
             id = row["identifier"]
             id_source = row["identifier.source"]
 
@@ -182,7 +182,7 @@ def create_harmonized_input_file(
 
         # Loop through each dictionary in the target data
         for entry in target_data:
-            if identifier_source != None:
+            if identifier_source is not None:
                 id = entry.get(identifier_source)
                 id_source = identifier_source
             # Extract the specific target identifiers based on the target_source
