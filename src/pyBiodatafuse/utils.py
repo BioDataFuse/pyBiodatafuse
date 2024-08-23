@@ -3,7 +3,7 @@
 """Python utils file for global functions."""
 
 import warnings
-from typing import List
+from typing import List, Optional
 
 import pandas as pd
 
@@ -156,11 +156,12 @@ def check_columns_against_constants(
 
 
 def create_harmonized_input_file(
-    annotated_df: pd.DataFrame, target_col: str, target_source: str
+    annotated_df: pd.DataFrame,
+    target_col: str,
+    target_source: str,
+    identifier_source: Optional[str] = None,
 ) -> pd.DataFrame:
-    """
-    Creates a harmonized input DataFrame by extracting specific identifiers from a complex nested structure
-    within a target column.
+    """Creates a harmonized input DataFrame by extracting specific identifiers from a complex nested structure within a target column.
 
     :param annotated_df: DataFrame containing the initial data with nested dictionaries.
     :param target_col: Name of the column containing the nested dictionaries.
@@ -172,24 +173,28 @@ def create_harmonized_input_file(
 
     for _i, row in annotated_df.iterrows():
         # Extract the identifier
-        identifier = row["identifier"]
-        identifier_source = row["identifier.source"]
+        if identifier_source == None:
+            id = row["identifier"]
+            id_source = row["identifier.source"]
 
         # Extract the the target column
         target_data = row[target_col]
 
         # Loop through each dictionary in the target data
         for entry in target_data:
-            # Extract the specific identifiers based on the target_source
-            identifiers = entry.get(target_source)
-            if identifiers:
-                for id in identifiers.split(", "):
+            if identifier_source != None:
+                id = entry.get(identifier_source)
+                id_source = identifier_source
+            # Extract the specific target identifiers based on the target_source
+            targets = entry.get(target_source)
+            if targets:
+                for target in targets.split(", "):
                     # Add a new row to the harmonized data list
                     harmonized_data.append(
                         {
-                            "identifier": identifier,
-                            "identifier.source": identifier_source,
-                            "target": id,
+                            "identifier": id,
+                            "identifier.source": id_source,
+                            "target": target,
                             "target.source": target_source,
                         }
                     )
