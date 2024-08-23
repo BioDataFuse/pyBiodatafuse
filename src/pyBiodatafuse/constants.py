@@ -262,7 +262,7 @@ DISGENET_NODE_ATTRS = {
     "UMLS": None,
     "disease_type": None,
     "disease_umlscui": None,
-    "labels": DISSEASE_NODE_LABELS,
+    "labels": DISEASE_NODE_LABELS,
 }
 DISGENET_EDGE_LABEL = "associated_with"
 DISGENET_EDGE_ATTRS = {
@@ -280,7 +280,7 @@ OPENTARGETS_DISEASE_NODE_ATTRS = {
     "name": None,
     "id": None,
     "therapeutic_areas": None,
-    "labels": DISSEASE_NODE_LABELS,
+    "labels": DISEASE_NODE_LABELS,
 }
 OPENTARGETS_DISEASE_EDGE_LABEL = "associated_with"
 OPENTARGETS_DISEASE_EDGE_ATTRS = {"source": OPENTARGETS, "label": OPENTARGETS_DISEASE_EDGE_LABEL}
