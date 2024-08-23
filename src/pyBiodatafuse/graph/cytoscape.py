@@ -12,7 +12,7 @@ import py4cytoscape as p4c
 from pyBiodatafuse.constants import (
     ANATOMICAL_NODE_LABELS,
     COMPOUND_NODE_LABELS,
-    DISGENET_NODE_LABELS,
+    DISEASE_NODE_LABELS,
     GENE_NODE_LABELS,
     GO_BP_NODE_LABELS,
     GO_CC_NODE_LABELS,
@@ -120,7 +120,7 @@ def load_graph(g: nx.MultiDiGraph, network_name: str):
     values = [
         GENE_NODE_LABELS,
         ANATOMICAL_NODE_LABELS,
-        DISGENET_NODE_LABELS,
+        DISEASE_NODE_LABELS,
         GO_BP_NODE_LABELS,
         GO_MF_NODE_LABELS,
         GO_CC_NODE_LABELS,
