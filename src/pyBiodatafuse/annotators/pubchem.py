@@ -49,7 +49,7 @@ def check_endpoint_pubchem() -> bool:
 # TODO - Add metadata function. Currently, no metadata is returned from IDSM servers
 
 
-def get_protein_molecule_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
+def get_protein_compound_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
     """Query PubChem for molecules screened on proteins as targets.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query.
@@ -155,6 +155,8 @@ def get_protein_molecule_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
         columns={
             "upProt": "target",
             "assay": "pubchem_assay_id",
+            "SMILES": "smiles",
+            "InChI": "inchi",
         },
         inplace=True,
     )
