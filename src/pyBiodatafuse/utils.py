@@ -187,7 +187,9 @@ def create_harmonized_input_file(
                 id_source = identifier_source
             # Extract the specific target identifiers based on the target_source
             targets = entry.get(target_source)
-            if targets:
+            if not targets or pd.isna(targets) or targets.strip() == "":
+                continue
+            if isinstance(targets, str):
                 for target in targets.split(", "):
                     # Add a new row to the harmonized data list
                     harmonized_data.append(
