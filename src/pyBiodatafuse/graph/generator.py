@@ -15,6 +15,7 @@ from pyBiodatafuse.constants import (
     BGEE_EDGE_ATTRS,
     BGEE_GENE_ANATOMICAL_EDGE_LABEL,
     COMPOUND_NODE_MAIN_LABEL,
+    COMPOUND_SIDE_EFFECT_EDGE_ATTRS,
     COMPOUND_SIDE_EFFECT_EDGE_LABEL,
     DISEASE_NODE_MAIN_LABEL,
     DISGENET,
@@ -419,6 +420,42 @@ def add_opentargets_gene_go_subgraph(g, gene_node_label, annot_list):
     return g
 
 
+def add_opentargets_compound_side_effect_subgraph(g, compound_node_label, side_effects_list):
+    """Construct part of the graph by linking the compound to side effects.
+
+    :param g: the input graph to extend with new nodes and edges.
+    :param compound_node_label: the compound node to be linked to side effect nodes.
+    :param side_effects_list: list of side effects from OpenTargets.
+    :returns: a NetworkX MultiDiGraph
+    """
+    for effect in side_effects_list:
+        effect_node_label = effect ["name"]
+        effect_node_attrs = SIDE_EFFECT_NODE_ATTRS.copy()
+        effect_node_attrs ["name"] = effect ["name"]
+
+        g.add_node(effect_node_label , attr_dict=effect_node_attrs)
+
+        edge_attrs = COMPOUND_SIDE_EFFECT_EDGE_ATTRS.copy()
+        edge_hash = hash(frozenset(edge_attrs.items()))
+        edge_attrs["edge_hash"] = edge_hash
+        edge_data = g.get_edge_data(compound_node_label, effect_node_label)
+        edge_data = {} if edge_data is None else edge_data
+        node_exists = [
+            x for x, y in edge_data.items() 
+            if "attr_dict" in y and y["attr_dict"].get("edge_hash") == edge_hash
+        ]
+
+        if len(node_exists) == 0:
+            g.add_edge(
+                compound_node_label,
+                effect_node_label,
+                label=COMPOUND_SIDE_EFFECT_EDGE_LABEL,
+                attr_dict=edge_attrs,
+            )
+
+    return g
+
+
 def add_opentargets_gene_compound_subgraph(g, gene_node_label, annot_list):
     """Construct part of the graph by linking the gene to a list of annotation entities (disease, compound ..etc).
 
@@ -473,23 +510,8 @@ def add_opentargets_gene_compound_subgraph(g, gene_node_label, annot_list):
 
             # Add side effects
             if annot["adverse_effect"]:
-                for effect in annot[SIDE_EFFECT_NODE_MAIN_LABEL]:
-                    effect_node_label = effect["name"]
-                    effect_node_attrs = SIDE_EFFECT_NODE_ATTRS.copy()
-                    effect_node_attrs["name"] = effect["name"]
+                add_opentargets_compound_side_effect_subgraph(g, annot_node_label, annot[SIDE_EFFECT_NODE_MAIN_LABEL])
 
-                    g.add_node(effect_node_label, attr_dict=effect_node_attrs)
-
-                    new_edge = (annot_node_label, effect_node_label)
-
-                    # Check if the edge already exists
-                    if not g.has_edge(*new_edge):
-                        # Add the edge to the graph
-                        g.add_edge(
-                            annot_node_label,
-                            effect_node_label,
-                            label=COMPOUND_SIDE_EFFECT_EDGE_LABEL,
-                        )
     return g
 
 
