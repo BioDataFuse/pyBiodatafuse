@@ -429,9 +429,9 @@ def add_opentargets_compound_side_effect_subgraph(g, compound_node_label, side_e
     :returns: a NetworkX MultiDiGraph
     """
     for effect in side_effects_list:
-        effect_node_label = effect ["name"]
+        effect_node_label = effect["name"]
         effect_node_attrs = SIDE_EFFECT_NODE_ATTRS.copy()
-        effect_node_attrs ["name"] = effect ["name"]
+        effect_node_attrs["name"] = effect["name"]
 
         g.add_node(effect_node_label , attr_dict=effect_node_attrs)
 
@@ -707,23 +707,7 @@ def add_opentargets_disease_compound_subgraph(g, disease_node_label, annot_list)
 
             # Add side effects
             if annot["adverse_effect"]:
-                for effect in annot[SIDE_EFFECT_NODE_MAIN_LABEL]:
-                    effect_node_label = effect["name"]
-                    effect_node_attrs = SIDE_EFFECT_NODE_ATTRS.copy()
-                    effect_node_attrs["name"] = effect["name"]
-
-                    g.add_node(effect_node_label, attr_dict=effect_node_attrs)
-
-                    new_edge = (annot_node_label, effect_node_label)
-
-                    # Check if the edge already exists
-                    if not g.has_edge(*new_edge):
-                        # Add the edge to the graph
-                        g.add_edge(
-                            annot_node_label,
-                            effect_node_label,
-                            label=COMPOUND_SIDE_EFFECT_EDGE_LABEL,
-                        )
+                add_opentargets_compound_side_effect_subgraph(g, annot_node_label, annot[SIDE_EFFECT_NODE_MAIN_LABEL])
 
     return g
 
