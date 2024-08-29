@@ -118,9 +118,9 @@ def load_graph(g: nx.MultiDiGraph, network_name: str):
     # Define node shape and color mapping
     column = "labels"
     values = [
-        GENE_NODE_LABELS, 
+        GENE_NODE_LABELS,
         ANATOMICAL_NODE_LABELS,
-        DISEASE_NODE_LABELS, 
+        DISEASE_NODE_LABELS,
         GO_BP_NODE_LABELS,
         GO_MF_NODE_LABELS,
         GO_CC_NODE_LABELS,
@@ -129,15 +129,15 @@ def load_graph(g: nx.MultiDiGraph, network_name: str):
         SIDE_EFFECT_NODE_LABELS,
     ]
     shapes = [
-        "ELLIPSE",            # Genes
-        "HEXAGON",            # Anatomical
-        "VEE",                # Diseases
-        "PARALLELOGRAM",      # GO BP
-        "ROUND_RECTANGLE",    # GO MF
-        "RECTANGLE",          # GO CC
-        "OCTAGON",            # Pathways
-        "DIAMOND",            # Compounds
-        "TRIANGLE",           # Side Effects
+        "ELLIPSE",  # Genes
+        "HEXAGON",  # Anatomical
+        "VEE",  # Diseases
+        "PARALLELOGRAM",  # GO BP
+        "ROUND_RECTANGLE",  # GO MF
+        "RECTANGLE",  # GO CC
+        "OCTAGON",  # Pathways
+        "DIAMOND",  # Compounds
+        "TRIANGLE",  # Side Effects
     ]
     colors = [
         "#42d4f4",  # Cyan for Genes
