@@ -14,11 +14,13 @@ from pyBiodatafuse.constants import (
     BGEE_ANATOMICAL_NODE_MAIN_LABEL,
     BGEE_EDGE_ATTRS,
     BGEE_GENE_ANATOMICAL_EDGE_LABEL,
+    BGEE_GENE_EXPRESSION_LEVELS_COL,
     COMPOUND_NODE_MAIN_LABEL,
     COMPOUND_SIDE_EFFECT_EDGE_ATTRS,
     COMPOUND_SIDE_EFFECT_EDGE_LABEL,
     DISEASE_NODE_MAIN_LABEL,
     DISGENET,
+    DISGENET_DISEASE_COL,
     DISGENET_DISEASE_NODE_ATTRS,
     DISGENET_EDGE_ATTRS,
     DISGENET_GENE_DISEASE_EDGE_LABEL,
@@ -392,11 +394,11 @@ def add_opentargets_gene_go_subgraph(g, gene_node_label, annot_list):
         annot_node_attrs = GO_NODE_ATTRS.copy()
         annot_node_attrs["name"] = annot["go_name"]
         annot_node_attrs["id"] = annot["go_id"]
-        if annot["go_type"] == "BP":
+        if annot["go_type"] == "P":
             annot_node_attrs["labels"] = GO_BP_NODE_LABELS
-        elif annot["go_type"] == "MF":
+        elif annot["go_type"] == "F":
             annot_node_attrs["labels"] = GO_MF_NODE_LABELS
-        elif annot["go_type"] == "CC":
+        elif annot["go_type"] == "C":
             annot_node_attrs["labels"] = GO_CC_NODE_LABELS
 
         g.add_node(annot_node_label, attr_dict=annot_node_attrs)
@@ -433,7 +435,7 @@ def add_opentargets_compound_side_effect_subgraph(g, compound_node_label, side_e
         effect_node_attrs = SIDE_EFFECT_NODE_ATTRS.copy()
         effect_node_attrs["name"] = effect["name"]
 
-        g.add_node(effect_node_label , attr_dict=effect_node_attrs)
+        g.add_node(effect_node_label, attr_dict=effect_node_attrs)
 
         edge_attrs = COMPOUND_SIDE_EFFECT_EDGE_ATTRS.copy()
         edge_hash = hash(frozenset(edge_attrs.items()))
@@ -441,7 +443,8 @@ def add_opentargets_compound_side_effect_subgraph(g, compound_node_label, side_e
         edge_data = g.get_edge_data(compound_node_label, effect_node_label)
         edge_data = {} if edge_data is None else edge_data
         node_exists = [
-            x for x, y in edge_data.items() 
+            x
+            for x, y in edge_data.items()
             if "attr_dict" in y and y["attr_dict"].get("edge_hash") == edge_hash
         ]
 
@@ -510,7 +513,9 @@ def add_opentargets_gene_compound_subgraph(g, gene_node_label, annot_list):
 
             # Add side effects
             if annot["adverse_effect"]:
-                add_opentargets_compound_side_effect_subgraph(g, annot_node_label, annot[SIDE_EFFECT_NODE_MAIN_LABEL])
+                add_opentargets_compound_side_effect_subgraph(
+                    g, annot_node_label, annot[SIDE_EFFECT_NODE_MAIN_LABEL]
+                )
 
     return g
 
@@ -707,7 +712,9 @@ def add_opentargets_disease_compound_subgraph(g, disease_node_label, annot_list)
 
             # Add side effects
             if annot["adverse_effect"]:
-                add_opentargets_compound_side_effect_subgraph(g, annot_node_label, annot[SIDE_EFFECT_NODE_MAIN_LABEL])
+                add_opentargets_compound_side_effect_subgraph(
+                    g, annot_node_label, annot[SIDE_EFFECT_NODE_MAIN_LABEL]
+                )
 
     return g
 
@@ -826,8 +833,8 @@ def networkx_graph(combined_df: pd.DataFrame, disease_compound=None):
     dea_columns = [c for c in combined_df.columns if c.endswith("_dea")]
 
     func_dict = {
-        BGEE: add_gene_bgee_subgraph,
-        DISGENET: add_disgenet_gene_disease_subgraph,
+        BGEE_GENE_EXPRESSION_LEVELS_COL: add_gene_bgee_subgraph,
+        DISGENET_DISEASE_COL: add_disgenet_gene_disease_subgraph,
         MINERVA: add_minerva_gene_pathway_subgraph,
         WIKIPATHWAYS: add_wikipathways_gene_pathway_subgraph,
         OPENTARGETS_REACTOME_COL: add_opentargets_gene_reactome_pathway_subgraph,
