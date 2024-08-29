@@ -9,7 +9,6 @@ import networkx as nx
 import pandas as pd
 
 from pyBiodatafuse.constants import (
-    BGEE,
     BGEE_ANATOMICAL_NODE_ATTRS,
     BGEE_ANATOMICAL_NODE_MAIN_LABEL,
     BGEE_EDGE_ATTRS,
@@ -19,7 +18,6 @@ from pyBiodatafuse.constants import (
     COMPOUND_SIDE_EFFECT_EDGE_ATTRS,
     COMPOUND_SIDE_EFFECT_EDGE_LABEL,
     DISEASE_NODE_MAIN_LABEL,
-    DISGENET,
     DISGENET_DISEASE_COL,
     DISGENET_DISEASE_NODE_ATTRS,
     DISGENET_EDGE_ATTRS,
@@ -41,14 +39,10 @@ from pyBiodatafuse.constants import (
     MOLMEDB_PROTEIN_COMPOUND_EDGE_LABEL,
     OPENTARGETS,
     OPENTARGETS_COMPOUND_NODE_ATTRS,
-    OPENTARGETS_DISEASE_COL,
     OPENTARGETS_DISEASE_COMPOUND_COL,
     OPENTARGETS_DISEASE_COMPOUND_EDGE_ATTRS,
-    OPENTARGETS_DISEASE_EDGE_ATTRS,
-    OPENTARGETS_DISEASE_NODE_ATTRS,
     OPENTARGETS_GENE_COMPOUND_COL,
     OPENTARGETS_GENE_COMPOUND_EDGE_ATTRS,
-    OPENTARGETS_GENE_DISEASE_EDGE_LABEL,
     OPENTARGETS_GO_COL,
     OPENTARGETS_REACTOME_COL,
     PATHWAY_NODE_ATTRS,
@@ -105,11 +99,11 @@ def merge_node(g, node_label, node_attrs):
 
 
 def add_gene_bgee_subgraph(g, gene_node_label, annot_list):
-    """Construct part of the graph by linking the gene to a list of annotation entities (disease, compound ..etc).
+    """Construct part of the graph by linking the gene to a list of anatomical entities.
 
     :param g: the input graph to extend with new nodes and edges.
     :param gene_node_label: the gene node to be linked to annotation entities.
-    :param annot_list: list of annotations from a specific source (e.g. DisGeNET, WikiPathways ..etc).
+    :param annot_list: list of anatomical entities from Bgee with gene expression levels.
     :returns: a NetworkX MultiDiGraph
     """
     for annot in annot_list:
@@ -152,11 +146,11 @@ def add_gene_bgee_subgraph(g, gene_node_label, annot_list):
 
 
 def add_disgenet_gene_disease_subgraph(g, gene_node_label, annot_list):
-    """Construct part of the graph by linking the gene to a list of annotation entities (disease, compound ..etc).
+    """Construct part of the graph by linking the gene to diseases.
 
     :param g: the input graph to extend with new nodes and edges.
-    :param gene_node_label: the gene node to be linked to annotation entities.
-    :param annot_list: list of annotations from a specific source (e.g. DisGeNET, WikiPathways ..etc).
+    :param gene_node_label: the gene node to be linked to diseases.
+    :param annot_list: list of diseases from DisGeNET.
     :returns: a NetworkX MultiDiGraph
     """
     for annot in annot_list:
@@ -260,11 +254,11 @@ def add_disgenet_gene_disease_subgraph(g, gene_node_label, annot_list):
 
 
 def add_minerva_gene_pathway_subgraph(g, gene_node_label, annot_list):
-    """Construct part of the graph by linking the gene to a list of annotation entities (disease, compound ..etc).
+    """Construct part of the graph by linking the gene to MINERVA pathways.
 
     :param g: the input graph to extend with new nodes and edges.
-    :param gene_node_label: the gene node to be linked to annotation entities.
-    :param annot_list: list of annotations from a specific source (e.g. DisGeNET, WikiPathways ..etc).
+    :param gene_node_label: the gene node to be linked to MINERVA pathways.
+    :param annot_list: list of MINERVA pathways from MINERVA.
     :returns: a NetworkX MultiDiGraph
     """
     for annot in annot_list:
@@ -301,11 +295,11 @@ def add_minerva_gene_pathway_subgraph(g, gene_node_label, annot_list):
 
 
 def add_wikipathways_gene_pathway_subgraph(g, gene_node_label, annot_list):
-    """Construct part of the graph by linking the gene to a list of annotation entities (disease, compound ..etc).
+    """Construct part of the graph by linking the gene to pathways from WikiPathways.
 
     :param g: the input graph to extend with new nodes and edges.
-    :param gene_node_label: the gene node to be linked to annotation entities.
-    :param annot_list: list of annotations from a specific source (e.g. DisGeNET, WikiPathways ..etc).
+    :param gene_node_label: the gene node to be linked to pathways from WikiPathways.
+    :param annot_list: list of pathways from WikiPathways.
     :returns: a NetworkX MultiDiGraph
     """
     for annot in annot_list:
@@ -342,11 +336,11 @@ def add_wikipathways_gene_pathway_subgraph(g, gene_node_label, annot_list):
 
 
 def add_opentargets_gene_reactome_pathway_subgraph(g, gene_node_label, annot_list):
-    """Construct part of the graph by linking the gene to a list of annotation entities (disease, compound ..etc).
+    """Construct part of the graph by linking the gene to Reactome pathways.
 
     :param g: the input graph to extend with new nodes and edges.
-    :param gene_node_label: the gene node to be linked to annotation entities.
-    :param annot_list: list of annotations from a specific source (e.g. DisGeNET, WikiPathways ..etc).
+    :param gene_node_label: the gene node to be linked to Reactome pathways.
+    :param annot_list: list of Reactome pathways from OpenTargets.
     :returns: a NetworkX MultiDiGraph
     """
     for annot in annot_list:
@@ -382,11 +376,11 @@ def add_opentargets_gene_reactome_pathway_subgraph(g, gene_node_label, annot_lis
 
 
 def add_opentargets_gene_go_subgraph(g, gene_node_label, annot_list):
-    """Construct part of the graph by linking the gene to a list of annotation entities (disease, compound ..etc).
+    """Construct part of the graph by linking the gene to gene ontologies.
 
     :param g: the input graph to extend with new nodes and edges.
-    :param gene_node_label: the gene node to be linked to annotation entities.
-    :param annot_list: list of annotations from a specific source (e.g. DisGeNET, WikiPathways ..etc).
+    :param gene_node_label: the gene node to be linked to gene ontologies.
+    :param annot_list: list of gene ontologies from OpenTargets.
     :returns: a NetworkX MultiDiGraph
     """
     for annot in annot_list:
@@ -460,11 +454,11 @@ def add_opentargets_compound_side_effect_subgraph(g, compound_node_label, side_e
 
 
 def add_opentargets_gene_compound_subgraph(g, gene_node_label, annot_list):
-    """Construct part of the graph by linking the gene to a list of annotation entities (disease, compound ..etc).
+    """Construct part of the graph by linking the gene to a list of compounds.
 
     :param g: the input graph to extend with new nodes and edges.
-    :param gene_node_label: the gene node to be linked to annotation entities.
-    :param annot_list: list of annotations from a specific source (e.g. DisGeNET, WikiPathways ..etc).
+    :param gene_node_label: the gene node to be linked to compounds.
+    :param annot_list: list of compounds from OpenTargets.
     :returns: a NetworkX MultiDiGraph
     """
     for annot in annot_list:
@@ -521,11 +515,11 @@ def add_opentargets_gene_compound_subgraph(g, gene_node_label, annot_list):
 
 
 def add_molmedb_gene_inhibitor_subgraph(g, gene_node_label, annot_list):
-    """Construct part of the graph by linking the gene to a list of annotation entities (disease, compound ..etc).
+    """Construct part of the graph by linking the gene to its inhibitors.
 
     :param g: the input graph to extend with new nodes and edges.
-    :param gene_node_label: the gene node to be linked to annotation entities.
-    :param annot_list: list of annotations from a specific source (e.g. DisGeNET, WikiPathways ..etc).
+    :param gene_node_label: the gene node to be linked to its inhibitors.
+    :param annot_list: list of gene inhibitors from MolMeDB.
     :returns: a NetworkX MultiDiGraph
     """
     for annot in annot_list:
@@ -585,11 +579,11 @@ def add_molmedb_gene_inhibitor_subgraph(g, gene_node_label, annot_list):
 
 
 def add_pubchem_assay_subgraph(g, gene_node_label, annot_list):
-    """Construct part of the graph by linking the gene to a list of annotation entities (disease, compound ..etc).
+    """Construct part of the graph by linking the gene to a list of compounds tested on it.
 
     :param g: the input graph to extend with new nodes and edges.
-    :param gene_node_label: the gene node to be linked to annotation entities.
-    :param annot_list: list of annotations from a specific source (e.g. DisGeNET, WikiPathways ..etc).
+    :param gene_node_label: the gene node to be linked to compound tested on it.
+    :param annot_list: list of compounds tested on gene from PubChem.
     :returns: a NetworkX MultiDiGraph
     """
     for annot in annot_list:
@@ -631,11 +625,11 @@ def add_pubchem_assay_subgraph(g, gene_node_label, annot_list):
 
 
 def add_stringdb_ppi_subgraph(g, gene_node_label, annot_list):
-    """Construct part of the graph by linking the gene to a list of annotation entities (disease, compound ..etc).
+    """Construct part of the graph by linking the gene to genes.
 
     :param g: the input graph to extend with new nodes and edges.
-    :param gene_node_label: the gene node to be linked to annotation entities.
-    :param annot_list: list of annotations from a specific source (e.g. DisGeNET, WikiPathways ..etc).
+    :param gene_node_label: the gene node to be linked to other genes entities.
+    :param annot_list: list of protein-protein interactions from StringDb.
     :returns: a NetworkX MultiDiGraph
     """
     for ppi in annot_list:
@@ -664,7 +658,7 @@ def add_opentargets_disease_compound_subgraph(g, disease_node_label, annot_list)
 
     :param g: the input graph to extend with new nodes and edges.
     :param disease_node_label: the disease node to be linked to compounds.
-    :param annot_list: list of annotations from a specific source (e.g. OpenTargets).
+    :param annot_list: list of compounds from OpenTargets.
     :returns: a NetworkX MultiDiGraph
     """
     for annot in annot_list:
@@ -825,7 +819,7 @@ def networkx_graph(combined_df: pd.DataFrame, disease_compound=None):
     """Construct a NetWorkX graph from a Pandas DataFrame of genes and their multi-source annotations.
 
     :param combined_df: the input DataFrame to be converted into a graph.
-    :param disease_compound: the input DataFrame containing disease_compound relationships.
+    :param disease_compound: the input DataFrame containing disease-compound relationships.
     :returns: a NetworkX MultiDiGraph
     """
     g = nx.MultiDiGraph()
