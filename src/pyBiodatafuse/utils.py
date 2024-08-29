@@ -109,7 +109,17 @@ def combine_sources(df_list: List[pd.DataFrame]) -> pd.DataFrame:
     :param df_list: list of dataframes to be combined
     :returns: a single dataframe containing from a list of dataframes
     """
-    m = pd.concat(df_list, axis=1)
+    m = df_list[0]
+
+    for df in df_list[1:]:
+        if not df.empty:
+            m = pd.merge(
+                m,
+                df.drop(columns=["target.source", "identifier.source", "target"], errors="ignore"),
+                on="identifier",
+                how="outer",
+            )
+
     m = m.loc[:, ~m.columns.duplicated()]  # remove duplicate columns
 
     return m
