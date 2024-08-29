@@ -786,7 +786,7 @@ def process_ppi(g, gene_node_label, row):
     if STRING_PPI_COL in row:
         ppi_list = json.loads(json.dumps(row[STRING_PPI_COL]))
         for item in ppi_list:
-            if pd.isna(item['stringdb_link_to']):
+            if pd.isna(item["stringdb_link_to"]):
                 ppi_list = []
 
         if not isinstance(ppi_list, float):
