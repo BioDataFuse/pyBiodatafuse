@@ -642,7 +642,7 @@ def add_stringdb_ppi_subgraph(g, gene_node_label, annot_list):
 
         edge_data = {} if edge_data is None else edge_data
         node_exists = [x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash]
-        if len(node_exists) == 0:
+        if len(node_exists) == 0 and not pd.isna(ppi[STRING_PPI_EDGE_MAIN_LABEL]):
             g.add_edge(
                 gene_node_label,
                 ppi[STRING_PPI_EDGE_MAIN_LABEL],
@@ -779,7 +779,6 @@ def process_ppi(g, gene_node_label, row):
     """
     if STRING_PPI_COL in row:
         ppi_list = json.loads(json.dumps(row[STRING_PPI_COL]))
-
         if ppi_list is None:
             ppi_list = []
 
