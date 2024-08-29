@@ -52,7 +52,7 @@ from pyBiodatafuse.constants import (
     PUBCHEM_GENE_COMPOUND_EDGE_ATTRS,
     SIDE_EFFECT_NODE_ATTRS,
     SIDE_EFFECT_NODE_MAIN_LABEL,
-    STRING,
+    STRING_PPI_COL,
     STRING_PPI_EDGE_ATTRS,
     STRING_PPI_EDGE_LABEL,
     STRING_PPI_EDGE_MAIN_LABEL,
@@ -777,8 +777,8 @@ def process_ppi(g, gene_node_label, row):
     :param gene_node_label: the gene node to be linked to annotation entities.
     :param row: row in the combined DataFrame.
     """
-    if STRING in row:
-        ppi_list = json.loads(json.dumps(row[STRING]))
+    if STRING_PPI_COL in row:
+        ppi_list = json.loads(json.dumps(row[STRING_PPI_COL]))
 
         if ppi_list is None:
             ppi_list = []
