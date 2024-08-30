@@ -177,6 +177,7 @@ CHEMBL_ID = "CHEMBL"
 DRUGBANK_ID = "DB"
 RELATION = "inhibits|activates"
 OPENTARGETS_GENE_COMPOUND_COL = f"{OPENTARGETS}_gene_compounds"
+OPENTARGETS_COMPOUND_DISEASE_RELATION = "treats"
 OPENTARGETS_DISEASE_COMPOUND_COL = f"{OPENTARGETS}_disease_compounds"
 
 # MolMeDB - Gene/Protein input
@@ -234,14 +235,14 @@ BGEE_ANATOMICAL_NODE_ATTRS = {
     "source": BGEE,
     "name": None,
     "id": None,
-    "developmental_stage_name": None,
-    "developmental_stage_id": None,
     "labels": ANATOMICAL_NODE_LABELS,
 }
 BGEE_GENE_ANATOMICAL_EDGE_LABEL = "expressed_by"
 BGEE_EDGE_ATTRS = {
     "source": BGEE,
     "expression_level": None,
+    "developmental_stage_name": None,
+    "developmental_stage_id": None,
     "confidence_level_name": None,
     "confidence_level_id": None,
     "label": BGEE_GENE_ANATOMICAL_EDGE_LABEL,
@@ -364,7 +365,7 @@ MOLMEDB_COMPOUND_NODE_ATTRS = {
     "source_pmid": None,
     "labels": COMPOUND_NODE_LABELS,
 }
-MOLMEDB_PROTEIN_COMPOUND_EDGE_LABEL = "inhibited_by"
+MOLMEDB_PROTEIN_COMPOUND_EDGE_LABEL = "inhibits"
 MOLMEDB_PROTEIN_COMPOUND_EDGE_ATTRS = {
     "source": MOLMEDB,
     "label": MOLMEDB_PROTEIN_COMPOUND_EDGE_LABEL,
