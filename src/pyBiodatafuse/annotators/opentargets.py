@@ -13,6 +13,7 @@ import requests
 from pyBiodatafuse import id_mapper
 from pyBiodatafuse.constants import (
     OPENTARGETS,
+    OPENTARGETS_COMPOUND_DISEASE_RELATION,
     OPENTARGETS_COMPOUND_INPUT_ID,
     OPENTARGETS_COMPOUND_OUTPUT_DICT,
     OPENTARGETS_COMPOUND_QUERY_INPUT_ID,
@@ -1061,7 +1062,7 @@ def get_disease_compound_interactions(
     )
     intermediate_df["compound_cid"] = mapped_df["target"]
 
-    intermediate_df["relation"] = "treats"
+    intermediate_df["relation"] = OPENTARGETS_COMPOUND_DISEASE_RELATION
 
     # Check if all keys in df match the keys in OUTPUT_DICT
     check_columns_against_constants(
