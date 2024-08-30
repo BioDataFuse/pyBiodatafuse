@@ -569,8 +569,8 @@ def add_molmedb_gene_inhibitor_subgraph(g, gene_node_label, annot_list):
 
             if len(node_exists) == 0:
                 g.add_edge(
-                    gene_node_label,
                     annot_node_label,
+                    gene_node_label,
                     label=MOLMEDB_PROTEIN_COMPOUND_EDGE_LABEL,
                     attr_dict=edge_attrs,
                 )
@@ -615,8 +615,8 @@ def add_pubchem_assay_subgraph(g, gene_node_label, annot_list):
 
             if len(node_exists) == 0:
                 g.add_edge(
-                    gene_node_label,
                     annot_node_label,
+                    gene_node_label,
                     label=annot["outcome"],
                     attr_dict=edge_attrs,
                 )
