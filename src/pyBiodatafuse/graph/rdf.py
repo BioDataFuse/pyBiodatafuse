@@ -11,7 +11,7 @@ from pyBiodatafuse.constants import (
     URIS,
     NODE_TYPES,
     PREDICATES,
-    BGEE_EXPRESSION_LEVELS_COL,
+    BGEE_GENE_EXPRESSION_LEVELS_COL,
     DISGENET_DISEASE_COL
 )
 from bioregistry import get_iri, normalize_curie
@@ -217,7 +217,7 @@ def generate_rdf(df: pd.DataFrame) -> Graph:
         source_namespace = row['identifier.source']
         target_idx = row['target']
         target_namespace = row['target.source']
-        expression_data = row[BGEE_EXPRESSION_LEVELS_COL]
+        expression_data = row[BGEE_GENE_EXPRESSION_LEVELS_COL]
         disease_data = row[DISGENET_DISEASE_COL]
 
         # Check if any of the essential columns are NaN, and skip the iteration if so
