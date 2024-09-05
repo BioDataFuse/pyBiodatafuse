@@ -14,6 +14,7 @@ from pyBiodatafuse.constants import (
     BGEE_EDGE_ATTRS,
     BGEE_GENE_ANATOMICAL_EDGE_LABEL,
     BGEE_GENE_EXPRESSION_LEVELS_COL,
+    BRIDGEDB,
     COMPOUND_NODE_MAIN_LABEL,
     COMPOUND_SIDE_EFFECT_EDGE_ATTRS,
     COMPOUND_SIDE_EFFECT_EDGE_LABEL,
@@ -733,7 +734,7 @@ def add_gene_node(g, row, dea_columns):
     """
     gene_node_label = row["identifier"]
     gene_node_attrs = {
-        "source": "BridgeDB",
+        "source": BRIDGEDB,
         "name": row["identifier"],
         "id": row["target"],
         "labels": GENE_NODE_LABELS,
