@@ -922,7 +922,7 @@ def get_disease_compound_interactions(
 ) -> Tuple[pd.DataFrame, dict]:
     """Get information about drugs associated with diseases of interest.
 
-    :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
+    :param bridgedb_df: BridgeDb output for creating the list of gene ids to query.
     :returns: a DataFrame containing the OpenTargets output and dictionary of the query metadata.
     """
     # Check if the API is available

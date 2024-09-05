@@ -106,7 +106,8 @@ def collapse_data_sources(
 def combine_sources(bridgedb_df: pd.DataFrame, df_list: List[pd.DataFrame]) -> pd.DataFrame:
     """Combine multiple dataframes into a single dataframe.
 
-    :param df_list: list of dataframes to be combined
+    :param bridgedb_df: BridgeDb output.
+    :param df_list: list of dataframes to be combined.
     :returns: a single dataframe containing from a list of dataframes
     """
     m = bridgedb_df[
