@@ -936,7 +936,7 @@ def get_disease_compound_interactions(
 
     if bridgedb_df.empty:
         warnings.warn(
-            f"There is no input.",
+            "There is no input.",
             stacklevel=2,
         )
         return pd.DataFrame(), {}
