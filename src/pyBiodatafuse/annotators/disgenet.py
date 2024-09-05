@@ -16,9 +16,9 @@ import requests
 from pyBiodatafuse.constants import (
     DISGENET,
     DISGENET_DISEASE_COL,
+    DISGENET_DISEASE_OUTPUT_DICT,
     DISGENET_ENDPOINT,
-    DISGENET_INPUT_ID,
-    DISGENET_OUTPUT_DICT,
+    DISGENET_GENE_INPUT_ID,
 )
 from pyBiodatafuse.utils import (
     check_columns_against_constants,
@@ -95,7 +95,7 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
     s = requests.Session()
 
     # Extract the "target" values
-    data_df = get_identifier_of_interest(bridgedb_df, DISGENET_INPUT_ID)
+    data_df = get_identifier_of_interest(bridgedb_df, DISGENET_GENE_INPUT_ID)
 
     disgenet_output = []
 
@@ -157,7 +157,7 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
         "metadata": disgenet_version,
         "query": {
             "size": len(data_df["target"].drop_duplicates()),
-            "input_type": DISGENET_INPUT_ID,
+            "input_type": DISGENET_GENE_INPUT_ID,
             "time": time_elapsed,
             "date": current_date,
             "url": DISGENET_ENDPOINT,
@@ -220,7 +220,7 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
     intermediate_df["target"] = intermediate_df["target"].values.astype(str)
 
     missing_cols = [
-        col for col in DISGENET_OUTPUT_DICT.keys() if col not in intermediate_df.columns
+        col for col in DISGENET_DISEASE_OUTPUT_DICT.keys() if col not in intermediate_df.columns
     ]
     for col in missing_cols:
         intermediate_df[col] = None
@@ -234,23 +234,23 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
         # "geneProteinClassNames",
         # "diseaseVocabularies",
         "target",
-        *DISGENET_OUTPUT_DICT.keys(),
+        *DISGENET_DISEASE_OUTPUT_DICT.keys(),
     ]
     intermediate_df = intermediate_df[selected_columns]
 
     # Check if all keys in df match the keys in OUTPUT_DICT
     check_columns_against_constants(
         data_df=intermediate_df,
-        output_dict=DISGENET_OUTPUT_DICT,
+        output_dict=DISGENET_DISEASE_OUTPUT_DICT,
         check_values_in=[],  # TODO: which columns to check
     )
 
     merged_df = collapse_data_sources(
         data_df=bridgedb_df,
-        source_namespace=DISGENET_INPUT_ID,
+        source_namespace=DISGENET_GENE_INPUT_ID,
         target_df=intermediate_df,
         common_cols=["target"],
-        target_specific_cols=list(DISGENET_OUTPUT_DICT.keys()),
+        target_specific_cols=list(DISGENET_DISEASE_OUTPUT_DICT.keys()),
         col_name=DISGENET_DISEASE_COL,
     )
 

@@ -14,10 +14,10 @@ from SPARQLWrapper import JSON, SPARQLWrapper
 
 from pyBiodatafuse.constants import (
     PUBCHEM,
-    PUBCHEM_ASSAYS_COL,
+    PUBCHEM_COMPOUND_ASSAYS_COL,
+    PUBCHEM_COMPOUND_INPUT_ID,
+    PUBCHEM_COMPOUND_OUTPUT_DICT,
     PUBCHEM_ENDPOINT,
-    PUBCHEM_INPUT_ID,
-    PUBCHEM_OUTPUT_DICT,
 )
 from pyBiodatafuse.utils import (
     check_columns_against_constants,
@@ -49,7 +49,7 @@ def check_endpoint_pubchem() -> bool:
 # TODO - Add metadata function. Currently, no metadata is returned from IDSM servers
 
 
-def get_protein_molecule_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
+def get_protein_compound_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
     """Query PubChem for molecules screened on proteins as targets.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query.
@@ -66,7 +66,7 @@ def get_protein_molecule_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
     # Record the start time
     start_time = datetime.datetime.now()
 
-    data_df = get_identifier_of_interest(bridgedb_df, PUBCHEM_INPUT_ID)
+    data_df = get_identifier_of_interest(bridgedb_df, PUBCHEM_COMPOUND_INPUT_ID)
     protein_list_str = data_df["target"].tolist()
     for i in range(len(protein_list_str)):
         protein_list_str[i] = "<http://purl.uniprot.org/uniprot/" + protein_list_str[i] + ">"
@@ -79,7 +79,6 @@ def get_protein_molecule_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
         for i in range(0, len(protein_list_str), 25):
             tmp_list = protein_list_str[i : i + 25]
             query_protein_list.append(" ".join(f"{g}" for g in tmp_list))
-
     else:
         query_protein_list.append(" ".join(f"{g}" for g in protein_list_str))
 
@@ -96,11 +95,11 @@ def get_protein_molecule_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
 
     intermediate_df = pd.DataFrame()
 
-    for protein_list_str in query_protein_list:
+    for protein_str in query_protein_list:
         query_count += 1
 
         sparql_query_template = Template(sparql_query)
-        substit_dict = dict(protein_list=protein_list_str)
+        substit_dict = dict(protein_list=protein_str)
         sparql_query_template_sub = sparql_query_template.substitute(substit_dict)
 
         sparql.setQuery(sparql_query_template_sub)
@@ -126,7 +125,7 @@ def get_protein_molecule_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
         "datasource": PUBCHEM,
         "query": {
             "size": len(protein_list_str),
-            "input_type": PUBCHEM_INPUT_ID,
+            "input_type": PUBCHEM_COMPOUND_INPUT_ID,
             "time": time_elapsed,
             "date": current_date,
             "url": PUBCHEM_ENDPOINT,
@@ -156,6 +155,8 @@ def get_protein_molecule_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
         columns={
             "upProt": "target",
             "assay": "pubchem_assay_id",
+            "SMILES": "smiles",
+            "InChI": "inchi",
         },
         inplace=True,
     )
@@ -190,18 +191,18 @@ def get_protein_molecule_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
     # Check if all keys in df match the keys in OUTPUT_DICT
     check_columns_against_constants(
         data_df=intermediate_df,
-        output_dict=PUBCHEM_OUTPUT_DICT,
-        check_values_in=["outcome", "InChI"],
+        output_dict=PUBCHEM_COMPOUND_OUTPUT_DICT,
+        check_values_in=["outcome", "inchi"],
     )
 
     # Merge the two DataFrames on the target column
     merged_df = collapse_data_sources(
         data_df=data_df,
-        source_namespace=PUBCHEM_INPUT_ID,
+        source_namespace=PUBCHEM_COMPOUND_INPUT_ID,
         target_df=intermediate_df,
         common_cols=["target"],
-        target_specific_cols=list(PUBCHEM_OUTPUT_DICT.keys()),
-        col_name=PUBCHEM_ASSAYS_COL,
+        target_specific_cols=list(PUBCHEM_COMPOUND_OUTPUT_DICT.keys()),
+        col_name=PUBCHEM_COMPOUND_ASSAYS_COL,
     )
 
     merged_df.reset_index(drop=True, inplace=True)

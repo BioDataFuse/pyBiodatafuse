@@ -9,7 +9,12 @@ from typing import Any, Dict, Optional, Tuple
 import pandas as pd
 import requests
 
-from pyBiodatafuse.constants import MINERVA, MINERVA_ENDPOINT, MINERVA_INPUT_ID, MINERVA_OUTPUT_DICT
+from pyBiodatafuse.constants import (
+    MINERVA,
+    MINERVA_ENDPOINT,
+    MINERVA_GENE_INPUT_ID,
+    MINERVA_PATHWAY_OUTPUT_DICT,
+)
 from pyBiodatafuse.utils import (
     check_columns_against_constants,
     collapse_data_sources,
@@ -196,7 +201,7 @@ def get_gene_minerva_pathways(
         "Simple molecule",
     ], "Incorrect Input_type provided. Please provide a valid input_type."
 
-    data_df = get_identifier_of_interest(bridgedb_df, MINERVA_INPUT_ID)
+    data_df = get_identifier_of_interest(bridgedb_df, MINERVA_GENE_INPUT_ID)
 
     # Record the start time
     start_time = datetime.datetime.now()
@@ -274,7 +279,7 @@ def get_gene_minerva_pathways(
         "metadata": minerva_version,
         "query": {
             "size": data_df["target"].nunique(),
-            "input_type": MINERVA_INPUT_ID,
+            "input_type": MINERVA_GENE_INPUT_ID,
             "MINERVA project": map_name,
             "time": time_elapsed,
             "date": current_date,
@@ -301,17 +306,17 @@ def get_gene_minerva_pathways(
     # Check if all keys in df match the keys in OUTPUT_DICT
     check_columns_against_constants(
         data_df=intermediate_df,
-        output_dict=MINERVA_OUTPUT_DICT,
+        output_dict=MINERVA_PATHWAY_OUTPUT_DICT,
         check_values_in=["pathway_id"],
     )
 
     # Merge the two DataFrames on the target column
     merged_df = collapse_data_sources(
         data_df=data_df,
-        source_namespace=MINERVA_INPUT_ID,
+        source_namespace=MINERVA_GENE_INPUT_ID,
         target_df=intermediate_df,
         common_cols=["target"],
-        target_specific_cols=list(MINERVA_OUTPUT_DICT.keys()),
+        target_specific_cols=list(MINERVA_PATHWAY_OUTPUT_DICT.keys()),
         col_name=MINERVA,
     )
 

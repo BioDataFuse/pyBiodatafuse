@@ -16,8 +16,9 @@ from pyBiodatafuse.constants import (
     ANATOMICAL_ENTITIES_LIST,
     BGEE,
     BGEE_ENDPOINT,
-    BGEE_INPUT_ID,
-    BGEE_OUTPUT_DICT,
+    BGEE_GENE_EXPRESSION_LEVELS_COL,
+    BGEE_GENE_EXPRESSION_OUTPUT_DICT,
+    BGEE_GENE_INPUT_ID,
 )
 from pyBiodatafuse.utils import (
     check_columns_against_constants,
@@ -82,7 +83,7 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
         return pd.DataFrame(), {}
 
     # Extract the "target" values and join them into a single string separated by commas
-    data_df = get_identifier_of_interest(bridgedb_df, BGEE_INPUT_ID)
+    data_df = get_identifier_of_interest(bridgedb_df, BGEE_GENE_INPUT_ID)
     gene_list = data_df["target"].tolist()
     gene_list = list(set(gene_list))
 
@@ -161,7 +162,7 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
         "metadata": bgee_version,
         "query": {
             "size": len(gene_list),
-            "input_type": BGEE_INPUT_ID,
+            "input_type": BGEE_GENE_INPUT_ID,
             "time": time_elapsed,
             "date": current_date,
             "url": BGEE_ENDPOINT,
@@ -191,7 +192,7 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
     # Check if all keys in df match the keys in OUTPUT_DICT
     check_columns_against_constants(
         data_df=intermediate_df,
-        output_dict=BGEE_OUTPUT_DICT,
+        output_dict=BGEE_GENE_EXPRESSION_OUTPUT_DICT,
         check_values_in=[
             "anatomical_entity_id",
             "confidence_level_id",
@@ -202,11 +203,11 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
     # Merge the two DataFrames on the target column
     merged_df = collapse_data_sources(
         data_df=data_df,
-        source_namespace=BGEE_INPUT_ID,
+        source_namespace=BGEE_GENE_INPUT_ID,
         target_df=intermediate_df,
         common_cols=["target"],
-        target_specific_cols=list(BGEE_OUTPUT_DICT.keys()),
-        col_name=BGEE,
+        target_specific_cols=list(BGEE_GENE_EXPRESSION_OUTPUT_DICT.keys()),
+        col_name=BGEE_GENE_EXPRESSION_LEVELS_COL,
     )
 
     """Update metadata"""

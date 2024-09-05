@@ -3,7 +3,7 @@
 """Python utils file for global functions."""
 
 import warnings
-from typing import List
+from typing import List, Optional
 
 import pandas as pd
 
@@ -24,7 +24,9 @@ def get_identifier_of_interest(bridgedb_df: pd.DataFrame, db_source: str) -> pd.
     assert db_source in identifier_options, f"Source {db_source} is not in identifier options"
 
     # Filter rows where "target.source" is specific datasource for eg. "NCBI Gene"
-    return bridgedb_df[bridgedb_df["target.source"] == db_source]
+    subset_df = bridgedb_df[bridgedb_df["target.source"] == db_source]
+
+    return subset_df.reset_index(drop=True)
 
 
 def create_or_append_to_metadata(data: dict, prev_entry: List[dict]) -> List[dict]:
@@ -107,7 +109,17 @@ def combine_sources(df_list: List[pd.DataFrame]) -> pd.DataFrame:
     :param df_list: list of dataframes to be combined
     :returns: a single dataframe containing from a list of dataframes
     """
-    m = pd.concat(df_list, axis=1)
+    m = df_list[0]
+
+    for df in df_list[1:]:
+        if not df.empty:
+            m = pd.merge(
+                m,
+                df.drop(columns=["target.source", "identifier.source", "target"], errors="ignore"),
+                on="identifier",
+                how="outer",
+            )
+
     m = m.loc[:, ~m.columns.duplicated()]  # remove duplicate columns
 
     return m
@@ -151,3 +163,54 @@ def check_columns_against_constants(
                         f"All values in column '{col}' do not start with '{starts_with}'.",
                         stacklevel=2,
                     )
+
+
+def create_harmonized_input_file(
+    annotated_df: pd.DataFrame,
+    target_col: str,
+    target_source: str,
+    identifier_source: Optional[str] = None,
+) -> pd.DataFrame:
+    """Create a harmonized input DataFrame by extracting specific identifiers from a complex nested structure within a target column.
+
+    :param annotated_df: DataFrame containing the initial data with nested dictionaries.
+    :param target_col: Name of the column containing the nested dictionaries.
+    :param target_source: The specific identifier source to extract (e.g., 'EFO', 'OMIM').
+    :param identifier_source: The main identifier in the output.
+    :returns: A DataFrame with original identifiers and the extracted target identifiers.
+    """
+    harmonized_data = []
+
+    for _i, row in annotated_df.iterrows():
+        # Extract the identifier
+        if identifier_source is None:
+            id = row["identifier"]
+            id_source = row["identifier.source"]
+
+        # Extract the the target column
+        target_data = row[target_col]
+
+        # Loop through each dictionary in the target data
+        for entry in target_data:
+            if identifier_source is not None:
+                id = entry.get(identifier_source)
+                id_source = identifier_source
+            # Extract the specific target identifiers based on the target_source
+            targets = entry.get(target_source)
+            if not targets or pd.isna(targets) or targets.strip() == "":
+                continue
+            if isinstance(targets, str):
+                for target in targets.split(", "):
+                    # Add a new row to the harmonized data list
+                    harmonized_data.append(
+                        {
+                            "identifier": id,
+                            "identifier.source": id_source,
+                            "target": target,
+                            "target.source": target_source,
+                        }
+                    )
+
+    harmonized_df = pd.DataFrame(harmonized_data)
+
+    return harmonized_df.drop_duplicates()

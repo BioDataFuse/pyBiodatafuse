@@ -26,23 +26,23 @@ WIKIDATA = "Wikidata"
 WIKIPATHWAYS = "WikiPathways"
 
 # Input type for each data source
-BGEE_INPUT_ID = "Ensembl"
-DISGENET_INPUT_ID = "NCBI Gene"
-MINERVA_INPUT_ID = "Ensembl"
-MOLMEDB_GENE_INPUT_ID = "Uniprot-TrEMBL"
+BGEE_GENE_INPUT_ID = "Ensembl"
+DISGENET_GENE_INPUT_ID = "NCBI Gene"
+MINERVA_GENE_INPUT_ID = "Ensembl"
+MOLMEDB_PROTEIN_INPUT_ID = "Uniprot-TrEMBL"
 MOLMEDB_COMPOUND_INPUT_ID = "InChIKey"
 OPENTARGETS_GENE_INPUT_ID = "Ensembl"
 OPENTARGETS_COMPOUND_INPUT_ID = "PubChem Compound"  # If using bridgedb mapping
 OPENTARGETS_COMPOUND_QUERY_INPUT_ID = "chembl_id"
 OPENTARGETS_DISEASE_INPUT_ID = "EFO"
-PUBCHEM_INPUT_ID = "Uniprot-TrEMBL"
-STRING_INPUT_ID = "Ensembl"
-WIKIDATA_PUBLICATION_INPUT_ID = "NCBI Gene"
-WIKIPATHWAYS_INPUT_ID = "NCBI Gene"
+PUBCHEM_COMPOUND_INPUT_ID = "Uniprot-TrEMBL"
+STRING_GENE_INPUT_ID = "Ensembl"
+WIKIDATA_GENE_INPUT_ID = "NCBI Gene"
+WIKIPATHWAYS_GENE_INPUT_ID = "NCBI Gene"
 
 # Output annotation for each data source
 # Bgee
-BGEE_OUTPUT_DICT = {
+BGEE_GENE_EXPRESSION_OUTPUT_DICT = {
     "anatomical_entity_id": str,
     "anatomical_entity_name": str,
     "expression_level": float,
@@ -73,10 +73,10 @@ ANATOMICAL_ENTITIES_LIST = [
     "respiratory system",
     "skeletal system",
 ]
-BGEE_EXPRESSION_LEVELS_COL = f"{BGEE}_expression_levels"
+BGEE_GENE_EXPRESSION_LEVELS_COL = f"{BGEE}_gene_expression_levels"
 
 # DISGENET
-DISGENET_OUTPUT_DICT = {
+DISGENET_DISEASE_OUTPUT_DICT = {
     "disease_name": str,
     "HPO": str,  # "HPO_HP:0100013"
     "NCI": str,  # "NCI_C2910"
@@ -131,17 +131,23 @@ OPENTARGETS_IGNORE_DISEASE_IDS = [
     "omimps",
     "csp",
 ]
-DRUG_ID = "CHEMBL"
+DRUG_ID = "CHEMBL"  # TODO: Yojana, please check as this is not in the opentarget output dict
 OPENTARGETS_DISEASE_COL = f"{OPENTARGETS}_diseases"
 
 # MINERVA
-MINERVA_OUTPUT_DICT = {
+MINERVA_PATHWAY_OUTPUT_DICT = {
     "pathway_id": int,
     "pathway_label": str,
     "pathway_gene_count": int,
 }
+
 # WikiPathways
-WIKIPATHWAYS_OUTPUT_DICT = {"pathway_id": str, "pathway_label": str, "pathway_gene_count": int}
+WIKIPATHWAYS_PATHWAYS_OUTPUT_DICT = {
+    "pathway_id": str,
+    "pathway_label": str,
+    "pathway_gene_count": int,
+}
+
 # Open Targets - Reactome
 OPENTARGETS_REACTOME_OUTPUT_DICT = {
     "pathway_id": str,
@@ -161,8 +167,8 @@ OPENTARGETS_COMPOUND_OUTPUT_DICT = {
     "drugbank_id": str,
     "compound_cid": str,
     "compound_name": str,
-    "is_approved": bool,
     "clincal_trial_phase": int,
+    "is_approved": bool,
     "relation": str,
     "adverse_effect_count": int,
     "adverse_effect": dict,
@@ -170,13 +176,15 @@ OPENTARGETS_COMPOUND_OUTPUT_DICT = {
 CHEMBL_ID = "CHEMBL"
 DRUGBANK_ID = "DB"
 RELATION = "inhibits|activates"
-OPENTARGETS_COMPOUND_COL = f"{OPENTARGETS}_compounds"
+OPENTARGETS_GENE_COMPOUND_COL = f"{OPENTARGETS}_gene_compounds"
+OPENTARGETS_COMPOUND_DISEASE_RELATION = "treats"
+OPENTARGETS_DISEASE_COMPOUND_COL = f"{OPENTARGETS}_disease_compounds"
 
-# MolMeDB - Gene input
-MOLMEDB_GENE_OUTPUT_DICT = {
+# MolMeDB - Gene/Protein input
+MOLMEDB_PROTEIN_COMPOUND_OUTPUT_DICT = {
     "compound_name": str,
-    "InChIKey": str,
-    "SMILES": str,
+    "inchikey": str,
+    "smiles": str,
     "compound_cid": str,
     "molmedb_id": str,
     "source_pmid": str,
@@ -186,31 +194,33 @@ MOLMEDB_GENE_OUTPUT_DICT = {
 }
 MOLMEDB_ID = "MM"
 DRUGBANK_ID = "DB"
-MOLMEDB_INHIBITOR_COL = f"{MOLMEDB}_transporter_inhibitor"
+MOLMEDB_PROTEIN_COMPOUND_COL = f"{MOLMEDB}_transporter_inhibitor"
+
 # MolMeDB - Compound input
-MOLMEDB_COMPOUND_OUTPUT_DICT = {
+MOLMEDB_COMPOUND_PROTEIN_OUTPUT_DICT = {
     "uniprot_trembl_id": str,
     "hgnc_symbol": str,
     "source_pmid": str,
 }
 UNIPROT_TREMBL_ID = "P"
-MOLMEDB_INHIBITED_COL = f"{MOLMEDB}_transporter_inhibited"
+MOLMEDB_COMPOUND_PROTEIN_COL = f"{MOLMEDB}_transporter_inhibited"
+
 # PubChem - Assays
-PUBCHEM_OUTPUT_DICT = {
+PUBCHEM_COMPOUND_OUTPUT_DICT = {
     "pubchem_assay_id": str,
     "assay_type": str,
     "outcome": str,
     "compound_cid": str,
     "compound_name": str,
-    "SMILES": str,
-    "InChI": str,
+    "smiles": str,
+    "inchi": str,
 }
 OUTCOME = "active|inactive"
 INCHI = "InChI"
-PUBCHEM_ASSAYS_COL = f"{PUBCHEM}_assays"
+PUBCHEM_COMPOUND_ASSAYS_COL = f"{PUBCHEM}_assays"
 
 # STRING
-STRING_OUTPUT_DICT = {"stringdb_link_to": str, STRING_INPUT_ID: str, "score": int}
+STRING_OUTPUT_DICT = {"stringdb_link_to": str, STRING_GENE_INPUT_ID: str, "score": int}
 STRING_PPI_COL = f"{STRING}_ppi"
 
 # Wikidata
@@ -219,174 +229,158 @@ WIKIDATA_CC_COL = f"{WIKIDATA}_cellular_components"
 # Node and edge main lable and attributes for each data source
 # Anatomical entity node
 # Bgee
-BGEE_NODE_LABELS = "Anatomical Entity"
-BGEE_NODE_MAIN_LABEL = "anatomical_entity_id"
-BGEE_NODE_ATTRS = {
+ANATOMICAL_NODE_LABELS = "Anatomical Entity"
+BGEE_ANATOMICAL_NODE_MAIN_LABEL = "anatomical_entity_id"
+BGEE_ANATOMICAL_NODE_ATTRS = {
     "source": BGEE,
     "name": None,
     "id": None,
-    "developmental_stage_name": None,
-    "developmental_stage_id": None,
-    "labels": BGEE_NODE_LABELS,
+    "labels": ANATOMICAL_NODE_LABELS,
 }
-BGEE_EDGE_LABEL = "expressed_by"
+BGEE_GENE_ANATOMICAL_EDGE_LABEL = "expressed_by"
 BGEE_EDGE_ATTRS = {
     "source": BGEE,
     "expression_level": None,
+    "developmental_stage_name": None,
+    "developmental_stage_id": None,
     "confidence_level_name": None,
     "confidence_level_id": None,
-    "label": BGEE_EDGE_LABEL,
+    "label": BGEE_GENE_ANATOMICAL_EDGE_LABEL,
 }
 
 # Disease node
 # DISGENET
-DISGENET_NODE_LABELS = "Disease"
-DISGENET_NODE_MAIN_LABEL = "disease_id"
-DISGENET_NODE_ATTRS = {
+DISEASE_NODE_LABELS = "Disease"
+DISEASE_NODE_MAIN_LABEL = "UMLS"
+DISGENET_DISEASE_NODE_ATTRS = {
     "source": DISGENET,
     "name": None,
     "id": None,
+    "HPO": None,
+    "NCI": None,
+    "OMIM": None,
+    "MONDO": None,
+    "ORDO": None,
+    "EFO": None,
+    "DO": None,
+    "MESH": None,
+    "UMLS": None,
     "disease_type": None,
-    "ei": None,
-    "el": None,
-    "labels": DISGENET_NODE_LABELS,
+    "disease_umlscui": None,
+    "labels": DISEASE_NODE_LABELS,
 }
-DISGENET_EDGE_LABEL = "associated_with"
+DISGENET_GENE_DISEASE_EDGE_LABEL = "associated_with"
 DISGENET_EDGE_ATTRS = {
     "source": DISGENET,
     "score": None,
-    "label": DISGENET_EDGE_LABEL,
+    "ei": None,
+    "el": None,
+    "label": DISGENET_GENE_DISEASE_EDGE_LABEL,
 }
 
 # Open Targets - Disease
-OPENTARGETS_DISEASE_NODE_LABELS = "Disease"
-OPENTARGETS_DISEASE_NODE_MAIN_LABEL = "disease_id"
 OPENTARGETS_DISEASE_NODE_ATTRS = {
     "source": OPENTARGETS,
     "name": None,
     "id": None,
     "therapeutic_areas": None,
-    "labels": OPENTARGETS_DISEASE_NODE_LABELS,
+    "labels": DISEASE_NODE_LABELS,
 }
-OPENTARGETS_DISEASE_EDGE_LABEL = "associated_with"
-OPENTARGETS_DISEASE_EDGE_ATTRS = {"source": OPENTARGETS, "label": OPENTARGETS_DISEASE_EDGE_LABEL}
+OPENTARGETS_GENE_DISEASE_EDGE_LABEL = "associated_with"
+OPENTARGETS_DISEASE_EDGE_ATTRS = {
+    "source": OPENTARGETS,
+    "label": OPENTARGETS_GENE_DISEASE_EDGE_LABEL,
+}
 
 # Pathway node
-# MINERVA
-MINERVA_NODE_LABELS = "Pathway"
-MINERVA_NODE_MAIN_LABEL = "pathway_id"
-MINERVA_NODE_ATTRS = {
-    "source": MINERVA,
+# MINERVA, WikiPathways, Open Targets - Reactome
+PATHWAY_NODE_LABELS = "Pathway"
+PATHWAY_NODE_MAIN_LABEL = "pathway_id"
+PATHWAY_NODE_ATTRS = {
+    "source": None,
     "name": None,
     "id": None,
     "gene_count": None,
-    "labels": MINERVA_NODE_LABELS,
-}
-MINERVA_EDGE_LABEL = "part_of"
-MINERVA_EDGE_ATTRS = {"source": MINERVA, "label": MINERVA_EDGE_LABEL}
-
-# WikiPathways
-WIKIPATHWAYS_NODE_LABELS = "Pathway"
-WIKIPATHWAYS_NODE_MAIN_LABEL = "pathway_id"
-WIKIPATHWAYS_NODE_ATTRS = {
-    "source": WIKIPATHWAYS,
-    "name": None,
-    "id": None,
-    "gene_count": None,
-    "labels": WIKIPATHWAYS_NODE_LABELS,
-}
-WIKIPATHWAYS_EDGE_LABEL = "part_of"
-WIKIPATHWAYS_EDGE_ATTRS = {"source": WIKIPATHWAYS, "label": WIKIPATHWAYS_EDGE_LABEL}
-
-# Open Targets - Reactome
-OPENTARGETS_REACTOME_NODE_LABELS = "Pathway"
-OPENTARGETS_REACTOME_NODE_MAIN_LABEL = "pathway_id"
-OPENTARGETS_REACTOME_NODE_ATTRS = {
-    "source": OPENTARGETS,
-    "name": None,
-    "id": None,
-    "labels": OPENTARGETS_REACTOME_NODE_LABELS,
-}
-OPENTARGETS_REACTOME_EDGE_LABEL = "part_of"
-OPENTARGETS_REACTOME_EDGE_ATTRS = {"source": OPENTARGETS, "label": OPENTARGETS_REACTOME_EDGE_LABEL}
+    "labels": PATHWAY_NODE_LABELS,
+}  # TODO: Yojana, would it be possible to add pathway size here (gene_count)
+GENE_PATHWAY_EDGE_LABEL = "part_of"
+GENE_PATHWAY_EDGE_ATTRS = {"source": None, "label": GENE_PATHWAY_EDGE_LABEL}
 
 # GO nodes
 # Open Targets - GO processes
-OPENTARGETS_GO_BP_NODE_LABELS = "Biological Process"
-OPENTARGETS_GO_MF_NODE_LABELS = "Molecular Function"
-OPENTARGETS_GO_CC_NODE_LABELS = "Cellular Component"
-OPENTARGETS_GO_NODE_MAIN_LABEL = "go_id"
-OPENTARGETS_GO_NODE_ATTRS = {
+GO_BP_NODE_LABELS = "Biological Process"
+GO_MF_NODE_LABELS = "Molecular Function"
+GO_CC_NODE_LABELS = "Cellular Component"
+GO_NODE_MAIN_LABEL = "go_id"
+GO_NODE_ATTRS = {
     "source": OPENTARGETS,
     "name": None,
     "id": None,
     "labels": None,
 }
-OPENTARGETS_GO_EDGE_LABEL = "part_of"
-OPENTARGETS_GO_EDGE_ATTRS = {"source": OPENTARGETS, "label": OPENTARGETS_GO_EDGE_LABEL}
+GENE_GO_EDGE_LABEL = "part_of"
+GENE_GO_EDGE_ATTRS = {"source": OPENTARGETS, "label": GENE_GO_EDGE_LABEL}
 
 # Compound node
 # Open Targets - Compound
-OPENTARGETS_COMPOUND_NODE_LABELS = "Compound"
-OPENTARGETS_COMPOUND_NODE_MAIN_LABEL = "compound_cid"
+COMPOUND_NODE_LABELS = "Compound"
+COMPOUND_NODE_MAIN_LABEL = "compound_cid"
 OPENTARGETS_COMPOUND_NODE_ATTRS = {
     "source": OPENTARGETS,
     "name": None,
     "id": None,
     "chembl_id": None,
-    "DrugBank_id": None,
+    "drugbank_id": None,
     "compound_cid": None,
+    "clincal_trial_phase": None,
     "is_approved": None,
     "adverse_effect_count": None,
-    "labels": OPENTARGETS_COMPOUND_NODE_LABELS,
+    "labels": COMPOUND_NODE_LABELS,
 }
-OPENTARGETS_COMPOUND_EDGE_ATTRS = {"source": OPENTARGETS, "label": None}
+OPENTARGETS_GENE_COMPOUND_EDGE_ATTRS = {"source": OPENTARGETS, "label": None}
 # Side effect
 # Open Targets - Compound
-OPENTARGETS_SIDE_EFFECT_NODE_LABELS = "Side Effect"
-OPENTARGETS_SIDE_EFFECT_NODE_MAIN_LABEL = "adverse_effect"
+SIDE_EFFECT_NODE_LABELS = "Side Effect"
+SIDE_EFFECT_NODE_MAIN_LABEL = "adverse_effect"
 # TODO: add the side effect id (adverse_effect id)
-OPENTARGETS_SIDE_EFFECT_NODE_ATTRS = {
+SIDE_EFFECT_NODE_ATTRS = {
     "source": OPENTARGETS,
     "name": None,
-    "labels": OPENTARGETS_SIDE_EFFECT_NODE_LABELS,
+    "labels": SIDE_EFFECT_NODE_LABELS,
 }
-OPENTARGETS_SIDE_EFFECT_EDGE_LABEL = "has_side_effect"
+COMPOUND_SIDE_EFFECT_EDGE_LABEL = "has_side_effect"
+COMPOUND_SIDE_EFFECT_EDGE_ATTRS = {"source": OPENTARGETS, "label": COMPOUND_SIDE_EFFECT_EDGE_LABEL}
 
-# MolMeDB - Gene input
-MOLMEDB_COMPOUND_NODE_LABELS = "Compound"
-MOLMEDB_COMPOUND_NODE_MAIN_LABEL = "compound_cid"
+# MolMeDB - Gene/Protein input
 MOLMEDB_COMPOUND_NODE_ATTRS = {
     "source": MOLMEDB,
     "name": None,
     "id": None,
-    "MolMeDB_id": None,
-    "ChEBI_id": None,
+    "molmedb_id": None,
+    "chebi_id": None,
     "drugbank_id": None,
     "compound_cid": None,
-    "InChIKey": None,
-    "SMILES": None,
+    "inchikey": None,
+    "smiles": None,
     "source_pmid": None,
-    "labels": MOLMEDB_COMPOUND_NODE_LABELS,
+    "labels": COMPOUND_NODE_LABELS,
 }
-MOLMEDB_COMPOUND_EDGE_LABEL = "inhibits"
-MOLMEDB_COMPOUND_EDGE_ATTRS = {
+MOLMEDB_PROTEIN_COMPOUND_EDGE_LABEL = "inhibits"
+MOLMEDB_PROTEIN_COMPOUND_EDGE_ATTRS = {
     "source": MOLMEDB,
-    "label": MOLMEDB_COMPOUND_EDGE_LABEL,
+    "label": MOLMEDB_PROTEIN_COMPOUND_EDGE_LABEL,
 }
 
 # PubChem - Assays
-PUBCHEM_NODE_LABELS = "Compound"
-PUBCHEM_NODE_MAIN_LABEL = "compound_cid"
-PUBCHEM_NODE_ATTRS = {
+PUBCHEM_COMPOUND_NODE_ATTRS = {
     "source": PUBCHEM,
     "name": None,
     "id": None,
-    "InChI": None,
-    "SMILES": None,
-    "labels": PUBCHEM_NODE_LABELS,
+    "inchi": None,
+    "smiles": None,
+    "labels": COMPOUND_NODE_LABELS,
 }
-PUBCHEM_EDGE_ATTRS = {
+PUBCHEM_GENE_COMPOUND_EDGE_ATTRS = {
     "source": PUBCHEM,
     "assay_type": None,
     "pubchem_assay_id": None,
@@ -400,13 +394,18 @@ PUBCHEM_EDGE_ATTRS = {
 # Gene node
 GENE_NODE_LABELS = "Gene"
 # STRING
-# TODO: to be checked
-STRING_EDGE_MAIN_LABEL = "stringdb_link_to"
-STRING_EDGE_LABEL = "StringDB_ppi"
-STRING_EDGE_ATTRS = {
+STRING_PPI_EDGE_MAIN_LABEL = "stringdb_link_to"
+STRING_PPI_EDGE_LABEL = "interacts_with"
+STRING_PPI_EDGE_ATTRS = {
     "source": STRING,
     "score": None,
-    "label": STRING_EDGE_LABEL,
+    "label": STRING_PPI_EDGE_LABEL,
+}
+
+# Disease - Compound edge
+OPENTARGETS_DISEASE_COMPOUND_EDGE_ATTRS = {
+    "source": OPENTARGETS,
+    "label": None,
 }
 
 # Wikidata

@@ -14,7 +14,7 @@ import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
 
 from pyBiodatafuse.annotators.wikidata import check_endpoint_wikidata
-from pyBiodatafuse.constants import WIKIDATA, WIKIDATA_ENDPOINT, WIKIDATA_PUBLICATION_INPUT_ID
+from pyBiodatafuse.constants import WIKIDATA, WIKIDATA_ENDPOINT, WIKIDATA_GENE_INPUT_ID
 from pyBiodatafuse.utils import get_identifier_of_interest
 
 
@@ -33,7 +33,7 @@ def get_wikidata_gene_literature(bridgedb_df: pd.DataFrame) -> Dict[str, Set[str
         )
         return {}
 
-    data_df = get_identifier_of_interest(bridgedb_df, WIKIDATA_PUBLICATION_INPUT_ID)
+    data_df = get_identifier_of_interest(bridgedb_df, WIKIDATA_GENE_INPUT_ID)
     gene_list = data_df["target"].tolist()
     gene_list = list(set(gene_list))
 
