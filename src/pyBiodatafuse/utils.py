@@ -109,7 +109,10 @@ def combine_sources(bridgedb_df: pd.DataFrame, df_list: List[pd.DataFrame]) -> p
     :param df_list: list of dataframes to be combined
     :returns: a single dataframe containing from a list of dataframes
     """
-    m = bridgedb_df[(bridgedb_df["target.source"] == "Ensembl") | (bridgedb_df["target.source"] == "PubChem-compound")]
+    m = bridgedb_df[
+        (bridgedb_df["target.source"] == "Ensembl")
+        | (bridgedb_df["target.source"] == "PubChem-compound")
+    ]
 
     for df in df_list:
         if not df.empty:
