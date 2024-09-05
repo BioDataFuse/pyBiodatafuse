@@ -103,15 +103,19 @@ def collapse_data_sources(
     return merged_df
 
 
-def combine_sources(df_list: List[pd.DataFrame]) -> pd.DataFrame:
+def combine_sources(bridgedb_df: pd.DataFrame, df_list: List[pd.DataFrame]) -> pd.DataFrame:
     """Combine multiple dataframes into a single dataframe.
 
-    :param df_list: list of dataframes to be combined
+    :param bridgedb_df: BridgeDb output.
+    :param df_list: list of dataframes to be combined.
     :returns: a single dataframe containing from a list of dataframes
     """
-    m = df_list[0]
+    m = bridgedb_df[
+        (bridgedb_df["target.source"] == "Ensembl")
+        | (bridgedb_df["target.source"] == "PubChem-compound")
+    ]
 
-    for df in df_list[1:]:
+    for df in df_list:
         if not df.empty:
             m = pd.merge(
                 m,

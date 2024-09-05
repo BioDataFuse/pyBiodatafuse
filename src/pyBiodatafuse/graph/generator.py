@@ -14,6 +14,7 @@ from pyBiodatafuse.constants import (
     BGEE_EDGE_ATTRS,
     BGEE_GENE_ANATOMICAL_EDGE_LABEL,
     BGEE_GENE_EXPRESSION_LEVELS_COL,
+    BRIDGEDB,
     COMPOUND_NODE_MAIN_LABEL,
     COMPOUND_SIDE_EFFECT_EDGE_ATTRS,
     COMPOUND_SIDE_EFFECT_EDGE_LABEL,
@@ -384,34 +385,37 @@ def add_opentargets_gene_go_subgraph(g, gene_node_label, annot_list):
     :returns: a NetworkX MultiDiGraph
     """
     for annot in annot_list:
-        annot_node_label = annot[GO_NODE_MAIN_LABEL]
-        annot_node_attrs = GO_NODE_ATTRS.copy()
-        annot_node_attrs["name"] = annot["go_name"]
-        annot_node_attrs["id"] = annot["go_id"]
-        if annot["go_type"] == "P":
-            annot_node_attrs["labels"] = GO_BP_NODE_LABELS
-        elif annot["go_type"] == "F":
-            annot_node_attrs["labels"] = GO_MF_NODE_LABELS
-        elif annot["go_type"] == "C":
-            annot_node_attrs["labels"] = GO_CC_NODE_LABELS
+        if not pd.isna(annot["go_id"]):
+            annot_node_label = annot[GO_NODE_MAIN_LABEL]
+            annot_node_attrs = GO_NODE_ATTRS.copy()
+            annot_node_attrs["name"] = annot["go_name"]
+            annot_node_attrs["id"] = annot["go_id"]
+            if annot["go_type"] == "P":
+                annot_node_attrs["labels"] = GO_BP_NODE_LABELS
+            elif annot["go_type"] == "F":
+                annot_node_attrs["labels"] = GO_MF_NODE_LABELS
+            elif annot["go_type"] == "C":
+                annot_node_attrs["labels"] = GO_CC_NODE_LABELS
 
-        g.add_node(annot_node_label, attr_dict=annot_node_attrs)
+            g.add_node(annot_node_label, attr_dict=annot_node_attrs)
 
-        edge_attrs = GENE_GO_EDGE_ATTRS.copy()
+            edge_attrs = GENE_GO_EDGE_ATTRS.copy()
 
-        edge_hash = hash(frozenset(edge_attrs.items()))
-        edge_attrs["edge_hash"] = edge_hash
-        edge_data = g.get_edge_data(gene_node_label, annot_node_label)
-        edge_data = {} if edge_data is None else edge_data
-        node_exists = [x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash]
+            edge_hash = hash(frozenset(edge_attrs.items()))
+            edge_attrs["edge_hash"] = edge_hash
+            edge_data = g.get_edge_data(gene_node_label, annot_node_label)
+            edge_data = {} if edge_data is None else edge_data
+            node_exists = [
+                x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash
+            ]
 
-        if len(node_exists) == 0:
-            g.add_edge(
-                gene_node_label,
-                annot_node_label,
-                label=GENE_GO_EDGE_LABEL,
-                attr_dict=edge_attrs,
-            )
+            if len(node_exists) == 0:
+                g.add_edge(
+                    gene_node_label,
+                    annot_node_label,
+                    label=GENE_GO_EDGE_LABEL,
+                    attr_dict=edge_attrs,
+                )
 
     return g
 
@@ -425,30 +429,31 @@ def add_opentargets_compound_side_effect_subgraph(g, compound_node_label, side_e
     :returns: a NetworkX MultiDiGraph
     """
     for effect in side_effects_list:
-        effect_node_label = effect["name"]
-        effect_node_attrs = SIDE_EFFECT_NODE_ATTRS.copy()
-        effect_node_attrs["name"] = effect["name"]
+        if not pd.isna(effect["name"]):
+            effect_node_label = effect["name"]
+            effect_node_attrs = SIDE_EFFECT_NODE_ATTRS.copy()
+            effect_node_attrs["name"] = effect["name"]
 
-        g.add_node(effect_node_label, attr_dict=effect_node_attrs)
+            g.add_node(effect_node_label, attr_dict=effect_node_attrs)
 
-        edge_attrs = COMPOUND_SIDE_EFFECT_EDGE_ATTRS.copy()
-        edge_hash = hash(frozenset(edge_attrs.items()))
-        edge_attrs["edge_hash"] = edge_hash
-        edge_data = g.get_edge_data(compound_node_label, effect_node_label)
-        edge_data = {} if edge_data is None else edge_data
-        node_exists = [
-            x
-            for x, y in edge_data.items()
-            if "attr_dict" in y and y["attr_dict"].get("edge_hash") == edge_hash
-        ]
+            edge_attrs = COMPOUND_SIDE_EFFECT_EDGE_ATTRS.copy()
+            edge_hash = hash(frozenset(edge_attrs.items()))
+            edge_attrs["edge_hash"] = edge_hash
+            edge_data = g.get_edge_data(compound_node_label, effect_node_label)
+            edge_data = {} if edge_data is None else edge_data
+            node_exists = [
+                x
+                for x, y in edge_data.items()
+                if "attr_dict" in y and y["attr_dict"].get("edge_hash") == edge_hash
+            ]
 
-        if len(node_exists) == 0:
-            g.add_edge(
-                compound_node_label,
-                effect_node_label,
-                label=COMPOUND_SIDE_EFFECT_EDGE_LABEL,
-                attr_dict=edge_attrs,
-            )
+            if len(node_exists) == 0:
+                g.add_edge(
+                    compound_node_label,
+                    effect_node_label,
+                    label=COMPOUND_SIDE_EFFECT_EDGE_LABEL,
+                    attr_dict=edge_attrs,
+                )
 
     return g
 
@@ -729,7 +734,7 @@ def add_gene_node(g, row, dea_columns):
     """
     gene_node_label = row["identifier"]
     gene_node_attrs = {
-        "source": "BridgeDB",
+        "source": BRIDGEDB,
         "name": row["identifier"],
         "id": row["target"],
         "labels": GENE_NODE_LABELS,

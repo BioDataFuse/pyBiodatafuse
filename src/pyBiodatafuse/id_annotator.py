@@ -80,7 +80,7 @@ def run_gene_selected_sources(
             if tmp_data.empty:
                 warnings.append(f"No annotation available for {source}")
             if not tmp_data.empty:
-                combined_data = combine_sources([combined_data, tmp_data])
+                combined_data = combine_sources(bridgedb_df, [combined_data, tmp_data])
 
     return combined_data, combined_metadata
 

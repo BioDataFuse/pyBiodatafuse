@@ -15,6 +15,7 @@ WIKIDATA_ENDPOINT = "https://query.wikidata.org/sparql"
 WIKIPATHWAYS_ENDPOINT = "https://sparql.wikipathways.org/sparql"
 
 # Data sources
+BRIDGEDB = "BridgeDB"
 BGEE = "Bgee"
 DISGENET = "DISGENET"
 MINERVA = "MINERVA"
