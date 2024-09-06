@@ -442,27 +442,27 @@ NAMESPACE_BINDINGS = {
 }
 
 # BASE URI for all nodes 
-BASE_URI = NAMESPACE_BINDINGS["biodatafuse"] + "rdf/"
+#'{}' = NAMESPACE_BINDINGS["biodatafuse"] + "rdf/"
 
-# URIs for nodes (one for each node in the schema)
+# Patterns URIs for nodes (one for each node in the schema)
 URIS = {
-    "gene_disease_association": BASE_URI + "gene_disease_association",
-    "gene_base_node": BASE_URI + "gene",
-    "gene_symbol_base_node": BASE_URI + "gene_symbol",
-    "source_base_node": BASE_URI + "source",
-    "data_source_base_node": BASE_URI + "datasource",
-    "score_base_node": BASE_URI + "score",
-    "experimental_process_node": BASE_URI + "experimental_process",
-    "anatomical_entity_base_node": BASE_URI + "anatomical_entity",
-    "life_cycle_base_node": BASE_URI + "life_cycle",
-    "gene_expression_value_base_node": BASE_URI + "gene_expression_value",
+    "gene_disease_association": "gene_disease_association",
+    "gene_base_node": "gene",
+    "gene_symbol_base_node": "gene_symbol",
+    "source_base_node": "source",
+    "data_source_base_node": "datasource",
+    "score_base_node": "score",
+    "experimental_process_node": "experimental_process",
+    "anatomical_entity_base_node": "anatomical_entity",
+    "life_cycle_base_node": "life_cycle",
+    "gene_expression_value_base_node": "gene_expression_value",
 }
 
 # NODE TYPES
 NODE_TYPES = {
     "gene_node" : f"{NAMESPACE_BINDINGS['obo']}NCIT_C16612",
     "disease_node" : f"{NAMESPACE_BINDINGS['obo']}NCIT_C7057",
-    "gene-disease_association" : f"{NAMESPACE_BINDINGS['sio']}SIO_000983",
+    "gene_disease_association" : f"{NAMESPACE_BINDINGS['sio']}SIO_000983",
     "score_node" : f"{NAMESPACE_BINDINGS['obo']}NCIT_C25338", 
     "data_source_node" : f"{NAMESPACE_BINDINGS['obo']}SLSO_0001122" ,
     "gene_expression_value_node" : f"{NAMESPACE_BINDINGS['sio']}SIO_001077",
