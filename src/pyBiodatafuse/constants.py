@@ -438,10 +438,10 @@ NAMESPACE_BINDINGS = {
     "owl": "http://www.w3.org/2002/07/owl#",
     "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
     "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
-    "xsd": "http://www.w3.org/2001/XMLSchema#"
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
 }
 
-# BASE URI for all nodes 
+# BASE URI for all nodes
 #'{}' = NAMESPACE_BINDINGS["biodatafuse"] + "rdf/"
 
 # Patterns URIs for nodes (one for each node in the schema)
@@ -460,23 +460,31 @@ URIS = {
 
 # NODE TYPES
 NODE_TYPES = {
-    "gene_node" : f"{NAMESPACE_BINDINGS['obo']}NCIT_C16612",
-    "disease_node" : f"{NAMESPACE_BINDINGS['obo']}NCIT_C7057",
-    "gene_disease_association" : f"{NAMESPACE_BINDINGS['sio']}SIO_000983",
-    "score_node" : f"{NAMESPACE_BINDINGS['obo']}NCIT_C25338", 
-    "data_source_node" : f"{NAMESPACE_BINDINGS['obo']}SLSO_0001122" ,
-    "gene_expression_value_node" : f"{NAMESPACE_BINDINGS['sio']}SIO_001077",
-    "anatomical_entity_node" : f"{NAMESPACE_BINDINGS['sio']}UBERON_0001062",
-
+    "gene_node": f"{NAMESPACE_BINDINGS['obo']}NCIT_C16612",
+    "disease_node": f"{NAMESPACE_BINDINGS['obo']}NCIT_C7057",
+    "gene_disease_association": f"{NAMESPACE_BINDINGS['sio']}SIO_000983",
+    "score_node": f"{NAMESPACE_BINDINGS['obo']}NCIT_C25338",
+    "data_source_node": f"{NAMESPACE_BINDINGS['obo']}SLSO_0001122",
+    "gene_expression_value_node": f"{NAMESPACE_BINDINGS['sio']}SIO_001077",
+    "anatomical_entity_node": f"{NAMESPACE_BINDINGS['sio']}UBERON_0001062",
+    "tested_substance_node": "http://www.bioassayontology.org/bao#BAO_0003059",
+    "source_database" : f"{NAMESPACE_BINDINGS['sio']}SIO_000750",
+    "experimental_process_node" : f"{NAMESPACE_BINDINGS['obo']}EFO_0002694",
+    "pathway_node": f"{NAMESPACE_BINDINGS['obo']}PW_0000001"
 }
 
 # PREDICATES
 PREDICATES = {
-    "sio_refers_to" : f"{NAMESPACE_BINDINGS['sio']}SIO_000628",
-    "sio_has_measurement_value" : f"{NAMESPACE_BINDINGS['sio']}SIO_000216",
-    "sio_has_source" : f"{NAMESPACE_BINDINGS['sio']}SIO_000253",
-    "sio_is_associated_with" : f"{NAMESPACE_BINDINGS['sio']}SIO_001403",
-    "sio_has_value" : f"{NAMESPACE_BINDINGS['sio']}SIO_000300",
-    "sio_has_input" : f"{NAMESPACE_BINDINGS['sio']}SIO_000230",
-    "sio_has_output" : f"{NAMESPACE_BINDINGS['sio']}SIO_000229",
+    "sio_refers_to": f"{NAMESPACE_BINDINGS['sio']}SIO_000628",
+    "sio_has_measurement_value": f"{NAMESPACE_BINDINGS['sio']}SIO_000216",
+    "sio_has_source": f"{NAMESPACE_BINDINGS['sio']}SIO_000253",
+    "sio_is_associated_with": f"{NAMESPACE_BINDINGS['sio']}SIO_001403",
+    "sio_has_value": f"{NAMESPACE_BINDINGS['sio']}SIO_000300",
+    "sio_has_input": f"{NAMESPACE_BINDINGS['sio']}SIO_000230",
+    "sio_has_output": f"{NAMESPACE_BINDINGS['sio']}SIO_000229",
+    "chebi_inchi": "http://purl.obolibrary.org/obo/chebi/inchi",
+    "chebi_smiles": "http://purl.obolibrary.org/obo/chebi/smiles",
+    "cheminf_compound_id": "http://semanticscience.org/resource/CHEMINF_000140",
+    "sio_is_part_of": f"{NAMESPACE_BINDINGS['sio']}SIO_000068",
+    "has_gene_count" : "" #TODO gene count
 }
