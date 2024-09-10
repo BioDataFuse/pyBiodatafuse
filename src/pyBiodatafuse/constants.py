@@ -470,7 +470,8 @@ NODE_TYPES = {
     "tested_substance_node": "http://www.bioassayontology.org/bao#BAO_0003059",
     "source_database" : f"{NAMESPACE_BINDINGS['sio']}SIO_000750",
     "experimental_process_node" : f"{NAMESPACE_BINDINGS['obo']}EFO_0002694",
-    "pathway_node": f"{NAMESPACE_BINDINGS['obo']}PW_0000001"
+    "pathway_node": f"{NAMESPACE_BINDINGS['obo']}PW_0000001",
+    "adverse_event_node" : f"{NAMESPACE_BINDINGS['obo']}OAE_0000001"
 }
 
 # PREDICATES
@@ -486,5 +487,7 @@ PREDICATES = {
     "chebi_smiles": "http://purl.obolibrary.org/obo/chebi/smiles",
     "cheminf_compound_id": "http://semanticscience.org/resource/CHEMINF_000140",
     "sio_is_part_of": f"{NAMESPACE_BINDINGS['sio']}SIO_000068",
-    "has_gene_count" : "" #TODO gene count
+    "has_gene_count": "",  # TODO gene count
+    "has_adverse_event": f"{NAMESPACE_BINDINGS['obo']}OAE_0002616",
+    "sio_has_part": f"{NAMESPACE_BINDINGS['sio']}SIO_000028",
 }
