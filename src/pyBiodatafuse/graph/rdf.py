@@ -330,8 +330,6 @@ def add_experimental_process_node(
     source_idx: str,
     data: list,
     new_uris: dict,):
-    pubchem_node = URIRef('https://pubchem.ncbi.nlm.nih.gov/')
-    g.add((pubchem_node, RDF.type, URIRef(NODE_TYPES['experimental_process_node'])))
     pubchem_assay_id = data['pubchem_assay_id']
     if pubchem_assay_id is not None:
         pubchem_assay_iri = 'https://pubchem.ncbi.nlm.nih.gov/bioassay/' + str(pubchem_assay_id).strip('AID')
@@ -341,10 +339,11 @@ def add_experimental_process_node(
         compound_cid =  data['compound_cid']
         compound_name =  data['compound_name']
         smiles =  data['SMILES']
-        experimental_process_node = URIRef((
-            f"{new_uris['experimental_process_node']}/{id_number}/{source_idx}_{pubchem_assay_id}"))
+        experimental_process_node = URIRef(
+            (f"{new_uris['experimental_process_node']}/{id_number}/{source_idx}_{pubchem_assay_id}")
+        )
         g.add((experimental_process_node, RDF.type, URIRef(NODE_TYPES["experimental_process_node"])))
-        g.add((experimental_process_node, RDF.type, URIRef(NODE_TYPES["experimental_process_node"])))
+        g.add((experimental_process_node, RDF.type, URIRef(pubchem_assay_iri)))
         g.add((experimental_process_node, RDFS.label, Literal(assay_type, datatype= XSD.string)))
         g.add((experimental_process_node, DC.identifier, Literal(pubchem_assay_id, datatype=XSD.string)))
         # has tested substance
@@ -486,7 +485,7 @@ def generate_rdf(df: pd.DataFrame, BASEURI: str) -> Graph:
         target_idx = row["target"]
         target_namespace = row["target.source"]
         expression_data = row[BGEE_GENE_EXPRESSION_LEVELS_COL]
-        experimental_process_data = row['PubChem_assays']
+        experimental_process_data = row["PubChem_assays"]
         disease_data = []
         for source in [DISGENET_DISEASE_COL, "OpenTargets_diseases"]:  # TODO update constants
             source_el = row[source]
