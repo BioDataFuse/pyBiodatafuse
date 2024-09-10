@@ -384,21 +384,43 @@ def add_pathway_node(g: Graph,
     else:
         return None
 
-def add_compound_node(g, compound):
+def add_compound_node(g, compound, gene_node):
     chembl_id = compound['chembl_id']
     drugbank_id = compound['drugbank_id']
     compound_name = compound['compound_name']
     compound_cid = compound['compound_cid'] #TODO report issue with CID not having the same format as in tested_substance_data
     is_approved = compound['is_approved']
     clincal_trial_phase = compound['clincal_trial_phase'] #TODO report issue typo
-    relation = compound['relation']
-    adverse_effect_count = compound['adverse_effect_count']
+    clinical_phases = {
+        "1.0": "http://purl.obolibrary.org/obo/OPMI_0000368",
+        "2.0": "http://purl.obolibrary.org/obo/OPMI_0000369",
+        '3.0': 'http://purl.obolibrary.org/obo/OPMI_0000370',
+        '4.0': 'http://purl.obolibrary.org/obo/OPMI_0000371'
+    }  # TODO add to constants
+
+    relation = compound['relation'] #TODO right now the information is lost, as all classes (agonist, etc.) are turned into activates / inhibit. This complicates mappings. These two mappings are not technically 100% correct because we miss information on the MOA --is it direct or indirect (ant)agonism?
+    relations = {"activates": "http://purl.obolibrary.org/obo/RO_0018027", #agonist
+                 "inhibits": "http://purl.obolibrary.org/obo/RO_0018029" #antagonist
+                 } #TODO add to constants (?)
+    # adverse_effect_count = compound['adverse_effect_count']
+
     compound_node = URIRef(f'https://www.ebi.ac.uk/chembl/compound_report_card/{chembl_id}')
     g.add((compound_node, RDFS.label, Literal(str(compound_name), datatype= XSD.string)))
     g.add((compound_node, RDF.type, URIRef(NODE_TYPES['tested_substance_node'])))
-
+    if relation in relations.keys():
+        relation_iri = relations[relation]
+        g.add((compound_node, URIRef(relation_iri), gene_node))
+    if clincal_trial_phase:
+        clinical_phase_iri = clinical_phases[str(clincal_trial_phase)]
+        g.add(
+            (
+                compound_node,
+                URIRef("http://purl.obolibrary.org/obo/PATO_0000083"),
+                URIRef(clinical_phase_iri),
+            )
+        )  # TODO add to constants
     for id in [drugbank_id, compound_cid]:
-        #TODO add namespace mappings to constant to replace current if statements
+        # TODO add namespace mappings to constant to replace current if statements
         if id:
             iri = None
             if id == drugbank_id:
@@ -413,11 +435,10 @@ def add_compound_node(g, compound):
                 g.add((id_node, RDF.type, URIRef(NODE_TYPES['tested_substance_node'])))
             if type(compound['adverse_effect']) == list:
                 for i in compound['adverse_effect']:
-                            ae = i['name']
-                            ae_node = add_ae_node(g, ae) # TODO file issue: For now we make up an internal IRI for each AE, maybe we could retrieve IRIs for AEs from OpenTargets?
-                            if ae_node:
-                                g.add(((compound_node, URIRef(PREDICATES['has_adverse_event']), ae_node)))
-                                
+                    ae = i['name']
+                    ae_node = add_ae_node(g, ae) # TODO file issue: For now we make up an internal IRI for each AE, maybe we could retrieve IRIs for AEs from OpenTargets?
+                    if ae_node:
+                        g.add(((compound_node, URIRef(PREDICATES['has_adverse_event']), ae_node)))                               
     return compound_node
 
 def add_ae_node(g, ae):
@@ -525,7 +546,7 @@ def generate_rdf(df: pd.DataFrame, BASEURI: str) -> Graph:
         ## Add compound data #TODO use constants
         compound_data = row['OpenTargets_compounds']
         for compound in compound_data:
-            add_compound_node(g, compound)
+            add_compound_node(g, compound, gene_node)
 
         # is compound active or inactive
 
