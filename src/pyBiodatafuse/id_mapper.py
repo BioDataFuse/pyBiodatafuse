@@ -180,7 +180,7 @@ def bridgedb_xref(
 
     # Subset based on the output_datasource
     bridgedb = bridgedb[bridgedb["target.source"].isin(output_datasource)]
-    
+
     bridgedb = bridgedb.drop_duplicates()
     identifiers.columns = [
         "{}{}".format(c, "" if c in "identifier" else "_dea") for c in identifiers.columns
@@ -217,6 +217,7 @@ def bridgedb_xref(
 
 
 """PubChem helper functions."""
+
 
 def check_smiles(smile: Optional[str]) -> Optional[str]:
     """Canonicalize the smiles of a compound.
