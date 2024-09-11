@@ -4,6 +4,7 @@
 
 
 # Endpoints / API
+BRIDGEDB_ENDPOINT = "https://webservice.bridgedb.org"
 BGEE_ENDPOINT = "https://www.bgee.org/sparql/"
 DISGENET_ENDPOINT = "https://api.disgenet.com/api/v1/gda/summary"
 MINERVA_ENDPOINT = "https://minerva-net.lcsb.uni.lu/api/"
