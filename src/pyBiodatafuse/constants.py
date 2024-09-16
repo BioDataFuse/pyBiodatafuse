@@ -424,7 +424,7 @@ OPENTARGETS_DISEASE_COMPOUND_EDGE_ATTRS = {
 
 # RDF (rdflib constants and namespaces)
 
-# Dictionary to store namespace strings
+## Dictionary to store namespace strings
 NAMESPACE_BINDINGS = {
     "sio": "http://semanticscience.org/resource/",
     "hgnc": "http://bio2rdf.org/hgnc:",
@@ -441,10 +441,7 @@ NAMESPACE_BINDINGS = {
     "xsd": "http://www.w3.org/2001/XMLSchema#",
 }
 
-# BASE URI for all nodes
-#'{}' = NAMESPACE_BINDINGS["biodatafuse"] + "rdf/"
-
-# Patterns URIs for nodes (one for each node in the schema)
+## Patterns URIs for nodes (one for each node in the schema)
 URIS = {
     "gene_disease_association": "gene_disease_association",
     "gene_base_node": "gene",
@@ -458,7 +455,7 @@ URIS = {
     "gene_expression_value_base_node": "gene_expression_value",
 }
 
-# NODE TYPES
+## NODE TYPES
 NODE_TYPES = {
     "gene_node": f"{NAMESPACE_BINDINGS['obo']}NCIT_C16612",
     "disease_node": f"{NAMESPACE_BINDINGS['obo']}NCIT_C7057",
@@ -471,10 +468,12 @@ NODE_TYPES = {
     "source_database" : f"{NAMESPACE_BINDINGS['sio']}SIO_000750",
     "experimental_process_node" : f"{NAMESPACE_BINDINGS['obo']}EFO_0002694",
     "pathway_node": f"{NAMESPACE_BINDINGS['obo']}PW_0000001",
-    "adverse_event_node" : f"{NAMESPACE_BINDINGS['obo']}OAE_0000001"
+    "adverse_event_node" : f"{NAMESPACE_BINDINGS['obo']}OAE_0000001",
+    "ensemble" : "http://identifiers.org/ensembl/",
+    "ncbi_disease" : "https://www.ncbi.nlm.nih.gov/medgen/"
 }
 
-# PREDICATES
+## PREDICATES
 PREDICATES = {
     "sio_refers_to": f"{NAMESPACE_BINDINGS['sio']}SIO_000628",
     "sio_has_measurement_value": f"{NAMESPACE_BINDINGS['sio']}SIO_000216",
@@ -492,11 +491,27 @@ PREDICATES = {
     "sio_has_part": f"{NAMESPACE_BINDINGS['sio']}SIO_000028",
 }
 
-# Classes for clinical phases
+## Classes for clinical phases
 
-clinical_phases = {
+CLINICAL_PHASES = {
     "1.0": "http://purl.obolibrary.org/obo/OPMI_0000368",
     "2.0": "http://purl.obolibrary.org/obo/OPMI_0000369",
     "3.0": "http://purl.obolibrary.org/obo/OPMI_0000370",
     "4.0": "http://purl.obolibrary.org/obo/OPMI_0000371"
 }
+
+## GO Types
+GO_TYPES = {
+    "C": "http://purl.obolibrary.org/obo/GO_0005575",
+    "P": "http://purl.obolibrary.org/obo/GO_0008150",
+    "F": "http://purl.obolibrary.org/obo/GO_0003674",
+}
+
+## Compound MoA
+MOAS = {
+    "activates": "http://purl.obolibrary.org/obo/RO_0018027",  # agonist
+    "inhibits": "http://purl.obolibrary.org/obo/RO_0018029",  # antagonist
+}
+
+## Data sources
+#DATA_SOURCES = {"disgenet": "https://disgenet.com/"}
