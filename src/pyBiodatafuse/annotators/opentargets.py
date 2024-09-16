@@ -923,6 +923,7 @@ def get_disease_compound_interactions(
     """Get information about drugs associated with diseases of interest.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query.
+    :raises ValueError: if failed to retrieve data
     :returns: a DataFrame containing the OpenTargets output and dictionary of the query metadata.
     """
     # Check if the API is available
@@ -978,7 +979,12 @@ def get_disease_compound_interactions(
 
         query_string = query_string.replace("$efoIds", str(efo_ids).replace("'", '"'))
 
-        r = requests.post(OPENTARGETS_ENDPOINT, json={"query": query_string}).json()
+        r = requests.post(OPENTARGETS_ENDPOINT, json={"query": query_string})
+
+        try:
+            response_data = r.json()
+        except ValueError:
+            raise ValueError(f"Failed to parse JSON response. Response text: {r.text}")
 
         # Record the end time
         end_time = datetime.datetime.now()
@@ -1001,14 +1007,14 @@ def get_disease_compound_interactions(
         # Generate the OpenTargets DataFrame
         intermediate_df = pd.DataFrame()
 
-        if r["data"]["diseases"] is None:
+        if response_data["data"]["diseases"] is None:
             warnings.warn(
                 f"There is no annotation for your input list in {OPENTARGETS_DISEASE_COMPOUND_COL}.",
                 stacklevel=2,
             )
             return pd.DataFrame(), opentargets_version
 
-        for disease in r["data"]["diseases"]:
+        for disease in response_data["data"]["diseases"]:
             if not disease["knownDrugs"]:
                 continue
 
