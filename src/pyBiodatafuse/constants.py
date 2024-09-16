@@ -491,3 +491,12 @@ PREDICATES = {
     "has_adverse_event": f"{NAMESPACE_BINDINGS['obo']}OAE_0002616",
     "sio_has_part": f"{NAMESPACE_BINDINGS['sio']}SIO_000028",
 }
+
+# Classes for clinical phases
+
+clinical_phases = {
+    "1.0": "http://purl.obolibrary.org/obo/OPMI_0000368",
+    "2.0": "http://purl.obolibrary.org/obo/OPMI_0000369",
+    "3.0": "http://purl.obolibrary.org/obo/OPMI_0000370",
+    "4.0": "http://purl.obolibrary.org/obo/OPMI_0000371"
+}
