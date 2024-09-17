@@ -271,28 +271,41 @@ DISGENET_DISEASE_NODE_ATTRS = {
     "disease_umlscui": None,
     "labels": DISEASE_NODE_LABELS,
 }
-DISGENET_GENE_DISEASE_EDGE_LABEL = "associated_with"
+GENE_DISEASE_EDGE_LABEL = "associated_with"
 DISGENET_EDGE_ATTRS = {
     "source": DISGENET,
     "score": None,
     "ei": None,
     "el": None,
-    "label": DISGENET_GENE_DISEASE_EDGE_LABEL,
+    "label": GENE_DISEASE_EDGE_LABEL,
 }
-
-# Open Targets - Disease
-OPENTARGETS_DISEASE_NODE_ATTRS = {
-    "source": OPENTARGETS,
+# Literature
+LITERATURE_DISEASE_NODE_ATTRS = {
+    "source": None,
     "name": None,
     "id": None,
-    "therapeutic_areas": None,
+    "UMLS": None,
     "labels": DISEASE_NODE_LABELS,
 }
-OPENTARGETS_GENE_DISEASE_EDGE_LABEL = "associated_with"
-OPENTARGETS_DISEASE_EDGE_ATTRS = {
-    "source": OPENTARGETS,
-    "label": OPENTARGETS_GENE_DISEASE_EDGE_LABEL,
+LITERATURE_DISEASE_EDGE_ATTRS = {
+    "source": None,
+    "label": GENE_DISEASE_EDGE_LABEL,
 }
+
+# TODO: The disease annotations are not curated and will be used again when the OpenTarget annotation improves.
+# Open Targets - Disease
+# OPENTARGETS_DISEASE_NODE_ATTRS = {
+#     "source": OPENTARGETS,
+#     "name": None,
+#     "id": None,
+#     "therapeutic_areas": None,
+#     "labels": DISEASE_NODE_LABELS,
+# }
+# OPENTARGETS_DISEASE_EDGE_ATTRS = {
+#     "source": OPENTARGETS,
+#     "label": GENE_DISEASE_EDGE_LABEL,
+# }
+
 
 # Pathway node
 # MINERVA, WikiPathways, Open Targets - Reactome

@@ -22,7 +22,7 @@ from pyBiodatafuse.constants import (
     DISGENET_DISEASE_COL,
     DISGENET_DISEASE_NODE_ATTRS,
     DISGENET_EDGE_ATTRS,
-    DISGENET_GENE_DISEASE_EDGE_LABEL,
+    GENE_DISEASE_EDGE_LABEL,
     GENE_GO_EDGE_ATTRS,
     GENE_GO_EDGE_LABEL,
     GENE_NODE_LABELS,
@@ -33,6 +33,8 @@ from pyBiodatafuse.constants import (
     GO_MF_NODE_LABELS,
     GO_NODE_ATTRS,
     GO_NODE_MAIN_LABEL,
+    LITERATURE_DISEASE_EDGE_ATTRS,
+    LITERATURE_DISEASE_NODE_ATTRS,
     MINERVA,
     MOLMEDB_COMPOUND_NODE_ATTRS,
     MOLMEDB_PROTEIN_COMPOUND_COL,
@@ -187,7 +189,7 @@ def add_disgenet_gene_disease_subgraph(g, gene_node_label, annot_list):
             g.add_node(annot_node_label, attr_dict=annot_node_attrs)
 
             edge_attrs = DISGENET_EDGE_ATTRS.copy()
-            edge_attrs["score"] = edge_attrs["score"]
+            edge_attrs["score"] = annot["score"]
 
             if not pd.isna(annot["ei"]):
                 edge_attrs["ei"] = annot["ei"]
@@ -206,7 +208,49 @@ def add_disgenet_gene_disease_subgraph(g, gene_node_label, annot_list):
                 g.add_edge(
                     gene_node_label,
                     annot_node_label,
-                    label=DISGENET_GENE_DISEASE_EDGE_LABEL,
+                    label=GENE_DISEASE_EDGE_LABEL,
+                    attr_dict=edge_attrs,
+                )
+
+    return g
+
+
+def add_literature_gene_disease_subgraph(g, gene_node_label, annot_list):
+    """Construct part of the graph by linking the gene to diseases form literature.
+
+    :param g: the input graph to extend with new nodes and edges.
+    :param gene_node_label: the gene node to be linked to diseases.
+    :param annot_list: list of diseases from DisGeNET.
+    :returns: a NetworkX MultiDiGraph
+    """
+    for annot in annot_list:
+        if not pd.isna(annot["disease_name"]):
+            annot_node_label = annot[DISEASE_NODE_MAIN_LABEL]
+            annot_node_attrs = LITERATURE_DISEASE_NODE_ATTRS.copy()
+            annot_node_attrs["source"] = annot["source"]
+            annot_node_attrs["name"] = annot["disease_name"]
+            annot_node_attrs["id"] = annot["UMLS"]
+            annot_node_attrs["UMLS"] = annot["UMLS"]
+
+            
+            g.add_node(annot_node_label, attr_dict=annot_node_attrs)
+
+            edge_attrs = LITERATURE_DISEASE_EDGE_ATTRS.copy()
+            edge_attrs["source"] = annot["source"]
+
+            edge_hash = hash(frozenset(edge_attrs.items()))
+            edge_attrs["edge_hash"] = edge_hash
+            edge_data = g.get_edge_data(gene_node_label, annot_node_label)
+            edge_data = {} if edge_data is None else edge_data
+            node_exists = [
+                x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash
+            ]
+
+            if len(node_exists) == 0:
+                g.add_edge(
+                    gene_node_label,
+                    annot_node_label,
+                    label=GENE_DISEASE_EDGE_LABEL,
                     attr_dict=edge_attrs,
                 )
 
