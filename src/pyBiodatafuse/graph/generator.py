@@ -33,6 +33,7 @@ from pyBiodatafuse.constants import (
     GO_MF_NODE_LABELS,
     GO_NODE_ATTRS,
     GO_NODE_MAIN_LABEL,
+    LITERATURE_DISEASE_COL,
     LITERATURE_DISEASE_EDGE_ATTRS,
     LITERATURE_DISEASE_NODE_ATTRS,
     MINERVA,
@@ -883,6 +884,7 @@ def networkx_graph(combined_df: pd.DataFrame, disease_compound=None):
     func_dict = {
         BGEE_GENE_EXPRESSION_LEVELS_COL: add_gene_bgee_subgraph,
         DISGENET_DISEASE_COL: add_disgenet_gene_disease_subgraph,
+        LITERATURE_DISEASE_COL: add_literature_gene_disease_subgraph,
         MINERVA: add_minerva_gene_pathway_subgraph,
         WIKIPATHWAYS: add_wikipathways_gene_pathway_subgraph,
         OPENTARGETS_REACTOME_COL: add_opentargets_gene_reactome_pathway_subgraph,

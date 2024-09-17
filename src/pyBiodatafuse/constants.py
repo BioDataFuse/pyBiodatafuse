@@ -97,6 +97,9 @@ DISGENET_DISEASE_OUTPUT_DICT = {
 }
 DISGENET_DISEASE_COL = f"{DISGENET}_diseases"
 
+# literature based disease info
+LITERATURE_DISEASE_COL = "literature_based_info"
+
 # Open Targets - Disease
 OPENTARGETS_DISEASE_OUTPUT_DICT = {
     "disease_name": str,
@@ -280,6 +283,7 @@ DISGENET_EDGE_ATTRS = {
     "label": GENE_DISEASE_EDGE_LABEL,
 }
 # Literature
+
 LITERATURE_DISEASE_NODE_ATTRS = {
     "source": None,
     "name": None,
