@@ -232,7 +232,6 @@ def add_literature_gene_disease_subgraph(g, gene_node_label, annot_list):
             annot_node_attrs["id"] = annot["UMLS"]
             annot_node_attrs["UMLS"] = annot["UMLS"]
 
-            
             g.add_node(annot_node_label, attr_dict=annot_node_attrs)
 
             edge_attrs = LITERATURE_DISEASE_EDGE_ATTRS.copy()
