@@ -586,22 +586,22 @@ def add_molmedb_gene_inhibitor_subgraph(g, gene_node_label, annot_list):
                 annot_node_attrs["id"] = annot["molmedb_id"]
 
             annot_node_attrs["molmedb_id"] = annot["molmedb_id"]
-            if not pd.isna(annot["chebi_id"]):
-                annot_node_attrs["chebi_id"] = annot["chebi_id"]
-            if not pd.isna(annot["drugbank_id"]):
-                annot_node_attrs["drugbank_id"] = annot["drugbank_id"]
-            if not pd.isna(annot["compound_cid"]):
-                annot_node_attrs["compound_cid"] = annot["compound_cid"]
-            # if not pd.isna(annot["pdb_ligand_id"]):
-            #     annot_node_attrs["pdb_ligand_id"] = annot["pdb_ligand_id"]
             if not pd.isna(annot["inchikey"]):
                 annot_node_attrs["inchikey"] = annot["inchikey"]
             if not pd.isna(annot["smiles"]):
                 annot_node_attrs["smiles"] = annot["smiles"]
-            if not pd.isna(annot["source_doi"]):
-                annot_node_attrs["source_doi"] = annot["source_doi"]
+            if not pd.isna(annot["compound_cid"]):
+                annot_node_attrs["compound_cid"] = annot["compound_cid"]
+            if not pd.isna(annot["chebi_id"]):
+                annot_node_attrs["chebi_id"] = annot["chebi_id"]
+            if not pd.isna(annot["drugbank_id"]):
+                annot_node_attrs["drugbank_id"] = annot["drugbank_id"]
+            # if not pd.isna(annot["pdb_ligand_id"]):
+            #     annot_node_attrs["pdb_ligand_id"] = annot["pdb_ligand_id"]
             if not pd.isna(annot["source_pmid"]):
                 annot_node_attrs["source_pmid"] = annot["source_pmid"]
+            if not pd.isna(annot["uniprot_trembl_id"]):
+                annot_node_attrs["uniprot_trembl_id"] = annot["uniprot_trembl_id"]
 
             merge_node(g, annot_node_label, annot_node_attrs)
 
