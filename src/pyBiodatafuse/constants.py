@@ -99,6 +99,11 @@ DISGENET_DISEASE_COL = f"{DISGENET}_diseases"
 
 # literature based disease info
 LITERATURE_DISEASE_COL = "literature_based_info"
+LITERATURE_DISEASE_OUTPUT_DICT = {
+    "disease_name": str,
+    "id": str,
+    "source": str,
+}
 
 # Open Targets - Disease
 OPENTARGETS_DISEASE_OUTPUT_DICT = {
