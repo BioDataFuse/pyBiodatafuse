@@ -36,6 +36,7 @@ from pyBiodatafuse.constants import (
     LITERATURE_DISEASE_COL,
     LITERATURE_DISEASE_EDGE_ATTRS,
     LITERATURE_DISEASE_NODE_ATTRS,
+    LITERATURE_NODE_MAIN_LABEL,
     MINERVA,
     MOLMEDB_COMPOUND_NODE_ATTRS,
     MOLMEDB_PROTEIN_COMPOUND_COL,
@@ -226,12 +227,13 @@ def add_literature_gene_disease_subgraph(g, gene_node_label, annot_list):
     """
     for annot in annot_list:
         if not pd.isna(annot["disease_name"]):
-            annot_node_label = annot[DISEASE_NODE_MAIN_LABEL]
+            annot_node_label = annot[LITERATURE_NODE_MAIN_LABEL]
             annot_node_attrs = LITERATURE_DISEASE_NODE_ATTRS.copy()
             annot_node_attrs["source"] = annot["source"]
             annot_node_attrs["name"] = annot["disease_name"]
             annot_node_attrs["id"] = annot["id"]
             annot_node_attrs["UMLS"] = annot["id"]
+            
 
             g.add_node(annot_node_label, attr_dict=annot_node_attrs)
 
