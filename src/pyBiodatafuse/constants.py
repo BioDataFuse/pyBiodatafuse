@@ -287,13 +287,13 @@ DISGENET_EDGE_ATTRS = {
     "el": None,
     "label": GENE_DISEASE_EDGE_LABEL,
 }
-# Literature
 
+# Literature
+LITERATURE_NODE_MAIN_LABEL = "id"
 LITERATURE_DISEASE_NODE_ATTRS = {
     "source": None,
     "name": None,
     "id": None,
-    "UMLS": None,
     "labels": DISEASE_NODE_LABELS,
 }
 LITERATURE_DISEASE_EDGE_ATTRS = {
