@@ -14,7 +14,7 @@
      xmlns:terms="http://purl.org/dc/terms/"
      xmlns:oboInOwl="http://www.geneontology.org/formats/oboInOwl#"
      xmlns:resource="http://semanticscience.org/resource/">
-    <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/opmi.owl"/>
+    <owl:Ontology rdf:about="http://biodatafuse.org/base.owl"/> <!-- placeholder, keep adding annotations -->
     
 
 
