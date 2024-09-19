@@ -13,6 +13,7 @@ from datetime import datetime
 from pyBiodatafuse.constants import (
     BGEE_GENE_EXPRESSION_LEVELS_COL,
     DISGENET_DISEASE_COL,
+    OPENTARGETS_DISEASE__COL,
     NAMESPACE_BINDINGS,
     NODE_TYPES,
     PREDICATES,
@@ -285,7 +286,7 @@ def add_gene_expression_data(
     :param new_uris: Dictionary with updated project base URIs for the nodes.
     """
     for data in expression_data:
-        if pd.isna(data["anatomical_entity_id"]):
+        if not data.get("anatomical_entity_id", None):
             continue
 
         gene_expression_value_node = URIRef(
@@ -602,7 +603,7 @@ def add_go_cpf(g: Graph, process_data: dict) -> URIRef:
         return None
 
 
-def add_metadata(graph, graph_uri, version_iri=None, author=None, orcid=None):
+def add_metadata(g: Graph, graph_uri: str, metadata: dict, version_iri=None, author=None, orcid=None, ):
     """
     Add metadata to the RDF graph, including creation date, version, author, and ORCID.
 
@@ -616,6 +617,10 @@ def add_metadata(graph, graph_uri, version_iri=None, author=None, orcid=None):
     Returns:
         None
     """
+    # Add some nodes used afterwards
+    g.add((URIRef("https://schema.org/WebAPI"), RDFS.label, Literal("Web API")))
+    g.add((URIRef("https://schema.org/provider"), RDFS.label, Literal("provider")))
+
     # Automatically get the current date and time in ISO 8601 format
     creation_date = datetime.utcnow().isoformat() + "Z"
 
@@ -623,19 +628,127 @@ def add_metadata(graph, graph_uri, version_iri=None, author=None, orcid=None):
     graph_resource = URIRef(graph_uri)
 
     # Add the creation date to the graph resource
-    graph.add((graph_resource, DCTERMS.created, Literal(creation_date, datatype=XSD.dateTime)))
+    g.add((graph_resource, DCTERMS.created, Literal(creation_date, datatype=XSD.dateTime)))
 
     if version_iri:
-        graph.add((graph_resource, DCTERMS.identifier, URIRef(version_iri)))
+        g.add((graph_resource, DCTERMS.identifier, URIRef(version_iri)))
 
-    if author:
-        graph.add((graph_resource, DCTERMS.creator, Literal(author)))
-        if orcid:
-            graph.add((graph_resource, URIRef("https://w3id.org/reproduceme#ORCID"), URIRef(orcid)))
+    if orcid:
+        orcid_node = URIRef(orcid)
+        g.add((orcid_node, SKOS.exactMatch, Literal(author, datatype = XSD.string)))
+        g.add((graph_resource, DCTERMS.creator, orcid_node))
+    # Metadata file: add version, api version, and dates to sources
+    api_version = None
+    version = None
+    for source in ['DISGENET',
+        'Open Targets GraphQL & REST API Beta',
+        'MINERVA',
+        'WikiPathways',
+        'StringDB',
+        'BridgeDb']: 
+        entries = [
+            item
+            for item in metadata
+            if isinstance(item, dict) and item.get("datasource") == source
+        ]
+        for entry in entries:
+            #input_type = entry.get("query").get("input_type")
+            date = entry.get("query").get("date")
+            url_service = entry.get("query").get("url")
+            match source:
+                case "Open Targets GraphQL & REST API Beta":
+                    source_node = URIRef("https://www.opentargets.org/")
+                    g.add(
+                        (
+                            source_node,
+                            RDFS.label,
+                            Literal("The Open Targets Platform", datatype=XSD.string),
+                        )
+                    )
+                    data_version = entry.get("metadata").get("data_version")
+                    year = data_version.get("year")
+                    month = data_version.get("month")
+                    version = f"{year}-{month}-01"
+                    api_version = ".".join(
+                        [
+                            str(i)
+                            for i in entry.get("metadata")
+                            .get("source_version")
+                            .get("apiVersion")
+                            .values()
+                        ]
+                    )
+                case "DISGENET":
+                    source_node = URIRef("https://disgenet.com/")
+                    g.add(
+                        (
+                            source_node,
+                            RDFS.label,
+                            Literal("DisGeNET", datatype=XSD.string),
+                        )
+                    )
+                    data_version = entry.get('metadata').get('version')
+                    date = entry.get('metadata').get('lastUpdate')
+                    parsed_date = datetime.strptime(date, "%d %b %Y")
+                    xsd_date = parsed_date.strftime("%Y-%m-%d")
+                    version = entry.get("metadata").get("version")
+                case 'MINERVA':
+                    project = entry.get('query').get('MINERVA project')
+                    version = entry.get('metadata').get('source_version')
+                    source_node = URIRef("https://minerva.pages.uni.lu/doc/")
+                    g.add(
+                        (
+                            source_node,
+                            RDFS.label,
+                            Literal("The MINERVA Platform", datatype=XSD.string),
+                        )
+                    )
+                case 'WikiPathways':
+                    version = entry.get("metadata").get("source_version")
+                    source_node = URIRef("https://www.wikipathways.org/")
+                    g.add(
+                        (
+                            source_node,
+                            RDFS.label,
+                            Literal("WikiPathways", datatype=XSD.string),
+                        )
+                    )
+                case 'BridgeDb': # Several metadata fields left unRDFied
+                    source_node = URIRef("https://www.bridgedb.org/")
+                    g.add(
+                        (
+                            source_node,
+                            RDFS.label,
+                            Literal("BridgeDb", datatype=XSD.string),
+                        )
+                    )
+                    version = entry.get("metadata").get("bridgedb.version")
+                    api_version = entry.get("metadata").get("webservice.version")
+                case 'StringDB':
+                    source_node = URIRef("https://string-db.org/")
+                    g.add(
+                        (
+                            source_node,
+                            RDFS.label,
+                            Literal("STRING", datatype=XSD.string),
+                        )
+                    )
+            # Add api node for source
+            api_node = URIRef(url_service)
+            g.add((api_node, RDF.type, URIRef("https://schema.org/WebAPI")))
+
+            g.add((api_node, URIRef('https://schema.org/provider'), source_node))
+            g.add((source_node, RDF.type, URIRef(NODE_TYPES['data_source_node'])))
+            if api_version:
+                g.add((api_node, URIRef('http://www.geneontology.org/formats/oboInOwl#version'), Literal(api_version)))
+            if version:
+                g.add((source_node, URIRef('http://www.geneontology.org/formats/oboInOwl#version'), Literal(version)))
+            # TODO each node in RDF should point to its source
+            
 
 
 def generate_rdf(
-    df: pd.DataFrame, base_uri: str, version_iri: str, author: str, orcid: str
+    df: pd.DataFrame, base_uri: str, version_iri: str, author: str, orcid: str, metadata: dict
 ) -> Graph:
     """Generate an RDF graph from the provided DataFrame.
 
@@ -666,15 +779,15 @@ def generate_rdf(
 
     for i, row in df.iterrows():
         # Unpack the relevant columns
-        source_idx = row["identifier"]
-        source_namespace = row["identifier.source"]
-        target_idx = row["target"]
-        target_namespace = row["target.source"]
-        expression_data = row[BGEE_GENE_EXPRESSION_LEVELS_COL]
-        experimental_process_data = row["PubChem_assays"]
+        source_idx = row.get("identifier", None)
+        source_namespace = row.get("identifier.source", None)
+        target_idx = row.get("target", None)
+        target_namespace = row.get("target.source", None)
+        expression_data = row.get(BGEE_GENE_EXPRESSION_LEVELS_COL, None)
+        experimental_process_data = row.get("PubChem_assays", None)
         disease_data = []
-        for source in [DISGENET_DISEASE_COL, "OpenTargets_diseases"]:
-            source_el = row[source]
+        for source in [DISGENET_DISEASE_COL, OPENTARGETS_DISEASE__COL]:
+            source_el = row.get(source)
             if isinstance(source_el, list):
                 disease_data += source_el
 
@@ -700,36 +813,39 @@ def generate_rdf(
                 add_gene_disease_associations(
                     g, id_number, source_idx, gene_node, disease, new_uris, j
                 )
-
-        add_gene_expression_data(
-            g,
-            id_number,
-            source_idx,
-            gene_node,
-            expression_data,
-            experimental_process_data,
-            new_uris,
-        )
+        if expression_data:
+            add_gene_expression_data(
+                g,
+                id_number,
+                source_idx,
+                gene_node,
+                expression_data,
+                experimental_process_data,
+                new_uris,
+            )
 
         for source in ["WikiPathways", "MINERVA", "OpenTargets_reactome"]:
-            for pathway_data in row[source]:
-                if pathway_data["pathway_id"]:
-                    pathway_node = add_pathway_node(g=g, data=pathway_data, source=source)
-                    g.add((gene_node, URIRef(PREDICATES["sio_is_part_of"]), pathway_node))
-                    g.add((pathway_node, URIRef(PREDICATES["sio_has_part"]), gene_node))
+            if row.get(source, None):
+                for pathway_data in row[source]:
+                    if pathway_data["pathway_id"]:
+                        pathway_node = add_pathway_node(g=g, data=pathway_data, source=source)
+                        g.add((gene_node, URIRef(PREDICATES["sio_is_part_of"]), pathway_node))
+                        g.add((pathway_node, URIRef(PREDICATES["sio_has_part"]), gene_node))
 
-        processes_data = row["OpenTargets_go"]
-        for process_data in processes_data:
-            go_cpf = add_go_cpf(g, process_data)
-            if go_cpf:
-                g.add((gene_node, URIRef(PREDICATES["sio_is_part_of"]), go_cpf))
-                g.add((go_cpf, URIRef(PREDICATES["sio_has_part"]), gene_node))
+        if row.get("OpenTargets_go", None):
+            processes_data = row.get("OpenTargets_go", None)
+            for process_data in processes_data:
+                go_cpf = add_go_cpf(g, process_data)
+                if go_cpf:
+                    g.add((gene_node, URIRef(PREDICATES["sio_is_part_of"]), go_cpf))
+                    g.add((go_cpf, URIRef(PREDICATES["sio_has_part"]), gene_node))
 
-        compound_data = row["OpenTargets_compounds"]
-        for compound in compound_data:
-            add_compound_node(g, compound, gene_node)
+        compound_data = row.get("OpenTargets_compounds", None)
+        if compound_data:
+            for compound in compound_data:
+                add_compound_node(g, compound, gene_node)
 
     # Add metadata to the RDF graph
-    add_metadata(g, version_iri, version_iri, author, orcid)
+    add_metadata(g=g, version_iri=version_iri, author=author, orcid=orcid, metadata=metadata, graph_uri= version_iri)
 
     return g
