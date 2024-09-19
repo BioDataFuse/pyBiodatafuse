@@ -4,6 +4,7 @@
 
 
 # Endpoints / API
+BRIDGEDB_ENDPOINT = "https://webservice.bridgedb.org"
 BGEE_ENDPOINT = "https://www.bgee.org/sparql/"
 DISGENET_ENDPOINT = "https://api.disgenet.com/api/v1/gda/summary"
 MINERVA_ENDPOINT = "https://minerva-net.lcsb.uni.lu/api/"
@@ -15,6 +16,7 @@ WIKIDATA_ENDPOINT = "https://query.wikidata.org/sparql"
 WIKIPATHWAYS_ENDPOINT = "https://sparql.wikipathways.org/sparql"
 
 # Data sources
+BRIDGEDB = "BridgeDB"
 BGEE = "Bgee"
 DISGENET = "DISGENET"
 MINERVA = "MINERVA"
@@ -94,6 +96,14 @@ DISGENET_DISEASE_OUTPUT_DICT = {
     "el": float,
 }
 DISGENET_DISEASE_COL = f"{DISGENET}_diseases"
+
+# literature based disease info
+LITERATURE_DISEASE_COL = "literature_based_info"
+LITERATURE_DISEASE_OUTPUT_DICT = {
+    "disease_name": str,
+    "id": str,
+    "source": str,
+}
 
 # Open Targets - Disease
 OPENTARGETS_DISEASE_OUTPUT_DICT = {
@@ -269,28 +279,42 @@ DISGENET_DISEASE_NODE_ATTRS = {
     "disease_umlscui": None,
     "labels": DISEASE_NODE_LABELS,
 }
-DISGENET_GENE_DISEASE_EDGE_LABEL = "associated_with"
+GENE_DISEASE_EDGE_LABEL = "associated_with"
 DISGENET_EDGE_ATTRS = {
     "source": DISGENET,
     "score": None,
     "ei": None,
     "el": None,
-    "label": DISGENET_GENE_DISEASE_EDGE_LABEL,
+    "label": GENE_DISEASE_EDGE_LABEL,
 }
 
-# Open Targets - Disease
-OPENTARGETS_DISEASE_NODE_ATTRS = {
-    "source": OPENTARGETS,
+# Literature
+LITERATURE_NODE_MAIN_LABEL = "id"
+LITERATURE_DISEASE_NODE_ATTRS = {
+    "source": None,
     "name": None,
     "id": None,
-    "therapeutic_areas": None,
     "labels": DISEASE_NODE_LABELS,
 }
-OPENTARGETS_GENE_DISEASE_EDGE_LABEL = "associated_with"
-OPENTARGETS_DISEASE_EDGE_ATTRS = {
-    "source": OPENTARGETS,
-    "label": OPENTARGETS_GENE_DISEASE_EDGE_LABEL,
+LITERATURE_DISEASE_EDGE_ATTRS = {
+    "source": None,
+    "label": GENE_DISEASE_EDGE_LABEL,
 }
+
+# TODO: The disease annotations are not curated and will be used again when the OpenTarget annotation improves.
+# Open Targets - Disease
+# OPENTARGETS_DISEASE_NODE_ATTRS = {
+#     "source": OPENTARGETS,
+#     "name": None,
+#     "id": None,
+#     "therapeutic_areas": None,
+#     "labels": DISEASE_NODE_LABELS,
+# }
+# OPENTARGETS_DISEASE_EDGE_ATTRS = {
+#     "source": OPENTARGETS,
+#     "label": GENE_DISEASE_EDGE_LABEL,
+# }
+
 
 # Pathway node
 # MINERVA, WikiPathways, Open Targets - Reactome
