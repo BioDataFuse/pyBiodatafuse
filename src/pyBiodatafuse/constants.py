@@ -494,7 +494,8 @@ NODE_TYPES = {
     "pathway_node": f"{NAMESPACE_BINDINGS['obo']}PW_0000001",
     "adverse_event_node" : f"{NAMESPACE_BINDINGS['obo']}OAE_0000001",
     "ensemble" : "http://identifiers.org/ensembl/",
-    "ncbi_disease" : "https://www.ncbi.nlm.nih.gov/medgen/"
+    "ncbi_disease" : "https://www.ncbi.nlm.nih.gov/medgen/",
+    "article" : f"{NAMESPACE_BINDINGS['obo']}IAO:0000013",
 }
 
 ## PREDICATES
@@ -538,4 +539,15 @@ MOAS = {
 }
 
 ## Data sources
-#DATA_SOURCES = {"disgenet": "https://disgenet.com/"}
+DATA_SOURCES = {
+    "DISGENET": "https://disgenet.com/",
+    "WikiPathways": "https://wikipathways.org",
+    "MINERVA": "https://minerva.pages.uni.lu/doc/",
+    "BridgeDb": "https://www.bridgedb.org/",
+    "StringDB": "https://string-db.org/",
+    "OpenTargets_reactome": "https://www.opentargets.org/",
+    "Bgee" : "https://www.bgee.org/",
+    "MolMeDB" : "https://molmedb.upol.cz",
+    "PubChem" : "https://pubchem.ncbi.nlm.nih.gov/",
+    "Wikidata" : "https://wikidata.org",
+}
