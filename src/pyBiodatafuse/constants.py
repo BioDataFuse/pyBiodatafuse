@@ -489,13 +489,14 @@ NODE_TYPES = {
     "gene_expression_value_node": f"{NAMESPACE_BINDINGS['sio']}SIO_001077",
     "anatomical_entity_node": f"{NAMESPACE_BINDINGS['sio']}UBERON_0001062",
     "tested_substance_node": "http://www.bioassayontology.org/bao#BAO_0003059",
-    "source_database" : f"{NAMESPACE_BINDINGS['sio']}SIO_000750",
-    "experimental_process_node" : f"{NAMESPACE_BINDINGS['obo']}EFO_0002694",
+    "source_database": f"{NAMESPACE_BINDINGS['sio']}SIO_000750",
+    "experimental_process_node": f"{NAMESPACE_BINDINGS['obo']}EFO_0002694",
     "pathway_node": f"{NAMESPACE_BINDINGS['obo']}PW_0000001",
-    "adverse_event_node" : f"{NAMESPACE_BINDINGS['obo']}OAE_0000001",
-    "ensemble" : "http://identifiers.org/ensembl/",
-    "ncbi_disease" : "https://www.ncbi.nlm.nih.gov/medgen/",
-    "article" : f"{NAMESPACE_BINDINGS['obo']}IAO:0000013",
+    "adverse_event_node": f"{NAMESPACE_BINDINGS['obo']}OAE_0000001",
+    "ensemble": "http://identifiers.org/ensembl/",
+    "ncbi_disease": "https://www.ncbi.nlm.nih.gov/medgen/",
+    "article": f"{NAMESPACE_BINDINGS['obo']}IAO:0000013",
+    "protein_node": "http://purl.obolibrary.org/obo/NCIT_C17021",
 }
 
 ## PREDICATES

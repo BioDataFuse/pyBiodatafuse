@@ -871,7 +871,79 @@ def add_transporter_inhibitor_node(g: Graph, transporter_inhibitor_data:dict, ba
                 URIRef("https://purl.obolibrary.org/GO_0032410"),
             )
         )
-        
+        g.add(
+            (
+                URIRef(f"https://www.uniprot.org/uniprotkb/{uniprot_trembl_id}"),
+                RDF.type,
+                URIRef(NODE_TYPES['protein_node']),
+            )
+        )
+
+def add_ppi_data(g: Graph, entry: dict, base_uri: str, new_uris:dict)->URIRef:
+    """Add a protein protein interaction node
+
+    :param g: RDFLib graph
+    :entry: the ppi dictionary
+    :base_uri: the base URI for the project
+    :new_uris: dictionary with project node URIs
+    Returns a ppi node    
+    """
+    stringdb_link_to = entry.get('stringdb_link_to', None)
+    ensembl = entry.get('stringdb_link_to', None)
+    score = entry.get('score', None)
+    try:
+        score = int(score)
+        # Nodes
+        ppi_node = URIRef(base_uri + f"inhibition/{stringdb_link_to}_{ensembl}")
+        g.add(
+            (
+                ppi_node,
+                RDF.type,
+                URIRef("http://purl.obolibrary.org/obo/NCIT_C18469"),
+            )
+        )
+
+        g.add(
+            (
+                URIRef(f"https://www.uniprot.org/uniprotkb/{stringdb_link_to}"),
+                RDF.type,
+                URIRef(NODE_TYPES['protein_node']),
+            )
+        )
+        g.add(
+            (
+                URIRef(f"https://www.uniprot.org/uniprotkb/{stringdb_link_to}"),
+                URIRef(PREDICATES['sio_is_part_of']),
+                ppi_node,
+            )
+        )
+        g.add(
+            (
+                URIRef(f"http://identifiers.org/ensembl/{ensembl}"),
+                URIRef(PREDICATES['sio_is_part_of']),
+                ppi_node,
+            )
+        )
+        g.add(
+            (
+                URIRef(f"http://identifiers.org/ensembl/{ensembl}"),
+                RDF.type,
+                URIRef(NODE_TYPES['gene_node']),
+            )
+        )
+        score_node = URIRef(f"{new_uris['score_base_node']}/{stringdb_link_to}_{ensembl}")
+        g.add((score_node, RDF.type, URIRef(NODE_TYPES["score_node"])))
+        g.add(
+            (
+                score_node,
+                URIRef(NAMESPACE_BINDINGS["sio"] + "has_value"),
+                Literal(score, datatype=XSD.double),
+            )
+        )
+        return ppi_node
+    except:
+        return None
+
 def generate_rdf(
     df: pd.DataFrame, base_uri: str, version_iri: str, author: str, orcid: str, metadata: dict
 ) -> Graph:
@@ -1016,7 +1088,8 @@ def generate_rdf(
         if transporter_inhibitor_data:
             for entry in transporter_inhibitor_data:
                 add_transporter_inhibitor_node(g, entry, base_uri)
-
+        if stringdb_data:
+                add_ppi_data(g, entry, base_uri, new_uris)
     # Add metadata to the RDF graph
     add_metadata(
         g=g,
