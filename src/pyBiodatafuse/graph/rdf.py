@@ -1089,7 +1089,11 @@ def generate_rdf(
             for entry in transporter_inhibitor_data:
                 add_transporter_inhibitor_node(g, entry, base_uri)
         if stringdb_data:
-                add_ppi_data(g, entry, base_uri, new_uris)
+                if isinstance(entry, list):
+                    for i in entry:
+                        add_ppi_data(g, i, base_uri, new_uris)
+                elif isinstance(entry, dict):
+                    add_ppi_data(g, entry, base_uri, new_uris)
     # Add metadata to the RDF graph
     add_metadata(
         g=g,
