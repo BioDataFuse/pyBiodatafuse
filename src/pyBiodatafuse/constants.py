@@ -514,6 +514,7 @@ PREDICATES = {
     "has_gene_count": "",  # TODO gene count
     "has_adverse_event": f"{NAMESPACE_BINDINGS['obo']}OAE_0002616",
     "sio_has_part": f"{NAMESPACE_BINDINGS['sio']}SIO_000028",
+    "negatively_regulates": f"{NAMESPACE_BINDINGS['obo']}RO_0002449",
 }
 
 ## Classes for clinical phases
@@ -546,8 +547,9 @@ DATA_SOURCES = {
     "BridgeDb": "https://www.bridgedb.org/",
     "StringDB": "https://string-db.org/",
     "OpenTargets_reactome": "https://www.opentargets.org/",
-    "Bgee" : "https://www.bgee.org/",
-    "MolMeDB" : "https://molmedb.upol.cz",
-    "PubChem" : "https://pubchem.ncbi.nlm.nih.gov/",
-    "Wikidata" : "https://wikidata.org",
+    "Reactome": "https://www.opentargets.org/",
+    "Bgee": "https://www.bgee.org/",
+    "MolMeDB": "https://molmedb.upol.cz",
+    "PubChem": "https://pubchem.ncbi.nlm.nih.gov/",
+    "Wikidata": "https://wikidata.org",
 }

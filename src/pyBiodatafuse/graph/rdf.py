@@ -206,15 +206,16 @@ def add_evidence_idx_node(
     return evidence_idx_node
 
 
-def add_data_source_node(g: Graph) -> URIRef:
+def add_data_source_node(g: Graph, source: str) -> URIRef:
     """Create and add a data source node to the RDF graph.
 
     :param g: RDF graph to which the data source node will be added.
+    :param source: String containing the name of the source of the data 
     :return: URIRef for the created data source node.
     """
     # for source in sources (eg disgenet)
-    data_source_name = Literal("DisGeNET", datatype=XSD.string)
-    data_source_url = URIRef("https://disgenet.com/")
+    data_source_name = Literal(source, datatype=XSD.string)
+    data_source_url = URIRef(DATA_SOURCES[source])
     g.add((data_source_url, RDF.type, URIRef(NODE_TYPES["data_source_node"])))
     g.add((data_source_url, RDFS.label, data_source_name))
     return data_source_url
@@ -265,7 +266,7 @@ def add_gene_disease_associations(
                     score_node,
                 )
             )
-        data_source_node = add_data_source_node(g)
+        data_source_node = add_data_source_node(g, "DISGENET")
         g.add((gene_disease_assoc_node, URIRef(PREDICATES["sio_has_source"]), data_source_node))
 
 
@@ -372,6 +373,8 @@ def add_gene_expression_data(
                     anatomical_entity_node,
                 )
             )
+        data_source_node = add_data_source_node(g, "Bgee")
+        g.add((gene_expression_value_node, URIRef(PREDICATES["sio_has_source"]), data_source_node))
 
 
 def add_tested_substance_node(
@@ -469,6 +472,8 @@ def add_experimental_process_node(
         )
         # has outcome
         g.add((experimental_process_node, URIRef(PREDICATES["sio_has_output"]), Literal(outcome)))
+        data_source_node = add_data_source_node(g, "PubChem")
+        g.add((experimental_process_node, URIRef(PREDICATES["sio_has_source"]), data_source_node))
         return experimental_process_node
 
 
@@ -499,6 +504,8 @@ def add_pathway_node(g: Graph, data: list, source: str):
         g.add((pathway_node, RDFS.label, Literal(pathway_label, datatype=XSD.string)))
         g.add((pathway_node, URIRef(PREDICATES["sio_has_source"]), URIRef(iri_source)))
         g.add((URIRef(iri_source), RDFS.label, Literal(source, datatype=XSD.string)))
+        data_source_node = add_data_source_node(g, source)
+        g.add((pathway_node, URIRef(PREDICATES["sio_has_source"]), data_source_node))
         return pathway_node
     else:
         return None
@@ -522,6 +529,8 @@ def add_compound_node(g: Graph, compound: dict, gene_node: URIRef) -> URIRef:
     compound_node = URIRef(f"https://www.ebi.ac.uk/chembl/compound_report_card/{chembl_id}")
     g.add((compound_node, RDFS.label, Literal(str(compound_name), datatype=XSD.string)))
     g.add((compound_node, RDF.type, URIRef(NODE_TYPES["tested_substance_node"])))
+    data_source_node = add_data_source_node(g, "OpenTargets_reactome")
+    g.add((compound_node, URIRef(PREDICATES["sio_has_source"]), data_source_node))
     if is_approved:
         g.add(
             (
@@ -601,6 +610,8 @@ def add_go_cpf(g: Graph, process_data: dict) -> URIRef:
         g.add((go_cpf, RDFS.label, Literal(label, datatype=XSD.string)))
         if go_type:
             g.add((go_cpf, RDF.type, go_type))
+        data_source_node = add_data_source_node(g, "OpenTargets_reactome")
+        g.add((go_cpf, URIRef(PREDICATES["sio_has_source"]), data_source_node))
         return go_cpf
     else:
         return None
@@ -663,8 +674,15 @@ def add_metadata(
             item for item in metadata if isinstance(item, dict) and item.get("datasource") == source
         ]
         for entry in entries:
+            data_version = None
+            year = None
+            month = None
+            version = None
+            api_version = None
+            #date = None
+            url_service = None
             # input_type = entry.get("query").get("input_type")
-            date = entry.get("query").get("date")
+            #date = entry.get("query").get("date")
             url_service = entry.get("query").get("url")
             match source:
                 case "Open Targets GraphQL & REST API Beta":
@@ -766,9 +784,94 @@ def add_metadata(
                         Literal(version),
                     )
                 )
-            # TODO each node in RDF should point to its source
 
+def add_transporter_inhibitor_node(g: Graph, transporter_inhibitor_data:dict, base_uri: str)->URIRef:
+    """Adds a transporter inhibitor node
+    
+    :param g: RDFLib graph
+    :transporter_inhibitor_data: dictionary with the membrane-compound interaction data
+    :base_uri: The project base uri
 
+    Returns: URIRef
+    """
+    data = transporter_inhibitor_data
+    compound_name = data.get('compound_name', None)
+    inchikey = data.get('inchikey', None)
+    smiles = data.get('smiles', None)
+    compound_cid = data.get('compound_cid', None)
+    molmedb_id = data.get('molmedb_id', None)
+    source_pmid = data.get('source_pmid', None)
+    chebi_id = data.get('chebi_id', None)
+    drugbank_id = data.get('drugbank_id', None)
+    uniprot_trembl_id = data.get('uniprot_trembl_id', None)
+    if compound_cid:
+        compound_node = URIRef(f'https://pubchem.ncbi.nlm.nih.gov/compound/{compound_cid}')
+        g.add(
+            (
+                compound_node, RDFS.label, Literal(compound_name, datatype=XSD.string)
+                )
+            )
+        g.add(
+            (
+                compound_node, URIRef(PREDICATES['chebi_inchi']), Literal(inchikey, datatype= XSD.string) 
+                )
+            )
+        g.add(
+            (
+                compound_node, URIRef(PREDICATES['chebi_smiles']), Literal(smiles) 
+                )
+            )
+        g.add(
+            (
+                compound_node, SKOS.exactMatch, URIRef(f'https://molmedb.upol.cz/mol/{molmedb_id}')
+            )
+        )
+        g.add(
+            (
+                compound_node, SKOS.exactMatch, URIRef(f'https://identifiers.org/CHEBI:{chebi_id}')
+            )
+        )
+        g.add(
+            (
+                compound_node, SKOS.exactMatch, URIRef(f'https://www.drugbank.ca/drugs/{drugbank_id}')
+            )
+        )
+        g.add(
+            (
+                compound_node,
+                URIRef(PREDICATES["negatively_regulates"]),
+                URIRef(f"https://www.uniprot.org/uniprotkb/{uniprot_trembl_id}")
+            )
+        )
+        g.add(
+            (
+                URIRef(f'https://pubmed.ncbi.nlm.nih.gov/{source_pmid}'), 
+                URIRef(PREDICATES['sio_refers_to']), 
+                URIRef(base_uri+f"inhibition/{uniprot_trembl_id}_{compound_cid}")
+            )
+        )
+        g.add(
+            (
+                compound_node,
+                URIRef(PREDICATES['sio_is_part_of']),
+                URIRef(base_uri+f"inhibition/{uniprot_trembl_id}_{compound_cid}")
+            )
+        )
+        g.add(
+            (
+                URIRef(f"https://www.uniprot.org/uniprotkb/{uniprot_trembl_id}"),
+                URIRef(PREDICATES["sio_is_part_of"]),
+                URIRef(base_uri + f"inhibition/{uniprot_trembl_id}_{compound_cid}"),
+            )
+        )
+        g.add(
+            (
+                URIRef(base_uri + f"inhibition/{uniprot_trembl_id}_{compound_cid}"),
+                RDF.type,
+                URIRef("https://purl.obolibrary.org/GO_0032410"),
+            )
+        )
+        
 def generate_rdf(
     df: pd.DataFrame, base_uri: str, version_iri: str, author: str, orcid: str, metadata: dict
 ) -> Graph:
@@ -811,6 +914,8 @@ def generate_rdf(
         processes_data = row.get("OpenTargets_go", None)
         compound_data = row.get("OpenTargets_compounds", None)
         literature_based_data = row.get("literature_based_info", None)
+        transporter_inhibitor_data = row.get("MolMeDB_transporter_inhibitor", None)
+        stringdb_data = row.get("StringDB_ppi", None)
         # molmedb_data = row.get("MolMeDB_transporter_inhibitor", None)
         disease_data = []
         for source in [DISGENET_DISEASE_COL, OPENTARGETS_DISEASE__COL]:
@@ -908,11 +1013,9 @@ def generate_rdf(
                             URIRef(NODE_TYPES["disease_node"]),
                         )
                     )
-        # TODO if molmedb_data:
-        #    # Add transport inhibitor node
-        #    g.add((
-        #        URIRef()
-        #    ))
+        if transporter_inhibitor_data:
+            for entry in transporter_inhibitor_data:
+                add_transporter_inhibitor_node(g, entry, base_uri)
 
     # Add metadata to the RDF graph
     add_metadata(
