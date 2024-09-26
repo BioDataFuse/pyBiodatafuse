@@ -301,21 +301,6 @@ LITERATURE_DISEASE_EDGE_ATTRS = {
     "label": GENE_DISEASE_EDGE_LABEL,
 }
 
-# TODO: The disease annotations are not curated 
-# Open Targets - Disease
-# OPENTARGETS_DISEASE_NODE_ATTRS = {
-#     "source": OPENTARGETS,
-#     "name": None,
-#     "id": None,
-#     "therapeutic_areas": None,
-#     "labels": DISEASE_NODE_LABELS,
-# }
-# OPENTARGETS_DISEASE_EDGE_ATTRS = {
-#     "source": OPENTARGETS,
-#     "label": GENE_DISEASE_EDGE_LABEL,
-# }
-
-
 # Pathway node
 # MINERVA, WikiPathways, Open Targets - Reactome
 PATHWAY_NODE_LABELS = "Pathway"

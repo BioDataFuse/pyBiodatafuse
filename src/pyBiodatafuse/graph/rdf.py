@@ -223,15 +223,15 @@ def add_gene_disease_associations(
     i: int,
 ) -> None:
     """Process and add gene-disease association data to the RDF graph.
+
     :param g: RDF graph to which the associations will be added.
     :param id_number: Unique identifier for the associations.
     :param source_idx: Source index for the associations.
     :param gene_node: URIRef of the gene node associated with the disease data.
     :param disease_data: List of dictionaries containing disease association information.
     :param new_uris: Dictionary with updated project base URIs for the nodes.
-    "param i: the index of the row
+    :param i: the index of the row
     """
-
     data = disease_data
     disease_node = add_disease_node(g, data)
     if disease_node:
@@ -272,6 +272,7 @@ def add_gene_expression_data(
     new_uris: dict,
 ) -> None:
     """Process and add gene expression data to the RDF graph.
+
     :param g: RDF graph to which the expression data will be added.
     :param id_number: Unique identifier for the expression data.
     :param source_idx: Source index for the expression data.
@@ -376,6 +377,7 @@ def add_tested_substance_node(
     compound_name: str,
 ):
     """Create and add a tested substance node to the RDF graph.
+
     :param g: RDF graph to which the tested substance node will be added.
     :param inchi: inchi identifier of the compound.
     :param smiles: smiles identifier of the compound.
@@ -419,6 +421,7 @@ def add_experimental_process_node(
     new_uris: dict,
 ):
     """Create and add an experimental process node to the RDF graph.
+
     :param g: RDF graph to which the experimental process node will be added.
     :param id_number: Unique identifier for the experimental process node.
     :param source_idx: Source index for the experimental process.
@@ -468,6 +471,7 @@ def add_experimental_process_node(
 
 def add_pathway_node(g: Graph, data: list, source: str):
     """Create and add a pathway node to the RDF graph.
+
     :param g: RDF graph to which the pathway node will be added.
     :param data: Dictionary containing pathway information.
     :param source: Source of the pathway information (e.g., WikiPathways, Reactome).
@@ -501,6 +505,7 @@ def add_pathway_node(g: Graph, data: list, source: str):
 
 def add_compound_node(g: Graph, compound: dict, gene_node: URIRef) -> URIRef:
     """Create and add a compound node to the RDF graph.
+
     :param g: RDF graph to which the compound node will be added.
     :param compound: Dictionary containing compound information.
     :param gene_node: URIRef of the gene node associated with the compound.
@@ -562,6 +567,7 @@ def add_compound_node(g: Graph, compound: dict, gene_node: URIRef) -> URIRef:
 
 def add_ae_node(g: Graph, ae: str) -> URIRef:
     """Create and add an adverse event node to the RDF graph.
+
     :param g: RDF graph to which the adverse event node will be added.
     :param ae: Name of the adverse event.
     :return: URIRef for the created adverse event node.
@@ -578,6 +584,7 @@ def add_ae_node(g: Graph, ae: str) -> URIRef:
 
 def add_go_cpf(g: Graph, process_data: dict) -> URIRef:
     """Create and add a Gene Ontology (GO) node to the RDF graph.
+
     :param g: RDF graph to which the GO node will be added.
     :param process_data: Dictionary containing Gene Ontology information.
     :return: URIRef for the created GO node.
@@ -606,13 +613,13 @@ def add_metadata(g: Graph, graph_uri: str, metadata: dict,
                  version_iri=None, author=None, orcid=None):
     """
     Add metadata to the RDF graph, including creation date, version, author, and ORCID.
-    :param graph: The RDF graph to which metadata is added.
+
+    :param g: The RDF graph to which metadata is added.
     :param graph_uri: URI identifying the RDF graph.
-    :param medatada: Combined metadata for a BioDatafuse query.
+    :param metadata: Combined metadata for a BioDatafuse query.
     :param version_iri: Version IRI to add.
     :param author: Author's name.
     :param orcid: Author's ORCID.
-    :return: None
     """
     # Add some nodes used afterwards
     g.add((URIRef("https://schema.org/WebAPI"), RDFS.label, Literal("Web API")))
@@ -761,12 +768,12 @@ def add_metadata(g: Graph, graph_uri: str, metadata: dict,
                 )
 
 
-def add_transporter_inhibitor_node(g: Graph, transporter_inhibitor_data: dict, base_uri: str) -> URIRef:
+def add_transporter_inhibitor_node(g: Graph, transporter_inhibitor_data: dict, base_uri: str):
     """Add a transporter inhibitor node.
+
     :param g: RDFLib graph
     :param transporter_inhibitor_data: dictionary with the membrane-compound interaction data
     :param base_uri: The project base uri
-    Returns: URIRef
     """
     data = transporter_inhibitor_data
     compound_name = data.get("compound_name", None)
@@ -839,7 +846,8 @@ def add_transporter_inhibitor_node(g: Graph, transporter_inhibitor_data: dict, b
 
 
 def add_ppi_data(g: Graph, entry: dict, base_uri: str, new_uris: dict) -> URIRef:
-    """Add a protein protein interaction node
+    """Add a protein protein interaction node.
+
     :param g: RDFLib graph
     :param entry: the ppi dictionary
     :param base_uri: the base URI for the project
@@ -903,13 +911,11 @@ def add_ppi_data(g: Graph, entry: dict, base_uri: str, new_uris: dict) -> URIRef
 def add_literature_based_data(
     g: Graph,
     entry: dict,
-) -> URIRef:
-    """Add a literature based node
+):
+    """Add a literature based node.
+
     :param g: RDFLib graph
-    :entry: the literature based data dictionary
-    :base_uri: the base URI for the project
-    :new_uris: dictionary with project node URIs
-    Returns a ppi node
+    :param entry: the literature based data dictionary
     """
     source = entry.get("source", None)
     if source:
@@ -946,6 +952,7 @@ def generate_rdf(
     df: pd.DataFrame, base_uri: str, version_iri: str, author: str, orcid: str, metadata: dict
 ) -> Graph:
     """Generate an RDF graph from the provided DataFrame.
+
     :param df: DataFrame containing the data to be converted to RDF.
     :param base_uri: Base URI to use for the nodes in the graph.
     :param version_iri: Version IRI to use as the graph URI and add metadata.
@@ -955,7 +962,6 @@ def generate_rdf(
     :return: RDF graph constructed from the DataFrame.
     """
     g = Graph()
-
     # Load ontology or base RDF
     with resources.path("pyBiodatafuse.resources", "base.owl") as owl_path:
         g.parse(owl_path)
