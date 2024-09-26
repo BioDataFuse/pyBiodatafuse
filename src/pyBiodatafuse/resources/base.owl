@@ -651,17 +651,6 @@ The &apos;adverse event&apos; defined in the above paper has now been changed to
         <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/uberon/core#upper_level"/>
         <rdfs:label>anatomical entity</rdfs:label>
     </owl:Class>
-
-
-
-    <!-- http://semanticscience.org/resource/SIO_000750 -->
-
-    <owl:Class rdf:about="http://semanticscience.org/resource/SIO_000750">
-        <dc:identifier>SIO_000750</dc:identifier>
-        <terms:description xml:lang="en">A database is a set of tables.</terms:description>
-        <rdfs:isDefinedBy rdf:resource="http://semanticscience.org/ontology/sio.owl"/>
-        <rdfs:label xml:lang="en">database</rdfs:label>
-    </owl:Class>
     
 
 
@@ -715,12 +704,36 @@ The &apos;adverse event&apos; defined in the above paper has now been changed to
 
 
 
-    <!-- http://purl.obolibrary.org/obo/NCIT_C18469 -->
+    <!-- http://purl.obolibrary.org/obo/NCIT_C17021 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCIT_C17021">
         <rdfs:label>Protein-Protein Interaction</rdfs:label>
         <obo:IAO_0000115>Temporary, non-covalent binding between protein molecules. Protein-protein interactions occur as a result of intermolecular physical forces and spatial complementation between domains or motifs. This interaction can be either homotypic or heterotypic and effect protein structure, conformation, and function.</obo:IAO_0000115>
     </owl:Class>
+
+
+
+    <!-- http://purl.obolibrary.org/obo/NCIT_C17021 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCIT_C17021">
+        <rdfs:label>Protein</rdfs:label>
+        <obo:IAO_0000115>A group of complex organic macromolecules composed of one or more chains (linear polymers) of alpha-L-amino acids linked by peptide bonds and ranging in size from a few thousand to over 1 million Daltons. Proteins are fundamental genetically encoded components of living cells with specific structures and functions dictated by amino acid sequence.</obo:IAO_0000115>
+    </owl:Class>
+
+
+
+    <!-- https://schema.org/WebAPI -->
+    <owl:Class rdf:about="https://schema.org/WebAPI">
+        <rdfs:label>Web API</rdfs:label>
+    </owl:Class>
+
+
+
+    <!-- https://schema.org/provider -->
+    <owl:Class rdf:about="https://schema.org/provider">
+        <rdfs:label>provider</rdfs:label>
+    </owl:Class>
+
 
 
 </rdf:RDF>

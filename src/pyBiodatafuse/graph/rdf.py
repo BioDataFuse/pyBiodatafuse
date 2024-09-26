@@ -105,23 +105,20 @@ def add_disease_node(g: Graph, disease_data: dict) -> URIRef:
     ]:
         curie_field = disease_data.get(identifier_type, None)
         if curie_field:
+            curies = [curie_field]
             if "," in (curie_field):
                 curies = [i for i in curie_field.split(", ")]
-        else:
-            curies = [curie_field]
-        for curie in curies:
-            disease_source_iri = get_iri(curie)
-            if disease_source_iri is None:
-                if ":" in curie:
-                    curie = curie.split(":")[1]
-                disease_source_iri = get_iri("obo:" + curie)
-                g.add(
-                    (disease_node, SKOS.closeMatch, URIRef(disease_source_iri))
-                )  # Some of the data does not look like a skos:exactMatch
-            else:
-                g.add((disease_node, SKOS.closeMatch, URIRef(disease_source_iri)))
-        else:
-            pass
+            for curie in curies:
+                disease_source_iri = get_iri(curie)
+                if disease_source_iri is None:
+                    if ":" in curie:
+                        curie = curie.split(":")[1]
+                    disease_source_iri = get_iri("obo:" + curie)
+                    g.add(
+                        (disease_node, SKOS.closeMatch, URIRef(disease_source_iri))
+                    )  # Some of the data does not look like a skos:exactMatch
+                else:
+                    g.add((disease_node, SKOS.closeMatch, URIRef(disease_source_iri)))
     return disease_node
 
 
@@ -511,13 +508,13 @@ def add_compound_node(g: Graph, compound: dict, gene_node: URIRef) -> URIRef:
     :param gene_node: URIRef of the gene node associated with the compound.
     :return: URIRef for the created compound node.
     """
-    chembl_id = compound["chembl_id"]
-    drugbank_id = compound["drugbank_id"]
-    compound_name = compound["compound_name"]
-    compound_cid = compound["compound_cid"]
-    is_approved = compound["is_approved"]
-    clincal_trial_phase = compound["clincal_trial_phase"]
-    relation = compound["relation"]
+    chembl_id = compound.get("chembl_id", None)
+    drugbank_id = compound.get("drugbank_id", None)
+    compound_name = compound.get("compound_name", None)
+    compound_cid = compound.get("compound_cid", None)
+    is_approved = compound.get("is_approved", None)
+    clincal_trial_phase = compound.get("clincal_trial_phase", None)
+    relation = compound.get("relation", None)
     compound_node = URIRef(f"https://www.ebi.ac.uk/chembl/compound_report_card/{chembl_id}")
     g.add((compound_node, RDFS.label, Literal(str(compound_name), datatype=XSD.string)))
     g.add((compound_node, RDF.type, URIRef(NODE_TYPES["tested_substance_node"])))
@@ -556,12 +553,14 @@ def add_compound_node(g: Graph, compound: dict, gene_node: URIRef) -> URIRef:
                 g.add((id_node, SKOS.exactMatch, compound_node))
                 g.add((id_node, RDFS.label, Literal(compound_name, datatype=XSD.string)))
                 g.add((id_node, RDF.type, URIRef(NODE_TYPES["tested_substance_node"])))
-            if isinstance(compound["adverse_effect"], list):
+            ae_list = compound.get("adverse_effect", None)
+            if ae_list:
                 for i in compound["adverse_effect"]:
-                    ae = i["name"]
-                    ae_node = add_ae_node(g, ae)
-                    if ae_node:
-                        g.add(((compound_node, URIRef(PREDICATES["has_adverse_event"]), ae_node)))
+                    ae = i.get("name", None)
+                    if ae:
+                        ae_node = add_ae_node(g, ae)
+                        if ae_node:
+                            g.add(((compound_node, URIRef(PREDICATES["has_adverse_event"]), ae_node)))
     return compound_node
 
 
@@ -621,10 +620,6 @@ def add_metadata(g: Graph, graph_uri: str, metadata: dict,
     :param author: Author's name.
     :param orcid: Author's ORCID.
     """
-    # Add some nodes used afterwards
-    g.add((URIRef("https://schema.org/WebAPI"), RDFS.label, Literal("Web API")))
-    g.add((URIRef("https://schema.org/provider"), RDFS.label, Literal("provider")))
-
     # Automatically get the current date and time in ISO 8601 format
     creation_date = datetime.utcnow().isoformat() + "Z"
 
@@ -1000,7 +995,7 @@ def generate_rdf(
         expression_data = row.get(BGEE_GENE_EXPRESSION_LEVELS_COL, None)
         experimental_process_data = row.get("PubChem_assays", None)
         processes_data = row.get("OpenTargets_go", None)
-        compound_data = row.get("OpenTargets_compounds", None)
+        compound_data = row.get("OpenTargets_gene_compounds", None)
         literature_based_data = row.get("literature_based_info", None)
         transporter_inhibitor_data = row.get("MolMeDB_transporter_inhibitor", None)
         stringdb_data = row.get("StringDB_ppi", None)
