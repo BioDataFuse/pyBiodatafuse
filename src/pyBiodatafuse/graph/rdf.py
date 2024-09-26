@@ -891,7 +891,7 @@ def add_ppi_data(g: Graph, entry: dict, base_uri: str, new_uris:dict)->URIRef:
     stringdb_link_to = entry.get('stringdb_link_to', None)
     ensembl = entry.get('stringdb_link_to', None)
     score = entry.get('score', None)
-    try:
+    if score:
         score = int(score)
         # Nodes
         ppi_node = URIRef(base_uri + f"inhibition/{stringdb_link_to}_{ensembl}")
@@ -902,7 +902,6 @@ def add_ppi_data(g: Graph, entry: dict, base_uri: str, new_uris:dict)->URIRef:
                 URIRef("http://purl.obolibrary.org/obo/NCIT_C18469"),
             )
         )
-
         g.add(
             (
                 URIRef(f"https://www.uniprot.org/uniprotkb/{stringdb_link_to}"),
@@ -941,7 +940,7 @@ def add_ppi_data(g: Graph, entry: dict, base_uri: str, new_uris:dict)->URIRef:
             )
         )
         return ppi_node
-    except:
+    else:
         return None
 
 def generate_rdf(
@@ -1089,11 +1088,15 @@ def generate_rdf(
             for entry in transporter_inhibitor_data:
                 add_transporter_inhibitor_node(g, entry, base_uri)
         if stringdb_data:
-                if isinstance(entry, list):
-                    for i in entry:
-                        add_ppi_data(g, i, base_uri, new_uris)
-                elif isinstance(entry, dict):
+            if isinstance(stringdb_data, list):
+                for entry in stringdb_data:
+                    if entry.get('Ensembl', None):
+                        add_ppi_data(g, entry, base_uri, new_uris)
+            elif isinstance(stringdb_data, dict):
+                entry = stringdb_data
+                if entry.get("Ensembl", None):
                     add_ppi_data(g, entry, base_uri, new_uris)
+
     # Add metadata to the RDF graph
     add_metadata(
         g=g,
