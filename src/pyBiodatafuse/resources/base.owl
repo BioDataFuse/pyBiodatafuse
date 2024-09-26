@@ -694,9 +694,9 @@ The &apos;adverse event&apos; defined in the above paper has now been changed to
 
 
 
-    <!-- http://purl.obolibrary.org/obo/NCIT_C17021 -->
+    <!-- http://purl.obolibrary.org/obo/NCIT_C18469 -->
 
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCIT_C17021">
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCIT_C18469">
         <obo:IAO_0000115>A group of complex organic macromolecules composed of one or more chains (linear polymers) of alpha-L-amino acids linked by peptide bonds and ranging in size from a few thousand to over 1 million Daltons. Proteins are fundamental genetically encoded components of living cells with specific structures and functions dictated by amino acid sequence.</obo:IAO_0000115>
         <rdfs:label>Protein</rdfs:label>
     </owl:Class>
