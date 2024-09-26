@@ -663,93 +663,101 @@ def add_metadata(g: Graph, graph_uri: str, metadata: dict,
             api_version = None
             # date = None
             url_service = None
+            source_node = None
             # input_type = entry.get("query").get("input_type")
             # date = entry.get("query").get("date")
             url_service = entry.get("query").get("url")
-            match source:
-                case "Open Targets GraphQL & REST API Beta":
-                    source_node = URIRef(DATA_SOURCES["OpenTargets_reactome"])
-                    g.add(
-                        (
-                            source_node,
-                            RDFS.label,
-                            Literal("The Open Targets Platform", datatype=XSD.string),
-                        )
+            source = entry.get("source")
+
+            if source == "Open Targets GraphQL & REST API Beta":
+                source_node = URIRef(DATA_SOURCES["OpenTargets_reactome"])
+                g.add(
+                    (
+                        source_node,
+                        RDFS.label,
+                        Literal("The Open Targets Platform", datatype=XSD.string),
                     )
-                    data_version = entry.get("metadata").get("data_version")
-                    year = data_version.get("year")
-                    month = data_version.get("month")
-                    version = f"{year}-{month}-01"
-                    api_version = ".".join(
-                        [
-                            str(i)
-                            for i in entry.get("metadata")
-                            .get("source_version")
-                            .get("apiVersion")
-                            .values()
-                        ]
+                )
+                data_version = entry.get("metadata").get("data_version")
+                year = data_version.get("year")
+                month = data_version.get("month")
+                version = f"{year}-{month}-01"
+                api_version = ".".join(
+                    [
+                        str(i)
+                        for i in entry.get("metadata")
+                        .get("source_version")
+                        .get("apiVersion")
+                        .values()
+                    ]
+                )
+
+            elif source == "DISGENET":
+                source_node = URIRef(DATA_SOURCES[source])
+                g.add(
+                    (
+                        source_node,
+                        RDFS.label,
+                        Literal("DisGeNET", datatype=XSD.string),
                     )
-                case "DISGENET":
-                    source_node = URIRef(DATA_SOURCES[source])
-                    g.add(
-                        (
-                            source_node,
-                            RDFS.label,
-                            Literal("DisGeNET", datatype=XSD.string),
-                        )
+                )
+                data_version = entry.get("metadata").get("version")
+                # date = entry.get("metadata").get("lastUpdate")
+                # parsed_date = datetime.strptime(date, "%d %b %Y")
+                # xsd_date = parsed_date.strftime("%Y-%m-%d")
+                version = entry.get("metadata").get("version")
+
+            elif source == "MINERVA":
+                source_node = URIRef(DATA_SOURCES[source])
+                # project = entry.get('query').get('MINERVA project')
+                version = entry.get("metadata").get("source_version")
+                g.add(
+                    (
+                        source_node,
+                        RDFS.label,
+                        Literal("The MINERVA Platform", datatype=XSD.string),
                     )
-                    data_version = entry.get("metadata").get("version")
-                    # date = entry.get("metadata").get("lastUpdate")
-                    # parsed_date = datetime.strptime(date, "%d %b %Y")
-                    # xsd_date = parsed_date.strftime("%Y-%m-%d")
-                    version = entry.get("metadata").get("version")
-                case "MINERVA":
-                    source_node = URIRef(DATA_SOURCES[source])
-                    # project = entry.get('query').get('MINERVA project')
-                    version = entry.get("metadata").get("source_version")
-                    g.add(
-                        (
-                            source_node,
-                            RDFS.label,
-                            Literal("The MINERVA Platform", datatype=XSD.string),
-                        )
+                )
+
+            elif source == "WikiPathways":
+                version = entry.get("metadata").get("source_version")
+                source_node = URIRef(DATA_SOURCES[source])
+                g.add(
+                    (
+                        source_node,
+                        RDFS.label,
+                        Literal("WikiPathways", datatype=XSD.string),
                     )
-                case "WikiPathways":
-                    version = entry.get("metadata").get("source_version")
-                    source_node = URIRef(DATA_SOURCES[source])
-                    g.add(
-                        (
-                            source_node,
-                            RDFS.label,
-                            Literal("WikiPathways", datatype=XSD.string),
-                        )
+                )
+
+            elif source == "BridgeDb":  # Several metadata fields left unRDFied
+                source_node = URIRef(DATA_SOURCES[source])
+                g.add(
+                    (
+                        source_node,
+                        RDFS.label,
+                        Literal("BridgeDb", datatype=XSD.string),
                     )
-                case "BridgeDb":  # Several metadata fields left unRDFied
-                    source_node = URIRef(DATA_SOURCES[source])
-                    g.add(
-                        (
-                            source_node,
-                            RDFS.label,
-                            Literal("BridgeDb", datatype=XSD.string),
-                        )
+                )
+                version = entry.get("metadata").get("bridgedb.version")
+                api_version = entry.get("metadata").get("webservice.version")
+
+            elif source == "StringDB":
+                source_node = URIRef(DATA_SOURCES[source])
+                g.add(
+                    (
+                        source_node,
+                        RDFS.label,
+                        Literal("STRING", datatype=XSD.string),
                     )
-                    version = entry.get("metadata").get("bridgedb.version")
-                    api_version = entry.get("metadata").get("webservice.version")
-                case "StringDB":
-                    source_node = URIRef(DATA_SOURCES[source])
-                    g.add(
-                        (
-                            source_node,
-                            RDFS.label,
-                            Literal("STRING", datatype=XSD.string),
-                        )
-                    )
+                )
+
             # Add api node for source
             api_node = URIRef(url_service)
             g.add((api_node, RDF.type, URIRef("https://schema.org/WebAPI")))
-
-            g.add((api_node, URIRef("https://schema.org/provider"), source_node))
-            g.add((source_node, RDF.type, URIRef(NODE_TYPES["data_source_node"])))
+            if source_node:
+                g.add((api_node, URIRef("https://schema.org/provider"), source_node))
+                g.add((source_node, RDF.type, URIRef(NODE_TYPES["data_source_node"])))
             if api_version:
                 g.add(
                     (
