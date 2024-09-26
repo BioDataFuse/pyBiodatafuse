@@ -103,23 +103,23 @@ def add_disease_node(g: Graph, disease_data: dict) -> URIRef:
         "MESH",
         "UMLS",
     ]:
-        if disease_data.get(identifier_type):
-            curie_field = disease_data.get(identifier_type)
-            if "," in curie_field:
+        curie_field = disease_data.get(identifier_type, None)
+        if curie_field:
+            if "," in (curie_field):
                 curies = [i for i in curie_field.split(", ")]
+        else:
+            curies = [curie_field]
+        for curie in curies:
+            disease_source_iri = get_iri(curie)
+            if disease_source_iri is None:
+                if ":" in curie:
+                    curie = curie.split(":")[1]
+                disease_source_iri = get_iri("obo:" + curie)
+                g.add(
+                    (disease_node, SKOS.closeMatch, URIRef(disease_source_iri))
+                )  # Some of the data does not look like a skos:exactMatch
             else:
-                curies = [curie_field]
-            for curie in curies:
-                disease_source_iri = get_iri(curie)
-                if disease_source_iri is None:
-                    if ":" in curie:
-                        curie = curie.split(":")[1]
-                    disease_source_iri = get_iri("obo:" + curie)
-                    g.add(
-                        (disease_node, SKOS.closeMatch, URIRef(disease_source_iri))
-                    )  # Some of the data does not look like a skos:exactMatch
-                else:
-                    g.add((disease_node, SKOS.closeMatch, URIRef(disease_source_iri)))
+                g.add((disease_node, SKOS.closeMatch, URIRef(disease_source_iri)))
         else:
             pass
     return disease_node
@@ -218,7 +218,7 @@ def add_gene_disease_associations(
     id_number: str,
     source_idx: str,
     gene_node: URIRef,
-    disease_data: list,
+    disease_data: dict,
     new_uris: dict,
     i: int,
 ) -> None:
@@ -242,22 +242,24 @@ def add_gene_disease_associations(
         g.add((gene_disease_assoc_node, URIRef(PREDICATES["sio_refers_to"]), gene_node))
         g.add((gene_disease_assoc_node, URIRef(PREDICATES["sio_refers_to"]), disease_node))
         if data.get("score"):
-            score_node = add_score_node(
-                g=g,
-                id_number=id_number,
-                source_idx=source_idx,
-                score=data["score"],
-                new_uris=new_uris,
-                i=i,
-                disease_id=disease_data.get("disease_umlscui"),
-            )  # SEE
-            g.add(
-                (
-                    gene_disease_assoc_node,
-                    URIRef(PREDICATES["sio_has_measurement_value"]),
-                    score_node,
+            disease_umlscui = disease_data.get("disease_umlscui", None)
+            if disease_umlscui:
+                score_node = add_score_node(
+                    g=g,
+                    id_number=id_number,
+                    source_idx=source_idx,
+                    score=data["score"],
+                    new_uris=new_uris,
+                    i=i,
+                    disease_id=disease_umlscui,
                 )
-            )
+                g.add(
+                    (
+                        gene_disease_assoc_node,
+                        URIRef(PREDICATES["sio_has_measurement_value"]),
+                        score_node,
+                    )
+                )
         data_source_node = add_data_source_node(g, "DISGENET")
         g.add((gene_disease_assoc_node, URIRef(PREDICATES["sio_has_source"]), data_source_node))
 
@@ -417,7 +419,7 @@ def add_experimental_process_node(
     g: Graph,
     id_number: str,
     source_idx: str,
-    data: list,
+    data: dict,
     new_uris: dict,
 ):
     """Create and add an experimental process node to the RDF graph.
@@ -429,8 +431,8 @@ def add_experimental_process_node(
     :param new_uris: Dictionary with updated project base URIs for the nodes.
     :return: URIRef for the created experimental process node.
     """
-    pubchem_assay_id = data["pubchem_assay_id"]
-    if pubchem_assay_id is not None:
+    pubchem_assay_id = data.get("pubchem_assay_id", None)
+    if pubchem_assay_id:
         pubchem_assay_iri = "https://pubchem.ncbi.nlm.nih.gov/bioassay/" + str(
             pubchem_assay_id
         ).strip("AID")
@@ -469,7 +471,7 @@ def add_experimental_process_node(
         return experimental_process_node
 
 
-def add_pathway_node(g: Graph, data: list, source: str):
+def add_pathway_node(g: Graph, data: dict, source: str):
     """Create and add a pathway node to the RDF graph.
 
     :param g: RDF graph to which the pathway node will be added.
@@ -477,9 +479,9 @@ def add_pathway_node(g: Graph, data: list, source: str):
     :param source: Source of the pathway information (e.g., WikiPathways, Reactome).
     :return: URIRef for the created pathway node.
     """
-    pathway_label = data["pathway_label"]
-    pathway_id = data["pathway_id"]
-    if pathway_id is not None:
+    pathway_label = data.get("pathway_label", None)
+    pathway_id = data.get("pathway_id", None)
+    if pathway_id:
         if source == "WikiPathways":
             pathway_iri = "https://www.wikipathways.org/pathways/" + str(pathway_id)
             iri_source = "https://www.wikipathways.org/"
@@ -499,8 +501,6 @@ def add_pathway_node(g: Graph, data: list, source: str):
         data_source_node = add_data_source_node(g, source)
         g.add((pathway_node, URIRef(PREDICATES["sio_has_source"]), data_source_node))
         return pathway_node
-    else:
-        return None
 
 
 def add_compound_node(g: Graph, compound: dict, gene_node: URIRef) -> URIRef:
@@ -666,9 +666,10 @@ def add_metadata(g: Graph, graph_uri: str, metadata: dict,
             source_node = None
             # input_type = entry.get("query").get("input_type")
             # date = entry.get("query").get("date")
-            url_service = entry.get("query").get("url")
-            source = entry.get("source")
-
+            query = entry.get("query", None)
+            if query:
+                url_service = query.get("url", None)
+            source = entry.get("source", None)
             if source == "Open Targets GraphQL & REST API Beta":
                 source_node = URIRef(DATA_SOURCES["OpenTargets_reactome"])
                 g.add(
@@ -678,20 +679,19 @@ def add_metadata(g: Graph, graph_uri: str, metadata: dict,
                         Literal("The Open Targets Platform", datatype=XSD.string),
                     )
                 )
-                data_version = entry.get("metadata").get("data_version")
-                year = data_version.get("year")
-                month = data_version.get("month")
-                version = f"{year}-{month}-01"
-                api_version = ".".join(
-                    [
-                        str(i)
-                        for i in entry.get("metadata")
-                        .get("source_version")
-                        .get("apiVersion")
-                        .values()
-                    ]
-                )
-
+                metadata_f = entry.get("metadata", None)
+                if metadata_f:
+                    data_version = metadata_f.get("data_version", None)
+                    if data_version:
+                        year = data_version.get("year")
+                        month = data_version.get("month")
+                        version = f"{year}-{month}-01"
+                source_version = metadata_f.get("source_version") if metadata_f else None
+                api_version_data = source_version.get("apiVersion") if source_version else None
+                if api_version_data:
+                    api_version = ".".join([str(i) for i in api_version_data.values()])
+                else:
+                    api_version = None
             elif source == "DISGENET":
                 source_node = URIRef(DATA_SOURCES[source])
                 g.add(
@@ -701,16 +701,16 @@ def add_metadata(g: Graph, graph_uri: str, metadata: dict,
                         Literal("DisGeNET", datatype=XSD.string),
                     )
                 )
-                data_version = entry.get("metadata").get("version")
-                # date = entry.get("metadata").get("lastUpdate")
-                # parsed_date = datetime.strptime(date, "%d %b %Y")
-                # xsd_date = parsed_date.strftime("%Y-%m-%d")
-                version = entry.get("metadata").get("version")
+                if metadata_f:
+                    data_version = metadata_f.get("version", None)
+                    version = metadata_f.get("version", None)
 
             elif source == "MINERVA":
                 source_node = URIRef(DATA_SOURCES[source])
                 # project = entry.get('query').get('MINERVA project')
-                version = entry.get("metadata").get("source_version")
+                metadata_f = entry.get("metadata", None)
+                if metadata_f:
+                    version = metadata_f.get("source_version")
                 g.add(
                     (
                         source_node,
@@ -720,7 +720,9 @@ def add_metadata(g: Graph, graph_uri: str, metadata: dict,
                 )
 
             elif source == "WikiPathways":
-                version = entry.get("metadata").get("source_version")
+                metadata_f = entry.get("metadata", None)
+                if metadata_f:
+                    version = metadata_f.get("source_version", None)
                 source_node = URIRef(DATA_SOURCES[source])
                 g.add(
                     (
@@ -739,8 +741,10 @@ def add_metadata(g: Graph, graph_uri: str, metadata: dict,
                         Literal("BridgeDb", datatype=XSD.string),
                     )
                 )
-                version = entry.get("metadata").get("bridgedb.version")
-                api_version = entry.get("metadata").get("webservice.version")
+                metadata_f = entry.get("metadata", None)
+                if metadata_f:
+                    version = metadata_f.get("bridgedb.version", None)
+                    api_version = metadata_f.get("webservice.version", None)
 
             elif source == "StringDB":
                 source_node = URIRef(DATA_SOURCES[source])
@@ -753,19 +757,20 @@ def add_metadata(g: Graph, graph_uri: str, metadata: dict,
                 )
 
             # Add api node for source
-            api_node = URIRef(url_service)
-            g.add((api_node, RDF.type, URIRef("https://schema.org/WebAPI")))
+            if url_service:
+                api_node = URIRef(url_service)
+                g.add((api_node, RDF.type, URIRef("https://schema.org/WebAPI")))
             if source_node:
                 g.add((api_node, URIRef("https://schema.org/provider"), source_node))
                 g.add((source_node, RDF.type, URIRef(NODE_TYPES["data_source_node"])))
-            if api_version:
-                g.add(
-                    (
-                        api_node,
-                        URIRef("http://www.geneontology.org/formats/oboInOwl#version"),
-                        Literal(api_version),
+                if api_version:
+                    g.add(
+                        (
+                            api_node,
+                            URIRef("http://www.geneontology.org/formats/oboInOwl#version"),
+                            Literal(api_version),
+                        )
                     )
-                )
             if version:
                 g.add(
                     (
