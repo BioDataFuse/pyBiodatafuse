@@ -35,16 +35,8 @@ def replace_na_none(item):
     """
     Recursively replaces 'na', 'nan', 'none' strings, Python None, and NaN values with None.
 
-    Handles:
-    - Strings: Converts 'na', 'nan', 'none' to None.
-    - None and NaN: Converts to None.
-    - Lists, dictionaries, and NumPy arrays: Recursively processes elements.
-
-    Args:
-        item: The value to process (string, None, NaN, list, dict, or np.ndarray).
-
-    Returns:
-        The processed item with 'na', 'nan', 'none', None, and NaN replaced by None.
+    :param item: The value to process (string, None, NaN, list, dict, or np.ndarray).
+    :return: The processed item with 'na', 'nan', 'none', None, and NaN replaced by None.
     """
     # Replace 'na' strings
     if isinstance(item, str) and item.lower() in ["na", "nan", "none"]:
@@ -210,7 +202,7 @@ def add_data_source_node(g: Graph, source: str) -> URIRef:
     """Create and add a data source node to the RDF graph.
 
     :param g: RDF graph to which the data source node will be added.
-    :param source: String containing the name of the source of the data 
+    :param source: String containing the name of the source of the data
     :return: URIRef for the created data source node.
     """
     # for source in sources (eg disgenet)
@@ -363,7 +355,7 @@ def add_gene_expression_data(
             if experimental_process_node:
                 g.add((gene_node, URIRef(PREDICATES["sio_is_part_of"]), experimental_process_node))
                 g.add((experimental_process_node, URIRef(PREDICATES["sio_has_part"]), gene_node))
-        ## Input gene, anatomical entity
+        # Input gene, anatomical entity
         if experimental_process_node:
             g.add((experimental_process_node, URIRef(PREDICATES["sio_has_input"]), gene_node))
             g.add(
@@ -617,14 +609,7 @@ def add_go_cpf(g: Graph, process_data: dict) -> URIRef:
         return None
 
 
-def add_metadata(
-    g: Graph,
-    graph_uri: str,
-    metadata: dict,
-    version_iri=None,
-    author=None,
-    orcid=None,
-):
+def add_metadata(g: Graph, graph_uri: str, metadata: dict, version_iri=None, author=None, orcid=None):
     """
     Add metadata to the RDF graph, including creation date, version, author, and ORCID.
 
@@ -679,10 +664,10 @@ def add_metadata(
             month = None
             version = None
             api_version = None
-            #date = None
+            # date = None
             url_service = None
             # input_type = entry.get("query").get("input_type")
-            #date = entry.get("query").get("date")
+            # date = entry.get("query").get("date")
             url_service = entry.get("query").get("url")
             match source:
                 case "Open Targets GraphQL & REST API Beta":
@@ -717,8 +702,8 @@ def add_metadata(
                         )
                     )
                     data_version = entry.get("metadata").get("version")
-                    date = entry.get("metadata").get("lastUpdate")
-                    #parsed_date = datetime.strptime(date, "%d %b %Y")
+                    # date = entry.get("metadata").get("lastUpdate")
+                    # parsed_date = datetime.strptime(date, "%d %b %Y")
                     # xsd_date = parsed_date.strftime("%Y-%m-%d")
                     version = entry.get("metadata").get("version")
                 case "MINERVA":
@@ -785,9 +770,12 @@ def add_metadata(
                     )
                 )
 
-def add_transporter_inhibitor_node(g: Graph, transporter_inhibitor_data:dict, base_uri: str)->URIRef:
+
+def add_transporter_inhibitor_node(
+    g: Graph, transporter_inhibitor_data: dict, base_uri: str
+) -> URIRef:
     """Adds a transporter inhibitor node
-    
+
     :param g: RDFLib graph
     :transporter_inhibitor_data: dictionary with the membrane-compound interaction data
     :base_uri: The project base uri
@@ -795,66 +783,50 @@ def add_transporter_inhibitor_node(g: Graph, transporter_inhibitor_data:dict, ba
     Returns: URIRef
     """
     data = transporter_inhibitor_data
-    compound_name = data.get('compound_name', None)
-    inchikey = data.get('inchikey', None)
-    smiles = data.get('smiles', None)
-    compound_cid = data.get('compound_cid', None)
-    molmedb_id = data.get('molmedb_id', None)
-    source_pmid = data.get('source_pmid', None)
-    chebi_id = data.get('chebi_id', None)
-    drugbank_id = data.get('drugbank_id', None)
-    uniprot_trembl_id = data.get('uniprot_trembl_id', None)
+    compound_name = data.get("compound_name", None)
+    inchikey = data.get("inchikey", None)
+    smiles = data.get("smiles", None)
+    compound_cid = data.get("compound_cid", None)
+    molmedb_id = data.get("molmedb_id", None)
+    source_pmid = data.get("source_pmid", None)
+    chebi_id = data.get("chebi_id", None)
+    drugbank_id = data.get("drugbank_id", None)
+    uniprot_trembl_id = data.get("uniprot_trembl_id", None)
     if compound_cid:
-        compound_node = URIRef(f'https://pubchem.ncbi.nlm.nih.gov/compound/{compound_cid}')
+        compound_node = URIRef(f"https://pubchem.ncbi.nlm.nih.gov/compound/{compound_cid}")
+        g.add((compound_node, RDFS.label, Literal(compound_name, datatype=XSD.string)))
         g.add(
             (
-                compound_node, RDFS.label, Literal(compound_name, datatype=XSD.string)
-                )
-            )
-        g.add(
-            (
-                compound_node, URIRef(PREDICATES['chebi_inchi']), Literal(inchikey, datatype= XSD.string) 
-                )
-            )
-        g.add(
-            (
-                compound_node, URIRef(PREDICATES['chebi_smiles']), Literal(smiles) 
-                )
-            )
-        g.add(
-            (
-                compound_node, SKOS.exactMatch, URIRef(f'https://molmedb.upol.cz/mol/{molmedb_id}')
+                compound_node,
+                URIRef(PREDICATES["chebi_inchi"]),
+                Literal(inchikey, datatype=XSD.string),
             )
         )
+        g.add((compound_node, URIRef(PREDICATES["chebi_smiles"]), Literal(smiles)))
+        g.add((compound_node, SKOS.exactMatch, URIRef(f"https://molmedb.upol.cz/mol/{molmedb_id}")))
+        g.add((compound_node, SKOS.exactMatch, URIRef(f"https://identifiers.org/CHEBI:{chebi_id}")))
         g.add(
-            (
-                compound_node, SKOS.exactMatch, URIRef(f'https://identifiers.org/CHEBI:{chebi_id}')
-            )
-        )
-        g.add(
-            (
-                compound_node, SKOS.exactMatch, URIRef(f'https://www.drugbank.ca/drugs/{drugbank_id}')
-            )
+            (compound_node, SKOS.exactMatch, URIRef(f"https://www.drugbank.ca/drugs/{drugbank_id}"))
         )
         g.add(
             (
                 compound_node,
                 URIRef(PREDICATES["negatively_regulates"]),
-                URIRef(f"https://www.uniprot.org/uniprotkb/{uniprot_trembl_id}")
+                URIRef(f"https://www.uniprot.org/uniprotkb/{uniprot_trembl_id}"),
             )
         )
         g.add(
             (
-                URIRef(f'https://pubmed.ncbi.nlm.nih.gov/{source_pmid}'), 
-                URIRef(PREDICATES['sio_refers_to']), 
-                URIRef(base_uri+f"inhibition/{uniprot_trembl_id}_{compound_cid}")
+                URIRef(f"https://pubmed.ncbi.nlm.nih.gov/{source_pmid}"),
+                URIRef(PREDICATES["sio_refers_to"]),
+                URIRef(base_uri + f"inhibition/{uniprot_trembl_id}_{compound_cid}"),
             )
         )
         g.add(
             (
                 compound_node,
-                URIRef(PREDICATES['sio_is_part_of']),
-                URIRef(base_uri+f"inhibition/{uniprot_trembl_id}_{compound_cid}")
+                URIRef(PREDICATES["sio_is_part_of"]),
+                URIRef(base_uri + f"inhibition/{uniprot_trembl_id}_{compound_cid}"),
             )
         )
         g.add(
@@ -875,22 +847,23 @@ def add_transporter_inhibitor_node(g: Graph, transporter_inhibitor_data:dict, ba
             (
                 URIRef(f"https://www.uniprot.org/uniprotkb/{uniprot_trembl_id}"),
                 RDF.type,
-                URIRef(NODE_TYPES['protein_node']),
+                URIRef(NODE_TYPES["protein_node"]),
             )
         )
 
-def add_ppi_data(g: Graph, entry: dict, base_uri: str, new_uris:dict)->URIRef:
+
+def add_ppi_data(g: Graph, entry: dict, base_uri: str, new_uris: dict) -> URIRef:
     """Add a protein protein interaction node
 
     :param g: RDFLib graph
     :entry: the ppi dictionary
     :base_uri: the base URI for the project
     :new_uris: dictionary with project node URIs
-    Returns a ppi node    
+    Returns a ppi node
     """
-    stringdb_link_to = entry.get('stringdb_link_to', None)
-    ensembl = entry.get('stringdb_link_to', None)
-    score = entry.get('score', None)
+    stringdb_link_to = entry.get("stringdb_link_to", None)
+    ensembl = entry.get("stringdb_link_to", None)
+    score = entry.get("score", None)
     if score:
         score = int(score)
         # Nodes
@@ -899,27 +872,27 @@ def add_ppi_data(g: Graph, entry: dict, base_uri: str, new_uris:dict)->URIRef:
             (
                 ppi_node,
                 RDF.type,
-                URIRef(NODE_TYPES['ppi_node']),
+                URIRef(NODE_TYPES["ppi_node"]),
             )
         )
         g.add(
             (
                 URIRef(f"https://www.uniprot.org/uniprotkb/{stringdb_link_to}"),
                 RDF.type,
-                URIRef(NODE_TYPES['protein_node']),
+                URIRef(NODE_TYPES["protein_node"]),
             )
         )
         g.add(
             (
                 URIRef(f"https://www.uniprot.org/uniprotkb/{stringdb_link_to}"),
-                URIRef(PREDICATES['sio_is_part_of']),
+                URIRef(PREDICATES["sio_is_part_of"]),
                 ppi_node,
             )
         )
         g.add(
             (
                 URIRef(f"http://identifiers.org/ensembl/{ensembl}"),
-                URIRef(PREDICATES['sio_is_part_of']),
+                URIRef(PREDICATES["sio_is_part_of"]),
                 ppi_node,
             )
         )
@@ -927,7 +900,7 @@ def add_ppi_data(g: Graph, entry: dict, base_uri: str, new_uris:dict)->URIRef:
             (
                 URIRef(f"http://identifiers.org/ensembl/{ensembl}"),
                 RDF.type,
-                URIRef(NODE_TYPES['gene_node']),
+                URIRef(NODE_TYPES["gene_node"]),
             )
         )
         score_node = URIRef(f"{new_uris['score_base_node']}/{stringdb_link_to}_{ensembl}")
@@ -940,21 +913,23 @@ def add_ppi_data(g: Graph, entry: dict, base_uri: str, new_uris:dict)->URIRef:
             )
         )
         return ppi_node
-    else:
-        return None
 
-def add_literature_based_data(g: Graph, entry: dict,)->URIRef:
+
+def add_literature_based_data(
+    g: Graph,
+    entry: dict,
+) -> URIRef:
     """Add a literature based node
 
     :param g: RDFLib graph
     :entry: the literature based data dictionary
     :base_uri: the base URI for the project
     :new_uris: dictionary with project node URIs
-    Returns a ppi node    
+    Returns a ppi node
     """
     source = entry.get("source", None)
     if source:
-        if 'PMID' in source:
+        if "PMID" in source:
             source = source.split(": ")[1]
             identifier = entry["id"]
             label = entry["disease_name"]
@@ -981,6 +956,7 @@ def add_literature_based_data(g: Graph, entry: dict,)->URIRef:
                     URIRef(NODE_TYPES["disease_node"]),
                 )
             )
+
 
 def generate_rdf(
     df: pd.DataFrame, base_uri: str, version_iri: str, author: str, orcid: str, metadata: dict
@@ -1107,7 +1083,7 @@ def generate_rdf(
         if stringdb_data:
             if isinstance(stringdb_data, list):
                 for entry in stringdb_data:
-                    if entry.get('Ensembl', None):
+                    if entry.get("Ensembl", None):
                         add_ppi_data(g, entry, base_uri, new_uris)
             elif isinstance(stringdb_data, dict):
                 entry = stringdb_data
