@@ -899,7 +899,7 @@ def add_ppi_data(g: Graph, entry: dict, base_uri: str, new_uris:dict)->URIRef:
             (
                 ppi_node,
                 RDF.type,
-                URIRef("http://purl.obolibrary.org/obo/NCIT_C18469"),
+                URIRef(NODE_TYPES['ppi_node']),
             )
         )
         g.add(
@@ -942,6 +942,45 @@ def add_ppi_data(g: Graph, entry: dict, base_uri: str, new_uris:dict)->URIRef:
         return ppi_node
     else:
         return None
+
+def add_literature_based_data(g: Graph, entry: dict,)->URIRef:
+    """Add a literature based node
+
+    :param g: RDFLib graph
+    :entry: the literature based data dictionary
+    :base_uri: the base URI for the project
+    :new_uris: dictionary with project node URIs
+    Returns a ppi node    
+    """
+    source = entry.get("source", None)
+    if source:
+        if 'PMID' in source:
+            source = source.split(": ")[1]
+            identifier = entry["id"]
+            label = entry["disease_name"]
+            source_url = f"https://pubmed.ncbi.nlm.nih.gov/{source}"
+            g.add((URIRef(source_url), RDF.type, URIRef(NODE_TYPES["article"])))
+            g.add(
+                (
+                    URIRef(source_url),
+                    URIRef(PREDICATES["sio_refers_to"]),
+                    URIRef(f"https://biodatafuse.org/identifiers/{identifier}"),
+                )
+            )
+            g.add(
+                (
+                    URIRef(f"https://biodatafuse.org/identifiers/{identifier}"),
+                    RDFS.label,
+                    Literal(label, datatype=XSD.string),
+                )
+            )
+            g.add(
+                (
+                    URIRef(f"https://biodatafuse.org/identifiers/{identifier}"),
+                    RDF.type,
+                    URIRef(NODE_TYPES["disease_node"]),
+                )
+            )
 
 def generate_rdf(
     df: pd.DataFrame, base_uri: str, version_iri: str, author: str, orcid: str, metadata: dict
@@ -1054,36 +1093,14 @@ def generate_rdf(
                 add_compound_node(g, compound, gene_node)
 
         if literature_based_data:
-            entry = literature_based_data
-            if isinstance(entry, dict):
-                source = entry.get("source", None)
-                if 'PMID' in source:
-                    source = source.split(": ")[1]
-                    identifier = entry["id"]
-                    label = entry["disease_name"]
-                    source_url = f"https://pubmed.ncbi.nlm.nih.gov/{source}"
-                    g.add((URIRef(source_url), RDF.type, URIRef(NODE_TYPES["article"])))
-                    g.add(
-                        (
-                            URIRef(source_url),
-                            URIRef(PREDICATES["sio_refers_to"]),
-                            URIRef(f"https://biodatafuse.org/identifiers/{identifier}"),
-                        )
-                    )
-                    g.add(
-                        (
-                            URIRef(f"https://biodatafuse.org/identifiers/{identifier}"),
-                            RDFS.label,
-                            Literal(label, datatype=XSD.string),
-                        )
-                    )
-                    g.add(
-                        (
-                            URIRef(f"https://biodatafuse.org/identifiers/{identifier}"),
-                            RDF.type,
-                            URIRef(NODE_TYPES["disease_node"]),
-                        )
-                    )
+            if isinstance(literature_based_data, list):
+                entries = literature_based_data
+                for entry in entries:
+                    add_literature_based_data(g, entry)
+            elif isinstance(literature_based_data, dict):
+                entry = literature_based_data
+                add_literature_based_data(g, entry)
+
         if transporter_inhibitor_data:
             for entry in transporter_inhibitor_data:
                 add_transporter_inhibitor_node(g, entry, base_uri)

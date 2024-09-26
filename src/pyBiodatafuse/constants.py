@@ -495,8 +495,9 @@ NODE_TYPES = {
     "adverse_event_node": f"{NAMESPACE_BINDINGS['obo']}OAE_0000001",
     "ensemble": "http://identifiers.org/ensembl/",
     "ncbi_disease": "https://www.ncbi.nlm.nih.gov/medgen/",
-    "article": f"{NAMESPACE_BINDINGS['obo']}IAO:0000013",
+    "article": f"{NAMESPACE_BINDINGS['obo']}IAO_0000013",
     "protein_node": "http://purl.obolibrary.org/obo/NCIT_C17021",
+    "ppi_node": "http://purl.obolibrary.org/obo/NCIT_C18469",
 }
 
 ## PREDICATES
