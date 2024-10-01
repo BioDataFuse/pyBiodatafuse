@@ -299,7 +299,7 @@ def add_gene_expression_data(
             (
                 gene_node, URIRef(PREDICATES["sio_is_associated_with"]), gene_expression_value_node
             )
-            )
+        )
         g.add(
             (
                 gene_expression_value_node,
@@ -426,10 +426,7 @@ def add_tested_substance_node(
 
 def add_experimental_process_node(
     g: Graph,
-    id_number: str,
-    source_idx: str,
     data: dict,
-    new_uris: dict,
 ):
     """Create and add an experimental process node to the RDF graph.
 
@@ -437,7 +434,6 @@ def add_experimental_process_node(
     :param id_number: Unique identifier for the experimental process node.
     :param source_idx: Source index for the experimental process.
     :param data: List of dictionaries containing experimental process information.
-    :param new_uris: Dictionary with updated project base URIs for the nodes.
     :return: URIRef for the created experimental process node.
     """
     pubchem_assay_id = data.get("pubchem_assay_id", None)
@@ -504,7 +500,7 @@ def add_pathway_node(g: Graph, data: dict, source: str):
         g.add((pathway_node, RDFS.label, Literal(pathway_label, datatype=XSD.string)))
         g.add((pathway_node, URIRef(PREDICATES["sio_has_source"]), URIRef(iri_source)))
         g.add((URIRef(iri_source), RDFS.label, Literal(source, datatype=XSD.string)))
-        data_source_node = add_data_source_node(g, source)
+        # data_source_node = add_data_source_node(g, source)
         g.add((URIRef(iri_source), RDF.type, URIRef(NODE_TYPES["data_source_node"])))
         return pathway_node
 
@@ -533,7 +529,7 @@ def add_compound_node(g: Graph, compound: dict, gene_node: URIRef) -> URIRef:
         g.add(
             (
                 compound_node,
-                URIRef(PREDICATES["sio_has_value"]), #TODO check
+                URIRef(PREDICATES["sio_has_value"]),  # TODO check
                 URIRef(NODE_TYPES['approved_drug']),
             )
         )
@@ -798,7 +794,7 @@ def add_transporter_inhibitor_node(g: Graph, transporter_inhibitor_data: dict, b
     smiles = data.get("smiles", None)
     compound_cid = data.get("compound_cid", None)
     molmedb_id = data.get("molmedb_id", None)
-    source_pmid = data.get("source_pmid", None)
+    # source_pmid = data.get("source_pmid", None)
     chebi_id = data.get("chebi_id", None)
     drugbank_id = data.get("drugbank_id", None)
     uniprot_trembl_id = data.get("uniprot_trembl_id", None)
@@ -844,15 +840,16 @@ def add_transporter_inhibitor_node(g: Graph, transporter_inhibitor_data: dict, b
             (
                 URIRef(f"https://www.uniprot.org/uniprotkb/{uniprot_trembl_id}"),
                 URIRef(PREDICATES["sio_is_part_of"]),
-               inhibition_node,
+                inhibition_node,
             )
         )
         g.add(
             (
-                compound_node),
+                compound_node,
                 URIRef(PREDICATES["sio_is_part_of"]),
                 inhibition_node,
             )
+        )
         g.add(
             (
                 inhibition_node,
