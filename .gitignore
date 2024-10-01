@@ -910,3 +910,9 @@ scratch/
 
 # Testing RDF
 src/test.ttl
+
+# ROBOT and intermediates used to create biodatafuse.owl
+src/pyBiodatafuse/resources/predicates*
+src/pyBiodatafuse/resources/base.owl
+robot.jar
+robot

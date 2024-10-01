@@ -96,7 +96,7 @@ DISGENET_DISEASE_OUTPUT_DICT = {
     "el": float,
 }
 DISGENET_DISEASE_COL = f"{DISGENET}_diseases"
-OPENTARGETS_DISEASE__COL = "OpenTargets_diseases"
+OPENTARGETS_DISEASE_COL = "OpenTargets_diseases"
 # literature based disease info
 LITERATURE_DISEASE_COL = "literature_based_info"
 LITERATURE_DISEASE_OUTPUT_DICT = {
@@ -301,6 +301,21 @@ LITERATURE_DISEASE_EDGE_ATTRS = {
     "label": GENE_DISEASE_EDGE_LABEL,
 }
 
+# TODO: The disease annotations are not curated and will be used again when the OpenTarget annotation improves.
+# Open Targets - Disease
+# OPENTARGETS_DISEASE_NODE_ATTRS = {
+#     "source": OPENTARGETS,
+#     "name": None,
+#     "id": None,
+#     "therapeutic_areas": None,
+#     "labels": DISEASE_NODE_LABELS,
+# }
+# OPENTARGETS_DISEASE_EDGE_ATTRS = {
+#     "source": OPENTARGETS,
+#     "label": GENE_DISEASE_EDGE_LABEL,
+# }
+
+
 # Pathway node
 # MINERVA, WikiPathways, Open Targets - Reactome
 PATHWAY_NODE_LABELS = "Pathway"
@@ -470,10 +485,10 @@ NODE_TYPES = {
     "disease_node": f"{NAMESPACE_BINDINGS['obo']}NCIT_C7057",
     "gene_disease_association": f"{NAMESPACE_BINDINGS['sio']}SIO_000983",
     "score_node": f"{NAMESPACE_BINDINGS['obo']}NCIT_C25338",
-    "data_source_node": f"{NAMESPACE_BINDINGS['obo']}SLSO_0001122",
+    "data_source_node": "http://semanticscience.org/resource/SIO_000750",
     "gene_expression_value_node": f"{NAMESPACE_BINDINGS['sio']}SIO_001077",
-    "anatomical_entity_node": f"{NAMESPACE_BINDINGS['sio']}UBERON_0001062",
-    "tested_substance_node": "http://www.bioassayontology.org/bao#BAO_0003059",
+    "anatomical_entity_node": "http://semanticscience.org/resource/SIO_001262",
+    "tested_substance_node": "http://semanticscience.org/resource/SSIO_010038",
     "source_database": f"{NAMESPACE_BINDINGS['sio']}SIO_000750",
     "experimental_process_node": f"{NAMESPACE_BINDINGS['obo']}EFO_0002694",
     "pathway_node": f"{NAMESPACE_BINDINGS['obo']}PW_0000001",
@@ -483,6 +498,10 @@ NODE_TYPES = {
     "article": f"{NAMESPACE_BINDINGS['obo']}IAO_0000013",
     "protein_node": "http://purl.obolibrary.org/obo/NCIT_C17021",
     "ppi_node": "http://purl.obolibrary.org/obo/NCIT_C18469",
+    "drug_node": "http://semanticscience.org/resource/SIO_010038",
+    "approved_drug": "http://purl.obolibrary.org/obo/NCIT_C172573",
+    "aid": "http://purl.obolibrary.org/obo/CLO_0037244",
+    "developmental_stage_node": "http://purl.obolibrary.org/obo/NCIT_C43531",
 }
 
 # PREDICATES
@@ -499,9 +518,10 @@ PREDICATES = {
     "cheminf_compound_id": "http://semanticscience.org/resource/CHEMINF_000140",
     "sio_is_part_of": f"{NAMESPACE_BINDINGS['sio']}SIO_000068",
     "has_gene_count": "",  # TODO gene count
-    "has_adverse_event": f"{NAMESPACE_BINDINGS['obo']}OAE_0002616",
+    "averse_event_preceded_by": f"{NAMESPACE_BINDINGS['obo']}OAE_0002616",
     "sio_has_part": f"{NAMESPACE_BINDINGS['sio']}SIO_000028",
     "negatively_regulates": f"{NAMESPACE_BINDINGS['obo']}RO_0002449",
+    "phase": "http://purl.obolibrary.org/obo/PATO_0000083",
 }
 
 # Classes for clinical phases

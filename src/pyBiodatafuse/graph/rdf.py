@@ -21,7 +21,7 @@ from pyBiodatafuse.constants import (
     MOAS,
     NAMESPACE_BINDINGS,
     NODE_TYPES,
-    OPENTARGETS_DISEASE__COL,
+    OPENTARGETS_DISEASE_COL,
     PREDICATES,
     URIS,
 )
@@ -295,9 +295,25 @@ def add_gene_expression_data(
             f"{exp_uri}/{id_number}/{source_idx}_{anatomical_entity}"
         )
 
-        g.add((gene_node, URIRef(PREDICATES["sio_is_associated_with"]), gene_expression_value_node))
-        g.add((gene_node, URIRef(PREDICATES["sio_is_associated_with"]), anatomical_entity_node))
-        g.add((gene_node, URIRef(PREDICATES["sio_is_associated_with"]), developmental_stage_node))
+        g.add(
+            (
+                gene_node, URIRef(PREDICATES["sio_is_associated_with"]), gene_expression_value_node
+            )
+            )
+        g.add(
+            (
+                gene_expression_value_node,
+                URIRef(PREDICATES["sio_is_associated_with"]),
+                anatomical_entity_node,
+            )
+        )
+        g.add(
+            (
+                gene_expression_value_node,
+                URIRef(PREDICATES["sio_is_associated_with"]),
+                developmental_stage_node,
+            )
+        )
 
         # g.add((gene_node, URIRef(PREDICATES['sio_is_part_of']), cellular_component))
         # g.add((gene_node, URIRef(PREDICATES['sio_is_represented_by']), gene_symbol))
@@ -328,15 +344,13 @@ def add_gene_expression_data(
                 Literal(data["developmental_stage_name"], datatype=XSD.string),
             )
         )
-        g.add((anatomical_entity_node, SKOS.exactMatch, anatomical_entity_node))
-
         g.add(
             (gene_expression_value_node, RDF.type, URIRef(NODE_TYPES["gene_expression_value_node"]))
         )
         g.add((gene_expression_value_node, URIRef(PREDICATES["sio_has_input"]), gene_node))
         g.add(
             (
-                gene_expression_value_node,
+                gene_node,
                 URIRef(PREDICATES["sio_has_output"]),
                 gene_expression_value_node,
             )
@@ -354,18 +368,15 @@ def add_gene_expression_data(
             if experimental_process_node:
                 g.add((gene_node, URIRef(PREDICATES["sio_is_part_of"]), experimental_process_node))
                 g.add((experimental_process_node, URIRef(PREDICATES["sio_has_part"]), gene_node))
-        # Input gene, anatomical entity
-        if experimental_process_node:
-            g.add((experimental_process_node, URIRef(PREDICATES["sio_has_input"]), gene_node))
-            g.add(
-                (
-                    experimental_process_node,
-                    URIRef(PREDICATES["sio_has_input"]),
-                    anatomical_entity_node,
+                g.add(
+                    (
+                        experimental_process_node,
+                        URIRef(PREDICATES["sio_has_part"]),
+                        anatomical_entity_node,
+                    )
                 )
-            )
-        data_source_node = add_data_source_node(g, "Bgee")
-        g.add((gene_expression_value_node, URIRef(PREDICATES["sio_has_source"]), data_source_node))
+                data_source_node = add_data_source_node(g, "Bgee")
+                g.add((gene_expression_value_node, URIRef(PREDICATES["sio_has_source"]), data_source_node))
 
 
 def add_tested_substance_node(
@@ -387,6 +398,7 @@ def add_tested_substance_node(
     uri_cas = "https://pubchem.ncbi.nlm.nih.gov/compound/" + str(compound_id).strip("CID")
     tested_substance_node = URIRef((uri_cas))
     g.add((tested_substance_node, RDF.type, URIRef(NODE_TYPES["tested_substance_node"])))
+    g.add((tested_substance_node, RDF.type, URIRef(NODE_TYPES["drug_node"])))
     g.add((tested_substance_node, RDFS.label, Literal(compound_name, datatype=XSD.string)))
     g.add(
         (
@@ -439,13 +451,10 @@ def add_experimental_process_node(
         compound_cid = data["compound_cid"]
         compound_name = data["compound_name"]
         smiles = data["smiles"]
-        experimental_process_node = URIRef(
-            (f"{new_uris['experimental_process_node']}/{id_number}/{source_idx}_{pubchem_assay_id}")
-        )
+        experimental_process_node = URIRef(pubchem_assay_iri)
         g.add(
             (experimental_process_node, RDF.type, URIRef(NODE_TYPES["experimental_process_node"]))
         )
-        g.add((experimental_process_node, RDF.type, URIRef(pubchem_assay_iri)))
         g.add((experimental_process_node, RDFS.label, Literal(assay_type, datatype=XSD.string)))
         g.add(
             (
@@ -496,7 +505,7 @@ def add_pathway_node(g: Graph, data: dict, source: str):
         g.add((pathway_node, URIRef(PREDICATES["sio_has_source"]), URIRef(iri_source)))
         g.add((URIRef(iri_source), RDFS.label, Literal(source, datatype=XSD.string)))
         data_source_node = add_data_source_node(g, source)
-        g.add((pathway_node, URIRef(PREDICATES["sio_has_source"]), data_source_node))
+        g.add((URIRef(iri_source), RDF.type, URIRef(NODE_TYPES["data_source_node"])))
         return pathway_node
 
 
@@ -524,8 +533,8 @@ def add_compound_node(g: Graph, compound: dict, gene_node: URIRef) -> URIRef:
         g.add(
             (
                 compound_node,
-                URIRef(PREDICATES["sio_has_value"]),
-                URIRef("http://purl.obolibrary.org/obo/NCIT_C172573"),
+                URIRef(PREDICATES["sio_has_value"]), #TODO check
+                URIRef(NODE_TYPES['approved_drug']),
             )
         )
     if relation in MOAS:
@@ -536,7 +545,7 @@ def add_compound_node(g: Graph, compound: dict, gene_node: URIRef) -> URIRef:
         g.add(
             (
                 compound_node,
-                URIRef("http://purl.obolibrary.org/obo/PATO_0000083"),
+                URIRef(PREDICATES['phase']),
                 URIRef(clinical_phase_iri),
             )
         )
@@ -560,7 +569,7 @@ def add_compound_node(g: Graph, compound: dict, gene_node: URIRef) -> URIRef:
                     if ae:
                         ae_node = add_ae_node(g, ae)
                         if ae_node:
-                            g.add(((compound_node, URIRef(PREDICATES["has_adverse_event"]), ae_node)))
+                            g.add(((ae_node, URIRef(PREDICATES["averse_event_preceded_by"]), compound_node)))
     return compound_node
 
 
@@ -811,35 +820,42 @@ def add_transporter_inhibitor_node(g: Graph, transporter_inhibitor_data: dict, b
         )
         g.add(
             (
-                compound_node,
-                URIRef(PREDICATES["negatively_regulates"]),
                 URIRef(f"https://www.uniprot.org/uniprotkb/{uniprot_trembl_id}"),
+                URIRef(PREDICATES["sio_has_part"]),
+                compound_node
             )
         )
         g.add(
             (
-                URIRef(f"https://pubmed.ncbi.nlm.nih.gov/{source_pmid}"),
-                URIRef(PREDICATES["sio_refers_to"]),
-                URIRef(base_uri + f"inhibition/{uniprot_trembl_id}_{compound_cid}"),
+                URIRef(f"https://identifiers.org/CHEBI:{chebi_id}"),
+                RDF.type,
+                "https://purl.obolibrary.org/CHEMINF_000407",
             )
         )
         g.add(
             (
-                compound_node,
-                URIRef(PREDICATES["sio_is_part_of"]),
-                URIRef(base_uri + f"inhibition/{uniprot_trembl_id}_{compound_cid}"),
+                URIRef(f"https://www.drugbank.ca/drugs/{drugbank_id}"),
+                RDF.type,
+                "https://purl.obolibrary.org/CHEMINF_000406",
             )
         )
+        inhibition_node = URIRef(base_uri + f"inhibition/{uniprot_trembl_id}_{compound_cid}")
         g.add(
             (
                 URIRef(f"https://www.uniprot.org/uniprotkb/{uniprot_trembl_id}"),
                 URIRef(PREDICATES["sio_is_part_of"]),
-                URIRef(base_uri + f"inhibition/{uniprot_trembl_id}_{compound_cid}"),
+               inhibition_node,
             )
         )
         g.add(
             (
-                URIRef(base_uri + f"inhibition/{uniprot_trembl_id}_{compound_cid}"),
+                compound_node),
+                URIRef(PREDICATES["sio_is_part_of"]),
+                inhibition_node,
+            )
+        g.add(
+            (
+                inhibition_node,
                 RDF.type,
                 URIRef("https://purl.obolibrary.org/GO_0032410"),
             )
@@ -971,7 +987,7 @@ def generate_rdf(
     """
     g = Graph()
     # Load ontology or base RDF
-    with resources.path("pyBiodatafuse.resources", "base.owl") as owl_path:
+    with resources.path("pyBiodatafuse.resources", "biodatafuse.owl") as owl_path:
         g.parse(owl_path)
 
     # Define the base URI and namespace bindings
@@ -1001,7 +1017,7 @@ def generate_rdf(
         stringdb_data = row.get("StringDB_ppi", None)
         # molmedb_data = row.get("MolMeDB_transporter_inhibitor", None)
         disease_data = []
-        for source in [DISGENET_DISEASE_COL, OPENTARGETS_DISEASE__COL]:
+        for source in [DISGENET_DISEASE_COL, OPENTARGETS_DISEASE_COL]:
             source_el = row.get(source)
             if isinstance(source_el, list):
                 disease_data += source_el
