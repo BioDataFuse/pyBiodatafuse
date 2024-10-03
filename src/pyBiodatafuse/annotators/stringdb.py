@@ -53,12 +53,16 @@ def _format_data(row, network_df):
     :param network_df: STRING-DB response annotation DataFrame
     :returns: StringDB reformatted annotation.
     """
-    gene_ppi_links = list()
-
+    gene_ppi_links = []
     target_links_set = set()
+    
+    ensembl_id = row["identifier"].split(".")[1] if "." in row["identifier"] else row["identifier"]
 
     for _i, row_arr in network_df.iterrows():
-        if row_arr["preferredName_A"] == row["identifier"]:
+        print("Interaction for gene: ", ensembl_id)  # debug
+        print(f"A: {row_arr['preferredName_A']}, B: {row_arr['preferredName_B']}")  # debug
+        
+        if row_arr["preferredName_A"] == ensembl_id:
             if row_arr["preferredName_B"] not in target_links_set:
                 gene_ppi_links.append(
                     {
@@ -69,7 +73,7 @@ def _format_data(row, network_df):
                 )
                 target_links_set.add(row_arr["preferredName_B"])
 
-        elif row_arr["preferredName_B"] == row["identifier"]:
+        elif row_arr["preferredName_B"] == ensembl_id:
             if row_arr["preferredName_A"] not in target_links_set:
                 gene_ppi_links.append(
                     {
@@ -80,14 +84,15 @@ def _format_data(row, network_df):
                 )
                 target_links_set.add(row_arr["preferredName_A"])
 
+    print(f"Links for {row['identifier']}: {gene_ppi_links}")  # debug
     return gene_ppi_links
 
 
-def get_string_ids(gene_list: list) -> str:
+def get_string_ids(gene_list: list, species: int = 9606) -> str:
     """Get the String identifiers of the gene list."""
     params = {
         "identifiers": "\r".join(gene_list),  # your protein list
-        "species": 9606,  # species NCBI identifier
+        "species": species,  # species NCBI identifier (default: human)
         "limit": 1,  # only one (best) identifier per input protein
         "caller_identity": "github.com",  # your app name
     }
@@ -95,25 +100,34 @@ def get_string_ids(gene_list: list) -> str:
     results = requests.post(f"{STRING_ENDPOINT}/json/get_string_ids", data=params).json()
     return results
 
-
-def _get_ppi_data(gene_ids: list) -> pd.DataFrame:
-    """Get the String PPI iteractions of the gene list."""
+def _get_ppi_data(gene_ids: list, species: int = 9606) -> pd.DataFrame:
+    """Get the STRING PPI interactions for the gene list for a specific species."""
     params = {
         "identifiers": "%0d".join(gene_ids),  # your protein
-        "species": 9606,  # species NCBI identifier
+        "species": species,  # species NCBI identifier (default: human)
         "caller_identity": "github.com",  # your app name
     }
-
+    
     response = requests.post(f"{STRING_ENDPOINT}/json/network", data=params).json()
+    print(response) #debug
     return response
 
 
-def get_ppi(bridgedb_df: pd.DataFrame):
-    """Annotate genes with protein-protein interactions from STRING-DB.
+def get_ppi(bridgedb_df: pd.DataFrame, species: str = "human"):
+    """Annotate genes with protein-protein interactions from STRING-DB for either humans or mice.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
+    :param species: The species to query ('Human' or 'Mouse' are supported for nw)
     :returns: a DataFrame containing the StringDB output and dictionary of the metadata.
     """
+    # Determine the NCBI species ID based on the input species
+    if species.lower() == "human":
+        species_id = 9606
+    elif species.lower() == "mouse":
+        species_id = 10090
+    else:
+        raise ValueError("Species must be either 'human' or 'mouse'.")
+
     # Check if the endpoint is available
     api_available = check_endpoint_stringdb()
     if not api_available:
@@ -138,19 +152,19 @@ def get_ppi(bridgedb_df: pd.DataFrame):
         )
         return pd.DataFrame(), {}
 
-    # Get ids
-    string_ids = get_string_ids(gene_list)
+    # Get STRING IDs
+    string_ids = get_string_ids(gene_list, species_id)
     stringdb_ids_df = pd.DataFrame(string_ids)
     stringdb_ids_df.queryIndex = stringdb_ids_df.queryIndex.astype(str)
 
     # Get the PPI data
-    response = _get_ppi_data(list(stringdb_ids_df.stringId.unique()))
+    response = _get_ppi_data(list(stringdb_ids_df.stringId.unique()), species_id)
     network_df = pd.DataFrame(response)
 
     # Record the end time
     end_time = datetime.datetime.now()
 
-    """Metdata details"""
+    """Metadata details"""
     # Get the current date and time
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # Calculate the time elapsed
@@ -161,7 +175,7 @@ def get_ppi(bridgedb_df: pd.DataFrame):
     # Check the network_df
     if num_new_edges != len(network_df):
         warnings.warn(
-            f"The network_df in {STRING} annotatur should be checked, please create an issue https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
+            f"The network_df in {STRING} annotator should be checked. Please create an issue https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
             stacklevel=2,
         )
 
