@@ -112,6 +112,7 @@ def bridgedb_xref(
             "Ensembl",
             "HGNC Accession Number",
             "HGNC",
+            "MGI",
         ]
 
     data_sources = read_resource_files()
