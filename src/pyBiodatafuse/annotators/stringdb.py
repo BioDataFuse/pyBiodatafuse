@@ -10,6 +10,7 @@ import warnings
 import numpy as np
 import pandas as pd
 import requests
+import mygene
 
 from pyBiodatafuse.constants import (
     STRING,
@@ -46,23 +47,32 @@ def get_version_stringdb() -> dict:
     return {"source_version": version_call[0]["string_version"]}
 
 
-def _format_data(row, network_df):
+def _format_data(row, species, network_df):
     """Reformat STRING-DB response (Helper function).
 
     :param row: input_df row
     :param network_df: STRING-DB response annotation DataFrame
     :returns: StringDB reformatted annotation.
     """
-    gene_ppi_links = []
+
+    # The Ensembl ID get extracted from the bridgedb row and then
+    # queried against mygene.info for the HGNC symbol that corresponds to the Ensembl gene ID
+    if row['identifier.source'] == 'Ensembl':
+        mg = mygene.MyGeneInfo()
+        id = row['identifier']
+        result = mg.query(id, scopes='ensembl.gene', fields='symbol', species=species)
+        
+        if result and 'symbol' in result['hits'][0]:
+            row['identifier'] = result['hits'][0]['symbol']
+
+    gene_ppi_links = list()
+
     target_links_set = set()
-    
-    ensembl_id = row["identifier"].split(".")[1] if "." in row["identifier"] else row["identifier"]
 
     for _i, row_arr in network_df.iterrows():
-        print("Interaction for gene: ", ensembl_id)  # debug
+        print("Interaction for gene: ", row["identifier"])  # debug
         print(f"A: {row_arr['preferredName_A']}, B: {row_arr['preferredName_B']}")  # debug
-        
-        if row_arr["preferredName_A"] == ensembl_id:
+        if row_arr["preferredName_A"] == row["identifier"]:
             if row_arr["preferredName_B"] not in target_links_set:
                 gene_ppi_links.append(
                     {
@@ -73,7 +83,7 @@ def _format_data(row, network_df):
                 )
                 target_links_set.add(row_arr["preferredName_B"])
 
-        elif row_arr["preferredName_B"] == ensembl_id:
+        elif row_arr["preferredName_B"] == row["identifier"]:
             if row_arr["preferredName_A"] not in target_links_set:
                 gene_ppi_links.append(
                     {
@@ -88,11 +98,13 @@ def _format_data(row, network_df):
     return gene_ppi_links
 
 
+
+
 def get_string_ids(gene_list: list, species: int = 9606) -> str:
     """Get the String identifiers of the gene list."""
     params = {
         "identifiers": "\r".join(gene_list),  # your protein list
-        "species": species,  # species NCBI identifier (default: human)
+        "species": species,  #  species NCBI identifier (default: human)
         "limit": 1,  # only one (best) identifier per input protein
         "caller_identity": "github.com",  # your app name
     }
@@ -201,7 +213,7 @@ def get_ppi(bridgedb_df: pd.DataFrame, species: str = "human"):
         return pd.DataFrame(), string_metadata
 
     # Format the data
-    data_df[STRING_PPI_COL] = data_df.apply(_format_data, network_df=network_df, axis=1)
+    data_df[STRING_PPI_COL] = data_df.apply(lambda row: _format_data(row, species, network_df), axis=1)
 
     data_df[STRING_PPI_COL] = data_df[STRING_PPI_COL].apply(
         lambda x: ([{key: np.nan for key in STRING_OUTPUT_DICT.keys()}] if len(x) == 0 else x)
