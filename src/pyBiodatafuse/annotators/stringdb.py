@@ -98,8 +98,6 @@ def _format_data(row, species, network_df):
     return gene_ppi_links
 
 
-
-
 def get_string_ids(gene_list: list, species: int = 9606) -> str:
     """Get the String identifiers of the gene list."""
     params = {
@@ -111,6 +109,7 @@ def get_string_ids(gene_list: list, species: int = 9606) -> str:
 
     results = requests.post(f"{STRING_ENDPOINT}/json/get_string_ids", data=params).json()
     return results
+
 
 def _get_ppi_data(gene_ids: list, species: int = 9606) -> pd.DataFrame:
     """Get the STRING PPI interactions for the gene list for a specific species."""
@@ -137,8 +136,10 @@ def get_ppi(bridgedb_df: pd.DataFrame, species: str = "human"):
         species_id = 9606
     elif species.lower() == "mouse":
         species_id = 10090
+    elif species.lower() == "rat":
+        species_id = 10116
     else:
-        raise ValueError("Species must be either 'human' or 'mouse'.")
+        raise ValueError("Species must be either 'human', 'mouse' or 'rat'.")
 
     # Check if the endpoint is available
     api_available = check_endpoint_stringdb()
