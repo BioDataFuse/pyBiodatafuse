@@ -165,6 +165,7 @@ def get_gene_wikipathways(bridgedb_df: pd.DataFrame):
     intermediate_df.rename(columns={"gene_id": "target"}, inplace=True)
     intermediate_df["pathway_gene_count"] = pd.to_numeric(intermediate_df["pathway_gene_count"])
     intermediate_df = intermediate_df.drop_duplicates()
+    intermediate_df["pathway_id"] = intermediate_df["pathway_id"].apply(lambda x: f"WP:{x}")
 
     # Check if all keys in df match the keys in OUTPUT_DICT
     check_columns_against_constants(

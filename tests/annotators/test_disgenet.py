@@ -21,7 +21,7 @@ data_file_folder = os.path.join(os.path.dirname(__file__), "data")
 class TestDisgenet(unittest.TestCase):
     """Test the DISGENET class."""
 
-    @patch("pyBiodatafuse.annotators.disgenet.requests.post")
+    @patch.object(Session, "get")
     def test_get_version_disgenet(self, mock_sparql_version):
         """Test that the API endpoint returns the expected get_version_bgee results."""
         mock_sparql_version.side_effect = {

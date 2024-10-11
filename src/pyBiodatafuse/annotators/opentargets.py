@@ -317,6 +317,17 @@ def get_gene_reactome_pathways(
         check_values_in=["pathway_id"],
     )
 
+    # Fixing the pathway_id
+    new_ids = []
+    for idx in intermediate_df["pathway_id"]:
+        if idx.startswith("R-"):
+            new_ids.append(f"Reactome:{idx}")
+        elif idx.startswuth("WP"):
+            new_ids.append(f"WP:{idx}")
+        else:
+            new_ids.append(idx)
+    intermediate_df["pathway_id"] = new_ids
+
     # Merge the two DataFrames on the target column
     merged_df = collapse_data_sources(
         data_df=data_df,

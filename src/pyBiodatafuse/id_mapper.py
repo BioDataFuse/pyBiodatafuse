@@ -233,7 +233,7 @@ def check_smiles(smile: Optional[str]) -> Optional[str]:
 
 
 def get_cid_from_data(idx: Optional[str], idx_type: str) -> Optional[str]:
-    """Get PubChem ID from any query.
+    """Get PubChem ID from any query using PubChempy.
 
     :param idx: identifier to query
     :param idx_type: type of identifier to query. Potential curies include : smiles, inchikey, inchi, name
@@ -256,6 +256,31 @@ def get_cid_from_data(idx: Optional[str], idx_type: str) -> Optional[str]:
         return None
 
 
+def get_cid_from_pugrest(idx: Optional[str], idx_type: str) -> Optional[str]:
+    """Get PubChem ID from any query throung Pubchem PUGREST.
+
+    :param idx: identifier to query
+    :param idx_type: type of identifier to query. Potential curies include : smiles, inchikey, inchi, name
+    :returns: PubChem ID
+    """
+    if idx_type.lower() == "smiles":
+        idx = check_smiles(idx)
+
+    if not idx:
+        return None
+
+    cid_data = requests.get(
+        f"https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/{idx_type}/{idx}/property/Title/JSON"
+    ).json()
+
+    if "Fault" in cid_data:
+        logger.info(f"Issue with {idx}")
+        return None
+
+    cidx = cid_data["PropertyTable"]["Properties"][0]["CID"]
+    return cidx
+
+
 def pubchem_xref(identifiers: list, identifier_type: str = "name") -> Tuple[pd.DataFrame, dict]:
     """Map chemical names or smiles or inchikeys to PubChem identifier.
 
@@ -273,12 +298,12 @@ def pubchem_xref(identifiers: list, identifier_type: str = "name") -> Tuple[pd.D
     # Getting the response to the query
     cid_data = []
     for idx in identifiers:
-        cid = get_cid_from_data(idx, identifier_type)
+        cid = get_cid_from_pugrest(idx, identifier_type)
         cid_data.append(
             {
                 "identifier": idx,
                 "identifier.source": identifier_type,
-                "target": str(cid).split(".")[0] if cid else None,
+                "target": f"pubchem.compounds:{str(cid).split('.')[0]}" if cid else None,
                 "target.source": "PubChem Compound",
             }
         )
