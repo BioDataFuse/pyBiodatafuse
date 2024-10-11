@@ -24,9 +24,9 @@ MolMeDB
 
 `MolMeDB <https://molmedb.upol.cz/detail/intro>` is an open chemistry database about interactions of molecules with membranes.
 
-.. autofunction:: pyBiodatafuse.annotators.molmedb.get_gene_mol_inhibitor
+.. autofunction:: pyBiodatafuse.annotators.molmedb.get_gene_compound_inhibitor
 
-.. autofunction:: pyBiodatafuse.annotators.molmedb.get_mol_gene_inhibitor
+.. autofunction:: pyBiodatafuse.annotators.molmedb.get_compound_gene_inhibitor
 
 OpenTargets
 ~~~~~~~~~~~~~~~
@@ -41,9 +41,9 @@ OpenTargets
 
 .. autofunction:: pyBiodatafuse.annotators.opentargets.get_gene_tractability
 
-.. autofunction:: pyBiodatafuse.annotators.opentargets.get_gene_drug_interactions
+.. autofunction:: pyBiodatafuse.annotators.opentargets.get_gene_compound_interactions
 
-.. autofunction:: pyBiodatafuse.annotators.opentargets.get_targetgene_disease_associations
+.. autofunction:: pyBiodatafuse.annotators.opentargets.get_gene_disease_associations
 
 StringDB
 ~~~~~~~~~~~~~~~
@@ -66,7 +66,7 @@ WikiPathways
 
 `Wikipathways <https://www.wikipathways.org/>` is an open science platform for biological pathways contributed, updated, and used by the research community.
 
-.. autofunction:: pyBiodatafuse.annotators.wikipathways.get_gene_wikipathway
+.. autofunction:: pyBiodatafuse.annotators.wikipathways.get_gene_wikipathways
 
 MINERVA
 ~~~~~~~~~~~~~~~

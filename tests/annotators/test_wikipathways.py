@@ -3,119 +3,124 @@
 
 """Tests for the WikiPathways annotator."""
 
-from unittest.mock import patch
+import unittest
+from unittest.mock import Mock, patch
 
 import pandas as pd
-import pytest
 from numpy import nan
 
-from pyBiodatafuse.annotators.wikipathways import get_gene_wikipathway, get_version_wikipathways
+from pyBiodatafuse.annotators import wikipathways
+from pyBiodatafuse.annotators.wikipathways import get_gene_wikipathways, get_version_wikipathways
+from pyBiodatafuse.constants import WIKIPATHWAYS
 
 
-@patch("pyBiodatafuse.annotators.wikipathways.SPARQLWrapper.queryAndConvert")
-def test_wikipathways_version(mock_sparql_request):
-    """Test the get_version_wikipathways."""
-    mock_sparql_request.return_value = {
-        "head": {"link": [], "vars": ["title"]},
-        "results": {
-            "distinct": False,
-            "ordered": True,
-            "bindings": [{"title": {"type": "literal", "value": "WikiPathways RDF 20231210"}}],
-        },
-    }
+class TestWikipathway(unittest.TestCase):
+    """Test the WikiPathway class."""
 
-    obtained_version = get_version_wikipathways()
-
-    expected_version = {"wikipathways_version": "WikiPathways RDF 20231210"}
-
-    assert obtained_version == expected_version
-
-
-@patch("pyBiodatafuse.annotators.wikipathways.SPARQLWrapper.queryAndConvert")
-def test_get_gene_wikipathway(mock_sparql_request, bridgedb_dataframe):
-    """Test the get_gene_wikipathway."""
-    mock_sparql_request.side_effect = [
-        {
-            "head": {"link": [], "vars": ["geneId", "pathwayId", "pathwayLabel", "geneCount"]},
-            "results": {
-                "distinct": False,
-                "ordered": True,
-                "bindings": [
-                    {
-                        "geneId": {"type": "literal", "value": "199857"},
-                        "pathwayId": {"type": "literal", "value": "WP5153"},
-                        "pathwayLabel": {
-                            "type": "literal",
-                            "xml:lang": "en",
-                            "value": "N-glycan biosynthesis",
-                        },
-                        "geneCount": {
-                            "type": "typed-literal",
-                            "datatype": "http://www.w3.org/2001/XMLSchema#integer",
-                            "value": "57",
-                        },
-                    },
-                    {
-                        "geneId": {"type": "literal", "value": "85365"},
-                        "pathwayId": {"type": "literal", "value": "WP5153"},
-                        "pathwayLabel": {
-                            "type": "literal",
-                            "xml:lang": "en",
-                            "value": "N-glycan biosynthesis",
-                        },
-                        "geneCount": {
-                            "type": "typed-literal",
-                            "datatype": "http://www.w3.org/2001/XMLSchema#integer",
-                            "value": "57",
-                        },
-                    },
-                ],
-            },
-        },
-        {
-            "head": {"link": [], "vars": ["title"]},
-            "results": {
-                "distinct": False,
-                "ordered": True,
-                "bindings": [{"title": {"type": "literal", "value": "WikiPathways RDF 20231210"}}],
-            },
-        },
-    ]
-
-    obtained_data, metadata = get_gene_wikipathway(bridgedb_dataframe)
-
-    expected_data = pd.Series(
-        [
-            [
-                {
-                    "pathwayId": "WP5153",
-                    "pathwayLabel": "N-glycan biosynthesis",
-                    "pathwayGeneCount": "57",
-                }
-            ],
-            [
-                {
-                    "pathwayId": "WP5153",
-                    "pathwayLabel": "N-glycan biosynthesis",
-                    "pathwayGeneCount": "57",
-                }
-            ],
-            [{"pathwayId": nan, "pathwayLabel": nan, "pathwayGeneCount": nan}],
+    @patch("pyBiodatafuse.annotators.wikipathways.SPARQLWrapper.queryAndConvert")
+    def test_wikipathways_version(self, mock_sparql_version):
+        """Test the get_version_wikipathways."""
+        mock_sparql_version.side_effect = [
+            {
+                "head": {"link": [], "vars": ["title"]},
+                "results": {
+                    "distinct": False,
+                    "ordered": True,
+                    "bindings": [
+                        {"title": {"type": "literal", "value": "WikiPathways RDF 20240310"}}
+                    ],
+                },
+            }
         ]
-    )
-    expected_data.name = "WikiPathways"
 
-    pd.testing.assert_series_equal(obtained_data["WikiPathways"], expected_data)
+        obtained_version = get_version_wikipathways()
 
+        expected_version = {"source_version": "WikiPathways RDF 20240310"}
 
-@pytest.fixture(scope="module")
-def bridgedb_dataframe():
-    """Reusable sample Pandas DataFrame to be used as input for the tests."""
-    return pd.DataFrame(
-        {
-            "identifier": ["ALG14", "ALG2", "CHRNA1"],
-            "identifier.source": ["HGNC", "HGNC", "HGNC"],
-            "target": ["199857", "85365", "1134"],
-            "target.source": ["NCBI Gene", "NCBI Gene", "NCBI Gene"],
-        }
-    )
+        assert obtained_version == expected_version
+
+    @patch("pyBiodatafuse.annotators.wikipathways.SPARQLWrapper.queryAndConvert")
+    def test_get_gene_wikipathways(self, mock_sparql_request):
+        """Test the get_gene_wikipathways."""
+        mock_sparql_request.side_effect = [
+            {
+                "head": {
+                    "link": [],
+                    "vars": ["gene_id", "pathway_id", "pathway_label", "pathway_gene_count"],
+                },
+                "results": {
+                    "distinct": False,
+                    "ordered": True,
+                    "bindings": [
+                        {
+                            "gene_id": {"type": "literal", "value": "85365"},
+                            "pathway_id": {"type": "literal", "value": "WP5153"},
+                            "pathway_label": {
+                                "type": "literal",
+                                "xml:lang": "en",
+                                "value": "N-glycan biosynthesis",
+                            },
+                            "pathway_gene_count": {
+                                "type": "typed-literal",
+                                "datatype": "http: //www.w3.org/2001/XMLSchema#integer",
+                                "value": "57",
+                            },
+                        },
+                        {
+                            "gene_id": {"type": "literal", "value": "199857"},
+                            "pathway_id": {"type": "literal", "value": "WP5153"},
+                            "pathway_label": {
+                                "type": "literal",
+                                "xml:lang": "en",
+                                "value": "N-glycan biosynthesis",
+                            },
+                            "pathway_gene_count": {
+                                "type": "typed-literal",
+                                "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+                                "value": "57",
+                            },
+                        },
+                    ],
+                },
+            }
+        ]
+
+        wikipathways.get_version_wikipathways = Mock(
+            return_value={"source_version": "WikiPathways RDF 20240310"}
+        )  # Mock the version call
+        wikipathways.check_endpoint_wikipathways = Mock(return_value=True)
+
+        bridgedb_dataframe = pd.DataFrame(
+            {
+                "identifier": ["ALG14", "ALG2", "CHRNA1"],
+                "identifier.source": ["HGNC", "HGNC", "HGNC"],
+                "target": ["199857", "85365", "1134"],
+                "target.source": ["NCBI Gene", "NCBI Gene", "NCBI Gene"],
+            }
+        )
+
+        obtained_data, metadata = get_gene_wikipathways(bridgedb_dataframe)
+
+        expected_data = pd.Series(
+            [
+                [
+                    {
+                        "pathway_id": "WP5153",
+                        "pathway_label": "N-glycan biosynthesis",
+                        "pathway_gene_count": 57.0,
+                    }
+                ],
+                [
+                    {
+                        "pathway_id": "WP5153",
+                        "pathway_label": "N-glycan biosynthesis",
+                        "pathway_gene_count": 57.0,
+                    }
+                ],
+                [{"pathway_id": nan, "pathway_label": nan, "pathway_gene_count": nan}],
+            ]
+        )
+        expected_data.name = WIKIPATHWAYS
+
+        pd.testing.assert_series_equal(obtained_data[WIKIPATHWAYS], expected_data)
+        self.assertIsInstance(metadata, dict)

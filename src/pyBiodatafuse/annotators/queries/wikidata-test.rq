@@ -1,0 +1,12 @@
+SELECT (SUBSTR(STR(?gene_),32) AS ?gene) ?geneId (SUBSTR(STR(?article_),32) AS ?article) ?pubmed
+WHERE {
+  VALUES ?geneId { "12345" }
+  {
+    ?gene_ wdt:P351 ?geneId .
+    ?geneProduct wdt:P702? ?gene_ .
+    SERVICE wdsubgraph:scholarly_articles {
+      ?article_ wdt:P921 ?geneProduct .
+      ?article_ wdt:P698 ?pubmed .
+    }
+  }
+} limit 1

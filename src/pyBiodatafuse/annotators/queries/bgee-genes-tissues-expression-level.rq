@@ -1,0 +1,30 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX orth: <http://purl.org/net/orth#>
+PREFIX lscr: <http://purl.org/lscr#>
+PREFIX genex: <http://purl.org/genex#>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+
+SELECT ?gene ?ensembl_id ?gene_id ?anatomical_entity_id ?anatomical_entity_name ?developmental_stage_id ?developmental_stage_name ?expression_level ?confidence_level_id ?confidence_level_name
+WHERE {
+  VALUES ?ensembl_id { $gene_list }
+  VALUES ?anatomical_entity_name { $anat_entities_list }
+  BIND(CONCAT("http://rdf.ebi.ac.uk/resource/ensembl/", STR(?ensembl_id)) AS ?gene_id_str)
+  BIND(URI(?gene_id_str) AS ?gene_id)
+  ?gene a orth:Gene .
+  ?gene lscr:xrefEnsemblGene ?gene_id .
+  ?expr genex:hasSequenceUnit ?gene.
+  ?expr a genex:Expression .
+  #?expr genex:hasConfidenceLevel obo:CIO_0000029 . # high confidence level
+  ?expr genex:hasConfidenceLevel ?confidence_level_id .
+  ?confidence_level_id rdfs:label ?confidence_level_label.
+  BIND(str(?confidence_level_label) as ?confidence_level_name)
+  ?expr genex:hasExpressionLevel ?expression_level .
+  ?expr genex:hasExpressionCondition ?cond .
+  ?cond genex:hasDevelopmentalStage ?developmental_stage_id.
+  ?developmental_stage_id rdfs:label ?developmental_stage_name.
+  ?cond genex:hasAnatomicalEntity ?anatomical_entity_id . # tissue
+  ?anatomical_entity_id rdfs:label ?anatomical_entity_name.
+  # also can filter by expression level: e.g. FILTER (?expression_level > 99) # highly expressed
+  VALUES (?developmental_stage_id) {(<http://purl.obolibrary.org/obo/HsapDv_0000226>) (<http://purl.obolibrary.org/obo/HsapDv_0000227>) (<http://purl.obolibrary.org/obo/UBERON_0000104>)}
+}

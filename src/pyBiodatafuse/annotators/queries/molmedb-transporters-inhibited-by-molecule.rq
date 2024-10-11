@@ -22,6 +22,5 @@ VALUES ?inhibitorInChIKey { $inhibitor_list }
                                      rdfs:label ?hgcn_id];
                     bao:BAO_0000208 [rdf:type mmdbvoc:InhibitionAssay;
                                      bao:BAO_0095007 repr:PositiveResult].
-  ?ref bibo:doi ?source_doi;
-       bibo:pmid ?source_pmid
+  ?ref bibo:pmid ?source_pmid
 }

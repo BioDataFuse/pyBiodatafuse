@@ -5,13 +5,16 @@
 import csv
 import datetime
 import logging
+import time
 from importlib import resources
 from typing import List, Optional, Tuple
 
 import pandas as pd
 import requests
-from pubchempy import BadRequestError, get_compounds
+from pubchempy import BadRequestError, PubChemHTTPError, get_compounds, get_synonyms
 from rdkit.Chem import CanonSmiles
+
+from pyBiodatafuse.constants import BRIDGEDB_ENDPOINT
 
 logger = logging.getLogger(__name__)
 
@@ -84,7 +87,7 @@ def get_version_datasource_bridgedb(input_species: Optional[str] = None) -> List
 def bridgedb_xref(
     identifiers: pd.DataFrame,
     input_species: Optional[str] = None,
-    input_datasource: Optional[str] = None,
+    input_datasource: str = "HGNC",
     output_datasource: Optional[list] = None,
 ) -> Tuple[pd.DataFrame, dict]:
     """Map input list using BridgeDb.
@@ -102,16 +105,12 @@ def bridgedb_xref(
     if not input_datasource:
         raise ValueError("Please provide the identifier datasource, e.g. HGNC")
 
-    if output_datasource is None:
+    if output_datasource is None or "All":
         output_datasource = [
-            "RefSeq",
-            "WikiGenes",
-            "OMIM",
             "Uniprot-TrEMBL",
             "NCBI Gene",
             "Ensembl",
             "HGNC Accession Number",
-            "PDB",
             "HGNC",
         ]
 
@@ -121,7 +120,7 @@ def bridgedb_xref(
     ]
 
     if len(identifiers) < 1:
-        raise ValueError("Please provide atleast one identifier datasource, e.g. HGNC")
+        raise ValueError("Please provide at least one identifier datasource, e.g. HGNC")
 
     post_con = (
         "\n".join([f"{identifier}\t{input_source}" for identifier in identifiers["identifier"]])
@@ -129,8 +128,7 @@ def bridgedb_xref(
     )
 
     # Setting up the query url
-    url = "https://webservice.bridgedb.org"
-    query_link = f"{url}/{input_species}/xrefsBatch"
+    query_link = f"{BRIDGEDB_ENDPOINT}/{input_species}/xrefsBatch"
 
     # Record the start time
     start_time = datetime.datetime.now()
@@ -138,6 +136,7 @@ def bridgedb_xref(
     # Getting the response to the query
     try:
         s = requests.post(url=query_link, data=post_con.encode())
+        s.raise_for_status()
     except Exception as e:
         raise ValueError("Error:", e)
 
@@ -176,9 +175,11 @@ def bridgedb_xref(
         data_sources.set_index("systemCode")["source"]
     )
 
+    # Drop not mapped ids
+    bridgedb = bridgedb.dropna(subset=["target.source"])
+
     # Subset based on the output_datasource
-    if not output_datasource == "All":
-        bridgedb = bridgedb[bridgedb["target.source"].isin(output_datasource)]
+    bridgedb = bridgedb[bridgedb["target.source"].isin(output_datasource)]
 
     bridgedb = bridgedb.drop_duplicates()
     identifiers.columns = [
@@ -250,19 +251,21 @@ def get_cid_from_data(idx: Optional[str], idx_type: str) -> Optional[str]:
         logger.info(f"Issue with {idx}")
         return None
 
+    except IndexError:
+        logger.info(f"Issue with {idx}")
+        return None
 
-def pubchem_xref(
-    identifiers: pd.DataFrame, indentifier_type: str = "name"
-) -> Tuple[pd.DataFrame, dict]:
+
+def pubchem_xref(identifiers: list, identifier_type: str = "name") -> Tuple[pd.DataFrame, dict]:
     """Map chemical names or smiles or inchikeys to PubChem identifier.
 
-    :param identifiers: a dataframe with one column called identifier (the output of data_loader.py)
-    :param indentifier_type: type of identifier to query. Potential curies include : smiles, inchikey, inchi, name
+    :param identifiers: a list of identifiers to query
+    :param identifier_type: type of identifier to query. Potential curies include : smiles, inchikey, inchi, name
     :raises ValueError: if the input_datasource is not provided or if the request fails
     :returns: a DataFrame containing the mapped identifiers and dictionary of the data resource metadata.
     """
     if len(identifiers) < 1:
-        raise ValueError("Please provide atleast one input.")
+        raise ValueError("Please provide at least one input.")
 
     # Record the start time
     start_time = datetime.datetime.now()
@@ -270,12 +273,12 @@ def pubchem_xref(
     # Getting the response to the query
     cid_data = []
     for idx in identifiers:
-        cid = get_cid_from_data(idx, indentifier_type)
+        cid = get_cid_from_data(idx, identifier_type)
         cid_data.append(
             {
                 "identifier": idx,
-                "identifier.source": "name",
-                "target": cid,
+                "identifier.source": identifier_type,
+                "target": str(cid).split(".")[0] if cid else None,
                 "target.source": "PubChem Compound",
             }
         )
@@ -303,10 +306,45 @@ def pubchem_xref(
         },
         "query": {
             "size": len(identifiers),
-            "input_type": indentifier_type,
+            "input_type": identifier_type,
             "time": time_elapsed,
             "date": current_date,
         },
     }
 
     return pubchem_df, pubchem_metadata
+
+
+def cid2chembl(cids: list) -> dict:
+    """Map Pubchem CIDs to ChEMBL identifier.
+
+    :param cids: a list of CIDs identifiers to query
+    :raises ValueError: if the input_datasource is not provided or if the request fails
+    :returns: a dictonary of ChEMBL mapped to CID identifiers and dictionary of the data resource metadata.
+    """
+    if len(cids) < 1:
+        raise ValueError("Please provide at least one input.")
+
+    # Getting the response to the query
+    chembl_data = {}  # ChEMBL ids as keys and PubChem ids as values
+    for pubchem_idx in cids:
+        try:
+            other_idenfitiers = get_synonyms(identifier=pubchem_idx)
+        except (PubChemHTTPError, BadRequestError):  # too many request
+            time.sleep(3)
+            try:
+                other_idenfitiers = get_synonyms(identifier=pubchem_idx)
+            except BadRequestError:  # incorrect pubchem id
+                continue
+
+        if len(other_idenfitiers) < 1:
+            continue
+
+        other_idenfitiers = other_idenfitiers[0]
+
+        for idx in other_idenfitiers["Synonym"]:
+            if idx.startswith("CHEMBL"):
+                chembl_data[idx] = pubchem_idx
+                break
+
+    return chembl_data

@@ -1,0 +1,1245 @@
+[
+    {
+        "head": {
+            "vars": [
+                "upProt",
+                "assay",
+                "assay_type",
+                "outcome",
+                "compound_cid",
+                "ref_cit",
+                "compound_name",
+                "SMILES",
+                "InChI",
+                "target_count"
+            ]
+        },
+        "results": {
+            "bindings": [
+                {
+                    "upProt": {
+                        "type": "uri",
+                        "value": "http://purl.uniprot.org/uniprot/P46098"
+                    },
+                    "assay": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID6505"
+                    },
+                    "assay_type": {
+                        "type": "uri",
+                        "value": "http://www.bioassayontology.org/bao#BAO_0000192"
+                    },
+                    "outcome": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/vocabulary#active"
+                    },
+                    "compound_cid": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/compound/CID9911844"
+                    },
+                    "ref_cit": {
+                        "type": "literal",
+                        "value": "Kikuchi C, Suzuki H, Hiranuma T, Koyama M. New tetrahydrobenzindoles as potent and selective 5-HT(7) antagonists with increased In vitro metabolic stability. Bioorg Med Chem Lett. 2003 Jan 06;13(1):61–4. doi: 10.1016/s0960-894x(02)00842-9. PMID: 12467617.",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+                    },
+                    "compound_name": {
+                        "type": "literal",
+                        "value": "DR-4485 free base",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+                    },
+                    "smiles": {
+                        "type": "literal",
+                        "value": "C1CC2=C(C=CC3=C2C(C1)(C(=O)N3)CCCCN4CCC(=CC4)C5=CC=C(C=C5)Cl)Cl",
+                        "xml:lang": "en"
+                    },
+                    "inchi": {
+                        "type": "literal",
+                        "value": "InChI=1S/C26H28Cl2N2O/c27-20-7-5-18(6-8-20)19-11-16-30(17-12-19)15-2-1-13-26-14-3-4-21-22(28)9-10-23(24(21)26)29-25(26)31/h5-11H,1-4,12-17H2,(H,29,31)",
+                        "xml:lang": "en"
+                    },
+                    "target_count": {
+                        "type": "literal",
+                        "value": "5",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#integer"
+                    }
+                },
+                {
+                    "upProt": {
+                        "type": "uri",
+                        "value": "http://purl.uniprot.org/uniprot/P00533"
+                    },
+                    "assay": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID1727"
+                    },
+                    "assay_type": {
+                        "type": "uri",
+                        "value": "http://www.bioassayontology.org/bao#BAO_0000186"
+                    },
+                    "outcome": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/vocabulary#active"
+                    },
+                    "compound_cid": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/compound/CID5211059"
+                    },
+                    "compound_name": {
+                        "type": "literal",
+                        "value": "N-(3,4-difluorophenyl)-7-thia-9,11-diazatricyclo[6.4.0.02,6]dodeca-1(12),2(6),8,10-tetraen-12-amine",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+                    },
+                    "smiles": {
+                        "type": "literal",
+                        "value": "C1CC2=C(C1)SC3=NC=NC(=C23)NC4=CC(=C(C=C4)F)F",
+                        "xml:lang": "en"
+                    },
+                    "inchi": {
+                        "type": "literal",
+                        "value": "InChI=1S/C15H11F2N3S/c16-10-5-4-8(6-11(10)17)20-14-13-9-2-1-3-12(9)21-15(13)19-7-18-14/h4-7H,1-3H2,(H,18,19,20)",
+                        "xml:lang": "en"
+                    },
+                    "target_count": {
+                        "type": "literal",
+                        "value": "1",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#integer"
+                    }
+                },
+                {
+                    "upProt": {
+                        "type": "uri",
+                        "value": "http://purl.uniprot.org/uniprot/P00533"
+                    },
+                    "assay": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID1731"
+                    },
+                    "assay_type": {
+                        "type": "uri",
+                        "value": "http://www.bioassayontology.org/bao#BAO_0000186"
+                    },
+                    "outcome": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/vocabulary#active"
+                    },
+                    "compound_cid": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/compound/CID5211059"
+                    },
+                    "compound_name": {
+                        "type": "literal",
+                        "value": "N-(3,4-difluorophenyl)-7-thia-9,11-diazatricyclo[6.4.0.02,6]dodeca-1(12),2(6),8,10-tetraen-12-amine",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+                    },
+                    "smiles": {
+                        "type": "literal",
+                        "value": "C1CC2=C(C1)SC3=NC=NC(=C23)NC4=CC(=C(C=C4)F)F",
+                        "xml:lang": "en"
+                    },
+                    "inchi": {
+                        "type": "literal",
+                        "value": "InChI=1S/C15H11F2N3S/c16-10-5-4-8(6-11(10)17)20-14-13-9-2-1-3-12(9)21-15(13)19-7-18-14/h4-7H,1-3H2,(H,18,19,20)",
+                        "xml:lang": "en"
+                    },
+                    "target_count": {
+                        "type": "literal",
+                        "value": "1",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#integer"
+                    }
+                },
+                {
+                    "upProt": {
+                        "type": "uri",
+                        "value": "http://purl.uniprot.org/uniprot/P00533"
+                    },
+                    "assay": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID1726"
+                    },
+                    "assay_type": {
+                        "type": "uri",
+                        "value": "http://www.bioassayontology.org/bao#BAO_0000186"
+                    },
+                    "outcome": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/vocabulary#active"
+                    },
+                    "compound_cid": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/compound/CID2303746"
+                    },
+                    "compound_name": {
+                        "type": "literal",
+                        "value": "4-Methyl-3-(2-phenylhydrazinyl)-1,5-benzodiazepin-2-one",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+                    },
+                    "smiles": {
+                        "type": "literal",
+                        "value": "CC1=C(C(=O)N=C2C=CC=CC2=N1)NNC3=CC=CC=C3",
+                        "xml:lang": "en"
+                    },
+                    "inchi": {
+                        "type": "literal",
+                        "value": "InChI=1S/C16H14N4O/c1-11-15(20-19-12-7-3-2-4-8-12)16(21)18-14-10-6-5-9-13(14)17-11/h2-10,19H,1H3,(H,18,20,21)",
+                        "xml:lang": "en"
+                    },
+                    "target_count": {
+                        "type": "literal",
+                        "value": "1",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#integer"
+                    }
+                },
+                {
+                    "upProt": {
+                        "type": "uri",
+                        "value": "http://purl.uniprot.org/uniprot/P00533"
+                    },
+                    "assay": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID1727"
+                    },
+                    "assay_type": {
+                        "type": "uri",
+                        "value": "http://www.bioassayontology.org/bao#BAO_0000186"
+                    },
+                    "outcome": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/vocabulary#active"
+                    },
+                    "compound_cid": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/compound/CID2303746"
+                    },
+                    "compound_name": {
+                        "type": "literal",
+                        "value": "4-Methyl-3-(2-phenylhydrazinyl)-1,5-benzodiazepin-2-one",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+                    },
+                    "smiles": {
+                        "type": "literal",
+                        "value": "CC1=C(C(=O)N=C2C=CC=CC2=N1)NNC3=CC=CC=C3",
+                        "xml:lang": "en"
+                    },
+                    "inchi": {
+                        "type": "literal",
+                        "value": "InChI=1S/C16H14N4O/c1-11-15(20-19-12-7-3-2-4-8-12)16(21)18-14-10-6-5-9-13(14)17-11/h2-10,19H,1H3,(H,18,20,21)",
+                        "xml:lang": "en"
+                    },
+                    "target_count": {
+                        "type": "literal",
+                        "value": "1",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#integer"
+                    }
+                },
+                {
+                    "upProt": {
+                        "type": "uri",
+                        "value": "http://purl.uniprot.org/uniprot/P00533"
+                    },
+                    "assay": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID1729"
+                    },
+                    "assay_type": {
+                        "type": "uri",
+                        "value": "http://www.bioassayontology.org/bao#BAO_0000186"
+                    },
+                    "outcome": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/vocabulary#active"
+                    },
+                    "compound_cid": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/compound/CID2303746"
+                    },
+                    "compound_name": {
+                        "type": "literal",
+                        "value": "4-Methyl-3-(2-phenylhydrazinyl)-1,5-benzodiazepin-2-one",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+                    },
+                    "smiles": {
+                        "type": "literal",
+                        "value": "CC1=C(C(=O)N=C2C=CC=CC2=N1)NNC3=CC=CC=C3",
+                        "xml:lang": "en"
+                    },
+                    "inchi": {
+                        "type": "literal",
+                        "value": "InChI=1S/C16H14N4O/c1-11-15(20-19-12-7-3-2-4-8-12)16(21)18-14-10-6-5-9-13(14)17-11/h2-10,19H,1H3,(H,18,20,21)",
+                        "xml:lang": "en"
+                    },
+                    "target_count": {
+                        "type": "literal",
+                        "value": "1",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#integer"
+                    }
+                },
+                {
+                    "upProt": {
+                        "type": "uri",
+                        "value": "http://purl.uniprot.org/uniprot/P00533"
+                    },
+                    "assay": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID1731"
+                    },
+                    "assay_type": {
+                        "type": "uri",
+                        "value": "http://www.bioassayontology.org/bao#BAO_0000186"
+                    },
+                    "outcome": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/vocabulary#active"
+                    },
+                    "compound_cid": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/compound/CID2303746"
+                    },
+                    "compound_name": {
+                        "type": "literal",
+                        "value": "4-Methyl-3-(2-phenylhydrazinyl)-1,5-benzodiazepin-2-one",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+                    },
+                    "smiles": {
+                        "type": "literal",
+                        "value": "CC1=C(C(=O)N=C2C=CC=CC2=N1)NNC3=CC=CC=C3",
+                        "xml:lang": "en"
+                    },
+                    "inchi": {
+                        "type": "literal",
+                        "value": "InChI=1S/C16H14N4O/c1-11-15(20-19-12-7-3-2-4-8-12)16(21)18-14-10-6-5-9-13(14)17-11/h2-10,19H,1H3,(H,18,20,21)",
+                        "xml:lang": "en"
+                    },
+                    "target_count": {
+                        "type": "literal",
+                        "value": "1",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#integer"
+                    }
+                },
+                {
+                    "upProt": {
+                        "type": "uri",
+                        "value": "http://purl.uniprot.org/uniprot/P00533"
+                    },
+                    "assay": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID1729"
+                    },
+                    "assay_type": {
+                        "type": "uri",
+                        "value": "http://www.bioassayontology.org/bao#BAO_0000186"
+                    },
+                    "outcome": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/vocabulary#active"
+                    },
+                    "compound_cid": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/compound/CID2322338"
+                    },
+                    "compound_name": {
+                        "type": "literal",
+                        "value": "7-Methyl-3-(phenylhydrazo)-1,5-benzodiazepin-2-one",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+                    },
+                    "smiles": {
+                        "type": "literal",
+                        "value": "CC1=CC2=NC=C(C(=O)N=C2C=C1)NNC3=CC=CC=C3",
+                        "xml:lang": "en"
+                    },
+                    "inchi": {
+                        "type": "literal",
+                        "value": "InChI=1S/C16H14N4O/c1-11-7-8-13-14(9-11)17-10-15(16(21)18-13)20-19-12-5-3-2-4-6-12/h2-10,19H,1H3,(H,18,20,21)",
+                        "xml:lang": "en"
+                    },
+                    "target_count": {
+                        "type": "literal",
+                        "value": "1",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#integer"
+                    }
+                },
+                {
+                    "upProt": {
+                        "type": "uri",
+                        "value": "http://purl.uniprot.org/uniprot/P00533"
+                    },
+                    "assay": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID1731"
+                    },
+                    "assay_type": {
+                        "type": "uri",
+                        "value": "http://www.bioassayontology.org/bao#BAO_0000186"
+                    },
+                    "outcome": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/vocabulary#active"
+                    },
+                    "compound_cid": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/compound/CID2322338"
+                    },
+                    "compound_name": {
+                        "type": "literal",
+                        "value": "7-Methyl-3-(phenylhydrazo)-1,5-benzodiazepin-2-one",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+                    },
+                    "smiles": {
+                        "type": "literal",
+                        "value": "CC1=CC2=NC=C(C(=O)N=C2C=C1)NNC3=CC=CC=C3",
+                        "xml:lang": "en"
+                    },
+                    "inchi": {
+                        "type": "literal",
+                        "value": "InChI=1S/C16H14N4O/c1-11-7-8-13-14(9-11)17-10-15(16(21)18-13)20-19-12-5-3-2-4-6-12/h2-10,19H,1H3,(H,18,20,21)",
+                        "xml:lang": "en"
+                    },
+                    "target_count": {
+                        "type": "literal",
+                        "value": "1",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#integer"
+                    }
+                },
+                {
+                    "upProt": {
+                        "type": "uri",
+                        "value": "http://purl.uniprot.org/uniprot/P00533"
+                    },
+                    "assay": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID1727"
+                    },
+                    "assay_type": {
+                        "type": "uri",
+                        "value": "http://www.bioassayontology.org/bao#BAO_0000186"
+                    },
+                    "outcome": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/vocabulary#active"
+                    },
+                    "compound_cid": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/compound/CID2303119"
+                    },
+                    "compound_name": {
+                        "type": "literal",
+                        "value": "4-Methyl-3-[2-(4-methylphenyl)hydrazinyl]-1,5-benzodiazepin-2-one",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+                    },
+                    "smiles": {
+                        "type": "literal",
+                        "value": "CC1=CC=C(C=C1)NNC2=C(N=C3C=CC=CC3=NC2=O)C",
+                        "xml:lang": "en"
+                    },
+                    "inchi": {
+                        "type": "literal",
+                        "value": "InChI=1S/C17H16N4O/c1-11-7-9-13(10-8-11)20-21-16-12(2)18-14-5-3-4-6-15(14)19-17(16)22/h3-10,20H,1-2H3,(H,19,21,22)",
+                        "xml:lang": "en"
+                    },
+                    "target_count": {
+                        "type": "literal",
+                        "value": "1",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#integer"
+                    }
+                },
+                {
+                    "upProt": {
+                        "type": "uri",
+                        "value": "http://purl.uniprot.org/uniprot/P00533"
+                    },
+                    "assay": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID1731"
+                    },
+                    "assay_type": {
+                        "type": "uri",
+                        "value": "http://www.bioassayontology.org/bao#BAO_0000186"
+                    },
+                    "outcome": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/vocabulary#active"
+                    },
+                    "compound_cid": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/compound/CID2303119"
+                    },
+                    "compound_name": {
+                        "type": "literal",
+                        "value": "4-Methyl-3-[2-(4-methylphenyl)hydrazinyl]-1,5-benzodiazepin-2-one",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+                    },
+                    "smiles": {
+                        "type": "literal",
+                        "value": "CC1=CC=C(C=C1)NNC2=C(N=C3C=CC=CC3=NC2=O)C",
+                        "xml:lang": "en"
+                    },
+                    "inchi": {
+                        "type": "literal",
+                        "value": "InChI=1S/C17H16N4O/c1-11-7-9-13(10-8-11)20-21-16-12(2)18-14-5-3-4-6-15(14)19-17(16)22/h3-10,20H,1-2H3,(H,19,21,22)",
+                        "xml:lang": "en"
+                    },
+                    "target_count": {
+                        "type": "literal",
+                        "value": "1",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#integer"
+                    }
+                },
+                {
+                    "upProt": {
+                        "type": "uri",
+                        "value": "http://purl.uniprot.org/uniprot/P00533"
+                    },
+                    "assay": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID1727"
+                    },
+                    "assay_type": {
+                        "type": "uri",
+                        "value": "http://www.bioassayontology.org/bao#BAO_0000186"
+                    },
+                    "outcome": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/vocabulary#active"
+                    },
+                    "compound_cid": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/compound/CID176870"
+                    },
+                    "compound_name": {
+                        "type": "literal",
+                        "value": "Erlotinib",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+                    },
+                    "smiles": {
+                        "type": "literal",
+                        "value": "COCCOC1=C(C=C2C(=C1)C(=NC=N2)NC3=CC=CC(=C3)C#C)OCCOC",
+                        "xml:lang": "en"
+                    },
+                    "inchi": {
+                        "type": "literal",
+                        "value": "InChI=1S/C22H23N3O4/c1-4-16-6-5-7-17(12-16)25-22-18-13-20(28-10-8-26-2)21(29-11-9-27-3)14-19(18)23-15-24-22/h1,5-7,12-15H,8-11H2,2-3H3,(H,23,24,25)",
+                        "xml:lang": "en"
+                    },
+                    "target_count": {
+                        "type": "literal",
+                        "value": "1",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#integer"
+                    }
+                },
+                {
+                    "upProt": {
+                        "type": "uri",
+                        "value": "http://purl.uniprot.org/uniprot/P00533"
+                    },
+                    "assay": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID1731"
+                    },
+                    "assay_type": {
+                        "type": "uri",
+                        "value": "http://www.bioassayontology.org/bao#BAO_0000186"
+                    },
+                    "outcome": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/vocabulary#active"
+                    },
+                    "compound_cid": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/compound/CID176870"
+                    },
+                    "compound_name": {
+                        "type": "literal",
+                        "value": "Erlotinib",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+                    },
+                    "smiles": {
+                        "type": "literal",
+                        "value": "COCCOC1=C(C=C2C(=C1)C(=NC=N2)NC3=CC=CC(=C3)C#C)OCCOC",
+                        "xml:lang": "en"
+                    },
+                    "inchi": {
+                        "type": "literal",
+                        "value": "InChI=1S/C22H23N3O4/c1-4-16-6-5-7-17(12-16)25-22-18-13-20(28-10-8-26-2)21(29-11-9-27-3)14-19(18)23-15-24-22/h1,5-7,12-15H,8-11H2,2-3H3,(H,23,24,25)",
+                        "xml:lang": "en"
+                    },
+                    "target_count": {
+                        "type": "literal",
+                        "value": "1",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#integer"
+                    }
+                },
+                {
+                    "upProt": {
+                        "type": "uri",
+                        "value": "http://purl.uniprot.org/uniprot/P00533"
+                    },
+                    "assay": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID1729"
+                    },
+                    "assay_type": {
+                        "type": "uri",
+                        "value": "http://www.bioassayontology.org/bao#BAO_0000186"
+                    },
+                    "outcome": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/vocabulary#active"
+                    },
+                    "compound_cid": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/compound/CID123631"
+                    },
+                    "compound_name": {
+                        "type": "literal",
+                        "value": "Gefitinib",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+                    },
+                    "smiles": {
+                        "type": "literal",
+                        "value": "COC1=C(C=C2C(=C1)N=CN=C2NC3=CC(=C(C=C3)F)Cl)OCCCN4CCOCC4",
+                        "xml:lang": "en"
+                    },
+                    "inchi": {
+                        "type": "literal",
+                        "value": "InChI=1S/C22H24ClFN4O3/c1-29-20-13-19-16(12-21(20)31-8-2-5-28-6-9-30-10-7-28)22(26-14-25-19)27-15-3-4-18(24)17(23)11-15/h3-4,11-14H,2,5-10H2,1H3,(H,25,26,27)",
+                        "xml:lang": "en"
+                    },
+                    "target_count": {
+                        "type": "literal",
+                        "value": "1",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#integer"
+                    }
+                },
+                {
+                    "upProt": {
+                        "type": "uri",
+                        "value": "http://purl.uniprot.org/uniprot/P00533"
+                    },
+                    "assay": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID1731"
+                    },
+                    "assay_type": {
+                        "type": "uri",
+                        "value": "http://www.bioassayontology.org/bao#BAO_0000186"
+                    },
+                    "outcome": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/vocabulary#active"
+                    },
+                    "compound_cid": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/compound/CID123631"
+                    },
+                    "compound_name": {
+                        "type": "literal",
+                        "value": "Gefitinib",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+                    },
+                    "smiles": {
+                        "type": "literal",
+                        "value": "COC1=C(C=C2C(=C1)N=CN=C2NC3=CC(=C(C=C3)F)Cl)OCCCN4CCOCC4",
+                        "xml:lang": "en"
+                    },
+                    "inchi": {
+                        "type": "literal",
+                        "value": "InChI=1S/C22H24ClFN4O3/c1-29-20-13-19-16(12-21(20)31-8-2-5-28-6-9-30-10-7-28)22(26-14-25-19)27-15-3-4-18(24)17(23)11-15/h3-4,11-14H,2,5-10H2,1H3,(H,25,26,27)",
+                        "xml:lang": "en"
+                    },
+                    "target_count": {
+                        "type": "literal",
+                        "value": "1",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#integer"
+                    }
+                },
+                {
+                    "upProt": {
+                        "type": "uri",
+                        "value": "http://purl.uniprot.org/uniprot/P00533"
+                    },
+                    "assay": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID1727"
+                    },
+                    "assay_type": {
+                        "type": "uri",
+                        "value": "http://www.bioassayontology.org/bao#BAO_0000186"
+                    },
+                    "outcome": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/vocabulary#active"
+                    },
+                    "compound_cid": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/compound/CID16219404"
+                    },
+                    "compound_name": {
+                        "type": "literal",
+                        "value": "GW 583340 dihydrochloride",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+                    },
+                    "smiles": {
+                        "type": "literal",
+                        "value": "CS(=O)(=O)CCNCC1=NC(=CS1)C2=CC3=C(C=C2)N=CN=C3NC4=CC(=C(C=C4)OCC5=CC(=CC=C5)F)Cl.Cl.Cl",
+                        "xml:lang": "en"
+                    },
+                    "inchi": {
+                        "type": "literal",
+                        "value": "InChI=1S/C28H25ClFN5O3S2.2ClH/c1-40(36,37)10-9-31-14-27-35-25(16-39-27)19-5-7-24-22(12-19)28(33-17-32-24)34-21-6-8-26(23(29)13-21)38-15-18-3-2-4-20(30)11-18;;/h2-8,11-13,16-17,31H,9-10,14-15H2,1H3,(H,32,33,34);2*1H",
+                        "xml:lang": "en"
+                    },
+                    "target_count": {
+                        "type": "literal",
+                        "value": "1",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#integer"
+                    }
+                },
+                {
+                    "upProt": {
+                        "type": "uri",
+                        "value": "http://purl.uniprot.org/uniprot/P00533"
+                    },
+                    "assay": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID1726"
+                    },
+                    "assay_type": {
+                        "type": "uri",
+                        "value": "http://www.bioassayontology.org/bao#BAO_0000186"
+                    },
+                    "outcome": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/vocabulary#active"
+                    },
+                    "compound_cid": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/compound/CID44259"
+                    },
+                    "compound_name": {
+                        "type": "literal",
+                        "value": "Staurosporine",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+                    },
+                    "smiles": {
+                        "type": "literal",
+                        "value": "CC12C(C(CC(O1)N3C4=CC=CC=C4C5=C6C(=C7C8=CC=CC=C8N2C7=C53)CNC6=O)NC)OC",
+                        "xml:lang": "en"
+                    },
+                    "inchi": {
+                        "type": "literal",
+                        "value": "InChI=1S/C28H26N4O3/c1-28-26(34-3)17(29-2)12-20(35-28)31-18-10-6-4-8-14(18)22-23-16(13-30-27(23)33)21-15-9-5-7-11-19(15)32(28)25(21)24(22)31/h4-11,17,20,26,29H,12-13H2,1-3H3,(H,30,33)/t17-,20-,26-,28+/m1/s1",
+                        "xml:lang": "en"
+                    },
+                    "target_count": {
+                        "type": "literal",
+                        "value": "1",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#integer"
+                    }
+                },
+                {
+                    "upProt": {
+                        "type": "uri",
+                        "value": "http://purl.uniprot.org/uniprot/P00533"
+                    },
+                    "assay": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID1727"
+                    },
+                    "assay_type": {
+                        "type": "uri",
+                        "value": "http://www.bioassayontology.org/bao#BAO_0000186"
+                    },
+                    "outcome": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/vocabulary#active"
+                    },
+                    "compound_cid": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/compound/CID44259"
+                    },
+                    "compound_name": {
+                        "type": "literal",
+                        "value": "Staurosporine",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+                    },
+                    "smiles": {
+                        "type": "literal",
+                        "value": "CC12C(C(CC(O1)N3C4=CC=CC=C4C5=C6C(=C7C8=CC=CC=C8N2C7=C53)CNC6=O)NC)OC",
+                        "xml:lang": "en"
+                    },
+                    "inchi": {
+                        "type": "literal",
+                        "value": "InChI=1S/C28H26N4O3/c1-28-26(34-3)17(29-2)12-20(35-28)31-18-10-6-4-8-14(18)22-23-16(13-30-27(23)33)21-15-9-5-7-11-19(15)32(28)25(21)24(22)31/h4-11,17,20,26,29H,12-13H2,1-3H3,(H,30,33)/t17-,20-,26-,28+/m1/s1",
+                        "xml:lang": "en"
+                    },
+                    "target_count": {
+                        "type": "literal",
+                        "value": "1",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#integer"
+                    }
+                },
+                {
+                    "upProt": {
+                        "type": "uri",
+                        "value": "http://purl.uniprot.org/uniprot/P00533"
+                    },
+                    "assay": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID1729"
+                    },
+                    "assay_type": {
+                        "type": "uri",
+                        "value": "http://www.bioassayontology.org/bao#BAO_0000186"
+                    },
+                    "outcome": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/vocabulary#active"
+                    },
+                    "compound_cid": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/compound/CID44259"
+                    },
+                    "compound_name": {
+                        "type": "literal",
+                        "value": "Staurosporine",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+                    },
+                    "smiles": {
+                        "type": "literal",
+                        "value": "CC12C(C(CC(O1)N3C4=CC=CC=C4C5=C6C(=C7C8=CC=CC=C8N2C7=C53)CNC6=O)NC)OC",
+                        "xml:lang": "en"
+                    },
+                    "inchi": {
+                        "type": "literal",
+                        "value": "InChI=1S/C28H26N4O3/c1-28-26(34-3)17(29-2)12-20(35-28)31-18-10-6-4-8-14(18)22-23-16(13-30-27(23)33)21-15-9-5-7-11-19(15)32(28)25(21)24(22)31/h4-11,17,20,26,29H,12-13H2,1-3H3,(H,30,33)/t17-,20-,26-,28+/m1/s1",
+                        "xml:lang": "en"
+                    },
+                    "target_count": {
+                        "type": "literal",
+                        "value": "1",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#integer"
+                    }
+                },
+                {
+                    "upProt": {
+                        "type": "uri",
+                        "value": "http://purl.uniprot.org/uniprot/P00533"
+                    },
+                    "assay": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID1731"
+                    },
+                    "assay_type": {
+                        "type": "uri",
+                        "value": "http://www.bioassayontology.org/bao#BAO_0000186"
+                    },
+                    "outcome": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/vocabulary#active"
+                    },
+                    "compound_cid": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/compound/CID44259"
+                    },
+                    "compound_name": {
+                        "type": "literal",
+                        "value": "Staurosporine",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+                    },
+                    "smiles": {
+                        "type": "literal",
+                        "value": "CC12C(C(CC(O1)N3C4=CC=CC=C4C5=C6C(=C7C8=CC=CC=C8N2C7=C53)CNC6=O)NC)OC",
+                        "xml:lang": "en"
+                    },
+                    "inchi": {
+                        "type": "literal",
+                        "value": "InChI=1S/C28H26N4O3/c1-28-26(34-3)17(29-2)12-20(35-28)31-18-10-6-4-8-14(18)22-23-16(13-30-27(23)33)21-15-9-5-7-11-19(15)32(28)25(21)24(22)31/h4-11,17,20,26,29H,12-13H2,1-3H3,(H,30,33)/t17-,20-,26-,28+/m1/s1",
+                        "xml:lang": "en"
+                    },
+                    "target_count": {
+                        "type": "literal",
+                        "value": "1",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#integer"
+                    }
+                },
+                {
+                    "upProt": {
+                        "type": "uri",
+                        "value": "http://purl.uniprot.org/uniprot/P00533"
+                    },
+                    "assay": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID1742"
+                    },
+                    "assay_type": {
+                        "type": "uri",
+                        "value": "http://www.bioassayontology.org/bao#BAO_0000190"
+                    },
+                    "outcome": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/vocabulary#active"
+                    },
+                    "compound_cid": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/compound/CID5211059"
+                    },
+                    "compound_name": {
+                        "type": "literal",
+                        "value": "N-(3,4-difluorophenyl)-7-thia-9,11-diazatricyclo[6.4.0.02,6]dodeca-1(12),2(6),8,10-tetraen-12-amine",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+                    },
+                    "smiles": {
+                        "type": "literal",
+                        "value": "C1CC2=C(C1)SC3=NC=NC(=C23)NC4=CC(=C(C=C4)F)F",
+                        "xml:lang": "en"
+                    },
+                    "inchi": {
+                        "type": "literal",
+                        "value": "InChI=1S/C15H11F2N3S/c16-10-5-4-8(6-11(10)17)20-14-13-9-2-1-3-12(9)21-15(13)19-7-18-14/h4-7H,1-3H2,(H,18,19,20)",
+                        "xml:lang": "en"
+                    },
+                    "target_count": {
+                        "type": "literal",
+                        "value": "1",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#integer"
+                    }
+                },
+                {
+                    "upProt": {
+                        "type": "uri",
+                        "value": "http://purl.uniprot.org/uniprot/P00533"
+                    },
+                    "assay": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID1742"
+                    },
+                    "assay_type": {
+                        "type": "uri",
+                        "value": "http://www.bioassayontology.org/bao#BAO_0000190"
+                    },
+                    "outcome": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/vocabulary#active"
+                    },
+                    "compound_cid": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/compound/CID9549284"
+                    },
+                    "compound_name": {
+                        "type": "literal",
+                        "value": "alpha-[Amino[(4-aminophenyl)thio]methylene]-2-(trifluoromethyl)benzeneacetonitrile",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+                    },
+                    "smiles": {
+                        "type": "literal",
+                        "value": "C1=CC=C(C(=C1)C(=C(N)SC2=CC=C(C=C2)N)C#N)C(F)(F)F",
+                        "xml:lang": "en"
+                    },
+                    "inchi": {
+                        "type": "literal",
+                        "value": "InChI=1S/C16H12F3N3S/c17-16(18,19)14-4-2-1-3-12(14)13(9-20)15(22)23-11-7-5-10(21)6-8-11/h1-8H,21-22H2/b15-13+",
+                        "xml:lang": "en"
+                    },
+                    "target_count": {
+                        "type": "literal",
+                        "value": "1",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#integer"
+                    }
+                },
+                {
+                    "upProt": {
+                        "type": "uri",
+                        "value": "http://purl.uniprot.org/uniprot/P00533"
+                    },
+                    "assay": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID1742"
+                    },
+                    "assay_type": {
+                        "type": "uri",
+                        "value": "http://www.bioassayontology.org/bao#BAO_0000190"
+                    },
+                    "outcome": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/vocabulary#active"
+                    },
+                    "compound_cid": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/compound/CID2322338"
+                    },
+                    "compound_name": {
+                        "type": "literal",
+                        "value": "7-Methyl-3-(phenylhydrazo)-1,5-benzodiazepin-2-one",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+                    },
+                    "smiles": {
+                        "type": "literal",
+                        "value": "CC1=CC2=NC=C(C(=O)N=C2C=C1)NNC3=CC=CC=C3",
+                        "xml:lang": "en"
+                    },
+                    "inchi": {
+                        "type": "literal",
+                        "value": "InChI=1S/C16H14N4O/c1-11-7-8-13-14(9-11)17-10-15(16(21)18-13)20-19-12-5-3-2-4-6-12/h2-10,19H,1H3,(H,18,20,21)",
+                        "xml:lang": "en"
+                    },
+                    "target_count": {
+                        "type": "literal",
+                        "value": "1",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#integer"
+                    }
+                },
+                {
+                    "upProt": {
+                        "type": "uri",
+                        "value": "http://purl.uniprot.org/uniprot/P00533"
+                    },
+                    "assay": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID1742"
+                    },
+                    "assay_type": {
+                        "type": "uri",
+                        "value": "http://www.bioassayontology.org/bao#BAO_0000190"
+                    },
+                    "outcome": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/vocabulary#active"
+                    },
+                    "compound_cid": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/compound/CID2303119"
+                    },
+                    "compound_name": {
+                        "type": "literal",
+                        "value": "4-Methyl-3-[2-(4-methylphenyl)hydrazinyl]-1,5-benzodiazepin-2-one",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+                    },
+                    "smiles": {
+                        "type": "literal",
+                        "value": "CC1=CC=C(C=C1)NNC2=C(N=C3C=CC=CC3=NC2=O)C",
+                        "xml:lang": "en"
+                    },
+                    "inchi": {
+                        "type": "literal",
+                        "value": "InChI=1S/C17H16N4O/c1-11-7-9-13(10-8-11)20-21-16-12(2)18-14-5-3-4-6-15(14)19-17(16)22/h3-10,20H,1-2H3,(H,19,21,22)",
+                        "xml:lang": "en"
+                    },
+                    "target_count": {
+                        "type": "literal",
+                        "value": "1",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#integer"
+                    }
+                },
+                {
+                    "upProt": {
+                        "type": "uri",
+                        "value": "http://purl.uniprot.org/uniprot/P00533"
+                    },
+                    "assay": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID1742"
+                    },
+                    "assay_type": {
+                        "type": "uri",
+                        "value": "http://www.bioassayontology.org/bao#BAO_0000190"
+                    },
+                    "outcome": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/vocabulary#active"
+                    },
+                    "compound_cid": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/compound/CID5354033"
+                    },
+                    "compound_name": {
+                        "type": "literal",
+                        "value": "(2E,3Z)-2,3-bis[amino-(2-aminophenyl)sulfanylmethylidene]butanedinitrile",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+                    },
+                    "smiles": {
+                        "type": "literal",
+                        "value": "C1=CC=C(C(=C1)N)SC(=C(C#N)C(=C(N)SC2=CC=CC=C2N)C#N)N",
+                        "xml:lang": "en"
+                    },
+                    "inchi": {
+                        "type": "literal",
+                        "value": "InChI=1S/C18H16N6S2/c19-9-11(17(23)25-15-7-3-1-5-13(15)21)12(10-20)18(24)26-16-8-4-2-6-14(16)22/h1-8H,21-24H2/b17-11-,18-12+",
+                        "xml:lang": "en"
+                    },
+                    "target_count": {
+                        "type": "literal",
+                        "value": "1",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#integer"
+                    }
+                },
+                {
+                    "upProt": {
+                        "type": "uri",
+                        "value": "http://purl.uniprot.org/uniprot/P00533"
+                    },
+                    "assay": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID1742"
+                    },
+                    "assay_type": {
+                        "type": "uri",
+                        "value": "http://www.bioassayontology.org/bao#BAO_0000190"
+                    },
+                    "outcome": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/vocabulary#active"
+                    },
+                    "compound_cid": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/compound/CID176870"
+                    },
+                    "compound_name": {
+                        "type": "literal",
+                        "value": "Erlotinib",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+                    },
+                    "smiles": {
+                        "type": "literal",
+                        "value": "COCCOC1=C(C=C2C(=C1)C(=NC=N2)NC3=CC=CC(=C3)C#C)OCCOC",
+                        "xml:lang": "en"
+                    },
+                    "inchi": {
+                        "type": "literal",
+                        "value": "InChI=1S/C22H23N3O4/c1-4-16-6-5-7-17(12-16)25-22-18-13-20(28-10-8-26-2)21(29-11-9-27-3)14-19(18)23-15-24-22/h1,5-7,12-15H,8-11H2,2-3H3,(H,23,24,25)",
+                        "xml:lang": "en"
+                    },
+                    "target_count": {
+                        "type": "literal",
+                        "value": "1",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#integer"
+                    }
+                },
+                {
+                    "upProt": {
+                        "type": "uri",
+                        "value": "http://purl.uniprot.org/uniprot/P00533"
+                    },
+                    "assay": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID1742"
+                    },
+                    "assay_type": {
+                        "type": "uri",
+                        "value": "http://www.bioassayontology.org/bao#BAO_0000190"
+                    },
+                    "outcome": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/vocabulary#active"
+                    },
+                    "compound_cid": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/compound/CID123631"
+                    },
+                    "compound_name": {
+                        "type": "literal",
+                        "value": "Gefitinib",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+                    },
+                    "smiles": {
+                        "type": "literal",
+                        "value": "COC1=C(C=C2C(=C1)N=CN=C2NC3=CC(=C(C=C3)F)Cl)OCCCN4CCOCC4",
+                        "xml:lang": "en"
+                    },
+                    "inchi": {
+                        "type": "literal",
+                        "value": "InChI=1S/C22H24ClFN4O3/c1-29-20-13-19-16(12-21(20)31-8-2-5-28-6-9-30-10-7-28)22(26-14-25-19)27-15-3-4-18(24)17(23)11-15/h3-4,11-14H,2,5-10H2,1H3,(H,25,26,27)",
+                        "xml:lang": "en"
+                    },
+                    "target_count": {
+                        "type": "literal",
+                        "value": "1",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#integer"
+                    }
+                },
+                {
+                    "upProt": {
+                        "type": "uri",
+                        "value": "http://purl.uniprot.org/uniprot/P00533"
+                    },
+                    "assay": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID1742"
+                    },
+                    "assay_type": {
+                        "type": "uri",
+                        "value": "http://www.bioassayontology.org/bao#BAO_0000190"
+                    },
+                    "outcome": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/vocabulary#active"
+                    },
+                    "compound_cid": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/compound/CID16219404"
+                    },
+                    "compound_name": {
+                        "type": "literal",
+                        "value": "GW 583340 dihydrochloride",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+                    },
+                    "smiles": {
+                        "type": "literal",
+                        "value": "CS(=O)(=O)CCNCC1=NC(=CS1)C2=CC3=C(C=C2)N=CN=C3NC4=CC(=C(C=C4)OCC5=CC(=CC=C5)F)Cl.Cl.Cl",
+                        "xml:lang": "en"
+                    },
+                    "inchi": {
+                        "type": "literal",
+                        "value": "InChI=1S/C28H25ClFN5O3S2.2ClH/c1-40(36,37)10-9-31-14-27-35-25(16-39-27)19-5-7-24-22(12-19)28(33-17-32-24)34-21-6-8-26(23(29)13-21)38-15-18-3-2-4-20(30)11-18;;/h2-8,11-13,16-17,31H,9-10,14-15H2,1H3,(H,32,33,34);2*1H",
+                        "xml:lang": "en"
+                    },
+                    "target_count": {
+                        "type": "literal",
+                        "value": "1",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#integer"
+                    }
+                },
+                {
+                    "upProt": {
+                        "type": "uri",
+                        "value": "http://purl.uniprot.org/uniprot/P00533"
+                    },
+                    "assay": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID1742"
+                    },
+                    "assay_type": {
+                        "type": "uri",
+                        "value": "http://www.bioassayontology.org/bao#BAO_0000190"
+                    },
+                    "outcome": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/vocabulary#active"
+                    },
+                    "compound_cid": {
+                        "type": "uri",
+                        "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/compound/CID44259"
+                    },
+                    "compound_name": {
+                        "type": "literal",
+                        "value": "Staurosporine",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+                    },
+                    "smiles": {
+                        "type": "literal",
+                        "value": "CC12C(C(CC(O1)N3C4=CC=CC=C4C5=C6C(=C7C8=CC=CC=C8N2C7=C53)CNC6=O)NC)OC",
+                        "xml:lang": "en"
+                    },
+                    "inchi": {
+                        "type": "literal",
+                        "value": "InChI=1S/C28H26N4O3/c1-28-26(34-3)17(29-2)12-20(35-28)31-18-10-6-4-8-14(18)22-23-16(13-30-27(23)33)21-15-9-5-7-11-19(15)32(28)25(21)24(22)31/h4-11,17,20,26,29H,12-13H2,1-3H3,(H,30,33)/t17-,20-,26-,28+/m1/s1",
+                        "xml:lang": "en"
+                    },
+                    "target_count": {
+                        "type": "literal",
+                        "value": "1",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#integer"
+                    }
+                }
+            ]
+        }
+    }
+]

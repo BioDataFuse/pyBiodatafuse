@@ -9,9 +9,9 @@
 </h1>
 
 <p align="center">
-    <a href="https://github.com/BioDataFuse/pyBiodatafuse/actions/workflows/tests.yml">
+<!--     <a href="https://github.com/BioDataFuse/pyBiodatafuse/actions/workflows/tests.yml">
         <img alt="Tests" src="https://github.com/BioDataFuse/pyBiodatafuse/workflows/Tests/badge.svg" />
-    </a>
+    </a> -->
     <a href="https://pypi.org/project/pyBiodatafuse">
         <img alt="PyPI" src="https://img.shields.io/pypi/v/pyBiodatafuse" />
     </a>
@@ -21,9 +21,9 @@
     <a href="https://github.com/BioDataFuse/pyBiodatafuse/blob/main/LICENSE">
         <img alt="PyPI - License" src="https://img.shields.io/pypi/l/pyBiodatafuse" />
     </a>
-    <a href='https://pyBiodatafuse.readthedocs.io/en/latest/?badge=latest'>
+<!--     <a href='https://pyBiodatafuse.readthedocs.io/en/latest/?badge=latest'>
         <img src='https://readthedocs.org/projects/pyBiodatafuse/badge/?version=latest' alt='Documentation Status' />
-    </a>
+    </a> -->
     <a href="https://codecov.io/gh/BioDataFuse/pyBiodatafuse/branch/main">
         <img src="https://codecov.io/gh/BioDataFuse/pyBiodatafuse/branch/main/graph/badge.svg" alt="Codecov status" />
     </a>  
@@ -41,9 +41,9 @@
 
 ## 💪 Getting Started
 
-> A python package for integrating data from multiple existsing biomedical resources and assist in generating a knowledge graph on the data. 
+> We introduce BioDataFuse, a query-based Python tool for seamless integration of biomedical databases. BioDataFuse establishes a modular framework for efficient data wrangling, enabling context-specific knowledge graph creation and supporting graph-based analyses. With a user-friendly interface, it enables users to dynamically create knowledge graphs from their input data. Supported by a robust Python package, pyBiodatafuse, this tool excels in data harmonization, aggregating diverse sources through modular queries. Moreover, BioDataFuse provides plugin capabilities for Cytoscape and Neo4j, allowing local graph hosting. Ongoing refinements enhance the graph utility through tasks like link prediction, making BioDataFuse a versatile solution for efficient and effective biological data integration.
 
-### Command Line Interface
+<!-- ### Command Line Interface
 
 The pyBiodatafuse command line tool is automatically installed. It can
 be used from the shell with the `--help` flag to show all subcommands:
@@ -53,7 +53,7 @@ $ pyBiodatafuse --help
 ```
 
 > TODO show the most useful thing the CLI does! The CLI will have documentation auto-generated
-> by `sphinx`.
+> by `sphinx`. -->
 
 ## 🚀 Installation
 
@@ -81,11 +81,11 @@ Contributions, whether filing an issue, making a pull request, or forking, are a
 
 The code in this package is licensed under the MIT License.
 
-<!--
+
 ### 📖 Citation
 
-Citation goes here!
--->
+The work was started as part of the [Elixir BioHackathon 2023](https://github.com/elixir-europe/biohackathon-projects-2023/tree/main/17) integrating and bringing together multiple Core Data Resources together.
+> Gadiya, Y., Ammar, A., Willighagen, E., Martinat, D., Sima, A. C., Balci, H., & Abbassi Daloii, T. (2023). BioHackEU23 report: Extending interoperability of experimental data using modular queries across biomedical resources. BioHackrXiv Preprints. https://doi.org/10.37044/osf.io/mhsqp
 
 <!--
 ### 🎁 Support
