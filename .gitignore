@@ -916,3 +916,5 @@ src/pyBiodatafuse/resources/predicates*
 src/pyBiodatafuse/resources/base.owl
 robot.jar
 robot
+src/pyBiodatafuse/resources/biodatafuse.properties
+src/pcs_graph.ttl

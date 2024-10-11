@@ -488,9 +488,9 @@ NODE_TYPES = {
     "data_source_node": "http://semanticscience.org/resource/SIO_000750",
     "gene_expression_value_node": f"{NAMESPACE_BINDINGS['sio']}SIO_001077",
     "anatomical_entity_node": "http://semanticscience.org/resource/SIO_001262",
-    "tested_substance_node": "http://semanticscience.org/resource/SSIO_010038",
+    "tested_substance_node": "http://semanticscience.org/resource/SIO_010038",
     "source_database": f"{NAMESPACE_BINDINGS['sio']}SIO_000750",
-    "experimental_process_node": f"{NAMESPACE_BINDINGS['obo']}EFO_0002694",
+    "experimental_process_node": "http://www.ebi.ac.uk/efo/EFO_0002694",
     "pathway_node": f"{NAMESPACE_BINDINGS['obo']}PW_0000001",
     "adverse_event_node": f"{NAMESPACE_BINDINGS['obo']}OAE_0000001",
     "ensemble": "http://identifiers.org/ensembl/",
@@ -518,10 +518,12 @@ PREDICATES = {
     "cheminf_compound_id": "http://semanticscience.org/resource/CHEMINF_000140",
     "sio_is_part_of": f"{NAMESPACE_BINDINGS['sio']}SIO_000068",
     "has_gene_count": "",  # TODO gene count
-    "averse_event_preceded_by": f"{NAMESPACE_BINDINGS['obo']}OAE_0002616",
+    "precedes": "http://semanticscience.org/resource/SIO_000248",
+    "is preceded by": "http://semanticscience.org/resource/SIO_000248",
     "sio_has_part": f"{NAMESPACE_BINDINGS['sio']}SIO_000028",
     "negatively_regulates": f"{NAMESPACE_BINDINGS['obo']}RO_0002449",
     "phase": "http://purl.obolibrary.org/obo/PATO_0000083",
+    "has_gene_template": "http://purl.obolibrary.org/obo/pr#has_gene_template",
 }
 
 # Classes for clinical phases
@@ -530,7 +532,7 @@ CLINICAL_PHASES = {
     "1.0": "http://purl.obolibrary.org/obo/OPMI_0000368",
     "2.0": "http://purl.obolibrary.org/obo/OPMI_0000369",
     "3.0": "http://purl.obolibrary.org/obo/OPMI_0000370",
-    "4.0": "http://purl.obolibrary.org/obo/OPMI_0000371"
+    "4.0": "http://purl.obolibrary.org/obo/OPMI_0000371",
 }
 
 # GO Types
