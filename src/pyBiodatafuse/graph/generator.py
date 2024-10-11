@@ -6,7 +6,7 @@ import json
 import os
 import pickle
 from logging import Logger
-from typing import Any
+from typing import Any, Dict
 
 import networkx as nx
 import pandas as pd
@@ -921,7 +921,7 @@ def build_networkx_graph(
 
 def save_graph(
     combined_df: pd.DataFrame,
-    combined_metadata: dict[Any, Any],
+    combined_metadata: Dict[Any, Any],
     disease_compound: pd.DataFrame = None,
     graph_name: str = "combined",
     graph_dir: str = "examples/usecases/",
