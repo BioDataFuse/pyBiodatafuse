@@ -1,5 +1,5 @@
 pandas==2.0.3
-tqdm==4.65.0
+tqdm==4.66.3
 SPARQLWrapper
 tox
 matplotlib
