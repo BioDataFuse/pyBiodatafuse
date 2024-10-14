@@ -51,6 +51,7 @@ def _format_data(row, species, network_df):
     """Reformat STRING-DB response (Helper function).
 
     :param row: input_df row
+    :param species: input species
     :param network_df: STRING-DB response annotation DataFrame
     :returns: StringDB reformatted annotation.
     """
@@ -64,6 +65,10 @@ def _format_data(row, species, network_df):
         
         if result and 'symbol' in result['hits'][0]:
             row['identifier'] = result['hits'][0]['symbol']
+
+    hgnc_to_uniprot = mg.querymany(row['identifier'], scopes='symbol', fields='uniprot', species=species)
+    uniprot_id = hgnc_to_uniprot[0].get('uniprot', {}).get('Swiss-Prot', None)
+    print("Uniprot ID:", uniprot_id)
 
     gene_ppi_links = list()
 
