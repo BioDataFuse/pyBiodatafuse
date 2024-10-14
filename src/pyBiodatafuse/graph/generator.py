@@ -8,9 +8,9 @@ import pickle
 from logging import Logger
 from typing import Any, Dict
 
-from tqdm import tqdm
 import networkx as nx
 import pandas as pd
+from tqdm import tqdm
 
 from pyBiodatafuse.constants import (
     BGEE_ANATOMICAL_NODE_ATTRS,

@@ -2,20 +2,20 @@
 
 """Python file for mapping identifiers using BridgeDb."""
 
-import os
-import json
 import csv
 import datetime
+import json
 import logging
+import os
 import time
 from importlib import resources
-from tqdm import tqdm
 from typing import List, Optional, Tuple
 
 import pandas as pd
 import requests
 from pubchempy import BadRequestError, PubChemHTTPError, get_compounds, get_synonyms
 from rdkit.Chem import CanonSmiles
+from tqdm import tqdm
 
 from pyBiodatafuse.constants import BRIDGEDB_ENDPOINT
 

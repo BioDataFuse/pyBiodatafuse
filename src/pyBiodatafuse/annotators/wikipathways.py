@@ -11,9 +11,9 @@ from string import Template
 from typing import Any, Dict
 
 import pandas as pd
-from tqdm import tqdm
 from SPARQLWrapper import JSON, SPARQLWrapper
 from SPARQLWrapper.SPARQLExceptions import SPARQLWrapperException
+from tqdm import tqdm
 
 from pyBiodatafuse.constants import (
     WIKIPATHWAYS,

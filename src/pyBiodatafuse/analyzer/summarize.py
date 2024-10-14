@@ -29,8 +29,8 @@ class BioGraph(nx.MultiDiGraph):
 
         self.node_count = self.count_nodes_by_type()
         self.edge_count = self.count_edge_by_type()
-        self.node_source_count = self.get_node_counts_by_source()
-        self.edge_source_count = self.get_edge_counts_by_source()
+        self.node_source_count = self.count_nodes_by_source()
+        self.edge_source_count = self.count_edge_by_source()
         self.graph_summary = self.get_graph_summary()
 
     def get_graph_summary(self) -> str:
@@ -88,6 +88,7 @@ class BioGraph(nx.MultiDiGraph):
 
         if plot:
             self._plot_type_count(node_count, interactive, count_type="Node")
+            return None
 
         return node_count
 
@@ -102,6 +103,7 @@ class BioGraph(nx.MultiDiGraph):
 
         if plot:
             self._plot_type_count(edge_count, interactive, count_type="Edge")
+            return None
 
         return edge_count
 
@@ -122,7 +124,7 @@ class BioGraph(nx.MultiDiGraph):
         )
         fig.show()
 
-    def get_node_counts_by_source(self, plot: bool = False) -> Optional[pd.DataFrame]:
+    def count_nodes_by_source(self, plot: bool = False) -> Optional[pd.DataFrame]:
         """Get the count of nodes by data source."""
         node_data = pd.DataFrame(self.graph.nodes(data=True), columns=["node", "data"])
         node_data["node_type"] = node_data["data"].apply(lambda x: x["labels"])
@@ -133,10 +135,11 @@ class BioGraph(nx.MultiDiGraph):
 
         if plot:
             self._plot_source_count(node_source_count, count_type="Node")
+            return None
 
         return node_source_count
 
-    def get_edge_counts_by_source(self, plot: bool = False) -> Optional[pd.DataFrame]:
+    def count_edge_by_source(self, plot: bool = False) -> Optional[pd.DataFrame]:
         """Get the count of edges by data source."""
         edge_data = pd.DataFrame(self.graph.edges(data=True), columns=["source", "target", "data"])
         edge_data["edge_type"] = edge_data["data"].apply(lambda x: x["label"])
@@ -148,6 +151,7 @@ class BioGraph(nx.MultiDiGraph):
 
         if plot:
             self._plot_source_count(edge_source_count, count_type="Edge")
+            return None
 
         return edge_source_count
 
