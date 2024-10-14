@@ -8,6 +8,7 @@ import pickle
 from logging import Logger
 from typing import Any, Dict
 
+from tqdm import tqdm
 import networkx as nx
 import pandas as pd
 
@@ -903,7 +904,7 @@ def build_networkx_graph(
         PUBCHEM_COMPOUND_ASSAYS_COL: add_pubchem_assay_subgraph,
     }
 
-    for _i, row in combined_df.iterrows():
+    for _i, row in tqdm(combined_df.iterrows(), total=combined_df.shape[0], desc="Building graph"):
         if pd.notna(row["identifier"]) and pd.notna(row["target"]):
             gene_node_label = add_gene_node(g, row, dea_columns)
             process_annotations(g, gene_node_label, row, func_dict)
@@ -934,23 +935,28 @@ def save_graph(
     :param graph_name: the name of the graph.
     :param graph_dir: the directory to save the graph.
     """
-    graph_path = f"{graph_dir}/{graph_name}/"
+    graph_path = f"{graph_dir}/{graph_name}"
     os.makedirs(graph_path, exist_ok=True)
-    logger.info(f"Graph will be saved in {graph_path} folder")
 
-    df_path = f"{graph_path}{graph_name}_df.pkl"
+    df_path = f"{graph_path}/{graph_name}_df.pkl"
     metadata_path = f"{graph_path}/{graph_name}_metadata.pkl"
     graph_path_pickle = f"{graph_path}/{graph_name}_graph.pkl"
     graph_path_gml = f"{graph_path}/{graph_name}_graph.gml"
 
     # Save the combined DataFrame
     combined_df.to_pickle(df_path)
+    logger.warning(f"Combined DataFrame saved in {df_path}")
 
     # Save the metadata
     with open(metadata_path, "wb") as file:
         pickle.dump(combined_metadata, file)
+    logger.warning(f"Metadata saved in {metadata_path}")
 
     # Save the graph
     g = build_networkx_graph(combined_df, disease_compound)
-    nx.write_gpickle(g, graph_path_pickle)
+    logger.warning(f"Graph is built successfully")
+
+    with open(graph_path_pickle, "wb") as f:
+        pickle.dump(g, f)
     nx.write_gml(g, graph_path_gml)
+    logger.warning(f"Graph saved in {graph_path_pickle} and {graph_path_gml}")

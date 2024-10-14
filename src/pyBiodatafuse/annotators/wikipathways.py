@@ -4,13 +4,14 @@
 """Python file for queriying Wikipathways SPARQL endpoint ()."""
 
 import datetime
-import logging
 import os
+import time
 import warnings
 from string import Template
 from typing import Any, Dict
 
 import pandas as pd
+from tqdm import tqdm
 from SPARQLWrapper import JSON, SPARQLWrapper
 from SPARQLWrapper.SPARQLExceptions import SPARQLWrapperException
 
@@ -25,8 +26,6 @@ from pyBiodatafuse.utils import (
     collapse_data_sources,
     get_identifier_of_interest,
 )
-
-logger = logging.getLogger("wikipathways")
 
 
 def check_endpoint_wikipathways() -> bool:
@@ -74,7 +73,7 @@ def get_gene_wikipathways(bridgedb_df: pd.DataFrame):
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
     :returns: a DataFrame containing the WikiPathways output and dictionary of the WikiPathways metadata.
     """
-    # Check if the DisGeNET API is available
+    # Check if the endpoint is available
     api_available = check_endpoint_wikipathways()
 
     if not api_available:
@@ -113,8 +112,11 @@ def get_gene_wikipathways(bridgedb_df: pd.DataFrame):
 
     intermediate_df = pd.DataFrame()
 
-    for gene_list_str in query_gene_lists:
-        query_count += 1
+    for gene_list_str in tqdm(query_gene_lists, desc="Querying WikiPathways"):
+        if query_count > 10:
+            print("Sleeping for 5 seconds to avoid overloading the server.")
+            time.sleep(5)
+            query_count = 0
 
         sparql_query_template = Template(sparql_query)
         substit_dict = dict(gene_list=gene_list_str)

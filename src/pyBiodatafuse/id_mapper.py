@@ -2,11 +2,14 @@
 
 """Python file for mapping identifiers using BridgeDb."""
 
+import os
+import json
 import csv
 import datetime
 import logging
 import time
 from importlib import resources
+from tqdm import tqdm
 from typing import List, Optional, Tuple
 
 import pandas as pd
@@ -281,11 +284,14 @@ def get_cid_from_pugrest(idx: Optional[str], idx_type: str) -> Optional[str]:
     return cidx
 
 
-def pubchem_xref(identifiers: list, identifier_type: str = "name") -> Tuple[pd.DataFrame, dict]:
+def pubchem_xref(
+    identifiers: list, identifier_type: str = "name", cache_res: bool = False
+) -> Tuple[pd.DataFrame, dict]:
     """Map chemical names or smiles or inchikeys to PubChem identifier.
 
     :param identifiers: a list of identifiers to query
     :param identifier_type: type of identifier to query. Potential curies include : smiles, inchikey, inchi, name
+    :param cache_res: whether to cache the results
     :raises ValueError: if the input_datasource is not provided or if the request fails
     :returns: a DataFrame containing the mapped identifiers and dictionary of the data resource metadata.
     """
@@ -297,8 +303,33 @@ def pubchem_xref(identifiers: list, identifier_type: str = "name") -> Tuple[pd.D
 
     # Getting the response to the query
     cid_data = []
-    for idx in identifiers:
-        cid = get_cid_from_pugrest(idx, identifier_type)
+    c = 0
+
+    if cache_res:
+        if os.path.exists("pubchem_cache_results.json"):
+            with open("pubchem_cache_results.json", "r") as f:
+                cache_results = json.load(f)
+        else:
+            cache_results = {}
+    else:
+        cache_results = {}
+
+    c = 0
+    for idx in tqdm(identifiers, desc="Mapping PubChem"):
+        if idx in cache_results:
+            cid = cache_results[idx]
+        else:
+            c += 1
+            if c == 100:
+                if cache_res:
+                    with open("pubchem_cache_results.json", "w") as f:
+                        json.dump(cache_results, f)
+                time.sleep(5)
+                c = 0
+
+            cid = get_cid_from_pugrest(idx, identifier_type)
+            cache_results[idx] = cid
+
         cid_data.append(
             {
                 "identifier": idx,
