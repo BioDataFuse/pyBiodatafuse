@@ -10,7 +10,7 @@ import numpy as np
 import pandas as pd
 from bioregistry import get_iri, normalize_curie
 from rdflib import Graph, Literal, URIRef
-from rdflib.namespace import DC, DCTERMS, RDF, RDFS, SKOS, XSD
+from rdflib.namespace import DC, DCTERMS, RDF, RDFS, SKOS, XSD, OWL
 
 from pyBiodatafuse.constants import (
     BGEE_GENE_EXPRESSION_LEVELS_COL,
@@ -68,11 +68,12 @@ def add_gene_protein_nodes(g: Graph, row) -> URIRef:
     target = row["target"]
     if target:
         gene_node = URIRef(f"http://identifiers.org/ensembl/{target}")
-        protein_node = URIRef(f"http://identifiers.org/ensembl/{target}/protein")
+        protein_node = URIRef(f"http://identifiers.org/ensembl/{target}_protein")
         # TODO replace by UniProt ID when available
         g.add((gene_node, RDF.type, URIRef(NODE_TYPES["gene_node"])))
         g.add((gene_node, RDFS.label, Literal(row["identifier"], datatype=XSD.string)))
         g.add((protein_node, URIRef(PREDICATES["has_gene_template"]), gene_node))
+        g.add((protein_node, RDF.type, URIRef(NODE_TYPES['protein_node'])))
         return [gene_node, protein_node]
     else:
         return None
@@ -561,8 +562,8 @@ def add_compound_node(g: Graph, compound: dict, gene_node: URIRef) -> URIRef:
                 iri = "https://pubchem.ncbi.nlm.nih.gov/compound/" + str(compound_cid)
             if iri:
                 id_node = URIRef(iri)
-                g.add((compound_node, SKOS.exactMatch, id_node))
-                g.add((id_node, SKOS.exactMatch, compound_node))
+                g.add((compound_node, OWL.sameAs, id_node))
+                g.add((id_node, OWL.sameAs, compound_node))
                 g.add((id_node, RDFS.label, Literal(compound_name, datatype=XSD.string)))
                 g.add((id_node, RDF.type, URIRef(NODE_TYPES["tested_substance_node"])))
             ae_list = compound.get("adverse_effect", None)
@@ -647,7 +648,7 @@ def add_metadata(
 
     if orcid:
         orcid_node = URIRef(orcid)
-        g.add((orcid_node, SKOS.exactMatch, Literal(author, datatype=XSD.string)))
+        g.add((orcid_node, OWL.sameAs, Literal(author, datatype=XSD.string)))
         g.add((graph_resource, DCTERMS.creator, orcid_node))
     # Metadata file: add version, api version, and dates to sources
     api_version = None
@@ -817,10 +818,10 @@ def add_transporter_inhibitor_node(g: Graph, transporter_inhibitor_data: dict, b
             )
         )
         g.add((compound_node, URIRef(PREDICATES["chebi_smiles"]), Literal(smiles)))
-        g.add((compound_node, SKOS.exactMatch, URIRef(f"https://molmedb.upol.cz/mol/{molmedb_id}")))
-        g.add((compound_node, SKOS.exactMatch, URIRef(f"https://identifiers.org/CHEBI:{chebi_id}")))
+        g.add((compound_node, OWL.sameAs, URIRef(f"https://molmedb.upol.cz/mol/{molmedb_id}")))
+        g.add((compound_node, OWL.sameAs, URIRef(f"https://identifiers.org/CHEBI:{chebi_id}")))
         g.add(
-            (compound_node, SKOS.exactMatch, URIRef(f"https://www.drugbank.ca/drugs/{drugbank_id}"))
+            (compound_node, OWL.sameAs, URIRef(f"https://www.drugbank.ca/drugs/{drugbank_id}"))
         )
         g.add(
             (
@@ -875,12 +876,13 @@ def add_transporter_inhibitor_node(g: Graph, transporter_inhibitor_data: dict, b
 
 
 def add_ppi_data(
-    g: Graph, protein_node: URIRef, entry: dict, base_uri: str, new_uris: dict
+    g: Graph, protein_node: URIRef, protein_name: str, entry: dict, base_uri: str, new_uris: dict
 ) -> URIRef:
     """Add a protein protein interaction node.
 
     :param g: RDFLib graph
-    :param protein_node: URIRef for the target gene product
+    :param protein_node: URIRef for the target protein
+    :param protein_name: the name of the target protein
     :param entry: the ppi dictionary
     :param base_uri: the base URI for the project
     :param new_uris: dictionary with project node URIs
@@ -892,7 +894,7 @@ def add_ppi_data(
     if score:
         score = int(score)
         # Nodes
-        ppi_node = URIRef(base_uri + f"inhibition/{stringdb_link_to}_{ensembl}")
+        ppi_node = URIRef(base_uri + f"ppi/{protein_name}_{ensembl}")
         g.add(
             (
                 ppi_node,
@@ -909,6 +911,20 @@ def add_ppi_data(
         )
         g.add(
             (
+                ppi_node,
+                URIRef(PREDICATES["sio_has_part"]),
+                URIRef(f"https://www.uniprot.org/uniprotkb/{stringdb_link_to}"),
+            )
+        )
+        g.add(
+            (
+                ppi_node,
+                URIRef(PREDICATES['sio_has_part']),
+                protein_node,
+            )
+        )
+        g.add(
+            (
                 URIRef(f"https://www.uniprot.org/uniprotkb/{stringdb_link_to}"),
                 URIRef(PREDICATES["sio_is_part_of"]),
                 ppi_node,
@@ -916,15 +932,29 @@ def add_ppi_data(
         )
         g.add(
             (
-                protein_node,
-                URIRef(PREDICATES["sio_is_part_of"]),
+                URIRef(f"https://www.uniprot.org/uniprotkb/{stringdb_link_to}"),
+                RDF.type,
+                URIRef(NODE_TYPES["protein_node"]),
+            )
+        )
+        g.add(
+            (
+                URIRef(f"https://www.uniprot.org/uniprotkb/{stringdb_link_to}"),
+                RDFS.label,
                 ppi_node,
             )
         )
         g.add(
             (
                 URIRef(f"http://identifiers.org/ensembl/{ensembl}"),
-                SKOS.exactMatch,
+                OWL.sameAs,
+                URIRef(f"https://www.uniprot.org/uniprotkb/{stringdb_link_to}"),
+            )
+        )        
+        g.add(
+            (
+                URIRef(f"http://identifiers.org/ensembl/{ensembl}"),
+                OWL.sameAs,
                 URIRef(f"https://www.uniprot.org/uniprotkb/{stringdb_link_to}"),
             )
         )
@@ -932,7 +962,7 @@ def add_ppi_data(
             (
                 URIRef(f"http://identifiers.org/ensembl/{ensembl}"),
                 RDF.type,
-                URIRef(NODE_TYPES["gene_node"]),
+                URIRef(NODE_TYPES["protein_node"]),
             )
         )
         score_node = URIRef(f"{new_uris['score_base_node']}/{stringdb_link_to}_{ensembl}")
@@ -1110,15 +1140,11 @@ def generate_rdf(
         if transporter_inhibitor_data:
             for entry in transporter_inhibitor_data:
                 add_transporter_inhibitor_node(g, entry, base_uri)
-        if stringdb_data:
-            if isinstance(stringdb_data, list):
-                for entry in stringdb_data:
-                    if entry.get("Ensembl", None):
-                        add_ppi_data(g, protein_node, entry, base_uri, new_uris)
-            elif isinstance(stringdb_data, dict):
-                entry = stringdb_data
+        if stringdb_data and isinstance(stringdb_data, list):
+            protein_name = f'{row.target}_protein'
+            for entry in stringdb_data:
                 if entry.get("Ensembl", None):
-                    add_ppi_data(g, protein_node, entry, base_uri, new_uris)
+                    add_ppi_data(g, protein_node, protein_name, entry, base_uri, new_uris)
 
     # Add metadata to the RDF graph
     add_metadata(
