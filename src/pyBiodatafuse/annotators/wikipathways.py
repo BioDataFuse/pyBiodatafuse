@@ -108,8 +108,6 @@ def get_gene_wikipathways(bridgedb_df: pd.DataFrame):
     sparql = SPARQLWrapper(WIKIPATHWAYS_ENDPOINT)
     sparql.setReturnFormat(JSON)
 
-    query_count = 0
-
     intermediate_df = pd.DataFrame()
 
     for gene_list_str in tqdm(query_gene_lists, desc="Querying WikiPathways"):
