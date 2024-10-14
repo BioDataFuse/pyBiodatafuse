@@ -113,11 +113,6 @@ def get_gene_wikipathways(bridgedb_df: pd.DataFrame):
     intermediate_df = pd.DataFrame()
 
     for gene_list_str in tqdm(query_gene_lists, desc="Querying WikiPathways"):
-        if query_count > 10:
-            print("Sleeping for 5 seconds to avoid overloading the server.")
-            time.sleep(5)
-            query_count = 0
-
         sparql_query_template = Template(sparql_query)
         substit_dict = dict(gene_list=gene_list_str)
         sparql_query_template_sub = sparql_query_template.substitute(substit_dict)

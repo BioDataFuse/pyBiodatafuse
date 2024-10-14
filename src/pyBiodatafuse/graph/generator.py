@@ -954,7 +954,7 @@ def save_graph(
 
     # Save the graph
     g = build_networkx_graph(combined_df, disease_compound)
-    logger.warning(f"Graph is built successfully")
+    logger.warning("Graph is built successfully")
 
     with open(graph_path_pickle, "wb") as f:
         pickle.dump(g, f)
