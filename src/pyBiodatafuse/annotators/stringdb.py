@@ -10,7 +10,7 @@ import warnings
 import numpy as np
 import pandas as pd
 import requests
-import mygene
+import time
 
 from pyBiodatafuse.constants import (
     STRING,
@@ -47,7 +47,7 @@ def get_version_stringdb() -> dict:
     return {"source_version": version_call[0]["string_version"]}
 
 
-def _format_data(row, string_ids_df, network_df):
+def _format_data(row, string_ids_df, network_df, to_uniprot):
     """Reformat STRING-DB response (Helper function).
 
     :param row: input_df row
@@ -66,7 +66,6 @@ def _format_data(row, string_ids_df, network_df):
 
     for _i, row_str in string_ids_df.iterrows():
         for _i, row_arr in network_df.iterrows():
-            print(row['identifier'])
 
             print("A:",row_arr["preferredName_A"], "B:",row_arr["preferredName_B"], "org:", row_str["preferredName"]) #debug
             if row_arr["preferredName_A"] == row_str["preferredName"] and row["identifier"] == row_str["queryItem"]:
@@ -79,6 +78,8 @@ def _format_data(row, string_ids_df, network_df):
                         }
                     )
                     target_links_set.add(row_arr["preferredName_B"])
+                    print(row_arr["stringId_B"])
+                    to_uniprot.append(row_arr["stringId_B"])
 
             elif row_arr["preferredName_B"] == row_str["preferredName"] and row["identifier"] == row_str["queryItem"]:
                 if row_arr["preferredName_A"] not in target_links_set:
@@ -90,8 +91,10 @@ def _format_data(row, string_ids_df, network_df):
                         }
                     )
                     target_links_set.add(row_arr["preferredName_A"])
+                    print(row_arr["stringId_A"])
+                    to_uniprot.append(row_arr["stringId_A"])
 
-    print(f"Links for {row['identifier']}: {gene_ppi_links}")  # debug
+    print(to_uniprot)
     return gene_ppi_links
 
 
@@ -121,6 +124,47 @@ def _get_ppi_data(gene_ids: list, species: int = 9606) -> pd.DataFrame:
     response = requests.post(f"{STRING_ENDPOINT}/json/network", data=params).json()
     print("ppi data response:", response) #debug
     return response
+
+
+
+def get_uniprot_ids(string_ids):
+    """Get the UniProt IDs using a list of STRING IDs"""
+    API_URL = "https://rest.uniprot.org"
+    
+    # Submit ID mapping request
+    request = requests.post(
+        f"{API_URL}/idmapping/run",
+        data={"from": "STRING", "to": "UniProtKB", "ids": ",".join(string_ids)},
+    )
+    
+    if request.status_code != 200:
+        raise Exception(f"Error: {request.status_code}, {request.text}")
+    
+    job_id = request.json().get("jobId")
+    
+    # While loop to check if the job is finished
+    while True:
+        status_request = requests.get(f"{API_URL}/idmapping/status/{job_id}")
+        status = status_request.json()
+        
+        if status.get("results") or status.get("failedIds"):
+            break
+        
+        print("Job is still running... waiting 5 seconds")
+        time.sleep(5)  # Wait for 5 seconds before checking again
+    
+    # When the job is finished, get the results
+    results_request = requests.get(f"{API_URL}/idmapping/results/{job_id}")
+    
+    results = results_request.json()
+    
+    # Check for results and map STRING to UniProt
+    if "results" not in results:
+        raise Exception(f"No results found in the mapping response: {results}")
+    
+    mapped_ids = {result["from"]: result["to"] for result in results["results"]}
+    
+    return mapped_ids
 
 
 def get_ppi(bridgedb_df: pd.DataFrame, species: str = "human"):
@@ -213,7 +257,11 @@ def get_ppi(bridgedb_df: pd.DataFrame, species: str = "human"):
         return pd.DataFrame(), string_metadata
 
     # Format the data
-    data_df[STRING_PPI_COL] = data_df.apply(lambda row: _format_data(row, stringdb_ids_df, network_df), axis=1)
+    to_uniprot = list()
+    data_df[STRING_PPI_COL] = data_df.apply(lambda row: _format_data(row, stringdb_ids_df, network_df, to_uniprot), axis=1)
+
+    uniprot_ids = get_uniprot_ids(to_uniprot)
+    print(uniprot_ids)
 
     data_df[STRING_PPI_COL] = data_df[STRING_PPI_COL].apply(
         lambda x: ([{key: np.nan for key in STRING_OUTPUT_DICT.keys()}] if len(x) == 0 else x)
