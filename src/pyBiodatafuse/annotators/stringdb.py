@@ -67,7 +67,6 @@ def _format_data(row, string_ids_df, network_df, to_uniprot):
     for _i, row_str in string_ids_df.iterrows():
         for _i, row_arr in network_df.iterrows():
 
-            print("A:",row_arr["preferredName_A"], "B:",row_arr["preferredName_B"], "org:", row_str["preferredName"]) #debug
             if row_arr["preferredName_A"] == row_str["preferredName"] and row["identifier"] == row_str["queryItem"]:
                 if row_arr["preferredName_B"] not in target_links_set:
                     gene_ppi_links.append(
@@ -75,10 +74,10 @@ def _format_data(row, string_ids_df, network_df, to_uniprot):
                             "stringdb_link_to": row_arr["preferredName_B"],
                             STRING_GENE_INPUT_ID: row_arr["stringId_B"].split(".")[1],
                             "score": row_arr["score"],
+                            "string_id": row_arr["stringId_B"]
                         }
                     )
                     target_links_set.add(row_arr["preferredName_B"])
-                    print(row_arr["stringId_B"])
                     to_uniprot.append(row_arr["stringId_B"])
 
             elif row_arr["preferredName_B"] == row_str["preferredName"] and row["identifier"] == row_str["queryItem"]:
@@ -88,13 +87,13 @@ def _format_data(row, string_ids_df, network_df, to_uniprot):
                             "stringdb_link_to": row_arr["preferredName_A"],
                             STRING_GENE_INPUT_ID: row_arr["stringId_A"].split(".")[1],
                             "score": row_arr["score"],
+                            "string_id": row_arr["stringId_A"]
                         }
                     )
                     target_links_set.add(row_arr["preferredName_A"])
-                    print(row_arr["stringId_A"])
                     to_uniprot.append(row_arr["stringId_A"])
 
-    print(to_uniprot)
+    print(to_uniprot) # debug
     return gene_ppi_links
 
 
@@ -122,7 +121,7 @@ def _get_ppi_data(gene_ids: list, species: int = 9606) -> pd.DataFrame:
     }
     
     response = requests.post(f"{STRING_ENDPOINT}/json/network", data=params).json()
-    print("ppi data response:", response) #debug
+    print("ppi data response:", response) # debug
     return response
 
 
@@ -149,8 +148,6 @@ def get_uniprot_ids(string_ids):
         
         if status.get("results") or status.get("failedIds"):
             break
-        
-        print("Job is still running... waiting 5 seconds")
         time.sleep(5)  # Wait for 5 seconds before checking again
     
     # When the job is finished, get the results
@@ -260,8 +257,16 @@ def get_ppi(bridgedb_df: pd.DataFrame, species: str = "human"):
     to_uniprot = list()
     data_df[STRING_PPI_COL] = data_df.apply(lambda row: _format_data(row, stringdb_ids_df, network_df, to_uniprot), axis=1)
 
+    # Get UniProt identifiers
     uniprot_ids = get_uniprot_ids(to_uniprot)
     print(uniprot_ids)
+
+    # Append the uniprot identifiers to the current dataframe
+    data_df['StringDB_ppi'] = data_df['StringDB_ppi'].apply(
+    lambda ppi_list: [
+        {**ppi, 'uniprot_id': uniprot_ids.get(ppi.get('string_id'), None)} for ppi in ppi_list
+        ]
+    )
 
     data_df[STRING_PPI_COL] = data_df[STRING_PPI_COL].apply(
         lambda x: ([{key: np.nan for key in STRING_OUTPUT_DICT.keys()}] if len(x) == 0 else x)
