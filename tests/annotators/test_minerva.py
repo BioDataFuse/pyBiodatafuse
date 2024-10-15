@@ -64,17 +64,23 @@ class TestMinerva(unittest.TestCase):
         # Define the expected DataFrame
         expected_df = pd.Series(
             [
-                [{"pathway_id": 952, "pathway_label": "HMOX1 pathway", "pathway_gene_count": 113}],
                 [
                     {
-                        "pathway_id": 953,
+                        "pathway_id": "MINERVA:952",
+                        "pathway_label": "HMOX1 pathway",
+                        "pathway_gene_count": 113,
+                    }
+                ],
+                [
+                    {
+                        "pathway_id": "MINERVA:953",
                         "pathway_label": "Kynurenine synthesis pathway",
                         "pathway_gene_count": 45,
                     }
                 ],
                 [
                     {
-                        "pathway_id": 942,
+                        "pathway_id": "MINERVA:942",
                         "pathway_label": "Nsp14 and metabolism",
                         "pathway_gene_count": 96,
                     }
