@@ -442,10 +442,12 @@ def get_gene_tractability(
 
 def get_gene_compound_interactions(
     bridgedb_df: pd.DataFrame,
+    cache_pubchem_cid: bool = True,
 ) -> Tuple[pd.DataFrame, dict]:
     """Get information about drugs associated with a genes of interest.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
+    :param cache_pubchem_cid: whether to cache the PubChem CID for the ChEMBL ID
     :returns: a DataFrame containing the OpenTargets output and dictionary of the query metadata.
     """
     # Check if the API is available
@@ -540,6 +542,7 @@ def get_gene_compound_interactions(
         drug_df.drop(columns=["drug"], inplace=True)
 
         drug_df["target"] = gene["id"]
+        drug_df["chembl_id"] = "CHEMBL:" + drug_df["chembl_id"].astype(str)
 
         drug_df["mechanismOfAction"] = drug_df["mechanismOfAction"].apply(
             lambda x: "inhibits" if "antagonist" in x else "activates"
@@ -552,6 +555,9 @@ def get_gene_compound_interactions(
                 if x
                 else None
             )
+        )
+        drug_df["drugbank_id"] = drug_df["drugbank_id"].apply(
+            lambda x: "DrugBank:" + x if x else None
         )
 
         drug_df[["adverse_effect_count", "adverse_effect"]] = drug_df.apply(
@@ -577,10 +583,16 @@ def get_gene_compound_interactions(
         return pd.DataFrame(), opentargets_version
 
     # Fixing chembl_id to pubchem_id
+    chembl_ids = intermediate_df["chembl_id"].str.split(":", expand=True)[1]
     mapped_df, _ = id_mapper.pubchem_xref(
-        identifiers=intermediate_df["chembl_id"], identifier_type="name"
+        identifiers=chembl_ids,
+        identifier_type="name",
+        cache_res=cache_pubchem_cid,
     )
-    intermediate_df["compound_cid"] = mapped_df["target"]
+    mapped_df = mapped_df[["identifier", "target"]]
+    mapped_df["identifier"] = "CHEMBL:" + mapped_df["identifier"]
+    mapped_dict = mapped_df.set_index("identifier").to_dict()["target"]
+    intermediate_df["compound_cid"] = intermediate_df["chembl_id"].map(mapped_dict)
 
     # Check if all keys in df match the keys in OUTPUT_DICT
     check_columns_against_constants(
@@ -1054,6 +1066,7 @@ def get_disease_compound_interactions(
             drug_df.drop(columns=["drug"], inplace=True)
 
             drug_df["target"] = disease["id"]
+            drug_df["chembl_id"] = "CHEMBL:" + drug_df["chembl_id"].astype(str)
 
             drug_df["drugbank_id"] = drug_df["cross_references"].apply(
                 lambda x: (
@@ -1062,12 +1075,15 @@ def get_disease_compound_interactions(
                     else None
                 )
             )
+            drug_df["drugbank_id"] = drug_df["drugbank_id"].apply(
+                lambda x: "DrugBank:" + x if x else None
+            )
 
             drug_df[["adverse_effect_count", "adverse_effect"]] = drug_df.apply(
                 lambda row: (
                     pd.Series([row["adverse_events"]["count"], row["adverse_events"]["rows"]])
                     if row["adverse_events"] and isinstance(row["adverse_events"], dict)
-                    else pd.Series([None, None])
+                    else pd.Series([0, {}])
                 ),
                 axis=1,
             )
@@ -1086,12 +1102,19 @@ def get_disease_compound_interactions(
             return pd.DataFrame(), opentargets_version
 
         # Fixing chembl_id to pubchem_id
+        chembl_idx = intermediate_df["chembl_id"].str.split(":", expand=True)[1]
         mapped_df, _ = id_mapper.pubchem_xref(
-            identifiers=intermediate_df["chembl_id"],
+            identifiers=chembl_idx,
             identifier_type="name",
             cache_res=cache_pubchem_cid,
         )
-        intermediate_df["compound_cid"] = mapped_df["target"]
+        mapped_df = mapped_df[["identifier", "target"]]
+        mapped_df["identifier"] = "CHEMBL:" + mapped_df["identifier"]
+        mapped_dict = mapped_df.set_index("identifier").to_dict()["target"]
+        intermediate_df["compound_cid"] = intermediate_df["chembl_id"].map(mapped_dict)
+
+        print("intermediate_df")
+        print(intermediate_df[intermediate_df["chembl_id"] == "CHEMBL:CHEMBL1276308"])
 
         intermediate_df["relation"] = OPENTARGETS_COMPOUND_DISEASE_RELATION
 

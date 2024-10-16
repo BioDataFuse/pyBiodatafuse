@@ -281,7 +281,9 @@ def get_cid_from_pugrest(idx: Optional[str], idx_type: str) -> Optional[str]:
         return None
 
     cidx = cid_data["PropertyTable"]["Properties"][0]["CID"]
-    return cidx
+    if "." in str(cidx):
+        return str(cidx).split(".")[0]
+    return str(cidx)
 
 
 def pubchem_xref(
@@ -334,7 +336,7 @@ def pubchem_xref(
             {
                 "identifier": idx,
                 "identifier.source": identifier_type,
-                "target": f"pubchem.compounds:{str(cid).split('.')[0]}" if cid else None,
+                "target": f"pubchem.compound:{cid}" if cid is not None else None,
                 "target.source": "PubChem Compound",
             }
         )
