@@ -301,4 +301,4 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
     disgenet_metadata["query"]["number_of_added_nodes"] = num_new_nodes
     disgenet_metadata["query"]["number_of_added_edges"] = num_new_edges
 
-    return merged_df, disgenet_metadata()
+    return merged_df, disgenet_metadata
