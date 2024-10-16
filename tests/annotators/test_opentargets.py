@@ -327,31 +327,31 @@ class TestOpentarget(unittest.TestCase):
                 [
                     {
                         "pathway_label": "Biosynthesis of the N-glycan precursor (dolichol lipid-linked oligosaccharide, LLO) and transfer to a nascent protein",
-                        "pathway_id": "R-HSA-446193",
+                        "pathway_id": "Reactome:R-HSA-446193",
                     },
                     {
                         "pathway_label": "Defective ALG14 causes ALG14-CMS",
-                        "pathway_id": "R-HSA-5633231",
+                        "pathway_id": "Reactome:R-HSA-5633231",
                     },
                 ],
                 [
                     {
                         "pathway_label": "Biosynthesis of the N-glycan precursor (dolichol lipid-linked oligosaccharide, LLO) and transfer to a nascent protein",
-                        "pathway_id": "R-HSA-446193",
+                        "pathway_id": "Reactome:R-HSA-446193",
                     },
                     {
                         "pathway_label": "Defective ALG2 causes CDG-1i",
-                        "pathway_id": "R-HSA-4549349",
+                        "pathway_id": "Reactome:R-HSA-4549349",
                     },
                 ],
                 [
                     {
                         "pathway_label": "Highly calcium permeable nicotinic acetylcholine receptors",
-                        "pathway_id": "R-HSA-629597",
+                        "pathway_id": "Reactome:R-HSA-629597",
                     },
                     {
                         "pathway_label": "Highly calcium permeable postsynaptic nicotinic acetylcholine receptors",
-                        "pathway_id": "R-HSA-629594",
+                        "pathway_id": "Reactome:R-HSA-629594",
                     },
                 ],
             ]

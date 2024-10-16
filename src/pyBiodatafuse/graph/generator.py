@@ -3,10 +3,14 @@
 """Python module to construct a NetworkX graph from the annotated data frame."""
 
 import json
+import os
 import pickle
+from logging import Logger
+from typing import Any, Dict
 
 import networkx as nx
 import pandas as pd
+from tqdm import tqdm
 
 from pyBiodatafuse.constants import (
     BGEE_ANATOMICAL_NODE_ATTRS,
@@ -63,6 +67,8 @@ from pyBiodatafuse.constants import (
     STRING_PPI_EDGE_MAIN_LABEL,
     WIKIPATHWAYS,
 )
+
+logger = Logger(__name__)
 
 
 def load_dataframe_from_pickle(pickle_path: str) -> pd.DataFrame:
@@ -163,7 +169,7 @@ def add_disgenet_gene_disease_subgraph(g, gene_node_label, annot_list):
             annot_node_label = annot[DISEASE_NODE_MAIN_LABEL]
             annot_node_attrs = DISGENET_DISEASE_NODE_ATTRS.copy()
             annot_node_attrs["name"] = annot["disease_name"]
-            annot_node_attrs["id"] = annot["UMLS"]
+            annot_node_attrs["id"] = f"UMLS:{annot['UMLS'].split('_')[1]}"
 
             if not pd.isna(annot["HPO"]):
                 annot_node_attrs["HPO"] = annot["HPO"]
@@ -780,7 +786,7 @@ def add_gene_node(g, row, dea_columns):
     gene_node_label = row["identifier"]
     gene_node_attrs = {
         "source": BRIDGEDB,
-        "name": row["identifier"],
+        "name": f"{row['identifier.source']}:{row['identifier']}",
         "id": row["target"],
         "labels": GENE_NODE_LABELS,
         row["target.source"]: row["target"],
@@ -871,7 +877,10 @@ def normalize_edge_attributes(g):
             del g[u][v][k]["attr_dict"]
 
 
-def networkx_graph(combined_df: pd.DataFrame, disease_compound=None):
+def build_networkx_graph(
+    combined_df: pd.DataFrame,
+    disease_compound=None,
+):
     """Construct a NetWorkX graph from a Pandas DataFrame of genes and their multi-source annotations.
 
     :param combined_df: the input DataFrame to be converted into a graph.
@@ -895,7 +904,7 @@ def networkx_graph(combined_df: pd.DataFrame, disease_compound=None):
         PUBCHEM_COMPOUND_ASSAYS_COL: add_pubchem_assay_subgraph,
     }
 
-    for _i, row in combined_df.iterrows():
+    for _i, row in tqdm(combined_df.iterrows(), total=combined_df.shape[0], desc="Building graph"):
         if pd.notna(row["identifier"]) and pd.notna(row["target"]):
             gene_node_label = add_gene_node(g, row, dea_columns)
             process_annotations(g, gene_node_label, row, func_dict)
@@ -909,3 +918,45 @@ def networkx_graph(combined_df: pd.DataFrame, disease_compound=None):
     normalize_edge_attributes(g)
 
     return g
+
+
+def save_graph(
+    combined_df: pd.DataFrame,
+    combined_metadata: Dict[Any, Any],
+    disease_compound: pd.DataFrame = None,
+    graph_name: str = "combined",
+    graph_dir: str = "examples/usecases/",
+):
+    """Save the graph to a file.
+
+    :param combined_df: the input DataFrame to be converted into a graph.
+    :param combined_metadata: the metadata of the graph.
+    :param disease_compound: the input DataFrame containing disease-compound relationships.
+    :param graph_name: the name of the graph.
+    :param graph_dir: the directory to save the graph.
+    """
+    graph_path = f"{graph_dir}/{graph_name}"
+    os.makedirs(graph_path, exist_ok=True)
+
+    df_path = f"{graph_path}/{graph_name}_df.pkl"
+    metadata_path = f"{graph_path}/{graph_name}_metadata.pkl"
+    graph_path_pickle = f"{graph_path}/{graph_name}_graph.pkl"
+    graph_path_gml = f"{graph_path}/{graph_name}_graph.gml"
+
+    # Save the combined DataFrame
+    combined_df.to_pickle(df_path)
+    logger.warning(f"Combined DataFrame saved in {df_path}")
+
+    # Save the metadata
+    with open(metadata_path, "wb") as file:
+        pickle.dump(combined_metadata, file)
+    logger.warning(f"Metadata saved in {metadata_path}")
+
+    # Save the graph
+    g = build_networkx_graph(combined_df, disease_compound)
+    logger.warning("Graph is built successfully")
+
+    with open(graph_path_pickle, "wb") as f:
+        pickle.dump(g, f)
+    nx.write_gml(g, graph_path_gml)
+    logger.warning(f"Graph saved in {graph_path_pickle} and {graph_path_gml}")

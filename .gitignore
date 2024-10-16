@@ -907,6 +907,8 @@ scratch/
 *.pkl
 /pyBiodatafuse-0.0.4.dev0
 *.graphml
+*.json
+*.gml
 
 # Testing RDF
 src/test.ttl
@@ -918,3 +920,4 @@ robot.jar
 robot
 src/pyBiodatafuse/resources/biodatafuse.properties
 src/pcs_graph.ttl
+
