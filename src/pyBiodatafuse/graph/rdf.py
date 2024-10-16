@@ -299,7 +299,7 @@ def add_gene_expression_data(
             f"{exp_uri}/{id_number}/{source_idx}_{anatomical_entity}"
         )
 
-        g.add((gene_node, URIRef(PREDICATES["sio_is_associated_with"]), gene_expression_value_node))
+        g.add((gene_node, URIRef(PREDICATES["sio_has_measurement_value"]), gene_expression_value_node))
         g.add(
             (
                 gene_expression_value_node,
