@@ -141,7 +141,6 @@ OPENTARGETS_IGNORE_DISEASE_IDS = [
     "omimps",
     "csp",
 ]
-DRUG_ID = "CHEMBL"  # TODO: Yojana, please check as this is not in the opentarget output dict
 OPENTARGETS_DISEASE_COL = f"{OPENTARGETS}_diseases"
 
 # MINERVA
@@ -184,7 +183,7 @@ OPENTARGETS_COMPOUND_OUTPUT_DICT = {
     "adverse_effect": dict,
 }
 CHEMBL_ID = "CHEMBL"
-DRUGBANK_ID = "DB"
+DRUGBANK_ID = "DrugBank"
 RELATION = "inhibits|activates"
 OPENTARGETS_GENE_COMPOUND_COL = f"{OPENTARGETS}_gene_compounds"
 OPENTARGETS_COMPOUND_DISEASE_RELATION = "treats"
@@ -203,7 +202,7 @@ MOLMEDB_PROTEIN_COMPOUND_OUTPUT_DICT = {
     "uniprot_trembl_id": str,  # uniprot id of isoform
 }
 MOLMEDB_ID = "MM"
-DRUGBANK_ID = "DB"
+DRUGBANK_ID = "DrugBank"
 MOLMEDB_PROTEIN_COMPOUND_COL = f"{MOLMEDB}_transporter_inhibitor"
 
 # MolMeDB - Compound input

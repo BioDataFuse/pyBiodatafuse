@@ -9,7 +9,7 @@ import time
 import warnings
 from typing import Any, Dict, List, Set, Tuple
 
-import numpy as np
+from tqdm import tqdm
 import pandas as pd
 import requests
 
@@ -27,6 +27,7 @@ from pyBiodatafuse.utils import (
 )
 
 logger = logging.getLogger("disgenet")
+requests.packages.urllib3.disable_warnings()
 
 
 def check_endpoint_disgenet(api_key: str) -> bool:
@@ -108,10 +109,13 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
     disgenet_version = get_version_disgenet(api_key)
     start_time = datetime.datetime.now()
 
-    for gene in data_df["target"]:
+    c = 0
+    for gene in tqdm(data_df["target"], desc="Querying DisGeNET"):
         # Retrieve disease associated to gene with NCBI ID
         params["gene_ncbi_id"] = gene
         params["page_number"] = str(0)
+
+        c += 1
         # Get all the diseases associated with genes for the current chunk
         gda_response = s.get(
             DISGENET_ENDPOINT, params=params, headers=httpheadersdict, verify=False
@@ -119,29 +123,26 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
 
         # If the status code of gda_response is 429, it means you have reached one of your query limits
         # You can retrieve the time you need to wait until doing a new query in the response headers
-        if not gda_response.ok:
-            if gda_response.status_code == 429:
-                while gda_response.ok is False:
-                    # print(
-                    #     "You have reached a query limit for your user. Please wait {} seconds until next query".format(
-                    #         gda_response.headers["x-rate-limit-retry-after-seconds"]
-                    #     )
-                    # )
-                    time.sleep(int(gda_response.headers["x-rate-limit-retry-after-seconds"]))
-                    # print("Your rate limit is now restored")
+        if gda_response.ok:
+            # Parse response content in JSON format since we set 'accept:application/json' as HTTP header
+            response_parsed = json.loads(gda_response.text)
+            disgenet_output.extend(response_parsed["payload"])
+        elif gda_response.status_code == 429:
+            while gda_response.ok is False:
+                time.sleep(int(gda_response.headers["x-rate-limit-retry-after-seconds"]))
 
-                    # Repeat your query
-                    gda_response = requests.get(
-                        DISGENET_ENDPOINT, params=params, headers=httpheadersdict
-                    )
-                    if gda_response.ok is True:
-                        break
-                    else:
-                        continue
+                # Repeat your query
+                gda_response = requests.get(
+                    DISGENET_ENDPOINT, params=params, headers=httpheadersdict
+                )
+                if gda_response.ok is True:
+                    break
+                else:
+                    continue
 
-        # Parse response content in JSON format since we set 'accept:application/json' as HTTP header
-        response_parsed = json.loads(gda_response.text)
-        disgenet_output.extend(response_parsed["payload"])
+        if c == 100:
+            time.sleep(20)
+            c = 0
     # Record the end time
     end_time = datetime.datetime.now()
 
@@ -238,6 +239,35 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
     ]
     intermediate_df = intermediate_df[selected_columns]
 
+    # Adding namespace prefixes to the identifiers
+    intermediate_df["HPO"] = intermediate_df["HPO"].apply(
+        lambda x: "HPO:" + x.split(":")[-1] if isinstance(x, str) else None
+    )
+    intermediate_df["NCI"] = intermediate_df["NCI"].apply(
+        lambda x: "NCI:" + x.split("_")[-1] if isinstance(x, str) else None
+    )
+    intermediate_df["OMIM"] = intermediate_df["OMIM"].apply(
+        lambda x: "MIM:" + x.split("_")[-1] if isinstance(x, str) else None
+    )
+    intermediate_df["MONDO"] = intermediate_df["MONDO"].apply(
+        lambda x: "MONDO:" + x.split("_")[-1] if isinstance(x, str) else None
+    )
+    intermediate_df["ORDO"] = intermediate_df["ORDO"].apply(
+        lambda x: "ORDO:" + x.split("_")[-1] if isinstance(x, str) else None
+    )
+    intermediate_df["EFO"] = intermediate_df["EFO"].apply(
+        lambda x: "EFO:" + x.split("_")[-1] if isinstance(x, str) else None
+    )
+    intermediate_df["DO"] = intermediate_df["DO"].apply(
+        lambda x: "DOID:" + x.split("_")[-1] if isinstance(x, str) else None
+    )
+    intermediate_df["MESH"] = intermediate_df["MESH"].apply(
+        lambda x: "MESH:" + x.split("_")[-1] if isinstance(x, str) else None
+    )
+    intermediate_df["UMLS"] = intermediate_df["UMLS"].apply(
+        lambda x: "UMLS:" + x.split("_")[-1] if isinstance(x, str) else None
+    )
+
     # Check if all keys in df match the keys in OUTPUT_DICT
     check_columns_against_constants(
         data_df=intermediate_df,
@@ -271,4 +301,4 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
     disgenet_metadata["query"]["number_of_added_nodes"] = num_new_nodes
     disgenet_metadata["query"]["number_of_added_edges"] = num_new_edges
 
-    return merged_df, disgenet_metadata
+    return merged_df, disgenet_metadata()
