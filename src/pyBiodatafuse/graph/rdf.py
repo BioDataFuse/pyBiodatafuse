@@ -5,13 +5,12 @@
 import logging
 from datetime import datetime
 from importlib import resources
-
 import numpy as np
 import pandas as pd
+
 from bioregistry import get_iri, normalize_curie
 from rdflib import Graph, Literal, URIRef
 from rdflib.namespace import DC, DCTERMS, RDF, RDFS, SKOS, XSD, OWL
-
 from pyBiodatafuse.constants import (
     BGEE_GENE_EXPRESSION_LEVELS_COL,
     CLINICAL_PHASES,
@@ -434,8 +433,6 @@ def add_experimental_process_node(
     """Create and add an experimental process node to the RDF graph.
 
     :param g: RDF graph to which the experimental process node will be added.
-    :param id_number: Unique identifier for the experimental process node.
-    :param source_idx: Source index for the experimental process.
     :param data: List of dictionaries containing experimental process information.
     :return: URIRef for the created experimental process node.
     """
@@ -950,7 +947,7 @@ def add_ppi_data(
                 OWL.sameAs,
                 URIRef(f"https://www.uniprot.org/uniprotkb/{stringdb_link_to}"),
             )
-        )        
+        )
         g.add(
             (
                 URIRef(f"http://identifiers.org/ensembl/{ensembl}"),
