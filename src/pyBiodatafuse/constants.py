@@ -26,6 +26,7 @@ PUBCHEM = "PubChem"
 STRING = "StringDB"
 WIKIDATA = "Wikidata"
 WIKIPATHWAYS = "WikiPathways"
+OPENTARGETS_REACTOME = "OpenTargets_reactome"
 
 # Input type for each data source
 BGEE_GENE_INPUT_ID = "Ensembl"
@@ -96,8 +97,7 @@ DISGENET_DISEASE_OUTPUT_DICT = {
     "el": float,
 }
 DISGENET_DISEASE_COL = f"{DISGENET}_diseases"
-OPENTARGETS_DISEASE_COL = "OpenTargets_diseases"
-# literature based disease info
+OPENTARGETS_DISEASE_COL = f"{OPENTARGETS}_diseases"  # literature based disease info
 LITERATURE_DISEASE_COL = "literature_based_info"
 LITERATURE_DISEASE_OUTPUT_DICT = {
     "disease_name": str,
@@ -550,15 +550,27 @@ MOAS = {
 
 # Data sources
 DATA_SOURCES = {
-    "DISGENET": "https://disgenet.com/",
-    "WikiPathways": "https://wikipathways.org",
-    "MINERVA": "https://minerva.pages.uni.lu/doc/",
-    "BridgeDb": "https://www.bridgedb.org/",
-    "StringDB": "https://string-db.org/",
-    "OpenTargets_reactome": "https://www.opentargets.org/",
-    "Reactome": "https://www.opentargets.org/",
-    "Bgee": "https://www.bgee.org/",
-    "MolMeDB": "https://molmedb.upol.cz",
-    "PubChem": "https://pubchem.ncbi.nlm.nih.gov/",
-    "Wikidata": "https://wikidata.org",
+    DISGENET: "https://disgenet.com/",
+    WIKIPATHWAYS: "https://wikipathways.org",
+    MINERVA: "https://minerva.pages.uni.lu/doc/",
+    BRIDGEDB: "https://www.bridgedb.org/",
+    STRING: "https://string-db.org/",
+    OPENTARGETS: "https://www.opentargets.org/",
+    BGEE: "https://www.bgee.org/",
+    MOLMEDB: "https://molmedb.upol.cz",
+    PUBCHEM: "https://pubchem.ncbi.nlm.nih.gov/",
+    WIKIDATA: "https://wikidata.org",
+    OPENTARGETS_REACTOME: "https://www.opentargets.org/",
 }
+
+IDENTIFIER_TYPES = [
+    "HPO",
+    "NCI",
+    "OMIM",
+    "MONDO",
+    "ORDO",
+    "EFO",
+    "DO",
+    "MESH",
+    "UMLS",
+]

@@ -23,6 +23,8 @@ from pyBiodatafuse.constants import (
     OPENTARGETS_DISEASE_COL,
     PREDICATES,
     URIS,
+    IDENTIFIER_TYPES,
+    OPENTARGETS
 )
 
 # Configure logging
@@ -95,17 +97,7 @@ def add_disease_node(g: Graph, disease_data: dict) -> URIRef:
     g.add(
         (disease_node, RDFS.label, Literal(disease_data.get("disease_name"), datatype=XSD.string))
     )
-    for identifier_type in [
-        "HPO",
-        "NCI",
-        "OMIM",
-        "MONDO",
-        "ORDO",
-        "EFO",
-        "DO",
-        "MESH",
-        "UMLS",
-    ]:
+    for identifier_type in IDENTIFIER_TYPES:
         curie_field = disease_data.get(identifier_type, None)
         if curie_field:
             curies = [curie_field]
