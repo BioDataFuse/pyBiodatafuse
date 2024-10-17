@@ -1,0 +1,107 @@
+# -*- coding: utf-8 -*-
+"""Python file for querying [DataSource] using GraphQL."""
+
+import datetime
+import warnings
+import requests
+
+import pandas as pd
+
+from pyBiodatafuse.constants import (
+    [CONSTANTS_USED],
+    [DATA_SOURCE_NAME],
+    [INPUT_ID_CONSTANT],
+    [OUTPUT_DICT_CONSTANT],
+    [ENDPOINT_CONSTANT]
+)
+from pyBiodatafuse.utils import (
+    check_columns_against_constants,
+    collapse_data_sources,
+    get_identifier_of_interest,
+)
+
+
+def check_endpoint_[datasource_name]() -> bool:
+    """Check the availability of the [DataSource] GraphQL endpoint."""
+    query = """
+        [GraphQL endpoint check query]
+    """
+    r = requests.post([ENDPOINT_CONSTANT], json={"query": query}).json()
+
+    if not r.get("data"):
+        return False
+
+    return True
+
+
+def get_version_[datasource_name]() -> dict:
+    """Get version of [DataSource] API."""
+    query = """
+        [GraphQL version query]
+    """
+    r = requests.post([ENDPOINT_CONSTANT], json={"query": query}).json()
+
+    metadata = {
+        "datasource": r["data"]["meta"]["name"],
+        "metadata": {
+            "source_version": {
+                "apiVersion": {
+                    "x": r["data"]["meta"]["apiVersion"]["x"],
+                    "y": r["data"]["meta"]["apiVersion"]["y"],
+                    "z": r["data"]["meta"]["apiVersion"]["z"],
+                }
+            },
+            "data_version": {
+                "dataVersion": {
+                    "year": r["data"]["meta"]["dataVersion"]["year"],
+                    "month": r["data"]["meta"]["dataVersion"]["month"],
+                }
+            },
+        },
+    }
+
+    return metadata
+
+
+def get_[data_type]_[datasource_name](bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
+    """Query [data_type] information from [DataSource].
+
+    :param bridgedb_df: BridgeDb output for creating the list of identifiers to query.
+    :returns: a DataFrame containing the [DataSource] output and dictionary of metadata.
+    """
+    # Check if the [DataSource] GraphQL endpoint is available
+    api_available = check_endpoint_[datasource_name]()
+
+    if not api_available:
+        warnings.warn(
+            f"{[DATA_SOURCE_NAME]} GraphQL endpoint is not available. Unable to retrieve data.", stacklevel=2
+        )
+        return pd.DataFrame(), {}
+
+    # Extract the identifiers and format them for the query
+    data_df = get_identifier_of_interest(bridgedb_df, [INPUT_ID_CONSTANT])
+    [data_extraction_logic]
+
+    query_string = """
+        [GraphQL query string]
+    """
+    query_string = query_string.replace("$ids", str([query_parameter])).replace("'", '"')
+
+    r = requests.post([ENDPOINT_CONSTANT], json={"query": query_string}).json()
+
+    # Record the start time
+    start_time = datetime.datetime.now()
+
+    # Generate the [DataSource] DataFrame
+    intermediate_df = pd.DataFrame()
+
+    for [result_processing_logic]:
+        [data_processing_logic]
+
+    # Record the end time
+    end_time = datetime.datetime.now()
+
+    [data_post_processing_logic]
+
+    return merged_df, [datasource_metadata]
+
