@@ -13,3 +13,4 @@ xlrd>= 2.0.1
 neo4j>=5.14
 pytest==8.1.1
 numpy==1.24.4
+rdflib==7.0.0
