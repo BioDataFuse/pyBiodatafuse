@@ -564,7 +564,7 @@ def get_gene_compound_interactions(
             lambda row: (
                 pd.Series([row["adverse_events"]["count"], row["adverse_events"]["rows"]])
                 if row["adverse_events"]
-                else pd.Series([None, None])
+                else pd.Series([0, None])
             ),
             axis=1,
         )
@@ -1112,10 +1112,6 @@ def get_disease_compound_interactions(
         mapped_df["identifier"] = "CHEMBL:" + mapped_df["identifier"]
         mapped_dict = mapped_df.set_index("identifier").to_dict()["target"]
         intermediate_df["compound_cid"] = intermediate_df["chembl_id"].map(mapped_dict)
-
-        print("intermediate_df")
-        print(intermediate_df[intermediate_df["chembl_id"] == "CHEMBL:CHEMBL1276308"])
-
         intermediate_df["relation"] = OPENTARGETS_COMPOUND_DISEASE_RELATION
 
         # Check if all keys in df match the keys in OUTPUT_DICT

@@ -169,7 +169,7 @@ def add_disgenet_gene_disease_subgraph(g, gene_node_label, annot_list):
             annot_node_label = annot[DISEASE_NODE_MAIN_LABEL]
             annot_node_attrs = DISGENET_DISEASE_NODE_ATTRS.copy()
             annot_node_attrs["name"] = annot["disease_name"]
-            annot_node_attrs["id"] = f"UMLS:{annot['UMLS'].split('_')[1]}"
+            annot_node_attrs["id"] = annot["UMLS"]
 
             if not pd.isna(annot["HPO"]):
                 annot_node_attrs["HPO"] = annot["HPO"]
@@ -724,53 +724,53 @@ def add_opentargets_disease_compound_subgraph(g, disease_node_label, annot_list)
     :returns: a NetworkX MultiDiGraph
     """
     for annot in annot_list:
-        if not pd.isna(annot["relation"]):
-            if not pd.isna(annot[COMPOUND_NODE_MAIN_LABEL]):
-                annot_node_label = annot[COMPOUND_NODE_MAIN_LABEL]
-            else:
-                annot_node_label = annot["chembl_id"]
-            annot_node_attrs = OPENTARGETS_COMPOUND_NODE_ATTRS.copy()
-            annot_node_attrs["name"] = annot["compound_name"]
-            if not pd.isna(annot[COMPOUND_NODE_MAIN_LABEL]):
-                annot_node_attrs["id"] = annot[COMPOUND_NODE_MAIN_LABEL]
-            else:
-                annot_node_attrs["id"] = annot["chembl_id"]
-            annot_node_attrs["chembl_id"] = annot["chembl_id"]
-            if not pd.isna(annot["drugbank_id"]):
-                annot_node_attrs["drugbank_id"] = annot["drugbank_id"]
-            if not pd.isna(annot["compound_cid"]):
-                annot_node_attrs["compound_cid"] = annot["compound_cid"]
-            if not pd.isna(annot["clincal_trial_phase"]):
-                annot_node_attrs["clincal_trial_phase"] = annot["clincal_trial_phase"]
-            annot_node_attrs["is_approved"] = annot["is_approved"]
-            if not pd.isna(annot["adverse_effect_count"]):
-                annot_node_attrs["adverse_effect_count"] = annot["adverse_effect_count"]
+        if pd.isna(annot["relation"]):
+            continue
 
-            merge_node(g, annot_node_label, annot_node_attrs)
+        if not pd.isna(annot[COMPOUND_NODE_MAIN_LABEL]):
+            annot_node_label = annot[COMPOUND_NODE_MAIN_LABEL]
+        else:
+            annot_node_label = annot["chembl_id"]
+        annot_node_attrs = OPENTARGETS_COMPOUND_NODE_ATTRS.copy()
+        annot_node_attrs["name"] = annot["compound_name"]
+        if not pd.isna(annot[COMPOUND_NODE_MAIN_LABEL]):
+            annot_node_attrs["id"] = annot[COMPOUND_NODE_MAIN_LABEL]
+        else:
+            annot_node_attrs["id"] = annot["chembl_id"]
+        annot_node_attrs["chembl_id"] = annot["chembl_id"]
+        if not pd.isna(annot["drugbank_id"]):
+            annot_node_attrs["drugbank_id"] = annot["drugbank_id"]
+        if not pd.isna(annot["compound_cid"]):
+            annot_node_attrs["compound_cid"] = annot["compound_cid"]
+        if not pd.isna(annot["clincal_trial_phase"]):
+            annot_node_attrs["clincal_trial_phase"] = annot["clincal_trial_phase"]
+        annot_node_attrs["is_approved"] = annot["is_approved"]
+        if not pd.isna(annot["adverse_effect_count"]):
+            annot_node_attrs["adverse_effect_count"] = annot["adverse_effect_count"]
 
-            edge_attrs = OPENTARGETS_DISEASE_COMPOUND_EDGE_ATTRS.copy()
-            edge_attrs["label"] = annot["relation"]
-            edge_hash = hash(frozenset(edge_attrs.items()))
-            edge_attrs["edge_hash"] = edge_hash
-            edge_data = g.get_edge_data(annot_node_label, disease_node_label)
-            edge_data = {} if edge_data is None else edge_data
-            node_exists = [
-                x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash
-            ]
+        merge_node(g, annot_node_label, annot_node_attrs)
 
-            if len(node_exists) == 0:
-                g.add_edge(
-                    annot_node_label,
-                    disease_node_label,
-                    label=annot["relation"],
-                    attr_dict=edge_attrs,
-                )
+        edge_attrs = OPENTARGETS_DISEASE_COMPOUND_EDGE_ATTRS.copy()
+        edge_attrs["label"] = annot["relation"]
+        edge_hash = hash(frozenset(edge_attrs.items()))
+        edge_attrs["edge_hash"] = edge_hash
+        edge_data = g.get_edge_data(annot_node_label, disease_node_label)
+        edge_data = {} if edge_data is None else edge_data
+        node_exists = [x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash]
 
-            # Add side effects
-            if annot["adverse_effect"]:
-                add_opentargets_compound_side_effect_subgraph(
-                    g, annot_node_label, annot[SIDE_EFFECT_NODE_MAIN_LABEL]
-                )
+        if len(node_exists) == 0:
+            g.add_edge(
+                annot_node_label,
+                disease_node_label,
+                label=annot["relation"],
+                attr_dict=edge_attrs,
+            )
+
+        # Add side effects
+        if annot["adverse_effect"]:
+            add_opentargets_compound_side_effect_subgraph(
+                g, annot_node_label, annot[SIDE_EFFECT_NODE_MAIN_LABEL]
+            )
 
     return g
 
@@ -905,14 +905,15 @@ def build_networkx_graph(
     }
 
     for _i, row in tqdm(combined_df.iterrows(), total=combined_df.shape[0], desc="Building graph"):
-        if pd.notna(row["identifier"]) and pd.notna(row["target"]):
-            gene_node_label = add_gene_node(g, row, dea_columns)
-            process_annotations(g, gene_node_label, row, func_dict)
+        if pd.isna(row["identifier"]) or pd.isna(row["target"]):
+            continue
 
-            if disease_compound is not None:
-                process_disease_compound(g, disease_compound)
+        gene_node_label = add_gene_node(g, row, dea_columns)
+        process_annotations(g, gene_node_label, row, func_dict)
+        process_ppi(g, gene_node_label, row)
 
-            process_ppi(g, gene_node_label, row)
+    if disease_compound is not None:
+        process_disease_compound(g, disease_compound)
 
     normalize_node_attributes(g)
     normalize_edge_attributes(g)
