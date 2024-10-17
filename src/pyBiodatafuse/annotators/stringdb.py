@@ -63,7 +63,9 @@ def _format_data(row, network_df):
                 gene_ppi_links.append(
                     {
                         "stringdb_link_to": row_arr["preferredName_B"],
-                        STRING_GENE_INPUT_ID: row_arr["stringId_B"].split(".")[1],
+                        STRING_GENE_INPUT_ID: STRING_GENE_INPUT_ID
+                        + ":"
+                        + row_arr["stringId_B"].split(".")[1],
                         "score": row_arr["score"],
                     }
                 )
@@ -74,7 +76,9 @@ def _format_data(row, network_df):
                 gene_ppi_links.append(
                     {
                         "stringdb_link_to": row_arr["preferredName_A"],
-                        STRING_GENE_INPUT_ID: row_arr["stringId_A"].split(".")[1],
+                        STRING_GENE_INPUT_ID: STRING_GENE_INPUT_ID
+                        + ":"
+                        + row_arr["stringId_A"].split(".")[1],
                         "score": row_arr["score"],
                     }
                 )
