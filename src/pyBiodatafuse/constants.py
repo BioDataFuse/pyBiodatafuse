@@ -26,6 +26,7 @@ PUBCHEM = "PubChem"
 STRING = "StringDB"
 WIKIDATA = "Wikidata"
 WIKIPATHWAYS = "WikiPathways"
+OPENTARGETS_REACTOME = "OpenTargets_reactome"
 
 # Input type for each data source
 BGEE_GENE_INPUT_ID = "Ensembl"
@@ -96,8 +97,7 @@ DISGENET_DISEASE_OUTPUT_DICT = {
     "el": float,
 }
 DISGENET_DISEASE_COL = f"{DISGENET}_diseases"
-
-# literature based disease info
+OPENTARGETS_DISEASE_COL = f"{OPENTARGETS}_diseases"  # literature based disease info
 LITERATURE_DISEASE_COL = "literature_based_info"
 LITERATURE_DISEASE_OUTPUT_DICT = {
     "disease_name": str,
@@ -438,3 +438,139 @@ OPENTARGETS_DISEASE_COMPOUND_EDGE_ATTRS = {
 
 
 # Output from the explorers
+# Wikidata
+
+# TODO: to be checked
+
+
+# Output from the explorers
+
+
+# RDF (rdflib constants and namespaces)
+
+# Dictionary to store namespace strings
+NAMESPACE_BINDINGS = {
+    "sio": "http://semanticscience.org/resource/",
+    "hgnc": "http://bio2rdf.org/hgnc:",
+    "obo": "http://purl.obolibrary.org/obo/",
+    "umls": "https://uts-ws.nlm.nih.gov/rest/semantic-network/2015AB/CUI/",
+    "ensembl": "https://identifiers.org/ensembl:",
+    "dcat": "http://www.w3.org/ns/dcat#",
+    "biodatafuse": "https://biodatafuse.org/",
+    "foaf": "http://xmlns.com/foaf/0.1/",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "owl": "http://www.w3.org/2002/07/owl#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+}
+
+# Patterns URIs for nodes (one for each node in the schema)
+URIS = {
+    "gene_disease_association": "gene_disease_association",
+    "gene_base_node": "gene",
+    "gene_symbol_base_node": "gene_symbol",
+    "source_base_node": "source",
+    "data_source_base_node": "datasource",
+    "score_base_node": "score",
+    "experimental_process_node": "experimental_process",
+    "anatomical_entity_base_node": "anatomical_entity",
+    "life_cycle_base_node": "life_cycle",
+    "gene_expression_value_base_node": "gene_expression_value",
+}
+
+# NODE TYPES
+NODE_TYPES = {
+    "gene_node": f"{NAMESPACE_BINDINGS['obo']}NCIT_C16612",
+    "disease_node": f"{NAMESPACE_BINDINGS['obo']}NCIT_C7057",
+    "gene_disease_association": f"{NAMESPACE_BINDINGS['sio']}SIO_000983",
+    "score_node": f"{NAMESPACE_BINDINGS['obo']}NCIT_C25338",
+    "data_source_node": "http://semanticscience.org/resource/SIO_000750",
+    "gene_expression_value_node": f"{NAMESPACE_BINDINGS['sio']}SIO_001077",
+    "anatomical_entity_node": "http://semanticscience.org/resource/SIO_001262",
+    "tested_substance_node": "http://semanticscience.org/resource/SIO_010038",
+    "source_database": f"{NAMESPACE_BINDINGS['sio']}SIO_000750",
+    "experimental_process_node": "http://www.ebi.ac.uk/efo/EFO_0002694",
+    "pathway_node": f"{NAMESPACE_BINDINGS['obo']}PW_0000001",
+    "adverse_event_node": f"{NAMESPACE_BINDINGS['obo']}OAE_0000001",
+    "ensemble": "http://identifiers.org/ensembl/",
+    "ncbi_disease": "https://www.ncbi.nlm.nih.gov/medgen/",
+    "article": f"{NAMESPACE_BINDINGS['obo']}IAO_0000013",
+    "protein_node": "http://purl.obolibrary.org/obo/NCIT_C17021",
+    "ppi_node": "http://purl.obolibrary.org/obo/NCIT_C18469",
+    "drug_node": "http://semanticscience.org/resource/SIO_010038",
+    "approved_drug": "http://purl.obolibrary.org/obo/NCIT_C172573",
+    "aid": "http://purl.obolibrary.org/obo/CLO_0037244",
+    "developmental_stage_node": "http://purl.obolibrary.org/obo/NCIT_C43531",
+}
+
+# PREDICATES
+PREDICATES = {
+    "sio_refers_to": f"{NAMESPACE_BINDINGS['sio']}SIO_000628",
+    "sio_has_measurement_value": f"{NAMESPACE_BINDINGS['sio']}SIO_000216",
+    "sio_has_source": f"{NAMESPACE_BINDINGS['sio']}SIO_000253",
+    "sio_is_associated_with": f"{NAMESPACE_BINDINGS['sio']}SIO_001403",
+    "sio_has_value": f"{NAMESPACE_BINDINGS['sio']}SIO_000300",
+    "sio_has_input": f"{NAMESPACE_BINDINGS['sio']}SIO_000230",
+    "sio_has_output": f"{NAMESPACE_BINDINGS['sio']}SIO_000229",
+    "chebi_inchi": "http://purl.obolibrary.org/obo/chebi/inchi",
+    "chebi_smiles": "http://purl.obolibrary.org/obo/chebi/smiles",
+    "cheminf_compound_id": "http://semanticscience.org/resource/CHEMINF_000140",
+    "sio_is_part_of": f"{NAMESPACE_BINDINGS['sio']}SIO_000068",
+    "has_gene_count": "",  # TODO gene count
+    "precedes": "http://semanticscience.org/resource/SIO_000248",
+    "is preceded by": "http://semanticscience.org/resource/SIO_000248",
+    "sio_has_part": f"{NAMESPACE_BINDINGS['sio']}SIO_000028",
+    "negatively_regulates": f"{NAMESPACE_BINDINGS['obo']}RO_0002449",
+    "phase": "http://purl.obolibrary.org/obo/PATO_0000083",
+    "has_gene_template": "http://purl.obolibrary.org/obo/pr#has_gene_template",
+}
+
+# Classes for clinical phases
+
+CLINICAL_PHASES = {
+    "1.0": "http://purl.obolibrary.org/obo/OPMI_0000368",
+    "2.0": "http://purl.obolibrary.org/obo/OPMI_0000369",
+    "3.0": "http://purl.obolibrary.org/obo/OPMI_0000370",
+    "4.0": "http://purl.obolibrary.org/obo/OPMI_0000371",
+}
+
+# GO Types
+GO_TYPES = {
+    "C": "http://purl.obolibrary.org/obo/GO_0005575",
+    "P": "http://purl.obolibrary.org/obo/GO_0008150",
+    "F": "http://purl.obolibrary.org/obo/GO_0003674",
+}
+
+# Compound MoA
+MOAS = {
+    "activates": "http://purl.obolibrary.org/obo/RO_0018027",  # agonist
+    "inhibits": "http://purl.obolibrary.org/obo/RO_0018029",  # antagonist
+}
+
+# Data sources
+DATA_SOURCES = {
+    DISGENET: "https://disgenet.com/",
+    WIKIPATHWAYS: "https://wikipathways.org",
+    MINERVA: "https://minerva.pages.uni.lu/doc/",
+    BRIDGEDB: "https://www.bridgedb.org/",
+    STRING: "https://string-db.org/",
+    OPENTARGETS: "https://www.opentargets.org/",
+    BGEE: "https://www.bgee.org/",
+    MOLMEDB: "https://molmedb.upol.cz",
+    PUBCHEM: "https://pubchem.ncbi.nlm.nih.gov/",
+    WIKIDATA: "https://wikidata.org",
+    OPENTARGETS_REACTOME: "https://www.opentargets.org/",
+}
+
+IDENTIFIER_TYPES = [
+    "HPO",
+    "NCI",
+    "OMIM",
+    "MONDO",
+    "ORDO",
+    "EFO",
+    "DO",
+    "MESH",
+    "UMLS",
+]
