@@ -102,7 +102,7 @@ LITERATURE_DISEASE_COL = "literature_based_info"
 LITERATURE_DISEASE_OUTPUT_DICT = {
     "disease_name": str,
     "id": str,
-    "source": str,
+    "datasource": str,
 }
 
 # Open Targets - Disease
@@ -235,20 +235,20 @@ STRING_PPI_COL = f"{STRING}_ppi"
 # Wikidata
 WIKIDATA_CC_COL = f"{WIKIDATA}_cellular_components"
 
-# Node and edge main lable and attributes for each data source
+""" Node and edge main lable and attributes for each data source """
 # Anatomical entity node
 # Bgee
 ANATOMICAL_NODE_LABELS = "Anatomical Entity"
 BGEE_ANATOMICAL_NODE_MAIN_LABEL = "anatomical_entity_id"
 BGEE_ANATOMICAL_NODE_ATTRS = {
-    "source": BGEE,
+    "datasource": BGEE,
     "name": None,
     "id": None,
     "labels": ANATOMICAL_NODE_LABELS,
 }
 BGEE_GENE_ANATOMICAL_EDGE_LABEL = "expressed_by"
 BGEE_EDGE_ATTRS = {
-    "source": BGEE,
+    "datasource": BGEE,
     "expression_level": None,
     "developmental_stage_name": None,
     "developmental_stage_id": None,
@@ -262,7 +262,7 @@ BGEE_EDGE_ATTRS = {
 DISEASE_NODE_LABELS = "Disease"
 DISEASE_NODE_MAIN_LABEL = "UMLS"
 DISGENET_DISEASE_NODE_ATTRS = {
-    "source": DISGENET,
+    "datasource": DISGENET,
     "name": None,
     "id": None,
     "HPO": None,
@@ -280,7 +280,7 @@ DISGENET_DISEASE_NODE_ATTRS = {
 }
 GENE_DISEASE_EDGE_LABEL = "associated_with"
 DISGENET_EDGE_ATTRS = {
-    "source": DISGENET,
+    "datasource": DISGENET,
     "score": None,
     "ei": None,
     "el": None,
@@ -290,27 +290,27 @@ DISGENET_EDGE_ATTRS = {
 # Literature
 LITERATURE_NODE_MAIN_LABEL = "id"
 LITERATURE_DISEASE_NODE_ATTRS = {
-    "source": None,
+    "datasource": None,
     "name": None,
     "id": None,
     "labels": DISEASE_NODE_LABELS,
 }
 LITERATURE_DISEASE_EDGE_ATTRS = {
-    "source": None,
+    "datasource": None,
     "label": GENE_DISEASE_EDGE_LABEL,
 }
 
 # TODO: The disease annotations are not curated and will be used again when the OpenTarget annotation improves.
 # Open Targets - Disease
 # OPENTARGETS_DISEASE_NODE_ATTRS = {
-#     "source": OPENTARGETS,
+#     "datasource": OPENTARGETS,
 #     "name": None,
 #     "id": None,
 #     "therapeutic_areas": None,
 #     "labels": DISEASE_NODE_LABELS,
 # }
 # OPENTARGETS_DISEASE_EDGE_ATTRS = {
-#     "source": OPENTARGETS,
+#     "datasource": OPENTARGETS,
 #     "label": GENE_DISEASE_EDGE_LABEL,
 # }
 
@@ -320,14 +320,14 @@ LITERATURE_DISEASE_EDGE_ATTRS = {
 PATHWAY_NODE_LABELS = "Pathway"
 PATHWAY_NODE_MAIN_LABEL = "pathway_id"
 PATHWAY_NODE_ATTRS = {
-    "source": None,
+    "datasource": None,
     "name": None,
     "id": None,
     "gene_count": None,
     "labels": PATHWAY_NODE_LABELS,
 }  # TODO: Yojana, would it be possible to add pathway size here (gene_count)
 GENE_PATHWAY_EDGE_LABEL = "part_of"
-GENE_PATHWAY_EDGE_ATTRS = {"source": None, "label": GENE_PATHWAY_EDGE_LABEL}
+GENE_PATHWAY_EDGE_ATTRS = {"datasource": None, "label": GENE_PATHWAY_EDGE_LABEL}
 
 # GO nodes
 # Open Targets - GO processes
@@ -336,20 +336,20 @@ GO_MF_NODE_LABELS = "Molecular Function"
 GO_CC_NODE_LABELS = "Cellular Component"
 GO_NODE_MAIN_LABEL = "go_id"
 GO_NODE_ATTRS = {
-    "source": OPENTARGETS,
+    "datasource": OPENTARGETS,
     "name": None,
     "id": None,
     "labels": None,
 }
 GENE_GO_EDGE_LABEL = "part_of"
-GENE_GO_EDGE_ATTRS = {"source": OPENTARGETS, "label": GENE_GO_EDGE_LABEL}
+GENE_GO_EDGE_ATTRS = {"datasource": OPENTARGETS, "label": GENE_GO_EDGE_LABEL}
 
 # Compound node
 # Open Targets - Compound
 COMPOUND_NODE_LABELS = "Compound"
 COMPOUND_NODE_MAIN_LABEL = "compound_cid"
 OPENTARGETS_COMPOUND_NODE_ATTRS = {
-    "source": OPENTARGETS,
+    "datasource": OPENTARGETS,
     "name": None,
     "id": None,
     "chembl_id": None,
@@ -360,23 +360,26 @@ OPENTARGETS_COMPOUND_NODE_ATTRS = {
     "adverse_effect_count": None,
     "labels": COMPOUND_NODE_LABELS,
 }
-OPENTARGETS_GENE_COMPOUND_EDGE_ATTRS = {"source": OPENTARGETS, "label": None}
+OPENTARGETS_GENE_COMPOUND_EDGE_ATTRS = {"datasource": OPENTARGETS, "label": None}
 # Side effect
 # Open Targets - Compound
 SIDE_EFFECT_NODE_LABELS = "Side Effect"
 SIDE_EFFECT_NODE_MAIN_LABEL = "adverse_effect"
 # TODO: add the side effect id (adverse_effect id)
 SIDE_EFFECT_NODE_ATTRS = {
-    "source": OPENTARGETS,
+    "datasource": OPENTARGETS,
     "name": None,
     "labels": SIDE_EFFECT_NODE_LABELS,
 }
 COMPOUND_SIDE_EFFECT_EDGE_LABEL = "has_side_effect"
-COMPOUND_SIDE_EFFECT_EDGE_ATTRS = {"source": OPENTARGETS, "label": COMPOUND_SIDE_EFFECT_EDGE_LABEL}
+COMPOUND_SIDE_EFFECT_EDGE_ATTRS = {
+    "datasource": OPENTARGETS,
+    "label": COMPOUND_SIDE_EFFECT_EDGE_LABEL,
+}
 
 # MolMeDB - Gene/Protein input
 MOLMEDB_COMPOUND_NODE_ATTRS = {
-    "source": MOLMEDB,
+    "datasource": MOLMEDB,
     "name": None,
     "id": None,
     "molmedb_id": None,
@@ -390,13 +393,13 @@ MOLMEDB_COMPOUND_NODE_ATTRS = {
 }
 MOLMEDB_PROTEIN_COMPOUND_EDGE_LABEL = "inhibits"
 MOLMEDB_PROTEIN_COMPOUND_EDGE_ATTRS = {
-    "source": MOLMEDB,
+    "datasource": MOLMEDB,
     "label": MOLMEDB_PROTEIN_COMPOUND_EDGE_LABEL,
 }
 
 # PubChem - Assays
 PUBCHEM_COMPOUND_NODE_ATTRS = {
-    "source": PUBCHEM,
+    "datasource": PUBCHEM,
     "name": None,
     "id": None,
     "inchi": None,
@@ -404,7 +407,7 @@ PUBCHEM_COMPOUND_NODE_ATTRS = {
     "labels": COMPOUND_NODE_LABELS,
 }
 PUBCHEM_GENE_COMPOUND_EDGE_ATTRS = {
-    "source": PUBCHEM,
+    "datasource": PUBCHEM,
     "assay_type": None,
     "pubchem_assay_id": None,
     "outcome": None,
@@ -420,14 +423,14 @@ GENE_NODE_LABELS = "Gene"
 STRING_PPI_EDGE_MAIN_LABEL = "stringdb_link_to"
 STRING_PPI_EDGE_LABEL = "interacts_with"
 STRING_PPI_EDGE_ATTRS = {
-    "source": STRING,
+    "datasource": STRING,
     "score": None,
     "label": STRING_PPI_EDGE_LABEL,
 }
 
 # Disease - Compound edge
 OPENTARGETS_DISEASE_COMPOUND_EDGE_ATTRS = {
-    "source": OPENTARGETS,
+    "datasource": OPENTARGETS,
     "label": None,
 }
 
