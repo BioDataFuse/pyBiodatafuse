@@ -11,6 +11,7 @@ import numpy as np
 import pandas as pd
 import requests
 import time
+import xml.etree.ElementTree as ET
 
 from pyBiodatafuse.constants import (
     STRING,
@@ -128,11 +129,11 @@ def _get_ppi_data(gene_ids: list, species: int = 9606) -> pd.DataFrame:
 
 def get_uniprot_ids(string_ids):
     """Get the UniProt IDs using a list of STRING IDs"""
-    API_URL = "https://rest.uniprot.org"
+    UNIPROT_API_URL = "https://rest.uniprot.org"
     
     # Submit ID mapping request
     request = requests.post(
-        f"{API_URL}/idmapping/run",
+        f"{UNIPROT_API_URL}/idmapping/run",
         data={"from": "STRING", "to": "UniProtKB", "ids": ",".join(string_ids)},
     )
     
@@ -143,7 +144,7 @@ def get_uniprot_ids(string_ids):
     
     # While loop to check if the job is finished
     while True:
-        status_request = requests.get(f"{API_URL}/idmapping/status/{job_id}")
+        status_request = requests.get(f"{UNIPROT_API_URL}/idmapping/status/{job_id}")
         status = status_request.json()
         
         if status.get("results") or status.get("failedIds"):
@@ -151,7 +152,7 @@ def get_uniprot_ids(string_ids):
         time.sleep(5)  # Wait for 5 seconds before checking again
     
     # When the job is finished, get the results
-    results_request = requests.get(f"{API_URL}/idmapping/results/{job_id}")
+    results_request = requests.get(f"{UNIPROT_API_URL}/idmapping/results/{job_id}")
     
     results = results_request.json()
     
@@ -171,15 +172,17 @@ def get_ppi(bridgedb_df: pd.DataFrame, species: str = "human"):
     :param species: The species to query ('Human' or 'Mouse' are supported for nw)
     :returns: a DataFrame containing the StringDB output and dictionary of the metadata.
     """
-    # Determine the NCBI species ID based on the input species
-    if species.lower() == "human":
-        species_id = 9606
-    elif species.lower() == "mouse":
-        species_id = 10090
-    elif species.lower() == "rat":
-        species_id = 10116
-    else:
-        raise ValueError("Species must be either 'human', 'mouse' or 'rat'.")
+    # Retrieve NCBI taxonomy identifier
+    NCBI_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi"
+    params = {
+        "db": "taxonomy",
+        "term": species,
+        "retmode": "xml" 
+    }
+    
+    response = requests.get(NCBI_URL, params=params) 
+    root = ET.fromstring(response.content)       
+    species_id = root.find(".//Id").text
 
     # Check if the endpoint is available
     api_available = check_endpoint_stringdb()
