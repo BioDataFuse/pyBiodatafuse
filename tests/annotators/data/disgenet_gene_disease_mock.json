@@ -1,0 +1,375 @@
+{
+    "status": "OK",
+    "paging": {
+        "pageSize": 100,
+        "totalElements": 7,
+        "totalElementsInPage": 7,
+        "currentPageNumber": 0
+    },
+    "warnings": [
+        "Academic roles can only access to CURATED sources: (PSYGENET, ORPHANET, CLINGEN, CLINVAR,UNIPROT, RGD_HUMAN",
+        "gene_ensembl_id > The parameter value is empty / unspecified.",
+        "gene_symbol > The parameter value is empty / unspecified.",
+        "disease > The parameter value is empty / unspecified.",
+        "chemical > The parameter value is empty / unspecified.",
+        "dis_type > The parameter value is empty / unspecified.",
+        "dis_class_list > The parameter value is empty / unspecified.",
+        "order_by > The parameter value is empty / unspecified.",
+        "min_score > The parameter value is unspecified or not a double number.",
+        "max_score > The parameter value is unspecified or not a double number.",
+        "min_ei > The parameter value is unspecified or not a double number.",
+        "max_ei > The parameter value is unspecified or not a double number.",
+        "min_dsi > The parameter value is unspecified or not a double number.",
+        "max_dsi > The parameter value is unspecified or not a double number.",
+        "min_dpi > The parameter value is unspecified or not a double number.",
+        "max_dpi > The parameter value is unspecified or not a double number.",
+        "min_pli > The parameter value is unspecified or not a double number.",
+        "max_pli > The parameter value is unspecified or not a double number.",
+        "min_numCTsupportingAssociation > The parameter value is unspecified or not an integer number."
+    ],
+    "requestpar": {
+        "gene_ncbi_id": "199857",
+        "source": "CURATED",
+        "page_number": 0
+    },
+    "userinfo": {
+        "profile": "ACADEMIC",
+        "profileDescription": "Your DISGENET profile is ACADEMIC; you can access DISGENET REST endpoints with restrictions."
+    },
+    "payload": [
+        {
+            "assocID": 30563384,
+            "symbolOfGene": "ALG14",
+            "geneNcbiID": 199857,
+            "geneEnsemblIDs": [
+                "ENSG00000172339"
+            ],
+            "geneNcbiType": "protein-coding",
+            "geneDSI": 0.622,
+            "geneDPI": 0.565,
+            "genepLI": 6.9786E-5,
+            "geneProteinStrIDs": [
+                "Q96F25"
+            ],
+            "geneProteinClassIDs": [],
+            "geneProteinClassNames": [],
+            "diseaseVocabularies": [
+                "MESH_D018981",
+                "NCI_C84615",
+                "DO_5212",
+                "ORDO_137",
+                "MONDO_0015286",
+                "UMLS_C0282577"
+            ],
+            "diseaseName": "Carbohydrate Deficient Glycoprotein Syndrome",
+            "diseaseType": "disease",
+            "diseaseUMLSCUI": "C0282577",
+            "diseaseClasses_MSH": [
+                "Nutritional and Metabolic Diseases (C18)",
+                "Congenital, Hereditary, and Neonatal Diseases and Abnormalities (C16)"
+            ],
+            "diseaseClasses_UMLS_ST": [
+                "Disease or Syndrome (T047)"
+            ],
+            "diseaseClasses_DO": [
+                "genetic disease (630)",
+                "disease of metabolism (0014667)",
+                "physical disorder (0080015)"
+            ],
+            "diseaseClasses_HPO": [],
+            "numCTsupportingAssociation": 0,
+            "numPMIDs": 7,
+            "chemicalsIncludedInEvidence": null,
+            "numberPmidsWithChemsIncludedInEvidenceBySource": [],
+            "score": 0.6000000000000001,
+            "yearInitial": 2005,
+            "yearFinal": 2022,
+            "el": "Limited",
+            "ei": 1.0
+        },
+        {
+            "assocID": 40492556,
+            "symbolOfGene": "ALG14",
+            "geneNcbiID": 199857,
+            "geneEnsemblIDs": [
+                "ENSG00000172339"
+            ],
+            "geneNcbiType": "protein-coding",
+            "geneDSI": 0.622,
+            "geneDPI": 0.565,
+            "genepLI": 6.9786E-5,
+            "geneProteinStrIDs": [
+                "Q96F25"
+            ],
+            "geneProteinClassIDs": [],
+            "geneProteinClassNames": [],
+            "diseaseVocabularies": [
+                "MESH_D020294",
+                "NCI_C84647",
+                "DO_3635",
+                "ORDO_590",
+                "MONDO_0018940",
+                "UMLS_C0751882"
+            ],
+            "diseaseName": "CONGEN MYASTHENIA GRAVIS",
+            "diseaseType": "disease",
+            "diseaseUMLSCUI": "C0751882",
+            "diseaseClasses_MSH": [
+                "Nervous System Diseases (C10)",
+                "Congenital, Hereditary, and Neonatal Diseases and Abnormalities (C16)"
+            ],
+            "diseaseClasses_UMLS_ST": [
+                "Disease or Syndrome (T047)"
+            ],
+            "diseaseClasses_DO": [
+                "physical disorder (0080015)",
+                "disease of anatomical entity (7)"
+            ],
+            "diseaseClasses_HPO": [],
+            "numCTsupportingAssociation": 0,
+            "numPMIDs": 0,
+            "chemicalsIncludedInEvidence": null,
+            "numberPmidsWithChemsIncludedInEvidenceBySource": [],
+            "score": 0.6000000000000001,
+            "yearInitial": null,
+            "yearFinal": null,
+            "el": null,
+            "ei": 1.0
+        },
+        {
+            "assocID": 50676301,
+            "symbolOfGene": "ALG14",
+            "geneNcbiID": 199857,
+            "geneEnsemblIDs": [
+                "ENSG00000172339"
+            ],
+            "geneNcbiType": "protein-coding",
+            "geneDSI": 0.622,
+            "geneDPI": 0.565,
+            "genepLI": 6.9786E-5,
+            "geneProteinStrIDs": [
+                "Q96F25"
+            ],
+            "geneProteinClassIDs": [],
+            "geneProteinClassNames": [],
+            "diseaseVocabularies": [
+                "OMIM_616227",
+                "OMIM_612866",
+                "DO_0110658",
+                "MONDO_0014542",
+                "UMLS_C4015596"
+            ],
+            "diseaseName": "CMSWTA",
+            "diseaseType": "disease",
+            "diseaseUMLSCUI": "C4015596",
+            "diseaseClasses_MSH": [],
+            "diseaseClasses_UMLS_ST": [
+                "Disease or Syndrome (T047)"
+            ],
+            "diseaseClasses_DO": [
+                "disease of anatomical entity (7)",
+                "physical disorder (0080015)",
+                "genetic disease (630)"
+            ],
+            "diseaseClasses_HPO": [],
+            "numCTsupportingAssociation": 0,
+            "numPMIDs": 5,
+            "chemicalsIncludedInEvidence": null,
+            "numberPmidsWithChemsIncludedInEvidenceBySource": [],
+            "score": 0.6,
+            "yearInitial": 2013,
+            "yearFinal": 2022,
+            "el": null,
+            "ei": 1.0
+        },
+        {
+            "assocID": 55489920,
+            "symbolOfGene": "ALG14",
+            "geneNcbiID": 199857,
+            "geneEnsemblIDs": [
+                "ENSG00000172339"
+            ],
+            "geneNcbiType": "protein-coding",
+            "geneDSI": 0.622,
+            "geneDPI": 0.565,
+            "genepLI": 6.9786E-5,
+            "geneProteinStrIDs": [
+                "Q96F25"
+            ],
+            "geneProteinClassIDs": [],
+            "geneProteinClassNames": [],
+            "diseaseVocabularies": [
+                "OMIM_619036",
+                "OMIM_612866",
+                "MONDO_0033619",
+                "UMLS_C5436652"
+            ],
+            "diseaseName": "MEPCA",
+            "diseaseType": "disease",
+            "diseaseUMLSCUI": "C5436652",
+            "diseaseClasses_MSH": [],
+            "diseaseClasses_UMLS_ST": [
+                "Disease or Syndrome (T047)"
+            ],
+            "diseaseClasses_DO": [],
+            "diseaseClasses_HPO": [],
+            "numCTsupportingAssociation": 0,
+            "numPMIDs": 2,
+            "chemicalsIncludedInEvidence": null,
+            "numberPmidsWithChemsIncludedInEvidenceBySource": [],
+            "score": 0.5,
+            "yearInitial": 2017,
+            "yearFinal": 2022,
+            "el": null,
+            "ei": 1.0
+        },
+        {
+            "assocID": 55568809,
+            "symbolOfGene": "ALG14",
+            "geneNcbiID": 199857,
+            "geneEnsemblIDs": [
+                "ENSG00000172339"
+            ],
+            "geneNcbiType": "protein-coding",
+            "geneDSI": 0.622,
+            "geneDPI": 0.565,
+            "genepLI": 6.9786E-5,
+            "geneProteinStrIDs": [
+                "Q96F25"
+            ],
+            "geneProteinClassIDs": [],
+            "geneProteinClassNames": [],
+            "diseaseVocabularies": [
+                "ORDO_353327",
+                "EFO_0700079",
+                "UMLS_C5680989"
+            ],
+            "diseaseName": "Congenital myasthenic syndromes with glycosylation defect",
+            "diseaseType": "disease",
+            "diseaseUMLSCUI": "C5680989",
+            "diseaseClasses_MSH": [
+                "Congenital, Hereditary, and Neonatal Diseases and Abnormalities (C16)",
+                "Nervous System Diseases (C10)"
+            ],
+            "diseaseClasses_UMLS_ST": [
+                "Disease or Syndrome (T047)"
+            ],
+            "diseaseClasses_DO": [],
+            "diseaseClasses_HPO": [],
+            "numCTsupportingAssociation": 0,
+            "numPMIDs": 1,
+            "chemicalsIncludedInEvidence": null,
+            "numberPmidsWithChemsIncludedInEvidenceBySource": [],
+            "score": 0.4,
+            "yearInitial": 2013,
+            "yearFinal": 2013,
+            "el": null,
+            "ei": 1.0
+        },
+        {
+            "assocID": 55489898,
+            "symbolOfGene": "ALG14",
+            "geneNcbiID": 199857,
+            "geneEnsemblIDs": [
+                "ENSG00000172339"
+            ],
+            "geneNcbiType": "protein-coding",
+            "geneDSI": 0.622,
+            "geneDPI": 0.565,
+            "genepLI": 6.9786E-5,
+            "geneProteinStrIDs": [
+                "Q96F25"
+            ],
+            "geneProteinClassIDs": [],
+            "geneProteinClassNames": [],
+            "diseaseVocabularies": [
+                "OMIM_619031",
+                "OMIM_612866",
+                "MONDO_0033572",
+                "UMLS_C5436646"
+            ],
+            "diseaseName": "IDDEBF",
+            "diseaseType": "disease",
+            "diseaseUMLSCUI": "C5436646",
+            "diseaseClasses_MSH": [],
+            "diseaseClasses_UMLS_ST": [
+                "Disease or Syndrome (T047)"
+            ],
+            "diseaseClasses_DO": [],
+            "diseaseClasses_HPO": [],
+            "numCTsupportingAssociation": 0,
+            "numPMIDs": 1,
+            "chemicalsIncludedInEvidence": null,
+            "numberPmidsWithChemsIncludedInEvidenceBySource": [],
+            "score": 0.4,
+            "yearInitial": 2018,
+            "yearFinal": 2018,
+            "el": null,
+            "ei": 1.0
+        },
+        {
+            "assocID": 30382304,
+            "symbolOfGene": "ALG14",
+            "geneNcbiID": 199857,
+            "geneEnsemblIDs": [
+                "ENSG00000172339"
+            ],
+            "geneNcbiType": "protein-coding",
+            "geneDSI": 0.622,
+            "geneDPI": 0.565,
+            "genepLI": 6.9786E-5,
+            "geneProteinStrIDs": [
+                "Q96F25"
+            ],
+            "geneProteinClassIDs": [],
+            "geneProteinClassNames": [],
+            "diseaseVocabularies": [
+                "ICD10_G71.2",
+                "DO_0112374",
+                "DO_0110632",
+                "DO_0110633",
+                "DO_0110634",
+                "DO_0110635",
+                "DO_0110637",
+                "DO_0110639",
+                "DO_0110640",
+                "ORDO_97245",
+                "MONDO_0012138",
+                "MONDO_0011246",
+                "MONDO_0013177",
+                "MONDO_0013178",
+                "MONDO_0011486",
+                "MONDO_0011688",
+                "MONDO_0019952",
+                "MONDO_0018276",
+                "UMLS_C0270960"
+            ],
+            "diseaseName": "Congenital myopathies",
+            "diseaseType": "disease",
+            "diseaseUMLSCUI": "C0270960",
+            "diseaseClasses_MSH": [
+                "Nervous System Diseases (C10)",
+                "Musculoskeletal Diseases (C05)"
+            ],
+            "diseaseClasses_UMLS_ST": [
+                "Disease or Syndrome (T047)"
+            ],
+            "diseaseClasses_DO": [
+                "genetic disease (630)",
+                "disease of anatomical entity (7)",
+                "physical disorder (0080015)"
+            ],
+            "diseaseClasses_HPO": [],
+            "numCTsupportingAssociation": 0,
+            "numPMIDs": 0,
+            "chemicalsIncludedInEvidence": null,
+            "numberPmidsWithChemsIncludedInEvidenceBySource": [],
+            "score": 0.4,
+            "yearInitial": null,
+            "yearFinal": null,
+            "el": null,
+            "ei": null
+        }
+    ],
+    "httpStatus": 200
+}

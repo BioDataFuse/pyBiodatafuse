@@ -950,7 +950,6 @@ def get_disease_compound_interactions(
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query.
     :param cache_pubchem_cid: If True, the PubChem CID will be cached for future use.
-    :raises ValueError: if failed to retrieve data
     :returns: a DataFrame containing the OpenTargets output and dictionary of the query metadata.
     """
     # Check if the API is available
