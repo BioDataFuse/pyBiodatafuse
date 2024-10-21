@@ -159,7 +159,7 @@ class BioGraph(nx.MultiDiGraph):
         """Get the subgraph of the graph."""
         pass
 
-    def get_all_nodes_by_type(self) -> Dict[str, Any]:
+    def get_all_nodes_by_labels(self) -> Dict[str, Any]:
         """Get all nodes with their label type."""
         label_dict = {}  # type: Dict[str, Any]
         for node, data in self.graph.nodes(data=True):
@@ -175,7 +175,7 @@ class BioGraph(nx.MultiDiGraph):
         label_dict = self.get_all_nodes_by_label()
         return label_dict[label]
 
-    def get_nodes_by_label(self, label: str) -> list:
+    def get_nodes_by_label(self, label: str) -> Optional[list]:
         """Get all nodes by specific label type."""
         if label in self.graph.nodes:
             return self.graph.nodes[label]

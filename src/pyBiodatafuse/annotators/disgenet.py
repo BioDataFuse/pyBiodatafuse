@@ -9,9 +9,10 @@ import time
 import warnings
 from typing import Any, Dict, List, Set, Tuple
 
-from tqdm import tqdm
 import pandas as pd
 import requests
+from tqdm import tqdm
+from urllib3 import disable_warnings
 
 from pyBiodatafuse.constants import (
     DISGENET,
@@ -27,7 +28,7 @@ from pyBiodatafuse.utils import (
 )
 
 logger = logging.getLogger("disgenet")
-requests.packages.urllib3.disable_warnings()
+disable_warnings()
 
 
 def check_endpoint_disgenet(api_key: str) -> bool:
@@ -70,6 +71,117 @@ def get_version_disgenet(api_key: str) -> dict:
     disgenet_version = version_response.json()["payload"]
 
     return disgenet_version
+
+
+def _format_dis_identifiers(row, namespace: str) -> List[str]:
+    """Format the disease identifiers.
+
+    :param row: List of disease identifiers
+    :param namespace: Namespace to be added to the identifiers
+    :returns: a list of formatted disease identifiers
+    """
+    new_vals = []  # type: List[Any]
+
+    for val in row:
+        if pd.isna(val):
+            new_vals.append(None)
+            continue
+
+        if val == "":
+            new_vals.append(None)
+            continue
+
+        t = []
+        for v in val.split(", "):
+            p = v.split("_")[-1]
+            t.append(f"{namespace}:{p}")
+        new_vals.append(", ".join(t))
+    return new_vals
+
+
+def _format_disgenet_output(intermediate_df: pd.DataFrame) -> pd.DataFrame:
+    """Format the DisGeNET output.
+
+    :param intermediate_df: DataFrame containing the DisGeNET output
+    :returns: a DataFrame containing the formatted DisGeNET output
+    """
+    # extract disease identifiers from diseaseVocabularies column
+    # Initialize dictionaries to store the columns
+    source_types: Set[str] = set()
+    # Process the 'diseaseVocabularies' column
+    for entry in intermediate_df["diseaseVocabularies"]:
+        for item in entry:
+            if isinstance(item, str):
+                # Remove everything after '_'
+                prefix = item.split("_")[0]
+                # Add to the set
+                source_types.add(prefix)
+    # Convert set to list
+    source_type_list: List[str] = list(source_types)
+
+    # Add new columns for each identifier type and initialize with empty lists
+    for source in source_type_list:
+        intermediate_df[source] = None
+
+    # Populate the new columns with identifiers
+    for index, entry in intermediate_df.iterrows():
+        vocab_list = entry["diseaseVocabularies"]
+        # Create a dictionary to hold identifiers by type
+        identifiers_by_type: Dict[str, List[str]] = {source: [] for source in source_type_list}
+        for item in vocab_list:
+            if isinstance(item, str):
+                # Extract the type and identifier
+                parts = item.split("_")
+                if len(parts) > 1:
+                    source_type = parts[0]
+                    if source_type in identifiers_by_type:
+                        identifiers_by_type[source_type].append(item)
+        # Populate the DataFrame with the collected identifiers
+        for source in source_type_list:
+            # Join the identifiers with comma and format as a list
+            intermediate_df.at[index, source] = ", ".join(identifiers_by_type[source])
+
+    intermediate_df.rename(
+        columns={
+            "geneNcbiID": "target",
+            "diseaseName": "disease_name",
+            "diseaseType": "disease_type",
+            "diseaseUMLSCUI": "disease_umlscui",
+        },
+        inplace=True,
+    )
+    intermediate_df["target"] = intermediate_df["target"].values.astype(str)
+
+    missing_cols = [
+        col for col in DISGENET_DISEASE_OUTPUT_DICT.keys() if col not in intermediate_df.columns
+    ]
+    for col in missing_cols:
+        intermediate_df[col] = None
+
+    selected_columns = [
+        # "geneDSI",
+        # "geneDPI",
+        # "genepLI",
+        # "geneNcbiType",
+        # "geneProteinClassIDs",
+        # "geneProteinClassNames",
+        # "diseaseVocabularies",
+        "target",
+        *DISGENET_DISEASE_OUTPUT_DICT.keys(),
+    ]
+    intermediate_df = intermediate_df[selected_columns]
+
+    # Adding namespace prefixes to the identifiers
+    intermediate_df["HPO"] = _format_dis_identifiers(intermediate_df["HPO"], namespace="HPO")
+    intermediate_df["NCI"] = _format_dis_identifiers(intermediate_df["NCI"], namespace="NCI")
+    intermediate_df["OMIM"] = _format_dis_identifiers(intermediate_df["OMIM"], namespace="MIM")
+    intermediate_df["MONDO"] = _format_dis_identifiers(intermediate_df["MONDO"], namespace="MONDO")
+    intermediate_df["ORDO"] = _format_dis_identifiers(intermediate_df["ORDO"], namespace="ORDO")
+    intermediate_df["EFO"] = _format_dis_identifiers(intermediate_df["EFO"], namespace="EFO")
+    intermediate_df["DO"] = _format_dis_identifiers(intermediate_df["DO"], namespace="DOID")
+    intermediate_df["MESH"] = _format_dis_identifiers(intermediate_df["MESH"], namespace="MESH")
+    intermediate_df["UMLS"] = _format_dis_identifiers(intermediate_df["UMLS"], namespace="UMLS")
+    return intermediate_df
 
 
 def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
@@ -174,99 +286,8 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
         )
         return pd.DataFrame(), disgenet_metadata
 
-    # extract disease identifiers from diseaseVocabularies column
-    # Initialize dictionaries to store the columns
-    source_types: Set[str] = set()
-    # Process the 'diseaseVocabularies' column
-    for entry in intermediate_df["diseaseVocabularies"]:
-        for item in entry:
-            if isinstance(item, str):
-                # Remove everything after '_'
-                prefix = item.split("_")[0]
-                # Add to the set
-                source_types.add(prefix)
-    # Convert set to list
-    source_type_list: List[str] = list(source_types)
-
-    # Add new columns for each identifier type and initialize with empty lists
-    for source in source_type_list:
-        intermediate_df[source] = None
-    # Populate the new columns with identifiers
-    for index, entry in intermediate_df.iterrows():
-        vocab_list = entry["diseaseVocabularies"]
-        # Create a dictionary to hold identifiers by type
-        identifiers_by_type: Dict[str, List[str]] = {source: [] for source in source_type_list}
-        for item in vocab_list:
-            if isinstance(item, str):
-                # Extract the type and identifier
-                parts = item.split("_")
-                if len(parts) > 1:
-                    source_type = parts[0]
-                    if source_type in identifiers_by_type:
-                        identifiers_by_type[source_type].append(item)
-        # Populate the DataFrame with the collected identifiers
-        for source in source_type_list:
-            # Join the identifiers with comma and format as a list
-            intermediate_df.at[index, source] = ", ".join(identifiers_by_type[source])
-
-    intermediate_df.rename(
-        columns={
-            "geneNcbiID": "target",
-            "diseaseName": "disease_name",
-            "diseaseType": "disease_type",
-            "diseaseUMLSCUI": "disease_umlscui",
-        },
-        inplace=True,
-    )
-    intermediate_df["target"] = intermediate_df["target"].values.astype(str)
-
-    missing_cols = [
-        col for col in DISGENET_DISEASE_OUTPUT_DICT.keys() if col not in intermediate_df.columns
-    ]
-    for col in missing_cols:
-        intermediate_df[col] = None
-
-    selected_columns = [
-        # "geneDSI",
-        # "geneDPI",
-        # "genepLI",
-        # "geneNcbiType",
-        # "geneProteinClassIDs",
-        # "geneProteinClassNames",
-        # "diseaseVocabularies",
-        "target",
-        *DISGENET_DISEASE_OUTPUT_DICT.keys(),
-    ]
-    intermediate_df = intermediate_df[selected_columns]
-
-    # Adding namespace prefixes to the identifiers
-    intermediate_df["HPO"] = intermediate_df["HPO"].apply(
-        lambda x: "HPO:" + x.split(":")[-1] if isinstance(x, str) else None
-    )
-    intermediate_df["NCI"] = intermediate_df["NCI"].apply(
-        lambda x: "NCI:" + x.split("_")[-1] if isinstance(x, str) else None
-    )
-    intermediate_df["OMIM"] = intermediate_df["OMIM"].apply(
-        lambda x: "MIM:" + x.split("_")[-1] if isinstance(x, str) else None
-    )
-    intermediate_df["MONDO"] = intermediate_df["MONDO"].apply(
-        lambda x: "MONDO:" + x.split("_")[-1] if isinstance(x, str) else None
-    )
-    intermediate_df["ORDO"] = intermediate_df["ORDO"].apply(
-        lambda x: "ORDO:" + x.split("_")[-1] if isinstance(x, str) else None
-    )
-    intermediate_df["EFO"] = intermediate_df["EFO"].apply(
-        lambda x: "EFO:" + x.split("_")[-1] if isinstance(x, str) else None
-    )
-    intermediate_df["DO"] = intermediate_df["DO"].apply(
-        lambda x: "DOID:" + x.split("_")[-1] if isinstance(x, str) else None
-    )
-    intermediate_df["MESH"] = intermediate_df["MESH"].apply(
-        lambda x: "MESH:" + x.split("_")[-1] if isinstance(x, str) else None
-    )
-    intermediate_df["UMLS"] = intermediate_df["UMLS"].apply(
-        lambda x: "UMLS:" + x.split("_")[-1] if isinstance(x, str) else None
-    )
+    # Format the DisGeNET output
+    intermediate_df = _format_disgenet_output(intermediate_df)
 
     # Check if all keys in df match the keys in OUTPUT_DICT
     check_columns_against_constants(
