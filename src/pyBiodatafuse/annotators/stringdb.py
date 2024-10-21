@@ -10,13 +10,17 @@ import warnings
 import numpy as np
 import pandas as pd
 import requests
+import time
+import xml.etree.ElementTree as ET
 
 from pyBiodatafuse.constants import (
+    NCBI_ENDPOINT,
     STRING,
     STRING_ENDPOINT,
     STRING_GENE_INPUT_ID,
     STRING_OUTPUT_DICT,
     STRING_PPI_COL,
+    UNIPROT_ENDPOINT
 )
 from pyBiodatafuse.utils import check_columns_against_constants, get_identifier_of_interest
 
@@ -46,74 +50,150 @@ def get_version_stringdb() -> dict:
     return {"source_version": version_call[0]["string_version"]}
 
 
-def _format_data(row, network_df):
+def _format_data(row, string_ids_df, network_df, to_uniprot):
     """Reformat STRING-DB response (Helper function).
 
     :param row: input_df row
+    :param species: input species
     :param network_df: STRING-DB response annotation DataFrame
     :returns: StringDB reformatted annotation.
     """
+
+    # The Ensembl ID get extracted from the bridgedb row and then
+    # queried against mygene.info for the HGNC symbol that corresponds to the Ensembl gene ID
+
     gene_ppi_links = list()
 
     target_links_set = set()
 
-    for _i, row_arr in network_df.iterrows():
-        if row_arr["preferredName_A"] == row["identifier"]:
-            if row_arr["preferredName_B"] not in target_links_set:
-                gene_ppi_links.append(
-                    {
-                        "stringdb_link_to": row_arr["preferredName_B"],
-                        STRING_GENE_INPUT_ID: row_arr["stringId_B"].split(".")[1],
-                        "score": row_arr["score"],
-                    }
-                )
-                target_links_set.add(row_arr["preferredName_B"])
 
-        elif row_arr["preferredName_B"] == row["identifier"]:
-            if row_arr["preferredName_A"] not in target_links_set:
-                gene_ppi_links.append(
-                    {
-                        "stringdb_link_to": row_arr["preferredName_A"],
-                        STRING_GENE_INPUT_ID: row_arr["stringId_A"].split(".")[1],
-                        "score": row_arr["score"],
-                    }
-                )
-                target_links_set.add(row_arr["preferredName_A"])
+    for _i, row_str in string_ids_df.iterrows():
+        for _i, row_arr in network_df.iterrows():
+
+            if row_arr["preferredName_A"] == row_str["preferredName"] and row["identifier"] == row_str["queryItem"]:
+                if row_arr["preferredName_B"] not in target_links_set:
+                    gene_ppi_links.append(
+                        {
+                            "stringdb_link_to": row_arr["preferredName_B"],
+                            STRING_GENE_INPUT_ID: row_arr["stringId_B"].split(".")[1],
+                            "score": row_arr["score"],
+                            "string_id": row_arr["stringId_B"]
+                        }
+                    )
+                    target_links_set.add(row_arr["preferredName_B"])
+                    to_uniprot.append(row_arr["stringId_B"])
+
+            elif row_arr["preferredName_B"] == row_str["preferredName"] and row["identifier"] == row_str["queryItem"]:
+                if row_arr["preferredName_A"] not in target_links_set:
+                    gene_ppi_links.append(
+                        {
+                            "stringdb_link_to": row_arr["preferredName_A"],
+                            STRING_GENE_INPUT_ID: row_arr["stringId_A"].split(".")[1],
+                            "score": row_arr["score"],
+                            "string_id": row_arr["stringId_A"]
+                        }
+                    )
+                    target_links_set.add(row_arr["preferredName_A"])
+                    to_uniprot.append(row_arr["stringId_A"])
 
     return gene_ppi_links
 
 
-def get_string_ids(gene_list: list) -> str:
-    """Get the String identifiers of the gene list."""
+def get_string_ids(gene_list: list, species: int = 9606) -> str:
+    """Get the String identifiers of the gene list.
+    
+    :param gene_list: list containing the genes of interest.
+    :param species: input species NCBI Taxonomy ID
+    :return results: list where each item is a dictionary containing information of a gene of interest"""
     params = {
         "identifiers": "\r".join(gene_list),  # your protein list
-        "species": 9606,  # species NCBI identifier
+        "species": species,  #  species NCBI identifier (default: human)
         "limit": 1,  # only one (best) identifier per input protein
         "caller_identity": "github.com",  # your app name
+        "echo_query" : 1, # column with your input identifier
     }
 
     results = requests.post(f"{STRING_ENDPOINT}/json/get_string_ids", data=params).json()
     return results
 
 
-def _get_ppi_data(gene_ids: list) -> pd.DataFrame:
-    """Get the String PPI iteractions of the gene list."""
+def _get_ppi_data(gene_ids: list, species: int = 9606) -> pd.DataFrame:
+    """Get the STRING PPI interactions for the gene list for a specific species.
+    
+    :param gene_ids: list of STRING identifiers.
+    :param species: input species NCBI Taxonomy ID
+    :returns response: list where each item is a dictionary containing PPI data. 
+    """
     params = {
         "identifiers": "%0d".join(gene_ids),  # your protein
-        "species": 9606,  # species NCBI identifier
+        "species": species,  # species NCBI identifier (default: human)
         "caller_identity": "github.com",  # your app name
     }
-
+    
     response = requests.post(f"{STRING_ENDPOINT}/json/network", data=params).json()
+
     return response
 
 
-def get_ppi(bridgedb_df: pd.DataFrame):
+
+def get_uniprot_ids(string_ids):
+    """Get the UniProt IDs using a list of STRING IDs.
+    
+    :param string_ids: list containing STRING identifiers
+    :returns mapped_ids: dictionary with the string ids as key, and the uniprot ids as value"""
+    
+    # Submit ID mapping request
+    request = requests.post(
+        f"{UNIPROT_ENDPOINT}/idmapping/run",
+        data={"from": "STRING", "to": "UniProtKB", "ids": ",".join(string_ids)},
+    )
+    
+    if request.status_code != 200:
+        raise Exception(f"Error: {request.status_code}, {request.text}")
+    
+    job_id = request.json().get("jobId")
+    
+    # While loop to check if the job is finished
+    while True:
+        status_request = requests.get(f"{UNIPROT_ENDPOINT}/idmapping/status/{job_id}")
+        status = status_request.json()
+        
+        if status.get("results") or status.get("failedIds"):
+            break
+        time.sleep(5)  # Wait for 5 seconds before checking again
+    
+    # When the job is finished, get the results
+    results_request = requests.get(f"{UNIPROT_ENDPOINT}/idmapping/results/{job_id}")
+    
+    results = results_request.json()
+    
+    # Check for results and map STRING to UniProt
+    if "results" not in results:
+        raise Exception(f"No results found in the mapping response: {results}")
+    
+    mapped_ids = {result["from"]: result["to"] for result in results["results"]}
+    
+    return mapped_ids
+
+
+def get_ppi(bridgedb_df: pd.DataFrame, species: str = "human"):
     """Annotate genes with protein-protein interactions from STRING-DB.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
+    :param species: The species to query. All species that are supported by both NCBI and STRINGDB can be used.
     :returns: a DataFrame containing the StringDB output and dictionary of the metadata.
     """
+    # Retrieve NCBI taxonomy identifier
+    params = {
+        "db": "taxonomy",
+        "term": species,
+        "retmode": "xml" 
+    }
+    
+    response = requests.get(f"{NCBI_ENDPOINT}/entrez/eutils/esearch.fcgi", params=params) 
+    root = ET.fromstring(response.content)       
+    species_id = root.find(".//Id").text
+
     # Check if the endpoint is available
     api_available = check_endpoint_stringdb()
     if not api_available:
@@ -138,19 +218,19 @@ def get_ppi(bridgedb_df: pd.DataFrame):
         )
         return pd.DataFrame(), {}
 
-    # Get ids
-    string_ids = get_string_ids(gene_list)
+    # Get STRING IDs
+    string_ids = get_string_ids(gene_list, species_id)
     stringdb_ids_df = pd.DataFrame(string_ids)
     stringdb_ids_df.queryIndex = stringdb_ids_df.queryIndex.astype(str)
 
     # Get the PPI data
-    response = _get_ppi_data(list(stringdb_ids_df.stringId.unique()))
+    response = _get_ppi_data(list(stringdb_ids_df.stringId.unique()), species_id)
     network_df = pd.DataFrame(response)
 
     # Record the end time
     end_time = datetime.datetime.now()
 
-    """Metdata details"""
+    """Metadata details"""
     # Get the current date and time
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # Calculate the time elapsed
@@ -161,7 +241,7 @@ def get_ppi(bridgedb_df: pd.DataFrame):
     # Check the network_df
     if num_new_edges != len(network_df):
         warnings.warn(
-            f"The network_df in {STRING} annotatur should be checked, please create an issue https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
+            f"The network_df in {STRING} annotator should be checked. Please create an issue https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
             stacklevel=2,
         )
 
@@ -187,7 +267,18 @@ def get_ppi(bridgedb_df: pd.DataFrame):
         return pd.DataFrame(), string_metadata
 
     # Format the data
-    data_df[STRING_PPI_COL] = data_df.apply(_format_data, network_df=network_df, axis=1)
+    to_uniprot = list()
+    data_df[STRING_PPI_COL] = data_df.apply(lambda row: _format_data(row, stringdb_ids_df, network_df, to_uniprot), axis=1)
+
+    # Get UniProt identifiers
+    uniprot_ids = get_uniprot_ids(to_uniprot)
+
+    # Append the uniprot identifiers to the current dataframe
+    data_df['StringDB_ppi'] = data_df['StringDB_ppi'].apply(
+    lambda ppi_list: [
+        {**ppi, 'uniprot_id': uniprot_ids.get(ppi.get('string_id'), None)} for ppi in ppi_list
+        ]
+    )
 
     data_df[STRING_PPI_COL] = data_df[STRING_PPI_COL].apply(
         lambda x: ([{key: np.nan for key in STRING_OUTPUT_DICT.keys()}] if len(x) == 0 else x)
