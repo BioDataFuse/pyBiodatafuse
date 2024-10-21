@@ -14,11 +14,13 @@ import time
 import xml.etree.ElementTree as ET
 
 from pyBiodatafuse.constants import (
+    NCBI_ENDPOINT,
     STRING,
     STRING_ENDPOINT,
     STRING_GENE_INPUT_ID,
     STRING_OUTPUT_DICT,
     STRING_PPI_COL,
+    UNIPROT_ENDPOINT
 )
 from pyBiodatafuse.utils import check_columns_against_constants, get_identifier_of_interest
 
@@ -94,12 +96,15 @@ def _format_data(row, string_ids_df, network_df, to_uniprot):
                     target_links_set.add(row_arr["preferredName_A"])
                     to_uniprot.append(row_arr["stringId_A"])
 
-    print(to_uniprot) # debug
     return gene_ppi_links
 
 
 def get_string_ids(gene_list: list, species: int = 9606) -> str:
-    """Get the String identifiers of the gene list."""
+    """Get the String identifiers of the gene list.
+    
+    :param gene_list: list containing the genes of interest.
+    :param species: input species NCBI Taxonomy ID
+    :return results: list where each item is a dictionary containing information of a gene of interest"""
     params = {
         "identifiers": "\r".join(gene_list),  # your protein list
         "species": species,  #  species NCBI identifier (default: human)
@@ -109,12 +114,16 @@ def get_string_ids(gene_list: list, species: int = 9606) -> str:
     }
 
     results = requests.post(f"{STRING_ENDPOINT}/json/get_string_ids", data=params).json()
-    print("string ids response:", results)
     return results
 
 
 def _get_ppi_data(gene_ids: list, species: int = 9606) -> pd.DataFrame:
-    """Get the STRING PPI interactions for the gene list for a specific species."""
+    """Get the STRING PPI interactions for the gene list for a specific species.
+    
+    :param gene_ids: list of STRING identifiers.
+    :param species: input species NCBI Taxonomy ID
+    :returns response: list where each item is a dictionary containing PPI data. 
+    """
     params = {
         "identifiers": "%0d".join(gene_ids),  # your protein
         "species": species,  # species NCBI identifier (default: human)
@@ -122,18 +131,20 @@ def _get_ppi_data(gene_ids: list, species: int = 9606) -> pd.DataFrame:
     }
     
     response = requests.post(f"{STRING_ENDPOINT}/json/network", data=params).json()
-    print("ppi data response:", response) # debug
+
     return response
 
 
 
 def get_uniprot_ids(string_ids):
-    """Get the UniProt IDs using a list of STRING IDs"""
-    UNIPROT_API_URL = "https://rest.uniprot.org"
+    """Get the UniProt IDs using a list of STRING IDs.
+    
+    :param string_ids: list containing STRING identifiers
+    :returns mapped_ids: dictionary with the string ids as key, and the uniprot ids as value"""
     
     # Submit ID mapping request
     request = requests.post(
-        f"{UNIPROT_API_URL}/idmapping/run",
+        f"{UNIPROT_ENDPOINT}/idmapping/run",
         data={"from": "STRING", "to": "UniProtKB", "ids": ",".join(string_ids)},
     )
     
@@ -144,7 +155,7 @@ def get_uniprot_ids(string_ids):
     
     # While loop to check if the job is finished
     while True:
-        status_request = requests.get(f"{UNIPROT_API_URL}/idmapping/status/{job_id}")
+        status_request = requests.get(f"{UNIPROT_ENDPOINT}/idmapping/status/{job_id}")
         status = status_request.json()
         
         if status.get("results") or status.get("failedIds"):
@@ -152,7 +163,7 @@ def get_uniprot_ids(string_ids):
         time.sleep(5)  # Wait for 5 seconds before checking again
     
     # When the job is finished, get the results
-    results_request = requests.get(f"{UNIPROT_API_URL}/idmapping/results/{job_id}")
+    results_request = requests.get(f"{UNIPROT_ENDPOINT}/idmapping/results/{job_id}")
     
     results = results_request.json()
     
@@ -166,21 +177,20 @@ def get_uniprot_ids(string_ids):
 
 
 def get_ppi(bridgedb_df: pd.DataFrame, species: str = "human"):
-    """Annotate genes with protein-protein interactions from STRING-DB for either humans or mice.
+    """Annotate genes with protein-protein interactions from STRING-DB.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
-    :param species: The species to query ('Human' or 'Mouse' are supported for nw)
+    :param species: The species to query. All species that are supported by both NCBI and STRINGDB can be used.
     :returns: a DataFrame containing the StringDB output and dictionary of the metadata.
     """
     # Retrieve NCBI taxonomy identifier
-    NCBI_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi"
     params = {
         "db": "taxonomy",
         "term": species,
         "retmode": "xml" 
     }
     
-    response = requests.get(NCBI_URL, params=params) 
+    response = requests.get(f"{NCBI_ENDPOINT}/entrez/eutils/esearch.fcgi", params=params) 
     root = ET.fromstring(response.content)       
     species_id = root.find(".//Id").text
 
@@ -262,7 +272,6 @@ def get_ppi(bridgedb_df: pd.DataFrame, species: str = "human"):
 
     # Get UniProt identifiers
     uniprot_ids = get_uniprot_ids(to_uniprot)
-    print(uniprot_ids)
 
     # Append the uniprot identifiers to the current dataframe
     data_df['StringDB_ppi'] = data_df['StringDB_ppi'].apply(
