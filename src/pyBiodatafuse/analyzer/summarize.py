@@ -10,9 +10,9 @@ import plotly.express as px
 import seaborn as sns
 from tabulate import tabulate
 
-from pyBiodatafuse.graph.generator import build_networkx_graph, load_dataframe_from_pickle
 from pyBiodatafuse.analyzer.explorer.patent import get_patent_from_pubchem
 from pyBiodatafuse.constants import COMPOUND_NAMESPACE_MAPPER
+from pyBiodatafuse.graph.generator import build_networkx_graph, load_dataframe_from_pickle
 
 
 class BioGraph(nx.MultiDiGraph):
@@ -25,6 +25,7 @@ class BioGraph(nx.MultiDiGraph):
         :param graph_path: path to the graph file
         :param graph_format: format of the graph file
         :param disease_df: disease dataframe to build the graph
+        :raises ValueError: if graph_format is not 'pickle' or 'gml'
         """
         if graph:
             self.graph = graph
@@ -34,7 +35,10 @@ class BioGraph(nx.MultiDiGraph):
                     load_dataframe_from_pickle(graph_path), disease_df
                 )
             elif graph_format == "pickle" and not disease_df:
-                warnings.warn("Disease dataframe not provided. Loading graph without disease data.")
+                warnings.warn(
+                    "Disease dataframe not provided. Loading graph without disease data.",
+                    stacklevel=2,
+                )
                 self.graph = nx.read_gpickle(graph_path)
             elif graph_format == "gml":
                 self.graph = nx.read_gml(graph_path)
@@ -193,6 +197,7 @@ class BioGraph(nx.MultiDiGraph):
         return None
 
     def get_publications_for_genes(self):
+        """Get publications for genes."""
         pass
 
     def get_patents_for_compounds(self):

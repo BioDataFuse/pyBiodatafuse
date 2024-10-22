@@ -6,12 +6,13 @@ The module contains special functions that are server expensive and can only be 
 """
 
 import time
+
 import pandas as pd
 import requests
 from tqdm import tqdm
 
-from pyBiodatafuse.utils import get_identifier_of_interest
 from pyBiodatafuse.constants import PATENT_INPUT_ID
+from pyBiodatafuse.utils import get_identifier_of_interest
 
 
 def get_patent_from_pubchem(bridgedb_df: pd.DataFrame) -> dict:
@@ -40,7 +41,6 @@ def get_patent_from_pubchem(bridgedb_df: pd.DataFrame) -> dict:
                 f"https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/{cid}/xrefs/PatentID/JSON"
             ).json()
         except requests.exceptions.ConnectionError as e:
-            print(e)
             cid_pat_dict[cid] = ""
             continue
 
