@@ -102,7 +102,8 @@ OPENTARGETS_DISEASE_COL = f"{OPENTARGETS}_diseases"  # literature based disease 
 LITERATURE_DISEASE_COL = "literature_based_info"
 LITERATURE_DISEASE_OUTPUT_DICT = {
     "disease_name": str,
-    "id": str,
+    "UMLS": str,
+    "MONDO": str,
     "datasource": str,
 }
 
