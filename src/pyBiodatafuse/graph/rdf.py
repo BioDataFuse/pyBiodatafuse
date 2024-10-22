@@ -156,7 +156,7 @@ def add_score_node(
     g.add(
         (
             score_node,
-            URIRef(NAMESPACE_BINDINGS["sio"] + "has_value"),
+            URIRef(PREDICATES["sio_has_value"]),
             Literal(score, datatype=XSD.double),
         )
     )
