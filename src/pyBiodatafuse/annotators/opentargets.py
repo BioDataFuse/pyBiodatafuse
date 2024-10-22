@@ -9,6 +9,7 @@ from typing import Dict, Tuple
 import numpy as np
 import pandas as pd
 import requests
+from tqdm import tqdm
 
 from pyBiodatafuse import id_mapper
 from pyBiodatafuse.constants import (
@@ -172,7 +173,7 @@ def get_gene_go_process(
     # Generate the OpenTargets DataFrame
     intermediate_df = pd.DataFrame()
 
-    for gene in r["data"]["targets"]:
+    for gene in tqdm(r["data"]["targets"], desc="Processing gene annotation"):
         terms = [i["term"] for i in gene["geneOntology"]]
         types = [i["aspect"] for i in gene["geneOntology"]]
         path_df = pd.DataFrame(terms)
@@ -293,7 +294,7 @@ def get_gene_reactome_pathways(
     # Generate the OpenTargets DataFrame
     intermediate_df = pd.DataFrame()
 
-    for gene in r["data"]["targets"]:
+    for gene in tqdm(r["data"]["targets"], desc="Processing gene-pathway interactions"):
         path_df = pd.DataFrame(gene["pathways"])
         path_df = path_df.drop_duplicates()
         path_df["target"] = gene["id"]
@@ -316,6 +317,17 @@ def get_gene_reactome_pathways(
         output_dict=OPENTARGETS_REACTOME_OUTPUT_DICT,
         check_values_in=["pathway_id"],
     )
+
+    # Fixing the pathway_id
+    new_ids = []
+    for idx in intermediate_df["pathway_id"]:
+        if idx.startswith("R-"):
+            new_ids.append(f"Reactome:{idx}")
+        elif idx.startswuth("WP"):
+            new_ids.append(f"WP:{idx}")
+        else:
+            new_ids.append(idx)
+    intermediate_df["pathway_id"] = new_ids
 
     # Merge the two DataFrames on the target column
     merged_df = collapse_data_sources(
@@ -505,7 +517,7 @@ def get_gene_compound_interactions(
     # Generate the OpenTargets DataFrame
     intermediate_df = pd.DataFrame()
 
-    for gene in r["data"]["targets"]:
+    for gene in tqdm(r["data"]["targets"], desc="Processing gene-drug interactions"):
         if not gene["knownDrugs"]:
             continue
 
@@ -919,10 +931,12 @@ def get_gene_compound_interactions(
 
 def get_disease_compound_interactions(
     bridgedb_df: pd.DataFrame,
+    cache_pubchem_cid: bool = False,
 ) -> Tuple[pd.DataFrame, dict]:
     """Get information about drugs associated with diseases of interest.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query.
+    :param cache_pubchem_cid: If True, the PubChem CID will be cached for future use.
     :raises ValueError: if failed to retrieve data
     :returns: a DataFrame containing the OpenTargets output and dictionary of the query metadata.
     """
@@ -1014,7 +1028,9 @@ def get_disease_compound_interactions(
             )
             return pd.DataFrame(), opentargets_version
 
-        for disease in response_data["data"]["diseases"]:
+        for disease in tqdm(
+            response_data["data"]["diseases"], desc="Processing diseases-drug interactions"
+        ):
             if not disease["knownDrugs"]:
                 continue
 
@@ -1071,7 +1087,9 @@ def get_disease_compound_interactions(
 
         # Fixing chembl_id to pubchem_id
         mapped_df, _ = id_mapper.pubchem_xref(
-            identifiers=intermediate_df["chembl_id"], identifier_type="name"
+            identifiers=intermediate_df["chembl_id"],
+            identifier_type="name",
+            cache_res=cache_pubchem_cid,
         )
         intermediate_df["compound_cid"] = mapped_df["target"]
 
