@@ -41,6 +41,7 @@ PUBCHEM_COMPOUND_INPUT_ID = "Uniprot-TrEMBL"
 STRING_GENE_INPUT_ID = "Ensembl"
 WIKIDATA_GENE_INPUT_ID = "NCBI Gene"
 WIKIPATHWAYS_GENE_INPUT_ID = "NCBI Gene"
+PATENT_INPUT_ID = "PubChem Compound"
 
 # Output annotation for each data source
 # Bgee
@@ -438,5 +439,5 @@ OPENTARGETS_DISEASE_COMPOUND_EDGE_ATTRS = {
 
 # TODO: to be checked
 
-
-# Output from the explorers
+# Mapper from namespace to BridgeDB datasource
+COMPOUND_NAMESPACE_MAPPER = {"pubchem.compound": "PubChem Compound", "CHEMBL": "ChEMBL compound"}

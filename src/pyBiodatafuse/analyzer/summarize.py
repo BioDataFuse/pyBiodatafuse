@@ -11,6 +11,8 @@ import seaborn as sns
 from tabulate import tabulate
 
 from pyBiodatafuse.graph.generator import build_networkx_graph, load_dataframe_from_pickle
+from pyBiodatafuse.analyzer.explorer.patent import get_patent_from_pubchem
+from pyBiodatafuse.constants import COMPOUND_NAMESPACE_MAPPER
 
 
 class BioGraph(nx.MultiDiGraph):
@@ -167,10 +169,6 @@ class BioGraph(nx.MultiDiGraph):
 
         return edge_source_count
 
-    def get_subgraph(self):
-        """Get the subgraph of the graph."""
-        pass
-
     def get_all_nodes_by_labels(self) -> Dict[str, Any]:
         """Get all nodes with their label type."""
         label_dict = {}  # type: Dict[str, Any]
@@ -184,7 +182,7 @@ class BioGraph(nx.MultiDiGraph):
 
     def get_all_nodes_by_type(self, label: str) -> list:
         """Get all nodes by specific label type."""
-        label_dict = self.get_all_nodes_by_label()
+        label_dict = self.get_all_nodes_by_labels()
         return label_dict[label]
 
     def get_nodes_by_label(self, label: str) -> Optional[list]:
@@ -194,13 +192,31 @@ class BioGraph(nx.MultiDiGraph):
 
         return None
 
+    def get_publications_for_genes(self):
+        pass
+
+    def get_patents_for_compounds(self):
+        """Get patents for compounds. TODO: Function in test mode!!"""
+        compound_nodes = self.get_all_nodes_by_type("Compound")
+
+        t = []
+        for node_idx, _ in compound_nodes:
+            t.append(
+                {
+                    "target.source": COMPOUND_NAMESPACE_MAPPER[node_idx.split(":")[0]],
+                    "target": node_idx.split(":")[1],
+                }
+            )
+
+        df = pd.DataFrame(t)
+        patent_dict = get_patent_from_pubchem(df)
+        return patent_dict
+
     def node_in_graph(self, node_type: str, node_namespace: str, node_name: str):
         """Check if the node is in the graph."""
         possible_node_type = self.node_count["node_type"].to_list()
 
         assert node_type in possible_node_type, f"Node type {node_type} not in {possible_node_type}"
-
-        pass
 
     def get_source_interactions(self, source_type, source_name, interaction_type, datasource):
         """Get interactions of a source."""
