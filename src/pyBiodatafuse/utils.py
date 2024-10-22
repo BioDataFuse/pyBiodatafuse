@@ -196,24 +196,32 @@ def create_harmonized_input_file(
 
         # Loop through each dictionary in the target data
         for entry in target_data:
-            if identifier_source is not None:
-                id = entry.get(identifier_source)
-                id_source = identifier_source
-            # Extract the specific target identifiers based on the target_source
-            targets = entry.get(target_source)
-            if not targets or pd.isna(targets) or targets.strip() == "":
+            source_idx = entry.get(identifier_source)
+            target_idx = entry.get(target_source)
+
+            if source_idx is None or target_idx in [None, ""]:
                 continue
-            if isinstance(targets, str):
-                for target in targets.split(", "):
-                    # Add a new row to the harmonized data list
-                    harmonized_data.append(
-                        {
-                            "identifier": id,
-                            "identifier.source": id_source,
-                            "target": target,
-                            "target.source": target_source,
-                        }
-                    )
+
+            if pd.isna(target_idx) or pd.isna(source_idx):
+                continue
+
+            if source_idx.split(":")[1] == "" or target_idx.split(":")[1] == "":
+                continue
+
+            id = source_idx.replace(":", "_")
+            id_source = identifier_source
+
+            # Extract the specific target identifiers based on the target_source
+            for target in target_idx.split(", "):
+                # Add a new row to the harmonized data list
+                harmonized_data.append(
+                    {
+                        "identifier": id,
+                        "identifier.source": id_source,
+                        "target": target.replace(":", "_"),
+                        "target.source": target_source,
+                    }
+                )
 
     harmonized_df = pd.DataFrame(harmonized_data)
 

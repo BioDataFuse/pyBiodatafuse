@@ -907,8 +907,9 @@ scratch/
 *.pkl
 /pyBiodatafuse-0.0.4.dev0
 *.graphml
-*.json
+
 *.gml
+pubchem_cache_results.json
 
 # Testing RDF
 src/test.ttl

@@ -111,11 +111,31 @@ class TestString(unittest.TestCase):
         expected_data = pd.Series(
             [
                 [
-                    {"stringdb_link_to": "CHRNA1", "Ensembl": "ENSP00000261007", "score": 0.543},
-                    {"stringdb_link_to": "ALG2", "Ensembl": "ENSP00000417764", "score": 0.633},
+                    {
+                        "stringdb_link_to": "CHRNA1",
+                        "Ensembl": "Ensembl:ENSP00000261007",
+                        "score": 0.543,
+                    },
+                    {
+                        "stringdb_link_to": "ALG2",
+                        "Ensembl": "Ensembl:ENSP00000417764",
+                        "score": 0.633,
+                    },
                 ],
-                [{"stringdb_link_to": "ALG14", "Ensembl": "ENSP00000359224", "score": 0.633}],
-                [{"stringdb_link_to": "ALG14", "Ensembl": "ENSP00000359224", "score": 0.543}],
+                [
+                    {
+                        "stringdb_link_to": "ALG14",
+                        "Ensembl": "Ensembl:ENSP00000359224",
+                        "score": 0.633,
+                    }
+                ],
+                [
+                    {
+                        "stringdb_link_to": "ALG14",
+                        "Ensembl": "Ensembl:ENSP00000359224",
+                        "score": 0.543,
+                    }
+                ],
             ]
         )
         expected_data.name = STRING_PPI_COL
