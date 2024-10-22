@@ -40,7 +40,7 @@ def get_patent_from_pubchem(bridgedb_df: pd.DataFrame) -> dict:
             patent_dict = requests.get(
                 f"https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/{cid}/xrefs/PatentID/JSON"
             ).json()
-        except requests.exceptions.ConnectionError as e:
+        except requests.exceptions.ConnectionError:
             cid_pat_dict[cid] = ""
             continue
 

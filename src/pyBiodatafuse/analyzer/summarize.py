@@ -201,7 +201,8 @@ class BioGraph(nx.MultiDiGraph):
         pass
 
     def get_patents_for_compounds(self):
-        """Get patents for compounds. TODO: Function in test mode!!"""
+        """Get patents for compounds."""
+        # TODO: Function in test mode!!
         compound_nodes = self.get_all_nodes_by_type("Compound")
 
         t = []
