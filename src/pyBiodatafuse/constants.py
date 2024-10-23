@@ -105,7 +105,7 @@ LITERATURE_DISEASE_OUTPUT_DICT = {
     "disease_name": str,
     "UMLS": str,
     "MONDO": str,
-    "datasource": str,
+    "source": str,
 }
 
 # Open Targets - Disease
@@ -291,11 +291,13 @@ DISGENET_EDGE_ATTRS = {
 }
 
 # Literature
-LITERATURE_NODE_MAIN_LABEL = "id"
+LITERATURE_NODE_MAIN_LABEL = "UMLS"
 LITERATURE_DISEASE_NODE_ATTRS = {
     "datasource": None,
     "name": None,
     "id": None,
+    "MONDO": None,
+    "UMLS": None,
     "labels": DISEASE_NODE_LABELS,
 }
 LITERATURE_DISEASE_EDGE_ATTRS = {
