@@ -234,13 +234,13 @@ def add_literature_gene_disease_subgraph(g, gene_node_label, annot_list):
     for annot in annot_list:
         if pd.isna(annot["disease_name"]):
             continue
-
         annot_node_label = annot[LITERATURE_NODE_MAIN_LABEL]
         annot_node_attrs = LITERATURE_DISEASE_NODE_ATTRS.copy()
         annot_node_attrs["datasource"] = annot["source"]
         annot_node_attrs["name"] = annot["disease_name"]
-        annot_node_attrs["id"] = annot["id"]
-        annot_node_attrs["UMLS"] = annot["id"]
+        annot_node_attrs["id"] = annot["UMLS"]
+        annot_node_attrs["UMLS"] = annot["UMLS"]
+        annot_node_attrs["MONDO"] = annot["MONDO"]
 
         g.add_node(annot_node_label, attr_dict=annot_node_attrs)
 
@@ -909,7 +909,6 @@ def build_networkx_graph(
     for _i, row in tqdm(combined_df.iterrows(), total=combined_df.shape[0], desc="Building graph"):
         if pd.isna(row["identifier"]) or pd.isna(row["target"]):
             continue
-
         gene_node_label = add_gene_node(g, row, dea_columns)
         process_annotations(g, gene_node_label, row, func_dict)
         process_ppi(g, gene_node_label, row)
