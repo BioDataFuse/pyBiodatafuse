@@ -64,17 +64,18 @@ def add_gene_protein_nodes(g: Graph, row) -> URIRef:
 
     :param g: RDF graph to which the gene node will be added.
     :param row: DataFrame row containing gene information.
-    :return: URIRef for the created gene node.
+    :return: List of URIRefs for the created gene node and protein node
     """
     target = row["target"]
     if target:
         gene_node = URIRef(f"http://identifiers.org/ensembl/{target}")
-        protein_node = URIRef(f"http://identifiers.org/ensembl/{target}_protein")
+        protein_node = URIRef(f"http://identifiers.org/ensembl/{target}xProtein")
         # TODO replace by UniProt ID when available
         g.add((gene_node, RDF.type, URIRef(NODE_TYPES["gene_node"])))
         g.add((gene_node, RDFS.label, Literal(row["identifier"], datatype=XSD.string)))
         g.add((protein_node, URIRef(PREDICATES["has_gene_template"]), gene_node))
         g.add((protein_node, RDF.type, URIRef(NODE_TYPES['protein_node'])))
+        g.add((protein_node, RDFS.label, Literal(f"{target}xProtein", datatype=XSD.string)))
         return [gene_node, protein_node]
     else:
         return None
@@ -117,29 +118,10 @@ def add_disease_node(g: Graph, disease_data: dict) -> URIRef:
     return disease_node
 
 
-def add_gene_disease_association_node(
-    g: Graph, id_number: str, source_idx: str, disease_id: str, new_uris: dict
-) -> URIRef:
-    """Create and add a gene-disease association node to the RDF graph.
-
-    :param g: RDF graph to which the association node will be added.
-    :param id_number: Unique identifier for the association node.
-    :param source_idx: Source index for the association.
-    :param disease_id: Disease identifier associated with the gene.
-    :param new_uris: Dictionary with updated project base URIs for the nodes.
-    :return: URIRef for the created association node.
-    """
-    gene_disease_assoc_node = URIRef(
-        f"{new_uris['gene_disease_association']}/{id_number}/{source_idx}_assoc_{disease_id}"
-    )
-    g.add((gene_disease_assoc_node, RDF.type, URIRef(NODE_TYPES["gene_disease_association"])))
-    return gene_disease_assoc_node
-
-
 def add_score_node(
-    g: Graph, id_number: str, source_idx: str, disease_id: str, score: float, new_uris: dict, i
+    g: Graph, id_number: str, source_idx: str, disease_id: str, score: float, new_uris: dict, i: int, gene_id: str
 ) -> URIRef:
-    """Create and add a score node to the RDF graph.
+    """Create and add a score node for gene-disease associations.
 
     :param g: RDF graph to which the score node will be added.
     :param id_number: Unique identifier for the score node.
@@ -148,14 +130,15 @@ def add_score_node(
     :param score: Score value for the gene-disease association.
     :param new_uris: Dictionary with updated project base URIs for the nodes.
     :param i: Index or iteration number used for node URI construction.
+    :param gene_id: String value of the gene ID
     :return: URIRef for the created score node.
     """
-    score_node = URIRef(f"{new_uris['score_base_node']}/{id_number}/{i}/{source_idx}_{disease_id}")
+    score_node = URIRef(f"{new_uris['score_base_node']}/{id_number}{i}{source_idx}_{disease_id}{gene_id}")
     g.add((score_node, RDF.type, URIRef(NODE_TYPES["score_node"])))
     g.add(
         (
             score_node,
-            URIRef(NAMESPACE_BINDINGS["sio"] + "has_value"),
+            URIRef(PREDICATES["sio_has_value"]),
             Literal(score, datatype=XSD.double),
         )
     )
@@ -177,13 +160,13 @@ def add_evidence_idx_node(
     :return: URIRef for the created EI node.
     """
     evidence_idx_node = URIRef(
-        f"{new_uris['score_base_node']}/{id_number}/{i}/{source_idx}_{disease_id}"
+        f"{new_uris['score_base_node']}/{id_number}{i}{source_idx}_{disease_id}"
     )
     g.add((evidence_idx_node, RDF.type, URIRef(NODE_TYPES["evidence_idx_node"])))
     g.add(
         (
             evidence_idx_node,
-            URIRef(NAMESPACE_BINDINGS["sio"] + "has_value"),
+            URIRef(PREDICATES["sio_has_value"]),
             Literal(ei, datatype=XSD.double),
         )
     )
@@ -225,10 +208,11 @@ def add_gene_disease_associations(
     :param i: the index of the row
     """
     data = disease_data
+    gene_id = g.value(subject=gene_node, predicate=RDFS.label)
     disease_node = add_disease_node(g, data)
     if disease_node:
         gene_disease_assoc_node = URIRef(
-            f"{new_uris['gene_disease_association']}/{id_number}/{i}/{source_idx}"
+            f"{new_uris['gene_disease_association']}/{id_number}{i}{source_idx}"
         )
         g.add((gene_disease_assoc_node, RDF.type, URIRef(NODE_TYPES["gene_disease_association"])))
         g.add((gene_disease_assoc_node, URIRef(PREDICATES["sio_refers_to"]), gene_node))
@@ -244,6 +228,7 @@ def add_gene_disease_associations(
                     new_uris=new_uris,
                     i=i,
                     disease_id=disease_umlscui,
+                    gene_id=gene_id
                 )
                 g.add(
                     (
@@ -501,12 +486,12 @@ def add_pathway_node(g: Graph, data: dict, source: str):
         return pathway_node
 
 
-def add_compound_node(g: Graph, compound: dict, gene_node: URIRef) -> URIRef:
+def add_drug_node(g: Graph, compound: dict, protein_node: URIRef) -> URIRef:
     """Create and add a compound node to the RDF graph.
 
     :param g: RDF graph to which the compound node will be added.
     :param compound: Dictionary containing compound information.
-    :param gene_node: URIRef of the gene node associated with the compound.
+    :param protein_node: URIRef of the protein node associated with the compound.
     :return: URIRef for the created compound node.
     """
     chembl_id = compound.get("chembl_id", None)
@@ -516,28 +501,28 @@ def add_compound_node(g: Graph, compound: dict, gene_node: URIRef) -> URIRef:
     is_approved = compound.get("is_approved", None)
     clincal_trial_phase = compound.get("clincal_trial_phase", None)
     relation = compound.get("relation", None)
-    compound_node = URIRef(f"https://www.ebi.ac.uk/chembl/compound_report_card/{chembl_id}")
-    g.add((compound_node, RDFS.label, Literal(str(compound_name), datatype=XSD.string)))
+    drug_node = URIRef(f"https://www.ebi.ac.uk/chembl/compound_report_card/{chembl_id}")
+    g.add((drug_node, RDFS.label, Literal(str(compound_name), datatype=XSD.string)))
     data_source_node = add_data_source_node(g, "OpenTargets_reactome")
-    g.add((compound_node, URIRef(PREDICATES["sio_has_source"]), data_source_node))
+    g.add((drug_node, URIRef(PREDICATES["sio_has_source"]), data_source_node))
     if is_approved:
         g.add(
             (
-                compound_node,
+                drug_node,
                 RDF.type,  # TODO check
                 URIRef(NODE_TYPES["approved_drug"]),
             )
         )
     else:
-        g.add((compound_node, RDF.type, URIRef(NODE_TYPES["tested_substance_node"])))
+        g.add((drug_node, RDF.type, URIRef(NODE_TYPES["tested_substance_node"])))
     if relation in MOAS:
         relation_iri = MOAS[relation]
-        g.add((compound_node, URIRef(relation_iri), gene_node))
+        g.add((drug_node, URIRef(relation_iri), protein_node))
     if clincal_trial_phase:
         clinical_phase_iri = CLINICAL_PHASES[str(clincal_trial_phase)]
         g.add(
             (
-                compound_node,
+                drug_node,
                 URIRef(PREDICATES["sio_has_value"]),
                 URIRef(clinical_phase_iri),
             )
@@ -551,8 +536,8 @@ def add_compound_node(g: Graph, compound: dict, gene_node: URIRef) -> URIRef:
                 iri = "https://pubchem.ncbi.nlm.nih.gov/compound/" + str(compound_cid)
             if iri:
                 id_node = URIRef(iri)
-                g.add((compound_node, OWL.sameAs, id_node))
-                g.add((id_node, OWL.sameAs, compound_node))
+                g.add((drug_node, OWL.sameAs, id_node))
+                g.add((id_node, OWL.sameAs, drug_node))
                 g.add((id_node, RDFS.label, Literal(compound_name, datatype=XSD.string)))
                 g.add((id_node, RDF.type, URIRef(NODE_TYPES["tested_substance_node"])))
             ae_list = compound.get("adverse_effect", None)
@@ -562,8 +547,9 @@ def add_compound_node(g: Graph, compound: dict, gene_node: URIRef) -> URIRef:
                     if ae:
                         ae_node = add_ae_node(g, ae)
                         if ae_node:
-                            g.add((ae_node, URIRef(PREDICATES["precedes"]), compound_node))
-    return compound_node
+                            g.add((ae_node, URIRef(PREDICATES["is_preceded_by"]), drug_node))
+                            g.add((drug_node, URIRef(PREDICATES["precedes"]), ae_node))
+    return drug_node
 
 
 def add_ae_node(g: Graph, ae: str) -> URIRef:
@@ -602,7 +588,7 @@ def add_go_cpf(g: Graph, process_data: dict) -> URIRef:
         go_cpf = URIRef(iri)
         g.add((go_cpf, RDFS.label, Literal(label, datatype=XSD.string)))
         if go_type:
-            g.add((go_cpf, RDF.type, go_type))
+            g.add((go_cpf, RDFS.subClassOf, go_type))
         data_source_node = add_data_source_node(g, "OpenTargets_reactome")
         g.add((go_cpf, URIRef(PREDICATES["sio_has_source"]), data_source_node))
         return go_cpf
@@ -797,26 +783,26 @@ def add_transporter_inhibitor_node(g: Graph, transporter_inhibitor_data: dict, b
     drugbank_id = data.get("drugbank_id", None)
     uniprot_trembl_id = data.get("uniprot_trembl_id", None)
     if compound_cid:
-        compound_node = URIRef(f"https://pubchem.ncbi.nlm.nih.gov/compound/{compound_cid}")
-        g.add((compound_node, RDFS.label, Literal(compound_name, datatype=XSD.string)))
+        drug_node = URIRef(f"https://pubchem.ncbi.nlm.nih.gov/compound/{compound_cid}")
+        g.add((drug_node, RDFS.label, Literal(compound_name, datatype=XSD.string)))
         g.add(
             (
-                compound_node,
+                drug_node,
                 URIRef(PREDICATES["chebi_inchi"]),
                 Literal(inchikey, datatype=XSD.string),
             )
         )
-        g.add((compound_node, URIRef(PREDICATES["chebi_smiles"]), Literal(smiles)))
-        g.add((compound_node, OWL.sameAs, URIRef(f"https://molmedb.upol.cz/mol/{molmedb_id}")))
-        g.add((compound_node, OWL.sameAs, URIRef(f"https://identifiers.org/CHEBI:{chebi_id}")))
+        g.add((drug_node, URIRef(PREDICATES["chebi_smiles"]), Literal(smiles)))
+        g.add((drug_node, OWL.sameAs, URIRef(f"https://molmedb.upol.cz/mol/{molmedb_id}")))
+        g.add((drug_node, OWL.sameAs, URIRef(f"https://identifiers.org/CHEBI:{chebi_id}")))
         g.add(
-            (compound_node, OWL.sameAs, URIRef(f"https://www.drugbank.ca/drugs/{drugbank_id}"))
+            (drug_node, OWL.sameAs, URIRef(f"https://www.drugbank.ca/drugs/{drugbank_id}"))
         )
         g.add(
             (
                 URIRef(f"https://www.uniprot.org/uniprotkb/{uniprot_trembl_id}"),
                 URIRef(PREDICATES["sio_has_part"]),
-                compound_node,
+                drug_node,
             )
         )
         g.add(
@@ -843,7 +829,7 @@ def add_transporter_inhibitor_node(g: Graph, transporter_inhibitor_data: dict, b
         )
         g.add(
             (
-                compound_node,
+                drug_node,
                 URIRef(PREDICATES["sio_is_part_of"]),
                 inhibition_node,
             )
@@ -881,7 +867,7 @@ def add_ppi_data(
     ensembl = entry.get("Ensembl", None)
     score = entry.get("score", None)
     if score:
-        score = int(score)
+        score = float(score)
         # Nodes
         ppi_node = URIRef(base_uri + f"ppi/{protein_name}_{ensembl}")
         g.add(
@@ -954,13 +940,13 @@ def add_ppi_data(
                 URIRef(NODE_TYPES["protein_node"]),
             )
         )
-        score_node = URIRef(f"{new_uris['score_base_node']}/{stringdb_link_to}_{ensembl}")
+        score_node = URIRef(f"{new_uris['score_base_node']}/{protein_name}_{ensembl}")
         g.add((ppi_node, URIRef(PREDICATES["sio_has_measurement_value"]), score_node))
         g.add((score_node, RDF.type, URIRef(NODE_TYPES["score_node"])))
         g.add(
             (
                 score_node,
-                URIRef(NAMESPACE_BINDINGS["sio"] + "has_value"),
+                URIRef(PREDICATES["sio_has_value"]),
                 Literal(score, datatype=XSD.double),
             )
         )
@@ -970,11 +956,13 @@ def add_ppi_data(
 def add_literature_based_data(
     g: Graph,
     entry: dict,
+    gene_node: URIRef
 ):
     """Add a literature based node.
 
     :param g: RDFLib graph
     :param entry: the literature based data dictionary
+    :param gene_node: The gene URIRef
     """
     source = entry.get("source", None)
     if source:
@@ -989,6 +977,13 @@ def add_literature_based_data(
                     URIRef(source_url),
                     URIRef(PREDICATES["sio_refers_to"]),
                     URIRef(f"https://biodatafuse.org/identifiers/{identifier}"),
+                )
+            )
+            g.add(
+                (
+                    URIRef(source_url),
+                    URIRef(PREDICATES["sio_refers_to"]),
+                    gene_node,
                 )
             )
             g.add(
@@ -1115,22 +1110,22 @@ def generate_rdf(
 
         if compound_data:
             for compound in compound_data:
-                add_compound_node(g, compound, gene_node)
+                add_drug_node(g, compound, protein_node)
 
         if literature_based_data:
             if isinstance(literature_based_data, list):
                 entries = literature_based_data
                 for entry in entries:
-                    add_literature_based_data(g, entry)
+                    add_literature_based_data(g, entry, gene_node)
             elif isinstance(literature_based_data, dict):
                 entry = literature_based_data
-                add_literature_based_data(g, entry)
+                add_literature_based_data(g, entry, gene_node)
 
         if transporter_inhibitor_data:
             for entry in transporter_inhibitor_data:
                 add_transporter_inhibitor_node(g, entry, base_uri)
         if stringdb_data and isinstance(stringdb_data, list):
-            protein_name = f'{row.target}_protein'
+            protein_name = f"{row.target}_protein"
             for entry in stringdb_data:
                 if entry.get("Ensembl", None):
                     add_ppi_data(g, protein_node, protein_name, entry, base_uri, new_uris)

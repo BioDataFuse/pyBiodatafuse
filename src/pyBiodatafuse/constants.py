@@ -519,7 +519,7 @@ PREDICATES = {
     "sio_is_part_of": f"{NAMESPACE_BINDINGS['sio']}SIO_000068",
     "has_gene_count": "",  # TODO gene count
     "precedes": "http://semanticscience.org/resource/SIO_000248",
-    "is preceded by": "http://semanticscience.org/resource/SIO_000248",
+    "is_preceded_by": "http://semanticscience.org/resource/SIO_000248",
     "sio_has_part": f"{NAMESPACE_BINDINGS['sio']}SIO_000028",
     "negatively_regulates": f"{NAMESPACE_BINDINGS['obo']}RO_0002449",
     "phase": "http://purl.obolibrary.org/obo/PATO_0000083",
