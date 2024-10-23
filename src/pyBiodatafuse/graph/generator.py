@@ -479,34 +479,35 @@ def add_opentargets_compound_side_effect_subgraph(g, compound_node_label, side_e
     :param side_effects_list: list of side effects from OpenTargets.
     :returns: a NetworkX MultiDiGraph
     """
-    for effect in side_effects_list:
-        if pd.isna(effect["name"]):
-            continue
+    if isinstance(side_effects_list, list):
+        for effect in side_effects_list:
+            if pd.isna(effect["name"]):
+                continue
 
-        effect_node_label = effect["name"]
-        effect_node_attrs = SIDE_EFFECT_NODE_ATTRS.copy()
-        effect_node_attrs["name"] = effect["name"]
+            effect_node_label = effect["name"]
+            effect_node_attrs = SIDE_EFFECT_NODE_ATTRS.copy()
+            effect_node_attrs["name"] = effect["name"]
 
-        g.add_node(effect_node_label, attr_dict=effect_node_attrs)
+            g.add_node(effect_node_label, attr_dict=effect_node_attrs)
 
-        edge_attrs = COMPOUND_SIDE_EFFECT_EDGE_ATTRS.copy()
-        edge_hash = hash(frozenset(edge_attrs.items()))
-        edge_attrs["edge_hash"] = edge_hash
-        edge_data = g.get_edge_data(compound_node_label, effect_node_label)
-        edge_data = {} if edge_data is None else edge_data
-        node_exists = [
-            x
-            for x, y in edge_data.items()
-            if "attr_dict" in y and y["attr_dict"].get("edge_hash") == edge_hash
-        ]
+            edge_attrs = COMPOUND_SIDE_EFFECT_EDGE_ATTRS.copy()
+            edge_hash = hash(frozenset(edge_attrs.items()))
+            edge_attrs["edge_hash"] = edge_hash
+            edge_data = g.get_edge_data(compound_node_label, effect_node_label)
+            edge_data = {} if edge_data is None else edge_data
+            node_exists = [
+                x
+                for x, y in edge_data.items()
+                if "attr_dict" in y and y["attr_dict"].get("edge_hash") == edge_hash
+            ]
 
-        if len(node_exists) == 0:
-            g.add_edge(
-                compound_node_label,
-                effect_node_label,
-                label=COMPOUND_SIDE_EFFECT_EDGE_LABEL,
-                attr_dict=edge_attrs,
-            )
+            if len(node_exists) == 0:
+                g.add_edge(
+                    compound_node_label,
+                    effect_node_label,
+                    label=COMPOUND_SIDE_EFFECT_EDGE_LABEL,
+                    attr_dict=edge_attrs,
+                )
 
     return g
 
