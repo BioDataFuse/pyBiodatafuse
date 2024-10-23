@@ -20,7 +20,8 @@ from pyBiodatafuse.constants import (
     OPENTARGETS_COMPOUND_QUERY_INPUT_ID,
     OPENTARGETS_DISEASE_COL,
     OPENTARGETS_DISEASE_COMPOUND_COL,
-    OPENTARGETS_DISEASE_INPUT_ID,
+    OPENTARGETS_DISEASE_INPUT_ID_1,
+    OPENTARGETS_DISEASE_INPUT_ID_2,
     OPENTARGETS_DISEASE_OUTPUT_DICT,
     OPENTARGETS_ENDPOINT,
     OPENTARGETS_GENE_COMPOUND_COL,
@@ -968,8 +969,14 @@ def get_disease_compound_interactions(
         )
         return pd.DataFrame(), {}
 
-    data_df = bridgedb_df[bridgedb_df["target.source"] == OPENTARGETS_DISEASE_INPUT_ID]
-    efo_ids = data_df["target"].tolist()
+    data_df = bridgedb_df[bridgedb_df["target.source"] == OPENTARGETS_DISEASE_INPUT_ID_1]
+    data_df_2 = bridgedb_df[bridgedb_df["target.source"] == OPENTARGETS_DISEASE_INPUT_ID_2]
+
+    data_df_2 = data_df_2[~data_df_2["identifier"].isin(data_df["identifier"])]  # remove duplicates
+
+    efo_ids_1 = data_df["target"].tolist()
+    efo_ids_2 = data_df_2["target"].tolist()
+    efo_ids = efo_ids_1 + efo_ids_2
 
     # Record the start time
     opentargets_version = get_version_opentargets()
@@ -1019,7 +1026,7 @@ def get_disease_compound_interactions(
     # Add version, datasource, query, query time, and the date to metadata
     opentargets_version["query"] = {
         "size": len(efo_ids),
-        "input_type": OPENTARGETS_DISEASE_INPUT_ID,
+        "input_type": OPENTARGETS_DISEASE_INPUT_ID_1 + ", " + OPENTARGETS_DISEASE_INPUT_ID_2,
         "time": time_elapsed,
         "date": current_date,
         "url": OPENTARGETS_ENDPOINT,
@@ -1116,14 +1123,24 @@ def get_disease_compound_interactions(
     )
 
     # Merge the two DataFrames on the target column
-    merged_df = collapse_data_sources(
+    merged_df_1 = collapse_data_sources(
         data_df=data_df,
-        source_namespace=OPENTARGETS_DISEASE_INPUT_ID,
+        source_namespace=OPENTARGETS_DISEASE_INPUT_ID_1,
         target_df=intermediate_df,
         common_cols=["target"],
         target_specific_cols=list(OPENTARGETS_COMPOUND_OUTPUT_DICT.keys()),
         col_name=OPENTARGETS_DISEASE_COMPOUND_COL,
     )
+    merged_df_2 = collapse_data_sources(
+        data_df=data_df_2,
+        source_namespace=OPENTARGETS_DISEASE_INPUT_ID_2,
+        target_df=intermediate_df,
+        common_cols=["target"],
+        target_specific_cols=list(OPENTARGETS_COMPOUND_OUTPUT_DICT.keys()),
+        col_name=OPENTARGETS_DISEASE_COMPOUND_COL,
+    )
+
+    merged_df = pd.concat([merged_df_1, merged_df_2], ignore_index=True)
 
     """Update metadata"""
     # Calculate the number of new nodes

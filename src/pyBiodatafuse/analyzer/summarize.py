@@ -232,3 +232,8 @@ class BioGraph(nx.MultiDiGraph):
         """Get metadata of a chemical."""
         # """Adverse effects, Clinical trials,"""
         pass
+
+    def get_subgraph(self, nodes: list):
+        """Get subgraph of the graph."""
+        subgraph = self.graph.subgraph(nodes)
+        return subgraph
