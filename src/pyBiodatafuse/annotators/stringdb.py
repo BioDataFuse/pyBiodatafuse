@@ -11,7 +11,6 @@ import numpy as np
 import pandas as pd
 import requests
 import time
-import xml.etree.ElementTree as ET
 
 from pyBiodatafuse.constants import (
     NCBI_ENDPOINT,
@@ -53,14 +52,12 @@ def get_version_stringdb() -> dict:
 def _format_data(row, string_ids_df, network_df, to_uniprot):
     """Reformat STRING-DB response (Helper function).
 
+    :param string_ids_df: dataframe containing string identifiers
     :param row: input_df row
-    :param species: input species
     :param network_df: STRING-DB response annotation DataFrame
+    :param network_df: list of uniprot gene identifiers
     :returns: StringDB reformatted annotation.
     """
-
-    # The Ensembl ID get extracted from the bridgedb row and then
-    # queried against mygene.info for the HGNC symbol that corresponds to the Ensembl gene ID
 
     gene_ppi_links = list()
 
@@ -101,10 +98,10 @@ def _format_data(row, string_ids_df, network_df, to_uniprot):
 
 def get_string_ids(gene_list: list, species: int = 9606) -> str:
     """Get the String identifiers of the gene list.
-    
     :param gene_list: list containing the genes of interest.
     :param species: input species NCBI Taxonomy ID
-    :return results: list where each item is a dictionary containing information of a gene of interest"""
+    :returns results: list where each item is a dictionary containing information of a gene of interest
+    """
     params = {
         "identifiers": "\r".join(gene_list),  # your protein list
         "species": species,  #  species NCBI identifier (default: human)
@@ -119,7 +116,6 @@ def get_string_ids(gene_list: list, species: int = 9606) -> str:
 
 def _get_ppi_data(gene_ids: list, species: int = 9606) -> pd.DataFrame:
     """Get the STRING PPI interactions for the gene list for a specific species.
-    
     :param gene_ids: list of STRING identifiers.
     :param species: input species NCBI Taxonomy ID
     :returns response: list where each item is a dictionary containing PPI data. 
@@ -135,44 +131,41 @@ def _get_ppi_data(gene_ids: list, species: int = 9606) -> pd.DataFrame:
     return response
 
 
-
 def get_uniprot_ids(string_ids):
     """Get the UniProt IDs using a list of STRING IDs.
-    
     :param string_ids: list containing STRING identifiers
-    :returns mapped_ids: dictionary with the string ids as key, and the uniprot ids as value"""
-    
+    :returns mapped_ids: dictionary with the string ids as key, and the uniprot ids as value
+    """
     # Submit ID mapping request
     request = requests.post(
         f"{UNIPROT_ENDPOINT}/idmapping/run",
         data={"from": "STRING", "to": "UniProtKB", "ids": ",".join(string_ids)},
     )
-    
+
     if request.status_code != 200:
         raise Exception(f"Error: {request.status_code}, {request.text}")
-    
+
     job_id = request.json().get("jobId")
-    
+
     # While loop to check if the job is finished
     while True:
         status_request = requests.get(f"{UNIPROT_ENDPOINT}/idmapping/status/{job_id}")
         status = status_request.json()
-        
         if status.get("results") or status.get("failedIds"):
             break
         time.sleep(5)  # Wait for 5 seconds before checking again
-    
+
     # When the job is finished, get the results
     results_request = requests.get(f"{UNIPROT_ENDPOINT}/idmapping/results/{job_id}")
-    
+
     results = results_request.json()
-    
+
     # Check for results and map STRING to UniProt
     if "results" not in results:
         raise Exception(f"No results found in the mapping response: {results}")
-    
+
     mapped_ids = {result["from"]: result["to"] for result in results["results"]}
-    
+
     return mapped_ids
 
 
@@ -187,12 +180,11 @@ def get_ppi(bridgedb_df: pd.DataFrame, species: str = "human"):
     params = {
         "db": "taxonomy",
         "term": species,
-        "retmode": "xml" 
+        "retmode": "json" 
     }
-    
-    response = requests.get(f"{NCBI_ENDPOINT}/entrez/eutils/esearch.fcgi", params=params) 
-    root = ET.fromstring(response.content)       
-    species_id = root.find(".//Id").text
+
+    response = requests.get(f"{NCBI_ENDPOINT}/entrez/eutils/esearch.fcgi", params=params).json()
+    species_id = response["esearchresult"]["idlist"][0]
 
     # Check if the endpoint is available
     api_available = check_endpoint_stringdb()
@@ -274,10 +266,10 @@ def get_ppi(bridgedb_df: pd.DataFrame, species: str = "human"):
     uniprot_ids = get_uniprot_ids(to_uniprot)
 
     # Append the uniprot identifiers to the current dataframe
-    data_df['StringDB_ppi'] = data_df['StringDB_ppi'].apply(
+    data_df[STRING_PPI_COL] = data_df[STRING_PPI_COL].apply(
     lambda ppi_list: [
         {**ppi, 'uniprot_id': uniprot_ids.get(ppi.get('string_id'), None)} for ppi in ppi_list
-        ]
+    ]
     )
 
     data_df[STRING_PPI_COL] = data_df[STRING_PPI_COL].apply(
