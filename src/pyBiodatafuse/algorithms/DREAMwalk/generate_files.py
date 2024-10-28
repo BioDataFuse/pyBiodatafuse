@@ -231,7 +231,6 @@ def create_files(graph_obj: BioGraph, output_dir: str = "./dreamwalk_data") -> N
     """
     subgraph = graph_obj.get_subgraph(node_types=["Gene", "Disease", "Compound"])
     logger.warning(f"Subgraph nodes: {len(subgraph.nodes())}, edges: {len(subgraph.edges())}")
-    nx.write_gml(subgraph, f"{output_dir}/subgraph_graph.gml")
 
     # Removing nodes with no heirarchy
     remove_nodes = check_hierarchy(subgraph, output_dir)
@@ -243,6 +242,8 @@ def create_files(graph_obj: BioGraph, output_dir: str = "./dreamwalk_data") -> N
     logger.info(
         f"Updated graph nodes: {len(updated_graph.nodes())}, edges: {len(updated_graph.edges())}"
     )
+    nx.write_gml(updated_graph, f"{output_dir}/subgraph_graph.gml")
+
     # Node type label file - TSV files with two columns: node_id, node_type
     create_nodetype_file(updated_graph, output_dir)
 
