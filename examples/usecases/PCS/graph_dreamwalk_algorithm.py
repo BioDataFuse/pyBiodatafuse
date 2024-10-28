@@ -4,13 +4,14 @@
 
 
 import logging
-from pyBiodatafuse.analyzer.summarize import BioGraph
-import pyBiodatafuse.algorithms.DREAMwalk.generate_files as gen
+
 import pyBiodatafuse.algorithms.DREAMwalk.generate_dis_sim as dis_gen
-from pyBiodatafuse.algorithms.DREAMwalk.generate_embeddings import save_embedding_files
-from pyBiodatafuse.algorithms.DREAMwalk.predict_associations import predict_dda
-from pyBiodatafuse.algorithms.DREAMwalk.generate_similarity_net import save_sim_graph
+import pyBiodatafuse.algorithms.DREAMwalk.generate_files as gen
 from pyBiodatafuse.algorithms.DREAMwalk.calculate_drug_scores import find_candidates
+from pyBiodatafuse.algorithms.DREAMwalk.generate_embeddings import save_embedding_files
+from pyBiodatafuse.algorithms.DREAMwalk.generate_similarity_net import save_sim_graph
+from pyBiodatafuse.algorithms.DREAMwalk.predict_associations import predict_dda
+from pyBiodatafuse.analyzer.summarize import BioGraph
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -21,7 +22,6 @@ def preprocess_files():
     graph_obj = BioGraph(graph_path="PCS_graph.gml", graph_format="gml")
     gen.create_files(graph_obj=graph_obj, output_dir="dreamwalk_data")
     logger.info("Files generated successfully.")
-    # dis_gen.save_dis_sim("preprocessed_graph.csv", "dis_sim.tsv")
 
 
 def generate_sim():

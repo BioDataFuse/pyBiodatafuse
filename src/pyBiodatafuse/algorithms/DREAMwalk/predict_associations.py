@@ -2,12 +2,11 @@
 
 import argparse
 import pickle
+
 import numpy as np
-
-from xgboost import XGBClassifier
+from sklearn.metrics import accuracy_score, average_precision_score, f1_score, roc_auc_score
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, f1_score, roc_auc_score, average_precision_score
-
+from xgboost import XGBClassifier
 
 from pyBiodatafuse.algorithms.DREAMwalk.utils import set_seed
 

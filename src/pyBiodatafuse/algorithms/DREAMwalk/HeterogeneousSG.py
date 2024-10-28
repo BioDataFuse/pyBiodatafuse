@@ -1,6 +1,7 @@
 """Codes taken from DreamWalk repository: https://github.com/eugenebang/DREAMwalk"""
 
 import os
+
 import numpy as np
 
 

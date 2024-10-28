@@ -2,8 +2,9 @@
 
 import os
 import random
-import numpy as np
+
 import networkx as nx
+import numpy as np
 
 
 def read_graph(edgeList, weighted=True, directed=False, delimiter="\t"):

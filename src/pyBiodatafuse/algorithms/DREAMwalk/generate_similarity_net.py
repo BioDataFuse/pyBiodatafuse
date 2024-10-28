@@ -1,18 +1,19 @@
 """Codes taken from DreamWalk repository: https://github.com/eugenebang/DREAMwalk"""
 
 import argparse
-
 import math
-import pandas as pd
 from collections import Counter, defaultdict
 
+import pandas as pd
+
 from pyBiodatafuse.analyzer.summarize import BioGraph
-from pyBiodatafuse.algorithms.DREAMwalk.utils import read_graph
 
 
 def generate_sim_graph(hier_df: str, nodes: list, cutoff: float, directed: bool = True):
     tree = _generate_tree(hier_df, nodes)
+    print("Creating IC values...")
     ic_values = _ic_from_tree(tree, nodes)
+    print("Calculating similarity values...")
 
     sim_values = {}
     for ntype in tree.keys():
@@ -154,11 +155,21 @@ def save_sim_graph(
     directed: bool = False,
     net_delimiter: str = "\t",
 ):
+    """Generate similarity graph for the algorithm.
+    :param graph_obj: BioGraph object
+    :param hierf: hierarchy file
+    :param outputf: output file name
+    :param cutoff: cutoff value for similarity
+    :param directed: directed or undirected graph
+    :param net_delimiter: delimiter of networks file; default = tab
+    """
     G = graph_obj.graph
     nodes = list(G.nodes())
     hier_df = pd.read_csv(hierf)
 
+    print("Generating similarity graph...")
     sim_values = generate_sim_graph(hier_df, nodes, cutoff, directed)
+    print("Similarity graph generated.")
 
     with open(outputf, "w") as fw:
         index = 0
@@ -174,8 +185,3 @@ def save_sim_graph(
                 index += 1
             type_number += 1
     print(f"Similarity graph saved: {outputf}")
-
-
-if __name__ == "__main__":
-    args = parse_args()
-    save_sim_graph(**args)

@@ -1,16 +1,16 @@
 """Codes taken from DreamWalk repository: https://github.com/eugenebang/DREAMwalk"""
 
 import argparse
-
-import os
 import math
-import random
+import os
 import pickle
+import random
+from collections import Counter, defaultdict
+
 import networkx as nx
 import numpy as np
-from scipy import stats
 import parmap
-from collections import defaultdict, Counter
+from scipy import stats
 
 from pyBiodatafuse.algorithms.DREAMwalk.HeterogeneousSG import HeterogeneousSG
 from pyBiodatafuse.algorithms.DREAMwalk.utils import read_graph, set_seed
