@@ -74,4 +74,4 @@ if __name__ == "__main__":
             parent_list.append({"umls": umls, "mondo": mondo, "parent": ",".join(parents)})
 
     parent_df = pd.DataFrame(parent_list)
-    parent_df.to_csv("dreamwalk_data/mondo_hierarchy.csv", index=False)
+    parent_df.to_csv("dreamwalk_data/mondo_hierarchy.tsv", sep="\t", index=False)
