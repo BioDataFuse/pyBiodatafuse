@@ -234,7 +234,7 @@ def create_files(graph_obj: BioGraph, output_dir: str = "./dreamwalk_data") -> N
 
     # Removing nodes with no heirarchy
     remove_nodes = check_hierarchy(subgraph, output_dir)
-    updated_graph = nx.Graph(subgraph)
+    updated_graph = nx.MultiDiGraph(subgraph)
 
     for node in remove_nodes:
         updated_graph.remove_node(node)
