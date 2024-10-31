@@ -40,14 +40,33 @@ def get_kegg_ids(row):
     print(row)
     results = requests.get(f"{KEGG_ENDPOINT}/conv/genes/ncbi-geneid:{row['target']}")
     kegg_id = results.text.split()
-    return {kegg_id[1]}
+    return {"KEGG_id": kegg_id[1]}
 
 
-def get_pathway_link(kegg_id_dict):
-    for key in kegg_id_dict:
-        print(kegg_id_dict[key]) # debug
-        results = requests.get(f"{KEGG_ENDPOINT}/link/pathway/{kegg_id_dict[key]}")
-        print(results.text) # debug
+def get_pathway_link(row):
+    kegg_dict = row[KEGG_COL_NAME]
+    results = requests.get(f"{KEGG_ENDPOINT}/link/pathway/{kegg_dict.get('KEGG_id')}")
+
+    pathways = []
+    for line in results.text.strip().split("\n"):
+        pathway_info = {}
+        parts = line.split("\t")
+        pathway_id = parts[1]
+        pathway_info["pathway_id"] = pathway_id 
+
+        results_kgml = requests.get(f"{KEGG_ENDPOINT}/get/{pathway_id}/kgml")
+        title_start = results_kgml.text.find('title="') + len('title="')
+        title_end = results_kgml.text.find('"', title_start)
+
+        # Extract the title substring
+        pathway_title = results_kgml.text[title_start:title_end]
+        pathway_info["pathway_label"] = pathway_title
+        pathways.append(pathway_info)
+
+
+    kegg_dict["pathways"] = pathways
+
+    return kegg_dict
     
 
 def get_pathways(bridgedb_df):    
@@ -65,16 +84,15 @@ def get_pathways(bridgedb_df):
 
     gene_list = list(set(data_df["target"].tolist()))
 
-
-    data_df[KEGG_COL_NAME] = data_df.apply(lambda row: get_kegg_ids(row), axis=1)
-
     # Get the KEGG identifiers
-    # for gene in gene_list:
-    #     kegg_id = get_kegg_ids(gene)
-    #     data_df[KEGG_COL_NAME]
+    data_df[KEGG_COL_NAME] = data_df.apply(lambda row: get_kegg_ids(row), axis=1)
+    print(data_df)
 
     # Get the links for the KEGG pathways
-    # get_pathway_link(kegg_id_dict)
+    data_df[KEGG_COL_NAME] = data_df.apply(lambda row: get_pathway_link(row), axis=1)
+    print(data_df)
+
+    return data_df
     
 
     
