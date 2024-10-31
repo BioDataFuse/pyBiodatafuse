@@ -2,6 +2,8 @@
 
 import logging
 import math
+from typing import Dict, List, Set
+from itertools import combinations_with_replacement
 from collections import Counter, defaultdict
 
 import pandas as pd
@@ -11,7 +13,7 @@ from pyBiodatafuse.algorithms.DREAMwalk.utils import read_graph
 logger = logging.getLogger(__name__)
 
 
-def _generate_tree(hier_df: pd.DataFrame, nodes: list) -> dict:
+def _generate_tree(hier_df: pd.DataFrame, nodes: list) -> Dict[str, Dict[str, List]]:
     """Generate tree from hierarchy dataframe.
     :param hier_df: hierarchy dataframe
     :param nodes: list of nodes
@@ -31,66 +33,36 @@ def _generate_tree(hier_df: pd.DataFrame, nodes: list) -> dict:
             break
     rows = [tempdf.iloc[i].dropna().tolist() for i in range(len(tempdf))]
 
-    tree = defaultdict(dict)  # type: dict
+    tree = defaultdict(lambda: defaultdict(list))  # type: Dict[str, Dict[str, List]]
     for row in rows:
         ntype = row[-1]
-        try:
-            tree[ntype][row[0]].append(row)
-        except:
-            tree[ntype][row[0]] = []
-            tree[ntype][row[0]].append(row)
+        n = row[0]
+        tree[ntype][n].append(row)
     return tree
 
 
-def generate_sim_graph(hier_df: str, nodes: list, cutoff: float, directed: bool = True):
-    """Generate similarity graph.
-    :param hier_df: hierarchy dataframe
-    :param nodes: list of nodes
-    :param cutoff: cutoff value for similarity
-    :param directed: directed or undirected graph
-    :return: similarity values
-    """
-    tree = _generate_tree(hier_df, nodes)
-    ic_values = _ic_from_tree(tree, nodes)
-
-    sim_values = {}  # type: dict
-    for ntype in tree.keys():
-        sim_values[ntype] = []
-        ids = list(tree[ntype].keys())
-        for i in range(len(ids)):
-            id1 = ids[i]
-            for j in range(i + 1, len(ids)):
-                id2 = ids[j]
-                sim = _simJC_from_tree(id1, id2, tree[ntype], ic_values[ntype])
-                if sim > cutoff:
-                    sim_values[ntype].append((id1, id2, sim))
-                    if directed:
-                        sim_values[ntype].append((id2, id1, sim))
-    return sim_values
-
-
-def _calculate_ic(total_counts: dict, max_wn: int, nodes: list) -> dict:
+def _calculate_ic(total_counts: dict, max_wn: int, nodes: list) -> Dict[str, float]:
     """Calculate information content for each node.
     :param total_counts: total counts of nodes
     :param max_wn: maximum count of nodes
     :param nodes: list of nodes
     """
-    ic_values = {}
-    for entity in list(total_counts.keys()):
+    ic_values = defaultdict(float)  # type: Dict[str, float]
+    for entity in total_counts:
         if entity in nodes:  # if node is in graph
             ic_value = 1
         else:
             count = total_counts[entity]
-            ic_value = 1 - math.log(count) / math.log(max_wn)  # type: float
+            ic_value = round(1 - math.log(count) / math.log(max_wn), 3)
         ic_values[entity] = ic_value
     return ic_values
 
 
-def _ic_from_tree(tree: dict, nodes: list):
-    ic_values = {}
-    for ntype in tree.keys():
+def _ic_from_tree(tree: Dict[str, Dict[str, List]], nodes: list) -> Dict[str, Dict[str, float]]:
+    ic_values = defaultdict(dict)  # type: Dict[str, Dict[str, float]]
+    for ntype, n_vals in tree.items():
         total_counts = Counter()  # type: Counter
-        for rows in tree[ntype].values():
+        for rows in n_vals.values():
             for row in rows:
                 total_counts += Counter(row)
         max_wn = total_counts[ntype]
@@ -98,7 +70,9 @@ def _ic_from_tree(tree: dict, nodes: list):
     return ic_values
 
 
-def _simJC_from_tree(id1: str, id2: str, tree, ic_values):
+def _simJC_from_tree(
+    id1: str, id2: str, tree: Dict[str, List], ic_values: Dict[str, float]
+) -> float:
     """Calculate similarity between two nodes using Jiang-Conrath similarity.
     :param id1: node 1
     :param id2: node 2
@@ -120,7 +94,7 @@ def _simJC_from_tree(id1: str, id2: str, tree, ic_values):
             path_pairs.append([path1, path2])
 
     # get all common ancecstors
-    com_ancs = set()  # type: set
+    com_ancs = set()  # type: Set[str]
     for pair in path_pairs:
         com_ancs = com_ancs | (set(pair[0]) & set(pair[1]))
 
@@ -132,13 +106,43 @@ def _simJC_from_tree(id1: str, id2: str, tree, ic_values):
         if anc_ic > max_ic:
             max_ic = anc_ic
             max_anc = anc
+
     if not max_anc:  # no common ancestor
         return 0
 
     # calculate similarity
-
-    simJC = 1 - (ic_values[id1] + ic_values[id2] - 2 * max_ic) / 2
+    simJC = round(1 - (ic_values[id1] + ic_values[id2] - 2 * max_ic) / 2, 3)
     return simJC
+
+
+def generate_sim_graph(
+    hier_df: str, nodes: list, cutoff: float, directed: bool = True
+) -> Dict[str, List]:
+    """Generate similarity graph.
+    :param hier_df: hierarchy dataframe
+    :param nodes: list of nodes
+    :param cutoff: cutoff value for similarity
+    :param directed: directed or undirected graph
+    :return: similarity values
+    """
+    tree = _generate_tree(hier_df, nodes)
+    ic_values = _ic_from_tree(tree, nodes)
+
+    sim_values = defaultdict(list)
+    for ntype, nvals in tree.items():
+        ids = list(nvals.keys())
+        all_pairs = list(combinations_with_replacement(ids, 2))
+
+        for id1, id2 in all_pairs:
+            sim = _simJC_from_tree(id1, id2, tree[ntype], ic_values[ntype])
+
+            if sim < cutoff:
+                continue
+            sim_values[ntype].append((id1, id2, sim))
+
+            if directed:
+                sim_values[ntype].append((id2, id1, sim))
+    return sim_values
 
 
 def save_sim_graph(
@@ -148,7 +152,7 @@ def save_sim_graph(
     cutoff: float,
     directed: bool = False,
     net_delimiter: str = "\t",
-):
+) -> None:
     """Generate similarity graph for the algorithm.
     :param networkf: Path to network file
     :param hierf: hierarchy file
@@ -165,17 +169,17 @@ def save_sim_graph(
     sim_values = generate_sim_graph(hier_df, nodes, cutoff, directed)
     logger.warning("Similarity graph generated!")
 
-    with open(outputf, "w") as fw:
-        index = 0
+    d = []
+    for ntype, nvals in sim_values.items():
+        index_num = 0
         type_number = 1
-        for ntype in sim_values.keys():
-            for row in sim_values[ntype]:
-                id1, id2, weight = row
-                fw.write(
-                    "{}{delim}{}{delim}{}{delim}{}{delim}{}\n".format(
-                        id1, id2, type_number, weight, index, delim=net_delimiter
-                    )
-                )
-                index += 1
-            type_number += 1
+        for row in nvals:
+            id1, id2, weight = row
+            d.append([id1, id2, type_number, weight, index_num])
+
+            index_num += 1
+        type_number += 1
+
+    df = pd.DataFrame(d, columns=["id1", "id2", "type", "weight", "index"])
+    df.to_csv(outputf, sep=net_delimiter, index=False, header=False)
     logger.warning(f"Similarity graph saved: {outputf}")
