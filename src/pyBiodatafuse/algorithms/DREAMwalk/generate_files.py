@@ -2,14 +2,35 @@
 
 import logging
 import os
+from itertools import combinations
 
 import networkx as nx
 import pandas as pd
 from tqdm import tqdm
 
+from pyBiodatafuse.algorithms.DREAMwalk.constant import (
+    ATC_HIERARCHY_FILE,
+    DDA_DIRECTORY,
+    DISEASE_SIM_FILE,
+    DRUG_HIERACHY_FILE,
+    GRAPH_FILE,
+    NODE_TYPE_FILE,
+    SUBGRAPH_FILE,
+)
 from pyBiodatafuse.analyzer.summarize import BioGraph
 
 logger = logging.getLogger(__name__)
+
+
+def jaccard_similarity(set1: set, set2: set) -> float:
+    """Calculate Jaccard similarity between two lists.
+    :param list1: List 1
+    :param list2: List 2
+    :return: Jaccard similarity
+    """
+    intersection = len(set1.intersection(set2))
+    union = len(set1.union(set2))
+    return intersection / union
 
 
 def get_drug_disease_file(graph, output_dir: str):
@@ -39,10 +60,10 @@ def get_drug_disease_file(graph, output_dir: str):
     logger.warning(f"Known DDA: {len(known_dda)}, Unknown DDA: {len(unknown_dda)}")
 
     # Sampling same number of negative samples as positive samples
-    os.makedirs(f"{output_dir}/dda", exist_ok=True)
+    os.makedirs(f"{output_dir}/{DDA_DIRECTORY}", exist_ok=True)
     for i in range(1, 11):
         sampled = unknown_dda.sample(n=len(known_dda))
-        sampled.to_csv(f"{output_dir}/dda/dda_{i}.tsv", sep="\t", index=False)
+        sampled.to_csv(f"{output_dir}/{DDA_DIRECTORY}/dda_{i}.tsv", sep="\t", index=False)
 
 
 def create_nodetype_file(graph, output_dir: str) -> None:
@@ -58,7 +79,7 @@ def create_nodetype_file(graph, output_dir: str) -> None:
     tmp_df = pd.DataFrame(tmp)
     tmp_df["type"] = tmp_df["type"].map({"Gene": "gene", "Disease": "disease", "Compound": "drug"})
     tmp_df = tmp_df.sort_values(by="type")
-    tmp_df.to_csv(f"{output_dir}/nodetypes.tsv", sep="\t", index=False)
+    tmp_df.to_csv(f"{output_dir}/{NODE_TYPE_FILE}", sep="\t", index=False)
     return None
 
 
@@ -89,7 +110,7 @@ def create_network_file(graph, output_dir: str) -> None:
 
     output_graph = pd.DataFrame(graph_data)
     output_graph["edge_counter"] = range(1, len(output_graph) + 1)
-    output_graph.to_csv(f"{output_dir}/graph.txt", sep="\t", index=False, header=False)
+    output_graph.to_csv(f"{output_dir}/{GRAPH_FILE}", sep="\t", index=False, header=False)
     return None
 
 
@@ -103,7 +124,7 @@ def check_hierarchy(graph: BioGraph, data_dir: str) -> set:
 
     # ATC hierarchy
     atc_hierarchy = pd.read_csv(
-        f"{data_dir}/atc_hierarchy.csv", usecols=["dbID", "atcClassification", "id"]
+        f"{data_dir}/{ATC_HIERARCHY_FILE}", usecols=["dbID", "atcClassification", "id"]
     )
 
     atc_hierarchy = atc_hierarchy.rename(
@@ -130,31 +151,21 @@ def check_hierarchy(graph: BioGraph, data_dir: str) -> set:
         if len(atc_classes) == 0:
             remove_nodes.add(drug)
 
-    # MONDO hierarchy
-    mondo_hierarchy = pd.read_csv(
-        f"{data_dir}/mondo_hierarchy.csv"
-    )  # file created using graph nodes itself
-
-    for disease_id, _, parents in mondo_hierarchy.values:
-        if pd.isna(parents) or isinstance(parents, float):
-            remove_nodes.add(disease_id)
-        elif parents == "disease":
-            remove_nodes.add(disease_id)
-
     logger.warning(f"Nodes to remove: {len(remove_nodes)}")
     return remove_nodes
 
 
-def get_drug_hierarchy(graph: BioGraph, data_dir: str) -> pd.DataFrame:
+def get_drug_hierarchy(graph: BioGraph, data_dir: str, output_dir: str) -> None:
     """Generating the drug hierarchy using ATC classification.
     :param graph: BioGraph object
     :param data_dir: Data directory to save the files
-    :return: drug_hierarchy_df: DataFrame
+    :param output_dir: output directory to save the files
+    :return: None
     """
     drug_classes = []
 
     atc_hierarchy = pd.read_csv(
-        f"{data_dir}/atc_hierarchy.csv", usecols=["dbID", "atcClassification", "id"]
+        f"{data_dir}/{ATC_HIERARCHY_FILE}", usecols=["dbID", "atcClassification", "id"]
     )
 
     atc_hierarchy = atc_hierarchy.rename(
@@ -183,44 +194,48 @@ def get_drug_hierarchy(graph: BioGraph, data_dir: str) -> pd.DataFrame:
             atc_classification_list = atc_classification.split(",")
             drug_classes.append({"child": drug, "parent": atc_classification_list[0]})
 
-            parents = atc_classification_list[:-1]
-            children = atc_classification_list[1:]
-            for parent, child in zip(parents, children):
+            parents = atc_classification_list[1:]
+            children = atc_classification_list[:-1]
+
+            for child, parent in zip(children, parents):
                 drug_classes.append({"child": child, "parent": parent})
 
     drug_class_df = pd.DataFrame(drug_classes)
     drug_class_df.drop_duplicates(inplace=True)
-
-    # make "Drug" into lowercase
-    drug_class_df["child"] = drug_class_df["child"].apply(lambda x: x.lower() if x == "Drug" else x)
-
-    return drug_class_df
+    drug_class_df.to_csv(f"{output_dir}/{DRUG_HIERACHY_FILE}", index=False)
+    return None
 
 
-def get_disease_hierarchy(data_dir: str) -> pd.DataFrame:
-    """Generating the disease hierarchy using MONDO classification.
-    :param output_dir: output directory to save the files
-    :return: disease_hierarchy_df: DataFrame
+def get_disease_similarity(graph: BioGraph, data_dir: str):
+    """Generate disease similarity graph based on gene overlap.
+    :param graph: BioGraph object
     """
-    mondo_hierarchy = pd.read_csv(
-        f"{data_dir}/mondo_hierarchy.csv"
-    )  # file created using graph nodes itself
+    disease_nodes = [node for node, label in graph.nodes(data="labels") if label == "Disease"]
+    disease_pairs = list(combinations(disease_nodes, 2))
 
-    disease_hierarchy = []
+    disease_similarity_matrix = []
 
-    for disease_id, _, parents in mondo_hierarchy.values:
-        if pd.isna(parents) or isinstance(parents, float) or parents == "disease":
+    for disease_1, disease_2 in tqdm(disease_pairs, desc="Calculating Disease Similarity"):
+        gene_list_1 = set([g for g, d in graph.in_edges(disease_1)])
+        gene_list_2 = set([g for g, d in graph.in_edges(disease_2)])
+
+        similarity = jaccard_similarity(gene_list_1, gene_list_2)
+        if similarity < 0.4:
             continue
 
-        all_parents = parents.split(",")
-        parent = all_parents
-        children = [disease_id] + list(reversed(all_parents[:-1]))
-        for p, c in zip(parent, children):
-            disease_hierarchy.append({"child": c, "parent": p})
+        disease_similarity_matrix.append(
+            {
+                "id1": disease_1,
+                "id2": disease_2,
+                "type_number": 2,
+                "weight": similarity,
+                "index": len(disease_similarity_matrix),
+            }
+        )
 
-    hierarchy_df = pd.DataFrame(disease_hierarchy)
-    hierarchy_df.drop_duplicates(inplace=True)
-    return hierarchy_df
+    sim_graph = pd.DataFrame(disease_similarity_matrix)
+    sim_graph.to_csv(f"{data_dir}/{DISEASE_SIM_FILE}", sep="\t", index=False, header=False)
+    return None
 
 
 def create_files(graph_obj: BioGraph, output_dir: str = "./dreamwalk_data") -> None:
@@ -242,7 +257,7 @@ def create_files(graph_obj: BioGraph, output_dir: str = "./dreamwalk_data") -> N
     logger.info(
         f"Updated graph nodes: {len(updated_graph.nodes())}, edges: {len(updated_graph.edges())}"
     )
-    nx.write_gml(updated_graph, f"{output_dir}/subgraph_graph.gml")
+    nx.write_gml(updated_graph, f"{output_dir}/{SUBGRAPH_FILE}")
 
     # Node type label file - TSV files with two columns: node_id, node_type
     create_nodetype_file(updated_graph, output_dir)
@@ -251,10 +266,10 @@ def create_files(graph_obj: BioGraph, output_dir: str = "./dreamwalk_data") -> N
     create_network_file(updated_graph, output_dir)
 
     # Hierarchy file - CSV file with two columns: child, parent
-    drug_hierarchy_df = get_drug_hierarchy(updated_graph, output_dir)
-    disease_hierarchy_df = get_disease_hierarchy(output_dir)
-    hierarchy_df = pd.concat([drug_hierarchy_df, disease_hierarchy_df], ignore_index=True)
-    hierarchy_df.to_csv(f"{output_dir}/hierarchy.csv", index=False)
+    get_drug_hierarchy(updated_graph, data_dir=output_dir, output_dir=output_dir)
+
+    # Disease similairty file - CSV file with two columns: child, parent
+    get_disease_similarity(updated_graph, output_dir)
 
     # Positive/negative drug-disease association file - TSV file with three columns: drug, disease, label
     get_drug_disease_file(updated_graph, output_dir)

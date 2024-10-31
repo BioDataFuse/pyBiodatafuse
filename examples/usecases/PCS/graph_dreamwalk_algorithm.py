@@ -2,12 +2,23 @@
 # -*- coding: utf-8 -*-
 """Codes to run Dreamwalk algorithm on BDF graph."""
 
-
 import logging
+import os
 
-import pyBiodatafuse.algorithms.DREAMwalk.generate_dis_sim as dis_gen
+import pandas as pd
+
 import pyBiodatafuse.algorithms.DREAMwalk.generate_files as gen
 from pyBiodatafuse.algorithms.DREAMwalk.calculate_drug_scores import find_candidates
+from pyBiodatafuse.algorithms.DREAMwalk.constant import (
+    DDA_DIRECTORY,
+    DISEASE_SIM_FILE,
+    DRUG_HIERACHY_FILE,
+    DRUG_SIM_FILE,
+    EMBEDDING_FILE,
+    GRAPH_FILE,
+    NODE_TYPE_FILE,
+    SIM_FILE,
+)
 from pyBiodatafuse.algorithms.DREAMwalk.generate_embeddings import save_embedding_files
 from pyBiodatafuse.algorithms.DREAMwalk.generate_similarity_net import save_sim_graph
 from pyBiodatafuse.algorithms.DREAMwalk.predict_associations import predict_dda
@@ -24,65 +35,101 @@ def preprocess_files():
     logger.info("Files generated successfully.")
 
 
-def generate_sim():
-    """Generate similarity graph."""
-    hierf = "dreamwalk_data/hierarchy.csv"
-    simf = "dreamwalk_data/similarty_graph_drugs.tsv"
-    cutoff = 0.4
+def generate_sim(
+    drug_hierarchy_file: str,
+    dis_sim_file: str,
+    drug_sim_file: str,
+    network_file: str,
+    output_file: str,
+):
+    """Generate similarity graph.
+    :param drug_hierarchy_file: Drug hierarchy file path
+    :param dis_sim_file: Disease similarity file path
+    :param drug_sim_file: Drug similarity file path
+    :param network_file: Network file path
+    :param output_file: Final similarity file path
+    """
+    if os.path.exists(drug_sim_file):
+        drug_sim = pd.read_csv(drug_sim_file, sep="\t", header=None)
+    else:
+        save_sim_graph(
+            networkf=network_file, hierf=drug_hierarchy_file, outputf=drug_sim_file, cutoff=0.4
+        )
+        logger.info("Similarity graph generated successfully.")
 
-    graph_obj = BioGraph(graph_path="dreamwalk_data/subgraph_graph.gml", graph_format="gml")
-    save_sim_graph(graph_obj=graph_obj, hierf=hierf, outputf=simf, cutoff=cutoff)
-    logger.info("Similarity graph generated successfully.")
+    # create similarity graph merging disease and drugs
+    drug_sim = pd.read_csv(drug_sim_file, sep="\t", header=None)
+    dis_sim = pd.read_csv(dis_sim_file, sep="\t", header=None)
 
-
-# # create similarity graph merging disease and drugs
-# dis_sim = pd.read_csv("dis_sim.tsv", sep="\t", header=None)
-# drug_sim = pd.read_csv("similarty_graph_drugs.tsv", sep="\t", header=None)
-
-# drug_sim[2] = 2
-# dis_sim[2] = 1
-
-# similarty_graph = pd.concat([dis_sim, drug_sim], ignore_index=True)
-
-# similarty_graph[4] = range(0, len(similarty_graph))
-# similarty_graph.to_csv("similarty_graph.txt", sep="\t", index=False, header=False)
-
-"""
-# Generate node embeddings by teleport-guided randomwalk
-
-networkf='graph.txt'
-hierf='hierarchy.csv'
-nodetypef='nodetypes.tsv'
-embeddingf='embedding_file.pkl'
-simf='similarty_graph.txt'
-
-save_embedding_files(netf=networkf,sim_netf=simf, outputf=embeddingf,
-                    nodetypef=nodetypef,tp_factor=0.3)
+    similarty_graph = pd.concat([dis_sim, drug_sim], ignore_index=True)
+    similarty_graph[4] = range(0, len(similarty_graph))  # reindexing the counts
+    similarty_graph.to_csv(output_file, sep="\t", index=False, header=False)
 
 
-# Predict drug-disease association
+def generate_node_embeddings(
+    similarity_file: str,
+    node_type_file: str,
+    network_file: str,
+    output_file: str,
+):
+    """Generate node embeddings."""
 
-pairf='dda_files/dda1.tsv'
-modelf='results/clf1.pkl'
-embeddingf='embedding_file.pkl'
+    save_embedding_files(
+        netf=network_file,
+        sim_netf=similarity_file,
+        outputf=output_file,
+        nodetypef=node_type_file,
+        tp_factor=0.3,
+    )
+    logger.info("Node embeddings generated successfully.")
 
-predict_dda(embeddingf=embeddingf, pairf=pairf, modelf=modelf)
+
+def predict_dda():
+    """Predict drug-disease association."""
+    pairf = "dreamwalk_data/dda1.tsv"  # TODO: change to actual file
+    modelf = "dreamwalk_data/clf1.pkl"
+    embeddingf = "dreamwalk_data/embedding_file.pkl"
+
+    predict_dda(embeddingf=embeddingf, pairf=pairf, modelf=modelf)
+    logger.info("Drug-disease association predicted successfully.")
 
 
-# Calculate drug scores
-embeddingf='embedding_file.pkl'
-model_folder= 'results'
-query_disease= 'C00000'
-kgfile='preprocessed_graph.csv'
-find_candidates(kgfile, embeddingf, model_folder, query_disease)
+def find_candidates():
+    """Calculate drug scores."""
+    embeddingf = "dreamwalk_data/embedding_file.pkl"
+    model_folder = "dreamwalk_data"
+    query_disease = "C00000"  # TODO: change to actual disease code
+    kgfile = "dreamwalk_data/preprocessed_graph.csv"  # TODO: change to actual file
 
-results1=find_candidates(kgfile, embeddingf, model_folder, query_disease, candidates_count=400)
-results1.to_csv('results.csv')
-"""
+    results1 = find_candidates(
+        kgfile, embeddingf, model_folder, query_disease, candidates_count=400
+    )
+    results1.to_csv("dreamwalk_data/results.csv")
+    logger.info("Drug scores calculated successfully.")
+
 
 if __name__ == "__main__":
-    preprocess_files()
-    generate_sim()
-    # generate_embedding_files()
+    networkf = f"dreamwalk_data/{GRAPH_FILE}"
+    hierarchyf = f"dreamwalk_data/{DRUG_HIERACHY_FILE}"
+    drug_simf = f"dreamwalk_data/{DRUG_SIM_FILE}"
+    disease_simf = f"dreamwalk_data/{DISEASE_SIM_FILE}"
+    nodetypef = f"dreamwalk_data/{NODE_TYPE_FILE}"
+    embeddingf = f"dreamwalk_data/{EMBEDDING_FILE}"
+    simf = f"dreamwalk_data/{SIM_FILE}"
+
+    # preprocess_files()
+    # generate_sim(
+    #     drug_hierarchy_file=hierarchyf,
+    #     dis_sim_file=disease_simf,
+    #     drug_sim_file=drug_simf,
+    #     network_file=networkf,
+    #     output_file=simf,
+    # )
+    generate_node_embeddings(
+        similarity_file=simf,
+        node_type_file=nodetypef,
+        network_file=networkf,
+        output_file=embeddingf,
+    )
     # predict_dda()
     # find_candidates()

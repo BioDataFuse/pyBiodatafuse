@@ -7,9 +7,13 @@ import networkx as nx
 import numpy as np
 
 
-def read_graph(edgeList, weighted=True, directed=False, delimiter="\t"):
-    """
-    Reads the input network in networkx.
+def read_graph(edgeList, weighted=True, directed=False, delimiter="\t") -> nx.MultiDiGraph:
+    """Reads the input network in networkx.
+    :param edgeList: Edge list file
+    :param weighted: True if the network is weighted
+    :param directed: True if the network is directed
+    :param delimiter: Delimiter for the edge list file
+    :return: networkx graph
     """
     if weighted:
         G = nx.read_edgelist(
@@ -39,7 +43,9 @@ def read_graph(edgeList, weighted=True, directed=False, delimiter="\t"):
 
 
 def set_seed(seed=42):
+    """Set seed for reproducibility.
+    :param seed: Seed value
+    """
     os.environ["PYTHONHASHSEED"] = str(seed)
     random.seed(seed)
     np.random.seed(seed)
-    print(f"random seed with {seed}")
