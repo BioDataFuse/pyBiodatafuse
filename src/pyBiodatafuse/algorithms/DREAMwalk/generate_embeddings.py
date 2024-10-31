@@ -1,79 +1,34 @@
 """Codes taken from DreamWalk repository: https://github.com/eugenebang/DREAMwalk"""
 
-import argparse
-
-import os
+import logging
 import math
-import random
+import os
 import pickle
+import random
+from collections import Counter, defaultdict
+
 import networkx as nx
 import numpy as np
-from scipy import stats
 import parmap
-from collections import defaultdict, Counter
+from scipy import stats
 
 from pyBiodatafuse.algorithms.DREAMwalk.HeterogeneousSG import HeterogeneousSG
 from pyBiodatafuse.algorithms.DREAMwalk.utils import read_graph, set_seed
 
-
-def parse_args():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--network_file", type=str, required=True)
-
-    parser.add_argument("--sim_network_file", type=str, default="")
-    parser.add_argument("--node_type_file", type=str, default=None)
-    parser.add_argument("--output_file", type=str, default="embedding_file.pkl")
-    parser.add_argument("--seed", type=float, default=42)
-    parser.add_argument("--tp_factor", type=float, default=0.5)
-    parser.add_argument("--weighted", type=bool, default=True)
-    parser.add_argument("--directed", type=bool, default=False)
-    parser.add_argument("--num_walks", type=int, default=100)
-    parser.add_argument("--walk_length", type=int, default=10)
-    parser.add_argument("--dimension", type=int, default=128)
-    parser.add_argument("--window_size", type=int, default=4)
-    parser.add_argument(
-        "--workers",
-        type=int,
-        default=os.cpu_count(),
-        help="if default, set to all available cpu count",
-    )
-    parser.add_argument("--p", type=float, default=1)
-    parser.add_argument("--q", type=float, default=1)
-    parser.add_argument(
-        "--em_max_iter",
-        type=int,
-        default=5,
-        help="maximum EM iteration for edge type transition matrix training",
-    )
-    parser.add_argument(
-        "--net_delimiter", type=str, default="\t", help="delimiter of networks file; default = tab"
-    )
-
-    args = parser.parse_args()
-    args = {
-        "netf": args.network_file,
-        "sim_netf": args.sim_network_file,
-        "outputf": args.output_file,
-        "nodetypef": args.node_type_file,
-        "tp_factor": args.tp_factor,
-        "seed": args.seed,
-        "weighted": args.weighted,
-        "directed": args.directed,
-        "num_walks": args.num_walks,
-        "walk_length": args.walk_length,
-        "dimension": args.dimension,
-        "window_size": args.window_size,
-        "workers": args.workers,
-        "em_max_iter": args.em_max_iter,
-        "p": args.p,
-        "q": args.q,
-        "net_delimiter": args.net_delimiter,
-    }
-    return args
+logger = logging.getLogger(__name__)
 
 
-# Train edge type transition matrix
 def train_edgetype_transition_matrix(em_max_iter, G, networkf, net_delimiter, walk_length, p, q):
+    """Train edge type transition matrix using EM algorithm.
+    :param em_max_iter: Maximum number of EM iterations
+    :param G: NetworkX graph object
+    :param networkf: Network file path
+    :param net_delimiter: Delimiter for network file
+    :param walk_length: Length of random walk
+    :param p: Return parameter
+    :param q: In-out parameter
+    :return: Edge type transition matrix
+    """
     matrix_conv_rate = 0.01
     matrices = {0: _init_edge_transition_matrix(networkf, net_delimiter)}
 
@@ -89,6 +44,13 @@ def train_edgetype_transition_matrix(em_max_iter, G, networkf, net_delimiter, wa
 
 
 def _sample_edge_paths(G, trans_matrix, walk_length, p, q):
+    """Sample edge paths from the network.
+    :param G: NetworkX graph object
+    :param trans_matrix: Edge type transition matrix
+    :param walk_length: Length of random walk
+    :param p: Return parameter
+    :param q: In-out parameter
+    """
     edges = list(G.edges(data=True))
     sampled_edges = random.sample(
         edges, int(len(edges) * 0.01)
@@ -100,6 +62,13 @@ def _sample_edge_paths(G, trans_matrix, walk_length, p, q):
 
 
 def _edge_transition_walk(edge, G, matrix, walk_length, p, q):
+    """Generate edge transition walk.
+    :param edge: Edge tuple
+    :param G: NetworkX graph object
+    :param matrix: Edge type transition matrix
+    :param walk_length: Length of random walk
+    :param p: Return parameter
+    """
     edge = (edge[0], edge[1], edge[2]["type"])
     walk = [edge]
     edge_path = [edge[2]]
@@ -139,6 +108,10 @@ def _edge_transition_walk(edge, G, matrix, walk_length, p, q):
 
 
 def _init_edge_transition_matrix(networkf, net_delimiter):
+    """Initialize edge type transition matrix.
+    :param networkf: Network file path
+    :param net_delimiter: Delimiter for network file
+    """
     edgetypes = set()
     with open(networkf, "r") as fin:
         lines = fin.readlines()
@@ -152,6 +125,10 @@ def _init_edge_transition_matrix(networkf, net_delimiter):
 
 
 def _update_trans_matrix(walks, matrix):
+    """Update edge type transition matrix.
+    :param walks: List of edge walks
+    :param matrix: Edge type transition matrix
+    """
     type_count = len(matrix)
     matrix = np.zeros(matrix.shape)
     repo = defaultdict(list)
@@ -170,11 +147,18 @@ def _update_trans_matrix(walks, matrix):
 
 
 def pearsonr_test(v1, v2):  # original metric: the larger the more similar
+    """Calculate Pearson correlation coefficient.
+    :param v1: List of values
+    :param v2: List of values
+    """
     result = stats.mstats.pearsonr(v1, v2)[0]
     return sigmoid(result)
 
 
 def sigmoid(x):
+    """Calculate sigmoid function.
+    :param x: Input value
+    """
     return 1 / (1 + math.exp(-x))
 
 
@@ -182,6 +166,17 @@ def sigmoid(x):
 def generate_DREAMwalk_paths(
     G, G_sim, trans_matrix, p, q, num_walks, walk_length, tp_factor, workers
 ):
+    """Generate DREAMwalk paths.
+    :param G: NetworkX graph object
+    :param G_sim: NetworkX graph object
+    :param trans_matrix: Edge type transition matrix
+    :param p: Return parameter
+    :param q: In-out parameter
+    :param num_walks: Number of walks
+    :param walk_length: Length of random walk
+    :param tp_factor: Teleport factor
+    :param workers: Number of workers
+    """
     tot_walks = []
     nodes = list(G.nodes())
 
@@ -208,6 +203,17 @@ def generate_DREAMwalk_paths(
 
 # parallel walks
 def _parmap_walks(_, nodes, G, G_sim, trans_matrix, p, q, walk_length, tp_factor):
+    """Generate DREAMwalk paths in parallel.
+    :param _: Dummy variable
+    :param nodes: List of nodes
+    :param G: NetworkX graph object
+    :param G_sim: NetworkX graph object
+    :param trans_matrix: Edge type transition matrix
+    :param p: Return parameter
+    :param q: In-out parameter
+    :param walk_length: Length of random walk
+    :param tp_factor: Teleport factor
+    """
     walks = []
     random.shuffle(nodes)
     for node in nodes:
@@ -216,6 +222,16 @@ def _parmap_walks(_, nodes, G, G_sim, trans_matrix, p, q, walk_length, tp_factor
 
 
 def _DREAMwalker(start_node, G, G_sim, trans_matrix, p, q, walk_length, tp_factor):
+    """Generate DREAMwalk path.
+    :param start_node: Start node
+    :param G: NetworkX graph object
+    :param G_sim: NetworkX graph object
+    :param trans_matrix: Edge type transition matrix
+    :param p: Return parameter
+    :param q: In-out parameter
+    :param walk_length: Length of random walk
+    :param tp_factor: Teleport factor
+    """
     walk = [start_node]
     edge_walk = []
 
@@ -251,6 +267,14 @@ def _DREAMwalker(start_node, G, G_sim, trans_matrix, p, q, walk_length, tp_facto
 
 
 def _network_traverse(cur, prev, G, trans_matrix, p, q):
+    """Traverse network to find next node and edge type.
+    :param cur: Current node
+    :param prev: Previous node and edge type
+    :param G: NetworkX graph object
+    :param trans_matrix: Edge type transition matrix
+    :param p: Return parameter
+    :param q: In-out parameter
+    """
     prev_node = prev[0]
     cur_edge_type = prev[1]
     cur_nbrs = sorted(G.neighbors(cur))
@@ -281,6 +305,10 @@ def _network_traverse(cur, prev, G, trans_matrix, p, q):
 
 
 def _teleport_operation(cur, G_sim):
+    """Perform teleport operation.
+    :param cur: Current node
+    :param G_sim: NetworkX graph object
+    """
     cur_nbrs = sorted(G_sim.neighbors(cur))
     random.shuffle(cur_nbrs)
     selected_nbrs = []
@@ -311,7 +339,7 @@ def save_embedding_files(
     netf: str,
     sim_netf: str,
     outputf: str,
-    nodetypef: str = None,
+    nodetypef: str,
     tp_factor: float = 0.5,
     seed: int = 42,
     directed: bool = False,
@@ -319,7 +347,7 @@ def save_embedding_files(
     em_max_iter: int = 5,
     num_walks: int = 100,
     walk_length: int = 10,
-    workers: int = os.cpu_count(),
+    workers: int = os.cpu_count() - 2,
     dimension: int = 128,
     window_size: int = 4,
     p: float = 1,
@@ -328,28 +356,26 @@ def save_embedding_files(
 ):
 
     set_seed(seed)
-    print("Reading network files...")
     G = read_graph(netf, weighted=weighted, directed=directed, delimiter=net_delimiter)
     if sim_netf:
         G_sim = read_graph(sim_netf, weighted=True, directed=False)
     else:
         G_sim = nx.empty_graph()
-        print("> No input similarity file detected!")
-        tp_factor = 0
+        raise ValueError("No input similarity file detected!")
 
-    print("Training edge type transition matrix...")
+    logging.info("Training edge type transition matrix...")
     trans_matrix = train_edgetype_transition_matrix(
         em_max_iter, G, netf, net_delimiter, walk_length, p, q
     )
 
-    print("Generating paths...")
+    logging.info("Generating paths...")
     walks = generate_DREAMwalk_paths(
         G, G_sim, trans_matrix, p, q, num_walks, walk_length, tp_factor, workers
     )
     #     with open('tmp_walk_file.pkl','wb') as fw:
     #         pickle.dump(walks,fw)
 
-    print("Generating node embeddings...")
+    logging.info("Generating node embeddings...")
     use_hetSG = True if nodetypef != None else False
     embeddings = HeterogeneousSG(
         use_hetSG,
@@ -363,9 +389,4 @@ def save_embedding_files(
     with open(outputf, "wb") as fw:
         pickle.dump(embeddings, fw)
 
-    print(f"Node embeddings saved: {outputf}")
-
-
-if __name__ == "__main__":
-    args = parse_args()
-    save_embedding_files(**args)
+    logging.info(f"Node embeddings saved: {outputf}")

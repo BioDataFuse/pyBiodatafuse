@@ -37,7 +37,8 @@ MOLMEDB_COMPOUND_INPUT_ID = "InChIKey"
 OPENTARGETS_GENE_INPUT_ID = "Ensembl"
 OPENTARGETS_COMPOUND_INPUT_ID = "PubChem Compound"  # If using bridgedb mapping
 OPENTARGETS_COMPOUND_QUERY_INPUT_ID = "chembl_id"
-OPENTARGETS_DISEASE_INPUT_ID = "EFO"
+OPENTARGETS_DISEASE_INPUT_ID_1 = "EFO"
+OPENTARGETS_DISEASE_INPUT_ID_2 = "MONOD"
 PUBCHEM_COMPOUND_INPUT_ID = "Uniprot-TrEMBL"
 STRING_GENE_INPUT_ID = "Ensembl"
 WIKIDATA_GENE_INPUT_ID = "NCBI Gene"
@@ -102,8 +103,9 @@ OPENTARGETS_DISEASE_COL = f"{OPENTARGETS}_diseases"  # literature based disease 
 LITERATURE_DISEASE_COL = "literature_based_info"
 LITERATURE_DISEASE_OUTPUT_DICT = {
     "disease_name": str,
-    "id": str,
-    "datasource": str,
+    "UMLS": str,
+    "MONDO": str,
+    "source": str,
 }
 
 # Open Targets - Disease
@@ -289,11 +291,13 @@ DISGENET_EDGE_ATTRS = {
 }
 
 # Literature
-LITERATURE_NODE_MAIN_LABEL = "id"
+LITERATURE_NODE_MAIN_LABEL = "UMLS"
 LITERATURE_DISEASE_NODE_ATTRS = {
     "datasource": None,
     "name": None,
     "id": None,
+    "MONDO": None,
+    "UMLS": None,
     "labels": DISEASE_NODE_LABELS,
 }
 LITERATURE_DISEASE_EDGE_ATTRS = {

@@ -1,20 +1,51 @@
 """Codes taken from DreamWalk repository: https://github.com/eugenebang/DREAMwalk"""
 
+import logging
+import os
+from itertools import combinations
+
+import networkx as nx
 import pandas as pd
 from tqdm import tqdm
-import networkx as nx
+
+from pyBiodatafuse.algorithms.DREAMwalk.constant import (
+    ATC_HIERARCHY_FILE,
+    DDA_DIRECTORY,
+    DISEASE_SIM_FILE,
+    DRUG_HIERACHY_FILE,
+    GRAPH_FILE,
+    NODE_TYPE_FILE,
+    SUBGRAPH_FILE,
+)
 from pyBiodatafuse.analyzer.summarize import BioGraph
+
+logger = logging.getLogger(__name__)
+
+
+def jaccard_similarity(set1: set, set2: set) -> float:
+    """Calculate Jaccard similarity between two lists.
+    :param list1: List 1
+    :param list2: List 2
+    :return: Jaccard similarity
+    """
+    intersection = len(set1.intersection(set2))
+    union = len(set1.union(set2))
+    return intersection / union
 
 
 def get_drug_disease_file(graph, output_dir: str):
-    """Generate DDA files."""
+    """Generate drug-disease association (DDA) files.
+    :param graph: networkx.Graph object
+    :param output_dir: output directory to save the files
+    :return: None
+    """
     drug_nodes = [node for node, label in graph.nodes(data="labels") if label == "Compound"]
 
     disease_nodes = [node for node, label in graph.nodes(data="labels") if label == "Disease"]
 
     drug_disease_edges = []
 
-    for drug in tqdm(drug_nodes):
+    for drug in tqdm(drug_nodes, desc="Creating Drug-Disease Association files"):
         for disease in disease_nodes:
             if graph.has_edge(drug, disease):
                 drug_disease_edges.append({"drug": drug, "disease": disease, "label": 1})
@@ -26,45 +57,43 @@ def get_drug_disease_file(graph, output_dir: str):
     known_dda = tmp[tmp["label"] == 1]
     unknown_dda = tmp[tmp["label"] == 0]
 
-    print(f"Known DDA: {len(known_dda)}, Unknown DDA: {len(unknown_dda)}")
+    logger.warning(f"Known DDA: {len(known_dda)}, Unknown DDA: {len(unknown_dda)}")
 
     # Sampling same number of negative samples as positive samples
+    os.makedirs(f"{output_dir}/{DDA_DIRECTORY}", exist_ok=True)
     for i in range(1, 11):
         sampled = unknown_dda.sample(n=len(known_dda))
-        sampled.to_csv(f"{output_dir}/dda_{i}.tsv", sep="\t", index=False)
+        sampled.to_csv(f"{output_dir}/{DDA_DIRECTORY}/dda_{i}.tsv", sep="\t", index=False)
 
 
-def create_files(graph_obj: BioGraph, output_dir: str = "./dreamwalk_data"):
-    """Generate files for the DREAMwalk algorithm from the BioGraph object."""
-    graph = graph_obj.graph
-
-    # Node type label file - TSV files with two columns: node_id, node_type
-    nodes_of_interest = [
-        node
-        for node, label in graph.nodes(data="labels")
-        if label in ["Gene", "Disease", "Compound"]
-    ]
-
-    subgraph = graph_obj.get_subgraph(nodes_of_interest)
-    print(f"Subgraph nodes: {len(subgraph.nodes())}, edges: {len(subgraph.edges())}")
-
-    nx.write_gml(subgraph, f"{output_dir}/subgraph_graph.gml")
-
+def create_nodetype_file(graph, output_dir: str) -> None:
+    """Generate node type file for the algorithm.
+    :param graph: networkx.Graph object
+    :param output_dir: output directory to save the files
+    :return: None
+    """
     tmp = []
-    for node, node_label in subgraph.nodes(data="labels"):
+    for node, node_label in graph.nodes(data="labels"):
         tmp.append({"node": node, "type": node_label})
 
     tmp_df = pd.DataFrame(tmp)
     tmp_df["type"] = tmp_df["type"].map({"Gene": "gene", "Disease": "disease", "Compound": "drug"})
     tmp_df = tmp_df.sort_values(by="type")
-    tmp_df.to_csv(f"{output_dir}/nodetypes.tsv", sep="\t", index=False)
+    tmp_df.to_csv(f"{output_dir}/{NODE_TYPE_FILE}", sep="\t", index=False)
+    return None
 
-    # Network file - TXT file with four columns: source, target, edgetype, weight
+
+def create_network_file(graph, output_dir: str) -> None:
+    """Generate network file for the algorithm.
+    :param graph: networkx.Graph object
+    :param output_dir: output directory to save the files
+    :return: None
+    """
     rel_to_id = {"activates": 1, "inhibits": 1, "associated_with": 2, "interacts_with": 3}
 
     graph_data = []
 
-    for source, target, edge in subgraph.edges(data=True):
+    for source, target, edge in graph.edges(data=True):
         if edge["label"] not in rel_to_id:
             continue
 
@@ -81,37 +110,21 @@ def create_files(graph_obj: BioGraph, output_dir: str = "./dreamwalk_data"):
 
     output_graph = pd.DataFrame(graph_data)
     output_graph["edge_counter"] = range(1, len(output_graph) + 1)
-    output_graph.to_csv(f"{output_dir}/graph.txt", sep="\t", index=False, header=False)
-
-    # Hierarchy file - CSV file with two columns: child, parent
-    drug_hierarchy_df = get_drug_hierarchy(subgraph, output_dir)
-    # disease_hierarchy_df = get_disease_hierarchy(subgraph)
-    # hierarchy_df = pd.concat([drug_hierarchy_df, disease_hierarchy_df], ignore_index=True)
-
-    # hierarchy_df["parent"] = hierarchy_df["parent"].apply(lambda x: x.lower() if x in ["Drug", "Disease"] else x)
-    # hierarchy_df.to_csv("./dreamwalk_data/hierarchy.txt", sep="\t", index=False)
-
-    d_nodes = [node for node, label in subgraph.nodes(data="labels") if label == "Disease"]
-    t = []
-    for node in d_nodes:
-        t.append({"child": node, "parent": "disease"})
-
-    hierarchy_df = pd.concat([drug_hierarchy_df, pd.DataFrame(t)], ignore_index=True)
-    hierarchy_df["parent"] = hierarchy_df["parent"].apply(
-        lambda x: x.lower() if x in ["Drug", "Disease"] else x
-    )
-    hierarchy_df.to_csv(f"{output_dir}/hierarchy.csv", index=False)
-
-    # Positive/negative drug-disease association file - TSV file with three columns: drug, disease, label
-    get_drug_disease_file(subgraph, output_dir)
+    output_graph.to_csv(f"{output_dir}/{GRAPH_FILE}", sep="\t", index=False, header=False)
+    return None
 
 
-def get_drug_hierarchy(graph: BioGraph, output_dir: str):
-    """Generating the drug hierarchy using ATC classification."""
-    drug_classes = []
+def check_hierarchy(graph: BioGraph, data_dir: str) -> set:
+    """Check if the node has a hierarchy.
+    :param graph: BioGraph object
+    :param data_dir: Data directory to save the files
+    :return: remove_nodes: Set of nodes to remove
+    """
+    remove_nodes = set()
 
+    # ATC hierarchy
     atc_hierarchy = pd.read_csv(
-        f"{output_dir}/atc_hierarchy.csv", usecols=["dbID", "atcClassification", "id"]
+        f"{data_dir}/{ATC_HIERARCHY_FILE}", usecols=["dbID", "atcClassification", "id"]
     )
 
     atc_hierarchy = atc_hierarchy.rename(
@@ -120,22 +133,8 @@ def get_drug_hierarchy(graph: BioGraph, output_dir: str):
     atc_hierarchy["drug"] = "DrugBank:" + atc_hierarchy["drug"]
     atc_hierarchy["chembl_id"] = "ChEMBL:" + atc_hierarchy["chembl_id"]
 
-    # With the main ATC hierarchy
-    for atc_classes in atc_hierarchy["atc"].unique():
-        for class_record in atc_classes.split(";"):
-            cnames = class_record.split(",")
-            cnames.reverse()
-
-            parents = cnames[:-1]
-            children = cnames[1:]
-
-            for parent, child in zip(parents, children):
-                drug_classes.append({"child": child, "parent": parent})
-
-    # With hierarch of drugs in KG
     drug_nodes = [node for node, label in graph.nodes(data="labels") if label == "Compound"]
 
-    skipped = 0
     for drug in drug_nodes:
         node_info = graph.nodes[drug]
         if "drugbank_id" in node_info:
@@ -146,49 +145,131 @@ def get_drug_hierarchy(graph: BioGraph, output_dir: str):
             atc_classes = atc_hierarchy[atc_hierarchy["chembl_id"] == node_info["chembl_id"]][
                 "atc"
             ].values
+        else:
+            atc_classes = []
 
         if len(atc_classes) == 0:
-            skipped += 1
+            remove_nodes.add(drug)
+
+    logger.warning(f"Nodes to remove: {len(remove_nodes)}")
+    return remove_nodes
+
+
+def get_drug_hierarchy(graph: BioGraph, data_dir: str, output_dir: str) -> None:
+    """Generating the drug hierarchy using ATC classification.
+    :param graph: BioGraph object
+    :param data_dir: Data directory to save the files
+    :param output_dir: output directory to save the files
+    :return: None
+    """
+    drug_classes = []
+
+    atc_hierarchy = pd.read_csv(
+        f"{data_dir}/{ATC_HIERARCHY_FILE}", usecols=["dbID", "atcClassification", "id"]
+    )
+
+    atc_hierarchy = atc_hierarchy.rename(
+        columns={"dbID": "drug", "atcClassification": "atc", "id": "chembl_id"}
+    )
+    atc_hierarchy["drug"] = "DrugBank:" + atc_hierarchy["drug"]
+    atc_hierarchy["chembl_id"] = "ChEMBL:" + atc_hierarchy["chembl_id"]
+
+    # With hierarch of drugs in KG
+    drug_nodes = [node for node, label in graph.nodes(data="labels") if label == "Compound"]
+
+    for drug in drug_nodes:
+        node_info = graph.nodes[drug]
+        if "drugbank_id" in node_info:
+            atc_classes = atc_hierarchy[atc_hierarchy["drug"] == node_info["drugbank_id"]][
+                "atc"
+            ].values[0]
+        else:
+            atc_classes = atc_hierarchy[atc_hierarchy["chembl_id"] == node_info["chembl_id"]][
+                "atc"
+            ].values[0]
+
+        pnames = atc_classes.split(";")
+
+        for atc_classification in pnames:
+            atc_classification_list = atc_classification.split(",")
+            drug_classes.append({"child": drug, "parent": atc_classification_list[0]})
+
+            parents = atc_classification_list[1:]
+            children = atc_classification_list[:-1]
+
+            for child, parent in zip(children, parents):
+                drug_classes.append({"child": child, "parent": parent})
+
+    drug_class_df = pd.DataFrame(drug_classes)
+    drug_class_df.drop_duplicates(inplace=True)
+    drug_class_df.to_csv(f"{output_dir}/{DRUG_HIERACHY_FILE}", index=False)
+    return None
+
+
+def get_disease_similarity(graph: BioGraph, data_dir: str):
+    """Generate disease similarity graph based on gene overlap.
+    :param graph: BioGraph object
+    """
+    disease_nodes = [node for node, label in graph.nodes(data="labels") if label == "Disease"]
+    disease_pairs = list(combinations(disease_nodes, 2))
+
+    disease_similarity_matrix = []
+
+    for disease_1, disease_2 in tqdm(disease_pairs, desc="Calculating Disease Similarity"):
+        gene_list_1 = set([g for g, d in graph.in_edges(disease_1)])
+        gene_list_2 = set([g for g, d in graph.in_edges(disease_2)])
+
+        similarity = jaccard_similarity(gene_list_1, gene_list_2)
+        if similarity < 0.4:
             continue
 
-        if len(atc_classes) > 1:
-            print(f"Multiple ATC classes for {drug}: {atc_classes}")
-
-        atc_classes = atc_classes[0]
-        cnames = atc_classes.split(",")
-        parent = cnames[0]
-        drug_classes.append({"child": drug, "parent": parent})
-
-    print(f"Skipped {skipped} drugs out of {len(drug_nodes)}")
-    return pd.DataFrame(drug_classes)
-
-
-def generate_disease_hierarchy(disease_df, kg_data) -> pd.DataFrame:
-    # filter rows with ':Drug' in '_labels'
-    diseases_filtered = kg_data[kg_data["_labels"].isin([":Disease"])][["diseaseID", "class"]]
-    # disease_hierarchy = generate_disease_hierarchy(diseases_filtered)
-
-    # writing the merged hierarchy to a csv file
-    # hierarchy_frames = [drug_hierarchy, disease_hierarchy]
-    # hierarchy_result = pd.concat(hierarchy_frames)
-    # hierarchy_result.to_csv('hierarchy.csv', sep=",", index = False)
-    print("Hierarchy file is saved!")
-
-    disease_hierarchy_df = pd.DataFrame(columns=["child", "parent"])
-    disease_hierarchy_dict = {}
-    for index, row in disease_df.iterrows():
-        diseaseID = row["diseaseID"]
-        mesh_classifications = row["class"].split(";")
-        for mesh_classification in mesh_classifications:
-            disease_hierarchy_df.loc[len(disease_hierarchy_df) + 1] = {
-                "child": diseaseID,
-                "parent": mesh_classification,
+        disease_similarity_matrix.append(
+            {
+                "id1": disease_1,
+                "id2": disease_2,
+                "type_number": 2,
+                "weight": similarity,
+                "index": len(disease_similarity_matrix),
             }
-            disease_hierarchy_dict[mesh_classification] = mesh_classification[0:1]
-            disease_hierarchy_dict[mesh_classification[0:1]] = "disease"
+        )
 
-    disease_hierarchy_df2 = pd.DataFrame(
-        disease_hierarchy_dict.items(), columns=["child", "parent"]
+    sim_graph = pd.DataFrame(disease_similarity_matrix)
+    sim_graph.to_csv(f"{data_dir}/{DISEASE_SIM_FILE}", sep="\t", index=False, header=False)
+    return None
+
+
+def create_files(graph_obj: BioGraph, output_dir: str = "./dreamwalk_data") -> None:
+    """Generate files for the DREAMwalk algorithm from the BioGraph object.
+    :param graph_obj: BioGraph object
+    :param output_dir: output directory to save the files
+    :return: None
+    """
+    subgraph = graph_obj.get_subgraph(node_types=["Gene", "Disease", "Compound"])
+    logger.warning(f"Subgraph nodes: {len(subgraph.nodes())}, edges: {len(subgraph.edges())}")
+
+    # Removing nodes with no heirarchy
+    remove_nodes = check_hierarchy(subgraph, output_dir)
+    updated_graph = nx.MultiDiGraph(subgraph)
+
+    for node in remove_nodes:
+        updated_graph.remove_node(node)
+
+    logger.info(
+        f"Updated graph nodes: {len(updated_graph.nodes())}, edges: {len(updated_graph.edges())}"
     )
-    disease_hierarchy_df = pd.concat([disease_hierarchy_df, disease_hierarchy_df2])
-    return disease_hierarchy_df
+    nx.write_gml(updated_graph, f"{output_dir}/{SUBGRAPH_FILE}")
+
+    # Node type label file - TSV files with two columns: node_id, node_type
+    create_nodetype_file(updated_graph, output_dir)
+
+    # Network file - TXT file with four columns: source, target, edgetype, weight
+    create_network_file(updated_graph, output_dir)
+
+    # Hierarchy file - CSV file with two columns: child, parent
+    get_drug_hierarchy(updated_graph, data_dir=output_dir, output_dir=output_dir)
+
+    # Disease similairty file - CSV file with two columns: child, parent
+    get_disease_similarity(updated_graph, output_dir)
+
+    # Positive/negative drug-disease association file - TSV file with three columns: drug, disease, label
+    get_drug_disease_file(updated_graph, output_dir)

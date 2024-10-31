@@ -63,18 +63,18 @@ def HeterogeneousSG(
     outputf = "tmp_outputf"
 
     # use hetsg.cpp file for embedding vector generation -> outputs .txt file
-    os.system(
-        "g++ DREAMwalk/HeterogeneousSG.cpp -o HetSG -lm -pthread -O3 -march=native -Wall -funroll-loops -Wno-unused-result"
-    )
-    os.system(
-        f"./HetSG -train {tmp_walkf} -output {outputf} -pp {use_hetSG} -min-count 0 -size {embedding_size} -iter 1 -window {window_length} -threads {workers}"
-    )
+    cpp_command = "g++ HeterogeneousSG.cpp -o HetSG -lm -pthread -O3 -march=native -Wall -funroll-loops -Wno-unused-result"
+    os.system(cpp_command)
+    run_command = f"HetSG -train {tmp_walkf} -output {outputf} -pp {use_hetSG} -min-count 0 -size {embedding_size} -iter 1 -window {window_length} -threads {workers}"
+    print(run_command)
+    os.system(run_command)
 
     with open(outputf + ".txt", "r") as fr:
         lines = fr.readlines()
 
     # remove tmp files
-    os.system(f"rm -f {outputf} {tmp_walkf} {outputf}.txt HetSG")
+    remove_command = f"rm -f {outputf} {tmp_walkf} {outputf}.txt HetSG"
+    os.system(remove_command)
 
     embeddings = {}
     for line in lines[1:]:

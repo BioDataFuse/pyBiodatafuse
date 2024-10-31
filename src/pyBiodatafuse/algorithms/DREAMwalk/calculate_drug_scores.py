@@ -1,9 +1,10 @@
 """Codes taken from DreamWalk repository: https://github.com/eugenebang/DREAMwalk"""
 
 import argparse
-import pandas as pd
 import os
 import pickle
+
+import pandas as pd
 
 
 def parse_args():
