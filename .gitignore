@@ -910,6 +910,7 @@ scratch/
 
 *.gml
 pubchem_cache_results.json
+examples/usecases/PCS/dreamwalk_data
 
 # Testing RDF
 src/test.ttl

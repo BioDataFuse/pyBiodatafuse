@@ -196,6 +196,11 @@ class BioGraph(nx.MultiDiGraph):
 
         return None
 
+    def get_subgraph(self, nodes: list):
+        """Get subgraph of the graph."""
+        subgraph = self.graph.subgraph(nodes)
+        return subgraph
+
     def get_publications_for_genes(self):
         """Get publications for genes."""
         pass
@@ -230,7 +235,7 @@ class BioGraph(nx.MultiDiGraph):
 
     def get_chemical_metatdata(self, chemical_name):
         """Get metadata of a chemical."""
-        # """Adverse effects, Clinical trials,"""
+        # """Adverse effects, Clinical trials,
         pass
 
     def get_subgraph(self, node_types: list):
