@@ -15,10 +15,7 @@ pytest==8.1.1
 numpy==1.24.4
 rdflib==7.0.0
 xgboost==1.7.4
-owlready2==0.47
 tabulate==0.8.9
-xgboost==1.7.4
-owlready2==0.47
 parmap==1.6.0
 scipy==1.10.1
 scikit-learn==1.1.3
