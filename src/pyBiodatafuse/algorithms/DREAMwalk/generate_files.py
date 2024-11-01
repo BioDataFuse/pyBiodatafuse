@@ -3,6 +3,7 @@
 import logging
 import os
 from itertools import combinations
+from typing import Any, Dict, List
 
 import networkx as nx
 import pandas as pd
@@ -213,7 +214,7 @@ def get_disease_similarity(graph: BioGraph, data_dir: str):
     disease_nodes = [node for node, label in graph.nodes(data="labels") if label == "Disease"]
     disease_pairs = list(combinations(disease_nodes, 2))
 
-    disease_similarity_matrix = []
+    disease_similarity_matrix = []  # type: List[Dict[str, Any]]
 
     for disease_1, disease_2 in tqdm(disease_pairs, desc="Calculating Disease Similarity"):
         gene_list_1 = set([g for g, d in graph.in_edges(disease_1)])
