@@ -148,7 +148,7 @@ OPENTARGETS_DISEASE_COL = f"{OPENTARGETS}_diseases"
 
 # MINERVA
 MINERVA_PATHWAY_OUTPUT_DICT = {
-    "pathway_id": int,
+    "pathway_id": str,
     "pathway_label": str,
     "pathway_gene_count": int,
 }
@@ -165,7 +165,7 @@ OPENTARGETS_REACTOME_OUTPUT_DICT = {
     "pathway_id": str,
     "pathway_label": str,
 }
-PATHWAY_ID = "WP|R-"  # ID Start with WP or R-
+PATHWAY_ID = "MINERVA|WP|R-"  # ID Start with WP or R-
 OPENTARGETS_REACTOME_COL = f"{OPENTARGETS}_reactome"
 
 # Open Targets - GO processes

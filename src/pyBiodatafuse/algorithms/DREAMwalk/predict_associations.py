@@ -1,54 +1,54 @@
-"""Codes taken from DreamWalk repository: https://github.com/eugenebang/DREAMwalk"""
+"""Codes taken from DreamWalk repository: https://github.com/eugenebang/DREAMwalk."""
 
-import argparse
+import logging
 import pickle
+from typing import List
 
 import numpy as np
+import pandas as pd
 from sklearn.metrics import accuracy_score, average_precision_score, f1_score, roc_auc_score
 from sklearn.model_selection import train_test_split
 from xgboost import XGBClassifier
 
 from pyBiodatafuse.algorithms.DREAMwalk.utils import set_seed
 
-
-def parse_args():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--embedding_file", type=str, required=True)
-    parser.add_argument("--pair_file", type=str, required=True)
-    parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument("--patience", type=int, default=20)
-    parser.add_argument("--model_checkpoint", type=str, default="clf.pkl")
-    parser.add_argument("--test_ratio", type=float, default=0.1)
-    parser.add_argument("--valid_ratio", type=float, default=0.1)
-
-    args = parser.parse_args()
-    args = {
-        "embeddingf": args.embedding_file,
-        "pairf": args.pair_file,
-        "seed": args.seed,
-        "patience": args.patience,
-        "modelf": args.model_checkpoint,
-        "testr": args.test_ratio,
-        "validr": args.validation_ratio,
-    }
-    return args
+logger = logging.getLogger(__name__)
 
 
-def split_dataset(pairf, embeddingf, validr, testr, seed):
+def split_dataset(pairf: str, embeddingf: str, validr: float, testr: float, seed: int) -> tuple:
+    """Split the dataset into train, validation, and test sets.
+
+    :param pairf: Path to the pair file
+    :param embeddingf: Path to the embedding file
+    :param validr: Validation ratio
+    :param testr: Test ratio
+    :param seed: Random seed
+    :return: Tuple of train, validation, and test sets
+    """
     with open(embeddingf, "rb") as fin:
         embedding_dict = pickle.load(fin)
 
     xs, ys = [], []
-    with open(pairf, "r") as fin:
-        lines = fin.readlines()
+    pair_df = pd.read_csv(pairf, sep="\t")
 
-    for line in lines[1:]:
-        line = line.strip().split("\t")
-        drug = line[0]
-        dis = line[1]
-        label = line[2]
-        xs.append(embedding_dict[drug] - embedding_dict[dis])
+    skipped = set()
+    for drug, dis, label in pair_df.values:
+        try:
+            drug_emb = embedding_dict[drug]
+        except KeyError:
+            skipped.add(drug)
+            continue
+        try:
+            dis_emb = embedding_dict[dis]
+        except KeyError:
+            skipped.add(dis)
+            continue
+
+        xs.append(drug_emb - dis_emb)
         ys.append(int(label))
+
+    logger.info(f"Skipped {len(skipped)} pairs due to missing embeddings.")
+    logger.info(f"Total pairs: {len(pair_df)} | Remaining pairs: {len(pair_df) - len(xs)}")
 
     # dataset split
     x, y = {}, {}
@@ -69,7 +69,13 @@ def split_dataset(pairf, embeddingf, validr, testr, seed):
     return x, y
 
 
-def return_scores(target_list, pred_list):
+def return_scores(target_list: list, pred_list: List[float]) -> list:
+    """Return metrics for the given target and prediction lists.
+
+    :param target_list: list of target values
+    :param pred_list: list of predicted values
+    :return: list of metrics
+    """
     metric_list = [accuracy_score, roc_auc_score, average_precision_score, f1_score]
 
     scores = []
@@ -89,7 +95,15 @@ def predict_dda(
     validr: float = 0.1,
     testr: float = 0.1,
 ):
+    """Predict drug-disease association.
 
+    :param embeddingf: Path to the embedding file
+    :param pairf: Path to the pair file
+    :param modelf: Path to the model file
+    :param seed: Random seed
+    :param validr: Validation ratio
+    :param testr: Test ratio
+    """
     set_seed(seed)
     x, y = split_dataset(pairf, embeddingf, validr, testr, seed)
 
@@ -118,16 +132,9 @@ def predict_dda(
     for split in ["train", "valid", "test"]:
         preds[split] = clf.predict_proba(np.array(x[split]))[:, 1]
         scores[split] = return_scores(y[split], preds[split])
-        print(
+        logger.info(
             f"{split.upper():5} set | Acc: {scores[split][0]*100:.2f}% | AUROC: {scores[split][1]:.4f} | AUPR: {scores[split][2]:.4f} | F1-score: {scores[split][3]:.4f}"
         )
 
     with open(modelf, "wb") as fw:
         pickle.dump(clf, fw)
-    print(f"saved XGBoost classifier: {modelf}")
-    print("=" * 50)
-
-
-if __name__ == "__main__":
-    args = parse_args()
-    predict_dda(**args)

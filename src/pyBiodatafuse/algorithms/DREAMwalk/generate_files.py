@@ -18,6 +18,7 @@ from pyBiodatafuse.algorithms.DREAMwalk.constant import (
     NODE_TYPE_FILE,
     SUBGRAPH_FILE,
 )
+from pyBiodatafuse.algorithms.DREAMwalk.utils import read_graph
 from pyBiodatafuse.analyzer.summarize import BioGraph
 
 logger = logging.getLogger(__name__)
@@ -35,15 +36,16 @@ def jaccard_similarity(set1: set, set2: set) -> float:
     return intersection / union
 
 
-def get_drug_disease_file(graph: nx.MultiDiGraph, output_dir: str) -> None:
+def get_drug_disease_file(output_dir: str) -> None:
     """Generate drug-disease association (DDA) files.
 
-    :param graph: networkx.Graph object
     :param output_dir: output directory to save the files
     """
-    drug_nodes = [node for node, label in graph.nodes(data="labels") if label == "Compound"]
+    graph = read_graph(f"{output_dir}/{GRAPH_FILE}", weighted=True, directed=False, delimiter="\t")
+    nodetype_df = pd.read_csv(f"{output_dir}/{NODE_TYPE_FILE}", sep="\t")
 
-    disease_nodes = [node for node, label in graph.nodes(data="labels") if label == "Disease"]
+    drug_nodes = nodetype_df[nodetype_df["type"] == "drug"]["node"].values
+    disease_nodes = nodetype_df[nodetype_df["type"] == "disease"]["node"].values
 
     drug_disease_edges = []
 
@@ -65,6 +67,7 @@ def get_drug_disease_file(graph: nx.MultiDiGraph, output_dir: str) -> None:
     os.makedirs(f"{output_dir}/{DDA_DIRECTORY}", exist_ok=True)
     for i in range(1, 11):
         sampled = unknown_dda.sample(n=len(known_dda))
+        sampled = pd.concat([known_dda, sampled])
         sampled.to_csv(f"{output_dir}/{DDA_DIRECTORY}/dda_{i}.tsv", sep="\t", index=False)
 
 
@@ -93,28 +96,37 @@ def create_network_file(graph: nx.MultiDiGraph, output_dir: str) -> None:
     :param output_dir: output directory to save the files
     :returns: None
     """
-    rel_to_id = {"activates": 1, "inhibits": 1, "associated_with": 2, "interacts_with": 3}
+    rel_to_id = {
+        "activates": 1,
+        "inhibits": 1,
+        "active": 1,
+        "inactive": 1,
+        "associated_with": 2,
+        "interacts_with": 3,
+        "treats": 4,
+    }
 
     graph_data = []
 
+    counter = 1
     for source, target, edge in graph.edges(data=True):
         if edge["label"] not in rel_to_id:
             continue
 
         edge_id = rel_to_id[edge["label"]]
-
         graph_data.append(
             {
                 "source": source,
                 "target": target,
-                "edgetype": edge_id,
+                "type": edge_id,
                 "weight": 1,
+                "edge_id": counter,
             }
         )
+        counter += 1
 
     output_graph = pd.DataFrame(graph_data)
-    output_graph["edge_counter"] = range(1, len(output_graph) + 1)
-    output_graph.to_csv(f"{output_dir}/{GRAPH_FILE}", sep="\t", index=False, header=False)
+    output_graph.to_csv(f"{output_dir}/{GRAPH_FILE}", sep="\t", index=False)
     return None
 
 
@@ -234,11 +246,11 @@ def get_disease_similarity(graph: nx.MultiDiGraph, data_dir: str) -> None:
 
         disease_similarity_matrix.append(
             {
-                "id1": disease_1,
-                "id2": disease_2,
-                "type_number": 2,
+                "source": disease_1,
+                "target": disease_2,
+                "type": 2,
                 "weight": similarity,
-                "index": len(disease_similarity_matrix),
+                "edge_id": len(disease_similarity_matrix),
             }
         )
 
@@ -281,4 +293,4 @@ def create_files(graph_obj: BioGraph, output_dir: str = "./dreamwalk_data") -> N
     get_disease_similarity(updated_graph, output_dir)
 
     # Positive/negative drug-disease association file - TSV file with three columns: drug, disease, label
-    get_drug_disease_file(updated_graph, output_dir)
+    get_drug_disease_file(output_dir)

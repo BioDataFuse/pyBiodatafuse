@@ -5,6 +5,7 @@ import random
 
 import networkx as nx
 import numpy as np
+import pandas as pd
 
 
 def read_graph(
@@ -18,24 +19,25 @@ def read_graph(
     :param delimiter: Delimiter for the edge list file
     :returns: networkx graph
     """
+    df = pd.read_csv(edgelist_path, sep=delimiter)
     if weighted:
-        graph = nx.read_edgelist(
-            edgelist_path,
-            nodetype=str,
-            data=(("type", int), ("weight", float), ("id", int)),
+        graph = nx.from_pandas_edgelist(
+            df,
+            source="source",
+            target="target",
+            edge_attr=True,
             create_using=nx.MultiDiGraph(),
-            delimiter=delimiter,
         )
     else:
-        graph = nx.read_edgelist(
-            edgelist_path,
-            nodetype=str,
-            data=(("type", int)),
+        graph = nx.from_pandas_edgelist(
+            df,
+            source="source",
+            target="target",
+            edge_attr=True,
             create_using=nx.MultiDiGraph(),
-            delimiter=delimiter,
         )
-        for edge in graph.edges():
-            edge = graph[edge[0]][edge[1]]
+        for source, target in graph.edges():
+            edge = graph[source][target]
             for i in range(len(edge)):
                 edge[i]["weight"] = 1.0
 

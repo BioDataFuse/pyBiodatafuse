@@ -6,7 +6,7 @@ import os
 import pickle
 import random
 from collections import Counter, defaultdict
-from typing import Any, Dict
+from typing import Union
 
 import networkx as nx
 import numpy as np
@@ -231,7 +231,7 @@ def _network_traverse(
     return next_edge
 
 
-def _teleport_operation(cur: str, g_sim: nx.MultiDiGraph) -> Any[str, bool]:
+def _teleport_operation(cur: str, g_sim: nx.MultiDiGraph) -> Union[str, bool]:
     """Perform teleport operation.
 
     :param cur: Current node
@@ -439,7 +439,11 @@ def save_embedding_files(
     :raises ValueError: If input similarity file is not detected
     """
     set_seed(42)
-    workers = os.cpu_count() - 2  # omit type: ignore
+    cpus = os.cpu_count()
+    if cpus is None:
+        workers = 1
+    else:
+        workers = cpus - 2
     graph = read_graph(netf, weighted=weighted, directed=directed, delimiter=net_delimiter)
     if not os.path.exists(sim_netf):
         raise ValueError(

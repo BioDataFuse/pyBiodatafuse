@@ -162,6 +162,7 @@ def save_sim_graph(
     hierf: str,
     outputf: str,
     cutoff: float,
+    weighted: bool = True,
     directed: bool = False,
     net_delimiter: str = "\t",
 ) -> None:
@@ -171,10 +172,11 @@ def save_sim_graph(
     :param hierf: hierarchy file
     :param outputf: output file name
     :param cutoff: cutoff value for similarity
+    :param weighted: weighted or unweighted graph
     :param directed: directed or undirected graph
     :param net_delimiter: delimiter of networks file; default = tab
     """
-    graph = read_graph(networkf, weighted=True, directed=directed, delimiter=net_delimiter)
+    graph = read_graph(networkf, weighted=weighted, directed=directed, delimiter=net_delimiter)
     nodes = list(graph.nodes())
     hier_df = pd.read_csv(hierf)
 
@@ -193,6 +195,6 @@ def save_sim_graph(
             index_num += 1
         type_number += 1
 
-    df = pd.DataFrame(d, columns=["id1", "id2", "type", "weight", "index"])
-    df.to_csv(outputf, sep=net_delimiter, index=False, header=False)
+    df = pd.DataFrame(d, columns=["source", "target", "type", "weight", "edge_id"])
+    df.to_csv(outputf, sep=net_delimiter, index=False)
     logger.warning(f"Similarity graph saved: {outputf}")
