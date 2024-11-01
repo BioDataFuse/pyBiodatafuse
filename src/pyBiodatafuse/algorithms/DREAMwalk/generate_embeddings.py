@@ -231,7 +231,7 @@ def _network_traverse(
     return next_edge
 
 
-def _teleport_operation(cur: str, g_sim: nx.MultiDiGraph) -> Union[str, bool]:
+def _teleport_operation(cur: str, g_sim: nx.MultiDiGraph) -> str:
     """Perform teleport operation.
 
     :param cur: Current node
@@ -248,8 +248,7 @@ def _teleport_operation(cur: str, g_sim: nx.MultiDiGraph) -> Union[str, bool]:
             nbr_link_weight = nbr_links[i]["weight"]
             distance_sum += nbr_link_weight
             selected_nbrs.append(nbr)
-    if distance_sum == 0:
-        return False
+
     rand = np.random.rand() * distance_sum
     threshold = 0
 

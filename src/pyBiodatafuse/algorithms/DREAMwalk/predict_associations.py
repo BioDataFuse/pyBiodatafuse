@@ -80,10 +80,7 @@ def return_scores(target_list: list, pred_list: List[float]) -> list:
 
     scores = []
     for metric in metric_list:
-        if metric in [roc_auc_score, average_precision_score]:
-            scores.append(metric(target_list, pred_list))
-        else:  # accuracy_score, f1_score
-            scores.append(metric(target_list, pred_list.round()))
+        scores.append(metric(target_list, pred_list))
     return scores
 
 
