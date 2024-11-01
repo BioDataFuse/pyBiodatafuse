@@ -228,16 +228,17 @@ class BioGraph(nx.MultiDiGraph):
         """Get interactions of a source."""
         pass
 
-    def get_chemical_metatdata(self, chemical_name):
+    def get_chemical_metatdata(self):
         """Get metadata of a chemical."""
         # """Adverse effects, Clinical trials,
         pass
 
     def get_subgraph(self, node_types: list):
         """Get subgraph of the graph.
+
         :param node_types: list of node types
         :raises AssertionError: if node type not in the graph
-        :return: subgraph
+        :returns: subgraph with the given node types
         """
         assert all(
             [node_type in self.node_count["node_type"].to_list() for node_type in node_types]

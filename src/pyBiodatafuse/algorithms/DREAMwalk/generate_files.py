@@ -1,4 +1,4 @@
-"""Codes taken from DreamWalk repository: https://github.com/eugenebang/DREAMwalk"""
+"""Codes taken from DreamWalk repository: https://github.com/eugenebang/DREAMwalk."""
 
 import logging
 import os
@@ -25,20 +25,21 @@ logger = logging.getLogger(__name__)
 
 def jaccard_similarity(set1: set, set2: set) -> float:
     """Calculate Jaccard similarity between two lists.
-    :param list1: List 1
-    :param list2: List 2
-    :return: Jaccard similarity
+
+    :param set1: Set 1
+    :param set2: Set 2
+    :returns: Jaccard similarity
     """
     intersection = len(set1.intersection(set2))
     union = len(set1.union(set2))
     return intersection / union
 
 
-def get_drug_disease_file(graph, output_dir: str):
+def get_drug_disease_file(graph: nx.MultiDiGraph, output_dir: str) -> None:
     """Generate drug-disease association (DDA) files.
+
     :param graph: networkx.Graph object
     :param output_dir: output directory to save the files
-    :return: None
     """
     drug_nodes = [node for node, label in graph.nodes(data="labels") if label == "Compound"]
 
@@ -67,11 +68,12 @@ def get_drug_disease_file(graph, output_dir: str):
         sampled.to_csv(f"{output_dir}/{DDA_DIRECTORY}/dda_{i}.tsv", sep="\t", index=False)
 
 
-def create_nodetype_file(graph, output_dir: str) -> None:
+def create_nodetype_file(graph: nx.MultiDiGraph, output_dir: str) -> None:
     """Generate node type file for the algorithm.
+
     :param graph: networkx.Graph object
     :param output_dir: output directory to save the files
-    :return: None
+    :returns: None
     """
     tmp = []
     for node, node_label in graph.nodes(data="labels"):
@@ -84,11 +86,12 @@ def create_nodetype_file(graph, output_dir: str) -> None:
     return None
 
 
-def create_network_file(graph, output_dir: str) -> None:
+def create_network_file(graph: nx.MultiDiGraph, output_dir: str) -> None:
     """Generate network file for the algorithm.
+
     :param graph: networkx.Graph object
     :param output_dir: output directory to save the files
-    :return: None
+    :returns: None
     """
     rel_to_id = {"activates": 1, "inhibits": 1, "associated_with": 2, "interacts_with": 3}
 
@@ -115,11 +118,12 @@ def create_network_file(graph, output_dir: str) -> None:
     return None
 
 
-def check_hierarchy(graph: BioGraph, data_dir: str) -> set:
+def check_hierarchy(graph: nx.MultiDiGraph, data_dir: str) -> set:
     """Check if the node has a hierarchy.
-    :param graph: BioGraph object
+
+    :param graph: Networkx object
     :param data_dir: Data directory to save the files
-    :return: remove_nodes: Set of nodes to remove
+    :returns: Set of nodes to remove
     """
     remove_nodes = set()
 
@@ -156,12 +160,13 @@ def check_hierarchy(graph: BioGraph, data_dir: str) -> set:
     return remove_nodes
 
 
-def get_drug_hierarchy(graph: BioGraph, data_dir: str, output_dir: str) -> None:
-    """Generating the drug hierarchy using ATC classification.
-    :param graph: BioGraph object
+def get_drug_hierarchy(graph: nx.MultiDiGraph, data_dir: str, output_dir: str) -> None:
+    """Generate the drug hierarchy using ATC classification.
+
+    :param graph: Networkx object
     :param data_dir: Data directory to save the files
     :param output_dir: output directory to save the files
-    :return: None
+    :returns: None
     """
     drug_classes = []
 
@@ -207,9 +212,12 @@ def get_drug_hierarchy(graph: BioGraph, data_dir: str, output_dir: str) -> None:
     return None
 
 
-def get_disease_similarity(graph: BioGraph, data_dir: str):
+def get_disease_similarity(graph: nx.MultiDiGraph, data_dir: str) -> None:
     """Generate disease similarity graph based on gene overlap.
-    :param graph: BioGraph object
+
+    :param graph: Networkx graph object
+    :param data_dir: Data directory to save the files
+    :returns: None
     """
     disease_nodes = [node for node, label in graph.nodes(data="labels") if label == "Disease"]
     disease_pairs = list(combinations(disease_nodes, 2))
@@ -241,9 +249,9 @@ def get_disease_similarity(graph: BioGraph, data_dir: str):
 
 def create_files(graph_obj: BioGraph, output_dir: str = "./dreamwalk_data") -> None:
     """Generate files for the DREAMwalk algorithm from the BioGraph object.
+
     :param graph_obj: BioGraph object
     :param output_dir: output directory to save the files
-    :return: None
     """
     subgraph = graph_obj.get_subgraph(node_types=["Gene", "Disease", "Compound"])
     logger.warning(f"Subgraph nodes: {len(subgraph.nodes())}, edges: {len(subgraph.edges())}")

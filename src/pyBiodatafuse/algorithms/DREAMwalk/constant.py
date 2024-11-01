@@ -1,5 +1,7 @@
 """File paths for DREAMwalk algorithm."""
 
+import os
+
 DDA_DIRECTORY = "dda/"
 NODE_TYPE_FILE = "nodetypes.tsv"
 GRAPH_FILE = "graph.txt"
@@ -14,3 +16,5 @@ SIM_FILE = "similarty_graph.txt"
 SUBGRAPH_FILE = "subgraph_graph.gml"
 
 EMBEDDING_FILE = "embedding_file.pkl"
+
+CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))

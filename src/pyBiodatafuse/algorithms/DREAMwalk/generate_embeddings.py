@@ -13,7 +13,7 @@ import numpy as np
 import parmap
 from scipy import stats
 
-from pyBiodatafuse.algorithms.DREAMwalk.HeterogeneousSG import HeterogeneousSG
+from pyBiodatafuse.algorithms.DREAMwalk.HeterogeneousSG import run_heterogeneous_sg
 from pyBiodatafuse.algorithms.DREAMwalk.utils import read_graph, set_seed
 
 logger = logging.getLogger(__name__)
@@ -465,7 +465,7 @@ def save_embedding_files(
 
     logging.info("Generating node embeddings...")
     use_hetsg = True if nodetypef is not None else False
-    embeddings = HeterogeneousSG(
+    embeddings = run_heterogeneous_sg(
         use_hetsg,
         walks,
         set(graph.nodes()),
