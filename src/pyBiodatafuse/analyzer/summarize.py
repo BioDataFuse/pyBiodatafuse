@@ -196,11 +196,6 @@ class BioGraph(nx.MultiDiGraph):
 
         return None
 
-    def get_subgraph(self, nodes: list):
-        """Get subgraph of the graph."""
-        subgraph = self.graph.subgraph(nodes)
-        return subgraph
-
     def get_publications_for_genes(self):
         """Get publications for genes."""
         pass
