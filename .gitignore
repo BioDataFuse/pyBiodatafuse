@@ -922,3 +922,5 @@ robot.jar
 robot
 src/pyBiodatafuse/resources/biodatafuse.properties
 src/pcs_graph.ttl
+BDF_example_graph.ttl
+bdf_shexer.png

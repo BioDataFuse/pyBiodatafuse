@@ -69,8 +69,8 @@ def add_gene_protein_nodes(g: Graph, row) -> URIRef:
     """
     target = row["target"]
     if target:
-        gene_node = URIRef(f"http://identifiers.org/ensembl/{target}")
-        protein_node = URIRef(f"http://identifiers.org/ensembl/{target}xProtein")
+        gene_node = URIRef(f"http://identifiers.org/ensembl#{target}")
+        protein_node = URIRef(f"http://identifiers.org/ensembl#{target}xProtein")
         # TODO replace by UniProt ID when available
         g.add((gene_node, RDF.type, URIRef(NODE_TYPES["gene_node"])))
         g.add((gene_node, RDFS.label, Literal(row["identifier"], datatype=XSD.string)))
@@ -468,7 +468,7 @@ def add_pathway_node(g: Graph, data: dict, source: str):
         pathway_iri = ""
         iri_source = None
         if source == "WikiPathways":
-            pathway_iri = "https://www.wikipathways.org/pathways/" + str(pathway_id)
+            pathway_iri = "https://www.wikipathways.org/pathways/" + str(pathway_id.split(":")[1])
             iri_source = "https://www.wikipathways.org/"
 
         if source == "OpenTargets_reactome":
@@ -796,10 +796,24 @@ def add_transporter_inhibitor_node(g: Graph, transporter_inhibitor_data: dict, b
             )
         )
         g.add((drug_node, URIRef(PREDICATES["chebi_smiles"]), Literal(smiles)))
-        g.add((drug_node, OWL.sameAs, URIRef(f"https://molmedb.upol.cz/mol/{molmedb_id}")))
-        g.add((drug_node, OWL.sameAs, URIRef(f"https://identifiers.org/CHEBI:{chebi_id}")))
         g.add(
-            (drug_node, OWL.sameAs, URIRef(f"https://www.drugbank.ca/drugs/{drugbank_id}"))
+            (
+                drug_node,
+                URIRef("http://semanticscience.org/resource/SIO_000671"),
+                URIRef(f"https://molmedb.upol.cz/mol/{molmedb_id}"),
+            )
+        )
+        g.add(
+            (drug_node, 
+               URIRef("http://semanticscience.org/resource/SIO_000671"), URIRef(f"https://identifiers.org/CHEBI#{chebi_id}")
+            )
+        )
+        g.add(
+            (
+                drug_node,
+                URIRef("http://semanticscience.org/resource/SIO_000671"),
+                URIRef(f"https://www.drugbank.ca/drugs/{drugbank_id}"),
+            )
         )
         g.add(
             (
@@ -810,16 +824,30 @@ def add_transporter_inhibitor_node(g: Graph, transporter_inhibitor_data: dict, b
         )
         g.add(
             (
-                URIRef(f"https://identifiers.org/CHEBI:{chebi_id}"),
+                URIRef(f"https://identifiers.org/CHEBI#{chebi_id}"),
                 RDF.type,
-                "https://purl.obolibrary.org/CHEMINF_000407",
+                URIRef("https://purl.obolibrary.org/CHEMINF_000407"),
+            )
+        )
+        g.add(
+            (
+                drug_node,
+                URIRef("http://semanticscience.org/resource/SIO_000671"),
+                URIRef(f"https://identifiers.org/CHEBI#{chebi_id}"),
             )
         )
         g.add(
             (
                 URIRef(f"https://www.drugbank.ca/drugs/{drugbank_id}"),
                 RDF.type,
-                "https://purl.obolibrary.org/CHEMINF_000406",
+                URIRef("https://purl.obolibrary.org/CHEMINF_000406"),
+            )
+        )
+        g.add(
+            (
+                drug_node,
+                URIRef("http://semanticscience.org/resource/SIO_000671"),
+                URIRef(f"https://www.drugbank.ca/drugs/{drugbank_id}"),
             )
         )
         inhibition_node = URIRef(base_uri + f"inhibition/{uniprot_trembl_id}_{compound_cid}")
@@ -867,7 +895,7 @@ def add_ppi_data(
     :return: a ppi URIRef node
     """
     stringdb_link_to = entry.get("stringdb_link_to", None)
-    ensembl = entry.get("Ensembl", None)
+    ensembl = entry.get("Ensembl", None).split(":")[1]
     score = entry.get("score", None)
     if score:
         score = float(score)
@@ -924,21 +952,21 @@ def add_ppi_data(
         )
         g.add(
             (
-                URIRef(f"http://identifiers.org/ensembl/{ensembl}"),
-                OWL.sameAs,
+                URIRef(f"http://identifiers.org/ensembl#{ensembl}"),
+                URIRef("http://semanticscience.org/resource/SIO_000671"),
                 URIRef(f"https://www.uniprot.org/uniprotkb/{stringdb_link_to}"),
             )
         )
         g.add(
             (
-                URIRef(f"http://identifiers.org/ensembl/{ensembl}"),
-                OWL.sameAs,
+                URIRef(f"http://identifiers.org/ensembl#{ensembl}"),
+                URIRef("http://semanticscience.org/resource/SIO_000671"),
                 URIRef(f"https://www.uniprot.org/uniprotkb/{stringdb_link_to}"),
             )
         )
         g.add(
             (
-                URIRef(f"http://identifiers.org/ensembl/{ensembl}"),
+                URIRef(f"http://identifiers.org/ensembl#{ensembl}"),
                 RDF.type,
                 URIRef(NODE_TYPES["protein_node"]),
             )
@@ -1006,7 +1034,7 @@ def add_literature_based_data(
 
 
 def generate_rdf(
-    df: pd.DataFrame, base_uri: str, version_iri: str, author: str, orcid: str, metadata: dict
+    df: pd.DataFrame, base_uri: str, version_iri: str, author: str, orcid: str, metadata: dict, open_only: bool, load_ontology: bool
 ) -> Graph:
     """Generate an RDF graph from the provided DataFrame.
 
@@ -1020,8 +1048,9 @@ def generate_rdf(
     """
     g = Graph()
     # Load ontology or base RDF
-    with resources.path("pyBiodatafuse.resources", "biodatafuse.owl") as owl_path:
-        g.parse(owl_path)
+    if load_ontology == True: # TODO decide
+        with resources.path("pyBiodatafuse.resources", "biodatafuse.owl") as owl_path:
+            g.parse(owl_path)
 
     # Define the base URI and namespace bindings
     new_uris = URIS
@@ -1051,6 +1080,8 @@ def generate_rdf(
         # molmedb_data = row.get("MolMeDB_transporter_inhibitor", None)
         disease_data = []
         for source in [DISGENET_DISEASE_COL, OPENTARGETS_DISEASE_COL]:
+            if open_only and source == DISGENET_DISEASE_COL: # TODO implement open data only feature properly
+                continue
             source_el = row.get(source)
             if isinstance(source_el, list):
                 disease_data += source_el
@@ -1135,13 +1166,14 @@ def generate_rdf(
                     add_ppi_data(g, protein_node, protein_name, entry, base_uri, new_uris)
 
     # Add metadata to the RDF graph
-    add_metadata(
-        g=g,
-        version_iri=version_iri,
-        author=author,
-        orcid=orcid,
-        metadata=metadata,
-        graph_uri=version_iri,
-    )
+    if metadata:
+        add_metadata(
+            g=g,
+            version_iri=version_iri,
+            author=author,
+            orcid=orcid,
+            metadata=metadata,
+            graph_uri=version_iri,
+        )
 
     return g
