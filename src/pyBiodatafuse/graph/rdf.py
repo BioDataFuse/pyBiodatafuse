@@ -5,26 +5,27 @@
 import logging
 from datetime import datetime
 from importlib import resources
+
 import numpy as np
 import pandas as pd
-
 from bioregistry import get_iri, normalize_curie
 from rdflib import Graph, Literal, URIRef
-from rdflib.namespace import DC, DCTERMS, RDF, RDFS, SKOS, XSD, OWL
+from rdflib.namespace import DC, DCTERMS, OWL, RDF, RDFS, SKOS, XSD
+
 from pyBiodatafuse.constants import (
     BGEE_GENE_EXPRESSION_LEVELS_COL,
     CLINICAL_PHASES,
     DATA_SOURCES,
     DISGENET_DISEASE_COL,
     GO_TYPES,
+    IDENTIFIER_TYPES,
     MOAS,
     NAMESPACE_BINDINGS,
     NODE_TYPES,
+    OPENTARGETS,
     OPENTARGETS_DISEASE_COL,
     PREDICATES,
     URIS,
-    IDENTIFIER_TYPES,
-    OPENTARGETS
 )
 
 # Configure logging
@@ -275,7 +276,9 @@ def add_gene_expression_data(
             f"{exp_uri}/{id_number}/{source_idx}_{anatomical_entity}"
         )
 
-        g.add((gene_node, URIRef(PREDICATES["sio_has_measurement_value"]), gene_expression_value_node))
+        g.add(
+            (gene_node, URIRef(PREDICATES["sio_has_measurement_value"]), gene_expression_value_node)
+        )
         g.add(
             (
                 gene_expression_value_node,
@@ -894,7 +897,7 @@ def add_ppi_data(
         g.add(
             (
                 ppi_node,
-                URIRef(PREDICATES['sio_has_part']),
+                URIRef(PREDICATES["sio_has_part"]),
                 protein_node,
             )
         )
@@ -1125,6 +1128,7 @@ def generate_rdf(
             for entry in transporter_inhibitor_data:
                 add_transporter_inhibitor_node(g, entry, base_uri)
         if stringdb_data and isinstance(stringdb_data, list):
+            protein_name = f"{row.target}_protein"
             protein_name = f"{row.target}_protein"
             for entry in stringdb_data:
                 if entry.get("Ensembl", None):
