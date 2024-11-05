@@ -472,6 +472,7 @@ def add_pathway_node(g: Graph, data: dict, source: str):
             iri_source = "https://www.wikipathways.org/"
 
         if source == "OpenTargets_reactome":
+            pathway_id = pathway_id.split(":")[1]
             pathway_iri = "https://reactome.org/content/detail/" + str(pathway_id)
             iri_source = "https://reactome.org/"
             source = "Reactome"
@@ -504,55 +505,57 @@ def add_drug_node(g: Graph, compound: dict, protein_node: URIRef) -> URIRef:
     is_approved = compound.get("is_approved", None)
     clincal_trial_phase = compound.get("clincal_trial_phase", None)
     relation = compound.get("relation", None)
-    drug_node = URIRef(f"https://www.ebi.ac.uk/chembl/compound_report_card/{chembl_id}")
-    g.add((drug_node, RDFS.label, Literal(str(compound_name), datatype=XSD.string)))
-    data_source_node = add_data_source_node(g, "OpenTargets_reactome")
-    g.add((drug_node, URIRef(PREDICATES["sio_has_source"]), data_source_node))
-    if is_approved:
-        g.add(
-            (
-                drug_node,
-                RDF.type,  # TODO check
-                URIRef(NODE_TYPES["approved_drug"]),
+    if chembl_id:
+        chembl_id = chembl_id.split("CHEMBL:")[1]
+        drug_node = URIRef(f"https://www.ebi.ac.uk/chembl/compound_report_card/{chembl_id}")
+        g.add((drug_node, RDFS.label, Literal(str(compound_name), datatype=XSD.string)))
+        data_source_node = add_data_source_node(g, "OpenTargets_reactome")
+        g.add((drug_node, URIRef(PREDICATES["sio_has_source"]), data_source_node))
+        if is_approved:
+            g.add(
+                (
+                    drug_node,
+                    RDF.type,  # TODO check
+                    URIRef(NODE_TYPES["approved_drug"]),
+                )
             )
-        )
-    else:
-        g.add((drug_node, RDF.type, URIRef(NODE_TYPES["tested_substance_node"])))
-    if relation in MOAS:
-        relation_iri = MOAS[relation]
-        g.add((drug_node, URIRef(relation_iri), protein_node))
-    if clincal_trial_phase:
-        clinical_phase_iri = CLINICAL_PHASES[str(clincal_trial_phase)]
-        g.add(
-            (
-                drug_node,
-                URIRef(PREDICATES["sio_has_value"]),
-                URIRef(clinical_phase_iri),
+        else:
+            g.add((drug_node, RDF.type, URIRef(NODE_TYPES["tested_substance_node"])))
+        if relation in MOAS:
+            relation_iri = MOAS[relation]
+            g.add((drug_node, URIRef(relation_iri), protein_node))
+        if clincal_trial_phase:
+            clinical_phase_iri = CLINICAL_PHASES[str(clincal_trial_phase)]
+            g.add(
+                (
+                    drug_node,
+                    URIRef(PREDICATES["sio_has_value"]),
+                    URIRef(clinical_phase_iri),
+                )
             )
-        )
-    for source_id in [drugbank_id, compound_cid]:
-        if source_id:
-            iri = None
-            if source_id == drugbank_id:
-                iri = f"https://go.drugbank.com/drugs/{source_id}"
-            if source_id == compound_cid:
-                iri = "https://pubchem.ncbi.nlm.nih.gov/compound/" + str(compound_cid)
-            if iri:
-                id_node = URIRef(iri)
-                g.add((drug_node, OWL.sameAs, id_node))
-                g.add((id_node, OWL.sameAs, drug_node))
-                g.add((id_node, RDFS.label, Literal(compound_name, datatype=XSD.string)))
-                g.add((id_node, RDF.type, URIRef(NODE_TYPES["tested_substance_node"])))
-            ae_list = compound.get("adverse_effect", None)
-            if ae_list:
-                for i in compound["adverse_effect"]:
-                    ae = i.get("name", None)
-                    if ae:
-                        ae_node = add_ae_node(g, ae)
-                        if ae_node:
-                            g.add((ae_node, URIRef(PREDICATES["is_preceded_by"]), drug_node))
-                            g.add((drug_node, URIRef(PREDICATES["precedes"]), ae_node))
-    return drug_node
+        for source_id in [drugbank_id, compound_cid]:
+            if source_id:
+                iri = None
+                if source_id == drugbank_id:
+                    iri = f"https://go.drugbank.com/drugs/{source_id}"
+                if source_id == compound_cid:
+                    iri = "https://pubchem.ncbi.nlm.nih.gov/compound/" + str(compound_cid)
+                if iri:
+                    id_node = URIRef(iri)
+                    g.add((drug_node, OWL.sameAs, id_node))
+                    g.add((id_node, OWL.sameAs, drug_node))
+                    g.add((id_node, RDFS.label, Literal(compound_name, datatype=XSD.string)))
+                    g.add((id_node, RDF.type, URIRef(NODE_TYPES["tested_substance_node"])))
+                ae_list = compound.get("adverse_effect", None)
+                if ae_list:
+                    for i in compound["adverse_effect"]:
+                        ae = i.get("name", None)
+                        if ae:
+                            ae_node = add_ae_node(g, ae)
+                            if ae_node:
+                                g.add((ae_node, URIRef(PREDICATES["is_preceded_by"]), drug_node))
+                                g.add((drug_node, URIRef(PREDICATES["precedes"]), ae_node))
+        return drug_node
 
 
 def add_ae_node(g: Graph, ae: str) -> URIRef:
