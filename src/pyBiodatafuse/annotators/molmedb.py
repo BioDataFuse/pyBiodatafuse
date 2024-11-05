@@ -122,6 +122,10 @@ def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
     # Record the end time
     end_time = datetime.datetime.now()
 
+    intermediate_df["drugbank_id"] = intermediate_df["drugbank_id"].apply(
+        lambda x: "DrugBank:" + x if x else None
+    )
+
     """Metdata details"""
     # Get the current date and time
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")

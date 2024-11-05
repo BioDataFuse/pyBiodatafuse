@@ -218,17 +218,34 @@ class BioGraph(nx.MultiDiGraph):
         patent_dict = get_patent_from_pubchem(df)
         return patent_dict
 
-    def node_in_graph(self, node_type: str, node_namespace: str, node_name: str):
+    def node_in_graph(self, node_type: str):
         """Check if the node is in the graph."""
         possible_node_type = self.node_count["node_type"].to_list()
 
         assert node_type in possible_node_type, f"Node type {node_type} not in {possible_node_type}"
 
-    def get_source_interactions(self, source_type, source_name, interaction_type, datasource):
+    def get_source_interactions(self):
         """Get interactions of a source."""
         pass
 
-    def get_chemical_metatdata(self, chemical_name):
+    def get_chemical_metatdata(self):
         """Get metadata of a chemical."""
-        # """Adverse effects, Clinical trials,"""
+        # """Adverse effects, Clinical trials,
         pass
+
+    def get_subgraph(self, node_types: list):
+        """Get subgraph of the graph.
+
+        :param node_types: list of node types
+        :raises AssertionError: if node type not in the graph
+        :returns: subgraph with the given node types
+        """
+        assert all(
+            [node_type in self.node_count["node_type"].to_list() for node_type in node_types]
+        ), "Node type not in the graph. Please use one of the following node types: {}".format(
+            self.node_count["node_type"].to_list()
+        )
+
+        nodes = [node for node, label in self.graph.nodes(data="labels") if label in node_types]
+        subgraph = self.graph.subgraph(nodes)
+        return subgraph
