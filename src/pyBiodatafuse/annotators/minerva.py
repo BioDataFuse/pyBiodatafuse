@@ -4,12 +4,17 @@
 
 import datetime
 import warnings
-from typing import Optional, Tuple
+from typing import Any, Dict, Optional, Tuple
 
 import pandas as pd
 import requests
 
-from pyBiodatafuse.constants import MINERVA, MINERVA_ENDPOINT, MINERVA_INPUT_ID, MINERVA_OUTPUT_DICT
+from pyBiodatafuse.constants import (
+    MINERVA,
+    MINERVA_ENDPOINT,
+    MINERVA_GENE_INPUT_ID,
+    MINERVA_PATHWAY_OUTPUT_DICT,
+)
 from pyBiodatafuse.utils import (
     check_columns_against_constants,
     collapse_data_sources,
@@ -171,9 +176,9 @@ def get_gene_minerva_pathways(
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
     :param map_name: name of the map you want to retrieve the information from. The extensive list
         can be found at https://minerva-net.lcsb.uni.lu/table.html.
-    :param input_type: type of input gene. Default is "Protein"
-    :param get_elements: boolean to get elements of the chosen diagram
-    :param get_reactions: if get_reactions = boolean to get reactions of the chosen diagram
+    :param input_type: type of input gene. Default is "Protein".
+    :param get_elements: boolean to get elements of the chosen diagram.
+    :param get_reactions: if get_reactions = boolean to get reactions of the chosen diagram.
     :returns: a tuple containing MINERVA outputs and dictionary of the MINERVA metadata.
     """
     # Check if the MINERVA API is available
@@ -196,7 +201,7 @@ def get_gene_minerva_pathways(
         "Simple molecule",
     ], "Incorrect Input_type provided. Please provide a valid input_type."
 
-    data_df = get_identifier_of_interest(bridgedb_df, MINERVA_INPUT_ID)
+    data_df = get_identifier_of_interest(bridgedb_df, MINERVA_GENE_INPUT_ID)
 
     # Record the start time
     start_time = datetime.datetime.now()
@@ -251,7 +256,7 @@ def get_gene_minerva_pathways(
         data["symbol"] = symbol
         data["pathway_label"] = pathway_name
         data["pathway_gene_count"] = len(symbol) - symbol.count(None)
-        data["pathway_id"] = models[idx]["idObject"]
+        data["pathway_id"] = "MINERVA:" + str(models[idx]["idObject"])
         data["refs"] = refs
         data["ensembl"] = ensembl
         data["type"] = entity_type
@@ -262,8 +267,25 @@ def get_gene_minerva_pathways(
     # Record the end time
     end_time = datetime.datetime.now()
 
-    if "symbol" not in intermediate_df:
-        return pd.DataFrame(), {"datasource": MINERVA, "metadata": minerva_version}
+    """Metdata details"""
+    # Get the current date and time
+    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    # Calculate the time elapsed
+    time_elapsed = str(end_time - start_time)
+
+    # Add the datasource, query, query time, and the date to metadata
+    minerva_metadata: Dict[str, Any] = {
+        "datasource": MINERVA,
+        "metadata": minerva_version,
+        "query": {
+            "size": data_df["target"].nunique(),
+            "input_type": MINERVA_GENE_INPUT_ID,
+            "MINERVA project": map_name,
+            "time": time_elapsed,
+            "date": current_date,
+            "url": map_url,
+        },
+    }
 
     # Organize the annotation results as an array of dictionaries
     intermediate_df.rename(columns={"ensembl": "target"}, inplace=True)
@@ -272,42 +294,47 @@ def get_gene_minerva_pathways(
     intermediate_df = intermediate_df.drop_duplicates(
         subset=["target", "pathway_id", "pathway_label", "pathway_gene_count"]
     )
+    intermediate_df = intermediate_df[intermediate_df["target"].isin(data_df["target"])]
+
+    if intermediate_df.empty:
+        warnings.warn(
+            f"There is no annotation for your input list in {MINERVA}, project {map_name}.",
+            stacklevel=2,
+        )
+        return pd.DataFrame(), minerva_metadata
 
     # Check if all keys in df match the keys in OUTPUT_DICT
     check_columns_against_constants(
         data_df=intermediate_df,
-        output_dict=MINERVA_OUTPUT_DICT,
+        output_dict=MINERVA_PATHWAY_OUTPUT_DICT,
         check_values_in=["pathway_id"],
     )
 
     # Merge the two DataFrames on the target column
     merged_df = collapse_data_sources(
         data_df=data_df,
-        source_namespace=MINERVA_INPUT_ID,
+        source_namespace=MINERVA_GENE_INPUT_ID,
         target_df=intermediate_df,
         common_cols=["target"],
-        target_specific_cols=list(MINERVA_OUTPUT_DICT.keys()),
+        target_specific_cols=list(MINERVA_PATHWAY_OUTPUT_DICT.keys()),
         col_name=MINERVA,
     )
 
-    """Metdata details"""
-    # Get the current date and time
-    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    # Calculate the time elapsed
-    time_elapsed = str(end_time - start_time)
+    """Update metadata"""
+    # Calculate the number of new nodes
+    num_new_nodes = intermediate_df["pathway_id"].nunique()
+    # Calculate the number of new edges
+    num_new_edges = intermediate_df.drop_duplicates(subset=["target", "pathway_id"]).shape[0]
 
-    # Add the datasource, query, query time, and the date to metadata
-    minerva_metadata = {
-        "datasource": MINERVA,
-        "metadata": minerva_version,
-        "query": {
-            "size": data_df["target"].nunique(),
-            "input_type": MINERVA_INPUT_ID,
-            "MINERVA project": map_name,
-            "time": time_elapsed,
-            "date": current_date,
-            "url": map_url,
-        },
-    }
+    # Check the intermediate_df
+    if num_new_edges != len(intermediate_df):
+        warnings.warn(
+            f"The intermediate_df in {MINERVA} annotatur should be checked, please create an issue on https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
+            stacklevel=2,
+        )
+
+    # Add the number of new nodes and edges to metadata
+    minerva_metadata["query"]["number_of_added_nodes"] = num_new_nodes
+    minerva_metadata["query"]["number_of_added_edges"] = num_new_edges
 
     return merged_df, minerva_metadata

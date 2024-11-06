@@ -6,6 +6,7 @@ import datetime
 import os
 import warnings
 from string import Template
+from typing import Any, Dict
 
 import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
@@ -15,8 +16,9 @@ from pyBiodatafuse.constants import (
     ANATOMICAL_ENTITIES_LIST,
     BGEE,
     BGEE_ENDPOINT,
-    BGEE_INPUT_ID,
-    BGEE_OUTPUT_DICT,
+    BGEE_GENE_EXPRESSION_LEVELS_COL,
+    BGEE_GENE_EXPRESSION_OUTPUT_DICT,
+    BGEE_GENE_INPUT_ID,
 )
 from pyBiodatafuse.utils import (
     check_columns_against_constants,
@@ -81,7 +83,7 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
         return pd.DataFrame(), {}
 
     # Extract the "target" values and join them into a single string separated by commas
-    data_df = get_identifier_of_interest(bridgedb_df, BGEE_INPUT_ID)
+    data_df = get_identifier_of_interest(bridgedb_df, BGEE_GENE_INPUT_ID)
     gene_list = data_df["target"].tolist()
     gene_list = list(set(gene_list))
 
@@ -94,7 +96,11 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
     else:
         query_gene_lists.append(" ".join(f'"{g}"' for g in gene_list))
 
-    anatomical_entities_list = ANATOMICAL_ENTITIES_LIST.split("\n")
+    anatomical_entities_list = [
+        anatomical_entity.strip()
+        for anatomical_entity in ANATOMICAL_ENTITIES_LIST
+        if anatomical_entity.strip() != ""
+    ]
 
     with open(
         os.path.dirname(__file__) + "/queries/bgee-genes-tissues-expression-level.rq", "r"
@@ -124,8 +130,7 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
 
             for anatomical_entity in anatomical_entities_list:
                 # for the query text, need to put each name in between quotes
-                anatomical_entity = f'"{anatomical_entity}"'
-                substit_dict = dict(gene_list=gene_id, anat_entities_list=anatomical_entity)
+                substit_dict = dict(gene_list=gene_id, anat_entities_list=f'"{anatomical_entity}"')
                 sparql_query_template_sub = sparql_query_template.substitute(substit_dict)
 
                 sparql.setQuery(sparql_query_template_sub)
@@ -133,30 +138,53 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
 
                 df = pd.DataFrame(res["results"]["bindings"])
 
-                df = df.applymap(lambda x: x["value"], na_action="ignore")
+                for col in df:
+                    df[col] = df[col].map(lambda x: x["value"], na_action="ignore")
+
                 if df.empty:
                     continue
 
-                df.drop_duplicates(
-                    subset=["anatomical_entity_id", "developmental_stage_id"], inplace=True
-                )
+                df.drop_duplicates(subset=["anatomical_entity_id"], inplace=True)
                 intermediate_df = pd.concat([intermediate_df, df], ignore_index=True)
 
     # Record the end time
     end_time = datetime.datetime.now()
 
+    """Metadata details"""
+    # Get the current date and time
+    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    # Calculate the time elapsed
+    time_elapsed = str(end_time - start_time)
+
+    # Add the datasource, query, query time, and the date to metadata
+    bgee_metadata: Dict[str, Any] = {
+        "datasource": BGEE,
+        "metadata": bgee_version,
+        "query": {
+            "size": len(gene_list),
+            "input_type": BGEE_GENE_INPUT_ID,
+            "time": time_elapsed,
+            "date": current_date,
+            "url": BGEE_ENDPOINT,
+        },
+    }
+
     if "anatomical_entity_id" not in intermediate_df:
-        return pd.DataFrame(), {"datasource": BGEE, "metadata": bgee_version}
+        warnings.warn(
+            f"There is no annotation for your input list in {BGEE}.",
+            stacklevel=2,
+        )
+        return pd.DataFrame(), bgee_metadata
 
     # Organize the annotation results as an array of dictionaries
     intermediate_df.rename(columns={"ensembl_id": "target"}, inplace=True)
     intermediate_df["anatomical_entity_id"] = intermediate_df["anatomical_entity_id"].apply(
         lambda x: x.split("/")[-1]
     )
-    intermediate_df["developmental_stage_id"] = intermediate_df["developmental_stage_id"].apply(
+    intermediate_df["confidence_level_id"] = intermediate_df["confidence_level_id"].apply(
         lambda x: x.split("/")[-1]
     )
-    intermediate_df["confidence_level_id"] = intermediate_df["confidence_level_id"].apply(
+    intermediate_df["developmental_stage_id"] = intermediate_df["developmental_stage_id"].apply(
         lambda x: x.split("/")[-1]
     )
     intermediate_df["expression_level"] = pd.to_numeric(intermediate_df["expression_level"])
@@ -164,37 +192,41 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
     # Check if all keys in df match the keys in OUTPUT_DICT
     check_columns_against_constants(
         data_df=intermediate_df,
-        output_dict=BGEE_OUTPUT_DICT,
-        check_values_in=["anatomical_entity_id", "developmental_stage_id", "confidence_level_id"],
+        output_dict=BGEE_GENE_EXPRESSION_OUTPUT_DICT,
+        check_values_in=[
+            "anatomical_entity_id",
+            "confidence_level_id",
+            "developmental_stage_id",
+        ],
     )
 
     # Merge the two DataFrames on the target column
     merged_df = collapse_data_sources(
         data_df=data_df,
-        source_namespace=BGEE_INPUT_ID,
+        source_namespace=BGEE_GENE_INPUT_ID,
         target_df=intermediate_df,
         common_cols=["target"],
-        target_specific_cols=list(BGEE_OUTPUT_DICT.keys()),
-        col_name=BGEE,
+        target_specific_cols=list(BGEE_GENE_EXPRESSION_OUTPUT_DICT.keys()),
+        col_name=BGEE_GENE_EXPRESSION_LEVELS_COL,
     )
 
-    """Metadata details"""
-    # Get the current date and time
-    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    """Update metadata"""
+    # Calculate the number of new nodes
+    num_new_nodes = intermediate_df["anatomical_entity_id"].nunique()
+    # Calculate the number of new edges
+    num_new_edges = intermediate_df.drop_duplicates(
+        subset=["anatomical_entity_id", "gene_id"]
+    ).shape[0]
 
-    # Calculate the time elapsed
-    time_elapsed = str(end_time - start_time)
+    # Check the intermediate_df
+    if num_new_edges != len(intermediate_df):
+        warnings.warn(
+            f"The intermediate_df in {BGEE} annotatur should be checked, please create an issue on https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
+            stacklevel=2,
+        )
 
-    # Add the datasource, query, query time, and the date to metadata
-    bgee_metadata = {
-        "datasource": BGEE,
-        "metadata": bgee_version,
-        "query": {
-            "size": len(gene_list),
-            "time": time_elapsed,
-            "date": current_date,
-            "url": BGEE_ENDPOINT,
-        },
-    }
+    # Add the number of new nodes and edges to metadata
+    bgee_metadata["query"]["number_of_added_nodes"] = num_new_nodes
+    bgee_metadata["query"]["number_of_added_edges"] = num_new_edges
 
     return merged_df, bgee_metadata

@@ -26,8 +26,5 @@ WHERE {
   ?cond genex:hasAnatomicalEntity ?anatomical_entity_id . # tissue
   ?anatomical_entity_id rdfs:label ?anatomical_entity_name.
   # also can filter by expression level: e.g. FILTER (?expression_level > 99) # highly expressed
-  FILTER regex(
-	?developmental_stage_id,
-  "HsapDv_0000226|HsapDv_0000227|UBERON_0000104"  # prime/late adult, life cycle "HsapDv_0000258|HsapDv_0010000|HsapDv_0000045"
-	)
+  VALUES (?developmental_stage_id) {(<http://purl.obolibrary.org/obo/HsapDv_0000226>) (<http://purl.obolibrary.org/obo/HsapDv_0000227>) (<http://purl.obolibrary.org/obo/UBERON_0000104>)}
 }

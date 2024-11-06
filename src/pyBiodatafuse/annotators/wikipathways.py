@@ -4,28 +4,28 @@
 """Python file for queriying Wikipathways SPARQL endpoint ()."""
 
 import datetime
-import logging
 import os
+import time
 import warnings
 from string import Template
+from typing import Any, Dict
 
 import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
 from SPARQLWrapper.SPARQLExceptions import SPARQLWrapperException
+from tqdm import tqdm
 
 from pyBiodatafuse.constants import (
     WIKIPATHWAYS,
     WIKIPATHWAYS_ENDPOINT,
-    WIKIPATHWAYS_INPUT_ID,
-    WIKIPATHWAYS_OUTPUT_DICT,
+    WIKIPATHWAYS_GENE_INPUT_ID,
+    WIKIPATHWAYS_PATHWAYS_OUTPUT_DICT,
 )
 from pyBiodatafuse.utils import (
     check_columns_against_constants,
     collapse_data_sources,
     get_identifier_of_interest,
 )
-
-logger = logging.getLogger("wikipathways")
 
 
 def check_endpoint_wikipathways() -> bool:
@@ -73,7 +73,7 @@ def get_gene_wikipathways(bridgedb_df: pd.DataFrame):
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
     :returns: a DataFrame containing the WikiPathways output and dictionary of the WikiPathways metadata.
     """
-    # Check if the DisGeNET API is available
+    # Check if the endpoint is available
     api_available = check_endpoint_wikipathways()
 
     if not api_available:
@@ -83,7 +83,7 @@ def get_gene_wikipathways(bridgedb_df: pd.DataFrame):
         )
         return pd.DataFrame(), {}
 
-    data_df = get_identifier_of_interest(bridgedb_df, WIKIPATHWAYS_INPUT_ID)
+    data_df = get_identifier_of_interest(bridgedb_df, WIKIPATHWAYS_GENE_INPUT_ID)
 
     wikipathways_version = get_version_wikipathways()
     gene_list = data_df["target"].tolist()
@@ -108,13 +108,9 @@ def get_gene_wikipathways(bridgedb_df: pd.DataFrame):
     sparql = SPARQLWrapper(WIKIPATHWAYS_ENDPOINT)
     sparql.setReturnFormat(JSON)
 
-    query_count = 0
-
     intermediate_df = pd.DataFrame()
 
-    for gene_list_str in query_gene_lists:
-        query_count += 1
-
+    for gene_list_str in tqdm(query_gene_lists, desc="Querying WikiPathways"):
         sparql_query_template = Template(sparql_query)
         substit_dict = dict(gene_list=gene_list_str)
         sparql_query_template_sub = sparql_query_template.substitute(substit_dict)
@@ -126,54 +122,78 @@ def get_gene_wikipathways(bridgedb_df: pd.DataFrame):
         res = res["results"]["bindings"]
 
         df = pd.DataFrame(res)
-        df = df.applymap(lambda x: x["value"])
+        for col in df:
+            df[col] = df[col].map(lambda x: x["value"], na_action="ignore")
 
         intermediate_df = pd.concat([intermediate_df, df], ignore_index=True)
 
     # Record the end time
     end_time = datetime.datetime.now()
 
-    if "gene_id" not in intermediate_df.columns:
-        return pd.DataFrame(), {"datasource": WIKIPATHWAYS, "metadata": wikipathways_version}
-
-    # Organize the annotation results as an array of dictionaries
-    intermediate_df.rename(columns={"gene_id": "target"}, inplace=True)
-    intermediate_df["pathway_gene_count"] = pd.to_numeric(intermediate_df["pathway_gene_count"])
-    intermediate_df = intermediate_df.drop_duplicates()
-
-    # Check if all keys in df match the keys in OUTPUT_DICT
-    check_columns_against_constants(
-        data_df=intermediate_df,
-        output_dict=WIKIPATHWAYS_OUTPUT_DICT,
-        check_values_in=["pathway_id"],
-    )
-
-    # Merge the two DataFrames on the target column
-    merged_df = collapse_data_sources(
-        data_df=data_df,
-        source_namespace=WIKIPATHWAYS_INPUT_ID,
-        target_df=intermediate_df,
-        common_cols=["target"],
-        target_specific_cols=list(WIKIPATHWAYS_OUTPUT_DICT.keys()),
-        col_name=WIKIPATHWAYS,
-    )
-
-    # Metdata details
+    """Metdata details"""
     # Get the current date and time
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # Calculate the time elapsed
     time_elapsed = str(end_time - start_time)
 
     # Add the datasource, query, query time, and the date to metadata
-    wikipathways_metadata = {
+    wikipathways_metadata: Dict[str, Any] = {
         "datasource": WIKIPATHWAYS,
         "metadata": wikipathways_version,
         "query": {
             "size": len(gene_list),
+            "input_type": WIKIPATHWAYS_GENE_INPUT_ID,
             "time": time_elapsed,
             "date": current_date,
             "url": WIKIPATHWAYS_ENDPOINT,
         },
     }
+
+    if "gene_id" not in intermediate_df.columns:
+        warnings.warn(
+            f"There is no annotation for your input list in {WIKIPATHWAYS}.",
+            stacklevel=2,
+        )
+        return pd.DataFrame(), wikipathways_metadata
+
+    # Organize the annotation results as an array of dictionaries
+    intermediate_df.rename(columns={"gene_id": "target"}, inplace=True)
+    intermediate_df["pathway_gene_count"] = pd.to_numeric(intermediate_df["pathway_gene_count"])
+    intermediate_df = intermediate_df.drop_duplicates()
+    intermediate_df["pathway_id"] = intermediate_df["pathway_id"].apply(lambda x: f"WP:{x}")
+
+    # Check if all keys in df match the keys in OUTPUT_DICT
+    check_columns_against_constants(
+        data_df=intermediate_df,
+        output_dict=WIKIPATHWAYS_PATHWAYS_OUTPUT_DICT,
+        check_values_in=["pathway_id"],
+    )
+
+    # Merge the two DataFrames on the target column
+    merged_df = collapse_data_sources(
+        data_df=data_df,
+        source_namespace=WIKIPATHWAYS_GENE_INPUT_ID,
+        target_df=intermediate_df,
+        common_cols=["target"],
+        target_specific_cols=list(WIKIPATHWAYS_PATHWAYS_OUTPUT_DICT.keys()),
+        col_name=WIKIPATHWAYS,
+    )
+
+    """Update metadata"""
+    # Calculate the number of new nodes
+    num_new_nodes = intermediate_df["pathway_id"].nunique()
+    # Calculate the number of new edges
+    num_new_edges = intermediate_df.drop_duplicates(subset=["target", "pathway_id"]).shape[0]
+
+    # Check the intermediate_df
+    if num_new_edges != len(intermediate_df):
+        warnings.warn(
+            f"The intermediate_df in {WIKIPATHWAYS} annotatur should be checked, please create an issue on https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
+            stacklevel=2,
+        )
+
+    # Add the number of new nodes and edges to metadata
+    wikipathways_metadata["query"]["number_of_added_nodes"] = num_new_nodes
+    wikipathways_metadata["query"]["number_of_added_edges"] = num_new_edges
 
     return merged_df, wikipathways_metadata
