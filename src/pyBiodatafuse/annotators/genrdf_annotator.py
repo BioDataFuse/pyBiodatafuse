@@ -45,15 +45,15 @@ def read_sparql_file(file_path: str) -> str:
     return sparql_query
 
 
-def check_endpoint() -> bool:
+def check_endpoint(db: str) -> bool:
     """Check the availability of the a SPARQL endpoint.
 
+    :param db: the database to query
     :returns: True if the endpoint is available, False otherwise.
     """
-
     sparql_query = read_sparql_file(VERSION_QUERY_FILE)
 
-    sparql = SPARQLWrapper(ENDPOINT)
+    sparql = SPARQLWrapper(DATABASE_SPARQL_DICT[db])
 
     sparql.setReturnFormat(JSON)
     sparql.setQuery(sparql_query)
@@ -65,14 +65,15 @@ def check_endpoint() -> bool:
         return False
 
 
-def get_version() -> dict:
+def get_version(db: str) -> dict:
     """Get version of RDF graph.
 
+    :param db: the database to query
     :returns: a dictionary containing the version information
     """
     sparql_query = read_sparql_file(VERSION_QUERY_FILE)
 
-    sparql = SPARQLWrapper(ENDPOINT)
+    sparql = SPARQLWrapper(DATABASE_SPARQL_DICT[db])
     sparql.setReturnFormat(JSON)
 
     sparql.setQuery(sparql_query)
@@ -91,15 +92,15 @@ def get_interactions(
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
     :param db: the database to query
     :param input: the input type used to query the database
+    :param input_identifier: the input identifier used to query the database
     :returns: a DataFrame containing the WikiPathways output and dictionary of the WikiPathways metadata.
     """
-
     assert db in DATABASE_SPARQL_DICT.keys(), f"{db} is not a valid database."
 
     assert input in INPUT_OPTIONS, f"{input} is not a valid input."
 
     # Check if the endpoint is available
-    api_available = check_endpoint()
+    api_available = check_endpoint(db=db)
 
     if not api_available:
         warnings.warn(
@@ -111,7 +112,7 @@ def get_interactions(
     # Step 1: Identifier mapping and harmonization
     data_df = get_identifier_of_interest(bridgedb_df, input_identifier)
 
-    version = get_version()  # Get the version of the RDF graph
+    version = get_version(db=db)  # Get the version of the RDF graph
 
     # Step 2: Aggregating query to avoid the query limit
     gene_list = list(data_df["target"].unique())
@@ -184,7 +185,7 @@ def get_interactions(
     }
 
     # Step 7: Cataloging the outputs from the resource
-    PATHWAYS_OUTPUT_DICT = {
+    output_dict = {
         "pathway_id": str,
         "pathway_label": str,
         "pathway_gene_count": int,
@@ -193,8 +194,8 @@ def get_interactions(
     # Step 8: Quality check for dtypes
     check_columns_against_constants(
         data_df=intermediate_df,
-        output_dict=PATHWAYS_OUTPUT_DICT,
-        check_values_in=PATHWAYS_OUTPUT_DICT.keys(),
+        output_dict=output_dict,
+        check_values_in=list(output_dict.keys()),
     )
 
     # Step 9: Adding node and edge statistics to metadata
@@ -218,7 +219,7 @@ def get_interactions(
         source_namespace=GENE_INPUT_COL,
         target_df=intermediate_df,
         common_cols=["target"],
-        target_specific_cols=list(PATHWAYS_OUTPUT_DICT.keys()),
+        target_specific_cols=list(output_dict.keys()),
         col_name=db,
     )
 

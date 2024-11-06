@@ -98,6 +98,15 @@ DISGENET_DISEASE_OUTPUT_DICT = {
     "ei": float,
     "el": float,
 }
+HPO = "HPO"
+NCI = "NCI"
+OMIM = "OMIM|MIM"
+MONDO = "MONDO"
+ORDO = "ORDO"
+EFO = "EFO"
+DO = "DO"
+MESH = "MESH"
+UMLS = "UMLS"
 DISGENET_DISEASE_COL = f"{DISGENET}_diseases"
 OPENTARGETS_DISEASE_COL = f"{OPENTARGETS}_diseases"  # literature based disease info
 LITERATURE_DISEASE_COL = "literature_based_info"

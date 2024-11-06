@@ -293,7 +293,7 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
     check_columns_against_constants(
         data_df=intermediate_df,
         output_dict=DISGENET_DISEASE_OUTPUT_DICT,
-        check_values_in=[],  # TODO: which columns to check
+        check_values_in=["HPO", "NCI", "OMIM", "MONDO", "ORDO", "EFO", "DO", "MESH", "UMLS"],
     )
 
     merged_df = collapse_data_sources(

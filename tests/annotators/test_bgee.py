@@ -227,15 +227,6 @@ class TestBgee(unittest.TestCase):
                 ],
                 [
                     {
-                        "anatomical_entity_id": "UBERON_0000178",
-                        "anatomical_entity_name": "blood",
-                        "expression_level": 91.3264,
-                        "confidence_level_id": "CIO_0000029",
-                        "confidence_level_name": "high confidence level",
-                        "developmental_stage_id": "UBERON_0000104",
-                        "developmental_stage_name": "life cycle",
-                    },
-                    {
                         "anatomical_entity_id": "UBERON_0002371",
                         "anatomical_entity_name": "bone marrow",
                         "expression_level": 93.19957,
@@ -374,6 +365,15 @@ class TestBgee(unittest.TestCase):
                         "anatomical_entity_id": "UBERON_0001434",
                         "anatomical_entity_name": "skeletal system",
                         "expression_level": 91.51794,
+                        "confidence_level_id": "CIO_0000029",
+                        "confidence_level_name": "high confidence level",
+                        "developmental_stage_id": "UBERON_0000104",
+                        "developmental_stage_name": "life cycle",
+                    },
+                    {
+                        "anatomical_entity_id": "UBERON_0000178",
+                        "anatomical_entity_name": "blood",
+                        "expression_level": 91.3264,
                         "confidence_level_id": "CIO_0000029",
                         "confidence_level_name": "high confidence level",
                         "developmental_stage_id": "UBERON_0000104",
