@@ -27,7 +27,7 @@ from pyBiodatafuse.utils import (
 )
 
 
-def check_endpoint_bgee() -> bool:
+def check_sparql_endpoint_bgee() -> bool:
     """Check the availability of the Bgee SPARQL endpoint.
 
     :returns: True if the endpoint is available, False otherwise.
@@ -68,13 +68,13 @@ def get_version_bgee() -> dict:
 
 
 def get_gene_expression(bridgedb_df: pd.DataFrame):
-    """Query gene-tissue expression information from Bgee.
+    """Query gene-tissue expression information from Bgee with SPARQL.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
     :returns: a DataFrame containing the Bgee output and dictionary of the Bgee metadata.
     """
     # Check if the Bgee SPARQL endpoint is available
-    api_available = check_endpoint_bgee()
+    api_available = check_sparql_endpoint_bgee()
 
     if not api_available:
         warnings.warn(
