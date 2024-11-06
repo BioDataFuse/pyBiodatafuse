@@ -4,7 +4,9 @@
 
 import csv
 import datetime
+import json
 import logging
+import os
 import time
 from importlib import resources
 from typing import List, Optional, Tuple
@@ -13,6 +15,7 @@ import pandas as pd
 import requests
 from pubchempy import BadRequestError, PubChemHTTPError, get_compounds, get_synonyms
 from rdkit.Chem import CanonSmiles
+from tqdm import tqdm
 
 from pyBiodatafuse.constants import BRIDGEDB_ENDPOINT
 
@@ -233,7 +236,7 @@ def check_smiles(smile: Optional[str]) -> Optional[str]:
 
 
 def get_cid_from_data(idx: Optional[str], idx_type: str) -> Optional[str]:
-    """Get PubChem ID from any query.
+    """Get PubChem ID from any query using PubChempy.
 
     :param idx: identifier to query
     :param idx_type: type of identifier to query. Potential curies include : smiles, inchikey, inchi, name
@@ -256,11 +259,41 @@ def get_cid_from_data(idx: Optional[str], idx_type: str) -> Optional[str]:
         return None
 
 
-def pubchem_xref(identifiers: list, identifier_type: str = "name") -> Tuple[pd.DataFrame, dict]:
+def get_cid_from_pugrest(idx: Optional[str], idx_type: str) -> Optional[str]:
+    """Get PubChem ID from any query throung Pubchem PUGREST.
+
+    :param idx: identifier to query
+    :param idx_type: type of identifier to query. Potential curies include : smiles, inchikey, inchi, name
+    :returns: PubChem ID
+    """
+    if idx_type.lower() == "smiles":
+        idx = check_smiles(idx)
+
+    if not idx:
+        return None
+
+    cid_data = requests.get(
+        f"https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/{idx_type}/{idx}/property/Title/JSON"
+    ).json()
+
+    if "Fault" in cid_data:
+        logger.info(f"Issue with {idx}")
+        return None
+
+    cidx = cid_data["PropertyTable"]["Properties"][0]["CID"]
+    if "." in str(cidx):
+        return str(cidx).split(".")[0]
+    return str(cidx)
+
+
+def pubchem_xref(
+    identifiers: list, identifier_type: str = "name", cache_res: bool = False
+) -> Tuple[pd.DataFrame, dict]:
     """Map chemical names or smiles or inchikeys to PubChem identifier.
 
     :param identifiers: a list of identifiers to query
     :param identifier_type: type of identifier to query. Potential curies include : smiles, inchikey, inchi, name
+    :param cache_res: whether to cache the results
     :raises ValueError: if the input_datasource is not provided or if the request fails
     :returns: a DataFrame containing the mapped identifiers and dictionary of the data resource metadata.
     """
@@ -272,13 +305,38 @@ def pubchem_xref(identifiers: list, identifier_type: str = "name") -> Tuple[pd.D
 
     # Getting the response to the query
     cid_data = []
-    for idx in identifiers:
-        cid = get_cid_from_data(idx, identifier_type)
+    c = 0
+
+    if cache_res:
+        if os.path.exists("pubchem_cache_results.json"):
+            with open("pubchem_cache_results.json", "r") as f:
+                cache_results = json.load(f)
+        else:
+            cache_results = {}
+    else:
+        cache_results = {}
+
+    c = 0
+    for idx in tqdm(identifiers, desc="Mapping PubChem"):
+        if idx in cache_results:
+            cid = cache_results[idx]
+        else:
+            c += 1
+            if c == 100:
+                if cache_res:
+                    with open("pubchem_cache_results.json", "w") as f:
+                        json.dump(cache_results, f)
+                time.sleep(5)
+                c = 0
+
+            cid = get_cid_from_pugrest(idx, identifier_type)
+            cache_results[idx] = cid
+
         cid_data.append(
             {
                 "identifier": idx,
                 "identifier.source": identifier_type,
-                "target": str(cid).split(".")[0] if cid else None,
+                "target": f"pubchem.compound:{cid}" if cid is not None else None,
                 "target.source": "PubChem Compound",
             }
         )

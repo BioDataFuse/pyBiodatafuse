@@ -256,7 +256,7 @@ def get_gene_minerva_pathways(
         data["symbol"] = symbol
         data["pathway_label"] = pathway_name
         data["pathway_gene_count"] = len(symbol) - symbol.count(None)
-        data["pathway_id"] = models[idx]["idObject"]
+        data["pathway_id"] = "MINERVA:" + str(models[idx]["idObject"])
         data["refs"] = refs
         data["ensembl"] = ensembl
         data["type"] = entity_type

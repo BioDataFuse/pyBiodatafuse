@@ -105,14 +105,14 @@ class TestWikipathway(unittest.TestCase):
             [
                 [
                     {
-                        "pathway_id": "WP5153",
+                        "pathway_id": "WP:WP5153",
                         "pathway_label": "N-glycan biosynthesis",
                         "pathway_gene_count": 57.0,
                     }
                 ],
                 [
                     {
-                        "pathway_id": "WP5153",
+                        "pathway_id": "WP:WP5153",
                         "pathway_label": "N-glycan biosynthesis",
                         "pathway_gene_count": 57.0,
                     }

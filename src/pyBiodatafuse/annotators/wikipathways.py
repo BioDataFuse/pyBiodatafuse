@@ -4,8 +4,8 @@
 """Python file for queriying Wikipathways SPARQL endpoint ()."""
 
 import datetime
-import logging
 import os
+import time
 import warnings
 from string import Template
 from typing import Any, Dict
@@ -13,6 +13,7 @@ from typing import Any, Dict
 import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
 from SPARQLWrapper.SPARQLExceptions import SPARQLWrapperException
+from tqdm import tqdm
 
 from pyBiodatafuse.constants import (
     WIKIPATHWAYS,
@@ -25,8 +26,6 @@ from pyBiodatafuse.utils import (
     collapse_data_sources,
     get_identifier_of_interest,
 )
-
-logger = logging.getLogger("wikipathways")
 
 
 def check_endpoint_wikipathways() -> bool:
@@ -74,7 +73,7 @@ def get_gene_wikipathways(bridgedb_df: pd.DataFrame):
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
     :returns: a DataFrame containing the WikiPathways output and dictionary of the WikiPathways metadata.
     """
-    # Check if the DisGeNET API is available
+    # Check if the endpoint is available
     api_available = check_endpoint_wikipathways()
 
     if not api_available:
@@ -109,13 +108,9 @@ def get_gene_wikipathways(bridgedb_df: pd.DataFrame):
     sparql = SPARQLWrapper(WIKIPATHWAYS_ENDPOINT)
     sparql.setReturnFormat(JSON)
 
-    query_count = 0
-
     intermediate_df = pd.DataFrame()
 
-    for gene_list_str in query_gene_lists:
-        query_count += 1
-
+    for gene_list_str in tqdm(query_gene_lists, desc="Querying WikiPathways"):
         sparql_query_template = Template(sparql_query)
         substit_dict = dict(gene_list=gene_list_str)
         sparql_query_template_sub = sparql_query_template.substitute(substit_dict)
@@ -165,6 +160,7 @@ def get_gene_wikipathways(bridgedb_df: pd.DataFrame):
     intermediate_df.rename(columns={"gene_id": "target"}, inplace=True)
     intermediate_df["pathway_gene_count"] = pd.to_numeric(intermediate_df["pathway_gene_count"])
     intermediate_df = intermediate_df.drop_duplicates()
+    intermediate_df["pathway_id"] = intermediate_df["pathway_id"].apply(lambda x: f"WP:{x}")
 
     # Check if all keys in df match the keys in OUTPUT_DICT
     check_columns_against_constants(
