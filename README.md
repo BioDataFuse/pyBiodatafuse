@@ -45,6 +45,10 @@
 
 To know more about the package, read our documentation [here](https://pybiodatafuse.readthedocs.io/en/latest/index.html).
 
+## Creating your own graph
+
+To generate your own graph, check out our tutorial notebook [in examples](examples).
+
 <!-- ### Command Line Interface
 
 The pyBiodatafuse command line tool is automatically installed. It can
