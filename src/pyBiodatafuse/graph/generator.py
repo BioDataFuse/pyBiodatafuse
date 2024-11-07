@@ -812,7 +812,7 @@ def process_annotations(g, gene_node_label, row, func_dict):
     """
     for annot_key in func_dict:
         if annot_key in row:
-            annot_list = json.loads(json.dumps(row[annot_key]))
+            annot_list = row[annot_key]
             if not isinstance(annot_list, list):
                 annot_list = []
 

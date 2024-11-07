@@ -4,16 +4,15 @@ PREFIX orth: <http://purl.org/net/orth#>
 PREFIX lscr: <http://purl.org/lscr#>
 PREFIX genex: <http://purl.org/genex#>
 PREFIX obo: <http://purl.obolibrary.org/obo/>
+PREFIX dcterms: <http://purl.org/dc/terms/>
 
-SELECT ?gene ?ensembl_id ?gene_id ?anatomical_entity_id ?anatomical_entity_name ?developmental_stage_id ?developmental_stage_name ?expression_level ?confidence_level_id ?confidence_level_name
+SELECT ?gene_id ?ensembl_id ?anatomical_entity_id ?anatomical_entity_name ?developmental_stage_id ?developmental_stage_name ?expression_level ?confidence_level_id ?confidence_level_name
 WHERE {
   VALUES ?ensembl_id { $gene_list }
   VALUES ?anatomical_entity_name { $anat_entities_list }
-  BIND(CONCAT("http://rdf.ebi.ac.uk/resource/ensembl/", STR(?ensembl_id)) AS ?gene_id_str)
-  BIND(URI(?gene_id_str) AS ?gene_id)
-  ?gene a orth:Gene .
-  ?gene lscr:xrefEnsemblGene ?gene_id .
-  ?expr genex:hasSequenceUnit ?gene.
+  ?gene_id a orth:Gene .
+  ?gene_id dcterms:identifier ?ensembl_id .
+  ?expr genex:hasSequenceUnit ?gene_id.
   ?expr a genex:Expression .
   #?expr genex:hasConfidenceLevel obo:CIO_0000029 . # high confidence level
   ?expr genex:hasConfidenceLevel ?confidence_level_id .
