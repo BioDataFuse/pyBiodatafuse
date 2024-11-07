@@ -1,0 +1,127 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ex: <http://example.org/>
+PREFIX weso-s: <http://weso.es/shapes/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX graph: <https://biodatafuse.org/example/>
+PREFIX brick: <https://brickschema.org/schema/Brick#>
+PREFIX csvw: <http://www.w3.org/ns/csvw#>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
+PREFIX dcmitype: <http://purl.org/dc/dcmitype/>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX dcam: <http://purl.org/dc/dcam/>
+PREFIX doap: <http://usefulinc.com/ns/doap#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX odrl: <http://www.w3.org/ns/odrl/2/>
+PREFIX org: <http://www.w3.org/ns/org#>
+PREFIX prof: <http://www.w3.org/ns/dx/prof/>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX qb: <http://purl.org/linked-data/cube#>
+PREFIX schema: <https://schema.org/>
+PREFIX sh: <http://www.w3.org/ns/shacl#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX sosa: <http://www.w3.org/ns/sosa/>
+PREFIX ssn: <http://www.w3.org/ns/ssn/>
+PREFIX time: <http://www.w3.org/2006/time#>
+PREFIX vann: <http://purl.org/vocab/vann/>
+PREFIX void: <http://rdfs.org/ns/void#>
+PREFIX wgs: <https://www.w3.org/2003/01/geo/wgs84_pos#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xml: <http://www.w3.org/XML/1998/namespace/>
+PREFIX ns1: <http://purl.obolibrary.org/obo/pr#>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+PREFIX sio: <http://semanticscience.org/resource/>
+
+weso-s:NCIT_C25338
+{
+   rdf:type  [obo:NCIT_C25338]  ;                              # 100.0 %
+   sio:SIO_000300  xsd:double                                  # 100.0 %
+}
+
+
+weso-s:NCIT_C18469
+{
+   rdf:type  [obo:NCIT_C18469]  ;                              # 100.0 %
+   sio:SIO_000028  @weso-s:NCIT_C17021  {2};                   # 100.0 %
+   sio:SIO_000216  @weso-s:NCIT_C25338                         # 100.0 %
+}
+
+
+weso-s:NCIT_C16612
+{
+   rdf:type  [obo:NCIT_C16612]  ;                              # 100.0 %
+   sio:SIO_000229  @weso-s:SIO_001077  +;                      # 100.0 %
+            # 60.0 % obj: @weso-s:SIO_001077. Cardinality: {17}
+            # 11.428571428571429 % obj: @weso-s:SIO_001077. Cardinality: {16}
+   sio:SIO_000216  @weso-s:SIO_001077  +;                      # 100.0 %
+            # 60.0 % obj: @weso-s:SIO_001077. Cardinality: {17}
+            # 11.428571428571429 % obj: @weso-s:SIO_001077. Cardinality: {16}
+   sio:SIO_000068  IRI  +;                                     # 100.0 %
+            # 88.57142857142857 % obj: @weso-s:PW_0000001. Cardinality: +
+   rdfs:label  xsd:string                                      # 100.0 %
+}
+
+
+weso-s:NCIT_C17021
+{
+   rdf:type  [obo:NCIT_C17021]  ;                              # 100.0 %
+   rdfs:label  xsd:string  ?;
+            # 67.67676767676768 % obj: xsd:string. Cardinality: {1}
+   sio:SIO_000068  IRI  *;
+            # 63.63636363636363 % obj: IRI. Cardinality: +
+            # 11.11111111111111 % obj: IRI. Cardinality: {2}
+            # 32.323232323232325 % obj: @weso-s:NCIT_C18469. Cardinality: +
+            # 31.313131313131315 % obj: @weso-s:PW_0000001. Cardinality: +
+   ns1:has_gene_template  @weso-s:NCIT_C16612  ?;
+            # 35.35353535353536 % obj: @weso-s:NCIT_C16612. Cardinality: {1}
+   owl:sameAs  @weso-s:NCIT_C17021  ?
+            # 32.323232323232325 % obj: @weso-s:NCIT_C17021. Cardinality: {1}
+}
+
+
+weso-s:PW_0000001
+{
+   rdf:type  [obo:PW_0000001]  ;                               # 100.0 %
+   rdfs:label  xsd:string  ;                                   # 100.0 %
+   sio:SIO_000253  @weso-s:SIO_000750  +;                      # 100.0 %
+            # 54.54545454545454 % obj: @weso-s:SIO_000750. Cardinality: {2}
+            # 45.45454545454545 % obj: @weso-s:SIO_000750. Cardinality: {1}
+   sio:SIO_000028  @weso-s:NCIT_C16612  +                      # 100.0 %
+            # 78.18181818181819 % obj: @weso-s:NCIT_C16612. Cardinality: {1}
+            # 13.636363636363635 % obj: @weso-s:NCIT_C16612. Cardinality: {2}
+}
+
+
+weso-s:SIO_001077
+{
+   rdf:type  [sio:SIO_001077]  ;                               # 100.0 %
+   sio:SIO_000300  xsd:double  ;                               # 100.0 %
+   sio:SIO_000230  @weso-s:NCIT_C16612  ;                      # 100.0 %
+   sio:SIO_001403  @weso-s:NCIT_C43531                         # 100.0 %
+            # 100.0 % obj: @weso-s:SIO_001262. Cardinality: {1}
+}
+
+
+weso-s:SIO_001262
+{
+   rdf:type  [sio:SIO_001262]  ;                               # 100.0 %
+   rdfs:label  xsd:string                                      # 100.0 %
+}
+
+
+weso-s:NCIT_C43531
+{
+   rdf:type  [obo:NCIT_C43531]  ;                              # 100.0 %
+   rdfs:label  xsd:string                                      # 100.0 %
+}
+
+
+weso-s:SIO_000750
+{
+   rdf:type  [sio:SIO_000750]  ;                               # 100.0 %
+   rdfs:label  xsd:string                                      # 100.0 %
+}
+
+

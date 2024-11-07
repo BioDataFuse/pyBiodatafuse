@@ -10,7 +10,7 @@ import numpy as np
 import pandas as pd
 from bioregistry import get_iri, normalize_curie
 from rdflib import Graph, Literal, URIRef
-from rdflib.namespace import DC, DCTERMS, OWL, RDF, RDFS, SKOS, XSD
+from rdflib.namespace import DC, DCTERMS, OWL, RDF, RDFS, XSD
 
 from pyBiodatafuse.constants import (
     BGEE_GENE_EXPRESSION_LEVELS_COL,
@@ -22,11 +22,9 @@ from pyBiodatafuse.constants import (
     MOAS,
     NAMESPACE_BINDINGS,
     NODE_TYPES,
-    OPENTARGETS,
     OPENTARGETS_DISEASE_COL,
     PREDICATES,
     URIS,
-    DISGENET_DISEASE_OUTPUT_DICT
 )
 
 # Configure logging
@@ -103,7 +101,7 @@ def add_disease_node(g: Graph, disease_data: dict) -> URIRef:
     )
     for identifier_type in DISEASE_IDENTIFIER_TYPES:
         curie_field = disease_data.get(identifier_type, None)
-        if curie_field:
+        if curie_field and 'ncit' not in curie_field:
             curies = [curie_field]
             if "," in (curie_field):
                 curies = [i for i in curie_field.split(", ")]
@@ -117,12 +115,13 @@ def add_disease_node(g: Graph, disease_data: dict) -> URIRef:
                         (disease_node, OWL.SameAs, URIRef(disease_source_iri))
                     )  # Some of the data does not look like a skos:exactMatch
                 else:
-                    g.add((disease_node, SKOS.closeMatch, URIRef(disease_source_iri)))
+                    g.add((disease_node, OWL.sameAs, URIRef(disease_source_iri)))
     return disease_node
 
 
 def add_score_node(
-    g: Graph, id_number: str, source_idx: str, disease_id: str, score: float, new_uris: dict, i: int, gene_id: str
+    g: Graph, id_number: str, source_idx: str, 
+    disease_id: str, score: float, new_uris: dict, i: int, gene_id: str
 ) -> URIRef:
     """Create and add a score node for gene-disease associations.
 
@@ -325,6 +324,13 @@ def add_gene_expression_data(
             )
         )
         g.add(
+            (
+                developmental_stage_node,
+                RDF.type,
+                URIRef(NODE_TYPES["developmental_stage_node"]),
+            )
+        )
+        g.add(
             (gene_expression_value_node, RDF.type, URIRef(NODE_TYPES["gene_expression_value_node"]))
         )
         g.add((gene_expression_value_node, URIRef(PREDICATES["sio_has_input"]), gene_node))
@@ -337,29 +343,32 @@ def add_gene_expression_data(
         )
 
         # Add experimental node
-        for exp in experimental_process_data:
-            experimental_process_node = add_experimental_process_node(
-                g=g,
-                data=exp,
-            )
-            if experimental_process_node:
-                g.add((gene_node, URIRef(PREDICATES["sio_is_part_of"]), experimental_process_node))
-                g.add((experimental_process_node, URIRef(PREDICATES["sio_has_part"]), gene_node))
-                g.add(
-                    (
-                        experimental_process_node,
-                        URIRef(PREDICATES["sio_has_part"]),
-                        anatomical_entity_node,
-                    )
+        if experimental_process_data:
+            for exp in experimental_process_data:
+                experimental_process_node = add_experimental_process_node(
+                    g=g,
+                    data=exp,
                 )
-                data_source_node = add_data_source_node(g, "Bgee")
-                g.add(
-                    (
-                        gene_expression_value_node,
-                        URIRef(PREDICATES["sio_has_source"]),
-                        data_source_node,
+                if experimental_process_node:
+                    g.add((gene_node, URIRef(PREDICATES["sio_is_part_of"]), experimental_process_node))
+                    g.add(
+                        (experimental_process_node, URIRef(PREDICATES["sio_has_part"]), gene_node)
+                        )
+                    g.add(
+                        (
+                            experimental_process_node,
+                            URIRef(PREDICATES["sio_has_part"]),
+                            anatomical_entity_node,
+                        )
                     )
-                )
+                    data_source_node = add_data_source_node(g, "Bgee")
+                    g.add(
+                        (
+                            gene_expression_value_node,
+                            URIRef(PREDICATES["sio_has_source"]),
+                            data_source_node,
+                        )
+                    )
 
 
 def add_tested_substance_node(
@@ -803,19 +812,21 @@ def add_transporter_inhibitor_node(g: Graph, transporter_inhibitor_data: dict, b
         g.add(
             (
                 drug_node,
-                URIRef("http://semanticscience.org/resource/SIO_000671"),
+                OWL.sameAs,
                 URIRef(f"https://molmedb.upol.cz/mol/{molmedb_id}"),
             )
         )
         g.add(
-            (drug_node, 
-               URIRef("http://semanticscience.org/resource/SIO_000671"), URIRef(f"https://identifiers.org/CHEBI#{chebi_id}")
+            (
+               drug_node,
+               OWL.sameAs,
+               URIRef(f"https://identifiers.org/CHEBI#{chebi_id}")
             )
         )
         g.add(
             (
                 drug_node,
-                URIRef("http://semanticscience.org/resource/SIO_000671"),
+                OWL.sameAs,
                 URIRef(f"https://www.drugbank.ca/drugs/{drugbank_id}"),
             )
         )
@@ -836,7 +847,7 @@ def add_transporter_inhibitor_node(g: Graph, transporter_inhibitor_data: dict, b
         g.add(
             (
                 drug_node,
-                URIRef("http://semanticscience.org/resource/SIO_000671"),
+                OWL.sameAs,
                 URIRef(f"https://identifiers.org/CHEBI#{chebi_id}"),
             )
         )
@@ -850,7 +861,7 @@ def add_transporter_inhibitor_node(g: Graph, transporter_inhibitor_data: dict, b
         g.add(
             (
                 drug_node,
-                URIRef("http://semanticscience.org/resource/SIO_000671"),
+                OWL.sameAs,
                 URIRef(f"https://www.drugbank.ca/drugs/{drugbank_id}"),
             )
         )
@@ -951,20 +962,20 @@ def add_ppi_data(
             (
                 URIRef(f"https://www.uniprot.org/uniprotkb/{stringdb_link_to}"),
                 RDFS.label,
-                ppi_node,
+                Literal(stringdb_link_to, datatype=XSD.string),
             )
         )
         g.add(
             (
                 URIRef(f"http://identifiers.org/ensembl#{ensembl}"),
-                URIRef("http://semanticscience.org/resource/SIO_000671"),
+                OWL.sameAs,
                 URIRef(f"https://www.uniprot.org/uniprotkb/{stringdb_link_to}"),
             )
         )
         g.add(
             (
                 URIRef(f"http://identifiers.org/ensembl#{ensembl}"),
-                URIRef("http://semanticscience.org/resource/SIO_000671"),
+                OWL.sameAs,
                 URIRef(f"https://www.uniprot.org/uniprotkb/{stringdb_link_to}"),
             )
         )
@@ -1051,11 +1062,6 @@ def generate_rdf(
     :return: RDF graph constructed from the DataFrame.
     """
     g = Graph()
-    # Load ontology or base RDF
-    if load_ontology == True: # TODO decide
-        with resources.path("pyBiodatafuse.resources", "biodatafuse.owl") as owl_path:
-            g.parse(owl_path)
-
     # Define the base URI and namespace bindings
     new_uris = {key: base_uri + value for key, value in URIS.items()}
 
@@ -1179,5 +1185,18 @@ def generate_rdf(
             metadata=metadata,
             graph_uri=version_iri,
         )
-
+        # Load ontology or base RDF
+    if load_ontology:
+        with resources.path("pyBiodatafuse.resources", "biodatafuse.owl") as owl_path:
+            temp_graph = Graph()  # Temporary graph for loading ontology
+            temp_graph.parse(owl_path)
+            # Iterate through classes and predicates in the ontology
+            for subj, pred, obj in temp_graph:
+                # Check if each element individually exists in g as part of any triple
+                subj_exists = any(g.triples((subj, None, None)))
+                pred_exists = any(g.triples((None, pred, None)))
+                obj_exists = any(g.triples((None, None, obj)))
+                # Add to graph only if any of these elements exist in g
+                if subj_exists or pred_exists or obj_exists:
+                    g.add((subj, pred, obj))
     return g
