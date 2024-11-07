@@ -42,8 +42,10 @@ class BioGraph(nx.MultiDiGraph):
                 self.graph = nx.read_gpickle(graph_path)
             elif graph_format == "gml":
                 self.graph = nx.read_gml(graph_path)
+            elif graph_format == "graphml":
+                self.graph = nx.read_graphml(graph_path)
             else:
-                raise ValueError("graph_format must be either 'pickle' or 'gml'")
+                raise ValueError("graph_format must be either 'pickle', 'gml' or 'graphml'")
 
         self.node_count = self.count_nodes_by_type()
         self.edge_count = self.count_edge_by_type()
