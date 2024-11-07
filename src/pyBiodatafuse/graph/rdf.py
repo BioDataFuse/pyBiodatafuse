@@ -18,7 +18,7 @@ from pyBiodatafuse.constants import (
     DATA_SOURCES,
     DISGENET_DISEASE_COL,
     GO_TYPES,
-    IDENTIFIER_TYPES,
+    DISEASE_IDENTIFIER_TYPES,
     MOAS,
     NAMESPACE_BINDINGS,
     NODE_TYPES,
@@ -26,6 +26,7 @@ from pyBiodatafuse.constants import (
     OPENTARGETS_DISEASE_COL,
     PREDICATES,
     URIS,
+    DISGENET_DISEASE_OUTPUT_DICT
 )
 
 # Configure logging
@@ -94,12 +95,13 @@ def add_disease_node(g: Graph, disease_data: dict) -> URIRef:
     if disease_curie is None:
         disease_curie = disease_data.get("UMLS")
     disease_iri = f"https://www.ncbi.nlm.nih.gov/medgen/{disease_curie}"
+    disease_data.get()
     disease_node = URIRef(disease_iri)
     g.add((disease_node, RDF.type, URIRef(NODE_TYPES["disease_node"])))
     g.add(
         (disease_node, RDFS.label, Literal(disease_data.get("disease_name"), datatype=XSD.string))
     )
-    for identifier_type in IDENTIFIER_TYPES:
+    for identifier_type in DISEASE_IDENTIFIER_TYPES:
         curie_field = disease_data.get(identifier_type, None)
         if curie_field:
             curies = [curie_field]
@@ -112,7 +114,7 @@ def add_disease_node(g: Graph, disease_data: dict) -> URIRef:
                         curie = curie.split(":")[1]
                     disease_source_iri = get_iri("obo:" + curie)
                     g.add(
-                        (disease_node, SKOS.closeMatch, URIRef(disease_source_iri))
+                        (disease_node, OWL.SameAs, URIRef(disease_source_iri))
                     )  # Some of the data does not look like a skos:exactMatch
                 else:
                     g.add((disease_node, SKOS.closeMatch, URIRef(disease_source_iri)))
@@ -181,7 +183,6 @@ def add_data_source_node(g: Graph, source: str) -> URIRef:
     :param source: String containing the name of the source of the data
     :return: URIRef for the created data source node.
     """
-    # for source in sources (eg disgenet)
     data_source_name = Literal(source, datatype=XSD.string)
     data_source_url = URIRef(DATA_SOURCES[source])
     g.add((data_source_url, RDF.type, URIRef(NODE_TYPES["data_source_node"])))
@@ -1056,10 +1057,10 @@ def generate_rdf(
             g.parse(owl_path)
 
     # Define the base URI and namespace bindings
-    new_uris = URIS
-    for key, value in new_uris.items():
-        new_value = base_uri + value
-        new_uris[key] = new_value
+    new_uris = {key: base_uri + value for key, value in URIS.items()}
+
+    # Update g.bind only after constructing new URIs
+    for key, new_value in new_uris.items():
         g.bind(key, new_value)
 
     for key, value in NAMESPACE_BINDINGS.items():
@@ -1083,7 +1084,7 @@ def generate_rdf(
         # molmedb_data = row.get("MolMeDB_transporter_inhibitor", None)
         disease_data = []
         for source in [DISGENET_DISEASE_COL, OPENTARGETS_DISEASE_COL]:
-            if open_only and source == DISGENET_DISEASE_COL: # TODO implement open data only feature properly
+            if open_only and source == DISGENET_DISEASE_COL:  # TODO implement open data only feature properly
                 continue
             source_el = row.get(source)
             if isinstance(source_el, list):

@@ -563,7 +563,7 @@ DATA_SOURCES = {
     OPENTARGETS_REACTOME: "https://www.opentargets.org/",
 }
 
-IDENTIFIER_TYPES = [
+DISEASE_IDENTIFIER_TYPES = [
     "HPO",
     "NCI",
     "OMIM",

@@ -1,0 +1,44 @@
+@prefix ex: <https://sparql.example.org/.well-known/sparql-examples/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix schema: <https://schema.org/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix sio: <http://semanticscience.org/resource/> .
+@prefix obo: <http://purl.obolibrary.org/obo/> .
+@prefix pr: <http://purl.obolibrary.org/obo/pr#> .
+
+ex:molecular_function_of_targeted_genes a sh:SPARQLExecutable,
+        sh:SPARQLSelectExecutable ;
+    rdfs:comment "What is the molecular function of genes targeted by clinical stage 4 or approved compounds?"@en ;
+    sh:prefixes _:sparql_examples_prefixes ;
+    sh:select """
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX sio: <http://semanticscience.org/resource/>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+PREFIX pr: <http://purl.obolibrary.org/obo/pr#>
+
+SELECT distinct ?gene ?geneLabel ?functionLabel
+WHERE {
+    ?gene a obo:NCIT_C16612 ;
+          rdfs:label ?geneLabel ;
+          sio:SIO_000068 ?function .
+    
+    ?function rdfs:label ?functionLabel ;
+              rdfs:subClassOf obo:GO_0003674 .
+    
+    ?protein pr:has_gene_template ?gene .
+
+    # Retrieve agonist drugs targeting the protein
+    ?agonistDrug a sio:SIO_010038 ;
+                 obo:RO_0018027 ?protein ;
+                 sio:SIO_000300 ?clinicalStatusAgonist .
+
+    # Retrieve antagonist drugs targeting the protein with specific status
+    ?antagonistDrug a sio:SIO_010038 ;
+                    obo:RO_0018029 ?protein ;
+                    sio:SIO_000300 obo:OPMI_0000371 .
+
+    # Filter for clinical status 4 or approved status for agonists
+    FILTER(?clinicalStatusAgonist = obo:OPMI_0000371)
+}""" ;
+    schema:keywords "gene-compound interaction" ;
+    schema:target <https://biohackeu24.cloud.vhp4safety.nl/sparql> .
