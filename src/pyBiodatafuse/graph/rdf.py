@@ -13,18 +13,34 @@ from rdflib import Graph, Literal, URIRef
 from rdflib.namespace import DC, DCTERMS, OWL, RDF, RDFS, XSD
 
 from pyBiodatafuse.constants import (
-    BGEE_GENE_EXPRESSION_LEVELS_COL,
     CLINICAL_PHASES,
     DATA_SOURCES,
-    DISGENET_DISEASE_COL,
     GO_TYPES,
     DISEASE_IDENTIFIER_TYPES,
     MOAS,
     NAMESPACE_BINDINGS,
     NODE_TYPES,
-    OPENTARGETS_DISEASE_COL,
     PREDICATES,
     URIS,
+    # Columns
+    TARGET_SOURCE_COL,
+    TARGET_COL,
+    IDENTIFIER_COL,
+    IDENTIFIER_SOURCE_COL,
+    TARGET_SOURCE_COL,
+    BGEE_GENE_EXPRESSION_LEVELS_COL,
+    DISGENET_DISEASE_COL,
+    OPENTARGETS_DISEASE_COL,
+    LITERATURE_DISEASE_COL,
+    OPENTARGETS_REACTOME_COL,
+    OPENTARGETS_GO_COL,
+    OPENTARGETS_DISEASE_COMPOUND_COL,
+    OPENTARGETS_GENE_COMPOUND_COL,
+    MOLMEDB_PROTEIN_COMPOUND_COL,
+    MOLMEDB_COMPOUND_PROTEIN_COL,
+    PUBCHEM_COMPOUND_ASSAYS_COL,
+    STRING_PPI_COL,
+    WIKIDATA_CC_COL,
 )
 
 # Configure logging
@@ -74,7 +90,7 @@ def add_gene_protein_nodes(g: Graph, row) -> URIRef:
         g.add((gene_node, RDF.type, URIRef(NODE_TYPES["gene_node"])))
         g.add((gene_node, RDFS.label, Literal(row["identifier"], datatype=XSD.string)))
         g.add((protein_node, URIRef(PREDICATES["has_gene_template"]), gene_node))
-        g.add((protein_node, RDF.type, URIRef(NODE_TYPES['protein_node'])))
+        g.add((protein_node, RDF.type, URIRef(NODE_TYPES["protein_node"])))
         g.add((protein_node, RDFS.label, Literal(f"{target}xProtein", datatype=XSD.string)))
         return [gene_node, protein_node]
     else:
@@ -101,7 +117,7 @@ def add_disease_node(g: Graph, disease_data: dict) -> URIRef:
     )
     for identifier_type in DISEASE_IDENTIFIER_TYPES:
         curie_field = disease_data.get(identifier_type, None)
-        if curie_field and 'ncit' not in curie_field:
+        if curie_field and "ncit" not in curie_field:
             curies = [curie_field]
             if "," in (curie_field):
                 curies = [i for i in curie_field.split(", ")]
@@ -120,8 +136,14 @@ def add_disease_node(g: Graph, disease_data: dict) -> URIRef:
 
 
 def add_score_node(
-    g: Graph, id_number: str, source_idx: str, 
-    disease_id: str, score: float, new_uris: dict, i: int, gene_id: str
+    g: Graph,
+    id_number: str,
+    source_idx: str,
+    disease_id: str,
+    score: float,
+    new_uris: dict,
+    i: int,
+    gene_id: str,
 ) -> URIRef:
     """Create and add a score node for gene-disease associations.
 
@@ -135,7 +157,9 @@ def add_score_node(
     :param gene_id: String value of the gene ID
     :return: URIRef for the created score node.
     """
-    score_node = URIRef(f"{new_uris['score_base_node']}/{id_number}{i}{source_idx}_{disease_id}{gene_id}")
+    score_node = URIRef(
+        f"{new_uris['score_base_node']}/{id_number}{i}{source_idx}_{disease_id}{gene_id}"
+    )
     g.add((score_node, RDF.type, URIRef(NODE_TYPES["score_node"])))
     g.add(
         (
@@ -229,7 +253,7 @@ def add_gene_disease_associations(
                     new_uris=new_uris,
                     i=i,
                     disease_id=disease_umlscui,
-                    gene_id=gene_id
+                    gene_id=gene_id,
                 )
                 g.add(
                     (
@@ -350,10 +374,12 @@ def add_gene_expression_data(
                     data=exp,
                 )
                 if experimental_process_node:
-                    g.add((gene_node, URIRef(PREDICATES["sio_is_part_of"]), experimental_process_node))
+                    g.add(
+                        (gene_node, URIRef(PREDICATES["sio_is_part_of"]), experimental_process_node)
+                    )
                     g.add(
                         (experimental_process_node, URIRef(PREDICATES["sio_has_part"]), gene_node)
-                        )
+                    )
                     g.add(
                         (
                             experimental_process_node,
@@ -788,17 +814,17 @@ def add_transporter_inhibitor_node(g: Graph, transporter_inhibitor_data: dict, b
     :param transporter_inhibitor_data: dictionary with the membrane-compound interaction data
     :param base_uri: The project base uri
     """
-    data = transporter_inhibitor_data
-    compound_name = data.get("compound_name", None)
-    inchikey = data.get("inchikey", None)
-    smiles = data.get("smiles", None)
-    compound_cid = data.get("compound_cid", None)
-    molmedb_id = data.get("molmedb_id", None)
-    # source_pmid = data.get("source_pmid", None)
-    chebi_id = data.get("chebi_id", None)
-    drugbank_id = data.get("drugbank_id", None)
-    uniprot_trembl_id = data.get("uniprot_trembl_id", None)
+    compound_cid = transporter_inhibitor_data.get("compound_cid", None)
     if compound_cid:
+        compound_name = transporter_inhibitor_data.get("compound_name", None)
+        inchikey = transporter_inhibitor_data.get("inchikey", None)
+        smiles = transporter_inhibitor_data.get("smiles", None)
+        molmedb_id = transporter_inhibitor_data.get("molmedb_id", None)
+        # source_pmid = data.get("source_pmid", None)
+        chebi_id = transporter_inhibitor_data.get("chebi_id", None)
+        drugbank_id = transporter_inhibitor_data.get("drugbank_id", None)
+        uniprot_trembl_id = transporter_inhibitor_data.get("uniprot_trembl_id", None)
+
         drug_node = URIRef(f"https://pubchem.ncbi.nlm.nih.gov/compound/{compound_cid}")
         g.add((drug_node, RDFS.label, Literal(compound_name, datatype=XSD.string)))
         g.add(
@@ -816,13 +842,7 @@ def add_transporter_inhibitor_node(g: Graph, transporter_inhibitor_data: dict, b
                 URIRef(f"https://molmedb.upol.cz/mol/{molmedb_id}"),
             )
         )
-        g.add(
-            (
-               drug_node,
-               OWL.sameAs,
-               URIRef(f"https://identifiers.org/CHEBI#{chebi_id}")
-            )
-        )
+        g.add((drug_node, OWL.sameAs, URIRef(f"https://identifiers.org/CHEBI#{chebi_id}")))
         g.add(
             (
                 drug_node,
@@ -999,11 +1019,7 @@ def add_ppi_data(
         return ppi_node
 
 
-def add_literature_based_data(
-    g: Graph,
-    entry: dict,
-    gene_node: URIRef
-):
+def add_literature_based_data(g: Graph, entry: dict, gene_node: URIRef):
     """Add a literature based node.
 
     :param g: RDFLib graph
@@ -1049,7 +1065,14 @@ def add_literature_based_data(
 
 
 def generate_rdf(
-    df: pd.DataFrame, base_uri: str, version_iri: str, author: str, orcid: str, metadata: dict, open_only: bool, load_ontology: bool
+    df: pd.DataFrame,
+    base_uri: str,
+    version_iri: str,
+    author: str,
+    orcid: str,
+    metadata: dict,
+    open_only: bool,
+    load_ontology: bool,
 ) -> Graph:
     """Generate an RDF graph from the provided DataFrame.
 
@@ -1076,21 +1099,24 @@ def generate_rdf(
 
     for i, row in df.iterrows():
         # Unpack the relevant columns
-        source_idx = row.get("identifier", None)
-        source_namespace = row.get("identifier.source", None)
-        target_idx = row.get("target", None)
-        target_namespace = row.get("target.source", None)
+        source_idx = row.get(IDENTIFIER_COL, None)
+        source_namespace = row.get(IDENTIFIER_SOURCE_COL, None)
+        target_idx = row.get(TARGET_COL, None)
+        target_namespace = row.get(TARGET_SOURCE_COL, None)
         expression_data = row.get(BGEE_GENE_EXPRESSION_LEVELS_COL, None)
-        experimental_process_data = row.get("PubChem_assays", None)
-        processes_data = row.get("OpenTargets_go", None)
-        compound_data = row.get("OpenTargets_gene_compounds", None)
-        literature_based_data = row.get("literature_based_info", None)
-        transporter_inhibitor_data = row.get("MolMeDB_transporter_inhibitor", None)
-        stringdb_data = row.get("StringDB_ppi", None)
+        experimental_process_data = row.get(PUBCHEM_COMPOUND_ASSAYS_COL, None)
+        processes_data = row.get(OPENTARGETS_GO_COL, None)
+        compound_data = row.get(OPENTARGETS_GENE_COMPOUND_COL, None)
+        literature_based_data = row.get(LITERATURE_DISEASE_COL, None)
+        transporter_inhibitor_data = row.get(MOLMEDB_PROTEIN_COMPOUND_COL, None)
+        # transporter_inhibited_data = row.get(MOLMEDB_COMPOUND_PROTEIN_COL, None)
+        stringdb_data = row.get(STRING_PPI_COL, None)
         # molmedb_data = row.get("MolMeDB_transporter_inhibitor", None)
         disease_data = []
         for source in [DISGENET_DISEASE_COL, OPENTARGETS_DISEASE_COL]:
-            if open_only and source == DISGENET_DISEASE_COL:  # TODO implement open data only feature properly
+            if (
+                open_only and source == DISGENET_DISEASE_COL
+            ):  # TODO implement open data only feature properly
                 continue
             source_el = row.get(source)
             if isinstance(source_el, list):
