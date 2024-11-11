@@ -44,8 +44,7 @@ def check_version_kegg() -> dict:
         if "Release" in line:
             release_version = line.split()[2]
             release_version = release_version.rstrip(",")
-            print("KEGG Release Version:", release_version)
-            break
+            return release_version
 
 
 
@@ -55,7 +54,6 @@ def get_kegg_ids(row):
     :param row: input_df row
     :returns: a dictionary containing the KEGG identifier
     """
-    print(row)
     results = requests.get(f"{KEGG_ENDPOINT}/conv/genes/ncbi-geneid:{row['target']}")
     kegg_id = results.text.split()
     return {"KEGG_id": kegg_id[1]}
@@ -79,6 +77,11 @@ def get_pathway_link(row):
 
         # Get KGML file from KEGG API
         results_kgml = requests.get(f"{KEGG_ENDPOINT}/get/{pathway_id}/kgml")
+        gene_count = 0
+        compound_list = set()
+
+        print(results_kgml.text)
+
         title_start = results_kgml.text.find('title="') + len('title="')
         title_end = results_kgml.text.find('"', title_start)
 
@@ -87,6 +90,28 @@ def get_pathway_link(row):
         pathway_info["pathway_label"] = pathway_title
         pathways.append(pathway_info)
 
+        # Exctract compounds
+        for line in results_kgml.text.splitlines():
+            # Check if the line contains an <entry> tag with type and name attributes
+            if 'type=' in line and 'name=' in line:
+                # Find type
+                type_start = line.find('type="') + 6
+                type_end = line.find('"', type_start)
+                entry_type = line[type_start:type_end]
+
+                # Find name if it’s a compound
+                if entry_type == "compound":
+                    name_start = line.find('name="') + 6
+                    name_end = line.find('"', name_start)
+                    name = line[name_start:name_end]
+                    compound_list.add(name)
+
+                # Increase gene counter if it's a gene
+                elif entry_type == "gene":
+                    gene_count += 1
+
+                pathway_info["pathway_compounds"] = compound_list
+                pathway_info["pathway_gene_amount"] = gene_count
 
     kegg_dict["pathways"] = pathways
 
@@ -100,7 +125,7 @@ def get_pathways(bridgedb_df):
         warnings.warn(f"{KEGG} endpoint is not available. Unable to retrieve data.", stacklevel=2)
         return pd.DataFrame(), {}
     
-    check_version_kegg()
+    kegg_version = check_version_kegg()
 
     # Record the start time
     start_time = datetime.datetime.now()
@@ -129,7 +154,7 @@ def get_pathways(bridgedb_df):
     # Add the datasource, query, query time, and the date to metadata
     # string_metadata = {
     #     "datasource": KEGG,
-    #     "metadata": {"source_version": string_version},
+    #     "metadata": {"source_version": kegg_version},
     #     "query": {
     #         "size": len(gene_list),
     #         "input_type": KEGG_GENE_INPUT_ID,
