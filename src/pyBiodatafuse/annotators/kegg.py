@@ -59,16 +59,56 @@ def get_kegg_ids(row):
     return {"KEGG_id": kegg_id[1]}
 
 
-def get_pathway_link(row):
+def get_compound_genes(pathway_info, results_kgml):
+    """Get compounds and gene counts from a pathway
+    :param pathway_info: Dictionary containing all information of the pathway
+    :param results_kgml: KGML file from which further information gets extracted
+    :returns: Dictionary containing compounds and gene count
+    """
+    compound_list = set()
+    gene_count = 0
+
+    # Extract each entry in the KGML file
+    entries = [f"<entry {entry_part}" for entry_part in results_kgml.text.split("<entry ")[1:]]
+
+    for entry in entries:
+        # Count genes
+        if 'type="gene"' in entry:
+            name_start = entry.find('name="') + len('name="')
+            name_end = entry.find('"', name_start)
+                
+            if name_start > len('name="') - 1: 
+                gene_ids = entry[name_start:name_end].split()
+                gene_count += len(gene_ids)
+
+        # Extract all compounds
+        elif 'type="compound"' in entry:
+            graphics_name_start = entry.find('<graphics name="') + len('<graphics name="')
+            graphics_name_end = entry.find('"', graphics_name_start)
+                
+            if graphics_name_start > len('<graphics name="') - 1:
+                # Extract the compound name and add it to the set to avoid duplicates
+                compound_name = entry[graphics_name_start:graphics_name_end]
+                compound_list.add(compound_name)
+
+        pathway_info["pathway_compounds"] = compound_list
+        pathway_info["pathway_gene_amount"] = gene_count
+
+    return pathway_info
+
+
+def get_pathway_info(row):
     """Get pathway information for the input genes.
     
     :param row: input_df row
     :returns: Dictionary containing pathway IDs and labels.
     """
     kegg_dict = row[KEGG_COL_NAME]
-    results = requests.get(f"{KEGG_ENDPOINT}/link/pathway/{kegg_dict.get('KEGG_id')}")
+    results = requests.get(f"{KEGG_ENDPOINT}/link/pathway/{kegg_dict.get('KEGG_id')}") 
+    results_test = requests.get(f"{KEGG_ENDPOINT}/link/pathway/C00035") 
 
     pathways = []
+
     for line in results.text.strip().split("\n"):
         pathway_info = {}
         parts = line.split("\t")
@@ -77,49 +117,29 @@ def get_pathway_link(row):
 
         # Get KGML file from KEGG API
         results_kgml = requests.get(f"{KEGG_ENDPOINT}/get/{pathway_id}/kgml")
-        gene_count = 0
-        compound_list = set()
-
-        print(results_kgml.text)
-
         title_start = results_kgml.text.find('title="') + len('title="')
         title_end = results_kgml.text.find('"', title_start)
 
         # Extract the title substring
         pathway_title = results_kgml.text[title_start:title_end]
         pathway_info["pathway_label"] = pathway_title
+
+        # Extract compounds and gene count from the pathway
+        pathway_info = get_compound_genes(pathway_info, results_kgml)
+
         pathways.append(pathway_info)
-
-        # Exctract compounds
-        for line in results_kgml.text.splitlines():
-            # Check if the line contains an <entry> tag with type and name attributes
-            if 'type=' in line and 'name=' in line:
-                # Find type
-                type_start = line.find('type="') + 6
-                type_end = line.find('"', type_start)
-                entry_type = line[type_start:type_end]
-
-                # Find name if it’s a compound
-                if entry_type == "compound":
-                    name_start = line.find('name="') + 6
-                    name_end = line.find('"', name_start)
-                    name = line[name_start:name_end]
-                    compound_list.add(name)
-
-                # Increase gene counter if it's a gene
-                elif entry_type == "gene":
-                    gene_count += 1
-
-                pathway_info["pathway_compounds"] = compound_list
-                pathway_info["pathway_gene_amount"] = gene_count
-
+    
     kegg_dict["pathways"] = pathways
 
     return kegg_dict
     
 
 def get_pathways(bridgedb_df):    
+    """Annotate genes with KEGG pathway information.
     
+    :param row: BridgeDb output for creating the list of gene ids to query
+    :returns: a DataFrame containing the KEGG output and dictionary of the metadata.
+    """
     api_available = check_endpoint_kegg()
     if not api_available:
         warnings.warn(f"{KEGG} endpoint is not available. Unable to retrieve data.", stacklevel=2)
@@ -136,11 +156,9 @@ def get_pathways(bridgedb_df):
 
     # Get the KEGG identifiers
     data_df[KEGG_COL_NAME] = data_df.apply(lambda row: get_kegg_ids(row), axis=1)
-    print(data_df)
 
     # Get the links for the KEGG pathways
-    data_df[KEGG_COL_NAME] = data_df.apply(lambda row: get_pathway_link(row), axis=1)
-    print(data_df)
+    data_df[KEGG_COL_NAME] = data_df.apply(lambda row: get_pathway_info(row), axis=1)
 
     # Record the end time
     end_time = datetime.datetime.now()
