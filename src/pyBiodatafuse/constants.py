@@ -3,7 +3,6 @@
 """Python constant file."""
 
 
-
 # Endpoints / API
 BRIDGEDB_ENDPOINT = "https://webservice.bridgedb.org"
 BGEE_ENDPOINT = "https://www.bgee.org/sparql/"
@@ -466,12 +465,11 @@ COMPOUND_NAMESPACE_MAPPER = {"pubchem.compound": "PubChem Compound", "CHEMBL": "
 # RDF (rdflib constants and namespaces)
 
 
-
 DATA_TYPES_SOURCES = {
     "identifier": IDENTIFIER_COL,
     "identifier_source": IDENTIFIER_SOURCE_COL,
     "target": TARGET_COL,
-    "target_source": TARGET_SOURCE_COL ,
+    "target_source": TARGET_SOURCE_COL,
     "gene_expression": BGEE_GENE_EXPRESSION_LEVELS_COL,
     "assays": PUBCHEM_COMPOUND_ASSAYS_COL,
     "go": OPENTARGETS_GO_COL,
@@ -558,7 +556,8 @@ PREDICATES = {
     "sio_has_part": f"{NAMESPACE_BINDINGS['sio']}SIO_000028",
     "negatively_regulates": f"{NAMESPACE_BINDINGS['obo']}RO_0002449",
     "phase": "http://purl.obolibrary.org/obo/PATO_0000083",
-    "has_gene_template": "http://purl.obolibrary.org/obo/pr#has_gene_template",
+    "translation_of": "http://purl.obolibrary.org/obo/so#translation_of",
+    "translates_to": "http://purl.obolibrary.org/obo/so#translates_to",
 }
 
 # Classes for clinical phases

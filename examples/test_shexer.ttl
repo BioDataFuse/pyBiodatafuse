@@ -1,0 +1,18 @@
+@prefix ex: <https://biodatafuse.org/example/> .
+@prefix sio: <http://semanticscience.org/resource/> .
+@prefix obo: <http://purl.obolibrary.org/obo/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# Instance data
+<https://biodatafuse.org/example/gene_expression_value/000000/ALG14_UBERON_0000178> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000172339> ;
+    sio:SIO_000300 6.016422e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0000178 .
+
+obo:UBERON_0000178 a sio:SIO_001262 ;
+    rdfs:label "blood"^^xsd:string .
+
+
