@@ -1,11 +1,13 @@
 # pathway.py
 
-from bioregistry import get_iri, normalize_curie
+
+"""Module to populate a BDF RDF graph with pathway nodes."""
+
+
 from rdflib import Graph, Literal, URIRef
 from rdflib.namespace import RDF, RDFS, XSD
 
 from pyBiodatafuse.constants import NODE_TYPES, PREDICATES
-from pyBiodatafuse.graph.rdf.utils import add_data_source_node
 
 
 def add_pathway_node(g: Graph, data: dict, source: str):

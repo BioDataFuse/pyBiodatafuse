@@ -1,6 +1,6 @@
 # gene_disease.py
 
-"""Module to populate a BDF RDF graph with gene-disease relationship data."""
+"""Populate a BDF RDF graph with gene-disease relationship data."""
 
 
 from bioregistry import get_iri
@@ -106,7 +106,7 @@ def add_disease_node(g: Graph, disease_data: dict) -> URIRef:
     if disease_curie is None:
         disease_curie = disease_data.get("UMLS")
     disease_iri = f"https://www.ncbi.nlm.nih.gov/medgen/{disease_curie}"
-    disease_data.get()
+    #  disease_data.get()
     disease_node = URIRef(disease_iri)
     g.add((disease_node, RDF.type, URIRef(NODE_TYPES["disease_node"])))
     g.add(

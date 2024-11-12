@@ -1,7 +1,7 @@
 # metadata.py
 
 
-"""Some metadata node functions"""
+"""Some metadata node functions."""
 
 
 from datetime import datetime

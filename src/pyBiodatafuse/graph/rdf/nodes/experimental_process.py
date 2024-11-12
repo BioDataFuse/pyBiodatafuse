@@ -1,6 +1,6 @@
 # assay.py
 
-"""Module to populate a BDF RDF graph with assay data."""
+"""Populate a BDF RDF graph with assay data."""
 
 
 from rdflib import Graph, Literal, URIRef

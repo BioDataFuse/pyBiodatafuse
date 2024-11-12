@@ -1,20 +1,22 @@
-from bioregistry import get_iri, normalize_curie
+# gene_protein.py
+
+
+"""Populate a BDF RDF graph with gene and protein nodes."""
+
+
 from rdflib import Graph, Literal, URIRef
 from rdflib.namespace import RDF, RDFS, XSD
 
 from pyBiodatafuse.constants import NODE_TYPES, PREDICATES
-from pyBiodatafuse.graph.rdf.utils import add_data_source_node
 
 
 def add_gene_protein_nodes(g: Graph, row) -> tuple:
-    """Creates and adds a gene node and associated protein node to the RDF graph.
+    """Create and add a gene node and associated protein node to the RDF graph.
 
-    Args:
-        g (Graph): RDF graph to which the gene and protein nodes are added.
-        row (pd.Series): Data row containing gene information.
+    :param g: (Graph): RDF graph to which the gene and protein nodes are added.
+    :param row: (pd.Series): Data row containing gene information.
 
-    Returns:
-        tuple: A tuple containing URIRefs for the gene node and protein node, respectively.
+    :return: tuple containing URIRefs for the gene node and protein node, respectively.
     """
     target = row["target"]
     if target:

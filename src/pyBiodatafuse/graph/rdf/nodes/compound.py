@@ -1,6 +1,6 @@
 # compound.py
 
-"""Module to populate a BDF RDF graph with compound data."""
+"""Populate a BDF RDF graph with compound data."""
 
 
 from rdflib import Graph, Literal, URIRef
@@ -10,15 +10,12 @@ from pyBiodatafuse.constants import CLINICAL_PHASES, MOAS, NODE_TYPES, PREDICATE
 
 
 def add_compound_node(g: Graph, compound: dict, protein_node: URIRef) -> URIRef:
-    """Creates and adds a compound node to the RDF graph.
+    """Create and add a compound node to the RDF graph.
 
-    Args:
-        g (Graph): RDF graph to which the compound node will be added.
-        compound (dict): Dictionary containing compound (compound) information.
-        protein_node (URIRef): URIRef of the protein node associated with the compound.
-
-    Returns:
-        URIRef: The created compound node URIRef.
+    :param g: RDF graph to which the compound node will be added.
+    :param compound: Dictionary containing compound data.
+    :param protein_node: URIRef of the protein node associated with the compound.
+    :return: URIRef for the created compound node.
     """
     chembl_id = compound.get("chembl_id")
     compoundbank_id = compound.get("compoundbank_id")
@@ -69,12 +66,11 @@ def add_compound_node(g: Graph, compound: dict, protein_node: URIRef) -> URIRef:
 
 
 def add_transporter_inhibitor_node(g: Graph, inhibitor_data: dict, base_uri: str) -> None:
-    """Adds a transporter inhibitor node to the RDF graph.
+    """Add a transporter inhibitor node to the RDF graph.
 
-    Args:
-        g (Graph): RDF graph to which the transporter inhibitor node is added.
-        inhibitor_data (dict): Dictionary containing transporter inhibitor data.
-        base_uri (str): The base URI for constructing nodes in the graph.
+    :param g: RDF graph to which the transporter inhibitor node is added.
+    :param inhibitor_data: Dictionary containing transporter inhibitor data (e.g., "compound_cid", "inchikey").
+    :param base_uri: The base URI for constructing nodes in the graph.
     """
     compound_cid = inhibitor_data.get("compound_cid")
     compound_name = inhibitor_data.get("compound_name")

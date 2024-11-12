@@ -1,19 +1,21 @@
 # literature.py
 
-from bioregistry import get_iri, normalize_curie
+
+"""Populate a BDF RDF graph with literature-based evidence."""
+
+
 from rdflib import Graph, Literal, URIRef
-from rdflib.namespace import RDFS
+from rdflib.namespace import RDF, RDFS
 
 from pyBiodatafuse.constants import NODE_TYPES, PREDICATES
 
 
 def add_literature_based_data(g: Graph, entry: dict, gene_node: URIRef) -> None:
-    """Adds literature-based data for gene associations.
+    """Add literature-based data for gene associations.
 
-    Args:
-        g (Graph): RDF graph to which the literature-based data is added.
-        entry (dict): Dictionary with literature-based association information.
-        gene_node (URIRef): URIRef of the gene node associated with the literature data.
+    :param g: (Graph): RDF graph to which the literature-based data is added.
+    :param entry: (dict): Dictionary with literature-based association information.
+    :param gene_node: (URIRef): URIRef of the gene node associated with the literature data.
     """
     source = entry.get("source", None)
     if source and "PMID" in source:

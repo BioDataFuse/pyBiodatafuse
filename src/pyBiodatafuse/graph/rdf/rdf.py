@@ -1,7 +1,7 @@
 # rdf.py
 
 
-"""Main function for the RDF module"""
+"""Provide function for the RDF module."""
 
 
 from importlib import resources
@@ -10,7 +10,7 @@ import pandas as pd
 from bioregistry import normalize_curie
 from rdflib import Graph, URIRef
 
-from pyBiodatafuse.constants import (  # CLINICAL_PHASES,; GO_TYPES,; DISEASE_IDENTIFIER_TYPES,; MOAS,; NODE_TYPES,; Columns; OPENTARGETS_REACTOME_COL,; OPENTARGETS_DISEASE_COMPOUND_COL,; MOLMEDB_COMPOUND_PROTEIN_COL,; WIKIDATA_CC_COL,
+from pyBiodatafuse.constants import (
     BGEE_GENE_EXPRESSION_LEVELS_COL,
     DATA_SOURCES,
     DISGENET_DISEASE_COL,
@@ -29,31 +29,16 @@ from pyBiodatafuse.constants import (  # CLINICAL_PHASES,; GO_TYPES,; DISEASE_ID
     TARGET_SOURCE_COL,
     URIS,
 )
-from pyBiodatafuse.graph.rdf.metadata import add_metadata  # pylint: disable=no-name-in-module
-from pyBiodatafuse.graph.rdf.nodes.compound import (  # pylint: disable=no-name-in-module
-    add_compound_node,
-    add_transporter_inhibitor_node,
-)
-from pyBiodatafuse.graph.rdf.nodes.gene_disease import (  # pylint: disable=no-name-in-module
-    add_gene_disease_associations,
-)
-from pyBiodatafuse.graph.rdf.nodes.gene_expression import (  # pylint: disable=no-name-in-module
-    add_gene_expression_data,
-)
-from pyBiodatafuse.graph.rdf.nodes.gene_protein import (  # pylint: disable=no-name-in-module
-    add_gene_protein_nodes,
-)
-from pyBiodatafuse.graph.rdf.nodes.go_terms import add_go_cpf  # pylint: disable=no-name-in-module
-from pyBiodatafuse.graph.rdf.nodes.literature import (  # pylint: disable=no-name-in-module
-    add_literature_based_data,
-)
-from pyBiodatafuse.graph.rdf.nodes.pathway import (  # pylint: disable=no-name-in-module
-    add_pathway_node,
-)
-from pyBiodatafuse.graph.rdf.nodes.protein_protein import (  # pylint: disable=no-name-in-module
-    add_ppi_data,
-)
-from pyBiodatafuse.graph.rdf.utils import replace_na_none  # pylint: disable=no-name-in-module
+from pyBiodatafuse.graph.rdf.metadata import add_metadata
+from pyBiodatafuse.graph.rdf.nodes.compound import add_compound_node, add_transporter_inhibitor_node
+from pyBiodatafuse.graph.rdf.nodes.gene_disease import add_gene_disease_associations
+from pyBiodatafuse.graph.rdf.nodes.gene_expression import add_gene_expression_data
+from pyBiodatafuse.graph.rdf.nodes.gene_protein import add_gene_protein_nodes
+from pyBiodatafuse.graph.rdf.nodes.go_terms import add_go_cpf
+from pyBiodatafuse.graph.rdf.nodes.literature import add_literature_based_data
+from pyBiodatafuse.graph.rdf.nodes.pathway import add_pathway_node
+from pyBiodatafuse.graph.rdf.nodes.protein_protein import add_ppi_data
+from pyBiodatafuse.graph.rdf.utils import replace_na_none
 
 
 def generate_rdf(
@@ -74,6 +59,8 @@ def generate_rdf(
     :param author: Author's name.
     :param orcid: Author's ORCID.
     :param metadata: Combined metadata for a BioDatafuse query.
+    :param open_only: Boolean to include non-open data.
+    :param load_ontology: Boolean to include annotations from the ontology to the graph.
     :return: RDF graph constructed from the DataFrame.
     """
     g = Graph()

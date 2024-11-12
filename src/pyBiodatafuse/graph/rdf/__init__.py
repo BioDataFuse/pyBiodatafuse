@@ -1,7 +1,6 @@
 # __init__.py
 
-"""init"""
+"""init script."""
 
 
-from . import nodes
 from .rdf import generate_rdf

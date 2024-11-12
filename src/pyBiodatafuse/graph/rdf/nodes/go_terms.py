@@ -1,11 +1,14 @@
 # go_terms.py
 
+"""Populate a BDF RDF graph with gene ontology terms related to genes."""
+
+
 from bioregistry import get_iri, normalize_curie
 from rdflib import Graph, Literal, URIRef
 from rdflib.namespace import OWL, RDF, RDFS, XSD
 
 from pyBiodatafuse.constants import CLINICAL_PHASES, GO_TYPES, MOAS, NODE_TYPES, PREDICATES
-from pyBiodatafuse.graph.rdf.utils import *
+from pyBiodatafuse.graph.rdf.utils import add_data_source_node
 
 
 def add_go_cpf(g: Graph, process_data: dict) -> URIRef:

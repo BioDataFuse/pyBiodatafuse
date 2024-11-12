@@ -1,12 +1,16 @@
 # protein_protein.py
-from bioregistry import get_iri, normalize_curie
+
+
+"""Module to populate a BDF RDF graph with PPI nodes."""
+
+
 from rdflib import Graph, Literal, URIRef
 from rdflib.namespace import OWL, RDF, RDFS, XSD
 
 from pyBiodatafuse.constants import NODE_TYPES, PREDICATES
 
 
-def add_ppi_data(
+def add_ppi_data(  # TODO refactor using constants
     g: Graph, protein_node: URIRef, protein_name: str, entry: dict, base_uri: str, new_uris: dict
 ) -> URIRef:
     """Add a protein protein interaction node.
