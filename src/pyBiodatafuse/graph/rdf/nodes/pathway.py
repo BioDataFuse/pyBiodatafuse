@@ -1,7 +1,7 @@
 # pathway.py
 
 
-"""Module to populate a BDF RDF graph with pathway nodes."""
+"""Populate a BDF RDF graph with pathway nodes."""
 
 
 from rdflib import Graph, Literal, URIRef

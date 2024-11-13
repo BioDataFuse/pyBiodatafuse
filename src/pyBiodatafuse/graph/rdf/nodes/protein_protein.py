@@ -1,7 +1,7 @@
 # protein_protein.py
 
 
-"""Module to populate a BDF RDF graph with PPI nodes."""
+"""Populate a BDF RDF graph with PPI nodes."""
 
 
 from rdflib import Graph, Literal, URIRef

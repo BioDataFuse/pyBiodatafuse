@@ -3,11 +3,11 @@
 """Populate a BDF RDF graph with gene expression data."""
 
 
-from bioregistry import get_iri, normalize_curie
+from bioregistry import get_iri
 from rdflib import Graph, Literal, URIRef
-from rdflib.namespace import OWL, RDF, RDFS, XSD
+from rdflib.namespace import RDF, RDFS, XSD
 
-from pyBiodatafuse.constants import CLINICAL_PHASES, MOAS, NODE_TYPES, PREDICATES
+from pyBiodatafuse.constants import NODE_TYPES, PREDICATES
 from pyBiodatafuse.graph.rdf.nodes.experimental_process import add_experimental_process_node
 from pyBiodatafuse.graph.rdf.utils import add_data_source_node
 

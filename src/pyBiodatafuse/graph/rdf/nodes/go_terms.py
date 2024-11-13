@@ -3,11 +3,11 @@
 """Populate a BDF RDF graph with gene ontology terms related to genes."""
 
 
-from bioregistry import get_iri, normalize_curie
+from bioregistry import get_iri
 from rdflib import Graph, Literal, URIRef
-from rdflib.namespace import OWL, RDF, RDFS, XSD
+from rdflib.namespace import RDFS, XSD
 
-from pyBiodatafuse.constants import CLINICAL_PHASES, GO_TYPES, MOAS, NODE_TYPES, PREDICATES
+from pyBiodatafuse.constants import GO_TYPES, PREDICATES
 from pyBiodatafuse.graph.rdf.utils import add_data_source_node
 
 

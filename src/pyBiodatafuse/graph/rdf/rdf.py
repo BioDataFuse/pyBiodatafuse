@@ -38,7 +38,7 @@ from pyBiodatafuse.graph.rdf.nodes.go_terms import add_go_cpf
 from pyBiodatafuse.graph.rdf.nodes.literature import add_literature_based_data
 from pyBiodatafuse.graph.rdf.nodes.pathway import add_pathway_node
 from pyBiodatafuse.graph.rdf.nodes.protein_protein import add_ppi_data
-from pyBiodatafuse.graph.rdf.utils import replace_na_none
+from pyBiodatafuse.graph.rdf.utils import replace_na_none, matching_triples
 
 
 def generate_rdf(
@@ -190,18 +190,19 @@ def generate_rdf(
             metadata=metadata,
             graph_uri=version_iri,
         )
-        # Load ontology or base RDF
+        # Load ontology
+
     if load_ontology:
-        with resources.path("pyBiodatafuse.resources", "biodatafuse.owl") as owl_path:
-            temp_graph = Graph()  # Temporary graph for loading ontology
+        with resources.files("pyBiodatafuse.resources").joinpath("biodatafuse.owl") as owl_path:
+            temp_graph = Graph()
             temp_graph.parse(owl_path)
-            # Iterate through classes and predicates in the ontology
-            for subj, pred, obj in temp_graph:
-                # Check if each element individually exists in g as part of any triple
-                subj_exists = any(g.triples((subj, None, None)))
-                pred_exists = any(g.triples((None, pred, None)))
-                obj_exists = any(g.triples((None, None, obj)))
-                # Add to graph only if any of these elements exist in g
-                if subj_exists or pred_exists or obj_exists:
-                    g.add((subj, pred, obj))
+
+            # Preload subject, predicate, and object sets from `g` for quick lookups
+            subj_set = {s for s, _, _ in g}
+            pred_set = {p for _, p, _ in g}
+            obj_set = {o for _, _, o in g}
+
+            # Add only matching triples to `g`
+            g.addN(matching_triples(temp_graph, subj_set, pred_set, obj_set))
+
     return g
