@@ -1,13 +1,11 @@
 # protein_protein.py
 
-
 """Populate a BDF RDF graph with PPI nodes."""
-
 
 from rdflib import Graph, Literal, URIRef
 from rdflib.namespace import OWL, RDF, RDFS, XSD
 
-from pyBiodatafuse.constants import NODE_TYPES, PREDICATES
+from pyBiodatafuse.constants import NODE_TYPES, PREDICATES, BASE_URLS_DBS
 
 
 def add_ppi_data(  # TODO refactor using constants
@@ -26,6 +24,7 @@ def add_ppi_data(  # TODO refactor using constants
     stringdb_link_to = entry.get("stringdb_link_to", None)
     ensembl = entry.get("Ensembl", None).split(":")[1]
     score = entry.get("score", None)
+
     if score:
         score = float(score)
         # Nodes
@@ -39,7 +38,7 @@ def add_ppi_data(  # TODO refactor using constants
         )
         g.add(
             (
-                URIRef(f"https://www.uniprot.org/uniprotkb/{stringdb_link_to}"),
+                URIRef(BASE_URLS_DBS["uniprot"] + f"{stringdb_link_to}"),
                 RDF.type,
                 URIRef(NODE_TYPES["protein_node"]),
             )
@@ -48,7 +47,7 @@ def add_ppi_data(  # TODO refactor using constants
             (
                 ppi_node,
                 URIRef(PREDICATES["sio_has_part"]),
-                URIRef(f"https://www.uniprot.org/uniprotkb/{stringdb_link_to}"),
+                URIRef(BASE_URLS_DBS["uniprot"] + f"{stringdb_link_to}"),
             )
         )
         g.add(
@@ -60,42 +59,35 @@ def add_ppi_data(  # TODO refactor using constants
         )
         g.add(
             (
-                URIRef(f"https://www.uniprot.org/uniprotkb/{stringdb_link_to}"),
+                URIRef(BASE_URLS_DBS["uniprot"] + f"{stringdb_link_to}"),
                 URIRef(PREDICATES["sio_is_part_of"]),
                 ppi_node,
             )
         )
         g.add(
             (
-                URIRef(f"https://www.uniprot.org/uniprotkb/{stringdb_link_to}"),
+                URIRef(BASE_URLS_DBS["uniprot"] + f"{stringdb_link_to}"),
                 RDF.type,
                 URIRef(NODE_TYPES["protein_node"]),
             )
         )
         g.add(
             (
-                URIRef(f"https://www.uniprot.org/uniprotkb/{stringdb_link_to}"),
+                URIRef(BASE_URLS_DBS["uniprot"] + f"{stringdb_link_to}"),
                 RDFS.label,
                 Literal(stringdb_link_to, datatype=XSD.string),
             )
         )
         g.add(
             (
-                URIRef(f"http://identifiers.org/ensembl#{ensembl}"),
+                URIRef(BASE_URLS_DBS["ensembl"] + f"{ensembl}"),
                 OWL.sameAs,
-                URIRef(f"https://www.uniprot.org/uniprotkb/{stringdb_link_to}"),
+                URIRef(BASE_URLS_DBS["uniprot"] + f"{stringdb_link_to}"),
             )
         )
         g.add(
             (
-                URIRef(f"http://identifiers.org/ensembl#{ensembl}"),
-                OWL.sameAs,
-                URIRef(f"https://www.uniprot.org/uniprotkb/{stringdb_link_to}"),
-            )
-        )
-        g.add(
-            (
-                URIRef(f"http://identifiers.org/ensembl#{ensembl}"),
+                URIRef(BASE_URLS_DBS["ensembl"] + f"{ensembl}"),
                 RDF.type,
                 URIRef(NODE_TYPES["protein_node"]),
             )

@@ -608,3 +608,9 @@ DISEASE_IDENTIFIER_TYPES = [
     "MESH",
     "UMLS",
 ]
+
+BASE_URLS_DBS = {
+    "uniprot": "https://www.uniprot.org/uniprotkb/",
+    "ensembl": "http://identifiers.org/ensembl#",
+    "stringdb": "https://string-db.org/network/",
+}
