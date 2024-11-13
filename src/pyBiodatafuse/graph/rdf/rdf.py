@@ -38,7 +38,7 @@ from pyBiodatafuse.graph.rdf.nodes.go_terms import add_go_cpf
 from pyBiodatafuse.graph.rdf.nodes.literature import add_literature_based_data
 from pyBiodatafuse.graph.rdf.nodes.pathway import add_pathway_node
 from pyBiodatafuse.graph.rdf.nodes.protein_protein import add_ppi_data
-from pyBiodatafuse.graph.rdf.utils import replace_na_none, matching_triples
+from pyBiodatafuse.graph.rdf.utils import replace_na_none
 
 
 def generate_rdf(
@@ -49,7 +49,6 @@ def generate_rdf(
     orcid: str,
     metadata: dict,
     open_only: bool,
-    load_ontology: bool,
 ) -> Graph:
     """Generate an RDF graph from the provided DataFrame.
 
@@ -60,7 +59,6 @@ def generate_rdf(
     :param orcid: Author's ORCID.
     :param metadata: Combined metadata for a BioDatafuse query.
     :param open_only: Boolean to include non-open data.
-    :param load_ontology: Boolean to include annotations from the ontology to the graph.
     :return: RDF graph constructed from the DataFrame.
     """
     g = Graph()
@@ -190,19 +188,5 @@ def generate_rdf(
             metadata=metadata,
             graph_uri=version_iri,
         )
-        # Load ontology
-
-    if load_ontology:
-        with resources.files("pyBiodatafuse.resources").joinpath("biodatafuse.owl") as owl_path:
-            temp_graph = Graph()
-            temp_graph.parse(owl_path)
-
-            # Preload subject, predicate, and object sets from `g` for quick lookups
-            subj_set = {s for s, _, _ in g}
-            pred_set = {p for _, p, _ in g}
-            obj_set = {o for _, _, o in g}
-
-            # Add only matching triples to `g`
-            g.addN(matching_triples(temp_graph, subj_set, pred_set, obj_set))
 
     return g

@@ -74,20 +74,6 @@ def add_data_source_node(g: Graph, source: str) -> URIRef:
     return data_source_url
 
 
-def matching_triples(temp_graph, subj_set, pred_set, obj_set):
-    """Match triples from a graph and a set of s, p, o from another graph.
-
-    :param g: RDF graph to which the data source node will be added.
-    :param subj_set: Set containing all s nodes.
-    :param pred_set: Set containing all p nodes.
-    :param obj_set: Set containing all o nodes.
-    :yield: Tuples (subj, pred, obj) where at least one element is found in subj_set, pred_set, or obj_set.
-    """
-    for subj, pred, obj in temp_graph:
-        if subj in subj_set or pred in pred_set or obj in obj_set:
-            yield (subj, pred, obj)
-
-
 def get_shapes(
     g,
     base_uri,
