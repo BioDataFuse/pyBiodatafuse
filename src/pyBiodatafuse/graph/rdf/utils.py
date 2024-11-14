@@ -173,7 +173,7 @@ def get_shacl_prefixes(namespaces, path, new_uris):
 
     def add_declarations(prefix_dict):
         """
-        Adds declarations for an dictionary of namespaces.
+        Add declarations for an dictionary of namespaces.
 
         :param prefix_dict: Dictionary of  {prefix:namespace,}.
         """
