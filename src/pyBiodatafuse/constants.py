@@ -521,7 +521,7 @@ NODE_TYPES = {
     "data_source_node": "http://semanticscience.org/resource/SIO_000750",
     "gene_expression_value_node": f"{NAMESPACE_BINDINGS['sio']}SIO_001077",
     "anatomical_entity_node": "http://semanticscience.org/resource/SIO_001262",
-    "tested_substance_node": "http://semanticscience.org/resource/SIO_010038",
+    "tested_compound_node": "http://semanticscience.org/resource/SIO_010038",
     "source_database": f"{NAMESPACE_BINDINGS['sio']}SIO_000750",
     "experimental_process_node": "http://www.ebi.ac.uk/efo/EFO_0002694",
     "pathway_node": f"{NAMESPACE_BINDINGS['obo']}PW_0000001",
@@ -531,8 +531,8 @@ NODE_TYPES = {
     "article": f"{NAMESPACE_BINDINGS['obo']}IAO_0000013",
     "protein_node": "http://purl.obolibrary.org/obo/NCIT_C17021",
     "ppi_node": "http://purl.obolibrary.org/obo/NCIT_C18469",
-    "drug_node": "http://semanticscience.org/resource/SIO_010038",
-    "approved_drug": "http://purl.obolibrary.org/obo/NCIT_C172573",
+    "compound_node": "http://semanticscience.org/resource/SIO_010038",
+    "approved_compound": "http://purl.obolibrary.org/obo/NCIT_C172573",
     "aid": "http://purl.obolibrary.org/obo/CLO_0037244",
     "developmental_stage_node": "http://purl.obolibrary.org/obo/NCIT_C43531",
 }
@@ -608,3 +608,9 @@ DISEASE_IDENTIFIER_TYPES = [
     "MESH",
     "UMLS",
 ]
+
+BASE_URLS_DBS = {
+    "uniprot": "https://www.uniprot.org/uniprotkb/",
+    "ensembl": "http://identifiers.org/ensembl#",
+    "stringdb": "https://string-db.org/network/",
+}

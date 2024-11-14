@@ -38,7 +38,7 @@ WHERE {
 
 # Query 1
 ex:pathways_with_multiple_genes_grouped_by_source a sh:SPARQLExecutable, sh:SPARQLSelectExecutable ;
-    rdfs:comment "Identify pathways described to involve more than seven genes, and show which sources provide data on these gene-pathway associations. Return the genes as well."@en ;
+    rdfs:comment "Identify pathways described to involve more than three genes, and show which sources provide data on these gene-pathway associations. Return the genes as well."@en ;
     sh:prefixes _:sparql_examples_prefixes ;
     sh:select """
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -56,7 +56,7 @@ WHERE {
     ?source rdfs:label ?sourceLabel .
 } 
 GROUP BY ?pathway ?pathwayLabel
-HAVING (COUNT(?gene) > 7)
+HAVING (COUNT(?gene) > 3)
 """ ;
     schema:keywords "pathways with multiple genes, data sources" .
 

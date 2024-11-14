@@ -34,6 +34,5 @@ def add_gene_protein_nodes(g: Graph, row) -> tuple:
         # Add protein node to graph
         g.add((protein_node, RDF.type, URIRef(NODE_TYPES["protein_node"])))
         g.add((protein_node, RDFS.label, Literal(f"{target}xProtein", datatype=XSD.string)))
-
         return gene_node, protein_node
     return None, None
