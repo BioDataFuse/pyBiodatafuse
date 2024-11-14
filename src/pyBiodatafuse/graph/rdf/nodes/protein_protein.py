@@ -5,7 +5,7 @@
 from rdflib import Graph, Literal, URIRef
 from rdflib.namespace import OWL, RDF, RDFS, XSD
 
-from pyBiodatafuse.constants import NODE_TYPES, PREDICATES, BASE_URLS_DBS
+from pyBiodatafuse.constants import BASE_URLS_DBS, NODE_TYPES, PREDICATES
 
 
 def add_ppi_data(  # TODO refactor using constants

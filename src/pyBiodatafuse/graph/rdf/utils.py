@@ -3,15 +3,15 @@
 import logging
 import os
 
-from shexer.consts import TURTLE, SHACL_TURTLE
-from shexer.shaper import Shaper
 import numpy as np
 import pandas as pd
 from bioregistry import normalize_curie
-from rdflib import Graph, Literal, URIRef, BNode
-from rdflib.namespace import RDF, RDFS, XSD, SH
+from rdflib import BNode, Graph, Literal, URIRef
+from rdflib.namespace import RDF, RDFS, SH, XSD
+from shexer.consts import SHACL_TURTLE, TURTLE
+from shexer.shaper import Shaper
 
-from pyBiodatafuse.constants import DATA_SOURCES, NODE_TYPES, NAMESPACE_BINDINGS
+from pyBiodatafuse.constants import DATA_SOURCES, NAMESPACE_BINDINGS, NODE_TYPES
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -93,9 +93,19 @@ def get_shapes(
     :param uml_figure_path: str path where the generated UML is stored.
     :param print_string_output: bool, print or not the generated TTL as a string.
     :param additional_namespaces: dictionary containing {namespace: prefix} pairs.
+    :raises ValueError: If the graph type is not a valid string or not in ['shex', 'shacl'].
     :return: shaper shex or shacl graph
     """
+    # Graph type: shex or shacl
     graph_type = graph_type.lower()
+    if graph_type not in ["shex", "shacl"]:
+        raise ValueError("Invalid graph_type specified. Choose 'shex' or 'shacl'.")
+
+    try:
+        graph_type = graph_type.lower()
+    except AttributeError as exc:
+        raise ValueError("graph_type must be a string.") from exc
+
     # Default namespaces
     namespaces_dict = {
         "http://www.w3.org/1999/02/22-rdf-syntax-ns#": "rdf",
@@ -111,7 +121,6 @@ def get_shapes(
     # Merge with additional namespaces if provided
     if additional_namespaces:
         namespaces_dict.update(additional_namespaces)
-
     # Initialize Shaper with the given graph and namespaces
     shaper = Shaper(
         all_classes_mode=True,
@@ -119,24 +128,23 @@ def get_shapes(
         input_format=TURTLE,
         namespaces_dict=namespaces_dict,
     )
-
+    graph_result = None
     # Generate the appropriate graph (Shex or SHACL)
     rdf_png_path = os.path.join(os.getcwd(), uml_figure_path) if uml_figure_path else None
-
     if graph_type == "shex":
         graph_result = shaper.shex_graph(
             string_output=True, acceptance_threshold=threshold, to_uml_path=rdf_png_path
         )
     elif graph_type == "shacl":
         graph_result = shaper.shex_graph(
-            string_output=True, acceptance_threshold=threshold, to_uml_path=rdf_png_path,
-            output_format=SHACL_TURTLE
+            string_output=True,
+            acceptance_threshold=threshold,
+            to_uml_path=rdf_png_path,
+            output_format=SHACL_TURTLE,
         )
-    else:
-        raise ValueError("Invalid graph_type specified. Choose 'shex' or 'shacl'.")
 
     # Save the output to a file if path is provided
-    if path:
+    if path and graph_result:
         # Ensure the directory exists before saving the file
         dir_path = os.path.dirname(path)
         if dir_path and not os.path.exists(dir_path):
@@ -182,7 +190,7 @@ def get_shacl_prefixes(namespaces, path, new_uris):
             with open(path, "w", encoding="UTF-8") as f:
                 f.write(ttl_data)
         except IOError as e:
-            logger.error(f"Error writing to file {path}: {e}")
+            logger.error("Error writing to file %s: %s", path, e)
 
-    logger.warning(f"Serialized data: {ttl_data}")
+    print(ttl_data)
     return graph
