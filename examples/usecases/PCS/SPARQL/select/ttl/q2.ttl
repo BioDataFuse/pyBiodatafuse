@@ -1,0 +1,48 @@
+@prefix ex: <https://sparql.example.org/.well-known/sparql-examples/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix schema: <https://schema.org/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix sio: <http://semanticscience.org/resource/> .
+@prefix obo: <http://purl.obolibrary.org/obo/> .
+@prefix pr: <http://purl.obolibrary.org/obo/pr#> .
+
+ex:genes_targeted_by_clinical_stage_drugs a sh:SPARQLExecutable,
+        sh:SPARQLSelectExecutable ;
+    rdfs:comment "Which genes are targeted by compounds in clinical stage 4 or approved, and what cellular components do these genes belong to?"@en ;
+    sh:prefixes _:sparql_examples_prefixes ;
+    sh:select """
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX sio: <http://semanticscience.org/resource/>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+PREFIX pr: <http://purl.obolibrary.org/obo/pr#>
+
+SELECT DISTINCT ?gene ?geneLabel ?compartmentLabel ?drug ?agonist
+WHERE {
+    ?gene a obo:NCIT_C16612 ;
+          rdfs:label ?geneLabel ;
+          sio:SIO_000068 ?compartment .
+    
+    ?compartment rdfs:subClassOf obo:GO_0005575 ;
+                 rdfs:label ?compartmentLabel .
+
+    ?protein pr:has_gene_template ?gene .
+
+    # Retrieve agonist drugs targeting the protein
+    {
+        ?drug a sio:SIO_010038 ;
+              obo:RO_0018027 ?protein ;
+              sio:SIO_000300 ?clinicalStatusAgonist .
+        FILTER(?clinicalStatusAgonist = obo:OPMI_0000371)
+        BIND(true AS ?agonist)
+    }
+    UNION
+    # Retrieve antagonist drugs targeting the protein with specific status
+    {
+        ?drug a sio:SIO_010038 ;
+              obo:RO_0018029 ?protein ;
+              sio:SIO_000300 obo:OPMI_0000371 .
+        BIND(false AS ?agonist)
+    }
+}""" ;
+    schema:keywords "gene-compound interaction" ;
+    schema:target <https://biohackeu24.cloud.vhp4safety.nl/sparql> .

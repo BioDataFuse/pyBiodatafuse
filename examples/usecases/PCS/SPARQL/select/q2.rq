@@ -1,0 +1,33 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX sio: <http://semanticscience.org/resource/>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+PREFIX pr: <http://purl.obolibrary.org/obo/pr#>
+
+SELECT DISTINCT ?gene ?geneLabel ?compartmentLabel ?drug ?agonist
+WHERE {
+    ?gene a obo:NCIT_C16612 ;
+          rdfs:label ?geneLabel ;
+          sio:SIO_000068 ?compartment .
+    
+    ?compartment rdfs:subClassOf obo:GO_0005575 ;
+                 rdfs:label ?compartmentLabel .
+
+    ?protein pr:has_gene_template ?gene .
+
+    # Retrieve agonist drugs targeting the protein
+    {
+        ?drug a sio:SIO_010038 ;
+              obo:RO_0018027 ?protein ;
+              sio:SIO_000300 ?clinicalStatusAgonist .
+        FILTER(?clinicalStatusAgonist = obo:OPMI_0000371)
+        BIND(true AS ?agonist)
+    }
+    UNION
+    # Retrieve antagonist drugs targeting the protein with specific status
+    {
+        ?drug a sio:SIO_010038 ;
+              obo:RO_0018029 ?protein ;
+              sio:SIO_000300 obo:OPMI_0000371 .
+        BIND(false AS ?agonist)
+    }
+}
