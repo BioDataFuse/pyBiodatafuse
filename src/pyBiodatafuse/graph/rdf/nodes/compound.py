@@ -62,7 +62,9 @@ def add_compound_node(g: Graph, compound: dict, protein_node: URIRef) -> URIRef:
                 g.add((id_node, RDFS.label, Literal(compound_name, datatype=XSD.string)))
                 g.add((id_node, RDF.type, URIRef(NODE_TYPES["tested_compound_node"])))
 
-    return compound_node
+        return compound_node
+    else:
+        return None
 
 
 def add_transporter_inhibitor_node(g: Graph, inhibitor_data: dict, base_uri: str) -> None:

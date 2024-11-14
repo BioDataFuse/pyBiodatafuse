@@ -3,16 +3,15 @@
 import logging
 import os
 
-import rdflib
 from shexer.consts import TURTLE, SHACL_TURTLE
 from shexer.shaper import Shaper
 import numpy as np
 import pandas as pd
 from bioregistry import normalize_curie
-from rdflib import Graph, Literal, URIRef
-from rdflib.namespace import RDF, RDFS, XSD
+from rdflib import Graph, Literal, URIRef, BNode
+from rdflib.namespace import RDF, RDFS, XSD, SH
 
-from pyBiodatafuse.constants import DATA_SOURCES, NODE_TYPES
+from pyBiodatafuse.constants import DATA_SOURCES, NODE_TYPES, NAMESPACE_BINDINGS
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -152,4 +151,38 @@ def get_shapes(
     return graph_result
 
 
-# Implement function to generate prefix shacl (used in SPARQL endpoint) from the graph
+def get_shacl_prefixes(namespaces, path, new_uris):
+    """
+    Generate SHACL prefix declarations and save them in Turtle format.
+
+    :param namespaces: Optional dictionary of prefix to namespace URI mappings to include in the SHACL declarations.
+    :param path: Optional path to a file where the Turtle data will be written. If not provided, the data is not written to disk.
+    :param new_uris: Dictionary of prefix to namespace URI mappings to include in the SHACL declarations.
+
+    :return: A RDFLib Graph containing the SHACL prefix declarations.
+    """
+    graph = Graph()
+
+    def add_declarations(prefix_dict):
+        for prefix, ns_uri in prefix_dict.items():
+            declare_node = BNode()
+            graph.add((declare_node, SH.prefix, Literal(prefix)))
+            graph.add((declare_node, SH.namespace, Literal(ns_uri, datatype=XSD.anyURI)))
+            graph.add((BNode(), SH.declare, declare_node))
+
+    add_declarations(new_uris)
+    add_declarations(NAMESPACE_BINDINGS)
+    if namespaces:
+        add_declarations(namespaces)
+
+    ttl_data = graph.serialize(format="ttl")
+
+    if path:
+        try:
+            with open(path, "w", encoding="UTF-8") as f:
+                f.write(ttl_data)
+        except IOError as e:
+            logger.error(f"Error writing to file {path}: {e}")
+
+    logger.warning(f"Serialized data: {ttl_data}")
+    return graph

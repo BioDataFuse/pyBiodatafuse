@@ -3,4 +3,4 @@
 """init script."""
 
 
-from .rdf import generate_rdf
+from .rdf import BDFGraph
