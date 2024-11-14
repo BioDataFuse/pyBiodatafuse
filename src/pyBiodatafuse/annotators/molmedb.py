@@ -122,6 +122,9 @@ def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
     # Record the end time
     end_time = datetime.datetime.now()
 
+    if intermediate_df.empty:
+        return intermediate_df, {}
+
     intermediate_df["drugbank_id"] = intermediate_df["drugbank_id"].apply(
         lambda x: f"DrugBank:{x}" if not pd.isna(x) else None
     )

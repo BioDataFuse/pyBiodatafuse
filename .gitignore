@@ -907,7 +907,7 @@ scratch/
 *.pkl
 /pyBiodatafuse-0.0.4.dev0
 *.graphml
-
+#*.json
 *.gml
 pubchem_cache_results.json
 examples/usecases/PCS/dreamwalk_data
@@ -922,3 +922,6 @@ robot.jar
 robot
 src/pyBiodatafuse/resources/biodatafuse.properties
 src/pcs_graph.ttl
+BDF_example_graph.ttl
+bdf_shexer.png
+graph_shex.ttl

@@ -28,6 +28,27 @@ WIKIDATA = "Wikidata"
 WIKIPATHWAYS = "WikiPathways"
 OPENTARGETS_REACTOME = "OpenTargets_reactome"
 
+# DataFrame Columns
+
+TARGET_SOURCE_COL = "target.source"
+TARGET_COL = "target"
+IDENTIFIER_COL = "identifier"
+IDENTIFIER_SOURCE_COL = "identifier.source"
+TARGET_SOURCE_COL = "target.source"
+BGEE_GENE_EXPRESSION_LEVELS_COL = f"{BGEE}_gene_expression_levels"
+DISGENET_DISEASE_COL = f"{DISGENET}_diseases"
+OPENTARGETS_DISEASE_COL = f"{OPENTARGETS}_diseases"
+LITERATURE_DISEASE_COL = "literature_based_info"
+OPENTARGETS_REACTOME_COL = f"{OPENTARGETS}_reactome"
+OPENTARGETS_GO_COL = f"{OPENTARGETS}_go"
+OPENTARGETS_DISEASE_COMPOUND_COL = f"{OPENTARGETS}_disease_compounds"
+OPENTARGETS_GENE_COMPOUND_COL = f"{OPENTARGETS}_gene_compounds"
+MOLMEDB_PROTEIN_COMPOUND_COL = f"{MOLMEDB}_transporter_inhibitor"
+MOLMEDB_COMPOUND_PROTEIN_COL = f"{MOLMEDB}_transporter_inhibited"
+PUBCHEM_COMPOUND_ASSAYS_COL = f"{PUBCHEM}_assays"
+STRING_PPI_COL = f"{STRING}_ppi"
+WIKIDATA_CC_COL = f"{WIKIDATA}_cellular_components"
+
 # Input type for each data source
 BGEE_GENE_INPUT_ID = "Ensembl"
 DISGENET_GENE_INPUT_ID = "NCBI Gene"
@@ -78,7 +99,6 @@ ANATOMICAL_ENTITIES_LIST = [
     "respiratory system",
     "skeletal system",
 ]
-BGEE_GENE_EXPRESSION_LEVELS_COL = f"{BGEE}_gene_expression_levels"
 
 # DISGENET
 DISGENET_DISEASE_OUTPUT_DICT = {
@@ -107,9 +127,6 @@ EFO = "EFO"
 DO = "DO"
 MESH = "MESH"
 UMLS = "UMLS"
-DISGENET_DISEASE_COL = f"{DISGENET}_diseases"
-OPENTARGETS_DISEASE_COL = f"{OPENTARGETS}_diseases"  # literature based disease info
-LITERATURE_DISEASE_COL = "literature_based_info"
 LITERATURE_DISEASE_OUTPUT_DICT = {
     "disease_name": str,
     "UMLS": str,
@@ -153,7 +170,6 @@ OPENTARGETS_IGNORE_DISEASE_IDS = [
     "omimps",
     "csp",
 ]
-OPENTARGETS_DISEASE_COL = f"{OPENTARGETS}_diseases"
 
 # MINERVA
 MINERVA_PATHWAY_OUTPUT_DICT = {
@@ -175,12 +191,10 @@ OPENTARGETS_REACTOME_OUTPUT_DICT = {
     "pathway_label": str,
 }
 PATHWAY_ID = "MINERVA|WP|R-"  # ID Start with WP or R-
-OPENTARGETS_REACTOME_COL = f"{OPENTARGETS}_reactome"
 
 # Open Targets - GO processes
 OPENTARGETS_GO_OUTPUT_DICT = {"go_id": str, "go_name": str, "go_type": str}
 GO_ID = "GO"
-OPENTARGETS_GO_COL = f"{OPENTARGETS}_go"
 
 # Open Targets - Compound
 OPENTARGETS_COMPOUND_OUTPUT_DICT = {
@@ -197,9 +211,8 @@ OPENTARGETS_COMPOUND_OUTPUT_DICT = {
 CHEMBL_ID = "CHEMBL"
 DRUGBANK_ID = "DrugBank"
 RELATION = "inhibits|activates"
-OPENTARGETS_GENE_COMPOUND_COL = f"{OPENTARGETS}_gene_compounds"
 OPENTARGETS_COMPOUND_DISEASE_RELATION = "treats"
-OPENTARGETS_DISEASE_COMPOUND_COL = f"{OPENTARGETS}_disease_compounds"
+
 
 # MolMeDB - Gene/Protein input
 MOLMEDB_PROTEIN_COMPOUND_OUTPUT_DICT = {
@@ -215,7 +228,6 @@ MOLMEDB_PROTEIN_COMPOUND_OUTPUT_DICT = {
 }
 MOLMEDB_ID = "MM"
 DRUGBANK_ID = "DrugBank"
-MOLMEDB_PROTEIN_COMPOUND_COL = f"{MOLMEDB}_transporter_inhibitor"
 
 # MolMeDB - Compound input
 MOLMEDB_COMPOUND_PROTEIN_OUTPUT_DICT = {
@@ -224,7 +236,6 @@ MOLMEDB_COMPOUND_PROTEIN_OUTPUT_DICT = {
     "source_pmid": str,
 }
 UNIPROT_TREMBL_ID = "P"
-MOLMEDB_COMPOUND_PROTEIN_COL = f"{MOLMEDB}_transporter_inhibited"
 
 # PubChem - Assays
 PUBCHEM_COMPOUND_OUTPUT_DICT = {
@@ -238,14 +249,10 @@ PUBCHEM_COMPOUND_OUTPUT_DICT = {
 }
 OUTCOME = "active|inactive"
 INCHI = "InChI"
-PUBCHEM_COMPOUND_ASSAYS_COL = f"{PUBCHEM}_assays"
 
 # STRING
 STRING_OUTPUT_DICT = {"stringdb_link_to": str, STRING_GENE_INPUT_ID: str, "score": int}
-STRING_PPI_COL = f"{STRING}_ppi"
 
-# Wikidata
-WIKIDATA_CC_COL = f"{WIKIDATA}_cellular_components"
 
 """ Node and edge main lable and attributes for each data source """
 # Anatomical entity node
@@ -457,6 +464,23 @@ COMPOUND_NAMESPACE_MAPPER = {"pubchem.compound": "PubChem Compound", "CHEMBL": "
 
 # RDF (rdflib constants and namespaces)
 
+
+DATA_TYPES_SOURCES = {
+    "identifier": IDENTIFIER_COL,
+    "identifier_source": IDENTIFIER_SOURCE_COL,
+    "target": TARGET_COL,
+    "target_source": TARGET_SOURCE_COL,
+    "gene_expression": BGEE_GENE_EXPRESSION_LEVELS_COL,
+    "assays": PUBCHEM_COMPOUND_ASSAYS_COL,
+    "go": OPENTARGETS_GO_COL,
+    "gene_compounds": OPENTARGETS_GENE_COMPOUND_COL,
+    "literature_disease": LITERATURE_DISEASE_COL,
+    "transporter_inhibitor": MOLMEDB_PROTEIN_COMPOUND_COL,
+    "ppi": STRING_PPI_COL,
+    "disgenet": DISGENET_DISEASE_COL,
+    "opentargets_disease": OPENTARGETS_DISEASE_COL,
+}
+
 # Dictionary to store namespace strings
 NAMESPACE_BINDINGS = {
     "sio": "http://semanticscience.org/resource/",
@@ -497,7 +521,7 @@ NODE_TYPES = {
     "data_source_node": "http://semanticscience.org/resource/SIO_000750",
     "gene_expression_value_node": f"{NAMESPACE_BINDINGS['sio']}SIO_001077",
     "anatomical_entity_node": "http://semanticscience.org/resource/SIO_001262",
-    "tested_substance_node": "http://semanticscience.org/resource/SIO_010038",
+    "tested_compound_node": "http://semanticscience.org/resource/SIO_010038",
     "source_database": f"{NAMESPACE_BINDINGS['sio']}SIO_000750",
     "experimental_process_node": "http://www.ebi.ac.uk/efo/EFO_0002694",
     "pathway_node": f"{NAMESPACE_BINDINGS['obo']}PW_0000001",
@@ -507,8 +531,8 @@ NODE_TYPES = {
     "article": f"{NAMESPACE_BINDINGS['obo']}IAO_0000013",
     "protein_node": "http://purl.obolibrary.org/obo/NCIT_C17021",
     "ppi_node": "http://purl.obolibrary.org/obo/NCIT_C18469",
-    "drug_node": "http://semanticscience.org/resource/SIO_010038",
-    "approved_drug": "http://purl.obolibrary.org/obo/NCIT_C172573",
+    "compound_node": "http://semanticscience.org/resource/SIO_010038",
+    "approved_compound": "http://purl.obolibrary.org/obo/NCIT_C172573",
     "aid": "http://purl.obolibrary.org/obo/CLO_0037244",
     "developmental_stage_node": "http://purl.obolibrary.org/obo/NCIT_C43531",
 }
@@ -528,11 +552,12 @@ PREDICATES = {
     "sio_is_part_of": f"{NAMESPACE_BINDINGS['sio']}SIO_000068",
     "has_gene_count": "",  # TODO gene count
     "precedes": "http://semanticscience.org/resource/SIO_000248",
-    "is preceded by": "http://semanticscience.org/resource/SIO_000248",
+    "is_preceded_by": "http://semanticscience.org/resource/SIO_000248",
     "sio_has_part": f"{NAMESPACE_BINDINGS['sio']}SIO_000028",
     "negatively_regulates": f"{NAMESPACE_BINDINGS['obo']}RO_0002449",
     "phase": "http://purl.obolibrary.org/obo/PATO_0000083",
-    "has_gene_template": "http://purl.obolibrary.org/obo/pr#has_gene_template",
+    "translation_of": "http://purl.obolibrary.org/obo/so#translation_of",
+    "translates_to": "http://purl.obolibrary.org/obo/so#translates_to",
 }
 
 # Classes for clinical phases
@@ -572,7 +597,7 @@ DATA_SOURCES = {
     OPENTARGETS_REACTOME: "https://www.opentargets.org/",
 }
 
-IDENTIFIER_TYPES = [
+DISEASE_IDENTIFIER_TYPES = [
     "HPO",
     "NCI",
     "OMIM",
@@ -583,3 +608,9 @@ IDENTIFIER_TYPES = [
     "MESH",
     "UMLS",
 ]
+
+BASE_URLS_DBS = {
+    "uniprot": "https://www.uniprot.org/uniprotkb/",
+    "ensembl": "http://identifiers.org/ensembl#",
+    "stringdb": "https://string-db.org/network/",
+}

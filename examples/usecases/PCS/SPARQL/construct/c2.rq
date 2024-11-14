@@ -1,0 +1,55 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX sio: <http://semanticscience.org/resource/>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+PREFIX pr: <http://purl.obolibrary.org/obo/pr#>
+
+CONSTRUCT {
+    ?gene a obo:NCIT_C16612 ;
+          sio:SIO_000068 ?compartment ;
+          rdfs:label ?geneLabel .
+    ?protein pr:has_gene_template ?gene ;
+             rdfs:label ?proteinLabel .
+
+    ?agonistDrug rdfs:label ?agonistLabel ;
+                 obo:RO_0018027 ?protein ;
+                 rdfs:comment "agonist" ;
+    			sio:SIO_000300 ?clinicalStatusAgonist .
+
+    ?antagonistDrug rdfs:label ?antagonistLabel ;
+                    obo:RO_0018029 ?protein ;
+                    rdfs:comment "antagonist" ;
+    			sio:SIO_000300 ?clinicalStatusAntagonist .
+
+    ?compartment rdfs:label ?compartmentLabel ;
+                 rdfs:subClassOf obo:GO_0005575 .
+    obo:GO_0005575 rdfs:label "cellular compartment" .
+}
+
+WHERE {
+    ?gene a obo:NCIT_C16612 ;
+          rdfs:label ?geneLabel .
+
+        ?gene sio:SIO_000068 ?compartment .
+        ?compartment rdfs:subClassOf obo:GO_0005575 ;
+                     rdfs:label ?compartmentLabel .
+    
+    ?protein pr:has_gene_template ?gene ;
+             rdfs:label ?proteinLabel .
+
+    # Retrieve agonists with a unique variable for the drug
+
+        ?agonistDrug a sio:SIO_010038 ;
+                     rdfs:label ?agonistLabel ;
+        			sio:SIO_000300 ?clinicalStatusAgonist ;
+
+                     obo:RO_0018027 ?protein .
+
+
+    # Retrieve antagonists with a unique variable for the drug
+
+        ?antagonistDrug a sio:SIO_010038 ;
+                        rdfs:label ?antagonistLabel ;
+    					sio:SIO_000300 ?clinicalStatusAntagonist ;
+                        obo:RO_0018029 ?protein .
+    
+}

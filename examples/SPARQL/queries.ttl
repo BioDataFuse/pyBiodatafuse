@@ -1,0 +1,116 @@
+@prefix ex: <https://sparql.example.org/.well-known/sparql-examples/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix schema: <https://schema.org/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix sio: <http://semanticscience.org/resource/> .
+@prefix obo: <http://purl.obolibrary.org/obo/> .
+
+# Query 0
+ex:genes_associated_with_pathways_and_expression_metrics a sh:SPARQLExecutable, sh:SPARQLSelectExecutable ;
+    rdfs:comment "Retrieve details about each gene in the dataset, including the pathways it participates in, and the expression levels tied to it together with its associated anatomical entity and developmental stage. Return the text labels for all entities."@en ;
+    sh:prefixes _:sparql_examples_prefixes ;
+    sh:select """
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX sio: <http://semanticscience.org/resource/>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+
+SELECT ?gene ?geneLabel ?pathway ?pathwayLabel ?expressionMetric ?expressionValue ?anatomicalEntity ?anatomicalEntityLabel ?developmentalStage ?developmentalStageLabel
+WHERE {
+    ?gene a obo:NCIT_C16612 ;
+          sio:SIO_000068 ?pathway ;
+          sio:SIO_000216 ?expressionMetric ;
+          rdfs:label ?geneLabel .
+    ?anatomicalEntity rdfs:label ?anatomicalEntityLabel ;
+          a sio:SIO_001262 .
+    ?developmentalStage rdfs:label ?developmentalStageLabel ;
+          a obo:NCIT_C43531 .
+    ?expressionMetric sio:SIO_000300 ?expressionValue ;
+          sio:SIO_001403 ?anatomicalEntity ;
+          sio:SIO_001403 ?developmentalStage ;
+          a sio:SIO_001077 .
+
+    
+    ?pathway a obo:PW_0000001 ;
+          rdfs:label ?pathwayLabel .
+}""" ;
+    schema:keywords "gene-pathway interaction, expression levels, anatomical entity, developmental stage" .
+
+
+# Query 1
+ex:pathways_with_multiple_genes_grouped_by_source a sh:SPARQLExecutable, sh:SPARQLSelectExecutable ;
+    rdfs:comment "Identify pathways described to involve more than three genes, and show which sources provide data on these gene-pathway associations. Return the genes as well."@en ;
+    sh:prefixes _:sparql_examples_prefixes ;
+    sh:select """
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX sio: <http://semanticscience.org/resource/>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+
+SELECT ?pathway ?pathwayLabel (COUNT(?gene) AS ?geneCount) (GROUP_CONCAT(DISTINCT ?sourceLabel; separator=", ") AS ?sources)  (GROUP_CONCAT(DISTINCT ?geneLabel; separator=", ") AS ?genes)
+WHERE {
+    ?pathway a obo:PW_0000001 ;
+             sio:SIO_000028 ?gene ;
+             sio:SIO_000253 ?source ;
+             rdfs:label ?pathwayLabel .
+    ?gene a obo:NCIT_C16612 ;
+            rdfs:label ?geneLabel .
+    ?source rdfs:label ?sourceLabel .
+} 
+GROUP BY ?pathway ?pathwayLabel
+HAVING (COUNT(?gene) > 3)
+""" ;
+    schema:keywords "pathways with multiple genes, data sources" .
+
+
+# Query 2
+ex:proteins_linked_to_disease_genes_and_pathways a sh:SPARQLExecutable, sh:SPARQLSelectExecutable ;
+    rdfs:comment "Show the protein products of all genes as well as any pathways they are part of. Return the molecular functions these genes hace been described to perform. Don't return labels, except for pathways and molecular functions."@en ;
+    sh:prefixes _:sparql_examples_prefixes ;
+    sh:select """
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX sio: <http://semanticscience.org/resource/>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+PREFIX pr: <http://purl.obolibrary.org/obo/pr#>
+
+SELECT DISTINCT ?protein ?gene ?pathway ?pathwayLabel ?molecularFunction ?molecularFunctionLabel
+WHERE {
+    ?gene a obo:NCIT_C16612 ;
+                 rdfs:label ?geneLabel ;
+                 sio:SIO_000068 ?pathway ;
+                 sio:SIO_000068 ?molecularFunction .
+    ?molecularFunction rdfs:subClassOf obo:GO_0003674 ;
+                 rdfs:label ?molecularFunctionLabel .
+    ?protein a obo:NCIT_C17021 ;
+             pr:has_gene_template ?gene ;
+             rdfs:label ?proteinLabel .
+    ?pathway a obo:PW_0000001 ;
+             rdfs:label ?pathwayLabel .
+}""" ;
+    schema:keywords "pathways, genes, molecular functions, genes involved in function" .
+
+
+# Query 3
+ex:genes_with_indirect_links_to_anatomical_entities a sh:SPARQLExecutable, sh:SPARQLSelectExecutable ;
+    rdfs:comment "List genes linked to that have been found to be expressed in blood, along with their expression level values. Sort them in descending order according to their expression level values. Return all relevant labels."@en ;
+    sh:prefixes _:sparql_examples_prefixes ;
+    sh:select """
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX sio: <http://semanticscience.org/resource/>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+
+SELECT ?gene ?geneLabel ?expressionValue ?anatomicalEntity ?entityLabel
+WHERE {
+    ?gene a obo:NCIT_C16612 ;
+          sio:SIO_000216 ?expressionMetric ;
+          rdfs:label ?geneLabel .
+
+          
+    ?expressionMetric a sio:SIO_001077 ;
+                      sio:SIO_001403 ?anatomicalEntity ;
+                      sio:SIO_000300 ?expressionValue ;
+                      sio:SIO_001403 obo:UBERON_0000104 .
+    ?anatomicalEntity a sio:SIO_001262 ;
+                      rdfs:label ?anatomicalEntityLabel .
+}
+ORDER BY DESC(?expressionValue)""" ;
+    schema:keywords "genes with anatomical connections, expression metrics" .
+

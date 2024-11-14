@@ -1,0 +1,58 @@
+prefix sh: <http://www.w3.org/ns/shacl#>
+prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+
+[] sh:declare [
+  sh:prefix "up" ;
+  sh:namespace "http://purl.uniprot.org/core/"^^xsd:anyURI ] .
+
+[] sh:declare [
+  sh:prefix "chembl" ;
+  sh:namespace "https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL"^^xsd:anyURI ] .
+
+[] sh:declare [
+  sh:prefix "ensembl" ;
+  sh:namespace "http://identifiers.org/ensembl#"^^xsd:anyURI ] .
+
+[] sh:declare [
+  sh:prefix "reactome" ;
+  sh:namespace "https://reactome.org/content/detail/"^^xsd:anyURI ] .
+
+[] sh:declare [
+  sh:prefix "wp" ;
+  sh:namespace "https://www.wikipathways.org/pathways/"^^xsd:anyURI ] .
+
+[] sh:declare [
+  sh:prefix "dc" ;
+  sh:namespace "http://purl.org/dc/elements/1.1/"^^xsd:anyURI ] .
+
+[] sh:declare [
+  sh:prefix "pr" ;
+  sh:namespace "http://purl.obolibrary.org/obo/pr#"^^xsd:anyURI ] .
+
+[] sh:declare [
+  sh:prefix "chebi" ;
+  sh:namespace "http://purl.obolibrary.org/obo/chebi/"^^xsd:anyURI ] .
+
+[] sh:declare [
+  sh:prefix "obo" ;
+  sh:namespace "http://purl.obolibrary.org/obo/"^^xsd:anyURI ] .
+
+[] sh:declare [
+  sh:prefix "owl" ;
+  sh:namespace "http://www.w3.org/2002/07/owl#"^^xsd:anyURI ] .
+
+[] sh:declare [
+  sh:prefix "rdfs" ;
+  sh:namespace "http://www.w3.org/2000/01/rdf-schema#"^^xsd:anyURI ] .
+
+[] sh:declare [
+  sh:prefix "sio" ;
+  sh:namespace "http://semanticscience.org/resource/"^^xsd:anyURI ] .
+
+[] sh:declare [
+  sh:prefix "xsd" ;
+  sh:namespace "http://www.w3.org/2001/XMLSchema#"^^xsd:anyURI ] .
+
+[] sh:declare [
+  sh:prefix "bdf" ;
+  sh:namespace "https://biodatafuse.org/"^^xsd:anyURI ] .
