@@ -172,6 +172,11 @@ def get_shacl_prefixes(namespaces, path, new_uris):
     graph = Graph()
 
     def add_declarations(prefix_dict):
+        """
+        Adds declarations for an dictionary of namespaces.
+
+        :param prefix_dict: Dictionary of  {prefix:namespace,}.
+        """
         for prefix, ns_uri in prefix_dict.items():
             declare_node = BNode()
             graph.add((declare_node, SH.prefix, Literal(prefix)))
