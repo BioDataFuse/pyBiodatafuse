@@ -6,8 +6,8 @@ This module defines the `BDFGraph` class, which extends the functionality of a b
 
 The class supports adding nodes for genes, proteins, pathways,
 compounds, gene-disease associations, gene expression data, and
-more. It also facilitates SHACL and ShEx validation, and metadata
-management for the RDF graph.
+more. It also uses shexer for SHACL and ShEx elucidation, and metadata
+management for the BDF graph.
 
 Classes:
     BDFGraph(Graph): Main class for constructing and managing BioDatafuse RDF graphs.
