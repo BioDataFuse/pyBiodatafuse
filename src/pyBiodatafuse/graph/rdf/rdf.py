@@ -117,22 +117,29 @@ class BDFGraph(Graph):
             stringdb_data = row.get(STRING_PPI_COL, None)
             # molmedb_data = row.get("MolMeDB_transporter_inhibitor", None)
             # transporter_inhibited_data = row.get(MOLMEDB_COMPOUND_PROTEIN_COL, None)
+            # Initialize an empty list to store disease data
             disease_data = []
-            for source in [DISGENET_DISEASE_COL, OPENTARGETS_DISEASE_COL]:
-                if open_only and source == DISGENET_DISEASE_COL:
-                    continue
-                source_el = row.get(source)
-                if isinstance(source_el, list):
-                    disease_data += source_el
 
-            if (
-                pd.isna(source_idx)
-                or pd.isna(source_namespace)
-                or pd.isna(target_idx)
-                or pd.isna(target_namespace)
+            # Iterate over the specified data columns
+            for source_col in [DISGENET_DISEASE_COL, OPENTARGETS_DISEASE_COL]:
+                if open_only and source_col == DISGENET_DISEASE_COL:
+                    continue  # TODO fix open data only feature
+                # Extract the source data from the current row
+                source_data = row.get(source_col, [])
+                # Ensure source_data is not None and is of type array or list
+                if len(source_data) > 0:
+                    disease_data.extend(source_data)
+            # Check for missing required indices or namespaces and skip the row if any are NaN
+            if any(
+                pd.isna(val) for val in [source_idx, source_namespace, target_idx, target_namespace]
             ):
                 continue
 
+            # Check for missing required indices or namespaces and skip the row if any are NaN
+            if any(
+                pd.isna(val) for val in [source_idx, source_namespace, target_idx, target_namespace]
+            ):
+                continue
             source_curie = normalize_curie(f"{source_namespace}:{source_idx}")
             target_curie = normalize_curie(f"{target_namespace}:{target_idx}")
 
@@ -307,12 +314,12 @@ class BDFGraph(Graph):
         :param metadata: Metadata to be added.
         """
         add_metadata(
-            self,
-            self.version_iri,
-            self.author,
-            self.orcid,
-            metadata,
-            self.version_iri,
+            g=self,
+            graph_uri=self.version_iri,  # TODO fix
+            version_iri=self.version_iri,
+            author=self.author,
+            orcid=self.orcid,
+            metadata=metadata,
         )
 
     def shex(

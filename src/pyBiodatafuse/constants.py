@@ -489,13 +489,14 @@ NAMESPACE_BINDINGS = {
     "umls": "https://uts-ws.nlm.nih.gov/rest/semantic-network/2015AB/CUI/",
     "ensembl": "https://identifiers.org/ensembl:",
     "dcat": "http://www.w3.org/ns/dcat#",
-    "biodatafuse": "https://biodatafuse.org/",
+    "bdf": "https://biodatafuse.org/",
     "foaf": "http://xmlns.com/foaf/0.1/",
     "skos": "http://www.w3.org/2004/02/skos/core#",
     "owl": "http://www.w3.org/2002/07/owl#",
     "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
     "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
     "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "bdfo": "https://biodatafuse.org/onto/bdf#",
 }
 
 # Patterns URIs for nodes (one for each node in the schema)
@@ -535,6 +536,8 @@ NODE_TYPES = {
     "approved_compound": "http://purl.obolibrary.org/obo/NCIT_C172573",
     "aid": "http://purl.obolibrary.org/obo/CLO_0037244",
     "developmental_stage_node": "http://purl.obolibrary.org/obo/NCIT_C43531",
+    "el_node": "https://biodatafuse.org/onto/bdf#DisGeNET_Evidence_Level",
+    "ei_node": "https://biodatafuse.org/onto/bdf#DisGeNET_Evidence_Index",
 }
 
 # PREDICATES
@@ -613,4 +616,15 @@ BASE_URLS_DBS = {
     "uniprot": "https://www.uniprot.org/uniprotkb/",
     "ensembl": "http://identifiers.org/ensembl#",
     "stringdb": "https://string-db.org/network/",
+}
+
+NAMESPACE_SHAPES = {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#": "rdf",
+    "http://example.org/": "ex",
+    "http://weso.es/shapes/": ":",
+    "http://www.w3.org/2001/XMLSchema#": "xsd",
+    "http://www.w3.org/2002/07/owl#": "owl",
+    "http://purl.obolibrary.org/obo/": "obo",
+    "http://purl.obolibrary.org/obo/so#": "so",
+    "https://biodatafuse.org/onto/bdf#": "bdfo",
 }

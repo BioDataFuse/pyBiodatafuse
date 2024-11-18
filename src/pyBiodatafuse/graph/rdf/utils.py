@@ -11,7 +11,7 @@ from rdflib.namespace import RDF, RDFS, SH, XSD
 from shexer.consts import SHACL_TURTLE, TURTLE
 from shexer.shaper import Shaper
 
-from pyBiodatafuse.constants import DATA_SOURCES, NAMESPACE_BINDINGS, NODE_TYPES
+from pyBiodatafuse.constants import DATA_SOURCES, NAMESPACE_BINDINGS, NAMESPACE_SHAPES, NODE_TYPES
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -106,27 +106,17 @@ def get_shapes(
     except AttributeError as exc:
         raise ValueError("graph_type must be a string.") from exc
 
-    # Default namespaces
-    namespaces_dict = {
-        "http://www.w3.org/1999/02/22-rdf-syntax-ns#": "rdf",
-        "http://example.org/": "ex",
-        "http://weso.es/shapes/": ":",
-        "http://www.w3.org/2001/XMLSchema#": "xsd",
-        "http://www.w3.org/2002/07/owl#": "owl",
-        f"{base_uri}": "graph",
-        "http://purl.obolibrary.org/obo/": "obo",
-        "http://purl.obolibrary.org/obo/so#": "so",
-    }
-
+    # Default namespaces: NAMESPACE_SHAPES
+    NAMESPACE_SHAPES[base_uri] = "graph"
     # Merge with additional namespaces if provided
     if additional_namespaces:
-        namespaces_dict.update(additional_namespaces)
+        NAMESPACE_SHAPES.update(additional_namespaces)
     # Initialize Shaper with the given graph and namespaces
     shaper = Shaper(
         all_classes_mode=True,
         rdflib_graph=g,
         input_format=TURTLE,
-        namespaces_dict=namespaces_dict,
+        namespaces_dict=NAMESPACE_SHAPES,
     )
     graph_result = None
     # Generate the appropriate graph (Shex or SHACL)
