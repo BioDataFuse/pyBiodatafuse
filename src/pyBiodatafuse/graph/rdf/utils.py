@@ -11,7 +11,7 @@ from rdflib.namespace import RDF, RDFS, SH, XSD
 from shexer.consts import SHACL_TURTLE, TURTLE
 from shexer.shaper import Shaper
 
-from pyBiodatafuse.constants import DATA_SOURCES, NAMESPACE_BINDINGS, NODE_TYPES, NAMESPACE_SHAPES
+from pyBiodatafuse.constants import DATA_SOURCES, NAMESPACE_BINDINGS, NAMESPACE_SHAPES, NODE_TYPES
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

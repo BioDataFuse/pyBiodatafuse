@@ -130,11 +130,15 @@ class BDFGraph(Graph):
                 if len(source_data) > 0:
                     disease_data.extend(source_data)
             # Check for missing required indices or namespaces and skip the row if any are NaN
-            if any(pd.isna(val) for val in [source_idx, source_namespace, target_idx, target_namespace]):
+            if any(
+                pd.isna(val) for val in [source_idx, source_namespace, target_idx, target_namespace]
+            ):
                 continue
 
             # Check for missing required indices or namespaces and skip the row if any are NaN
-            if any(pd.isna(val) for val in [source_idx, source_namespace, target_idx, target_namespace]):
+            if any(
+                pd.isna(val) for val in [source_idx, source_namespace, target_idx, target_namespace]
+            ):
                 continue
             source_curie = normalize_curie(f"{source_namespace}:{source_idx}")
             target_curie = normalize_curie(f"{target_namespace}:{target_idx}")

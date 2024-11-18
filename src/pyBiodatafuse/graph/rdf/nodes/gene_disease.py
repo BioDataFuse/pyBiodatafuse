@@ -36,14 +36,15 @@ def add_gene_disease_associations(
     g.add((assoc_node, RDF.type, URIRef(NODE_TYPES["gene_disease_association"])))
     g.add((assoc_node, URIRef(PREDICATES["sio_refers_to"]), gene_node))
     g.add((assoc_node, URIRef(PREDICATES["sio_refers_to"]), disease_node))
-
+    umlscui = disease_data.get("disease_umlscui", "")
+    score = disease_data.get("score", "")
     if disease_data.get("score"):
         score_node = add_score_node(
             g,
             id_number,
             source_idx,
-            disease_data.get("disease_umlscui"),
-            disease_data["score"],
+            umlscui,
+            score,
             new_uris,
             i,
             gene_id,
