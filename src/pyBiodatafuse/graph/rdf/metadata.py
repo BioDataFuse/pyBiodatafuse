@@ -38,7 +38,6 @@ def add_metadata(
         g.add((graph_resource, DCTERMS.identifier, URIRef(version_iri)))
 
     if orcid:
-        print(orcid)
         orcid_node = URIRef(orcid)
         g.add((orcid_node, OWL.sameAs, Literal(author, datatype=XSD.string)))
         g.add((graph_resource, DCTERMS.creator, orcid_node))

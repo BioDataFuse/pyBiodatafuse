@@ -628,3 +628,4 @@ NAMESPACE_SHAPES = {
     "http://purl.obolibrary.org/obo/so#": "so",
     "https://biodatafuse.org/onto/bdf#": "bdfo",
 }
+
