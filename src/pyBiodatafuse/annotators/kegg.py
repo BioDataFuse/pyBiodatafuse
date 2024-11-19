@@ -56,7 +56,8 @@ def get_kegg_ids(row):
     """
     results = requests.get(f"{KEGG_ENDPOINT}/conv/genes/ncbi-geneid:{row['target']}")
     kegg_id = results.text.split()
-    return {"KEGG_id": kegg_id[1]}
+    if len(kegg_id) > 1:
+        return {"KEGG_id": kegg_id[1]}
 
 
 def get_compound_genes(pathway_info, results_entry):
@@ -101,8 +102,14 @@ def get_pathway_info(row):
     :returns: Dictionary containing pathway IDs and labels.
     """
     kegg_dict = row[KEGG_COL_NAME]
+    if not isinstance(kegg_dict, dict) or kegg_dict.get("KEGG_id") is None:
+        kegg_dict["pathways"] = None
+        return kegg_dict
+    
     results = requests.get(f"{KEGG_ENDPOINT}/link/pathway/{kegg_dict.get('KEGG_id')}") 
-    results_test = requests.get(f"{KEGG_ENDPOINT}/link/pathway/C00035") 
+    if len(results.text) <= 1:
+        kegg_dict["pathways"] = None
+        return kegg_dict
 
     pathways = []
 
@@ -110,7 +117,7 @@ def get_pathway_info(row):
         pathway_info = {}
         parts = line.split("\t")
         pathway_id = parts[1]
-        pathway_info["pathway_id"] = pathway_id 
+        pathway_info["pathway_id"] = pathway_id
 
         # Get entry from KEGG API
         results_entry = requests.get(f"{KEGG_ENDPOINT}/get/{pathway_id}")
