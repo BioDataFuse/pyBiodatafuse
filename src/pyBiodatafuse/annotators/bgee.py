@@ -32,7 +32,8 @@ def check_sparql_endpoint_bgee() -> bool:
 
     :returns: True if the endpoint is available, False otherwise.
     """
-    with open(os.path.dirname(__file__) + "/queries/bgee-get-last-modified.rq", "r") as fin:
+    query_file_path = os.path.join(os.path.dirname(__file__), "queries", "bgee-get-last-modified.rq")
+    with open(query_file_path, "r", encoding="utf-8") as fin:
         sparql_query = fin.read()
 
     sparql = SPARQLWrapper(BGEE_ENDPOINT)
@@ -54,7 +55,7 @@ def get_version_bgee() -> dict:
     # http://purl.org/dc/terms/modified
     :returns: a dictionary containing the last modified date information
     """
-    with open(os.path.dirname(__file__) + "/queries/bgee-get-last-modified.rq", "r") as fin:
+    with open(os.path.join(os.path.dirname(__file__), "queries", "bgee-get-last-modified.rq"), "r", encoding="utf-8") as fin:
         sparql_query = fin.read()
 
     sparql = SPARQLWrapper(BGEE_ENDPOINT)
@@ -102,9 +103,8 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
         if anatomical_entity.strip() != ""
     ]
 
-    with open(
-        os.path.dirname(__file__) + "/queries/bgee-genes-tissues-expression-level.rq", "r"
-    ) as fin:
+    query_file_path = os.path.join(os.path.dirname(__file__), "queries", "bgee-genes-tissues-expression-level.rq")
+    with open(query_file_path, "r", encoding="utf-8") as fin:
         sparql_query = fin.read()
 
     # Add version to metadata file
