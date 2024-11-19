@@ -20,8 +20,14 @@ def add_gene_protein_nodes(g: Graph, row) -> tuple:
     """
     target = row["target"]
     if target:
+        uniprot = row.get("Uniprot-TrEMBL", None)
         gene_node = URIRef(f"http://identifiers.org/ensembl#{target}")
-        protein_node = URIRef(f"http://identifiers.org/ensembl#{target}xProtein")
+        prot_label = f"{target}xProtein"
+        if uniprot:
+            protein_node = URIRef(f"https://www.uniprot.org/uniprot/{uniprot}")
+            prot_label = uniprot
+        else:
+            protein_node = URIRef(f"http://identifiers.org/ensembl#{target}xProtein")
 
         # Add gene node to graph
         g.add((gene_node, RDF.type, URIRef(NODE_TYPES["gene_node"])))
@@ -33,6 +39,6 @@ def add_gene_protein_nodes(g: Graph, row) -> tuple:
 
         # Add protein node to graph
         g.add((protein_node, RDF.type, URIRef(NODE_TYPES["protein_node"])))
-        g.add((protein_node, RDFS.label, Literal(f"{target}xProtein", datatype=XSD.string)))
+        g.add((protein_node, RDFS.label, Literal(prot_label, datatype=XSD.string)))
         return gene_node, protein_node
     return None, None
