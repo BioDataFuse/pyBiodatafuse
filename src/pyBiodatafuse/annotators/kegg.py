@@ -59,40 +59,37 @@ def get_kegg_ids(row):
     return {"KEGG_id": kegg_id[1]}
 
 
-def get_compound_genes(pathway_info, results_kgml):
+def get_compound_genes(pathway_info, results_entry):
     """Get compounds and gene counts from a pathway
     :param pathway_info: Dictionary containing all information of the pathway
     :param results_kgml: KGML file from which further information gets extracted
     :returns: Dictionary containing compounds and gene count
     """
-    compound_list = set()
-    gene_count = 0
+    genes = []
+    compounds = []
+    section = None
 
-    # Extract each entry in the KGML file
-    entries = [f"<entry {entry_part}" for entry_part in results_kgml.text.split("<entry ")[1:]]
+    for line in results_entry.text.splitlines():
+        if line.startswith("GENE"):
+            section = "GENE"
+        elif line.startswith("COMPOUND"):
+            section = "COMPOUND"
+        elif line.startswith("REFERENCE"):
+            section = None  # End parsing once references start
 
-    for entry in entries:
-        # Count genes
-        if 'type="gene"' in entry:
-            name_start = entry.find('name="') + len('name="')
-            name_end = entry.find('"', name_start)
-                
-            if name_start > len('name="') - 1: 
-                gene_ids = entry[name_start:name_end].split()
-                gene_count += len(gene_ids)
+        if section == "GENE":
+            parts = line.split()
+            if len(parts) > 0 and parts[0].isdigit():  # Gene identifier is numeric
+                genes.append(parts[0])
 
-        # Extract all compounds
-        elif 'type="compound"' in entry:
-            graphics_name_start = entry.find('<graphics name="') + len('<graphics name="')
-            graphics_name_end = entry.find('"', graphics_name_start)
-                
-            if graphics_name_start > len('<graphics name="') - 1:
-                # Extract the compound name and add it to the set to avoid duplicates
-                compound_name = entry[graphics_name_start:graphics_name_end]
-                compound_list.add(compound_name)
-
-        pathway_info["pathway_compounds"] = compound_list
-        pathway_info["pathway_gene_amount"] = gene_count
+        elif section == "COMPOUND":
+            parts = line.split()
+            for part in parts:
+                if part.startswith("C") and part[1:].isdigit():  # KEGG compound identifiers start with C
+                    compounds.append(part)
+        
+    pathway_info["gene_count"] = len(genes)
+    pathway_info["compounds"] = compounds
 
     return pathway_info
 
@@ -115,17 +112,15 @@ def get_pathway_info(row):
         pathway_id = parts[1]
         pathway_info["pathway_id"] = pathway_id 
 
-        # Get KGML file from KEGG API
-        results_kgml = requests.get(f"{KEGG_ENDPOINT}/get/{pathway_id}/kgml")
-        title_start = results_kgml.text.find('title="') + len('title="')
-        title_end = results_kgml.text.find('"', title_start)
+        # Get entry from KEGG API
+        results_entry = requests.get(f"{KEGG_ENDPOINT}/get/{pathway_id}")
 
-        # Extract the title substring
-        pathway_title = results_kgml.text[title_start:title_end]
-        pathway_info["pathway_label"] = pathway_title
+        for line in results_entry.text.splitlines():
+            if line.startswith("NAME"):
+                pathway_info["pathway_name"] = line.split("  ", 1)[1].strip()
+                break  
 
-        # Extract compounds and gene count from the pathway
-        pathway_info = get_compound_genes(pathway_info, results_kgml)
+        pathway_info = get_compound_genes(pathway_info, results_entry)
 
         pathways.append(pathway_info)
     
@@ -144,7 +139,7 @@ def get_pathways(bridgedb_df):
     if not api_available:
         warnings.warn(f"{KEGG} endpoint is not available. Unable to retrieve data.", stacklevel=2)
         return pd.DataFrame(), {}
-    
+
     kegg_version = check_version_kegg()
 
     # Record the start time
@@ -168,22 +163,24 @@ def get_pathways(bridgedb_df):
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # Calculate the time elapsed
     time_elapsed = str(end_time - start_time)
+    # Calculate new edges
+    num_new_edges = data_df.shape[0]
 
     # Add the datasource, query, query time, and the date to metadata
-    # string_metadata = {
-    #     "datasource": KEGG,
-    #     "metadata": {"source_version": kegg_version},
-    #     "query": {
-    #         "size": len(gene_list),
-    #         "input_type": KEGG_GENE_INPUT_ID,
-    #         "number_of_added_edges": num_new_edges,
-    #         "time": time_elapsed,
-    #         "date": current_date,
-    #         "url": KEGG_ENDPOINT,
-    #     },
-    # }
+    kegg_metadata = {
+        "datasource": KEGG,
+        "metadata": {"source_version": kegg_version},
+        "query": {
+            "size": len(gene_list),
+            "input_type": KEGG_GENE_INPUT_ID,
+            "number_of_added_edges": num_new_edges,
+            "time": time_elapsed,
+            "date": current_date,
+            "url": KEGG_ENDPOINT,
+        },
+    }
 
-    return data_df
+    return data_df, kegg_metadata
     
 
     
