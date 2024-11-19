@@ -115,8 +115,9 @@ def get_shapes(
     shaper = Shaper(
         all_classes_mode=True,
         rdflib_graph=g,
-        input_format=TURTLE,
+        # input_format=TURTLE,
         namespaces_dict=NAMESPACE_SHAPES,
+        # disable_or_statements=False, Workaround for bug
     )
     graph_result = None
     # Generate the appropriate graph (Shex or SHACL)
