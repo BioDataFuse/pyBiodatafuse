@@ -190,3 +190,17 @@ def get_shacl_prefixes(namespaces, path, new_uris):
 
     print(ttl_data)
     return graph
+
+
+def get_node_label(g, node):
+    """
+    Retrieve the label of a given node from an RDF graph.
+
+    :param g: The RDF graph containing the data.
+    :param node: The node whose label is to be retrieved.
+
+    :return: The label of the node if it exists, otherwise None.
+    """
+    for stmt in g.triples((node, RDFS.label, None)):
+        return stmt[2]
+    return None

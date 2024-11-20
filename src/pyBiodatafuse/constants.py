@@ -9,9 +9,11 @@ BGEE_ENDPOINT = "https://www.bgee.org/sparql/"
 DISGENET_ENDPOINT = "https://api.disgenet.com/api/v1/gda/summary"
 MINERVA_ENDPOINT = "https://minerva-net.lcsb.uni.lu/api/"
 MOLMEDB_ENDPOINT = "https://idsm.elixir-czech.cz/sparql/endpoint/molmedb"
+NCBI_ENDPOINT = "https://eutils.ncbi.nlm.nih.gov"
 OPENTARGETS_ENDPOINT = "https://api.platform.opentargets.org/api/v4/graphql"
 PUBCHEM_ENDPOINT = "https://idsm.elixir-czech.cz/sparql/endpoint/idsm"
 STRING_ENDPOINT = "https://string-db.org/api"
+UNIPROT_ENDPOINT = "https://rest.uniprot.org"
 WIKIDATA_ENDPOINT = "https://query-main.wikidata.org/sparql"
 WIKIPATHWAYS_ENDPOINT = "https://sparql.wikipathways.org/sparql"
 
@@ -486,7 +488,6 @@ NAMESPACE_BINDINGS = {
     "sio": "http://semanticscience.org/resource/",
     "hgnc": "http://bio2rdf.org/hgnc:",
     "obo": "http://purl.obolibrary.org/obo/",
-    "umls": "https://uts-ws.nlm.nih.gov/rest/semantic-network/2015AB/CUI/",
     "ensembl": "https://identifiers.org/ensembl:",
     "dcat": "http://www.w3.org/ns/dcat#",
     "bdf": "https://biodatafuse.org/",
@@ -497,6 +498,9 @@ NAMESPACE_BINDINGS = {
     "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
     "xsd": "http://www.w3.org/2001/XMLSchema#",
     "bdfo": "https://biodatafuse.org/onto/bdf#",
+    "mondo": "https://monarchinitiative.org/disease/",
+    "umls": "https://www.ncbi.nlm.nih.gov/medgen/",
+    "so": "http://purl.obolibrary.org/obo/so#",
 }
 
 # Patterns URIs for nodes (one for each node in the schema)
@@ -561,6 +565,7 @@ PREDICATES = {
     "phase": "http://purl.obolibrary.org/obo/PATO_0000083",
     "translation_of": "http://purl.obolibrary.org/obo/so#translation_of",
     "translates_to": "http://purl.obolibrary.org/obo/so#translates_to",
+    "variant_of": "http://purl.obolibrary.org/obo/so#variant_of",
 }
 
 # Classes for clinical phases
@@ -614,7 +619,7 @@ DISEASE_IDENTIFIER_TYPES = [
 
 BASE_URLS_DBS = {
     "uniprot": "https://www.uniprot.org/uniprotkb/",
-    "ensembl": "http://identifiers.org/ensembl#",
+    "ensembl": "http://identifiers.org/ensembl:",
     "stringdb": "https://string-db.org/network/",
 }
 

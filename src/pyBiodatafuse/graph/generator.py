@@ -80,6 +80,7 @@ def load_dataframe_from_pickle(pickle_path: str) -> pd.DataFrame:
     """
     with open(pickle_path, "rb") as rin:
         df = pickle.load(rin)
+        df = df[(df["target.source"] == "Ensembl")]
 
     return df
 
@@ -891,6 +892,7 @@ def build_networkx_graph(
     :returns: a NetworkX MultiDiGraph
     """
     g = nx.MultiDiGraph()
+    combined_df = combined_df[(combined_df["target.source"] == "Ensembl")]
 
     dea_columns = [c for c in combined_df.columns if c.endswith("_dea")]
 

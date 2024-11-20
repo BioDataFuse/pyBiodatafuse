@@ -244,13 +244,15 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
                 time.sleep(int(gda_response.headers["x-rate-limit-retry-after-seconds"]))
 
                 # Repeat your query
-                gda_response = requests.get(
-                    DISGENET_ENDPOINT, params=params, headers=httpheadersdict
+                gda_response = s.get(
+                    DISGENET_ENDPOINT,
+                    params=params,
+                    headers=httpheadersdict,
+                    verify=False,
+                    timeout=None,
                 )
                 if gda_response.ok is True:
                     break
-                else:
-                    continue
 
         if c == 100:
             time.sleep(20)
@@ -258,7 +260,7 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
     # Record the end time
     end_time = datetime.datetime.now()
 
-    """Metdata details"""
+    """Metadata details"""
     # Get the current date and time
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # Calculate the time elapsed

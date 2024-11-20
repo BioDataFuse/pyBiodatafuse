@@ -149,6 +149,9 @@ def add_evidence_node(
     node = URIRef(
         f"{new_uris['score_base_node']}/{evidence_type}/{id_number}{i}{source_idx}_{disease_data['disease_umlscui']}"
     )
+    datatype = XSD.double
+    if evidence_type == "el":
+        datatype = XSD.string
     g.add((node, RDF.type, URIRef(NODE_TYPES[f"{evidence_type}_node"])))
-    g.add((node, URIRef(PREDICATES["sio_has_value"]), Literal(value, datatype=XSD.double)))
+    g.add((node, URIRef(PREDICATES["sio_has_value"]), Literal(value, datatype=datatype)))
     return node

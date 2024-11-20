@@ -16,29 +16,26 @@ def add_gene_protein_nodes(g: Graph, row) -> tuple:
     :param g: (Graph): RDF graph to which the gene and protein nodes are added.
     :param row: (pd.Series): Data row containing gene information.
 
-    :return: tuple containing URIRefs for the gene node and protein node, respectively.
+    :return: tuple containing URIRefs for the gene node and a list of URIRefs for protein nodes respectively.
     """
-    target = row["target"]
+    target = row.get("target", None)
     if target:
-        uniprot = row.get("Uniprot-TrEMBL", None)
+        protein_nodes = []
+        uniprot = row.get("Uniprot-TrEMBL", [])
         gene_node = URIRef(f"http://identifiers.org/ensembl#{target}")
-        prot_label = f"{target}xProtein"
-        if uniprot:
-            protein_node = URIRef(f"https://www.uniprot.org/uniprot/{uniprot}")
-            prot_label = uniprot
-        else:
-            protein_node = URIRef(f"http://identifiers.org/ensembl#{target}xProtein")
-
-        # Add gene node to graph
         g.add((gene_node, RDF.type, URIRef(NODE_TYPES["gene_node"])))
         g.add((gene_node, RDFS.label, Literal(row["identifier"], datatype=XSD.string)))
+        if uniprot:
+            for prot in uniprot:
+                protein_node = URIRef(f"https://www.uniprot.org/uniprot/{prot}")
+                prot_label = prot
+                # Link gene to protein
+                g.add((protein_node, URIRef(PREDICATES["translation_of"]), gene_node))
+                g.add((gene_node, URIRef(PREDICATES["translates_to"]), protein_node))
 
-        # Link gene to protein
-        g.add((protein_node, URIRef(PREDICATES["translation_of"]), gene_node))
-        g.add((gene_node, URIRef(PREDICATES["translates_to"]), protein_node))
-
-        # Add protein node to graph
-        g.add((protein_node, RDF.type, URIRef(NODE_TYPES["protein_node"])))
-        g.add((protein_node, RDFS.label, Literal(prot_label, datatype=XSD.string)))
-        return gene_node, protein_node
+                # Add protein node to graph
+                g.add((protein_node, RDF.type, URIRef(NODE_TYPES["protein_node"])))
+                g.add((protein_node, RDFS.label, Literal(prot_label, datatype=XSD.string)))
+                protein_nodes.append(protein_node)
+        return gene_node, protein_nodes
     return None, None

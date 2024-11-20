@@ -7,7 +7,7 @@
 from rdflib import Graph, Literal, URIRef
 from rdflib.namespace import RDF, RDFS
 
-from pyBiodatafuse.constants import NODE_TYPES, PREDICATES
+from pyBiodatafuse.constants import NAMESPACE_BINDINGS, NODE_TYPES, PREDICATES
 
 
 def add_literature_based_data(g: Graph, entry: dict, gene_node: URIRef) -> None:
@@ -20,23 +20,33 @@ def add_literature_based_data(g: Graph, entry: dict, gene_node: URIRef) -> None:
     source = entry.get("source", None)
     if source and "PMID" in source:
         source_id = source.split(": ")[1]
-        identifier = entry["id"]
-        disease_name = entry["disease_name"]
         source_url = f"https://pubmed.ncbi.nlm.nih.gov/{source_id}"
-
-        # Create the source node and add metadata
         article_node = URIRef(source_url)
+        umls = entry.get("UMLS", None)
+        mondo = entry.get("MONDO", None)
+        disease_name = entry["disease_name"]
+        # Create the source node and add metadata
         g.add((article_node, RDF.type, URIRef(NODE_TYPES["article"])))
         g.add((article_node, URIRef(PREDICATES["sio_refers_to"]), gene_node))
-        g.add(
-            (
-                article_node,
-                URIRef(PREDICATES["sio_refers_to"]),
-                URIRef(f"https://biodatafuse.org/identifiers/{identifier}"),
+        if umls:
+            disease_node = URIRef(f"{NAMESPACE_BINDINGS['umls']}{umls}")
+            g.add(
+                (
+                    article_node,
+                    URIRef(PREDICATES["sio_refers_to"]),
+                    disease_node,
+                )
             )
-        )
-
-        # Add disease label
-        disease_node = URIRef(f"https://biodatafuse.org/identifiers/{identifier}")
-        g.add((disease_node, RDFS.label, Literal(disease_name)))
-        g.add((disease_node, RDF.type, URIRef(NODE_TYPES["disease_node"])))
+            g.add((disease_node, RDFS.label, Literal(disease_name)))
+            g.add((disease_node, RDF.type, URIRef(NODE_TYPES["disease_node"])))
+        if mondo:
+            disease_node = URIRef(f"{NAMESPACE_BINDINGS['mondo']}{mondo}")
+            g.add(
+                (
+                    article_node,
+                    URIRef(PREDICATES["sio_refers_to"]),
+                    disease_node,
+                )
+            )
+            g.add((disease_node, RDFS.label, Literal(disease_name)))
+            g.add((disease_node, RDF.type, URIRef(NODE_TYPES["disease_node"])))
