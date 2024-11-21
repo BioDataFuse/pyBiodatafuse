@@ -82,7 +82,7 @@ def _format_data(row, network_df):
     return gene_ppi_links
 
 
-def get_string_ids(gene_list: list) -> str:
+def get_string_ids(gene_list: list):
     """Get the String identifiers of the gene list."""
     params = {
         "identifiers": "\r".join(gene_list),  # your protein list
@@ -92,10 +92,11 @@ def get_string_ids(gene_list: list) -> str:
     }
 
     try:
-        results = requests.post(f"{STRING_ENDPOINT}/json/get_string_ids", data=params, timeout=TIMEOUT).json()
+        results = requests.post(f"{STRING_ENDPOINT}/json/get_string_ids",
+                                data=params, timeout=TIMEOUT).json()
         return results
     except RequestException as e:
-        logger.error(f"Error getting STRING IDs: {e}")
+        logger.error("Error getting STRING IDs: %s", e)
         return []
 
 
@@ -190,7 +191,7 @@ def get_ppi(bridgedb_df: pd.DataFrame):
     # Format the data
     data_df[STRING_PPI_COL] = data_df.apply(_format_data, network_df=network_df, axis=1)
     data_df[STRING_PPI_COL] = data_df[STRING_PPI_COL].apply(
-        lambda x: ([{key: np.nan for key in STRING_OUTPUT_DICT.keys()}] if len(x) == 0 else x)
+        lambda x: ([{key: np.nan for key in STRING_OUTPUT_DICT}] if len(x) == 0 else x)
     )
 
     # Check if all keys in df match the keys in OUTPUT_DICT
