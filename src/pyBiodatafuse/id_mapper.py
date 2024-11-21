@@ -108,7 +108,7 @@ def bridgedb_xref(
     if not input_datasource:
         raise ValueError("Please provide the identifier datasource, e.g. HGNC")
 
-    if output_datasource is None or "All":
+    if output_datasource is None:
         output_datasource = [
             "Uniprot-TrEMBL",
             "NCBI Gene",
@@ -116,6 +116,8 @@ def bridgedb_xref(
             "HGNC Accession Number",
             "HGNC",
         ]
+    else:
+        assert isinstance(output_datasource, list), "output_datasource must be a list"
 
     data_sources = read_resource_files()
     input_source = data_sources.loc[data_sources["source"] == input_datasource, "systemCode"].iloc[
@@ -182,13 +184,13 @@ def bridgedb_xref(
     bridgedb = bridgedb.dropna(subset=["target.source"])
 
     # Subset based on the output_datasource
-    bridgedb = bridgedb[bridgedb["target.source"].isin(output_datasource)]
+    bridgedb_subset = bridgedb[bridgedb["target.source"].isin(output_datasource)]
 
-    bridgedb = bridgedb.drop_duplicates()
+    bridgedb_subset = bridgedb_subset.drop_duplicates()
     identifiers.columns = [
         "{}{}".format(c, "" if c in "identifier" else "_dea") for c in identifiers.columns
     ]
-    bridgedb = bridgedb.merge(identifiers, on="identifier")
+    bridgedb_subset = bridgedb_subset.merge(identifiers, on="identifier")
 
     """Metadata details"""
     # Get the current date and time
@@ -216,7 +218,7 @@ def bridgedb_xref(
         },
     }
 
-    return bridgedb, bridgedb_metadata
+    return bridgedb_subset, bridgedb_metadata
 
 
 """PubChem helper functions."""

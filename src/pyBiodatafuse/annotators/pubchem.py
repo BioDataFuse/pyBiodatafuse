@@ -5,6 +5,7 @@
 
 import datetime
 import os
+from tqdm import tqdm
 import warnings
 from string import Template
 from typing import Any, Dict, Tuple
@@ -95,7 +96,7 @@ def get_protein_compound_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
 
     intermediate_df = pd.DataFrame()
 
-    for protein_str in query_protein_list:
+    for protein_str in tqdm(query_protein_list, desc="Querying PubChem"):
         query_count += 1
 
         sparql_query_template = Template(sparql_query)
