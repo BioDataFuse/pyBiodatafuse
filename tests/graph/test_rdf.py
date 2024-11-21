@@ -26,7 +26,7 @@ with open(os.path.join("tests", "graph", "data", "combined_metadata_mock_data.js
 
 class TestBDFGraph(unittest.TestCase):
     """
-    Unit test case for the BDFGraph class.
+    Set unit test case for the BDFGraph class.
 
     Methods:
         setUp: Sets up the test environment.
@@ -35,7 +35,7 @@ class TestBDFGraph(unittest.TestCase):
 
     def setUp(self):
         """
-        Sets up the test environment.
+        Set up the test environment.
 
         This method initializes the BDFGraph instance with a base URI, version IRI, author name, and ORCID.
         """
@@ -47,7 +47,7 @@ class TestBDFGraph(unittest.TestCase):
 
     def test_generate_rdf(self):
         """
-        Tests the generate_rdf method of the BDFGraph class.
+        Test the generate_rdf method of the BDFGraph class.
 
         This method verifies that the RDF graph is generated correctly from the provided dataframe and metadata.
         """
