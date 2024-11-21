@@ -167,7 +167,7 @@ class BDFGraph(Graph):
             if open_only and source_col == DISGENET_DISEASE_COL:
                 continue  # TODO fix open data only feature
             source_data = row.get(source_col, [])
-            if len(source_data) > 0:
+            if isinstance(source_data, dict) and source_data:
                 disease_data.extend(source_data)
         return disease_data
 

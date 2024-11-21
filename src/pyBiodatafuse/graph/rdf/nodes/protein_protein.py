@@ -41,7 +41,7 @@ def add_ppi_data(
         g.add((stringdb_node, RDF.type, URIRef(NODE_TYPES["protein_node"])))
         g.add((stringdb_node, RDFS.label, Literal(stringdb_link_to, datatype=XSD.string)))
         g.add((ensembl_node, URIRef(PREDICATES["translates_to"]), stringdb_node))
-        g.add((stringdb_node, URIRef(PREDICATES["translates_to"]), ensembl_node))
+        g.add((stringdb_node, URIRef(PREDICATES["translation_of"]), ensembl_node))
         g.add((stringdb_node, OWL.sameAs, ensembl_node))
         g.add((ensembl_node, RDF.type, URIRef(NODE_TYPES["gene_node"])))
         g.add((ppi_node, URIRef(PREDICATES["sio_has_measurement_value"]), score_node))

@@ -1,0 +1,745 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ex: <http://example.org/>
+PREFIX weso-s: <http://weso.es/shapes/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+PREFIX so: <http://purl.obolibrary.org/obo/so#>
+PREFIX bdfo: <https://biodatafuse.org/onto/bdf#>
+PREFIX graph: <https://biodatafuse.org/pcs_example/>
+PREFIX brick: <https://brickschema.org/schema/Brick#>
+PREFIX csvw: <http://www.w3.org/ns/csvw#>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
+PREFIX dcmitype: <http://purl.org/dc/dcmitype/>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX dcam: <http://purl.org/dc/dcam/>
+PREFIX doap: <http://usefulinc.com/ns/doap#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX odrl: <http://www.w3.org/ns/odrl/2/>
+PREFIX org: <http://www.w3.org/ns/org#>
+PREFIX prof: <http://www.w3.org/ns/dx/prof/>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX qb: <http://purl.org/linked-data/cube#>
+PREFIX schema: <https://schema.org/>
+PREFIX sh: <http://www.w3.org/ns/shacl#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX sosa: <http://www.w3.org/ns/sosa/>
+PREFIX ssn: <http://www.w3.org/ns/ssn/>
+PREFIX time: <http://www.w3.org/2006/time#>
+PREFIX vann: <http://purl.org/vocab/vann/>
+PREFIX void: <http://rdfs.org/ns/void#>
+PREFIX wgs: <https://www.w3.org/2003/01/geo/wgs84_pos#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xml: <http://www.w3.org/XML/1998/namespace/>
+PREFIX gene_disease_association: <https://biodatafuse.org/pcs_example/gene_disease_association>
+PREFIX gene_base_node: <https://biodatafuse.org/pcs_example/gene>
+PREFIX gene_symbol_base_node: <https://biodatafuse.org/pcs_example/gene_symbol>
+PREFIX source_base_node: <https://biodatafuse.org/pcs_example/source>
+PREFIX data_source_base_node: <https://biodatafuse.org/pcs_example/datasource>
+PREFIX score_base_node: <https://biodatafuse.org/pcs_example/score>
+PREFIX experimental_process_node: <https://biodatafuse.org/pcs_example/experimental_process>
+PREFIX anatomical_entity_base_node: <https://biodatafuse.org/pcs_example/anatomical_entity>
+PREFIX life_cycle_base_node: <https://biodatafuse.org/pcs_example/life_cycle>
+PREFIX gene_expression_value_base_node: <https://biodatafuse.org/pcs_example/gene_expression_value>
+PREFIX sio: <http://semanticscience.org/resource/>
+PREFIX hgnc: <http://bio2rdf.org/hgnc:>
+PREFIX ensembl: <https://identifiers.org/ensembl:>
+PREFIX bdf: <https://biodatafuse.org/>
+PREFIX mondo: <https://monarchinitiative.org/disease/>
+PREFIX umls: <https://www.ncbi.nlm.nih.gov/medgen/>
+
+weso-s:NCIT_C18469
+{
+   rdf:type  [obo:NCIT_C18469]  ;                              # 100.0 %
+   sio:SIO_000028  @weso-s:NCIT_C17021  {2};                   # 100.0 %
+   sio:SIO_000216  @weso-s:NCIT_C25338                         # 100.0 %
+}
+
+
+weso-s:NCIT_C25338
+{
+   rdf:type  [obo:NCIT_C25338]  ;                              # 100.0 %
+   sio:SIO_000300  xsd:double  +                               # 100.0 %
+            # 99.96440067045404 % obj: xsd:double. Cardinality: {1}
+}
+
+
+weso-s:NCIT_C17021
+{
+   rdf:type  [obo:NCIT_C17021]  ;                              # 100.0 %
+   rdfs:label  xsd:string  ;                                   # 100.0 %
+   so:translation_of  @weso-s:NCIT_C16612  *;
+            # 79.98442367601245 % obj: @weso-s:NCIT_C16612. Cardinality: +
+            # 79.75077881619937 % obj: @weso-s:NCIT_C16612. Cardinality: {1}
+            # 0.21806853582554517 % obj: @weso-s:NCIT_C16612. Cardinality: {2}
+   sio:SIO_000068  IRI  *;
+            # 71.15264797507788 % obj: IRI. Cardinality: +
+            # 18.473520249221185 % obj: IRI. Cardinality: {1}
+            # 10.996884735202492 % obj: IRI. Cardinality: {2}
+            # 7.679127725856698 % obj: IRI. Cardinality: {3}
+            # 4.018691588785047 % obj: IRI. Cardinality: {4}
+            # 3.442367601246106 % obj: IRI. Cardinality: {5}
+            # 2.7414330218068534 % obj: IRI. Cardinality: {6}
+            # 1.8224299065420562 % obj: IRI. Cardinality: {7}
+            # 1.61993769470405 % obj: IRI. Cardinality: {8}
+            # 1.32398753894081 % obj: IRI. Cardinality: {10}
+            # 1.1214953271028036 % obj: IRI. Cardinality: {13}
+            # 0.778816199376947 % obj: IRI. Cardinality: {9}
+            # 0.7632398753894081 % obj: IRI. Cardinality: {18}
+            # 0.6230529595015576 % obj: IRI. Cardinality: {11}
+            # 0.5763239875389409 % obj: IRI. Cardinality: {20}
+            # 0.5451713395638629 % obj: IRI. Cardinality: {14}
+            # 0.5451713395638629 % obj: IRI. Cardinality: {19}
+            # 0.4828660436137072 % obj: IRI. Cardinality: {29}
+            # 0.43613707165109034 % obj: IRI. Cardinality: {12}
+            # 0.43613707165109034 % obj: IRI. Cardinality: {21}
+            # 0.4205607476635514 % obj: IRI. Cardinality: {15}
+            # 0.4205607476635514 % obj: IRI. Cardinality: {17}
+            # 0.3115264797507788 % obj: IRI. Cardinality: {53}
+            # 0.2959501557632399 % obj: IRI. Cardinality: {59}
+            # 0.2803738317757009 % obj: IRI. Cardinality: {23}
+            # 0.2803738317757009 % obj: IRI. Cardinality: {26}
+            # 0.26479750778816197 % obj: IRI. Cardinality: {60}
+            # 0.24922118380062305 % obj: IRI. Cardinality: {33}
+            # 0.24922118380062305 % obj: IRI. Cardinality: {16}
+            # 0.24922118380062305 % obj: IRI. Cardinality: {24}
+            # 0.24922118380062305 % obj: IRI. Cardinality: {22}
+            # 0.21806853582554517 % obj: IRI. Cardinality: {35}
+            # 0.21806853582554517 % obj: IRI. Cardinality: {32}
+            # 0.21806853582554517 % obj: IRI. Cardinality: {31}
+            # 0.20249221183800625 % obj: IRI. Cardinality: {25}
+            # 0.17133956386292834 % obj: IRI. Cardinality: {28}
+            # 0.17133956386292834 % obj: IRI. Cardinality: {30}
+            # 0.1557632398753894 % obj: IRI. Cardinality: {37}
+            # 0.1557632398753894 % obj: IRI. Cardinality: {52}
+            # 0.14018691588785046 % obj: IRI. Cardinality: {51}
+            # 0.14018691588785046 % obj: IRI. Cardinality: {34}
+            # 0.14018691588785046 % obj: IRI. Cardinality: {36}
+            # 0.14018691588785046 % obj: IRI. Cardinality: {40}
+            # 0.14018691588785046 % obj: IRI. Cardinality: {58}
+            # 0.12461059190031153 % obj: IRI. Cardinality: {86}
+            # 0.12461059190031153 % obj: IRI. Cardinality: {38}
+            # 0.12461059190031153 % obj: IRI. Cardinality: {54}
+            # 0.12461059190031153 % obj: IRI. Cardinality: {41}
+            # 0.12461059190031153 % obj: IRI. Cardinality: {45}
+            # 0.12461059190031153 % obj: IRI. Cardinality: {56}
+            # 0.12461059190031153 % obj: IRI. Cardinality: {49}
+            # 0.10903426791277258 % obj: IRI. Cardinality: {43}
+            # 0.10903426791277258 % obj: IRI. Cardinality: {73}
+            # 0.10903426791277258 % obj: IRI. Cardinality: {92}
+            # 0.10903426791277258 % obj: IRI. Cardinality: {48}
+            # 0.10903426791277258 % obj: IRI. Cardinality: {42}
+            # 0.10903426791277258 % obj: IRI. Cardinality: {61}
+            # 0.10903426791277258 % obj: IRI. Cardinality: {44}
+            # 51.13707165109034 % obj: @weso-s:PW_0000001. Cardinality: +
+            # 20.01557632398754 % obj: @weso-s:NCIT_C18469. Cardinality: +
+   owl:sameAs  @weso-s:NCIT_C16612  ?;
+            # 20.01557632398754 % obj: @weso-s:NCIT_C16612. Cardinality: {1}
+   so:translates_to  @weso-s:NCIT_C16612  ?
+            # 20.01557632398754 % obj: @weso-s:NCIT_C16612. Cardinality: {1}
+}
+
+
+weso-s:NCIT_C16612
+{
+   rdf:type  [obo:NCIT_C16612]  ;                              # 100.0 %
+   so:translates_to  @weso-s:NCIT_C17021  *;
+            # 92.0608108108108 % obj: @weso-s:NCIT_C17021. Cardinality: +
+            # 55.439189189189186 % obj: @weso-s:NCIT_C17021. Cardinality: {1}
+            # 11.25 % obj: @weso-s:NCIT_C17021. Cardinality: {2}
+            # 7.398648648648648 % obj: @weso-s:NCIT_C17021. Cardinality: {3}
+            # 5.912162162162162 % obj: @weso-s:NCIT_C17021. Cardinality: {4}
+            # 3.445945945945946 % obj: @weso-s:NCIT_C17021. Cardinality: {5}
+            # 2.3986486486486487 % obj: @weso-s:NCIT_C17021. Cardinality: {6}
+            # 1.8243243243243243 % obj: @weso-s:NCIT_C17021. Cardinality: {7}
+            # 1.2837837837837838 % obj: @weso-s:NCIT_C17021. Cardinality: {8}
+            # 0.8445945945945946 % obj: @weso-s:NCIT_C17021. Cardinality: {9}
+            # 0.6081081081081081 % obj: @weso-s:NCIT_C17021. Cardinality: {10}
+            # 0.33783783783783783 % obj: @weso-s:NCIT_C17021. Cardinality: {11}
+            # 0.30405405405405406 % obj: @weso-s:NCIT_C17021. Cardinality: {12}
+            # 0.2364864864864865 % obj: @weso-s:NCIT_C17021. Cardinality: {14}
+            # 0.16891891891891891 % obj: @weso-s:NCIT_C17021. Cardinality: {13}
+            # 0.10135135135135136 % obj: @weso-s:NCIT_C17021. Cardinality: {16}
+            # 0.10135135135135136 % obj: @weso-s:NCIT_C17021. Cardinality: {21}
+            # 0.10135135135135136 % obj: @weso-s:NCIT_C17021. Cardinality: {20}
+   rdfs:label  xsd:string  ?;
+            # 56.58783783783784 % obj: xsd:string. Cardinality: {1}
+   sio:SIO_000068  IRI  *
+            # 47.36486486486486 % obj: IRI. Cardinality: +
+            # 2.4662162162162162 % obj: IRI. Cardinality: {11}
+            # 2.331081081081081 % obj: IRI. Cardinality: {6}
+            # 2.22972972972973 % obj: IRI. Cardinality: {8}
+            # 2.0945945945945947 % obj: IRI. Cardinality: {7}
+            # 1.9256756756756759 % obj: IRI. Cardinality: {10}
+            # 1.8581081081081081 % obj: IRI. Cardinality: {12}
+            # 1.8581081081081081 % obj: IRI. Cardinality: {5}
+            # 1.8243243243243243 % obj: IRI. Cardinality: {13}
+            # 1.722972972972973 % obj: IRI. Cardinality: {14}
+            # 1.6891891891891893 % obj: IRI. Cardinality: {15}
+            # 1.6891891891891893 % obj: IRI. Cardinality: {1}
+            # 1.587837837837838 % obj: IRI. Cardinality: {9}
+            # 1.5202702702702704 % obj: IRI. Cardinality: {16}
+            # 1.4527027027027029 % obj: IRI. Cardinality: {3}
+            # 1.3851351351351353 % obj: IRI. Cardinality: {17}
+            # 1.3513513513513513 % obj: IRI. Cardinality: {4}
+            # 1.1824324324324325 % obj: IRI. Cardinality: {2}
+            # 1.1824324324324325 % obj: IRI. Cardinality: {18}
+            # 1.0810810810810811 % obj: IRI. Cardinality: {21}
+            # 0.945945945945946 % obj: IRI. Cardinality: {19}
+            # 0.8783783783783784 % obj: IRI. Cardinality: {22}
+            # 0.7770270270270271 % obj: IRI. Cardinality: {23}
+            # 0.7094594594594595 % obj: IRI. Cardinality: {24}
+            # 0.6756756756756757 % obj: IRI. Cardinality: {20}
+            # 0.5405405405405406 % obj: IRI. Cardinality: {31}
+            # 0.5405405405405406 % obj: IRI. Cardinality: {26}
+            # 0.5405405405405406 % obj: IRI. Cardinality: {28}
+            # 0.5067567567567568 % obj: IRI. Cardinality: {29}
+            # 0.5067567567567568 % obj: IRI. Cardinality: {25}
+            # 0.4391891891891892 % obj: IRI. Cardinality: {30}
+            # 0.40540540540540543 % obj: IRI. Cardinality: {34}
+            # 0.37162162162162166 % obj: IRI. Cardinality: {40}
+            # 0.33783783783783783 % obj: IRI. Cardinality: {36}
+            # 0.33783783783783783 % obj: IRI. Cardinality: {32}
+            # 0.33783783783783783 % obj: IRI. Cardinality: {42}
+            # 0.33783783783783783 % obj: IRI. Cardinality: {35}
+            # 0.30405405405405406 % obj: IRI. Cardinality: {33}
+            # 0.30405405405405406 % obj: IRI. Cardinality: {44}
+            # 0.2702702702702703 % obj: IRI. Cardinality: {38}
+            # 0.2702702702702703 % obj: IRI. Cardinality: {27}
+            # 0.2364864864864865 % obj: IRI. Cardinality: {49}
+            # 0.2364864864864865 % obj: IRI. Cardinality: {37}
+            # 0.16891891891891891 % obj: IRI. Cardinality: {46}
+            # 0.16891891891891891 % obj: IRI. Cardinality: {52}
+            # 0.16891891891891891 % obj: IRI. Cardinality: {39}
+            # 0.16891891891891891 % obj: IRI. Cardinality: {73}
+            # 0.16891891891891891 % obj: IRI. Cardinality: {41}
+            # 0.16891891891891891 % obj: IRI. Cardinality: {47}
+            # 0.13513513513513514 % obj: IRI. Cardinality: {108}
+            # 0.13513513513513514 % obj: IRI. Cardinality: {55}
+            # 0.13513513513513514 % obj: IRI. Cardinality: {77}
+            # 0.13513513513513514 % obj: IRI. Cardinality: {63}
+            # 0.13513513513513514 % obj: IRI. Cardinality: {43}
+            # 0.13513513513513514 % obj: IRI. Cardinality: {45}
+            # 0.10135135135135136 % obj: IRI. Cardinality: {53}
+            # 0.10135135135135136 % obj: IRI. Cardinality: {62}
+            # 0.10135135135135136 % obj: IRI. Cardinality: {54}
+            # 0.10135135135135136 % obj: IRI. Cardinality: {69}
+            # 0.10135135135135136 % obj: IRI. Cardinality: {58}
+            # 0.10135135135135136 % obj: IRI. Cardinality: {51}
+            # 29.45945945945946 % obj: @weso-s:PW_0000001. Cardinality: +
+}
+
+
+weso-s:NCIT_C172573
+{
+   rdf:type  [obo:NCIT_C172573]  ;                             # 100.0 %
+   rdfs:label  xsd:string  ;                                   # 100.0 %
+   obo:RO_0018027  @weso-s:NCIT_C17021  *;
+            # 83.45864661654136 % obj: @weso-s:NCIT_C17021. Cardinality: +
+            # 16.917293233082706 % obj: @weso-s:NCIT_C17021. Cardinality: {3}
+            # 14.285714285714285 % obj: @weso-s:NCIT_C17021. Cardinality: {2}
+            # 10.902255639097744 % obj: @weso-s:NCIT_C17021. Cardinality: {4}
+            # 9.022556390977442 % obj: @weso-s:NCIT_C17021. Cardinality: {1}
+            # 8.270676691729323 % obj: @weso-s:NCIT_C17021. Cardinality: {5}
+            # 4.135338345864661 % obj: @weso-s:NCIT_C17021. Cardinality: {8}
+            # 3.7593984962406015 % obj: @weso-s:NCIT_C17021. Cardinality: {6}
+            # 3.3834586466165413 % obj: @weso-s:NCIT_C17021. Cardinality: {9}
+            # 2.631578947368421 % obj: @weso-s:NCIT_C17021. Cardinality: {20}
+            # 1.8796992481203008 % obj: @weso-s:NCIT_C17021. Cardinality: {16}
+            # 1.5037593984962405 % obj: @weso-s:NCIT_C17021. Cardinality: {14}
+            # 1.1278195488721803 % obj: @weso-s:NCIT_C17021. Cardinality: {7}
+            # 1.1278195488721803 % obj: @weso-s:NCIT_C17021. Cardinality: {30}
+            # 0.7518796992481203 % obj: @weso-s:NCIT_C17021. Cardinality: {23}
+            # 0.7518796992481203 % obj: @weso-s:NCIT_C17021. Cardinality: {25}
+            # 0.37593984962406013 % obj: @weso-s:NCIT_C17021. Cardinality: {50}
+            # 0.37593984962406013 % obj: @weso-s:NCIT_C17021. Cardinality: {10}
+            # 0.37593984962406013 % obj: @weso-s:NCIT_C17021. Cardinality: {32}
+            # 0.37593984962406013 % obj: @weso-s:NCIT_C17021. Cardinality: {94}
+            # 0.37593984962406013 % obj: @weso-s:NCIT_C17021. Cardinality: {13}
+            # 0.37593984962406013 % obj: @weso-s:NCIT_C17021. Cardinality: {12}
+            # 0.37593984962406013 % obj: @weso-s:NCIT_C17021. Cardinality: {98}
+            # 0.37593984962406013 % obj: @weso-s:NCIT_C17021. Cardinality: {22}
+   owl:sameAs  @weso-s:SIO_010038  ?;
+            # 81.57894736842105 % obj: @weso-s:SIO_010038. Cardinality: {1}
+   obo:RO_0018029  @weso-s:NCIT_C17021  *
+            # 16.917293233082706 % obj: @weso-s:NCIT_C17021. Cardinality: +
+            # 10.526315789473683 % obj: @weso-s:NCIT_C17021. Cardinality: {2}
+            # 4.887218045112782 % obj: @weso-s:NCIT_C17021. Cardinality: {1}
+            # 0.7518796992481203 % obj: @weso-s:NCIT_C17021. Cardinality: {3}
+            # 0.37593984962406013 % obj: @weso-s:NCIT_C17021. Cardinality: {11}
+            # 0.37593984962406013 % obj: @weso-s:NCIT_C17021. Cardinality: {5}
+}
+
+
+weso-s:SIO_010038
+{
+   rdf:type  [sio:SIO_010038]  ;                               # 100.0 %
+   rdfs:label  xsd:string  +;                                  # 100.0 %
+            # 99.80276134122288 % obj: xsd:string. Cardinality: {1}
+            # 0.19723865877712032 % obj: xsd:string. Cardinality: {2}
+   owl:sameAs  IRI  *;
+            # 87.57396449704143 % obj: IRI. Cardinality: +
+            # 87.3767258382643 % obj: IRI. Cardinality: {1}
+            # 0.19723865877712032 % obj: IRI. Cardinality: {2}
+            # 44.773175542406314 % obj: @weso-s:SIO_010038. Cardinality: +
+            # 42.80078895463511 % obj: @weso-s:NCIT_C172573. Cardinality: {1}
+   obo:RO_0018027  @weso-s:NCIT_C17021  *;
+            # 30.96646942800789 % obj: @weso-s:NCIT_C17021. Cardinality: +
+            # 6.31163708086785 % obj: @weso-s:NCIT_C17021. Cardinality: {1}
+            # 4.930966469428008 % obj: @weso-s:NCIT_C17021. Cardinality: {2}
+            # 4.733727810650888 % obj: @weso-s:NCIT_C17021. Cardinality: {4}
+            # 4.339250493096647 % obj: @weso-s:NCIT_C17021. Cardinality: {3}
+            # 2.9585798816568047 % obj: @weso-s:NCIT_C17021. Cardinality: {7}
+            # 1.7751479289940828 % obj: @weso-s:NCIT_C17021. Cardinality: {5}
+            # 1.3806706114398422 % obj: @weso-s:NCIT_C17021. Cardinality: {6}
+            # 1.3806706114398422 % obj: @weso-s:NCIT_C17021. Cardinality: {10}
+            # 0.7889546351084813 % obj: @weso-s:NCIT_C17021. Cardinality: {14}
+            # 0.591715976331361 % obj: @weso-s:NCIT_C17021. Cardinality: {13}
+            # 0.39447731755424065 % obj: @weso-s:NCIT_C17021. Cardinality: {30}
+            # 0.39447731755424065 % obj: @weso-s:NCIT_C17021. Cardinality: {50}
+            # 0.19723865877712032 % obj: @weso-s:NCIT_C17021. Cardinality: {20}
+            # 0.19723865877712032 % obj: @weso-s:NCIT_C17021. Cardinality: {29}
+            # 0.19723865877712032 % obj: @weso-s:NCIT_C17021. Cardinality: {16}
+            # 0.19723865877712032 % obj: @weso-s:NCIT_C17021. Cardinality: {15}
+            # 0.19723865877712032 % obj: @weso-s:NCIT_C17021. Cardinality: {12}
+   obo:RO_0018029  @weso-s:NCIT_C17021  *
+            # 3.9447731755424065 % obj: @weso-s:NCIT_C17021. Cardinality: +
+            # 1.3806706114398422 % obj: @weso-s:NCIT_C17021. Cardinality: {1}
+            # 0.9861932938856016 % obj: @weso-s:NCIT_C17021. Cardinality: {6}
+            # 0.591715976331361 % obj: @weso-s:NCIT_C17021. Cardinality: {7}
+            # 0.39447731755424065 % obj: @weso-s:NCIT_C17021. Cardinality: {2}
+            # 0.39447731755424065 % obj: @weso-s:NCIT_C17021. Cardinality: {3}
+            # 0.19723865877712032 % obj: @weso-s:NCIT_C17021. Cardinality: {4}
+}
+
+
+weso-s:PW_0000001
+{
+   rdf:type  [obo:PW_0000001]  ;                               # 100.0 %
+   sio:SIO_000028  @weso-s:NCIT_C16612  +;                     # 100.0 %
+            # 45.46225614927905 % obj: @weso-s:NCIT_C16612. Cardinality: {1}
+            # 20.525869380831214 % obj: @weso-s:NCIT_C16612. Cardinality: {2}
+            # 10.517387616624257 % obj: @weso-s:NCIT_C16612. Cardinality: {3}
+            # 5.937234944868533 % obj: @weso-s:NCIT_C16612. Cardinality: {4}
+            # 3.5623409669211195 % obj: @weso-s:NCIT_C16612. Cardinality: {5}
+            # 2.9686174724342664 % obj: @weso-s:NCIT_C16612. Cardinality: {7}
+            # 2.7989821882951653 % obj: @weso-s:NCIT_C16612. Cardinality: {6}
+            # 1.8659881255301103 % obj: @weso-s:NCIT_C16612. Cardinality: {9}
+            # 1.6115351993214586 % obj: @weso-s:NCIT_C16612. Cardinality: {8}
+            # 1.3570822731128074 % obj: @weso-s:NCIT_C16612. Cardinality: {11}
+            # 0.7633587786259541 % obj: @weso-s:NCIT_C16612. Cardinality: {10}
+            # 0.5089058524173028 % obj: @weso-s:NCIT_C16612. Cardinality: {13}
+            # 0.4240882103477523 % obj: @weso-s:NCIT_C16612. Cardinality: {12}
+            # 0.4240882103477523 % obj: @weso-s:NCIT_C16612. Cardinality: {19}
+            # 0.2544529262086514 % obj: @weso-s:NCIT_C16612. Cardinality: {14}
+            # 0.16963528413910092 % obj: @weso-s:NCIT_C16612. Cardinality: {17}
+            # 0.16963528413910092 % obj: @weso-s:NCIT_C16612. Cardinality: {15}
+            # 99.91518235793045 % obj: @weso-s:NCIT_C17021. Cardinality: +
+   sio:SIO_000253  @weso-s:SIO_000750  +;                      # 100.0 %
+            # 98.72773536895674 % obj: @weso-s:SIO_000750. Cardinality: {2}
+            # 1.2722646310432568 % obj: @weso-s:SIO_000750. Cardinality: {1}
+   rdfs:label  xsd:string                                      # 100.0 %
+}
+
+
+weso-s:WebAPI
+{
+   rdf:type  [schema:WebAPI]                                   # 100.0 %
+}
+
+
+weso-s:IAO_0000013
+{
+   sio:SIO_000628  @weso-s:NCIT_C16612  {29};                  # 100.0 %
+            # 100.0 % obj: @weso-s:NCIT_C7057. Cardinality: {2}
+   rdf:type  [obo:IAO_0000013]                                 # 100.0 %
+}
+
+
+weso-s:NCIT_C7057
+{
+   rdfs:label  xsd:string  ;                                   # 100.0 %
+   rdf:type  [obo:NCIT_C7057]                                  # 100.0 %
+}
+
+
+weso-s:SIO_000750
+{
+   rdfs:label  xsd:string  ;                                   # 100.0 %
+   rdf:type  [sio:SIO_000750]                                  # 100.0 %
+}
+
+
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ex: <http://example.org/>
+PREFIX weso-s: <http://weso.es/shapes/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+PREFIX so: <http://purl.obolibrary.org/obo/so#>
+PREFIX bdfo: <https://biodatafuse.org/onto/bdf#>
+PREFIX graph: <https://biodatafuse.org/pcs_example/>
+PREFIX brick: <https://brickschema.org/schema/Brick#>
+PREFIX csvw: <http://www.w3.org/ns/csvw#>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
+PREFIX dcmitype: <http://purl.org/dc/dcmitype/>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX dcam: <http://purl.org/dc/dcam/>
+PREFIX doap: <http://usefulinc.com/ns/doap#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX odrl: <http://www.w3.org/ns/odrl/2/>
+PREFIX org: <http://www.w3.org/ns/org#>
+PREFIX prof: <http://www.w3.org/ns/dx/prof/>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX qb: <http://purl.org/linked-data/cube#>
+PREFIX schema: <https://schema.org/>
+PREFIX sh: <http://www.w3.org/ns/shacl#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX sosa: <http://www.w3.org/ns/sosa/>
+PREFIX ssn: <http://www.w3.org/ns/ssn/>
+PREFIX time: <http://www.w3.org/2006/time#>
+PREFIX vann: <http://purl.org/vocab/vann/>
+PREFIX void: <http://rdfs.org/ns/void#>
+PREFIX wgs: <https://www.w3.org/2003/01/geo/wgs84_pos#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xml: <http://www.w3.org/XML/1998/namespace/>
+PREFIX gene_disease_association: <https://biodatafuse.org/pcs_example/gene_disease_association>
+PREFIX gene_base_node: <https://biodatafuse.org/pcs_example/gene>
+PREFIX gene_symbol_base_node: <https://biodatafuse.org/pcs_example/gene_symbol>
+PREFIX source_base_node: <https://biodatafuse.org/pcs_example/source>
+PREFIX data_source_base_node: <https://biodatafuse.org/pcs_example/datasource>
+PREFIX score_base_node: <https://biodatafuse.org/pcs_example/score>
+PREFIX experimental_process_node: <https://biodatafuse.org/pcs_example/experimental_process>
+PREFIX anatomical_entity_base_node: <https://biodatafuse.org/pcs_example/anatomical_entity>
+PREFIX life_cycle_base_node: <https://biodatafuse.org/pcs_example/life_cycle>
+PREFIX gene_expression_value_base_node: <https://biodatafuse.org/pcs_example/gene_expression_value>
+PREFIX sio: <http://semanticscience.org/resource/>
+PREFIX hgnc: <http://bio2rdf.org/hgnc:>
+PREFIX ensembl: <https://identifiers.org/ensembl:>
+PREFIX bdf: <https://biodatafuse.org/>
+PREFIX mondo: <https://monarchinitiative.org/disease/>
+PREFIX umls: <https://www.ncbi.nlm.nih.gov/medgen/>
+
+weso-s:NCIT_C25338
+{
+   rdf:type  [obo:NCIT_C25338]  ;                              # 100.0 %
+   sio:SIO_000300  xsd:double  +                               # 100.0 %
+            # 99.96440067045404 % obj: xsd:double. Cardinality: {1}
+}
+
+
+weso-s:NCIT_C18469
+{
+   rdf:type  [obo:NCIT_C18469]  ;                              # 100.0 %
+   sio:SIO_000216  @weso-s:NCIT_C25338  ;                      # 100.0 %
+   sio:SIO_000028  @weso-s:NCIT_C17021  {2}                    # 100.0 %
+}
+
+
+weso-s:NCIT_C16612
+{
+   rdf:type  [obo:NCIT_C16612]  ;                              # 100.0 %
+   so:translates_to  @weso-s:NCIT_C17021  *;
+            # 92.0608108108108 % obj: @weso-s:NCIT_C17021. Cardinality: +
+            # 55.439189189189186 % obj: @weso-s:NCIT_C17021. Cardinality: {1}
+            # 11.25 % obj: @weso-s:NCIT_C17021. Cardinality: {2}
+            # 7.398648648648648 % obj: @weso-s:NCIT_C17021. Cardinality: {3}
+            # 5.912162162162162 % obj: @weso-s:NCIT_C17021. Cardinality: {4}
+            # 3.445945945945946 % obj: @weso-s:NCIT_C17021. Cardinality: {5}
+            # 2.3986486486486487 % obj: @weso-s:NCIT_C17021. Cardinality: {6}
+            # 1.8243243243243243 % obj: @weso-s:NCIT_C17021. Cardinality: {7}
+            # 1.2837837837837838 % obj: @weso-s:NCIT_C17021. Cardinality: {8}
+            # 0.8445945945945946 % obj: @weso-s:NCIT_C17021. Cardinality: {9}
+            # 0.6081081081081081 % obj: @weso-s:NCIT_C17021. Cardinality: {10}
+            # 0.33783783783783783 % obj: @weso-s:NCIT_C17021. Cardinality: {11}
+            # 0.30405405405405406 % obj: @weso-s:NCIT_C17021. Cardinality: {12}
+            # 0.2364864864864865 % obj: @weso-s:NCIT_C17021. Cardinality: {14}
+            # 0.16891891891891891 % obj: @weso-s:NCIT_C17021. Cardinality: {13}
+            # 0.10135135135135136 % obj: @weso-s:NCIT_C17021. Cardinality: {16}
+            # 0.10135135135135136 % obj: @weso-s:NCIT_C17021. Cardinality: {21}
+            # 0.10135135135135136 % obj: @weso-s:NCIT_C17021. Cardinality: {20}
+   rdfs:label  xsd:string  ?;
+            # 56.58783783783784 % obj: xsd:string. Cardinality: {1}
+   sio:SIO_000068  IRI  *
+            # 47.36486486486486 % obj: IRI. Cardinality: +
+            # 2.4662162162162162 % obj: IRI. Cardinality: {11}
+            # 2.331081081081081 % obj: IRI. Cardinality: {6}
+            # 2.22972972972973 % obj: IRI. Cardinality: {8}
+            # 2.0945945945945947 % obj: IRI. Cardinality: {7}
+            # 1.9256756756756759 % obj: IRI. Cardinality: {10}
+            # 1.8581081081081081 % obj: IRI. Cardinality: {5}
+            # 1.8581081081081081 % obj: IRI. Cardinality: {12}
+            # 1.8243243243243243 % obj: IRI. Cardinality: {13}
+            # 1.722972972972973 % obj: IRI. Cardinality: {14}
+            # 1.6891891891891893 % obj: IRI. Cardinality: {1}
+            # 1.6891891891891893 % obj: IRI. Cardinality: {15}
+            # 1.587837837837838 % obj: IRI. Cardinality: {9}
+            # 1.5202702702702704 % obj: IRI. Cardinality: {16}
+            # 1.4527027027027029 % obj: IRI. Cardinality: {3}
+            # 1.3851351351351353 % obj: IRI. Cardinality: {17}
+            # 1.3513513513513513 % obj: IRI. Cardinality: {4}
+            # 1.1824324324324325 % obj: IRI. Cardinality: {2}
+            # 1.1824324324324325 % obj: IRI. Cardinality: {18}
+            # 1.0810810810810811 % obj: IRI. Cardinality: {21}
+            # 0.945945945945946 % obj: IRI. Cardinality: {19}
+            # 0.8783783783783784 % obj: IRI. Cardinality: {22}
+            # 0.7770270270270271 % obj: IRI. Cardinality: {23}
+            # 0.7094594594594595 % obj: IRI. Cardinality: {24}
+            # 0.6756756756756757 % obj: IRI. Cardinality: {20}
+            # 0.5405405405405406 % obj: IRI. Cardinality: {31}
+            # 0.5405405405405406 % obj: IRI. Cardinality: {26}
+            # 0.5405405405405406 % obj: IRI. Cardinality: {28}
+            # 0.5067567567567568 % obj: IRI. Cardinality: {25}
+            # 0.5067567567567568 % obj: IRI. Cardinality: {29}
+            # 0.4391891891891892 % obj: IRI. Cardinality: {30}
+            # 0.40540540540540543 % obj: IRI. Cardinality: {34}
+            # 0.37162162162162166 % obj: IRI. Cardinality: {40}
+            # 0.33783783783783783 % obj: IRI. Cardinality: {32}
+            # 0.33783783783783783 % obj: IRI. Cardinality: {42}
+            # 0.33783783783783783 % obj: IRI. Cardinality: {36}
+            # 0.33783783783783783 % obj: IRI. Cardinality: {35}
+            # 0.30405405405405406 % obj: IRI. Cardinality: {33}
+            # 0.30405405405405406 % obj: IRI. Cardinality: {44}
+            # 0.2702702702702703 % obj: IRI. Cardinality: {27}
+            # 0.2702702702702703 % obj: IRI. Cardinality: {38}
+            # 0.2364864864864865 % obj: IRI. Cardinality: {37}
+            # 0.2364864864864865 % obj: IRI. Cardinality: {49}
+            # 0.16891891891891891 % obj: IRI. Cardinality: {73}
+            # 0.16891891891891891 % obj: IRI. Cardinality: {46}
+            # 0.16891891891891891 % obj: IRI. Cardinality: {41}
+            # 0.16891891891891891 % obj: IRI. Cardinality: {39}
+            # 0.16891891891891891 % obj: IRI. Cardinality: {52}
+            # 0.16891891891891891 % obj: IRI. Cardinality: {47}
+            # 0.13513513513513514 % obj: IRI. Cardinality: {63}
+            # 0.13513513513513514 % obj: IRI. Cardinality: {77}
+            # 0.13513513513513514 % obj: IRI. Cardinality: {43}
+            # 0.13513513513513514 % obj: IRI. Cardinality: {108}
+            # 0.13513513513513514 % obj: IRI. Cardinality: {45}
+            # 0.13513513513513514 % obj: IRI. Cardinality: {55}
+            # 0.10135135135135136 % obj: IRI. Cardinality: {62}
+            # 0.10135135135135136 % obj: IRI. Cardinality: {54}
+            # 0.10135135135135136 % obj: IRI. Cardinality: {53}
+            # 0.10135135135135136 % obj: IRI. Cardinality: {58}
+            # 0.10135135135135136 % obj: IRI. Cardinality: {69}
+            # 0.10135135135135136 % obj: IRI. Cardinality: {51}
+            # 29.45945945945946 % obj: @weso-s:PW_0000001. Cardinality: +
+}
+
+
+weso-s:NCIT_C17021
+{
+   rdf:type  [obo:NCIT_C17021]  ;                              # 100.0 %
+   rdfs:label  xsd:string  ;                                   # 100.0 %
+   so:translation_of  @weso-s:NCIT_C16612  +;                  # 100.0 %
+            # 99.76635514018692 % obj: @weso-s:NCIT_C16612. Cardinality: {1}
+            # 0.21806853582554517 % obj: @weso-s:NCIT_C16612. Cardinality: {2}
+   sio:SIO_000068  IRI  *;
+            # 71.15264797507788 % obj: IRI. Cardinality: +
+            # 18.473520249221185 % obj: IRI. Cardinality: {1}
+            # 10.996884735202492 % obj: IRI. Cardinality: {2}
+            # 7.679127725856698 % obj: IRI. Cardinality: {3}
+            # 4.018691588785047 % obj: IRI. Cardinality: {4}
+            # 3.442367601246106 % obj: IRI. Cardinality: {5}
+            # 2.7414330218068534 % obj: IRI. Cardinality: {6}
+            # 1.8224299065420562 % obj: IRI. Cardinality: {7}
+            # 1.61993769470405 % obj: IRI. Cardinality: {8}
+            # 1.32398753894081 % obj: IRI. Cardinality: {10}
+            # 1.1214953271028036 % obj: IRI. Cardinality: {13}
+            # 0.778816199376947 % obj: IRI. Cardinality: {9}
+            # 0.7632398753894081 % obj: IRI. Cardinality: {18}
+            # 0.6230529595015576 % obj: IRI. Cardinality: {11}
+            # 0.5763239875389409 % obj: IRI. Cardinality: {20}
+            # 0.5451713395638629 % obj: IRI. Cardinality: {19}
+            # 0.5451713395638629 % obj: IRI. Cardinality: {14}
+            # 0.4828660436137072 % obj: IRI. Cardinality: {29}
+            # 0.43613707165109034 % obj: IRI. Cardinality: {21}
+            # 0.43613707165109034 % obj: IRI. Cardinality: {12}
+            # 0.4205607476635514 % obj: IRI. Cardinality: {15}
+            # 0.4205607476635514 % obj: IRI. Cardinality: {17}
+            # 0.3115264797507788 % obj: IRI. Cardinality: {53}
+            # 0.2959501557632399 % obj: IRI. Cardinality: {59}
+            # 0.2803738317757009 % obj: IRI. Cardinality: {23}
+            # 0.2803738317757009 % obj: IRI. Cardinality: {26}
+            # 0.26479750778816197 % obj: IRI. Cardinality: {60}
+            # 0.24922118380062305 % obj: IRI. Cardinality: {22}
+            # 0.24922118380062305 % obj: IRI. Cardinality: {16}
+            # 0.24922118380062305 % obj: IRI. Cardinality: {33}
+            # 0.24922118380062305 % obj: IRI. Cardinality: {24}
+            # 0.21806853582554517 % obj: IRI. Cardinality: {31}
+            # 0.21806853582554517 % obj: IRI. Cardinality: {35}
+            # 0.21806853582554517 % obj: IRI. Cardinality: {32}
+            # 0.20249221183800625 % obj: IRI. Cardinality: {25}
+            # 0.17133956386292834 % obj: IRI. Cardinality: {30}
+            # 0.17133956386292834 % obj: IRI. Cardinality: {28}
+            # 0.1557632398753894 % obj: IRI. Cardinality: {52}
+            # 0.1557632398753894 % obj: IRI. Cardinality: {37}
+            # 0.14018691588785046 % obj: IRI. Cardinality: {58}
+            # 0.14018691588785046 % obj: IRI. Cardinality: {40}
+            # 0.14018691588785046 % obj: IRI. Cardinality: {36}
+            # 0.14018691588785046 % obj: IRI. Cardinality: {34}
+            # 0.14018691588785046 % obj: IRI. Cardinality: {51}
+            # 0.12461059190031153 % obj: IRI. Cardinality: {38}
+            # 0.12461059190031153 % obj: IRI. Cardinality: {54}
+            # 0.12461059190031153 % obj: IRI. Cardinality: {49}
+            # 0.12461059190031153 % obj: IRI. Cardinality: {86}
+            # 0.12461059190031153 % obj: IRI. Cardinality: {56}
+            # 0.12461059190031153 % obj: IRI. Cardinality: {41}
+            # 0.12461059190031153 % obj: IRI. Cardinality: {45}
+            # 0.10903426791277258 % obj: IRI. Cardinality: {92}
+            # 0.10903426791277258 % obj: IRI. Cardinality: {73}
+            # 0.10903426791277258 % obj: IRI. Cardinality: {43}
+            # 0.10903426791277258 % obj: IRI. Cardinality: {61}
+            # 0.10903426791277258 % obj: IRI. Cardinality: {48}
+            # 0.10903426791277258 % obj: IRI. Cardinality: {42}
+            # 0.10903426791277258 % obj: IRI. Cardinality: {44}
+            # 51.13707165109034 % obj: @weso-s:PW_0000001. Cardinality: +
+            # 20.01557632398754 % obj: @weso-s:NCIT_C18469. Cardinality: +
+   owl:sameAs  @weso-s:NCIT_C16612  ?
+            # 20.01557632398754 % obj: @weso-s:NCIT_C16612. Cardinality: {1}
+}
+
+
+weso-s:SIO_010038
+{
+   rdf:type  [sio:SIO_010038]  ;                               # 100.0 %
+   rdfs:label  xsd:string  +;                                  # 100.0 %
+            # 99.80276134122288 % obj: xsd:string. Cardinality: {1}
+            # 0.19723865877712032 % obj: xsd:string. Cardinality: {2}
+   owl:sameAs  IRI  *;
+            # 87.57396449704143 % obj: IRI. Cardinality: +
+            # 87.3767258382643 % obj: IRI. Cardinality: {1}
+            # 0.19723865877712032 % obj: IRI. Cardinality: {2}
+            # 44.773175542406314 % obj: @weso-s:SIO_010038. Cardinality: +
+            # 42.80078895463511 % obj: @weso-s:NCIT_C172573. Cardinality: {1}
+   obo:RO_0018027  @weso-s:NCIT_C17021  *;
+            # 30.96646942800789 % obj: @weso-s:NCIT_C17021. Cardinality: +
+            # 6.31163708086785 % obj: @weso-s:NCIT_C17021. Cardinality: {1}
+            # 4.930966469428008 % obj: @weso-s:NCIT_C17021. Cardinality: {2}
+            # 4.733727810650888 % obj: @weso-s:NCIT_C17021. Cardinality: {4}
+            # 4.339250493096647 % obj: @weso-s:NCIT_C17021. Cardinality: {3}
+            # 2.9585798816568047 % obj: @weso-s:NCIT_C17021. Cardinality: {7}
+            # 1.7751479289940828 % obj: @weso-s:NCIT_C17021. Cardinality: {5}
+            # 1.3806706114398422 % obj: @weso-s:NCIT_C17021. Cardinality: {6}
+            # 1.3806706114398422 % obj: @weso-s:NCIT_C17021. Cardinality: {10}
+            # 0.7889546351084813 % obj: @weso-s:NCIT_C17021. Cardinality: {14}
+            # 0.591715976331361 % obj: @weso-s:NCIT_C17021. Cardinality: {13}
+            # 0.39447731755424065 % obj: @weso-s:NCIT_C17021. Cardinality: {30}
+            # 0.39447731755424065 % obj: @weso-s:NCIT_C17021. Cardinality: {50}
+            # 0.19723865877712032 % obj: @weso-s:NCIT_C17021. Cardinality: {15}
+            # 0.19723865877712032 % obj: @weso-s:NCIT_C17021. Cardinality: {16}
+            # 0.19723865877712032 % obj: @weso-s:NCIT_C17021. Cardinality: {29}
+            # 0.19723865877712032 % obj: @weso-s:NCIT_C17021. Cardinality: {12}
+            # 0.19723865877712032 % obj: @weso-s:NCIT_C17021. Cardinality: {20}
+   obo:RO_0018029  @weso-s:NCIT_C17021  *
+            # 3.9447731755424065 % obj: @weso-s:NCIT_C17021. Cardinality: +
+            # 1.3806706114398422 % obj: @weso-s:NCIT_C17021. Cardinality: {1}
+            # 0.9861932938856016 % obj: @weso-s:NCIT_C17021. Cardinality: {6}
+            # 0.591715976331361 % obj: @weso-s:NCIT_C17021. Cardinality: {7}
+            # 0.39447731755424065 % obj: @weso-s:NCIT_C17021. Cardinality: {3}
+            # 0.39447731755424065 % obj: @weso-s:NCIT_C17021. Cardinality: {2}
+            # 0.19723865877712032 % obj: @weso-s:NCIT_C17021. Cardinality: {4}
+}
+
+
+weso-s:PW_0000001
+{
+   rdf:type  [obo:PW_0000001]  ;                               # 100.0 %
+   sio:SIO_000028  @weso-s:NCIT_C16612  +;                     # 100.0 %
+            # 45.46225614927905 % obj: @weso-s:NCIT_C16612. Cardinality: {1}
+            # 20.525869380831214 % obj: @weso-s:NCIT_C16612. Cardinality: {2}
+            # 10.517387616624257 % obj: @weso-s:NCIT_C16612. Cardinality: {3}
+            # 5.937234944868533 % obj: @weso-s:NCIT_C16612. Cardinality: {4}
+            # 3.5623409669211195 % obj: @weso-s:NCIT_C16612. Cardinality: {5}
+            # 2.9686174724342664 % obj: @weso-s:NCIT_C16612. Cardinality: {7}
+            # 2.7989821882951653 % obj: @weso-s:NCIT_C16612. Cardinality: {6}
+            # 1.8659881255301103 % obj: @weso-s:NCIT_C16612. Cardinality: {9}
+            # 1.6115351993214586 % obj: @weso-s:NCIT_C16612. Cardinality: {8}
+            # 1.3570822731128074 % obj: @weso-s:NCIT_C16612. Cardinality: {11}
+            # 0.7633587786259541 % obj: @weso-s:NCIT_C16612. Cardinality: {10}
+            # 0.5089058524173028 % obj: @weso-s:NCIT_C16612. Cardinality: {13}
+            # 0.4240882103477523 % obj: @weso-s:NCIT_C16612. Cardinality: {12}
+            # 0.4240882103477523 % obj: @weso-s:NCIT_C16612. Cardinality: {19}
+            # 0.2544529262086514 % obj: @weso-s:NCIT_C16612. Cardinality: {14}
+            # 0.16963528413910092 % obj: @weso-s:NCIT_C16612. Cardinality: {17}
+            # 0.16963528413910092 % obj: @weso-s:NCIT_C16612. Cardinality: {15}
+            # 99.91518235793045 % obj: @weso-s:NCIT_C17021. Cardinality: +
+   sio:SIO_000253  @weso-s:SIO_000750  +;                      # 100.0 %
+            # 98.72773536895674 % obj: @weso-s:SIO_000750. Cardinality: {2}
+            # 1.2722646310432568 % obj: @weso-s:SIO_000750. Cardinality: {1}
+   rdfs:label  xsd:string                                      # 100.0 %
+}
+
+
+weso-s:NCIT_C172573
+{
+   rdf:type  [obo:NCIT_C172573]  ;                             # 100.0 %
+   rdfs:label  xsd:string  ;                                   # 100.0 %
+   obo:RO_0018027  @weso-s:NCIT_C17021  *;
+            # 83.45864661654136 % obj: @weso-s:NCIT_C17021. Cardinality: +
+            # 16.917293233082706 % obj: @weso-s:NCIT_C17021. Cardinality: {3}
+            # 14.285714285714285 % obj: @weso-s:NCIT_C17021. Cardinality: {2}
+            # 10.902255639097744 % obj: @weso-s:NCIT_C17021. Cardinality: {4}
+            # 9.022556390977442 % obj: @weso-s:NCIT_C17021. Cardinality: {1}
+            # 8.270676691729323 % obj: @weso-s:NCIT_C17021. Cardinality: {5}
+            # 4.135338345864661 % obj: @weso-s:NCIT_C17021. Cardinality: {8}
+            # 3.7593984962406015 % obj: @weso-s:NCIT_C17021. Cardinality: {6}
+            # 3.3834586466165413 % obj: @weso-s:NCIT_C17021. Cardinality: {9}
+            # 2.631578947368421 % obj: @weso-s:NCIT_C17021. Cardinality: {20}
+            # 1.8796992481203008 % obj: @weso-s:NCIT_C17021. Cardinality: {16}
+            # 1.5037593984962405 % obj: @weso-s:NCIT_C17021. Cardinality: {14}
+            # 1.1278195488721803 % obj: @weso-s:NCIT_C17021. Cardinality: {30}
+            # 1.1278195488721803 % obj: @weso-s:NCIT_C17021. Cardinality: {7}
+            # 0.7518796992481203 % obj: @weso-s:NCIT_C17021. Cardinality: {23}
+            # 0.7518796992481203 % obj: @weso-s:NCIT_C17021. Cardinality: {25}
+            # 0.37593984962406013 % obj: @weso-s:NCIT_C17021. Cardinality: {50}
+            # 0.37593984962406013 % obj: @weso-s:NCIT_C17021. Cardinality: {10}
+            # 0.37593984962406013 % obj: @weso-s:NCIT_C17021. Cardinality: {32}
+            # 0.37593984962406013 % obj: @weso-s:NCIT_C17021. Cardinality: {22}
+            # 0.37593984962406013 % obj: @weso-s:NCIT_C17021. Cardinality: {94}
+            # 0.37593984962406013 % obj: @weso-s:NCIT_C17021. Cardinality: {12}
+            # 0.37593984962406013 % obj: @weso-s:NCIT_C17021. Cardinality: {98}
+            # 0.37593984962406013 % obj: @weso-s:NCIT_C17021. Cardinality: {13}
+   owl:sameAs  @weso-s:SIO_010038  ?;
+            # 81.57894736842105 % obj: @weso-s:SIO_010038. Cardinality: {1}
+   obo:RO_0018029  @weso-s:NCIT_C17021  *
+            # 16.917293233082706 % obj: @weso-s:NCIT_C17021. Cardinality: +
+            # 10.526315789473683 % obj: @weso-s:NCIT_C17021. Cardinality: {2}
+            # 4.887218045112782 % obj: @weso-s:NCIT_C17021. Cardinality: {1}
+            # 0.7518796992481203 % obj: @weso-s:NCIT_C17021. Cardinality: {3}
+            # 0.37593984962406013 % obj: @weso-s:NCIT_C17021. Cardinality: {11}
+            # 0.37593984962406013 % obj: @weso-s:NCIT_C17021. Cardinality: {5}
+}
+
+
+weso-s:WebAPI
+{
+   rdf:type  [schema:WebAPI]                                   # 100.0 %
+}
+
+
+weso-s:SIO_000750
+{
+   rdf:type  [sio:SIO_000750]  ;                               # 100.0 %
+   rdfs:label  xsd:string                                      # 100.0 %
+}
+
+
+weso-s:NCIT_C7057
+{
+   rdfs:label  xsd:string  ;                                   # 100.0 %
+   rdf:type  [obo:NCIT_C7057]                                  # 100.0 %
+}
+
+
+weso-s:IAO_0000013
+{
+   sio:SIO_000628  @weso-s:NCIT_C16612  {29};                  # 100.0 %
+            # 100.0 % obj: @weso-s:NCIT_C7057. Cardinality: {2}
+   rdf:type  [obo:IAO_0000013]                                 # 100.0 %
+}
+
+
