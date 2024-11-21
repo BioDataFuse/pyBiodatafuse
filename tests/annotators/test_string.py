@@ -10,7 +10,7 @@ import pandas as pd
 
 from pyBiodatafuse.annotators import stringdb
 from pyBiodatafuse.annotators.stringdb import get_ppi, get_version_stringdb
-from pyBiodatafuse.constants import STRING, STRING_PPI_COL
+from pyBiodatafuse.constants import STRING_PPI_COL
 
 
 class TestString(unittest.TestCase):
@@ -34,35 +34,37 @@ class TestString(unittest.TestCase):
         stringdb.check_endpoint_stringdb = Mock(return_value=True)
         stringdb.get_version_stringdb = Mock(return_value={"source_version": "12.0"})
         stringdb.get_string_ids = Mock(
-            return_value=pd.DataFrame([
-                {
-                    "queryIndex": 0,
-                    "queryItem": "ENSG00000119523",
-                    "stringId": "9606.ENSP00000417764",
-                    "ncbiTaxonId": 9606,
-                    "taxonName": "Homo sapiens",
-                    "preferredName": "ALG2",
-                },
-                {
-                    "queryIndex": 1,
-                    "queryItem": "ENSG00000138435",
-                    "stringId": "9606.ENSP00000261007",
-                    "ncbiTaxonId": 9606,
-                    "taxonName": "Homo sapiens",
-                    "preferredName": "CHRNA1",
-                },
-                {
-                    "queryIndex": 2,
-                    "queryItem": "ENSG00000172339",
-                    "stringId": "9606.ENSP00000359224",
-                    "ncbiTaxonId": 9606,
-                    "taxonName": "Homo sapiens",
-                    "preferredName": "ALG14",
-                },
-            ]
-        ))
+            return_value=pd.DataFrame(
+                [
+                    {
+                        "queryIndex": 0,
+                        "queryItem": "ENSG00000119523",
+                        "stringId": "9606.ENSP00000417764",
+                        "ncbiTaxonId": 9606,
+                        "taxonName": "Homo sapiens",
+                        "preferredName": "ALG2",
+                    },
+                    {
+                        "queryIndex": 1,
+                        "queryItem": "ENSG00000138435",
+                        "stringId": "9606.ENSP00000261007",
+                        "ncbiTaxonId": 9606,
+                        "taxonName": "Homo sapiens",
+                        "preferredName": "CHRNA1",
+                    },
+                    {
+                        "queryIndex": 2,
+                        "queryItem": "ENSG00000172339",
+                        "stringId": "9606.ENSP00000359224",
+                        "ncbiTaxonId": 9606,
+                        "taxonName": "Homo sapiens",
+                        "preferredName": "ALG14",
+                    },
+                ]
+            )
+        )
 
-        stringdb._get_ppi_data = Mock(
+        stringdb.get_ppi_data = Mock(
             return_value=pd.DataFrame([
                 {
                     "stringId_A": "9606.ENSP00000261007",
