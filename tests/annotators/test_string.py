@@ -34,7 +34,7 @@ class TestString(unittest.TestCase):
         stringdb.check_endpoint_stringdb = Mock(return_value=True)
         stringdb.get_version_stringdb = Mock(return_value={"source_version": "12.0"})
         stringdb.get_string_ids = Mock(
-            return_value=[
+            return_value=pd.DataFrame([
                 {
                     "queryIndex": 0,
                     "queryItem": "ENSG00000119523",
@@ -60,10 +60,10 @@ class TestString(unittest.TestCase):
                     "preferredName": "ALG14",
                 },
             ]
-        )
+        ))
 
         stringdb._get_ppi_data = Mock(
-            return_value=[
+            return_value=pd.DataFrame([
                 {
                     "stringId_A": "9606.ENSP00000261007",
                     "stringId_B": "9606.ENSP00000359224",
@@ -94,7 +94,7 @@ class TestString(unittest.TestCase):
                     "dscore": 0.119,
                     "tscore": 0.589,
                 },
-            ]
+            ])
         )
 
         bridgedb_dataframe = pd.DataFrame(

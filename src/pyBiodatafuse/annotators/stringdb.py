@@ -145,7 +145,7 @@ def get_ppi(bridgedb_df: pd.DataFrame):
 
     # Get ids
     string_ids = get_string_ids(gene_list)
-    if not string_ids:
+    if string_ids.empty:
         return pd.DataFrame(), {}
 
     stringdb_ids_df = pd.DataFrame(string_ids)

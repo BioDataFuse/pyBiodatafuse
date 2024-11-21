@@ -118,7 +118,7 @@ DISGENET_DISEASE_OUTPUT_DICT = {
     "disease_umlscui": str,  # "C1510586"
     "score": float,
     "ei": float,
-    "el": float,
+    "el": str,
 }
 HPO = "HPO"
 NCI = "NCI"
@@ -208,7 +208,7 @@ OPENTARGETS_COMPOUND_OUTPUT_DICT = {
     "is_approved": bool,
     "relation": str,
     "adverse_effect_count": int,
-    "adverse_effect": dict,
+    "adverse_effect": list,
 }
 CHEMBL_ID = "CHEMBL"
 DRUGBANK_ID = "DrugBank"
@@ -253,7 +253,7 @@ OUTCOME = "active|inactive"
 INCHI = "InChI"
 
 # STRING
-STRING_OUTPUT_DICT = {"stringdb_link_to": str, STRING_GENE_INPUT_ID: str, "score": int}
+STRING_OUTPUT_DICT = {"stringdb_link_to": str, STRING_GENE_INPUT_ID: str, "score": float}
 
 
 """ Node and edge main lable and attributes for each data source """
