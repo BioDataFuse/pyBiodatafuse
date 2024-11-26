@@ -403,7 +403,6 @@ def get_gene_tractability(
     query_string = query_string.replace("$ids", str(gene_ids).replace("'", '"'))
 
     r = requests.post(OPENTARGETS_ENDPOINT, json={"query": query_string}).json()
-
     # Record the end time
     end_time = datetime.datetime.now()
 
@@ -470,35 +469,39 @@ def get_gene_compound_interactions(
     query_string = """
       query targetDrugs {
         targets (ensemblIds: $ids){
-          id
-          knownDrugs {
-            rows {
-              mechanismOfAction
-              drug {
-                id
-                name
-                isApproved
-                maximumClinicalTrialPhase
-                crossReferences {
+            id
+            knownDrugs {
+              rows {
+                mechanismOfAction
+                drug {
+                  id
+                  name
+                  isApproved
+                  maximumClinicalTrialPhase
+                  crossReferences {
                     source
                     reference
-                }
-                adverseEvents{
+                  }
+                  adverseEvents {
                     count
-                    rows{
+                    rows {
                       name
                     }
                   }
+                  mechanismsOfAction {
+                    uniqueActionTypes
+                    uniqueTargetTypes
+                  }
+                }
               }
             }
           }
         }
-      }
+
     """
     query_string = query_string.replace("$ids", str(gene_ids).replace("'", '"'))
 
     r = requests.post(OPENTARGETS_ENDPOINT, json={"query": query_string}).json()
-
     # Record the end time
     end_time = datetime.datetime.now()
 
@@ -529,7 +532,7 @@ def get_gene_compound_interactions(
 
         if drug_df.empty:
             continue
-
+        # drug_df["unique_action_type"] = drug_df["drug"]["mechanismsOfAction"]["uniqueActionTypes"]
         drug_df[
             [
                 "chembl_id",
@@ -538,17 +541,17 @@ def get_gene_compound_interactions(
                 "clincal_trial_phase",
                 "cross_references",
                 "adverse_events",
+                "mechanisms_of_action"
             ]
         ] = drug_df["drug"].apply(pd.Series)
         drug_df.drop(columns=["drug"], inplace=True)
-
         drug_df["target"] = gene["id"]
         drug_df["chembl_id"] = "CHEMBL:" + drug_df["chembl_id"].astype(str)
 
-        drug_df["mechanismOfAction"] = drug_df["mechanismOfAction"].apply(
+        drug_df["relation"] = drug_df["mechanismOfAction"].apply(
             lambda x: "inhibits" if "antagonist" in x else "activates"
         )
-        drug_df.rename(columns={"mechanismOfAction": "relation"}, inplace=True)
+        # drug_df.rename(columns={"mechanismOfAction": "relation"}, inplace=True)
 
         drug_df["drugbank_id"] = drug_df["cross_references"].apply(
             lambda x: (
@@ -573,7 +576,7 @@ def get_gene_compound_interactions(
         intermediate_df = pd.concat([intermediate_df, drug_df], ignore_index=True)
         intermediate_df.drop(["cross_references", "adverse_events"], axis=1, inplace=True)
         intermediate_df = intermediate_df.drop_duplicates(
-            subset=[col for col in intermediate_df.columns if col != "adverse_effect"]
+            subset=[col for col in intermediate_df.columns if col not in ["adverse_effect", "mechanisms_of_action"]]
         )
 
     if intermediate_df.empty:
@@ -726,8 +729,8 @@ def get_compound_disease_interactions(
         }
     }"""
     query_string = query_string.replace("$chemblIds", str(chembl_ids).replace("'", '"'))
-
     r = requests.post(OPENTARGETS_ENDPOINT, json={"query": query_string}).json()
+  
     # Record the end time
     end_time = datetime.datetime.now()
 
@@ -1091,7 +1094,7 @@ def get_disease_compound_interactions(
         intermediate_df = pd.concat([intermediate_df, drug_df], ignore_index=True)
         intermediate_df.drop(["cross_references", "adverse_events"], axis=1, inplace=True)
         intermediate_df = intermediate_df.drop_duplicates(
-            subset=[col for col in intermediate_df.columns if col != "adverse_effect"]
+            subset=[col for col in intermediate_df.columns if col not in ["adverse_effect", "mechanisms_of_action"]]
         )
 
     if intermediate_df.empty:

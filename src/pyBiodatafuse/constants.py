@@ -209,6 +209,7 @@ OPENTARGETS_COMPOUND_OUTPUT_DICT = {
     "relation": str,
     "adverse_effect_count": int,
     "adverse_effect": list,
+    "mechanisms_of_action": list,
 }
 CHEMBL_ID = "CHEMBL"
 DRUGBANK_ID = "DrugBank"
@@ -585,9 +586,15 @@ GO_TYPES = {
 }
 
 # Compound MoA
+
 MOAS = {
-    "activates": "http://purl.obolibrary.org/obo/RO_0018027",  # agonist
-    "inhibits": "http://purl.obolibrary.org/obo/RO_0018029",  # antagonist
+    "ANTAGONIST": "http://purl.obolibrary.org/obo/RO_0018029",
+    "AGONIST": "http://purl.obolibrary.org/obo/RO_0018027",
+    "BLOCKER": "http://purl.obolibrary.org/obo/RO_0003002",
+    "INHIBITOR": "http://purl.obolibrary.org/obo/RO_0012006",  # TODO this predicate has the wrong range
+    "MODULATOR": "http://purl.obolibrary.org/obo/RO_0011002",  # TODO needs more granularity
+    "PARTIAL AGONIST": "http://purl.obolibrary.org/obo/RO_0018027",  # TODO needs more granularity
+    "INVERSE AGONIST": "http://purl.obolibrary.org/obo/RO_0018028",
 }
 
 # Data sources
@@ -632,4 +639,10 @@ NAMESPACE_SHAPES = {
     "http://purl.obolibrary.org/obo/": "obo",
     "http://purl.obolibrary.org/obo/so#": "so",
     "https://biodatafuse.org/onto/bdf#": "bdfo",
+    "https://minerva-net.lcsb.uni.lu/api/": "minerva",
+    "https://reactome.org/content/detail/": "reactome",
+    "https://www.uniprot.org/uniprotkb/": "uniprot",
+    "http://identifiers.org/ensembl#": "ensembl",
+    
+
 }

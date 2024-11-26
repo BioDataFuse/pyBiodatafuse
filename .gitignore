@@ -924,3 +924,6 @@ src/pyBiodatafuse/resources/biodatafuse.properties
 
 # More
 .vscode
+
+# PCS Graph (DisGeNET data)
+examples/usecases/PCS/BDF_PCS_graph.ttl

@@ -11,6 +11,7 @@ import numpy as np
 import pandas as pd
 import requests
 from requests.exceptions import RequestException
+# from biomart import BiomartServer
 
 from pyBiodatafuse.constants import (
     STRING,
@@ -64,11 +65,14 @@ def _format_data(row, network_df):
 
     for _, row_arr in network_df.iterrows():
         if row_arr["preferredName_A"] == row["identifier"] and row_arr["preferredName_B"] not in target_links_set:
-            gene_ppi_links.append({
-                "stringdb_link_to": row_arr["preferredName_B"],
-                STRING_GENE_INPUT_ID: f"{STRING_GENE_INPUT_ID}:{row_arr['stringId_B'].split('.')[1]}",
-                "score": row_arr["score"],
-            })
+            gene_ppi_links.append(
+                {
+                    "stringdb_link_to": row_arr["preferredName_B"],
+                    STRING_GENE_INPUT_ID: f"{STRING_GENE_INPUT_ID}:{row_arr['stringId_B'].split('.')[1]}",
+                    "score": row_arr["score"],
+                    "Uniprot-TrEMBL": row_arr["preferredName_A"],
+                }
+            )
             target_links_set.add(row_arr["preferredName_B"])
 
         elif row_arr["preferredName_B"] == row["identifier"] and row_arr["preferredName_A"] not in target_links_set:
@@ -76,6 +80,7 @@ def _format_data(row, network_df):
                 "stringdb_link_to": row_arr["preferredName_A"],
                 STRING_GENE_INPUT_ID: f"{STRING_GENE_INPUT_ID}:{row_arr['stringId_A'].split('.')[1]}",
                 "score": row_arr["score"],
+                "Uniprot-TrEMBL": row_arr["preferredName_B"],
             })
             target_links_set.add(row_arr["preferredName_A"])
 
@@ -145,7 +150,7 @@ def get_ppi(bridgedb_df: pd.DataFrame):
 
     # Get ids
     string_ids = get_string_ids(gene_list)
-    if string_ids.empty:
+    if len(string_ids) == 0:
         return pd.DataFrame(), {}
 
     stringdb_ids_df = pd.DataFrame(string_ids)
@@ -193,14 +198,43 @@ def get_ppi(bridgedb_df: pd.DataFrame):
     data_df[STRING_PPI_COL] = data_df[STRING_PPI_COL].apply(
         lambda x: ([{key: np.nan for key in STRING_OUTPUT_DICT}] if len(x) == 0 else x)
     )
-
-    # Check if all keys in df match the keys in OUTPUT_DICT
-    exploded_df = data_df.explode(STRING_PPI_COL)
-    ppi_df = pd.json_normalize(exploded_df[STRING_PPI_COL])
-    check_columns_against_constants(
-        data_df=ppi_df,
-        output_dict=STRING_OUTPUT_DICT,
-        check_values_in=[],
-    )
-
+    # # Collect all ENSP IDs from network_df
+    # ensp_ids = set(network_df['stringId_A'].str.split('.').str[1]) | set(network_df# ['stringId_B'].str.split('.').str[1])
+    # # Get UniProt mapping
+    # uniprot_map = ensp_to_uniprot(list(ensp_ids))
+    # Add 'Uniprot-TrEMBL' key to each element in data_df[STRING_PPI_COL]
+    # data_df[STRING_PPI_COL] = data_df[STRING_PPI_COL].apply(
+    #     lambda lst: [
+    #         {**ppi, "Uniprot-TrEMBL": uniprot_map.get(ppi.get("Ensembl"))}
+    #         for ppi in lst if lst
+    #     ] if lst else []
+    # )
     return data_df, string_metadata
+
+
+# def ensp_to_uniprot(ensp_ids):
+#     """
+#     Retrieve UniProt IDs from Ensembl protein IDs (ENSP).
+# 
+#     :param ensp_ids: List of Ensembl protein IDs (ENSP)
+#     :return: Dictionary mapping ENSP IDs to UniProt IDs
+#     """
+#     server = BiomartServer("http://www.ensembl.org/biomart")
+#     hsapiens_mart = server.datasets["hsapiens_gene_ensembl"]
+# 
+#     response = hsapiens_mart.search(
+#         {
+#             "filters": {"ensembl_peptide_id": ensp_ids},
+#             "attributes": ["ensembl_peptide_id", "uniprotswissprot"],
+#         }
+#     )
+# 
+#     ensp_to_uniprot_map = {}
+#     for line in response.iter_lines():
+#         decoded_line = line.decode("utf-8").split("\t")
+#         ensp_id = decoded_line[0]
+#         uniprot_id = decoded_line[1] if len(decoded_line) > 1 else None
+#         ensp_id = f"Ensembl:{ensp_id}"
+#         ensp_to_uniprot_map[ensp_id] = uniprot_id
+#     return ensp_to_uniprot_map
+# 

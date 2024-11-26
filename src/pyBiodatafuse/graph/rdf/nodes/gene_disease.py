@@ -26,17 +26,17 @@ def add_gene_disease_associations(
     :param disease_data: Dictionary containing disease association information.
     :param new_uris: Dictionary with updated project base URIs for the nodes.
     :param i: The index of the row.
+    :return: disease node (URIRef).
     """
     gene_id = g.value(subject=gene_node, predicate=RDFS.label)
     disease_node = add_disease_node(g, disease_data)
     if not disease_node:
         return
-
-    assoc_node = URIRef(f"{new_uris['gene_disease_association']}/{id_number}{i}{source_idx}")
+    umlscui = disease_data.get("disease_umlscui", "")
+    assoc_node = URIRef(f"{new_uris['gene_disease_association']}/{gene_id}{umlscui}")
     g.add((assoc_node, RDF.type, URIRef(NODE_TYPES["gene_disease_association"])))
     g.add((assoc_node, URIRef(PREDICATES["sio_refers_to"]), gene_node))
     g.add((assoc_node, URIRef(PREDICATES["sio_refers_to"]), disease_node))
-    umlscui = disease_data.get("disease_umlscui", "")
     score = disease_data.get("score", "")
     if disease_data.get("score"):
         score_node = add_score_node(
@@ -59,8 +59,9 @@ def add_gene_disease_associations(
         el_node = add_evidence_node(g, id_number, source_idx, "el", disease_data, new_uris, i)
         g.add((assoc_node, URIRef(PREDICATES["sio_has_measurement_value"]), el_node))
 
-    data_source_node = add_data_source_node(g, "DISGENET")
-    g.add((assoc_node, URIRef(PREDICATES["sio_has_source"]), data_source_node))
+    # data_source_node = add_data_source_node(g, "DISGENET")
+    # g.add((assoc_node, URIRef(PREDICATES["sio_has_source"]), data_source_node))
+    return disease_node
 
 
 def add_disease_node(g: Graph, disease_data: dict) -> URIRef:

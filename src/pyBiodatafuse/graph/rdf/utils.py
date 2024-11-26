@@ -77,7 +77,7 @@ def get_shapes(
     g,
     base_uri,
     path,
-    threshold=0.001,
+    threshold=0.000000001,
     graph_type="shex",  # "shex" or "shacl"
     uml_figure_path=None,
     print_string_output=True,
