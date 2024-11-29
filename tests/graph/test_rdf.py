@@ -20,7 +20,7 @@ import pandas as pd
 from pyBiodatafuse.graph.rdf.rdf import BDFGraph
 
 DATA = pd.read_json(os.path.join("tests", "graph", "data", "combined_df_mock_data.json"))
-with open(os.path.join("tests", "graph", "data", "combined_metadata_mock_data.json"), "r") as file:
+with open(os.path.join("tests", "graph", "data", "combined_metadata_mock_data.json"), "r", encoding="utf-8") as file:
     METADATA = json.load(file)
 
 
@@ -52,7 +52,6 @@ class TestBDFGraph(unittest.TestCase):
         This method verifies that the RDF graph is generated correctly from the provided dataframe and metadata.
         """
         df = pd.DataFrame(DATA)
-        # metadata = {"title": "Test Graph"} TODO
         self.graph.generate_rdf(df, metadata=METADATA)
         self.assertTrue(len(self.graph) > 0)
 

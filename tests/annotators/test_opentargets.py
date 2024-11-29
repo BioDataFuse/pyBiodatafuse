@@ -3533,7 +3533,7 @@ class TestOpentarget(unittest.TestCase):
                 {},
             )
         )
-
+        )
         bridge_df = pd.DataFrame(
             {
                 "identifier": ["A2ML1", "ABCA1"],
