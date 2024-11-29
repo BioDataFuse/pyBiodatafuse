@@ -16,7 +16,7 @@ def add_gene_disease_associations(
     disease_data: dict,
     new_uris: dict,
     i: int,
-) -> None:
+) -> URIRef:
     """Process and add gene-disease association data to the RDF graph.
 
     :param g: RDF graph to which the associations will be added.

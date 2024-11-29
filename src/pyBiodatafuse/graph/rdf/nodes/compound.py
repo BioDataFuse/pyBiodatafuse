@@ -20,7 +20,7 @@ def add_compound_node(g: Graph, compound: dict, gene_node: URIRef) -> URIRef:
     chembl_id = compound.get("chembl_id")
     compoundbank_id = compound.get("compoundbank_id")
     compound_name = compound.get("compound_name")
-    compound_cid = compound.get("compound_cid")
+    compound_cid = compound.get("compound_cid", "")
     is_approved = compound.get("is_approved")
     clinical_trial_phase = compound.get("clinical_trial_phase")
     moa = compound.get("mechanisms_of_action", None)
