@@ -12,8 +12,6 @@ import pandas as pd
 import requests
 from requests.exceptions import RequestException
 
-# from biomart import BiomartServer
-
 from pyBiodatafuse.constants import (
     STRING,
     STRING_ENDPOINT,
@@ -22,6 +20,9 @@ from pyBiodatafuse.constants import (
     STRING_PPI_COL,
 )
 from pyBiodatafuse.utils import check_columns_against_constants, get_identifier_of_interest
+
+# from biomart import BiomartServer
+
 
 logger = logging.getLogger("stringdb")
 

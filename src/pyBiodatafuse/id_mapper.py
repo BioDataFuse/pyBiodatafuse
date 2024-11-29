@@ -108,7 +108,7 @@ def bridgedb_xref(
     if not input_datasource:
         raise ValueError("Please provide the identifier datasource, e.g. HGNC")
 
-    if output_datasource is None or 'All':
+    if output_datasource is None or "All":
         output_datasource = [
             "Uniprot-TrEMBL",
             "NCBI Gene",

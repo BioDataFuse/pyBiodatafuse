@@ -56,18 +56,14 @@ from pyBiodatafuse.constants import (
 )
 from pyBiodatafuse.graph.rdf.metadata import add_metadata
 from pyBiodatafuse.graph.rdf.nodes.compound import add_compound_node, add_transporter_inhibitor_node
+from pyBiodatafuse.graph.rdf.nodes.gene import add_gene_nodes
 from pyBiodatafuse.graph.rdf.nodes.gene_disease import add_gene_disease_associations
 from pyBiodatafuse.graph.rdf.nodes.gene_expression import add_gene_expression_data
-from pyBiodatafuse.graph.rdf.nodes.gene import add_gene_nodes
 from pyBiodatafuse.graph.rdf.nodes.go_terms import add_go_cpf
 from pyBiodatafuse.graph.rdf.nodes.literature import add_literature_based_data
 from pyBiodatafuse.graph.rdf.nodes.pathway import add_pathway_node
 from pyBiodatafuse.graph.rdf.nodes.protein_protein import add_ppi_data
-from pyBiodatafuse.graph.rdf.utils import (
-    get_shacl_prefixes,
-    get_shapes,
-    replace_na_none,
-)
+from pyBiodatafuse.graph.rdf.utils import get_shacl_prefixes, get_shapes, replace_na_none
 
 
 class BDFGraph(Graph):
@@ -301,7 +297,7 @@ class BDFGraph(Graph):
         Process compound data and add to the RDF graph.
 
         :param compound_data: List of compounds to be processed.
-        :param protein_nodes: URIRef of gene node.
+        :param gene_node: URIRef of gene node.
         """
         if compound_data:
             for compound in compound_data:
@@ -315,8 +311,11 @@ class BDFGraph(Graph):
 
         :param literature_based_data: Data derived from literature sources. Can be a single entry or a list of entries.
         :param gene_node: The gene node to which the literature-based data will be added.
+        :param id_number: Unique identifier for the expression data.
+        :param source_idx: Identifier for the source of the expression data.
+        :param new_uris: Node URIs for the graph.
+        :param i" Row index.
         """
-
         if literature_based_data:
             entries = (
                 literature_based_data
@@ -371,7 +370,7 @@ class BDFGraph(Graph):
         Process Protein-Protein Interaction (PPI) data and add to the RDF graph.
 
         :param stringdb_data: List of dictionaries containing PPI data from STRING database.
-        :param protein_nodes: List of protein nodes to be processed.
+        :param gene_node: The gene URIRef.
         """
         if stringdb_data:
             for entry in stringdb_data:
@@ -460,8 +459,9 @@ class BDFGraph(Graph):
         :param entry: Literature data to be added.
         :param gene_node: Node representing the gene.
         :param id_number: Unique identifier for the expression data.
-        :param source_idx: Identifier for the source of the expression data.
         :param disease_data: List of disease data to be processed.
+        :param source_idx: Identifier for the source of the expression data.
+        :param new_uris: Node URIs for the graph.
         :param i: An integer representing the index of the row.
         """
         add_literature_based_data(
@@ -472,7 +472,6 @@ class BDFGraph(Graph):
         """Add Protein-Protein Interaction (PPI) data to the RDF graph.
 
         :param gene_node: Node representing the gene.
-        :param protein_name: Name of the protein.
         :param entry: PPI data to be added.
         """
         add_ppi_data(

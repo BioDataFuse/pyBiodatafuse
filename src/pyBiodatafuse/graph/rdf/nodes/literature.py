@@ -5,7 +5,7 @@
 
 
 from rdflib import Literal, URIRef
-from rdflib.namespace import RDF, RDFS, OWL
+from rdflib.namespace import OWL, RDF, RDFS
 
 from pyBiodatafuse.constants import NAMESPACE_BINDINGS, NODE_TYPES, PREDICATES
 from pyBiodatafuse.graph.rdf.nodes.gene_disease import add_gene_disease_associations
@@ -26,6 +26,10 @@ def add_literature_based_data(
     :param g: (Graph): RDF graph to which the literature-based data is added.
     :param entry: (dict): Dictionary with literature-based association information.
     :param gene_node: (URIRef): URIRef of the gene node associated with the literature data.
+    :param id_number: Unique identifier for the expression data.
+    :param source_idx: Identifier for the source of the expression data.
+    :param new_uris: Node URIs for the graph.
+    :param i" Row index.
     """
     source = entry.get("source", None)
     if source and "PMID" in source:

@@ -3,16 +3,17 @@
 """Python file for querying the OpenTargets database (https://www.opentargets.org/)."""
 
 import datetime
+import json
 import warnings
 from typing import Dict, Tuple
+from unittest.mock import MagicMock
+
 import numpy as np
 import pandas as pd
 import requests
 from tqdm import tqdm
 
 from pyBiodatafuse import id_mapper
-import json
-from unittest.mock import MagicMock
 from pyBiodatafuse.constants import (
     OPENTARGETS,
     OPENTARGETS_COMPOUND_DISEASE_RELATION,
