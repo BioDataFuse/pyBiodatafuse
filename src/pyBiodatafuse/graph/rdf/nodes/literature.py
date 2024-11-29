@@ -30,7 +30,7 @@ def add_literature_based_data(
     :param source_idx: Identifier for the source of the expression data.
     :param disease_data: Dictionary with disease data.
     :param new_uris: Node URIs for the graph.
-    :param i" Row index.
+    :param i: Row index.
     """
     source = entry.get("source", None)
     if source and "PMID" in source:
