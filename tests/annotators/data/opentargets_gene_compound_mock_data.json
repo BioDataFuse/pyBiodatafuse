@@ -117,114 +117,13 @@
                                             "name": "rash maculo-papular"
                                         }
                                     ]
-                                }
-                            }
-                        },
-                        {
-                            "mechanismOfAction": "Muscle-type nicotinic acetylcholine receptor antagonist",
-                            "drug": {
-                                "id": "CHEMBL1200641",
-                                "name": "CISATRACURIUM BESYLATE",
-                                "isApproved": true,
-                                "maximumClinicalTrialPhase": 4,
-                                "crossReferences": [
-                                    {
-                                        "source": "DailyMed",
-                                        "reference": [
-                                            "cisatracurium%20besylate"
-                                        ]
-                                    },
-                                    {
-                                        "source": "PubChem",
-                                        "reference": [
-                                            "11113043"
-                                        ]
-                                    },
-                                    {
-                                        "source": "chEBI",
-                                        "reference": [
-                                            "3721"
-                                        ]
-                                    }
-                                ],
-                                "adverseEvents": {
-                                    "count": 83,
-                                    "rows": [
-                                        {
-                                            "name": "anaphylactic shock"
-                                        },
-                                        {
-                                            "name": "anaphylactic reaction"
-                                        },
-                                        {
-                                            "name": "feeding intolerance"
-                                        },
-                                        {
-                                            "name": "bronchospasm"
-                                        },
-                                        {
-                                            "name": "hyperthermia malignant"
-                                        },
-                                        {
-                                            "name": "circulatory collapse"
-                                        },
-                                        {
-                                            "name": "hypotension"
-                                        },
-                                        {
-                                            "name": "cardiac arrest"
-                                        },
-                                        {
-                                            "name": "hypertransaminasaemia"
-                                        },
-                                        {
-                                            "name": "cardio-respiratory arrest"
-                                        },
-                                        {
-                                            "name": "drug reaction with eosinophilia and systemic symptoms"
-                                        },
-                                        {
-                                            "name": "shock"
-                                        },
-                                        {
-                                            "name": "apnoea"
-                                        },
-                                        {
-                                            "name": "toxic epidermal necrolysis"
-                                        },
-                                        {
-                                            "name": "acute pulmonary oedema"
-                                        },
-                                        {
-                                            "name": "post procedural complication"
-                                        },
-                                        {
-                                            "name": "haemodynamic instability"
-                                        },
-                                        {
-                                            "name": "hepatocellular injury"
-                                        },
-                                        {
-                                            "name": "fatigue"
-                                        },
-                                        {
-                                            "name": "hyperbilirubinaemia"
-                                        },
-                                        {
-                                            "name": "bradycardia"
-                                        },
-                                        {
-                                            "name": "diarrhoea"
-                                        },
-                                        {
-                                            "name": "tachyphylaxis"
-                                        },
-                                        {
-                                            "name": "neuromuscular block prolonged"
-                                        },
-                                        {
-                                            "name": "headache"
-                                        }
+                                },
+                                "mechanismsOfAction": {
+                                    "uniqueActionTypes": [
+                                        "ANTAGONIST"
+                                    ],
+                                    "uniqueTargetTypes": [
+                                        "protein complex group"
                                     ]
                                 }
                             }
@@ -334,6 +233,131 @@
                                         {
                                             "name": "headache"
                                         }
+                                    ]
+                                },
+                                "mechanismsOfAction": {
+                                    "uniqueActionTypes": [
+                                        "ANTAGONIST"
+                                    ],
+                                    "uniqueTargetTypes": [
+                                        "protein complex group"
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "mechanismOfAction": "Muscle-type nicotinic acetylcholine receptor antagonist",
+                            "drug": {
+                                "id": "CHEMBL1200641",
+                                "name": "CISATRACURIUM BESYLATE",
+                                "isApproved": true,
+                                "maximumClinicalTrialPhase": 4,
+                                "crossReferences": [
+                                    {
+                                        "source": "DailyMed",
+                                        "reference": [
+                                            "cisatracurium%20besylate"
+                                        ]
+                                    },
+                                    {
+                                        "source": "PubChem",
+                                        "reference": [
+                                            "11113043"
+                                        ]
+                                    },
+                                    {
+                                        "source": "chEBI",
+                                        "reference": [
+                                            "3721"
+                                        ]
+                                    }
+                                ],
+                                "adverseEvents": {
+                                    "count": 83,
+                                    "rows": [
+                                        {
+                                            "name": "anaphylactic shock"
+                                        },
+                                        {
+                                            "name": "anaphylactic reaction"
+                                        },
+                                        {
+                                            "name": "feeding intolerance"
+                                        },
+                                        {
+                                            "name": "bronchospasm"
+                                        },
+                                        {
+                                            "name": "hyperthermia malignant"
+                                        },
+                                        {
+                                            "name": "circulatory collapse"
+                                        },
+                                        {
+                                            "name": "hypotension"
+                                        },
+                                        {
+                                            "name": "cardiac arrest"
+                                        },
+                                        {
+                                            "name": "hypertransaminasaemia"
+                                        },
+                                        {
+                                            "name": "cardio-respiratory arrest"
+                                        },
+                                        {
+                                            "name": "drug reaction with eosinophilia and systemic symptoms"
+                                        },
+                                        {
+                                            "name": "shock"
+                                        },
+                                        {
+                                            "name": "apnoea"
+                                        },
+                                        {
+                                            "name": "toxic epidermal necrolysis"
+                                        },
+                                        {
+                                            "name": "acute pulmonary oedema"
+                                        },
+                                        {
+                                            "name": "post procedural complication"
+                                        },
+                                        {
+                                            "name": "haemodynamic instability"
+                                        },
+                                        {
+                                            "name": "hepatocellular injury"
+                                        },
+                                        {
+                                            "name": "fatigue"
+                                        },
+                                        {
+                                            "name": "hyperbilirubinaemia"
+                                        },
+                                        {
+                                            "name": "bradycardia"
+                                        },
+                                        {
+                                            "name": "diarrhoea"
+                                        },
+                                        {
+                                            "name": "tachyphylaxis"
+                                        },
+                                        {
+                                            "name": "neuromuscular block prolonged"
+                                        },
+                                        {
+                                            "name": "headache"
+                                        }
+                                    ]
+                                },
+                                "mechanismsOfAction": {
+                                    "uniqueActionTypes": [
+                                        "ANTAGONIST"
+                                    ],
+                                    "uniqueTargetTypes": [
+                                        "protein complex group"
                                     ]
                                 }
                             }
@@ -445,6 +469,14 @@
                                             "name": "muscle contractions involuntary"
                                         }
                                     ]
+                                },
+                                "mechanismsOfAction": {
+                                    "uniqueActionTypes": [
+                                        "AGONIST"
+                                    ],
+                                    "uniqueTargetTypes": [
+                                        "protein complex group"
+                                    ]
                                 }
                             }
                         },
@@ -553,6 +585,14 @@
                                         {
                                             "name": "headache"
                                         }
+                                    ]
+                                },
+                                "mechanismsOfAction": {
+                                    "uniqueActionTypes": [
+                                        "ANTAGONIST"
+                                    ],
+                                    "uniqueTargetTypes": [
+                                        "protein complex group"
                                     ]
                                 }
                             }
@@ -657,120 +697,13 @@
                                             "name": "rash maculo-papular"
                                         }
                                     ]
-                                }
-                            }
-                        },
-                        {
-                            "mechanismOfAction": "Muscle-type nicotinic acetylcholine receptor antagonist",
-                            "drug": {
-                                "id": "CHEMBL1201244",
-                                "name": "ROCURONIUM",
-                                "isApproved": true,
-                                "maximumClinicalTrialPhase": 4,
-                                "crossReferences": [
-                                    {
-                                        "source": "PubChem",
-                                        "reference": [
-                                            "50112687"
-                                        ]
-                                    },
-                                    {
-                                        "source": "Wikipedia",
-                                        "reference": [
-                                            "Rocuronium_bromide"
-                                        ]
-                                    },
-                                    {
-                                        "source": "drugbank",
-                                        "reference": [
-                                            "DB00728"
-                                        ]
-                                    },
-                                    {
-                                        "source": "chEBI",
-                                        "reference": [
-                                            "8884"
-                                        ]
-                                    }
-                                ],
-                                "adverseEvents": {
-                                    "count": 98,
-                                    "rows": [
-                                        {
-                                            "name": "anaphylactic reaction"
-                                        },
-                                        {
-                                            "name": "anaphylactic shock"
-                                        },
-                                        {
-                                            "name": "cardiac arrest"
-                                        },
-                                        {
-                                            "name": "hypotension"
-                                        },
-                                        {
-                                            "name": "neuromuscular block prolonged"
-                                        },
-                                        {
-                                            "name": "hyperthermia malignant"
-                                        },
-                                        {
-                                            "name": "bronchospasm"
-                                        },
-                                        {
-                                            "name": "circulatory collapse"
-                                        },
-                                        {
-                                            "name": "tachycardia"
-                                        },
-                                        {
-                                            "name": "delayed recovery from anaesthesia"
-                                        },
-                                        {
-                                            "name": "neuromuscular blockade"
-                                        },
-                                        {
-                                            "name": "pulseless electrical activity"
-                                        },
-                                        {
-                                            "name": "recurrence of neuromuscular blockade"
-                                        },
-                                        {
-                                            "name": "bradycardia"
-                                        },
-                                        {
-                                            "name": "finger deformity"
-                                        },
-                                        {
-                                            "name": "wrist surgery"
-                                        },
-                                        {
-                                            "name": "tenosynovitis"
-                                        },
-                                        {
-                                            "name": "stress cardiomyopathy"
-                                        },
-                                        {
-                                            "name": "oxygen saturation decreased"
-                                        },
-                                        {
-                                            "name": "airway peak pressure increased"
-                                        },
-                                        {
-                                            "name": "negative pressure pulmonary oedema"
-                                        },
-                                        {
-                                            "name": "procedural hypotension"
-                                        },
-                                        {
-                                            "name": "hypoventilation"
-                                        },
-                                        {
-                                            "name": "fatigue"
-                                        },
-                                        {
-                                            "name": "hypoxia"
-                                        }
+                                },
+                                "mechanismsOfAction": {
+                                    "uniqueActionTypes": [
+                                        "ANTAGONIST"
+                                    ],
+                                    "uniqueTargetTypes": [
+                                        "protein complex group"
                                     ]
                                 }
                             }
@@ -886,6 +819,137 @@
                                         {
                                             "name": "hypoxia"
                                         }
+                                    ]
+                                },
+                                "mechanismsOfAction": {
+                                    "uniqueActionTypes": [
+                                        "ANTAGONIST"
+                                    ],
+                                    "uniqueTargetTypes": [
+                                        "protein complex group"
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "mechanismOfAction": "Muscle-type nicotinic acetylcholine receptor antagonist",
+                            "drug": {
+                                "id": "CHEMBL1201244",
+                                "name": "ROCURONIUM",
+                                "isApproved": true,
+                                "maximumClinicalTrialPhase": 4,
+                                "crossReferences": [
+                                    {
+                                        "source": "PubChem",
+                                        "reference": [
+                                            "50112687"
+                                        ]
+                                    },
+                                    {
+                                        "source": "Wikipedia",
+                                        "reference": [
+                                            "Rocuronium_bromide"
+                                        ]
+                                    },
+                                    {
+                                        "source": "drugbank",
+                                        "reference": [
+                                            "DB00728"
+                                        ]
+                                    },
+                                    {
+                                        "source": "chEBI",
+                                        "reference": [
+                                            "8884"
+                                        ]
+                                    }
+                                ],
+                                "adverseEvents": {
+                                    "count": 98,
+                                    "rows": [
+                                        {
+                                            "name": "anaphylactic reaction"
+                                        },
+                                        {
+                                            "name": "anaphylactic shock"
+                                        },
+                                        {
+                                            "name": "cardiac arrest"
+                                        },
+                                        {
+                                            "name": "hypotension"
+                                        },
+                                        {
+                                            "name": "neuromuscular block prolonged"
+                                        },
+                                        {
+                                            "name": "hyperthermia malignant"
+                                        },
+                                        {
+                                            "name": "bronchospasm"
+                                        },
+                                        {
+                                            "name": "circulatory collapse"
+                                        },
+                                        {
+                                            "name": "tachycardia"
+                                        },
+                                        {
+                                            "name": "delayed recovery from anaesthesia"
+                                        },
+                                        {
+                                            "name": "neuromuscular blockade"
+                                        },
+                                        {
+                                            "name": "pulseless electrical activity"
+                                        },
+                                        {
+                                            "name": "recurrence of neuromuscular blockade"
+                                        },
+                                        {
+                                            "name": "bradycardia"
+                                        },
+                                        {
+                                            "name": "finger deformity"
+                                        },
+                                        {
+                                            "name": "wrist surgery"
+                                        },
+                                        {
+                                            "name": "tenosynovitis"
+                                        },
+                                        {
+                                            "name": "stress cardiomyopathy"
+                                        },
+                                        {
+                                            "name": "oxygen saturation decreased"
+                                        },
+                                        {
+                                            "name": "airway peak pressure increased"
+                                        },
+                                        {
+                                            "name": "negative pressure pulmonary oedema"
+                                        },
+                                        {
+                                            "name": "procedural hypotension"
+                                        },
+                                        {
+                                            "name": "hypoventilation"
+                                        },
+                                        {
+                                            "name": "fatigue"
+                                        },
+                                        {
+                                            "name": "hypoxia"
+                                        }
+                                    ]
+                                },
+                                "mechanismsOfAction": {
+                                    "uniqueActionTypes": [
+                                        "ANTAGONIST"
+                                    ],
+                                    "uniqueTargetTypes": [
+                                        "protein complex group"
                                     ]
                                 }
                             }
@@ -995,6 +1059,14 @@
                                         {
                                             "name": "headache"
                                         }
+                                    ]
+                                },
+                                "mechanismsOfAction": {
+                                    "uniqueActionTypes": [
+                                        "ANTAGONIST"
+                                    ],
+                                    "uniqueTargetTypes": [
+                                        "protein complex group"
                                     ]
                                 }
                             }
@@ -1111,120 +1183,13 @@
                                             "name": "drug resistance"
                                         }
                                     ]
-                                }
-                            }
-                        },
-                        {
-                            "mechanismOfAction": "Muscle-type nicotinic acetylcholine receptor antagonist",
-                            "drug": {
-                                "id": "CHEMBL1201244",
-                                "name": "ROCURONIUM",
-                                "isApproved": true,
-                                "maximumClinicalTrialPhase": 4,
-                                "crossReferences": [
-                                    {
-                                        "source": "PubChem",
-                                        "reference": [
-                                            "50112687"
-                                        ]
-                                    },
-                                    {
-                                        "source": "Wikipedia",
-                                        "reference": [
-                                            "Rocuronium_bromide"
-                                        ]
-                                    },
-                                    {
-                                        "source": "drugbank",
-                                        "reference": [
-                                            "DB00728"
-                                        ]
-                                    },
-                                    {
-                                        "source": "chEBI",
-                                        "reference": [
-                                            "8884"
-                                        ]
-                                    }
-                                ],
-                                "adverseEvents": {
-                                    "count": 98,
-                                    "rows": [
-                                        {
-                                            "name": "anaphylactic reaction"
-                                        },
-                                        {
-                                            "name": "anaphylactic shock"
-                                        },
-                                        {
-                                            "name": "cardiac arrest"
-                                        },
-                                        {
-                                            "name": "hypotension"
-                                        },
-                                        {
-                                            "name": "neuromuscular block prolonged"
-                                        },
-                                        {
-                                            "name": "hyperthermia malignant"
-                                        },
-                                        {
-                                            "name": "bronchospasm"
-                                        },
-                                        {
-                                            "name": "circulatory collapse"
-                                        },
-                                        {
-                                            "name": "tachycardia"
-                                        },
-                                        {
-                                            "name": "delayed recovery from anaesthesia"
-                                        },
-                                        {
-                                            "name": "neuromuscular blockade"
-                                        },
-                                        {
-                                            "name": "pulseless electrical activity"
-                                        },
-                                        {
-                                            "name": "recurrence of neuromuscular blockade"
-                                        },
-                                        {
-                                            "name": "bradycardia"
-                                        },
-                                        {
-                                            "name": "finger deformity"
-                                        },
-                                        {
-                                            "name": "wrist surgery"
-                                        },
-                                        {
-                                            "name": "tenosynovitis"
-                                        },
-                                        {
-                                            "name": "stress cardiomyopathy"
-                                        },
-                                        {
-                                            "name": "oxygen saturation decreased"
-                                        },
-                                        {
-                                            "name": "airway peak pressure increased"
-                                        },
-                                        {
-                                            "name": "negative pressure pulmonary oedema"
-                                        },
-                                        {
-                                            "name": "procedural hypotension"
-                                        },
-                                        {
-                                            "name": "hypoventilation"
-                                        },
-                                        {
-                                            "name": "fatigue"
-                                        },
-                                        {
-                                            "name": "hypoxia"
-                                        }
+                                },
+                                "mechanismsOfAction": {
+                                    "uniqueActionTypes": [
+                                        "ANTAGONIST"
+                                    ],
+                                    "uniqueTargetTypes": [
+                                        "protein complex group"
                                     ]
                                 }
                             }
@@ -1340,6 +1305,137 @@
                                         {
                                             "name": "hypoxia"
                                         }
+                                    ]
+                                },
+                                "mechanismsOfAction": {
+                                    "uniqueActionTypes": [
+                                        "ANTAGONIST"
+                                    ],
+                                    "uniqueTargetTypes": [
+                                        "protein complex group"
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "mechanismOfAction": "Muscle-type nicotinic acetylcholine receptor antagonist",
+                            "drug": {
+                                "id": "CHEMBL1201244",
+                                "name": "ROCURONIUM",
+                                "isApproved": true,
+                                "maximumClinicalTrialPhase": 4,
+                                "crossReferences": [
+                                    {
+                                        "source": "PubChem",
+                                        "reference": [
+                                            "50112687"
+                                        ]
+                                    },
+                                    {
+                                        "source": "Wikipedia",
+                                        "reference": [
+                                            "Rocuronium_bromide"
+                                        ]
+                                    },
+                                    {
+                                        "source": "drugbank",
+                                        "reference": [
+                                            "DB00728"
+                                        ]
+                                    },
+                                    {
+                                        "source": "chEBI",
+                                        "reference": [
+                                            "8884"
+                                        ]
+                                    }
+                                ],
+                                "adverseEvents": {
+                                    "count": 98,
+                                    "rows": [
+                                        {
+                                            "name": "anaphylactic reaction"
+                                        },
+                                        {
+                                            "name": "anaphylactic shock"
+                                        },
+                                        {
+                                            "name": "cardiac arrest"
+                                        },
+                                        {
+                                            "name": "hypotension"
+                                        },
+                                        {
+                                            "name": "neuromuscular block prolonged"
+                                        },
+                                        {
+                                            "name": "hyperthermia malignant"
+                                        },
+                                        {
+                                            "name": "bronchospasm"
+                                        },
+                                        {
+                                            "name": "circulatory collapse"
+                                        },
+                                        {
+                                            "name": "tachycardia"
+                                        },
+                                        {
+                                            "name": "delayed recovery from anaesthesia"
+                                        },
+                                        {
+                                            "name": "neuromuscular blockade"
+                                        },
+                                        {
+                                            "name": "pulseless electrical activity"
+                                        },
+                                        {
+                                            "name": "recurrence of neuromuscular blockade"
+                                        },
+                                        {
+                                            "name": "bradycardia"
+                                        },
+                                        {
+                                            "name": "finger deformity"
+                                        },
+                                        {
+                                            "name": "wrist surgery"
+                                        },
+                                        {
+                                            "name": "tenosynovitis"
+                                        },
+                                        {
+                                            "name": "stress cardiomyopathy"
+                                        },
+                                        {
+                                            "name": "oxygen saturation decreased"
+                                        },
+                                        {
+                                            "name": "airway peak pressure increased"
+                                        },
+                                        {
+                                            "name": "negative pressure pulmonary oedema"
+                                        },
+                                        {
+                                            "name": "procedural hypotension"
+                                        },
+                                        {
+                                            "name": "hypoventilation"
+                                        },
+                                        {
+                                            "name": "fatigue"
+                                        },
+                                        {
+                                            "name": "hypoxia"
+                                        }
+                                    ]
+                                },
+                                "mechanismsOfAction": {
+                                    "uniqueActionTypes": [
+                                        "ANTAGONIST"
+                                    ],
+                                    "uniqueTargetTypes": [
+                                        "protein complex group"
                                     ]
                                 }
                             }
@@ -1444,6 +1540,14 @@
                                             "name": "rash maculo-papular"
                                         }
                                     ]
+                                },
+                                "mechanismsOfAction": {
+                                    "uniqueActionTypes": [
+                                        "ANTAGONIST"
+                                    ],
+                                    "uniqueTargetTypes": [
+                                        "protein complex group"
+                                    ]
                                 }
                             }
                         },
@@ -1558,6 +1662,14 @@
                                         {
                                             "name": "hypoxia"
                                         }
+                                    ]
+                                },
+                                "mechanismsOfAction": {
+                                    "uniqueActionTypes": [
+                                        "ANTAGONIST"
+                                    ],
+                                    "uniqueTargetTypes": [
+                                        "protein complex group"
                                     ]
                                 }
                             }
@@ -1674,6 +1786,14 @@
                                             "name": "drug resistance"
                                         }
                                     ]
+                                },
+                                "mechanismsOfAction": {
+                                    "uniqueActionTypes": [
+                                        "ANTAGONIST"
+                                    ],
+                                    "uniqueTargetTypes": [
+                                        "protein complex group"
+                                    ]
                                 }
                             }
                         },
@@ -1788,6 +1908,14 @@
                                         {
                                             "name": "hypoxia"
                                         }
+                                    ]
+                                },
+                                "mechanismsOfAction": {
+                                    "uniqueActionTypes": [
+                                        "ANTAGONIST"
+                                    ],
+                                    "uniqueTargetTypes": [
+                                        "protein complex group"
                                     ]
                                 }
                             }
@@ -1906,6 +2034,14 @@
                                             "name": "po2 increased"
                                         }
                                     ]
+                                },
+                                "mechanismsOfAction": {
+                                    "uniqueActionTypes": [
+                                        "AGONIST"
+                                    ],
+                                    "uniqueTargetTypes": [
+                                        "protein complex group"
+                                    ]
                                 }
                             }
                         },
@@ -2014,6 +2150,14 @@
                                         {
                                             "name": "diarrhoea"
                                         }
+                                    ]
+                                },
+                                "mechanismsOfAction": {
+                                    "uniqueActionTypes": [
+                                        "ANTAGONIST"
+                                    ],
+                                    "uniqueTargetTypes": [
+                                        "protein complex group"
                                     ]
                                 }
                             }
@@ -2129,6 +2273,14 @@
                                         {
                                             "name": "hypoxia"
                                         }
+                                    ]
+                                },
+                                "mechanismsOfAction": {
+                                    "uniqueActionTypes": [
+                                        "ANTAGONIST"
+                                    ],
+                                    "uniqueTargetTypes": [
+                                        "protein complex group"
                                     ]
                                 }
                             }
@@ -2245,453 +2397,13 @@
                                             "name": "drug resistance"
                                         }
                                     ]
-                                }
-                            }
-                        },
-                        {
-                            "mechanismOfAction": "Muscle-type nicotinic acetylcholine receptor antagonist",
-                            "drug": {
-                                "id": "CHEMBL1201248",
-                                "name": "CISATRACURIUM",
-                                "isApproved": true,
-                                "maximumClinicalTrialPhase": 4,
-                                "crossReferences": [
-                                    {
-                                        "source": "Wikipedia",
-                                        "reference": [
-                                            "Cisatracurium_besilate"
-                                        ]
-                                    },
-                                    {
-                                        "source": "drugbank",
-                                        "reference": [
-                                            "DB00565"
-                                        ]
-                                    }
-                                ],
-                                "adverseEvents": {
-                                    "count": 102,
-                                    "rows": [
-                                        {
-                                            "name": "anaphylactic shock"
-                                        },
-                                        {
-                                            "name": "anaphylactic reaction"
-                                        },
-                                        {
-                                            "name": "feeding intolerance"
-                                        },
-                                        {
-                                            "name": "circulatory collapse"
-                                        },
-                                        {
-                                            "name": "bronchospasm"
-                                        },
-                                        {
-                                            "name": "hyperthermia malignant"
-                                        },
-                                        {
-                                            "name": "hypotension"
-                                        },
-                                        {
-                                            "name": "cardiac arrest"
-                                        },
-                                        {
-                                            "name": "cardio-respiratory arrest"
-                                        },
-                                        {
-                                            "name": "apnoea"
-                                        },
-                                        {
-                                            "name": "shock"
-                                        },
-                                        {
-                                            "name": "post procedural complication"
-                                        },
-                                        {
-                                            "name": "haemodynamic instability"
-                                        },
-                                        {
-                                            "name": "bradycardia"
-                                        },
-                                        {
-                                            "name": "hepatocellular injury"
-                                        },
-                                        {
-                                            "name": "hypertransaminasaemia"
-                                        },
-                                        {
-                                            "name": "acute pulmonary oedema"
-                                        },
-                                        {
-                                            "name": "neuromuscular block prolonged"
-                                        },
-                                        {
-                                            "name": "fatigue"
-                                        },
-                                        {
-                                            "name": "hyperbilirubinaemia"
-                                        },
-                                        {
-                                            "name": "diarrhoea"
-                                        },
-                                        {
-                                            "name": "drug reaction with eosinophilia and systemic symptoms"
-                                        },
-                                        {
-                                            "name": "tachyphylaxis"
-                                        },
-                                        {
-                                            "name": "myocardial stunning"
-                                        },
-                                        {
-                                            "name": "rash maculo-papular"
-                                        }
-                                    ]
-                                }
-                            }
-                        },
-                        {
-                            "mechanismOfAction": "Muscle-type nicotinic acetylcholine receptor antagonist",
-                            "drug": {
-                                "id": "CHEMBL1201244",
-                                "name": "ROCURONIUM",
-                                "isApproved": true,
-                                "maximumClinicalTrialPhase": 4,
-                                "crossReferences": [
-                                    {
-                                        "source": "PubChem",
-                                        "reference": [
-                                            "50112687"
-                                        ]
-                                    },
-                                    {
-                                        "source": "Wikipedia",
-                                        "reference": [
-                                            "Rocuronium_bromide"
-                                        ]
-                                    },
-                                    {
-                                        "source": "drugbank",
-                                        "reference": [
-                                            "DB00728"
-                                        ]
-                                    },
-                                    {
-                                        "source": "chEBI",
-                                        "reference": [
-                                            "8884"
-                                        ]
-                                    }
-                                ],
-                                "adverseEvents": {
-                                    "count": 98,
-                                    "rows": [
-                                        {
-                                            "name": "anaphylactic reaction"
-                                        },
-                                        {
-                                            "name": "anaphylactic shock"
-                                        },
-                                        {
-                                            "name": "cardiac arrest"
-                                        },
-                                        {
-                                            "name": "hypotension"
-                                        },
-                                        {
-                                            "name": "neuromuscular block prolonged"
-                                        },
-                                        {
-                                            "name": "hyperthermia malignant"
-                                        },
-                                        {
-                                            "name": "bronchospasm"
-                                        },
-                                        {
-                                            "name": "circulatory collapse"
-                                        },
-                                        {
-                                            "name": "tachycardia"
-                                        },
-                                        {
-                                            "name": "delayed recovery from anaesthesia"
-                                        },
-                                        {
-                                            "name": "neuromuscular blockade"
-                                        },
-                                        {
-                                            "name": "pulseless electrical activity"
-                                        },
-                                        {
-                                            "name": "recurrence of neuromuscular blockade"
-                                        },
-                                        {
-                                            "name": "bradycardia"
-                                        },
-                                        {
-                                            "name": "finger deformity"
-                                        },
-                                        {
-                                            "name": "wrist surgery"
-                                        },
-                                        {
-                                            "name": "tenosynovitis"
-                                        },
-                                        {
-                                            "name": "stress cardiomyopathy"
-                                        },
-                                        {
-                                            "name": "oxygen saturation decreased"
-                                        },
-                                        {
-                                            "name": "airway peak pressure increased"
-                                        },
-                                        {
-                                            "name": "negative pressure pulmonary oedema"
-                                        },
-                                        {
-                                            "name": "procedural hypotension"
-                                        },
-                                        {
-                                            "name": "hypoventilation"
-                                        },
-                                        {
-                                            "name": "fatigue"
-                                        },
-                                        {
-                                            "name": "hypoxia"
-                                        }
-                                    ]
-                                }
-                            }
-                        },
-                        {
-                            "mechanismOfAction": "Muscle-type nicotinic acetylcholine receptor antagonist",
-                            "drug": {
-                                "id": "CHEMBL1201244",
-                                "name": "ROCURONIUM",
-                                "isApproved": true,
-                                "maximumClinicalTrialPhase": 4,
-                                "crossReferences": [
-                                    {
-                                        "source": "PubChem",
-                                        "reference": [
-                                            "50112687"
-                                        ]
-                                    },
-                                    {
-                                        "source": "Wikipedia",
-                                        "reference": [
-                                            "Rocuronium_bromide"
-                                        ]
-                                    },
-                                    {
-                                        "source": "drugbank",
-                                        "reference": [
-                                            "DB00728"
-                                        ]
-                                    },
-                                    {
-                                        "source": "chEBI",
-                                        "reference": [
-                                            "8884"
-                                        ]
-                                    }
-                                ],
-                                "adverseEvents": {
-                                    "count": 98,
-                                    "rows": [
-                                        {
-                                            "name": "anaphylactic reaction"
-                                        },
-                                        {
-                                            "name": "anaphylactic shock"
-                                        },
-                                        {
-                                            "name": "cardiac arrest"
-                                        },
-                                        {
-                                            "name": "hypotension"
-                                        },
-                                        {
-                                            "name": "neuromuscular block prolonged"
-                                        },
-                                        {
-                                            "name": "hyperthermia malignant"
-                                        },
-                                        {
-                                            "name": "bronchospasm"
-                                        },
-                                        {
-                                            "name": "circulatory collapse"
-                                        },
-                                        {
-                                            "name": "tachycardia"
-                                        },
-                                        {
-                                            "name": "delayed recovery from anaesthesia"
-                                        },
-                                        {
-                                            "name": "neuromuscular blockade"
-                                        },
-                                        {
-                                            "name": "pulseless electrical activity"
-                                        },
-                                        {
-                                            "name": "recurrence of neuromuscular blockade"
-                                        },
-                                        {
-                                            "name": "bradycardia"
-                                        },
-                                        {
-                                            "name": "finger deformity"
-                                        },
-                                        {
-                                            "name": "wrist surgery"
-                                        },
-                                        {
-                                            "name": "tenosynovitis"
-                                        },
-                                        {
-                                            "name": "stress cardiomyopathy"
-                                        },
-                                        {
-                                            "name": "oxygen saturation decreased"
-                                        },
-                                        {
-                                            "name": "airway peak pressure increased"
-                                        },
-                                        {
-                                            "name": "negative pressure pulmonary oedema"
-                                        },
-                                        {
-                                            "name": "procedural hypotension"
-                                        },
-                                        {
-                                            "name": "hypoventilation"
-                                        },
-                                        {
-                                            "name": "fatigue"
-                                        },
-                                        {
-                                            "name": "hypoxia"
-                                        }
-                                    ]
-                                }
-                            }
-                        },
-                        {
-                            "mechanismOfAction": "Muscle-type nicotinic acetylcholine receptor antagonist",
-                            "drug": {
-                                "id": "CHEMBL1201244",
-                                "name": "ROCURONIUM",
-                                "isApproved": true,
-                                "maximumClinicalTrialPhase": 4,
-                                "crossReferences": [
-                                    {
-                                        "source": "PubChem",
-                                        "reference": [
-                                            "50112687"
-                                        ]
-                                    },
-                                    {
-                                        "source": "Wikipedia",
-                                        "reference": [
-                                            "Rocuronium_bromide"
-                                        ]
-                                    },
-                                    {
-                                        "source": "drugbank",
-                                        "reference": [
-                                            "DB00728"
-                                        ]
-                                    },
-                                    {
-                                        "source": "chEBI",
-                                        "reference": [
-                                            "8884"
-                                        ]
-                                    }
-                                ],
-                                "adverseEvents": {
-                                    "count": 98,
-                                    "rows": [
-                                        {
-                                            "name": "anaphylactic reaction"
-                                        },
-                                        {
-                                            "name": "anaphylactic shock"
-                                        },
-                                        {
-                                            "name": "cardiac arrest"
-                                        },
-                                        {
-                                            "name": "hypotension"
-                                        },
-                                        {
-                                            "name": "neuromuscular block prolonged"
-                                        },
-                                        {
-                                            "name": "hyperthermia malignant"
-                                        },
-                                        {
-                                            "name": "bronchospasm"
-                                        },
-                                        {
-                                            "name": "circulatory collapse"
-                                        },
-                                        {
-                                            "name": "tachycardia"
-                                        },
-                                        {
-                                            "name": "delayed recovery from anaesthesia"
-                                        },
-                                        {
-                                            "name": "neuromuscular blockade"
-                                        },
-                                        {
-                                            "name": "pulseless electrical activity"
-                                        },
-                                        {
-                                            "name": "recurrence of neuromuscular blockade"
-                                        },
-                                        {
-                                            "name": "bradycardia"
-                                        },
-                                        {
-                                            "name": "finger deformity"
-                                        },
-                                        {
-                                            "name": "wrist surgery"
-                                        },
-                                        {
-                                            "name": "tenosynovitis"
-                                        },
-                                        {
-                                            "name": "stress cardiomyopathy"
-                                        },
-                                        {
-                                            "name": "oxygen saturation decreased"
-                                        },
-                                        {
-                                            "name": "airway peak pressure increased"
-                                        },
-                                        {
-                                            "name": "negative pressure pulmonary oedema"
-                                        },
-                                        {
-                                            "name": "procedural hypotension"
-                                        },
-                                        {
-                                            "name": "hypoventilation"
-                                        },
-                                        {
-                                            "name": "fatigue"
-                                        },
-                                        {
-                                            "name": "hypoxia"
-                                        }
+                                },
+                                "mechanismsOfAction": {
+                                    "uniqueActionTypes": [
+                                        "ANTAGONIST"
+                                    ],
+                                    "uniqueTargetTypes": [
+                                        "protein complex group"
                                     ]
                                 }
                             }
@@ -2795,6 +2507,494 @@
                                         {
                                             "name": "rash maculo-papular"
                                         }
+                                    ]
+                                },
+                                "mechanismsOfAction": {
+                                    "uniqueActionTypes": [
+                                        "ANTAGONIST"
+                                    ],
+                                    "uniqueTargetTypes": [
+                                        "protein complex group"
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "mechanismOfAction": "Muscle-type nicotinic acetylcholine receptor antagonist",
+                            "drug": {
+                                "id": "CHEMBL1201244",
+                                "name": "ROCURONIUM",
+                                "isApproved": true,
+                                "maximumClinicalTrialPhase": 4,
+                                "crossReferences": [
+                                    {
+                                        "source": "PubChem",
+                                        "reference": [
+                                            "50112687"
+                                        ]
+                                    },
+                                    {
+                                        "source": "Wikipedia",
+                                        "reference": [
+                                            "Rocuronium_bromide"
+                                        ]
+                                    },
+                                    {
+                                        "source": "drugbank",
+                                        "reference": [
+                                            "DB00728"
+                                        ]
+                                    },
+                                    {
+                                        "source": "chEBI",
+                                        "reference": [
+                                            "8884"
+                                        ]
+                                    }
+                                ],
+                                "adverseEvents": {
+                                    "count": 98,
+                                    "rows": [
+                                        {
+                                            "name": "anaphylactic reaction"
+                                        },
+                                        {
+                                            "name": "anaphylactic shock"
+                                        },
+                                        {
+                                            "name": "cardiac arrest"
+                                        },
+                                        {
+                                            "name": "hypotension"
+                                        },
+                                        {
+                                            "name": "neuromuscular block prolonged"
+                                        },
+                                        {
+                                            "name": "hyperthermia malignant"
+                                        },
+                                        {
+                                            "name": "bronchospasm"
+                                        },
+                                        {
+                                            "name": "circulatory collapse"
+                                        },
+                                        {
+                                            "name": "tachycardia"
+                                        },
+                                        {
+                                            "name": "delayed recovery from anaesthesia"
+                                        },
+                                        {
+                                            "name": "neuromuscular blockade"
+                                        },
+                                        {
+                                            "name": "pulseless electrical activity"
+                                        },
+                                        {
+                                            "name": "recurrence of neuromuscular blockade"
+                                        },
+                                        {
+                                            "name": "bradycardia"
+                                        },
+                                        {
+                                            "name": "finger deformity"
+                                        },
+                                        {
+                                            "name": "wrist surgery"
+                                        },
+                                        {
+                                            "name": "tenosynovitis"
+                                        },
+                                        {
+                                            "name": "stress cardiomyopathy"
+                                        },
+                                        {
+                                            "name": "oxygen saturation decreased"
+                                        },
+                                        {
+                                            "name": "airway peak pressure increased"
+                                        },
+                                        {
+                                            "name": "negative pressure pulmonary oedema"
+                                        },
+                                        {
+                                            "name": "procedural hypotension"
+                                        },
+                                        {
+                                            "name": "hypoventilation"
+                                        },
+                                        {
+                                            "name": "fatigue"
+                                        },
+                                        {
+                                            "name": "hypoxia"
+                                        }
+                                    ]
+                                },
+                                "mechanismsOfAction": {
+                                    "uniqueActionTypes": [
+                                        "ANTAGONIST"
+                                    ],
+                                    "uniqueTargetTypes": [
+                                        "protein complex group"
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "mechanismOfAction": "Muscle-type nicotinic acetylcholine receptor antagonist",
+                            "drug": {
+                                "id": "CHEMBL1201244",
+                                "name": "ROCURONIUM",
+                                "isApproved": true,
+                                "maximumClinicalTrialPhase": 4,
+                                "crossReferences": [
+                                    {
+                                        "source": "PubChem",
+                                        "reference": [
+                                            "50112687"
+                                        ]
+                                    },
+                                    {
+                                        "source": "Wikipedia",
+                                        "reference": [
+                                            "Rocuronium_bromide"
+                                        ]
+                                    },
+                                    {
+                                        "source": "drugbank",
+                                        "reference": [
+                                            "DB00728"
+                                        ]
+                                    },
+                                    {
+                                        "source": "chEBI",
+                                        "reference": [
+                                            "8884"
+                                        ]
+                                    }
+                                ],
+                                "adverseEvents": {
+                                    "count": 98,
+                                    "rows": [
+                                        {
+                                            "name": "anaphylactic reaction"
+                                        },
+                                        {
+                                            "name": "anaphylactic shock"
+                                        },
+                                        {
+                                            "name": "cardiac arrest"
+                                        },
+                                        {
+                                            "name": "hypotension"
+                                        },
+                                        {
+                                            "name": "neuromuscular block prolonged"
+                                        },
+                                        {
+                                            "name": "hyperthermia malignant"
+                                        },
+                                        {
+                                            "name": "bronchospasm"
+                                        },
+                                        {
+                                            "name": "circulatory collapse"
+                                        },
+                                        {
+                                            "name": "tachycardia"
+                                        },
+                                        {
+                                            "name": "delayed recovery from anaesthesia"
+                                        },
+                                        {
+                                            "name": "neuromuscular blockade"
+                                        },
+                                        {
+                                            "name": "pulseless electrical activity"
+                                        },
+                                        {
+                                            "name": "recurrence of neuromuscular blockade"
+                                        },
+                                        {
+                                            "name": "bradycardia"
+                                        },
+                                        {
+                                            "name": "finger deformity"
+                                        },
+                                        {
+                                            "name": "wrist surgery"
+                                        },
+                                        {
+                                            "name": "tenosynovitis"
+                                        },
+                                        {
+                                            "name": "stress cardiomyopathy"
+                                        },
+                                        {
+                                            "name": "oxygen saturation decreased"
+                                        },
+                                        {
+                                            "name": "airway peak pressure increased"
+                                        },
+                                        {
+                                            "name": "negative pressure pulmonary oedema"
+                                        },
+                                        {
+                                            "name": "procedural hypotension"
+                                        },
+                                        {
+                                            "name": "hypoventilation"
+                                        },
+                                        {
+                                            "name": "fatigue"
+                                        },
+                                        {
+                                            "name": "hypoxia"
+                                        }
+                                    ]
+                                },
+                                "mechanismsOfAction": {
+                                    "uniqueActionTypes": [
+                                        "ANTAGONIST"
+                                    ],
+                                    "uniqueTargetTypes": [
+                                        "protein complex group"
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "mechanismOfAction": "Muscle-type nicotinic acetylcholine receptor antagonist",
+                            "drug": {
+                                "id": "CHEMBL1201244",
+                                "name": "ROCURONIUM",
+                                "isApproved": true,
+                                "maximumClinicalTrialPhase": 4,
+                                "crossReferences": [
+                                    {
+                                        "source": "PubChem",
+                                        "reference": [
+                                            "50112687"
+                                        ]
+                                    },
+                                    {
+                                        "source": "Wikipedia",
+                                        "reference": [
+                                            "Rocuronium_bromide"
+                                        ]
+                                    },
+                                    {
+                                        "source": "drugbank",
+                                        "reference": [
+                                            "DB00728"
+                                        ]
+                                    },
+                                    {
+                                        "source": "chEBI",
+                                        "reference": [
+                                            "8884"
+                                        ]
+                                    }
+                                ],
+                                "adverseEvents": {
+                                    "count": 98,
+                                    "rows": [
+                                        {
+                                            "name": "anaphylactic reaction"
+                                        },
+                                        {
+                                            "name": "anaphylactic shock"
+                                        },
+                                        {
+                                            "name": "cardiac arrest"
+                                        },
+                                        {
+                                            "name": "hypotension"
+                                        },
+                                        {
+                                            "name": "neuromuscular block prolonged"
+                                        },
+                                        {
+                                            "name": "hyperthermia malignant"
+                                        },
+                                        {
+                                            "name": "bronchospasm"
+                                        },
+                                        {
+                                            "name": "circulatory collapse"
+                                        },
+                                        {
+                                            "name": "tachycardia"
+                                        },
+                                        {
+                                            "name": "delayed recovery from anaesthesia"
+                                        },
+                                        {
+                                            "name": "neuromuscular blockade"
+                                        },
+                                        {
+                                            "name": "pulseless electrical activity"
+                                        },
+                                        {
+                                            "name": "recurrence of neuromuscular blockade"
+                                        },
+                                        {
+                                            "name": "bradycardia"
+                                        },
+                                        {
+                                            "name": "finger deformity"
+                                        },
+                                        {
+                                            "name": "wrist surgery"
+                                        },
+                                        {
+                                            "name": "tenosynovitis"
+                                        },
+                                        {
+                                            "name": "stress cardiomyopathy"
+                                        },
+                                        {
+                                            "name": "oxygen saturation decreased"
+                                        },
+                                        {
+                                            "name": "airway peak pressure increased"
+                                        },
+                                        {
+                                            "name": "negative pressure pulmonary oedema"
+                                        },
+                                        {
+                                            "name": "procedural hypotension"
+                                        },
+                                        {
+                                            "name": "hypoventilation"
+                                        },
+                                        {
+                                            "name": "fatigue"
+                                        },
+                                        {
+                                            "name": "hypoxia"
+                                        }
+                                    ]
+                                },
+                                "mechanismsOfAction": {
+                                    "uniqueActionTypes": [
+                                        "ANTAGONIST"
+                                    ],
+                                    "uniqueTargetTypes": [
+                                        "protein complex group"
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "mechanismOfAction": "Muscle-type nicotinic acetylcholine receptor antagonist",
+                            "drug": {
+                                "id": "CHEMBL1201248",
+                                "name": "CISATRACURIUM",
+                                "isApproved": true,
+                                "maximumClinicalTrialPhase": 4,
+                                "crossReferences": [
+                                    {
+                                        "source": "Wikipedia",
+                                        "reference": [
+                                            "Cisatracurium_besilate"
+                                        ]
+                                    },
+                                    {
+                                        "source": "drugbank",
+                                        "reference": [
+                                            "DB00565"
+                                        ]
+                                    }
+                                ],
+                                "adverseEvents": {
+                                    "count": 102,
+                                    "rows": [
+                                        {
+                                            "name": "anaphylactic shock"
+                                        },
+                                        {
+                                            "name": "anaphylactic reaction"
+                                        },
+                                        {
+                                            "name": "feeding intolerance"
+                                        },
+                                        {
+                                            "name": "circulatory collapse"
+                                        },
+                                        {
+                                            "name": "bronchospasm"
+                                        },
+                                        {
+                                            "name": "hyperthermia malignant"
+                                        },
+                                        {
+                                            "name": "hypotension"
+                                        },
+                                        {
+                                            "name": "cardiac arrest"
+                                        },
+                                        {
+                                            "name": "cardio-respiratory arrest"
+                                        },
+                                        {
+                                            "name": "apnoea"
+                                        },
+                                        {
+                                            "name": "shock"
+                                        },
+                                        {
+                                            "name": "post procedural complication"
+                                        },
+                                        {
+                                            "name": "haemodynamic instability"
+                                        },
+                                        {
+                                            "name": "bradycardia"
+                                        },
+                                        {
+                                            "name": "hepatocellular injury"
+                                        },
+                                        {
+                                            "name": "hypertransaminasaemia"
+                                        },
+                                        {
+                                            "name": "acute pulmonary oedema"
+                                        },
+                                        {
+                                            "name": "neuromuscular block prolonged"
+                                        },
+                                        {
+                                            "name": "fatigue"
+                                        },
+                                        {
+                                            "name": "hyperbilirubinaemia"
+                                        },
+                                        {
+                                            "name": "diarrhoea"
+                                        },
+                                        {
+                                            "name": "drug reaction with eosinophilia and systemic symptoms"
+                                        },
+                                        {
+                                            "name": "tachyphylaxis"
+                                        },
+                                        {
+                                            "name": "myocardial stunning"
+                                        },
+                                        {
+                                            "name": "rash maculo-papular"
+                                        }
+                                    ]
+                                },
+                                "mechanismsOfAction": {
+                                    "uniqueActionTypes": [
+                                        "ANTAGONIST"
+                                    ],
+                                    "uniqueTargetTypes": [
+                                        "protein complex group"
                                     ]
                                 }
                             }

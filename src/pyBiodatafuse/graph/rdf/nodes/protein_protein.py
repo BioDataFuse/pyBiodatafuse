@@ -8,9 +8,7 @@ from rdflib.namespace import OWL, RDF, RDFS, XSD
 from pyBiodatafuse.constants import BASE_URLS_DBS, NODE_TYPES, PREDICATES
 
 
-def add_ppi_data(
-    g: Graph, gene_node: URIRef, entry: dict, base_uri: str, new_uris: dict
-) -> URIRef:
+def add_ppi_data(g: Graph, gene_node: URIRef, entry: dict, base_uri: str, new_uris: dict) -> URIRef:
     """Add a protein protein interaction node.
 
     :param g: RDFLib graph
@@ -40,13 +38,17 @@ def add_ppi_data(
             g.add((stringdb_node, RDF.type, URIRef(NODE_TYPES["protein_node"])))
             g.add((protein_node, RDF.type, URIRef(NODE_TYPES["protein_node"])))
             g.add((stringdb_node, URIRef(PREDICATES["sio_is_part_of"]), ppi_node))
-            g.add((stringdb_node, RDFS.label, Literal(stringdb_link_to, datatype=XSD.   string)))
+            g.add((stringdb_node, RDFS.label, Literal(stringdb_link_to, datatype=XSD.string)))
             # g.add((ensembl_node, OWL.sameAs, stringdb_node))
             # g.add((ensembl_node, RDF.type, URIRef(NODE_TYPES["protein_node"])))
             score_node = URIRef(f"{new_uris['score_base_node']}/{uniprot}_{stringdb_link_to}")
             g.add((score_node, RDF.type, URIRef(NODE_TYPES["score_node"])))
             g.add(
-                (score_node, URIRef(PREDICATES["sio_has_value"]), Literal(score, datatype=XSD.double))
+                (
+                    score_node,
+                    URIRef(PREDICATES["sio_has_value"]),
+                    Literal(score, datatype=XSD.double),
+                )
             )
             g.add((ppi_node, URIRef(PREDICATES["sio_has_measurement_value"]), score_node))
 

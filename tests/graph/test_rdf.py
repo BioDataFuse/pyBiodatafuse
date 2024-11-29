@@ -20,7 +20,11 @@ import pandas as pd
 from pyBiodatafuse.graph.rdf.rdf import BDFGraph
 
 DATA = pd.read_json(os.path.join("tests", "graph", "data", "combined_df_mock_data.json"))
-with open(os.path.join("tests", "graph", "data", "combined_metadata_mock_data.json"), "r", encoding="utf-8") as file:
+with open(
+    os.path.join("tests", "graph", "data", "combined_metadata_mock_data.json"),
+    "r",
+    encoding="utf-8",
+) as file:
     METADATA = json.load(file)
 
 

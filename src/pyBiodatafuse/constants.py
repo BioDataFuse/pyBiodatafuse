@@ -209,7 +209,7 @@ OPENTARGETS_COMPOUND_OUTPUT_DICT = {
     "relation": str,
     "adverse_effect_count": int,
     "adverse_effect": list,
-    "mechanisms_of_action": list,
+    # "mechanisms_of_action": list,
 }
 CHEMBL_ID = "CHEMBL"
 DRUGBANK_ID = "DrugBank"
@@ -643,6 +643,4 @@ NAMESPACE_SHAPES = {
     "https://reactome.org/content/detail/": "reactome",
     "https://www.uniprot.org/uniprotkb/": "uniprot",
     "http://identifiers.org/ensembl#": "ensembl",
-    
-
 }

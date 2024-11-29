@@ -152,7 +152,9 @@ class BDFGraph(Graph):
         self.process_pathways(row, gene_node, protein_nodes)
         self.process_processes_data(row.get(OPENTARGETS_GO_COL), gene_node)
         self.process_compound_data(row.get(OPENTARGETS_GENE_COMPOUND_COL), gene_node)
-        self.process_literature_data(row.get(LITERATURE_DISEASE_COL), gene_node, id_number, source_idx, self.new_uris, i)
+        self.process_literature_data(
+            row.get(LITERATURE_DISEASE_COL), gene_node, id_number, source_idx, self.new_uris, i
+        )
         self.process_transporter_inhibitor_data(row.get(MOLMEDB_PROTEIN_COMPOUND_COL))
         if self.include_variants:
             self.process_protein_variants(protein_nodes)
@@ -160,7 +162,10 @@ class BDFGraph(Graph):
     # Class methods about specific nodes begin here
     # If you add a new method, try to import most of the code from another script
     # Add new methods below
-    def collect_disease_data(self, row,):
+    def collect_disease_data(
+        self,
+        row,
+    ):
         """
         Collect disease data from the row.
 
@@ -302,7 +307,9 @@ class BDFGraph(Graph):
             for compound in compound_data:
                 self._add_compound_node(compound, gene_node)
 
-    def process_literature_data(self, literature_based_data, gene_node, id_number, source_idx, new_uris, i):
+    def process_literature_data(
+        self, literature_based_data, gene_node, id_number, source_idx, new_uris, i
+    ):
         """
         Process literature-based data and add to the RDF graph.
 
@@ -330,7 +337,9 @@ class BDFGraph(Graph):
                         "el": None,
                         "disease_name": entry["disease_name"],
                     }
-                    self._add_literature_based_data(entry, gene_node, id_number, disease_data_lit, source_idx, new_uris, i)
+                    self._add_literature_based_data(
+                        entry, gene_node, id_number, disease_data_lit, source_idx, new_uris, i
+                    )
 
     def process_transporter_inhibitor_data(self, transporter_inhibitor_data):
         """
@@ -466,11 +475,9 @@ class BDFGraph(Graph):
         :param protein_name: Name of the protein.
         :param entry: PPI data to be added.
         """
-        add_ppi_data(g=self,
-                     gene_node=gene_node,
-                     entry=entry,
-                     base_uri=self.base_uri,
-                     new_uris=self.new_uris)
+        add_ppi_data(
+            g=self, gene_node=gene_node, entry=entry, base_uri=self.base_uri, new_uris=self.new_uris
+        )
 
     def _add_metadata(self, metadata):
         """Add metadata to the RDF graph.

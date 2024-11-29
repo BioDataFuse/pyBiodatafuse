@@ -11,6 +11,7 @@ import numpy as np
 import pandas as pd
 import requests
 from requests.exceptions import RequestException
+
 # from biomart import BiomartServer
 
 from pyBiodatafuse.constants import (
@@ -64,7 +65,10 @@ def _format_data(row, network_df):
     target_links_set = set()
 
     for _, row_arr in network_df.iterrows():
-        if row_arr["preferredName_A"] == row["identifier"] and row_arr["preferredName_B"] not in target_links_set:
+        if (
+            row_arr["preferredName_A"] == row["identifier"]
+            and row_arr["preferredName_B"] not in target_links_set
+        ):
             gene_ppi_links.append(
                 {
                     "stringdb_link_to": row_arr["preferredName_B"],
@@ -75,13 +79,18 @@ def _format_data(row, network_df):
             )
             target_links_set.add(row_arr["preferredName_B"])
 
-        elif row_arr["preferredName_B"] == row["identifier"] and row_arr["preferredName_A"] not in target_links_set:
-            gene_ppi_links.append({
-                "stringdb_link_to": row_arr["preferredName_A"],
-                STRING_GENE_INPUT_ID: f"{STRING_GENE_INPUT_ID}:{row_arr['stringId_A'].split('.')[1]}",
-                "score": row_arr["score"],
-                "Uniprot-TrEMBL": row_arr["preferredName_B"],
-            })
+        elif (
+            row_arr["preferredName_B"] == row["identifier"]
+            and row_arr["preferredName_A"] not in target_links_set
+        ):
+            gene_ppi_links.append(
+                {
+                    "stringdb_link_to": row_arr["preferredName_A"],
+                    STRING_GENE_INPUT_ID: f"{STRING_GENE_INPUT_ID}:{row_arr['stringId_A'].split('.')[1]}",
+                    "score": row_arr["score"],
+                    "Uniprot-TrEMBL": row_arr["preferredName_B"],
+                }
+            )
             target_links_set.add(row_arr["preferredName_A"])
 
     return gene_ppi_links
@@ -97,8 +106,9 @@ def get_string_ids(gene_list: list):
     }
 
     try:
-        results = requests.post(f"{STRING_ENDPOINT}/json/get_string_ids",
-                                data=params, timeout=TIMEOUT).json()
+        results = requests.post(
+            f"{STRING_ENDPOINT}/json/get_string_ids", data=params, timeout=TIMEOUT
+        ).json()
         return results
     except RequestException as e:
         logger.error("Error getting STRING IDs: %s", e)
@@ -114,7 +124,9 @@ def _get_ppi_data(gene_ids: list) -> pd.DataFrame:
     }
 
     try:
-        response = requests.post(f"{STRING_ENDPOINT}/json/network", data=params, timeout=TIMEOUT).json()
+        response = requests.post(
+            f"{STRING_ENDPOINT}/json/network", data=params, timeout=TIMEOUT
+        ).json()
         return pd.DataFrame(response)
     except RequestException as e:
         logger.error("Error getting PPI data: %s", e)
@@ -215,20 +227,20 @@ def get_ppi(bridgedb_df: pd.DataFrame):
 # def ensp_to_uniprot(ensp_ids):
 #     """
 #     Retrieve UniProt IDs from Ensembl protein IDs (ENSP).
-# 
+#
 #     :param ensp_ids: List of Ensembl protein IDs (ENSP)
 #     :return: Dictionary mapping ENSP IDs to UniProt IDs
 #     """
 #     server = BiomartServer("http://www.ensembl.org/biomart")
 #     hsapiens_mart = server.datasets["hsapiens_gene_ensembl"]
-# 
+#
 #     response = hsapiens_mart.search(
 #         {
 #             "filters": {"ensembl_peptide_id": ensp_ids},
 #             "attributes": ["ensembl_peptide_id", "uniprotswissprot"],
 #         }
 #     )
-# 
+#
 #     ensp_to_uniprot_map = {}
 #     for line in response.iter_lines():
 #         decoded_line = line.decode("utf-8").split("\t")
@@ -237,4 +249,4 @@ def get_ppi(bridgedb_df: pd.DataFrame):
 #         ensp_id = f"Ensembl:{ensp_id}"
 #         ensp_to_uniprot_map[ensp_id] = uniprot_id
 #     return ensp_to_uniprot_map
-# 
+#

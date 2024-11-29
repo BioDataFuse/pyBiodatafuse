@@ -5,13 +5,14 @@
 import datetime
 import warnings
 from typing import Dict, Tuple
-
 import numpy as np
 import pandas as pd
 import requests
 from tqdm import tqdm
 
 from pyBiodatafuse import id_mapper
+import json
+from unittest.mock import MagicMock
 from pyBiodatafuse.constants import (
     OPENTARGETS,
     OPENTARGETS_COMPOUND_DISEASE_RELATION,
@@ -500,12 +501,11 @@ def get_gene_compound_interactions(
 
     """
     query_string = query_string.replace("$ids", str(gene_ids).replace("'", '"'))
-
     r = requests.post(OPENTARGETS_ENDPOINT, json={"query": query_string}).json()
     # Record the end time
     end_time = datetime.datetime.now()
 
-    """Metdata details"""
+    """Metadata details"""
     # Get the current date and time
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # Calculate the time elapsed
@@ -522,7 +522,6 @@ def get_gene_compound_interactions(
 
     # Generate the OpenTargets DataFrame
     intermediate_df = pd.DataFrame()
-
     for gene in tqdm(r["data"]["targets"], desc="Processing gene-drug interactions"):
         if not gene["knownDrugs"]:
             continue
@@ -541,10 +540,11 @@ def get_gene_compound_interactions(
                 "clincal_trial_phase",
                 "cross_references",
                 "adverse_events",
-                "mechanisms_of_action"
+                "mechanisms_of_action",
             ]
         ] = drug_df["drug"].apply(pd.Series)
         drug_df.drop(columns=["drug"], inplace=True)
+
         drug_df["target"] = gene["id"]
         drug_df["chembl_id"] = "CHEMBL:" + drug_df["chembl_id"].astype(str)
 
@@ -576,7 +576,11 @@ def get_gene_compound_interactions(
         intermediate_df = pd.concat([intermediate_df, drug_df], ignore_index=True)
         intermediate_df.drop(["cross_references", "adverse_events"], axis=1, inplace=True)
         intermediate_df = intermediate_df.drop_duplicates(
-            subset=[col for col in intermediate_df.columns if col not in ["adverse_effect", "mechanisms_of_action"]]
+            subset=[
+                col
+                for col in intermediate_df.columns
+                if col not in ["adverse_effect", "mechanisms_of_action"]
+            ]
         )
 
     if intermediate_df.empty:
@@ -615,6 +619,10 @@ def get_gene_compound_interactions(
         col_name=OPENTARGETS_GENE_COMPOUND_COL,
     )
 
+    # Ensure the column is correctly assigned
+    if OPENTARGETS_GENE_COMPOUND_COL not in merged_df.columns:
+        merged_df[OPENTARGETS_GENE_COMPOUND_COL] = pd.Series([[] for _ in range(len(merged_df))])
+
     """Update metadata"""
     # Calculate the number of new nodes
     num_new_nodes = intermediate_df["chembl_id"].nunique()
@@ -631,7 +639,6 @@ def get_gene_compound_interactions(
     # Add the number of new nodes and edges to metadata
     opentargets_version["query"]["number_of_added_nodes"] = num_new_nodes
     opentargets_version["query"]["number_of_added_edges"] = num_new_edges
-
     return merged_df, opentargets_version
 
 
@@ -707,7 +714,6 @@ def get_compound_disease_interactions(
     # Record the start time
     opentargets_version = get_version_opentargets()
     start_time = datetime.datetime.now()
-
     query_string = """
     query KnownDrugsQuery{
         drugs (chemblIds: $chemblIds) {
@@ -730,11 +736,11 @@ def get_compound_disease_interactions(
     }"""
     query_string = query_string.replace("$chemblIds", str(chembl_ids).replace("'", '"'))
     r = requests.post(OPENTARGETS_ENDPOINT, json={"query": query_string}).json()
-  
+
     # Record the end time
     end_time = datetime.datetime.now()
 
-    """Metdata details"""
+    """Metadata details"""
     # Get the current date and time
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # Calculate the time elapsed
@@ -1094,7 +1100,11 @@ def get_disease_compound_interactions(
         intermediate_df = pd.concat([intermediate_df, drug_df], ignore_index=True)
         intermediate_df.drop(["cross_references", "adverse_events"], axis=1, inplace=True)
         intermediate_df = intermediate_df.drop_duplicates(
-            subset=[col for col in intermediate_df.columns if col not in ["adverse_effect", "mechanisms_of_action"]]
+            subset=[
+                col
+                for col in intermediate_df.columns
+                if col not in ["adverse_effect", "mechanisms_of_action"]
+            ]
         )
 
     if intermediate_df.empty:
@@ -1161,5 +1171,4 @@ def get_disease_compound_interactions(
     # Add the number of new nodes and edges to metadata
     opentargets_version["query"]["number_of_added_nodes"] = num_new_nodes
     opentargets_version["query"]["number_of_added_edges"] = num_new_edges
-
     return merged_df, opentargets_version

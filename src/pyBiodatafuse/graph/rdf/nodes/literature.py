@@ -40,7 +40,9 @@ def add_literature_based_data(
         g.add((article_node, URIRef(PREDICATES["sio_refers_to"]), gene_node))
         if umls:
             # disease_node = URIRef(f"{NAMESPACE_BINDINGS['umls']}{umls}")
-            disease_node = add_gene_disease_associations(g, id_number, source_idx, gene_node, disease_data, new_uris, i)
+            disease_node = add_gene_disease_associations(
+                g, id_number, source_idx, gene_node, disease_data, new_uris, i
+            )
             g.add(
                 (
                     article_node,

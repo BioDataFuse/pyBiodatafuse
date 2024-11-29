@@ -65,38 +65,40 @@ class TestString(unittest.TestCase):
         )
 
         stringdb.get_ppi_data = Mock(
-            return_value=pd.DataFrame([
-                {
-                    "stringId_A": "9606.ENSP00000261007",
-                    "stringId_B": "9606.ENSP00000359224",
-                    "preferredName_A": "CHRNA1",
-                    "preferredName_B": "ALG14",
-                    "ncbiTaxonId": "9606",
-                    "score": 0.543,
-                    "nscore": 0,
-                    "fscore": 0,
-                    "pscore": 0,
-                    "ascore": 0,
-                    "escore": 0,
-                    "dscore": 0,
-                    "tscore": 0.543,
-                },
-                {
-                    "stringId_A": "9606.ENSP00000359224",
-                    "stringId_B": "9606.ENSP00000417764",
-                    "preferredName_A": "ALG14",
-                    "preferredName_B": "ALG2",
-                    "ncbiTaxonId": "9606",
-                    "score": 0.633,
-                    "nscore": 0,
-                    "fscore": 0,
-                    "pscore": 0,
-                    "ascore": 0.067,
-                    "escore": 0,
-                    "dscore": 0.119,
-                    "tscore": 0.589,
-                },
-            ])
+            return_value=pd.DataFrame(
+                [
+                    {
+                        "stringId_A": "9606.ENSP00000261007",
+                        "stringId_B": "9606.ENSP00000359224",
+                        "preferredName_A": "CHRNA1",
+                        "preferredName_B": "ALG14",
+                        "ncbiTaxonId": "9606",
+                        "score": 0.543,
+                        "nscore": 0,
+                        "fscore": 0,
+                        "pscore": 0,
+                        "ascore": 0,
+                        "escore": 0,
+                        "dscore": 0,
+                        "tscore": 0.543,
+                    },
+                    {
+                        "stringId_A": "9606.ENSP00000359224",
+                        "stringId_B": "9606.ENSP00000417764",
+                        "preferredName_A": "ALG14",
+                        "preferredName_B": "ALG2",
+                        "ncbiTaxonId": "9606",
+                        "score": 0.633,
+                        "nscore": 0,
+                        "fscore": 0,
+                        "pscore": 0,
+                        "ascore": 0.067,
+                        "escore": 0,
+                        "dscore": 0.119,
+                        "tscore": 0.589,
+                    },
+                ]
+            )
         )
 
         bridgedb_dataframe = pd.DataFrame(

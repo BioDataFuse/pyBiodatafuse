@@ -119,7 +119,6 @@ def add_transporter_inhibitor_node(g: Graph, inhibitor_data: dict, base_uri: str
         g.add((inhibition_node, RDF.type, URIRef("https://purl.obolibrary.org/GO_0032410")))
 
 
-
 def add_tested_compound_node(
     g: Graph,
     inchi: str,
