@@ -123,7 +123,7 @@ class TestString(unittest.TestCase):
                         "stringdb_link_to": "ALG2",
                         "Ensembl": "Ensembl:ENSP00000417764",
                         "score": 0.633,
-                        "Uniprot-TrEMBL": "CHRNA1",
+                        "Uniprot-TrEMBL": "ALG14",
                     },
                 ],
                 [
@@ -139,7 +139,7 @@ class TestString(unittest.TestCase):
                         "stringdb_link_to": "ALG14",
                         "Ensembl": "Ensembl:ENSP00000359224",
                         "score": 0.543,
-                        "Uniprot-TrEMBL": "ALG2",
+                        "Uniprot-TrEMBL": "CHRNA1",
                     }
                 ],
             ]
