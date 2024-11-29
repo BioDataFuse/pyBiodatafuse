@@ -114,7 +114,6 @@ def combine_sources(bridgedb_df: pd.DataFrame, df_list: List[pd.DataFrame]) -> p
         (bridgedb_df["target.source"] == "Ensembl")
         | (bridgedb_df["target.source"] == "PubChem-compound")
     ]
-
     for df in df_list:
         if not df.empty:
             m = pd.merge(
@@ -126,6 +125,12 @@ def combine_sources(bridgedb_df: pd.DataFrame, df_list: List[pd.DataFrame]) -> p
 
     m = m.loc[:, ~m.columns.duplicated()]  # remove duplicate columns
 
+    # Ensure "Uniprot-TrEMBL" column is present
+    # if bridgedb_df["target.source"].eq("Uniprot-TrEMBL").any():
+    #    uniprot_trembl_df = bridgedb_df[bridgedb_df["target.source"] == "Uniprot-TrEMBL"]
+    #    uniprot_trembl_df = uniprot_trembl_df.groupby("identifier")["target"].apply(list).reset_index()
+    #    uniprot_trembl_df.rename(columns={"target": "Uniprot-TrEMBL"}, inplace=True)
+    #    m = pd.merge(m, uniprot_trembl_df, on="identifier", how="left")
     return m
 
 

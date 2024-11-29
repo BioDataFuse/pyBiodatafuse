@@ -9,21 +9,21 @@ from rdflib.namespace import OWL, RDF, RDFS, XSD
 from pyBiodatafuse.constants import CLINICAL_PHASES, MOAS, NODE_TYPES, PREDICATES
 
 
-def add_compound_node(g: Graph, compound: dict, protein_node: URIRef) -> URIRef:
+def add_compound_node(g: Graph, compound: dict, gene_node: URIRef) -> URIRef:
     """Create and add a compound node to the RDF graph.
 
     :param g: RDF graph to which the compound node will be added.
     :param compound: Dictionary containing compound data.
-    :param protein_node: URIRef of the protein node associated with the compound.
+    :param gene_node: URIRef of the gene node associated with the compound.
     :return: URIRef for the created compound node.
     """
     chembl_id = compound.get("chembl_id")
     compoundbank_id = compound.get("compoundbank_id")
     compound_name = compound.get("compound_name")
-    compound_cid = compound.get("compound_cid")
+    compound_cid = compound.get("compound_cid", "")
     is_approved = compound.get("is_approved")
     clinical_trial_phase = compound.get("clinical_trial_phase")
-    relation = compound.get("relation")
+    moa = compound.get("mechanisms_of_action", None)
 
     if chembl_id:
         chembl_id = chembl_id.split("CHEMBL:")[1]
@@ -35,10 +35,11 @@ def add_compound_node(g: Graph, compound: dict, protein_node: URIRef) -> URIRef:
         else:
             g.add((compound_node, RDF.type, URIRef(NODE_TYPES["tested_compound_node"])))
 
-        # Add relation between compound and protein
-        if relation in MOAS:
-            relation_iri = MOAS[relation]
-            g.add((compound_node, URIRef(relation_iri), protein_node))
+        # Add relation between compound and gene
+        if moa:
+            for relation in moa.get("uniqueActionTypes", []):
+                if relation in MOAS:
+                    g.add((compound_node, URIRef(MOAS[relation]), gene_node))
 
         # Clinical trial phase
         if clinical_trial_phase:
@@ -54,14 +55,12 @@ def add_compound_node(g: Graph, compound: dict, protein_node: URIRef) -> URIRef:
                 iri = (
                     f"https://go.compoundbank.com/compounds/{source_id}"
                     if source_id == compoundbank_id
-                    else f"https://pubchem.ncbi.nlm.nih.gov/compound/{compound_cid}"
+                    else f"https://pubchem.ncbi.nlm.nih.gov/compound/{compound_cid.split(':')[1]}"
                 )
                 id_node = URIRef(iri)
                 g.add((compound_node, OWL.sameAs, id_node))
                 g.add((id_node, OWL.sameAs, compound_node))
-                g.add((id_node, RDFS.label, Literal(compound_name, datatype=XSD.string)))
                 g.add((id_node, RDF.type, URIRef(NODE_TYPES["tested_compound_node"])))
-
         return compound_node
     else:
         return None
@@ -118,13 +117,6 @@ def add_transporter_inhibitor_node(g: Graph, inhibitor_data: dict, base_uri: str
         )
         g.add((compound_node, URIRef(PREDICATES["sio_is_part_of"]), inhibition_node))
         g.add((inhibition_node, RDF.type, URIRef("https://purl.obolibrary.org/GO_0032410")))
-        g.add(
-            (
-                URIRef(f"https://www.uniprot.org/uniprotkb/{uniprot_id}"),
-                RDF.type,
-                URIRef(NODE_TYPES["protein_node"]),
-            )
-        )
 
 
 def add_tested_compound_node(

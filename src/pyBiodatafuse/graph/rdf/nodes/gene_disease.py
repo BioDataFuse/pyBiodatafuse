@@ -16,7 +16,7 @@ def add_gene_disease_associations(
     disease_data: dict,
     new_uris: dict,
     i: int,
-) -> None:
+) -> URIRef:
     """Process and add gene-disease association data to the RDF graph.
 
     :param g: RDF graph to which the associations will be added.
@@ -26,17 +26,17 @@ def add_gene_disease_associations(
     :param disease_data: Dictionary containing disease association information.
     :param new_uris: Dictionary with updated project base URIs for the nodes.
     :param i: The index of the row.
+    :return: disease node (URIRef).
     """
     gene_id = g.value(subject=gene_node, predicate=RDFS.label)
     disease_node = add_disease_node(g, disease_data)
     if not disease_node:
         return
-
-    assoc_node = URIRef(f"{new_uris['gene_disease_association']}/{id_number}{i}{source_idx}")
+    umlscui = disease_data.get("disease_umlscui", "")
+    assoc_node = URIRef(f"{new_uris['gene_disease_association']}/{gene_id}{umlscui}")
     g.add((assoc_node, RDF.type, URIRef(NODE_TYPES["gene_disease_association"])))
     g.add((assoc_node, URIRef(PREDICATES["sio_refers_to"]), gene_node))
     g.add((assoc_node, URIRef(PREDICATES["sio_refers_to"]), disease_node))
-    umlscui = disease_data.get("disease_umlscui", "")
     score = disease_data.get("score", "")
     if disease_data.get("score"):
         score_node = add_score_node(
@@ -59,8 +59,9 @@ def add_gene_disease_associations(
         el_node = add_evidence_node(g, id_number, source_idx, "el", disease_data, new_uris, i)
         g.add((assoc_node, URIRef(PREDICATES["sio_has_measurement_value"]), el_node))
 
-    data_source_node = add_data_source_node(g, "DISGENET")
-    g.add((assoc_node, URIRef(PREDICATES["sio_has_source"]), data_source_node))
+    # data_source_node = add_data_source_node(g, "DISGENET")
+    # g.add((assoc_node, URIRef(PREDICATES["sio_has_source"]), data_source_node))
+    return disease_node
 
 
 def add_disease_node(g: Graph, disease_data: dict) -> URIRef:
@@ -149,6 +150,9 @@ def add_evidence_node(
     node = URIRef(
         f"{new_uris['score_base_node']}/{evidence_type}/{id_number}{i}{source_idx}_{disease_data['disease_umlscui']}"
     )
+    datatype = XSD.double
+    if evidence_type == "el":
+        datatype = XSD.string
     g.add((node, RDF.type, URIRef(NODE_TYPES[f"{evidence_type}_node"])))
-    g.add((node, URIRef(PREDICATES["sio_has_value"]), Literal(value, datatype=XSD.double)))
+    g.add((node, URIRef(PREDICATES["sio_has_value"]), Literal(value, datatype=datatype)))
     return node

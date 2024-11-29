@@ -4,39 +4,67 @@
 """Populate a BDF RDF graph with literature-based evidence."""
 
 
-from rdflib import Graph, Literal, URIRef
-from rdflib.namespace import RDF, RDFS
+from rdflib import Literal, URIRef
+from rdflib.namespace import OWL, RDF, RDFS
 
-from pyBiodatafuse.constants import NODE_TYPES, PREDICATES
+from pyBiodatafuse.constants import NAMESPACE_BINDINGS, NODE_TYPES, PREDICATES
+from pyBiodatafuse.graph.rdf.nodes.gene_disease import add_gene_disease_associations
 
 
-def add_literature_based_data(g: Graph, entry: dict, gene_node: URIRef) -> None:
+def add_literature_based_data(
+    g,
+    entry,
+    gene_node,
+    id_number,
+    source_idx,
+    disease_data,
+    new_uris,
+    i,
+) -> None:
     """Add literature-based data for gene associations.
 
     :param g: (Graph): RDF graph to which the literature-based data is added.
     :param entry: (dict): Dictionary with literature-based association information.
     :param gene_node: (URIRef): URIRef of the gene node associated with the literature data.
+    :param id_number: Unique identifier for the expression data.
+    :param source_idx: Identifier for the source of the expression data.
+    :param disease_data: Dictionary with disease data.
+    :param new_uris: Node URIs for the graph.
+    :param i: Row index.
     """
     source = entry.get("source", None)
     if source and "PMID" in source:
         source_id = source.split(": ")[1]
-        identifier = entry["id"]
-        disease_name = entry["disease_name"]
         source_url = f"https://pubmed.ncbi.nlm.nih.gov/{source_id}"
-
-        # Create the source node and add metadata
         article_node = URIRef(source_url)
+        umls = entry.get("UMLS", None)
+        mondo = entry.get("MONDO", None)
+        disease_name = entry["disease_name"]
+        # Create the source node and add metadata
         g.add((article_node, RDF.type, URIRef(NODE_TYPES["article"])))
         g.add((article_node, URIRef(PREDICATES["sio_refers_to"]), gene_node))
-        g.add(
-            (
-                article_node,
-                URIRef(PREDICATES["sio_refers_to"]),
-                URIRef(f"https://biodatafuse.org/identifiers/{identifier}"),
+        if umls:
+            # disease_node = URIRef(f"{NAMESPACE_BINDINGS['umls']}{umls}")
+            disease_node = add_gene_disease_associations(
+                g, id_number, source_idx, gene_node, disease_data, new_uris, i
             )
-        )
-
-        # Add disease label
-        disease_node = URIRef(f"https://biodatafuse.org/identifiers/{identifier}")
-        g.add((disease_node, RDFS.label, Literal(disease_name)))
-        g.add((disease_node, RDF.type, URIRef(NODE_TYPES["disease_node"])))
+            g.add(
+                (
+                    article_node,
+                    URIRef(PREDICATES["sio_refers_to"]),
+                    disease_node,
+                )
+            )
+            g.add((disease_node, RDFS.label, Literal(disease_name)))
+            g.add((disease_node, RDF.type, URIRef(NODE_TYPES["disease_node"])))
+        if mondo:
+            mondo_node = URIRef(f"{NAMESPACE_BINDINGS['mondo']}{mondo}")
+            g.add(
+                (
+                    disease_node,
+                    OWL.sameAs,
+                    mondo_node,
+                )
+            )
+            g.add((disease_node, RDFS.label, Literal(disease_name)))
+            g.add((disease_node, RDF.type, URIRef(NODE_TYPES["disease_node"])))

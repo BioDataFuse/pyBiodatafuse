@@ -9,9 +9,11 @@ BGEE_ENDPOINT = "https://www.bgee.org/sparql/"
 DISGENET_ENDPOINT = "https://api.disgenet.com/api/v1/gda/summary"
 MINERVA_ENDPOINT = "https://minerva-net.lcsb.uni.lu/api/"
 MOLMEDB_ENDPOINT = "https://idsm.elixir-czech.cz/sparql/endpoint/molmedb"
+NCBI_ENDPOINT = "https://eutils.ncbi.nlm.nih.gov"
 OPENTARGETS_ENDPOINT = "https://api.platform.opentargets.org/api/v4/graphql"
 PUBCHEM_ENDPOINT = "https://idsm.elixir-czech.cz/sparql/endpoint/idsm"
 STRING_ENDPOINT = "https://string-db.org/api"
+UNIPROT_ENDPOINT = "https://rest.uniprot.org"
 WIKIDATA_ENDPOINT = "https://query-main.wikidata.org/sparql"
 WIKIPATHWAYS_ENDPOINT = "https://sparql.wikipathways.org/sparql"
 
@@ -116,7 +118,7 @@ DISGENET_DISEASE_OUTPUT_DICT = {
     "disease_umlscui": str,  # "C1510586"
     "score": float,
     "ei": float,
-    "el": float,
+    "el": str,
 }
 HPO = "HPO"
 NCI = "NCI"
@@ -206,7 +208,8 @@ OPENTARGETS_COMPOUND_OUTPUT_DICT = {
     "is_approved": bool,
     "relation": str,
     "adverse_effect_count": int,
-    "adverse_effect": dict,
+    "adverse_effect": list,
+    # "mechanisms_of_action": list,
 }
 CHEMBL_ID = "CHEMBL"
 DRUGBANK_ID = "DrugBank"
@@ -251,7 +254,7 @@ OUTCOME = "active|inactive"
 INCHI = "InChI"
 
 # STRING
-STRING_OUTPUT_DICT = {"stringdb_link_to": str, STRING_GENE_INPUT_ID: str, "score": int}
+STRING_OUTPUT_DICT = {"stringdb_link_to": str, STRING_GENE_INPUT_ID: str, "score": float}
 
 
 """ Node and edge main lable and attributes for each data source """
@@ -486,7 +489,6 @@ NAMESPACE_BINDINGS = {
     "sio": "http://semanticscience.org/resource/",
     "hgnc": "http://bio2rdf.org/hgnc:",
     "obo": "http://purl.obolibrary.org/obo/",
-    "umls": "https://uts-ws.nlm.nih.gov/rest/semantic-network/2015AB/CUI/",
     "ensembl": "https://identifiers.org/ensembl:",
     "dcat": "http://www.w3.org/ns/dcat#",
     "bdf": "https://biodatafuse.org/",
@@ -497,6 +499,9 @@ NAMESPACE_BINDINGS = {
     "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
     "xsd": "http://www.w3.org/2001/XMLSchema#",
     "bdfo": "https://biodatafuse.org/onto/bdf#",
+    "mondo": "https://monarchinitiative.org/disease/",
+    "umls": "https://www.ncbi.nlm.nih.gov/medgen/",
+    "so": "http://purl.obolibrary.org/obo/so#",
 }
 
 # Patterns URIs for nodes (one for each node in the schema)
@@ -561,6 +566,7 @@ PREDICATES = {
     "phase": "http://purl.obolibrary.org/obo/PATO_0000083",
     "translation_of": "http://purl.obolibrary.org/obo/so#translation_of",
     "translates_to": "http://purl.obolibrary.org/obo/so#translates_to",
+    "variant_of": "http://purl.obolibrary.org/obo/so#variant_of",
 }
 
 # Classes for clinical phases
@@ -580,9 +586,15 @@ GO_TYPES = {
 }
 
 # Compound MoA
+
 MOAS = {
-    "activates": "http://purl.obolibrary.org/obo/RO_0018027",  # agonist
-    "inhibits": "http://purl.obolibrary.org/obo/RO_0018029",  # antagonist
+    "ANTAGONIST": "http://purl.obolibrary.org/obo/RO_0018029",
+    "AGONIST": "http://purl.obolibrary.org/obo/RO_0018027",
+    "BLOCKER": "http://purl.obolibrary.org/obo/RO_0003002",
+    "INHIBITOR": "http://purl.obolibrary.org/obo/RO_0012006",  # TODO this predicate has the wrong range
+    "MODULATOR": "http://purl.obolibrary.org/obo/RO_0011002",  # TODO needs more granularity
+    "PARTIAL AGONIST": "http://purl.obolibrary.org/obo/RO_0018027",  # TODO needs more granularity
+    "INVERSE AGONIST": "http://purl.obolibrary.org/obo/RO_0018028",
 }
 
 # Data sources
@@ -614,7 +626,7 @@ DISEASE_IDENTIFIER_TYPES = [
 
 BASE_URLS_DBS = {
     "uniprot": "https://www.uniprot.org/uniprotkb/",
-    "ensembl": "http://identifiers.org/ensembl#",
+    "ensembl": "http://identifiers.org/ensembl:",
     "stringdb": "https://string-db.org/network/",
 }
 
@@ -627,4 +639,8 @@ NAMESPACE_SHAPES = {
     "http://purl.obolibrary.org/obo/": "obo",
     "http://purl.obolibrary.org/obo/so#": "so",
     "https://biodatafuse.org/onto/bdf#": "bdfo",
+    "https://minerva-net.lcsb.uni.lu/api/": "minerva",
+    "https://reactome.org/content/detail/": "reactome",
+    "https://www.uniprot.org/uniprotkb/": "uniprot",
+    "http://identifiers.org/ensembl#": "ensembl",
 }

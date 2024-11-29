@@ -5,13 +5,13 @@
 
 import datetime
 import os
-from tqdm import tqdm
 import warnings
 from string import Template
 from typing import Any, Dict, Tuple
 
 import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
+from tqdm import tqdm
 
 from pyBiodatafuse.constants import (
     PUBCHEM,

@@ -77,7 +77,7 @@ def get_shapes(
     g,
     base_uri,
     path,
-    threshold=0.001,
+    threshold=0.000000001,
     graph_type="shex",  # "shex" or "shacl"
     uml_figure_path=None,
     print_string_output=True,
@@ -115,8 +115,9 @@ def get_shapes(
     shaper = Shaper(
         all_classes_mode=True,
         rdflib_graph=g,
-        input_format=TURTLE,
+        # input_format=TURTLE,
         namespaces_dict=NAMESPACE_SHAPES,
+        # disable_or_statements=False, Workaround for bug
     )
     graph_result = None
     # Generate the appropriate graph (Shex or SHACL)
@@ -189,3 +190,17 @@ def get_shacl_prefixes(namespaces, path, new_uris):
 
     print(ttl_data)
     return graph
+
+
+def get_node_label(g, node):
+    """
+    Retrieve the label of a given node from an RDF graph.
+
+    :param g: The RDF graph containing the data.
+    :param node: The node whose label is to be retrieved.
+
+    :return: The label of the node if it exists, otherwise None.
+    """
+    for stmt in g.triples((node, RDFS.label, None)):
+        return stmt[2]
+    return None

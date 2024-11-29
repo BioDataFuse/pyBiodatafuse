@@ -1,0 +1,26 @@
+CONSTRUCT {
+    ?gene a obo:NCIT_C16612 ;
+          rdfs:label ?geneLabel .
+    ?gd a sio:SIO_000983 ;
+        sio:SIO_000628 ?gene, ?disease .
+    ?disease rdfs:label ?diseaseLabel .
+    ?drug ?rel ?gene ;
+          rdfs:label ?drugLabel .
+} 
+WHERE {
+    ?gene a obo:NCIT_C16612 ;
+          rdfs:label ?geneLabel .
+    ?disease rdfs:label ?diseaseLabel .
+    VALUES ?disease { obo:C5433293 umls:C5433293 }
+    ?drug rdfs:label ?drugLabel ;
+          ?rel ?gene .
+    ?gd a sio:SIO_000983 ;
+        sio:SIO_000628 ?gene, ?disease .
+    
+    VALUES ?rel {
+        obo:RO_0018029    # ANTAGONIST
+        obo:RO_0003002    # BLOCKER
+        obo:RO_0012006    # INHIBITOR
+        obo:RO_0018028    # INVERSE AGONIST
+    }
+}
