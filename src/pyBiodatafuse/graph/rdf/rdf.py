@@ -314,7 +314,7 @@ class BDFGraph(Graph):
         :param id_number: Unique identifier for the expression data.
         :param source_idx: Identifier for the source of the expression data.
         :param new_uris: Node URIs for the graph.
-        :param i" Row index.
+        :param i: Row index.
         """
         if literature_based_data:
             entries = (

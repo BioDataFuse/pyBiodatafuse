@@ -28,6 +28,7 @@ def add_literature_based_data(
     :param gene_node: (URIRef): URIRef of the gene node associated with the literature data.
     :param id_number: Unique identifier for the expression data.
     :param source_idx: Identifier for the source of the expression data.
+    :param disease_data: Dictionary with disease data.
     :param new_uris: Node URIs for the graph.
     :param i" Row index.
     """
