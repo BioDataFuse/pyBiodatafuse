@@ -103,9 +103,8 @@ def get_pathway_info(row):
     :returns: Dictionary containing pathway IDs and labels.
     """
     kegg_dict = row[KEGG_COL]
-    if not isinstance(kegg_dict, dict) or kegg_dict.get("KEGG_id") is None:
-        kegg_dict["pathways"] = None
-        return kegg_dict
+    if kegg_dict is None or not isinstance(kegg_dict, dict) or kegg_dict.get("KEGG_id") is None:
+        return {"KEGG_id": None, "pathways": None}
     
     results = requests.get(f"{KEGG_ENDPOINT}/link/pathway/{kegg_dict.get('KEGG_id')}") 
     if len(results.text) <= 1:
@@ -131,7 +130,7 @@ def get_pathway_info(row):
         pathway_info = get_compound_genes(pathway_info, results_entry)
 
         pathways.append(pathway_info)
-    
+
     kegg_dict["pathways"] = pathways
 
     return kegg_dict
