@@ -396,10 +396,8 @@ def add_kegg_gene_pathway_subgraph(g, gene_node_label, annot_list):
     :param annot_list: list of pathways from KEGG.
     :returns: a NetworkX MultiDiGraph
     """
-    print("a")
     for annot in annot_list:
         if not pd.isna(annot["pathway_name"]):
-            print("vb")
             annot_node_label = annot[PATHWAY_NODE_MAIN_LABEL]
             annot_node_attrs = PATHWAY_NODE_ATTRS.copy()
             annot_node_attrs["source"] = KEGG
@@ -850,14 +848,11 @@ def process_annotations(g, gene_node_label, row, func_dict):
     :param row: row in the combined DataFrame.
     :param func_dict: dictionary of subgraph function.
     """
-    print(row)
-    print(func_dict)
     for annot_key in func_dict:
         if annot_key in row:
             annot_list = json.loads(json.dumps(row[annot_key]))
             if not isinstance(annot_list, list):
                 annot_list = []
-                print(annot_list)
 
             func_dict[annot_key](g, gene_node_label, annot_list)
 
