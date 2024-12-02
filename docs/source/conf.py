@@ -27,7 +27,7 @@ copyright = f"{date.today().year}, Tooba Abbassi-Daloii and Yojana Gadiya"
 author = "Tooba Abbassi-Daloii and Yojana Gadiya"
 
 # The full version, including alpha/beta/rc tags.
-release = "0.0.4"
+release = "1.0.0"
 
 # The short X.Y version.
 parsed_version = re.match(
