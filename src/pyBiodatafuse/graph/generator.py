@@ -37,6 +37,8 @@ from pyBiodatafuse.constants import (
     GO_MF_NODE_LABELS,
     GO_NODE_ATTRS,
     GO_NODE_MAIN_LABEL,
+    KEGG,
+    KEGG_COL,
     LITERATURE_DISEASE_COL,
     LITERATURE_DISEASE_EDGE_ATTRS,
     LITERATURE_DISEASE_NODE_ATTRS,
@@ -386,6 +388,47 @@ def add_wikipathways_gene_pathway_subgraph(g, gene_node_label, annot_list):
 
     return g
 
+def add_kegg_gene_pathway_subgraph(g, gene_node_label, annot_list):
+    """Construct part of the graph by linking the gene to pathways from KEGG.
+
+    :param g: the input graph to extend with new nodes and edges.
+    :param gene_node_label: the gene node to be linked to pathways from KEGG.
+    :param annot_list: list of pathways from KEGG.
+    :returns: a NetworkX MultiDiGraph
+    """
+    print("a")
+    for annot in annot_list:
+        if not pd.isna(annot["pathway_name"]):
+            print("vb")
+            annot_node_label = annot[PATHWAY_NODE_MAIN_LABEL]
+            annot_node_attrs = PATHWAY_NODE_ATTRS.copy()
+            annot_node_attrs["source"] = KEGG
+            annot_node_attrs["id"] = annot["pathway_id"]
+            annot_node_attrs["gene_count"] = annot["gene_count"]
+            annot_node_attrs["compounds"] = annot["compounds"]
+
+            g.add_node(annot_node_label, attr_dict=annot_node_attrs)
+
+            edge_attrs = GENE_PATHWAY_EDGE_ATTRS.copy()
+            edge_attrs["source"] = KEGG
+
+            edge_hash = hash(frozenset(edge_attrs.items()))
+            edge_attrs["edge_hash"] = edge_hash
+            edge_data = g.get_edge_data(gene_node_label, annot_node_label)
+            edge_data = {} if edge_data is None else edge_data
+            node_exists = [
+                x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash
+            ]
+
+            if len(node_exists) == 0:
+                g.add_edge(
+                    gene_node_label,
+                    annot_node_label,
+                    label=GENE_PATHWAY_EDGE_LABEL,
+                    attr_dict=edge_attrs,
+                )
+
+    return g
 
 def add_opentargets_gene_reactome_pathway_subgraph(g, gene_node_label, annot_list):
     """Construct part of the graph by linking the gene to Reactome pathways.
@@ -807,11 +850,14 @@ def process_annotations(g, gene_node_label, row, func_dict):
     :param row: row in the combined DataFrame.
     :param func_dict: dictionary of subgraph function.
     """
+    print(row)
+    print(func_dict)
     for annot_key in func_dict:
         if annot_key in row:
             annot_list = json.loads(json.dumps(row[annot_key]))
             if not isinstance(annot_list, list):
                 annot_list = []
+                print(annot_list)
 
             func_dict[annot_key](g, gene_node_label, annot_list)
 
@@ -897,6 +943,7 @@ def build_networkx_graph(
         LITERATURE_DISEASE_COL: add_literature_gene_disease_subgraph,
         MINERVA: add_minerva_gene_pathway_subgraph,
         WIKIPATHWAYS: add_wikipathways_gene_pathway_subgraph,
+        KEGG_COL: add_kegg_gene_pathway_subgraph,
         OPENTARGETS_REACTOME_COL: add_opentargets_gene_reactome_pathway_subgraph,
         OPENTARGETS_GO_COL: add_opentargets_gene_go_subgraph,
         OPENTARGETS_GENE_COMPOUND_COL: add_opentargets_gene_compound_subgraph,

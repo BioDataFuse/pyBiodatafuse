@@ -294,7 +294,7 @@ DISGENET_EDGE_ATTRS = {
 }
 
 # KEGG
-KEGG_COL_NAME = f"{KEGG}_pathways"
+KEGG_COL = f"{KEGG}_pathways"
 
 # Literature
 LITERATURE_NODE_MAIN_LABEL = "id"

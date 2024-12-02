@@ -11,12 +11,13 @@ import numpy as np
 import pandas as pd
 import requests
 import time
+import json
 
 from pyBiodatafuse.constants import (
     KEGG,
     KEGG_ENDPOINT,
     KEGG_GENE_INPUT_ID,
-    KEGG_COL_NAME
+    KEGG_COL
 )
 
 from pyBiodatafuse.utils import check_columns_against_constants, get_identifier_of_interest
@@ -57,7 +58,7 @@ def get_kegg_ids(row):
     results = requests.get(f"{KEGG_ENDPOINT}/conv/genes/ncbi-geneid:{row['target']}")
     kegg_id = results.text.split()
     if len(kegg_id) > 1:
-        return {"KEGG_id": kegg_id[1]}
+       return {"KEGG_id": kegg_id[1]}
 
 
 def get_compound_genes(pathway_info, results_entry):
@@ -76,7 +77,7 @@ def get_compound_genes(pathway_info, results_entry):
         elif line.startswith("COMPOUND"):
             section = "COMPOUND"
         elif line.startswith("REFERENCE"):
-            section = None  # End parsing once references start
+            section = None 
 
         if section == "GENE":
             parts = line.split()
@@ -101,7 +102,7 @@ def get_pathway_info(row):
     :param row: input_df row
     :returns: Dictionary containing pathway IDs and labels.
     """
-    kegg_dict = row[KEGG_COL_NAME]
+    kegg_dict = row[KEGG_COL]
     if not isinstance(kegg_dict, dict) or kegg_dict.get("KEGG_id") is None:
         kegg_dict["pathways"] = None
         return kegg_dict
@@ -137,11 +138,7 @@ def get_pathway_info(row):
     
 
 def get_pathways(bridgedb_df):    
-    """Annotate genes with KEGG pathway information.
-    
-    :param row: BridgeDb output for creating the list of gene ids to query
-    :returns: a DataFrame containing the KEGG output and dictionary of the metadata.
-    """
+    """Annotate genes with KEGG pathway information."""
     api_available = check_endpoint_kegg()
     if not api_available:
         warnings.warn(f"{KEGG} endpoint is not available. Unable to retrieve data.", stacklevel=2)
@@ -157,10 +154,14 @@ def get_pathways(bridgedb_df):
     gene_list = list(set(data_df["target"].tolist()))
 
     # Get the KEGG identifiers
-    data_df[KEGG_COL_NAME] = data_df.apply(lambda row: get_kegg_ids(row), axis=1)
+    data_df[KEGG_COL] = data_df.apply(lambda row: get_kegg_ids(row), axis=1)
 
     # Get the links for the KEGG pathways
-    data_df[KEGG_COL_NAME] = data_df.apply(lambda row: get_pathway_info(row), axis=1)
+    data_df[KEGG_COL] = data_df.apply(lambda row: get_pathway_info(row), axis=1)
+
+    data_df['KEGG_pathways'] = data_df['KEGG_pathways'].apply(
+        lambda x: x['pathways'] if isinstance(x, dict) and 'pathways' in x else []
+    )
 
     # Record the end time
     end_time = datetime.datetime.now()
@@ -188,7 +189,3 @@ def get_pathways(bridgedb_df):
     }
 
     return data_df, kegg_metadata
-    
-
-    
-    
