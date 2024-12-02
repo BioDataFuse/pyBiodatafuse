@@ -907,8 +907,10 @@ scratch/
 *.pkl
 /pyBiodatafuse-0.0.4.dev0
 *.graphml
-*.json
+#*.json
 *.gml
+pubchem_cache_results.json
+examples/usecases/PCS/dreamwalk_data
 
 # Testing RDF
 src/test.ttl
@@ -919,5 +921,9 @@ src/pyBiodatafuse/resources/base.owl
 robot.jar
 robot
 src/pyBiodatafuse/resources/biodatafuse.properties
-src/pcs_graph.ttl
 
+# More
+.vscode
+
+# PCS Graph (DisGeNET data)
+examples/usecases/PCS/BDF_PCS_graph.ttl

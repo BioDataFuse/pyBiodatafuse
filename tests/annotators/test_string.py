@@ -10,7 +10,7 @@ import pandas as pd
 
 from pyBiodatafuse.annotators import stringdb
 from pyBiodatafuse.annotators.stringdb import get_ppi, get_version_stringdb
-from pyBiodatafuse.constants import STRING, STRING_PPI_COL
+from pyBiodatafuse.constants import STRING_PPI_COL
 
 
 class TestString(unittest.TestCase):
@@ -34,67 +34,71 @@ class TestString(unittest.TestCase):
         stringdb.check_endpoint_stringdb = Mock(return_value=True)
         stringdb.get_version_stringdb = Mock(return_value={"source_version": "12.0"})
         stringdb.get_string_ids = Mock(
-            return_value=[
-                {
-                    "queryIndex": 0,
-                    "queryItem": "ENSG00000119523",
-                    "stringId": "9606.ENSP00000417764",
-                    "ncbiTaxonId": 9606,
-                    "taxonName": "Homo sapiens",
-                    "preferredName": "ALG2",
-                },
-                {
-                    "queryIndex": 1,
-                    "queryItem": "ENSG00000138435",
-                    "stringId": "9606.ENSP00000261007",
-                    "ncbiTaxonId": 9606,
-                    "taxonName": "Homo sapiens",
-                    "preferredName": "CHRNA1",
-                },
-                {
-                    "queryIndex": 2,
-                    "queryItem": "ENSG00000172339",
-                    "stringId": "9606.ENSP00000359224",
-                    "ncbiTaxonId": 9606,
-                    "taxonName": "Homo sapiens",
-                    "preferredName": "ALG14",
-                },
-            ]
+            return_value=pd.DataFrame(
+                [
+                    {
+                        "queryIndex": 0,
+                        "queryItem": "ENSG00000119523",
+                        "stringId": "9606.ENSP00000417764",
+                        "ncbiTaxonId": 9606,
+                        "taxonName": "Homo sapiens",
+                        "preferredName": "ALG2",
+                    },
+                    {
+                        "queryIndex": 1,
+                        "queryItem": "ENSG00000138435",
+                        "stringId": "9606.ENSP00000261007",
+                        "ncbiTaxonId": 9606,
+                        "taxonName": "Homo sapiens",
+                        "preferredName": "CHRNA1",
+                    },
+                    {
+                        "queryIndex": 2,
+                        "queryItem": "ENSG00000172339",
+                        "stringId": "9606.ENSP00000359224",
+                        "ncbiTaxonId": 9606,
+                        "taxonName": "Homo sapiens",
+                        "preferredName": "ALG14",
+                    },
+                ]
+            )
         )
 
-        stringdb._get_ppi_data = Mock(
-            return_value=[
-                {
-                    "stringId_A": "9606.ENSP00000261007",
-                    "stringId_B": "9606.ENSP00000359224",
-                    "preferredName_A": "CHRNA1",
-                    "preferredName_B": "ALG14",
-                    "ncbiTaxonId": "9606",
-                    "score": 0.543,
-                    "nscore": 0,
-                    "fscore": 0,
-                    "pscore": 0,
-                    "ascore": 0,
-                    "escore": 0,
-                    "dscore": 0,
-                    "tscore": 0.543,
-                },
-                {
-                    "stringId_A": "9606.ENSP00000359224",
-                    "stringId_B": "9606.ENSP00000417764",
-                    "preferredName_A": "ALG14",
-                    "preferredName_B": "ALG2",
-                    "ncbiTaxonId": "9606",
-                    "score": 0.633,
-                    "nscore": 0,
-                    "fscore": 0,
-                    "pscore": 0,
-                    "ascore": 0.067,
-                    "escore": 0,
-                    "dscore": 0.119,
-                    "tscore": 0.589,
-                },
-            ]
+        stringdb.get_ppi_data = Mock(
+            return_value=pd.DataFrame(
+                [
+                    {
+                        "stringId_A": "9606.ENSP00000261007",
+                        "stringId_B": "9606.ENSP00000359224",
+                        "preferredName_A": "CHRNA1",
+                        "preferredName_B": "ALG14",
+                        "ncbiTaxonId": "9606",
+                        "score": 0.543,
+                        "nscore": 0,
+                        "fscore": 0,
+                        "pscore": 0,
+                        "ascore": 0,
+                        "escore": 0,
+                        "dscore": 0,
+                        "tscore": 0.543,
+                    },
+                    {
+                        "stringId_A": "9606.ENSP00000359224",
+                        "stringId_B": "9606.ENSP00000417764",
+                        "preferredName_A": "ALG14",
+                        "preferredName_B": "ALG2",
+                        "ncbiTaxonId": "9606",
+                        "score": 0.633,
+                        "nscore": 0,
+                        "fscore": 0,
+                        "pscore": 0,
+                        "ascore": 0.067,
+                        "escore": 0,
+                        "dscore": 0.119,
+                        "tscore": 0.589,
+                    },
+                ]
+            )
         )
 
         bridgedb_dataframe = pd.DataFrame(
@@ -111,11 +115,35 @@ class TestString(unittest.TestCase):
         expected_data = pd.Series(
             [
                 [
-                    {"stringdb_link_to": "CHRNA1", "Ensembl": "ENSP00000261007", "score": 0.543},
-                    {"stringdb_link_to": "ALG2", "Ensembl": "ENSP00000417764", "score": 0.633},
+                    {
+                        "stringdb_link_to": "CHRNA1",
+                        "Ensembl": "Ensembl:ENSP00000261007",
+                        "score": 0.543,
+                        "Uniprot-TrEMBL": "ALG14",
+                    },
+                    {
+                        "stringdb_link_to": "ALG2",
+                        "Ensembl": "Ensembl:ENSP00000417764",
+                        "score": 0.633,
+                        "Uniprot-TrEMBL": "ALG14",
+                    },
                 ],
-                [{"stringdb_link_to": "ALG14", "Ensembl": "ENSP00000359224", "score": 0.633}],
-                [{"stringdb_link_to": "ALG14", "Ensembl": "ENSP00000359224", "score": 0.543}],
+                [
+                    {
+                        "stringdb_link_to": "ALG14",
+                        "Ensembl": "Ensembl:ENSP00000359224",
+                        "score": 0.633,
+                        "Uniprot-TrEMBL": "ALG2",
+                    }
+                ],
+                [
+                    {
+                        "stringdb_link_to": "ALG14",
+                        "Ensembl": "Ensembl:ENSP00000359224",
+                        "score": 0.543,
+                        "Uniprot-TrEMBL": "CHRNA1",
+                    }
+                ],
             ]
         )
         expected_data.name = STRING_PPI_COL

@@ -1,0 +1,37 @@
+@prefix ex: <https://sparql.example.org/.well-known/sparql-examples/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix schema: <https://schema.org/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix sio: <http://semanticscience.org/resource/> .
+@prefix obo: <http://purl.obolibrary.org/obo/> .
+
+ex:covid_gene_disease_minerva_pathways a sh:SPARQLExecutable,
+        sh:SPARQLSelectExecutable ;
+    rdfs:comment "Which MINERVA pathways contain genes involved in COVID-related gene-disease interactions documented in the literature?"@en ;
+    sh:prefixes _:sparql_examples_prefixes ;
+    sh:select """
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX sio: <http://semanticscience.org/resource/>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+
+SELECT ?gene ?geneLabel ?pw
+WHERE {
+    ?publication a obo:IAO_0000013 ;
+                 sio:SIO_000628 ?gene ;
+                 sio:SIO_000628 ?disease .
+
+    ?disease a obo:NCIT_C7057 ;
+            rdfs:label ?diseaseLabel .
+    FILTER(CONTAINS(?diseaseLabel, "COVID"))
+
+    ?gene a obo:NCIT_C16612 ;
+          sio:SIO_000068 ?pw ;
+          rdfs:label ?geneLabel .
+
+    ?pw a obo:PW_0000001 ;
+        sio:SIO_000253 ?source .
+
+    FILTER(CONTAINS(LCASE(STR(?source)), "minerva"))
+}""" ;
+    schema:keywords "gene-disease interaction" ;
+    schema:target <https://biohackeu24.cloud.vhp4safety.nl/sparql> .

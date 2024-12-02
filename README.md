@@ -43,6 +43,12 @@
 
 > We introduce BioDataFuse, a query-based Python tool for seamless integration of biomedical databases. BioDataFuse establishes a modular framework for efficient data wrangling, enabling context-specific knowledge graph creation and supporting graph-based analyses. With a user-friendly interface, it enables users to dynamically create knowledge graphs from their input data. Supported by a robust Python package, pyBiodatafuse, this tool excels in data harmonization, aggregating diverse sources through modular queries. Moreover, BioDataFuse provides plugin capabilities for Cytoscape and Neo4j, allowing local graph hosting. Ongoing refinements enhance the graph utility through tasks like link prediction, making BioDataFuse a versatile solution for efficient and effective biological data integration.
 
+To know more about the package, read our documentation [here](https://pybiodatafuse.readthedocs.io/en/latest/index.html).
+
+## Creating your own graph
+
+To generate your own graph, check out our tutorial notebook [in examples](examples).
+
 <!-- ### Command Line Interface
 
 The pyBiodatafuse command line tool is automatically installed. It can

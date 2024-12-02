@@ -27,12 +27,15 @@ from pyBiodatafuse.utils import (
 )
 
 
-def check_endpoint_bgee() -> bool:
+def check_sparql_endpoint_bgee() -> bool:
     """Check the availability of the Bgee SPARQL endpoint.
 
     :returns: True if the endpoint is available, False otherwise.
     """
-    with open(os.path.dirname(__file__) + "/queries/bgee-get-last-modified.rq", "r") as fin:
+    query_file_path = os.path.join(
+        os.path.dirname(__file__), "queries", "bgee-get-last-modified.rq"
+    )
+    with open(query_file_path, "r", encoding="utf-8") as fin:
         sparql_query = fin.read()
 
     sparql = SPARQLWrapper(BGEE_ENDPOINT)
@@ -54,7 +57,11 @@ def get_version_bgee() -> dict:
     # http://purl.org/dc/terms/modified
     :returns: a dictionary containing the last modified date information
     """
-    with open(os.path.dirname(__file__) + "/queries/bgee-get-last-modified.rq", "r") as fin:
+    with open(
+        os.path.join(os.path.dirname(__file__), "queries", "bgee-get-last-modified.rq"),
+        "r",
+        encoding="utf-8",
+    ) as fin:
         sparql_query = fin.read()
 
     sparql = SPARQLWrapper(BGEE_ENDPOINT)
@@ -68,13 +75,13 @@ def get_version_bgee() -> dict:
 
 
 def get_gene_expression(bridgedb_df: pd.DataFrame):
-    """Query gene-tissue expression information from Bgee.
+    """Query gene-tissue expression information from Bgee with SPARQL.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
     :returns: a DataFrame containing the Bgee output and dictionary of the Bgee metadata.
     """
     # Check if the Bgee SPARQL endpoint is available
-    api_available = check_endpoint_bgee()
+    api_available = check_sparql_endpoint_bgee()
 
     if not api_available:
         warnings.warn(
@@ -102,9 +109,10 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
         if anatomical_entity.strip() != ""
     ]
 
-    with open(
-        os.path.dirname(__file__) + "/queries/bgee-genes-tissues-expression-level.rq", "r"
-    ) as fin:
+    query_file_path = os.path.join(
+        os.path.dirname(__file__), "queries", "bgee-genes-tissues-expression-level.rq"
+    )
+    with open(query_file_path, "r", encoding="utf-8") as fin:
         sparql_query = fin.read()
 
     # Add version to metadata file

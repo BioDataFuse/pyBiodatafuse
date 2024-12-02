@@ -1,0 +1,44 @@
+{
+    "q1": [
+        "Which MINERVA pathways contain genes involved in COVID-related gene-disease interactions documented in the literature?",
+        "What MINERVA pathways include genes linked to COVID gene-disease interactions based on existing studies?",
+        "Identify MINERVA pathways that list genes with literature-supported interactions in COVID.",
+        "Which pathways under MINERVA involve genes with documented COVID gene-disease interactions?"
+    ],
+    "q2": [
+        "Which genes are targeted by compounds in clinical stage 4 or approved, and what cellular components do these genes belong to?",
+        "For genes targeted by clinically approved or stage 4 compounds, what are their associated cellular components?",
+        "Identify genes targeted by clinical stage 4 or approved compounds and list their cellular component associations.",
+        "Which cellular components are associated with genes targeted by stage 4 or approved compounds?"
+    ],
+    "q3": [
+        "Which biological processes involve genes targeted by clinical stage 4 or approved compounds?",
+        "What are the biological processes of genes targeted by approved or stage 4 compounds?",
+        "Identify biological processes for genes targeted by compounds at stage 4 or approved for clinical use.",
+        "Which genes targeted by stage 4 or approved compounds are involved in specific biological processes?"
+    ],
+    "q4": [
+        "What is the molecular function of genes targeted by clinical stage 4 or approved compounds?",
+        "Which molecular functions are associated with genes targeted by approved or stage 4 compounds?",
+        "Identify molecular functions for genes targeted by stage 4 or approved compounds.",
+        "For genes targeted by stage 4 or approved compounds, what are their molecular functions?"
+    ],
+    "q5": [
+        "Which compounds target genes with protein products having a high PPI score (above 0.8) with other proteins?",
+        "Identify compounds that target genes with protein interactions scoring above 0.8.",
+        "Which compounds target genes whose protein products have a PPI score higher than 0.8?",
+        "List compounds targeting genes where protein interactions exceed a PPI score of 0.8."
+    ],
+    "q6": [
+        "Which pathways involve proteins targeted by drugs and have high PPI scores (above 0.8) with other proteins?",
+        "Identify pathways containing proteins targeted by drugs that show PPIs above a score of 0.8.",
+        "Which drug-targeted proteins involved in pathways show high PPI scores (above 0.8)?",
+        "Pathways with proteins targeted by drugs and showing significant PPIs (score > 0.8) with other proteins."
+    ],
+    "q7": [
+        "Which compounds target genes with high PPI score protein products (0.8), and how do these compounds rank by adverse outcome count?",
+        "Identify compounds targeting high-PPI-score genes (0.8) and sort by adverse outcome frequency.",
+        "Which compounds interact with high-PPI genes (score 0.8) and what are their adverse outcome counts?",
+        "Sort compounds targeting genes with high PPI scores (0.8) by the number of recorded adverse outcomes."
+    ]
+}

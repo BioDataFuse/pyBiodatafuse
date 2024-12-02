@@ -761,6 +761,45 @@ an anatomical entity is an object that is a structural part (material or immater
     <owl:Class rdf:about="https://schema.org/WebAPI">
         <rdfs:label>Web API</rdfs:label>
     </owl:Class>
+    
+
+	<!-- http://semanticscience.org/resource/SIO_001352 -->
+	<owl:Class rdf:about="http://semanticscience.org/resource/SIO_001352">
+		<rdfs:label xml:lang="en">DisGeNET Pleiotropy Index</rdfs:label>
+		<rdfs:subClassOf rdf:resource="http://semanticscience.org/resource/SIO_001018"/>
+		<dc:identifier>SIO_001352</dc:identifier>
+		<dc:description xml:lang="en">
+		The DisGeNET pleiotropy index is a measure of specificity as it pertains to classes of disease. The disease pleotropy index is computed from the ratio of the number of disease classes associated with an entity over the total number of disease classes multplied by 100. The measure is defined here: http://www.disgenet.org/web/DisGeNET/menu/dbinfo#pleiotropy
+		</dc:description>
+	<rdfs:isDefinedBy rdf:resource="http://semanticscience.org/ontology/sio.owl"/>
+	</owl:Class>    
+    
+<!-- http://semanticscience.org/resource/SIO_001018 -->
+<owl:Class rdf:about="http://semanticscience.org/resource/SIO_001018">
+<rdfs:label xml:lang="en">ratio</rdfs:label>
+</owl:Class>
+<!-- http://semanticscience.org/resource/SIO_001352 -->
+<owl:Class rdf:about="http://semanticscience.org/resource/SIO_001352">
+<rdfs:label xml:lang="en">DisGeNET Pleiotropy Index</rdfs:label>
+<rdfs:subClassOf rdf:resource="http://semanticscience.org/resource/SIO_001018"/>
+<dc:identifier>SIO_001352</dc:identifier>
+<dc:description xml:lang="en">
+The DisGeNET pleiotropy index is a measure of specificity as it pertains to classes of disease. The disease pleotropy index is computed from the ratio of the number of disease classes associated with an entity over the total number of disease classes multplied by 100. The measure is defined here: http://www.disgenet.org/web/DisGeNET/menu/dbinfo#pleiotropy
+</dc:description>
+<rdfs:isDefinedBy rdf:resource="http://semanticscience.org/ontology/sio.owl"/>
+</owl:Class>
+
+<!-- http://semanticscience.org/resource/SIO_001351 -->
+<owl:Class rdf:about="http://semanticscience.org/resource/SIO_001351">
+<rdfs:label xml:lang="en">DisGeNET disease specificity</rdfs:label>
+<rdfs:subClassOf rdf:resource="http://semanticscience.org/resource/SIO_001018"/>
+<dc:description xml:lang="en">
+DisGeNET Disease specificity is a measure of disease coverage. It is calculated from the negative base 2 log of the ratio of number of diseases associated to the total number of diseases. The measure is described here: http://www.disgenet.org/web/DisGeNET/menu/dbinfo#specificity
+</dc:description>
+<dc:identifier>SIO_001351</dc:identifier>
+<rdfs:isDefinedBy rdf:resource="http://semanticscience.org/ontology/sio.owl"/>
+</owl:Class>
+    
 </rdf:RDF>
 
 

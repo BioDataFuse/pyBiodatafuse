@@ -11,6 +11,7 @@ from typing import Any, Dict, Tuple
 
 import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
+from tqdm import tqdm
 
 from pyBiodatafuse.constants import (
     PUBCHEM,
@@ -95,7 +96,7 @@ def get_protein_compound_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
 
     intermediate_df = pd.DataFrame()
 
-    for protein_str in query_protein_list:
+    for protein_str in tqdm(query_protein_list, desc="Querying PubChem"):
         query_count += 1
 
         sparql_query_template = Template(sparql_query)

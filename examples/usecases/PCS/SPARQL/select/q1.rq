@@ -1,0 +1,25 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX sio: <http://semanticscience.org/resource/>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+PREFIX pr: <http://purl.obolibrary.org/obo/pr#>
+
+SELECT ?gene ?geneLabel ?pw
+WHERE {
+    ?publication a obo:IAO_0000013 ;
+                 sio:SIO_000628 ?gene ;
+                 sio:SIO_000628 ?disease .
+                 
+                 
+    ?disease a obo:NCIT_C7057 ;
+            rdfs:label ?diseaseLabel .
+    FILTER(CONTAINS(?diseaseLabel, "COVID"))
+    
+    ?gene a obo:NCIT_C16612 ;
+          sio:SIO_000068 ?pw ;
+          rdfs:label ?geneLabel .
+    
+    ?pw a obo:PW_0000001 ;
+        sio:SIO_000253 ?source .
+
+    FILTER(CONTAINS(LCASE(STR(?source)), "minerva"))
+}

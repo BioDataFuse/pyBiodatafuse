@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""Python file for queriying StringDB (https://string-db.org/)."""
+"""Python file for querying StringDB (https://string-db.org/)."""
 
 import datetime
 import logging
@@ -10,7 +10,7 @@ import warnings
 import numpy as np
 import pandas as pd
 import requests
-import time
+from requests.exceptions import RequestException
 
 from pyBiodatafuse.constants import (
     NCBI_ENDPOINT,
@@ -23,7 +23,12 @@ from pyBiodatafuse.constants import (
 )
 from pyBiodatafuse.utils import check_columns_against_constants, get_identifier_of_interest
 
+# from biomart import BiomartServer
+
+
 logger = logging.getLogger("stringdb")
+
+TIMEOUT = 10  # Timeout for requests in seconds
 
 
 def check_endpoint_stringdb() -> bool:
@@ -31,12 +36,11 @@ def check_endpoint_stringdb() -> bool:
 
     :returns: True if the endpoint is available, False otherwise.
     """
-    response = requests.get(f"{STRING_ENDPOINT}/json/version")
-
-    # Check if API is down
-    if response.status_code == 200:
-        return True
-    else:
+    try:
+        response = requests.get(f"{STRING_ENDPOINT}/json/version", timeout=TIMEOUT)
+        return response.status_code == 200
+    except RequestException as e:
+        logger.error("Error checking STRING Db endpoint: %s", e)
         return False
 
 
@@ -45,8 +49,12 @@ def get_version_stringdb() -> dict:
 
     :returns: a dictionary containing the version information
     """
-    version_call = requests.get(f"{STRING_ENDPOINT}/json/version").json()
-    return {"source_version": version_call[0]["string_version"]}
+    try:
+        version_call = requests.get(f"{STRING_ENDPOINT}/json/version", timeout=TIMEOUT).json()
+        return {"source_version": version_call[0]["string_version"]}
+    except RequestException as e:
+        logger.error("Error getting STRING Db version: %s", e)
+        return {"source_version": "unknown"}
 
 
 def _format_data(row, string_ids_df, network_df, to_uniprot):
@@ -58,50 +66,43 @@ def _format_data(row, string_ids_df, network_df, to_uniprot):
     :param network_df: list of uniprot gene identifiers
     :returns: StringDB reformatted annotation.
     """
-
-    gene_ppi_links = list()
-
+    gene_ppi_links = []
     target_links_set = set()
 
+    for _, row_arr in network_df.iterrows():
+        if (
+            row_arr["preferredName_A"] == row["identifier"]
+            and row_arr["preferredName_B"] not in target_links_set
+        ):
+            gene_ppi_links.append(
+                {
+                    "stringdb_link_to": row_arr["preferredName_B"],
+                    STRING_GENE_INPUT_ID: f"{STRING_GENE_INPUT_ID}:{row_arr['stringId_B'].split('.')[1]}",
+                    "score": row_arr["score"],
+                    "Uniprot-TrEMBL": row_arr["preferredName_A"],
+                }
+            )
+            target_links_set.add(row_arr["preferredName_B"])
 
-    for _i, row_str in string_ids_df.iterrows():
-        for _i, row_arr in network_df.iterrows():
-
-            if row_arr["preferredName_A"] == row_str["preferredName"] and row["identifier"] == row_str["queryItem"]:
-                if row_arr["preferredName_B"] not in target_links_set:
-                    gene_ppi_links.append(
-                        {
-                            "stringdb_link_to": row_arr["preferredName_B"],
-                            STRING_GENE_INPUT_ID: row_arr["stringId_B"].split(".")[1],
-                            "score": row_arr["score"],
-                            "string_id": row_arr["stringId_B"]
-                        }
-                    )
-                    target_links_set.add(row_arr["preferredName_B"])
-                    to_uniprot.append(row_arr["stringId_B"])
-
-            elif row_arr["preferredName_B"] == row_str["preferredName"] and row["identifier"] == row_str["queryItem"]:
-                if row_arr["preferredName_A"] not in target_links_set:
-                    gene_ppi_links.append(
-                        {
-                            "stringdb_link_to": row_arr["preferredName_A"],
-                            STRING_GENE_INPUT_ID: row_arr["stringId_A"].split(".")[1],
-                            "score": row_arr["score"],
-                            "string_id": row_arr["stringId_A"]
-                        }
-                    )
-                    target_links_set.add(row_arr["preferredName_A"])
-                    to_uniprot.append(row_arr["stringId_A"])
+        elif (
+            row_arr["preferredName_B"] == row["identifier"]
+            and row_arr["preferredName_A"] not in target_links_set
+        ):
+            gene_ppi_links.append(
+                {
+                    "stringdb_link_to": row_arr["preferredName_A"],
+                    STRING_GENE_INPUT_ID: f"{STRING_GENE_INPUT_ID}:{row_arr['stringId_A'].split('.')[1]}",
+                    "score": row_arr["score"],
+                    "Uniprot-TrEMBL": row_arr["preferredName_B"],
+                }
+            )
+            target_links_set.add(row_arr["preferredName_A"])
 
     return gene_ppi_links
 
 
-def get_string_ids(gene_list: list, species: int = 9606) -> str:
-    """Get the String identifiers of the gene list.
-    :param gene_list: list containing the genes of interest.
-    :param species: input species NCBI Taxonomy ID
-    :returns results: list where each item is a dictionary containing information of a gene of interest
-    """
+def get_string_ids(gene_list: list):
+    """Get the String identifiers of the gene list."""
     params = {
         "identifiers": "\r".join(gene_list),  # your protein list
         "species": species,  #  species NCBI identifier (default: human)
@@ -110,25 +111,32 @@ def get_string_ids(gene_list: list, species: int = 9606) -> str:
         "echo_query" : 1, # column with your input identifier
     }
 
-    results = requests.post(f"{STRING_ENDPOINT}/json/get_string_ids", data=params).json()
-    return results
+    try:
+        results = requests.post(
+            f"{STRING_ENDPOINT}/json/get_string_ids", data=params, timeout=TIMEOUT
+        ).json()
+        return results
+    except RequestException as e:
+        logger.error("Error getting STRING IDs: %s", e)
+        return []
 
 
-def _get_ppi_data(gene_ids: list, species: int = 9606) -> pd.DataFrame:
-    """Get the STRING PPI interactions for the gene list for a specific species.
-    :param gene_ids: list of STRING identifiers.
-    :param species: input species NCBI Taxonomy ID
-    :returns response: list where each item is a dictionary containing PPI data. 
-    """
+def _get_ppi_data(gene_ids: list) -> pd.DataFrame:
+    """Get the String PPI interactions of the gene list."""
     params = {
         "identifiers": "%0d".join(gene_ids),  # your protein
         "species": species,  # species NCBI identifier (default: human)
         "caller_identity": "github.com",  # your app name
     }
-    
-    response = requests.post(f"{STRING_ENDPOINT}/json/network", data=params).json()
 
-    return response
+    try:
+        response = requests.post(
+            f"{STRING_ENDPOINT}/json/network", data=params, timeout=TIMEOUT
+        ).json()
+        return pd.DataFrame(response)
+    except RequestException as e:
+        logger.error("Error getting PPI data: %s", e)
+        return pd.DataFrame()
 
 
 def get_uniprot_ids(string_ids):
@@ -187,8 +195,7 @@ def get_ppi(bridgedb_df: pd.DataFrame, species: str = "human"):
     species_id = response["esearchresult"]["idlist"][0]
 
     # Check if the endpoint is available
-    api_available = check_endpoint_stringdb()
-    if not api_available:
+    if not check_endpoint_stringdb():
         warnings.warn(f"{STRING} endpoint is not available. Unable to retrieve data.", stacklevel=2)
         return pd.DataFrame(), {}
 
@@ -197,9 +204,7 @@ def get_ppi(bridgedb_df: pd.DataFrame, species: str = "human"):
     # Record the start time
     start_time = datetime.datetime.now()
 
-    data_df = get_identifier_of_interest(bridgedb_df, STRING_GENE_INPUT_ID)
-    data_df = data_df.reset_index(drop=True)
-
+    data_df = get_identifier_of_interest(bridgedb_df, STRING_GENE_INPUT_ID).reset_index(drop=True)
     gene_list = list(set(data_df["target"].tolist()))
 
     # Return empty dataframe when only one input submitted
@@ -210,34 +215,31 @@ def get_ppi(bridgedb_df: pd.DataFrame, species: str = "human"):
         )
         return pd.DataFrame(), {}
 
-    # Get STRING IDs
-    string_ids = get_string_ids(gene_list, species_id)
+    # Get ids
+    string_ids = get_string_ids(gene_list)
+    if len(string_ids) == 0:
+        return pd.DataFrame(), {}
+
     stringdb_ids_df = pd.DataFrame(string_ids)
     stringdb_ids_df.queryIndex = stringdb_ids_df.queryIndex.astype(str)
 
     # Get the PPI data
-    response = _get_ppi_data(list(stringdb_ids_df.stringId.unique()), species_id)
-    network_df = pd.DataFrame(response)
+    network_df = _get_ppi_data(list(stringdb_ids_df.stringId.unique()))
 
     # Record the end time
     end_time = datetime.datetime.now()
 
-    """Metadata details"""
-    # Get the current date and time
+    # Metadata details
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    # Calculate the time elapsed
     time_elapsed = str(end_time - start_time)
-    # Calculate the number of new edges
     num_new_edges = network_df.drop_duplicates(subset=["stringId_A", "stringId_B"]).shape[0]
 
-    # Check the network_df
     if num_new_edges != len(network_df):
         warnings.warn(
-            f"The network_df in {STRING} annotator should be checked. Please create an issue https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
+            f"The network_df in {STRING} annotator should be checked, please create an issue https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
             stacklevel=2,
         )
 
-    # Add the datasource, query, query time, and the date to metadata
     string_metadata = {
         "datasource": STRING,
         "metadata": {"source_version": string_version},
@@ -259,30 +261,47 @@ def get_ppi(bridgedb_df: pd.DataFrame, species: str = "human"):
         return pd.DataFrame(), string_metadata
 
     # Format the data
-    to_uniprot = list()
-    data_df[STRING_PPI_COL] = data_df.apply(lambda row: _format_data(row, stringdb_ids_df, network_df, to_uniprot), axis=1)
-
-    # Get UniProt identifiers
-    uniprot_ids = get_uniprot_ids(to_uniprot)
-
-    # Append the uniprot identifiers to the current dataframe
+    data_df[STRING_PPI_COL] = data_df.apply(_format_data, network_df=network_df, axis=1)
     data_df[STRING_PPI_COL] = data_df[STRING_PPI_COL].apply(
-    lambda ppi_list: [
-        {**ppi, 'uniprot_id': uniprot_ids.get(ppi.get('string_id'), None)} for ppi in ppi_list
-    ]
+        lambda x: ([{key: np.nan for key in STRING_OUTPUT_DICT}] if len(x) == 0 else x)
     )
-
-    data_df[STRING_PPI_COL] = data_df[STRING_PPI_COL].apply(
-        lambda x: ([{key: np.nan for key in STRING_OUTPUT_DICT.keys()}] if len(x) == 0 else x)
-    )
-
-    # Check if all keys in df match the keys in OUTPUT_DICT
-    exploded_df = data_df.explode(STRING_PPI_COL)
-    ppi_df = pd.json_normalize(exploded_df[STRING_PPI_COL])
-    check_columns_against_constants(
-        data_df=ppi_df,
-        output_dict=STRING_OUTPUT_DICT,
-        check_values_in=[],
-    )
-
+    # # Collect all ENSP IDs from network_df
+    # ensp_ids = set(network_df['stringId_A'].str.split('.').str[1]) | set(network_df# ['stringId_B'].str.split('.').str[1])
+    # # Get UniProt mapping
+    # uniprot_map = ensp_to_uniprot(list(ensp_ids))
+    # Add 'Uniprot-TrEMBL' key to each element in data_df[STRING_PPI_COL]
+    # data_df[STRING_PPI_COL] = data_df[STRING_PPI_COL].apply(
+    #     lambda lst: [
+    #         {**ppi, "Uniprot-TrEMBL": uniprot_map.get(ppi.get("Ensembl"))}
+    #         for ppi in lst if lst
+    #     ] if lst else []
+    # )
     return data_df, string_metadata
+
+
+# def ensp_to_uniprot(ensp_ids):
+#     """
+#     Retrieve UniProt IDs from Ensembl protein IDs (ENSP).
+#
+#     :param ensp_ids: List of Ensembl protein IDs (ENSP)
+#     :return: Dictionary mapping ENSP IDs to UniProt IDs
+#     """
+#     server = BiomartServer("http://www.ensembl.org/biomart")
+#     hsapiens_mart = server.datasets["hsapiens_gene_ensembl"]
+#
+#     response = hsapiens_mart.search(
+#         {
+#             "filters": {"ensembl_peptide_id": ensp_ids},
+#             "attributes": ["ensembl_peptide_id", "uniprotswissprot"],
+#         }
+#     )
+#
+#     ensp_to_uniprot_map = {}
+#     for line in response.iter_lines():
+#         decoded_line = line.decode("utf-8").split("\t")
+#         ensp_id = decoded_line[0]
+#         uniprot_id = decoded_line[1] if len(decoded_line) > 1 else None
+#         ensp_id = f"Ensembl:{ensp_id}"
+#         ensp_to_uniprot_map[ensp_id] = uniprot_id
+#     return ensp_to_uniprot_map
+#

@@ -1,5 +1,6 @@
 """Graph summary functions."""
 
+import warnings
 from typing import Any, Dict, Optional
 
 import matplotlib.pyplot as plt
@@ -9,28 +10,47 @@ import plotly.express as px
 import seaborn as sns
 from tabulate import tabulate
 
+from pyBiodatafuse.analyzer.explorer.patent import get_patent_from_pubchem
+from pyBiodatafuse.constants import COMPOUND_NAMESPACE_MAPPER
 from pyBiodatafuse.graph.generator import build_networkx_graph, load_dataframe_from_pickle
 
 
 class BioGraph(nx.MultiDiGraph):
     """BioGraph class to analyze the graph."""
 
-    def __init__(self, graph=None, graph_path=None, graph_format="pickle"):
-        """Initialize the BioGraph class."""
+    def __init__(self, graph=None, graph_path=None, graph_format="pickle", disease_df=None):
+        """Initialize the BioGraph class.
+
+        :param graph: networkx graph object
+        :param graph_path: path to the graph file
+        :param graph_format: format of the graph file
+        :param disease_df: disease dataframe to build the graph
+        :raises ValueError: if graph_format is not 'pickle' or 'gml'
+        """
         if graph:
             self.graph = graph
         elif graph_path:
-            if graph_format == "pickle":
-                self.graph = build_networkx_graph(load_dataframe_from_pickle(graph_path))
+            if graph_format == "pickle" and disease_df:
+                self.graph = build_networkx_graph(
+                    load_dataframe_from_pickle(graph_path), disease_df
+                )
+            elif graph_format == "pickle" and not disease_df:
+                warnings.warn(
+                    "Disease dataframe not provided. Loading graph without disease data.",
+                    stacklevel=2,
+                )
+                self.graph = nx.read_gpickle(graph_path)
             elif graph_format == "gml":
                 self.graph = nx.read_gml(graph_path)
+            elif graph_format == "graphml":
+                self.graph = nx.read_graphml(graph_path)
             else:
-                raise ValueError("graph_format must be either 'pickle' or 'gml'")
+                raise ValueError("graph_format must be either 'pickle', 'gml' or 'graphml'")
 
         self.node_count = self.count_nodes_by_type()
         self.edge_count = self.count_edge_by_type()
-        self.node_source_count = self.count_nodes_by_source()
-        self.edge_source_count = self.count_edge_by_source()
+        self.node_source_count = self.count_nodes_by_data_source()
+        self.edge_source_count = self.count_edge_by_data_source()
         self.graph_summary = self.get_graph_summary()
 
     def get_graph_summary(self) -> str:
@@ -124,11 +144,11 @@ class BioGraph(nx.MultiDiGraph):
         )
         fig.show()
 
-    def count_nodes_by_source(self, plot: bool = False) -> Optional[pd.DataFrame]:
+    def count_nodes_by_data_source(self, plot: bool = False) -> Optional[pd.DataFrame]:
         """Get the count of nodes by data source."""
         node_data = pd.DataFrame(self.graph.nodes(data=True), columns=["node", "data"])
         node_data["node_type"] = node_data["data"].apply(lambda x: x["labels"])
-        node_data["node_source"] = node_data["data"].apply(lambda x: x["source"])
+        node_data["node_source"] = node_data["data"].apply(lambda x: x["datasource"])
         node_source_count = (
             node_data.groupby(["node_type", "node_source"]).size().reset_index(name="count")
         )
@@ -139,11 +159,11 @@ class BioGraph(nx.MultiDiGraph):
 
         return node_source_count
 
-    def count_edge_by_source(self, plot: bool = False) -> Optional[pd.DataFrame]:
+    def count_edge_by_data_source(self, plot: bool = False) -> Optional[pd.DataFrame]:
         """Get the count of edges by data source."""
         edge_data = pd.DataFrame(self.graph.edges(data=True), columns=["source", "target", "data"])
         edge_data["edge_type"] = edge_data["data"].apply(lambda x: x["label"])
-        edge_data["edge_source"] = edge_data["data"].apply(lambda x: x["source"])
+        edge_data["edge_source"] = edge_data["data"].apply(lambda x: x["datasource"])
         edge_source_count = (
             edge_data.groupby(["edge_type", "edge_source"]).size().reset_index(name="count")
         )
@@ -155,12 +175,8 @@ class BioGraph(nx.MultiDiGraph):
 
         return edge_source_count
 
-    def get_subgraph(self):
-        """Get the subgraph of the graph."""
-        pass
-
-    def get_all_nodes_by_label(self) -> Dict[str, Any]:
-        """Get all nodes with their labels."""
+    def get_all_nodes_by_labels(self) -> Dict[str, Any]:
+        """Get all nodes with their label type."""
         label_dict = {}  # type: Dict[str, Any]
         for node, data in self.graph.nodes(data=True):
             node_type = data["labels"]
@@ -170,24 +186,68 @@ class BioGraph(nx.MultiDiGraph):
 
         return label_dict
 
-    def get_nodes_by_label(self, label: str) -> list:
-        """Get all nodes by specific label."""
-        label_dict = self.get_all_nodes_by_label()
+    def get_all_nodes_by_type(self, label: str) -> list:
+        """Get all nodes by specific label type."""
+        label_dict = self.get_all_nodes_by_labels()
         return label_dict[label]
 
-    def node_in_graph(self, node_type: str, node_namespace: str, node_name: str):
+    def get_nodes_by_label(self, label: str) -> Optional[list]:
+        """Get all nodes by specific label type."""
+        if label in self.graph.nodes:
+            return self.graph.nodes[label]
+
+        return None
+
+    def get_publications_for_genes(self):
+        """Get publications for genes."""
+        pass
+
+    def get_patents_for_compounds(self):
+        """Get patents for compounds."""
+        # TODO: Function in test mode!!
+        compound_nodes = self.get_all_nodes_by_type("Compound")
+
+        t = []
+        for node_idx, _ in compound_nodes:
+            t.append(
+                {
+                    "target.source": COMPOUND_NAMESPACE_MAPPER[node_idx.split(":")[0]],
+                    "target": node_idx.split(":")[1],
+                }
+            )
+
+        df = pd.DataFrame(t)
+        patent_dict = get_patent_from_pubchem(df)
+        return patent_dict
+
+    def node_in_graph(self, node_type: str):
         """Check if the node is in the graph."""
         possible_node_type = self.node_count["node_type"].to_list()
 
         assert node_type in possible_node_type, f"Node type {node_type} not in {possible_node_type}"
 
-        pass
-
-    def get_source_interactions(self, source_type, source_name, interaction_type, datasource):
+    def get_source_interactions(self):
         """Get interactions of a source."""
         pass
 
-    def get_chemical_metatdata(self, chemical_name):
+    def get_chemical_metatdata(self):
         """Get metadata of a chemical."""
-        # """Adverse effects, Clinical trials,"""
+        # """Adverse effects, Clinical trials,
         pass
+
+    def get_subgraph(self, node_types: list):
+        """Get subgraph of the graph.
+
+        :param node_types: list of node types
+        :raises AssertionError: if node type not in the graph
+        :returns: subgraph with the given node types
+        """
+        assert all(
+            [node_type in self.node_count["node_type"].to_list() for node_type in node_types]
+        ), "Node type not in the graph. Please use one of the following node types: {}".format(
+            self.node_count["node_type"].to_list()
+        )
+
+        nodes = [node for node, label in self.graph.nodes(data="labels") if label in node_types]
+        subgraph = self.graph.subgraph(nodes)
+        return subgraph

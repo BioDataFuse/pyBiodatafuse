@@ -117,6 +117,8 @@ def bridgedb_xref(
             "HGNC",
             "MGI",
         ]
+    else:
+        assert isinstance(output_datasource, list), "output_datasource must be a list"
 
     data_sources = read_resource_files()
     input_source = data_sources.loc[data_sources["source"] == input_datasource, "systemCode"].iloc[
@@ -183,13 +185,13 @@ def bridgedb_xref(
     bridgedb = bridgedb.dropna(subset=["target.source"])
 
     # Subset based on the output_datasource
-    bridgedb = bridgedb[bridgedb["target.source"].isin(output_datasource)]
+    bridgedb_subset = bridgedb[bridgedb["target.source"].isin(output_datasource)]
 
-    bridgedb = bridgedb.drop_duplicates()
+    bridgedb_subset = bridgedb_subset.drop_duplicates()
     identifiers.columns = [
         "{}{}".format(c, "" if c in "identifier" else "_dea") for c in identifiers.columns
     ]
-    bridgedb = bridgedb.merge(identifiers, on="identifier")
+    bridgedb_subset = bridgedb_subset.merge(identifiers, on="identifier")
 
     """Metadata details"""
     # Get the current date and time
@@ -217,7 +219,7 @@ def bridgedb_xref(
         },
     }
 
-    return bridgedb, bridgedb_metadata
+    return bridgedb_subset, bridgedb_metadata
 
 
 """PubChem helper functions."""
@@ -282,7 +284,9 @@ def get_cid_from_pugrest(idx: Optional[str], idx_type: str) -> Optional[str]:
         return None
 
     cidx = cid_data["PropertyTable"]["Properties"][0]["CID"]
-    return cidx
+    if "." in str(cidx):
+        return str(cidx).split(".")[0]
+    return str(cidx)
 
 
 def pubchem_xref(
@@ -335,7 +339,7 @@ def pubchem_xref(
             {
                 "identifier": idx,
                 "identifier.source": identifier_type,
-                "target": f"pubchem.compounds:{str(cid).split('.')[0]}" if cid else None,
+                "target": f"pubchem.compound:{cid}" if cid is not None else None,
                 "target.source": "PubChem Compound",
             }
         )

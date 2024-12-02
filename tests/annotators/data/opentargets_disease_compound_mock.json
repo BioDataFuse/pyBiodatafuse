@@ -51,7 +51,7 @@
                                     }
                                 ],
                                 "adverseEvents": {
-                                    "count": 7,
+                                    "count": 5,
                                     "rows": [
                                         {
                                             "name": "ductus arteriosus stenosis foetal"
@@ -67,12 +67,6 @@
                                         },
                                         {
                                             "name": "mydriasis"
-                                        },
-                                        {
-                                            "name": "accessory kidney"
-                                        },
-                                        {
-                                            "name": "dilatation ventricular"
                                         }
                                     ]
                                 }
@@ -164,10 +158,10 @@
                                             "name": "nasal congestion"
                                         },
                                         {
-                                            "name": "nasal polyps"
+                                            "name": "dysphonia"
                                         },
                                         {
-                                            "name": "dysphonia"
+                                            "name": "nasal polyps"
                                         },
                                         {
                                             "name": "poor quality drug administered"
@@ -245,7 +239,7 @@
                                     }
                                 ],
                                 "adverseEvents": {
-                                    "count": 7,
+                                    "count": 5,
                                     "rows": [
                                         {
                                             "name": "ductus arteriosus stenosis foetal"
@@ -261,12 +255,6 @@
                                         },
                                         {
                                             "name": "mydriasis"
-                                        },
-                                        {
-                                            "name": "accessory kidney"
-                                        },
-                                        {
-                                            "name": "dilatation ventricular"
                                         }
                                     ]
                                 }
@@ -299,7 +287,7 @@
                                     }
                                 ],
                                 "adverseEvents": {
-                                    "count": 68,
+                                    "count": 65,
                                     "rows": [
                                         {
                                             "name": "asthma"
@@ -332,25 +320,22 @@
                                             "name": "aggression"
                                         },
                                         {
-                                            "name": "loss of personal independence in daily activities"
-                                        },
-                                        {
                                             "name": "nightmare"
                                         },
                                         {
-                                            "name": "cough"
+                                            "name": "loss of personal independence in daily activities"
                                         },
                                         {
                                             "name": "abnormal behaviour"
+                                        },
+                                        {
+                                            "name": "cough"
                                         },
                                         {
                                             "name": "sleep terror"
                                         },
                                         {
                                             "name": "productive cough"
-                                        },
-                                        {
-                                            "name": "sputum discoloured"
                                         },
                                         {
                                             "name": "eosinophilic granulomatosis with polyangiitis"
@@ -360,6 +345,9 @@
                                         },
                                         {
                                             "name": "anxiety"
+                                        },
+                                        {
+                                            "name": "sputum discoloured"
                                         },
                                         {
                                             "name": "chest discomfort"
@@ -446,10 +434,10 @@
                                             "name": "unresponsive to stimuli"
                                         },
                                         {
-                                            "name": "hypotension"
+                                            "name": "depressed level of consciousness"
                                         },
                                         {
-                                            "name": "depressed level of consciousness"
+                                            "name": "hypotension"
                                         },
                                         {
                                             "name": "miosis"
@@ -464,10 +452,10 @@
                                             "name": "lethargy"
                                         },
                                         {
-                                            "name": "oxygen saturation decreased"
+                                            "name": "respiratory rate decreased"
                                         },
                                         {
-                                            "name": "respiratory rate decreased"
+                                            "name": "oxygen saturation decreased"
                                         },
                                         {
                                             "name": "withdrawal syndrome"
@@ -476,13 +464,13 @@
                                             "name": "drug abuse"
                                         },
                                         {
-                                            "name": "nausea"
-                                        },
-                                        {
                                             "name": "coma"
                                         },
                                         {
-                                            "name": "drug dependence"
+                                            "name": "nausea"
+                                        },
+                                        {
+                                            "name": "myoclonus"
                                         }
                                     ]
                                 }
@@ -582,10 +570,10 @@
                                             "name": "nephrogenic anaemia"
                                         },
                                         {
-                                            "name": "gastrooesophageal reflux disease"
+                                            "name": "hypocalcaemia"
                                         },
                                         {
-                                            "name": "hypocalcaemia"
+                                            "name": "gastrooesophageal reflux disease"
                                         },
                                         {
                                             "name": "renal haemangioma"
@@ -594,10 +582,10 @@
                                             "name": "drug reaction with eosinophilia and systemic symptoms"
                                         },
                                         {
-                                            "name": "hypertensive nephropathy"
+                                            "name": "agranulocytosis"
                                         },
                                         {
-                                            "name": "agranulocytosis"
+                                            "name": "hypertensive nephropathy"
                                         },
                                         {
                                             "name": "hepatocellular injury"
@@ -660,7 +648,7 @@
                                     }
                                 ],
                                 "adverseEvents": {
-                                    "count": 7,
+                                    "count": 5,
                                     "rows": [
                                         {
                                             "name": "ductus arteriosus stenosis foetal"
@@ -676,12 +664,6 @@
                                         },
                                         {
                                             "name": "mydriasis"
-                                        },
-                                        {
-                                            "name": "accessory kidney"
-                                        },
-                                        {
-                                            "name": "dilatation ventricular"
                                         }
                                     ]
                                 }
@@ -790,10 +772,10 @@
                                             "name": "presbyacusis"
                                         },
                                         {
-                                            "name": "anaphylactic reaction"
+                                            "name": "pharmaceutical product complaint"
                                         },
                                         {
-                                            "name": "pharmaceutical product complaint"
+                                            "name": "anaphylactic reaction"
                                         },
                                         {
                                             "name": "drug interaction"
@@ -803,97 +785,6 @@
                                         },
                                         {
                                             "name": "cardiac arrest"
-                                        }
-                                    ]
-                                }
-                            }
-                        },
-                        {
-                            "drug": {
-                                "id": "CHEMBL1201191",
-                                "name": "LEVOCETIRIZINE",
-                                "isApproved": true,
-                                "maximumClinicalTrialPhase": 4,
-                                "crossReferences": [
-                                    {
-                                        "source": "PubChem",
-                                        "reference": [
-                                            "26719822",
-                                            "49681558"
-                                        ]
-                                    },
-                                    {
-                                        "source": "Wikipedia",
-                                        "reference": [
-                                            "Levocetirizine"
-                                        ]
-                                    },
-                                    {
-                                        "source": "drugbank",
-                                        "reference": [
-                                            "DB06282"
-                                        ]
-                                    }
-                                ],
-                                "adverseEvents": {
-                                    "count": 19,
-                                    "rows": [
-                                        {
-                                            "name": "drug-induced liver injury"
-                                        },
-                                        {
-                                            "name": "febrile convulsion"
-                                        },
-                                        {
-                                            "name": "alopecia areata"
-                                        },
-                                        {
-                                            "name": "dermatitis contact"
-                                        },
-                                        {
-                                            "name": "allergic reaction to excipient"
-                                        },
-                                        {
-                                            "name": "urticaria"
-                                        },
-                                        {
-                                            "name": "angioedema"
-                                        },
-                                        {
-                                            "name": "erythema multiforme"
-                                        },
-                                        {
-                                            "name": "somnolence"
-                                        },
-                                        {
-                                            "name": "fixed eruption"
-                                        },
-                                        {
-                                            "name": "face oedema"
-                                        },
-                                        {
-                                            "name": "loss of consciousness"
-                                        },
-                                        {
-                                            "name": "congenital inguinal hernia"
-                                        },
-                                        {
-                                            "name": "anaphylactic shock"
-                                        },
-                                        {
-                                            "name": "dermatitis bullous"
-                                        },
-                                        {
-                                            "name": "hypogammaglobulinaemia"
-                                        },
-                                        {
-                                            "name": "swelling face"
-                                        },
-                                        {
-                                            "name": "eosinophilia"
-                                        },
-                                        {
-                                            "name": "altered state of consciousness"
                                         }
                                     ]
                                 }
@@ -944,7 +835,7 @@
                                     }
                                 ],
                                 "adverseEvents": {
-                                    "count": 7,
+                                    "count": 5,
                                     "rows": [
                                         {
                                             "name": "ductus arteriosus stenosis foetal"
@@ -960,12 +851,115 @@
                                         },
                                         {
                                             "name": "mydriasis"
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "drug": {
+                                "id": "CHEMBL1201191",
+                                "name": "LEVOCETIRIZINE",
+                                "isApproved": true,
+                                "maximumClinicalTrialPhase": 4,
+                                "crossReferences": [
+                                    {
+                                        "source": "PubChem",
+                                        "reference": [
+                                            "26719822",
+                                            "49681558"
+                                        ]
+                                    },
+                                    {
+                                        "source": "Wikipedia",
+                                        "reference": [
+                                            "Levocetirizine"
+                                        ]
+                                    },
+                                    {
+                                        "source": "drugbank",
+                                        "reference": [
+                                            "DB06282"
+                                        ]
+                                    }
+                                ],
+                                "adverseEvents": {
+                                    "count": 25,
+                                    "rows": [
+                                        {
+                                            "name": "drug-induced liver injury"
                                         },
                                         {
-                                            "name": "accessory kidney"
+                                            "name": "febrile convulsion"
                                         },
                                         {
-                                            "name": "dilatation ventricular"
+                                            "name": "alopecia areata"
+                                        },
+                                        {
+                                            "name": "dermatitis contact"
+                                        },
+                                        {
+                                            "name": "allergic reaction to excipient"
+                                        },
+                                        {
+                                            "name": "urticaria"
+                                        },
+                                        {
+                                            "name": "somnolence"
+                                        },
+                                        {
+                                            "name": "angioedema"
+                                        },
+                                        {
+                                            "name": "erythema multiforme"
+                                        },
+                                        {
+                                            "name": "fixed eruption"
+                                        },
+                                        {
+                                            "name": "face oedema"
+                                        },
+                                        {
+                                            "name": "loss of consciousness"
+                                        },
+                                        {
+                                            "name": "dermatitis bullous"
+                                        },
+                                        {
+                                            "name": "congenital inguinal hernia"
+                                        },
+                                        {
+                                            "name": "hypogammaglobulinaemia"
+                                        },
+                                        {
+                                            "name": "anaphylactic shock"
+                                        },
+                                        {
+                                            "name": "swelling face"
+                                        },
+                                        {
+                                            "name": "eosinophilia"
+                                        },
+                                        {
+                                            "name": "altered state of consciousness"
+                                        },
+                                        {
+                                            "name": "bronchopulmonary dysplasia"
+                                        },
+                                        {
+                                            "name": "anaphylactic reaction"
+                                        },
+                                        {
+                                            "name": "haemorrhage subcutaneous"
+                                        },
+                                        {
+                                            "name": "arrhythmia"
+                                        },
+                                        {
+                                            "name": "eye oedema"
+                                        },
+                                        {
+                                            "name": "neonatal infection"
                                         }
                                     ]
                                 }
@@ -987,7 +981,7 @@
                                     {
                                         "source": "EMA",
                                         "reference": [
-                                            "https: //www.ema.europa.eu/en/medicines/veterinary/EPAR/equisolon"
+                                            "https://www.ema.europa.eu/en/medicines/veterinary/EPAR/equisolon"
                                         ]
                                     },
                                     {
@@ -1050,10 +1044,10 @@
                                             "name": "cytomegalovirus viraemia"
                                         },
                                         {
-                                            "name": "bk virus infection"
-                                        },
-                                        {
                                             "name": "hepatitis e"
+                                        },
+                                        {
+                                            "name": "bk virus infection"
                                         }
                                     ]
                                 }
@@ -1104,7 +1098,7 @@
                                     }
                                 ],
                                 "adverseEvents": {
-                                    "count": 7,
+                                    "count": 5,
                                     "rows": [
                                         {
                                             "name": "ductus arteriosus stenosis foetal"
@@ -1120,12 +1114,6 @@
                                         },
                                         {
                                             "name": "mydriasis"
-                                        },
-                                        {
-                                            "name": "accessory kidney"
-                                        },
-                                        {
-                                            "name": "dilatation ventricular"
                                         }
                                     ]
                                 }
@@ -1176,7 +1164,7 @@
                                     }
                                 ],
                                 "adverseEvents": {
-                                    "count": 7,
+                                    "count": 5,
                                     "rows": [
                                         {
                                             "name": "ductus arteriosus stenosis foetal"
@@ -1192,12 +1180,6 @@
                                         },
                                         {
                                             "name": "mydriasis"
-                                        },
-                                        {
-                                            "name": "accessory kidney"
-                                        },
-                                        {
-                                            "name": "dilatation ventricular"
                                         }
                                     ]
                                 }
@@ -1318,7 +1300,7 @@
                                     }
                                 ],
                                 "adverseEvents": {
-                                    "count": 66,
+                                    "count": 69,
                                     "rows": [
                                         {
                                             "name": "cushing's syndrome"
@@ -1357,13 +1339,13 @@
                                             "name": "human antichimeric antibody positive"
                                         },
                                         {
-                                            "name": "joint destruction"
+                                            "name": "cytomegalovirus chorioretinitis"
                                         },
                                         {
                                             "name": "wheelchair user"
                                         },
                                         {
-                                            "name": "cytomegalovirus chorioretinitis"
+                                            "name": "joint destruction"
                                         },
                                         {
                                             "name": "body height below normal"
@@ -1372,16 +1354,16 @@
                                             "name": "retinal artery occlusion"
                                         },
                                         {
-                                            "name": "polyarthritis"
-                                        },
-                                        {
                                             "name": "eye inflammation"
                                         },
                                         {
-                                            "name": "obesity"
+                                            "name": "polyarthritis"
                                         },
                                         {
                                             "name": "maculopathy"
+                                        },
+                                        {
+                                            "name": "obesity"
                                         },
                                         {
                                             "name": "adrenal suppression"
@@ -1438,7 +1420,7 @@
                                     }
                                 ],
                                 "adverseEvents": {
-                                    "count": 60,
+                                    "count": 57,
                                     "rows": [
                                         {
                                             "name": "hypotension"
@@ -1483,19 +1465,16 @@
                                             "name": "anaphylactic shock"
                                         },
                                         {
-                                            "name": "necrosis ischaemic"
-                                        },
-                                        {
                                             "name": "generalised tonic-clonic seizure"
                                         },
                                         {
                                             "name": "anaesthetic complication neurological"
                                         },
                                         {
-                                            "name": "hyperthermia malignant"
+                                            "name": "necrosis ischaemic"
                                         },
                                         {
-                                            "name": "systemic inflammatory response syndrome"
+                                            "name": "hyperthermia malignant"
                                         },
                                         {
                                             "name": "unresponsive to stimuli"
@@ -1504,13 +1483,16 @@
                                             "name": "agitation"
                                         },
                                         {
-                                            "name": "apnoea"
+                                            "name": "systemic inflammatory response syndrome"
                                         },
                                         {
                                             "name": "bradycardia"
                                         },
                                         {
                                             "name": "upper airway obstruction"
+                                        },
+                                        {
+                                            "name": "apnoea"
                                         },
                                         {
                                             "name": "myoclonus"
@@ -1552,7 +1534,7 @@
                                     }
                                 ],
                                 "adverseEvents": {
-                                    "count": 84,
+                                    "count": 94,
                                     "rows": [
                                         {
                                             "name": "delirium"
@@ -1585,13 +1567,13 @@
                                             "name": "diabetes insipidus"
                                         },
                                         {
-                                            "name": "drug withdrawal syndrome"
-                                        },
-                                        {
                                             "name": "intestinal pseudo-obstruction"
                                         },
                                         {
                                             "name": "acute motor axonal neuropathy"
+                                        },
+                                        {
+                                            "name": "drug withdrawal syndrome"
                                         },
                                         {
                                             "name": "polyuria"
@@ -1672,7 +1654,7 @@
                                     }
                                 ],
                                 "adverseEvents": {
-                                    "count": 60,
+                                    "count": 57,
                                     "rows": [
                                         {
                                             "name": "hypotension"
@@ -1717,19 +1699,16 @@
                                             "name": "anaphylactic shock"
                                         },
                                         {
-                                            "name": "necrosis ischaemic"
-                                        },
-                                        {
                                             "name": "generalised tonic-clonic seizure"
                                         },
                                         {
                                             "name": "anaesthetic complication neurological"
                                         },
                                         {
-                                            "name": "hyperthermia malignant"
+                                            "name": "necrosis ischaemic"
                                         },
                                         {
-                                            "name": "systemic inflammatory response syndrome"
+                                            "name": "hyperthermia malignant"
                                         },
                                         {
                                             "name": "unresponsive to stimuli"
@@ -1738,13 +1717,16 @@
                                             "name": "agitation"
                                         },
                                         {
-                                            "name": "apnoea"
+                                            "name": "systemic inflammatory response syndrome"
                                         },
                                         {
                                             "name": "bradycardia"
                                         },
                                         {
                                             "name": "upper airway obstruction"
+                                        },
+                                        {
+                                            "name": "apnoea"
                                         },
                                         {
                                             "name": "myoclonus"
@@ -1769,7 +1751,7 @@
                                     {
                                         "source": "EMA",
                                         "reference": [
-                                            "https: //www.ema.europa.eu/en/medicines/human/EPAR/ozurdex"
+                                            "https://www.ema.europa.eu/en/medicines/human/EPAR/ozurdex"
                                         ]
                                     },
                                     {
@@ -1868,7 +1850,7 @@
                                     }
                                 ],
                                 "adverseEvents": {
-                                    "count": 60,
+                                    "count": 57,
                                     "rows": [
                                         {
                                             "name": "hypotension"
@@ -1913,19 +1895,16 @@
                                             "name": "anaphylactic shock"
                                         },
                                         {
-                                            "name": "necrosis ischaemic"
-                                        },
-                                        {
                                             "name": "generalised tonic-clonic seizure"
                                         },
                                         {
                                             "name": "anaesthetic complication neurological"
                                         },
                                         {
-                                            "name": "hyperthermia malignant"
+                                            "name": "necrosis ischaemic"
                                         },
                                         {
-                                            "name": "systemic inflammatory response syndrome"
+                                            "name": "hyperthermia malignant"
                                         },
                                         {
                                             "name": "unresponsive to stimuli"
@@ -1934,13 +1913,136 @@
                                             "name": "agitation"
                                         },
                                         {
-                                            "name": "apnoea"
+                                            "name": "systemic inflammatory response syndrome"
                                         },
                                         {
                                             "name": "bradycardia"
                                         },
                                         {
                                             "name": "upper airway obstruction"
+                                        },
+                                        {
+                                            "name": "apnoea"
+                                        },
+                                        {
+                                            "name": "myoclonus"
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "drug": {
+                                "id": "CHEMBL655",
+                                "name": "MIDAZOLAM",
+                                "isApproved": true,
+                                "maximumClinicalTrialPhase": 4,
+                                "crossReferences": [
+                                    {
+                                        "source": "DailyMed",
+                                        "reference": [
+                                            "midazolam"
+                                        ]
+                                    },
+                                    {
+                                        "source": "PubChem",
+                                        "reference": [
+                                            "50113067"
+                                        ]
+                                    },
+                                    {
+                                        "source": "Wikipedia",
+                                        "reference": [
+                                            "Midazolam"
+                                        ]
+                                    },
+                                    {
+                                        "source": "drugbank",
+                                        "reference": [
+                                            "DB00683"
+                                        ]
+                                    },
+                                    {
+                                        "source": "chEBI",
+                                        "reference": [
+                                            "6931"
+                                        ]
+                                    }
+                                ],
+                                "adverseEvents": {
+                                    "count": 57,
+                                    "rows": [
+                                        {
+                                            "name": "hypotension"
+                                        },
+                                        {
+                                            "name": "status epilepticus"
+                                        },
+                                        {
+                                            "name": "respiratory depression"
+                                        },
+                                        {
+                                            "name": "anaphylactic reaction"
+                                        },
+                                        {
+                                            "name": "delirium"
+                                        },
+                                        {
+                                            "name": "seizure"
+                                        },
+                                        {
+                                            "name": "oxygen saturation decreased"
+                                        },
+                                        {
+                                            "name": "sedation"
+                                        },
+                                        {
+                                            "name": "drug reaction with eosinophilia and systemic symptoms"
+                                        },
+                                        {
+                                            "name": "multiple-drug resistance"
+                                        },
+                                        {
+                                            "name": "tachycardia"
+                                        },
+                                        {
+                                            "name": "intestinal ischaemia"
+                                        },
+                                        {
+                                            "name": "cardiac arrest"
+                                        },
+                                        {
+                                            "name": "anaphylactic shock"
+                                        },
+                                        {
+                                            "name": "generalised tonic-clonic seizure"
+                                        },
+                                        {
+                                            "name": "anaesthetic complication neurological"
+                                        },
+                                        {
+                                            "name": "necrosis ischaemic"
+                                        },
+                                        {
+                                            "name": "hyperthermia malignant"
+                                        },
+                                        {
+                                            "name": "unresponsive to stimuli"
+                                        },
+                                        {
+                                            "name": "agitation"
+                                        },
+                                        {
+                                            "name": "systemic inflammatory response syndrome"
+                                        },
+                                        {
+                                            "name": "bradycardia"
+                                        },
+                                        {
+                                            "name": "upper airway obstruction"
+                                        },
+                                        {
+                                            "name": "apnoea"
                                         },
                                         {
                                             "name": "myoclonus"
@@ -1982,7 +2084,7 @@
                                     }
                                 ],
                                 "adverseEvents": {
-                                    "count": 84,
+                                    "count": 94,
                                     "rows": [
                                         {
                                             "name": "delirium"
@@ -2015,13 +2117,13 @@
                                             "name": "diabetes insipidus"
                                         },
                                         {
-                                            "name": "drug withdrawal syndrome"
-                                        },
-                                        {
                                             "name": "intestinal pseudo-obstruction"
                                         },
                                         {
                                             "name": "acute motor axonal neuropathy"
+                                        },
+                                        {
+                                            "name": "drug withdrawal syndrome"
                                         },
                                         {
                                             "name": "polyuria"
@@ -2102,7 +2204,7 @@
                                     }
                                 ],
                                 "adverseEvents": {
-                                    "count": 60,
+                                    "count": 57,
                                     "rows": [
                                         {
                                             "name": "hypotension"
@@ -2147,19 +2249,16 @@
                                             "name": "anaphylactic shock"
                                         },
                                         {
-                                            "name": "necrosis ischaemic"
-                                        },
-                                        {
                                             "name": "generalised tonic-clonic seizure"
                                         },
                                         {
                                             "name": "anaesthetic complication neurological"
                                         },
                                         {
-                                            "name": "hyperthermia malignant"
+                                            "name": "necrosis ischaemic"
                                         },
                                         {
-                                            "name": "systemic inflammatory response syndrome"
+                                            "name": "hyperthermia malignant"
                                         },
                                         {
                                             "name": "unresponsive to stimuli"
@@ -2168,133 +2267,16 @@
                                             "name": "agitation"
                                         },
                                         {
-                                            "name": "apnoea"
-                                        },
-                                        {
-                                            "name": "bradycardia"
-                                        },
-                                        {
-                                            "name": "upper airway obstruction"
-                                        },
-                                        {
-                                            "name": "myoclonus"
-                                        }
-                                    ]
-                                }
-                            }
-                        },
-                        {
-                            "drug": {
-                                "id": "CHEMBL655",
-                                "name": "MIDAZOLAM",
-                                "isApproved": true,
-                                "maximumClinicalTrialPhase": 4,
-                                "crossReferences": [
-                                    {
-                                        "source": "DailyMed",
-                                        "reference": [
-                                            "midazolam"
-                                        ]
-                                    },
-                                    {
-                                        "source": "PubChem",
-                                        "reference": [
-                                            "50113067"
-                                        ]
-                                    },
-                                    {
-                                        "source": "Wikipedia",
-                                        "reference": [
-                                            "Midazolam"
-                                        ]
-                                    },
-                                    {
-                                        "source": "drugbank",
-                                        "reference": [
-                                            "DB00683"
-                                        ]
-                                    },
-                                    {
-                                        "source": "chEBI",
-                                        "reference": [
-                                            "6931"
-                                        ]
-                                    }
-                                ],
-                                "adverseEvents": {
-                                    "count": 60,
-                                    "rows": [
-                                        {
-                                            "name": "hypotension"
-                                        },
-                                        {
-                                            "name": "status epilepticus"
-                                        },
-                                        {
-                                            "name": "respiratory depression"
-                                        },
-                                        {
-                                            "name": "anaphylactic reaction"
-                                        },
-                                        {
-                                            "name": "delirium"
-                                        },
-                                        {
-                                            "name": "seizure"
-                                        },
-                                        {
-                                            "name": "oxygen saturation decreased"
-                                        },
-                                        {
-                                            "name": "sedation"
-                                        },
-                                        {
-                                            "name": "drug reaction with eosinophilia and systemic symptoms"
-                                        },
-                                        {
-                                            "name": "multiple-drug resistance"
-                                        },
-                                        {
-                                            "name": "tachycardia"
-                                        },
-                                        {
-                                            "name": "intestinal ischaemia"
-                                        },
-                                        {
-                                            "name": "cardiac arrest"
-                                        },
-                                        {
-                                            "name": "anaphylactic shock"
-                                        },
-                                        {
-                                            "name": "necrosis ischaemic"
-                                        },
-                                        {
-                                            "name": "generalised tonic-clonic seizure"
-                                        },
-                                        {
-                                            "name": "anaesthetic complication neurological"
-                                        },
-                                        {
-                                            "name": "hyperthermia malignant"
-                                        },
-                                        {
                                             "name": "systemic inflammatory response syndrome"
                                         },
                                         {
-                                            "name": "unresponsive to stimuli"
-                                        },
-                                        {
-                                            "name": "agitation"
-                                        },
-                                        {
-                                            "name": "apnoea"
-                                        },
-                                        {
                                             "name": "bradycardia"
                                         },
                                         {
                                             "name": "upper airway obstruction"
+                                        },
+                                        {
+                                            "name": "apnoea"
                                         },
                                         {
                                             "name": "myoclonus"
@@ -2336,7 +2318,7 @@
                                     }
                                 ],
                                 "adverseEvents": {
-                                    "count": 84,
+                                    "count": 94,
                                     "rows": [
                                         {
                                             "name": "delirium"
@@ -2369,13 +2351,13 @@
                                             "name": "diabetes insipidus"
                                         },
                                         {
-                                            "name": "drug withdrawal syndrome"
-                                        },
-                                        {
                                             "name": "intestinal pseudo-obstruction"
                                         },
                                         {
                                             "name": "acute motor axonal neuropathy"
+                                        },
+                                        {
+                                            "name": "drug withdrawal syndrome"
                                         },
                                         {
                                             "name": "polyuria"
@@ -2456,7 +2438,7 @@
                                     }
                                 ],
                                 "adverseEvents": {
-                                    "count": 60,
+                                    "count": 57,
                                     "rows": [
                                         {
                                             "name": "hypotension"
@@ -2501,19 +2483,16 @@
                                             "name": "anaphylactic shock"
                                         },
                                         {
-                                            "name": "necrosis ischaemic"
-                                        },
-                                        {
                                             "name": "generalised tonic-clonic seizure"
                                         },
                                         {
                                             "name": "anaesthetic complication neurological"
                                         },
                                         {
-                                            "name": "hyperthermia malignant"
+                                            "name": "necrosis ischaemic"
                                         },
                                         {
-                                            "name": "systemic inflammatory response syndrome"
+                                            "name": "hyperthermia malignant"
                                         },
                                         {
                                             "name": "unresponsive to stimuli"
@@ -2522,13 +2501,16 @@
                                             "name": "agitation"
                                         },
                                         {
-                                            "name": "apnoea"
+                                            "name": "systemic inflammatory response syndrome"
                                         },
                                         {
                                             "name": "bradycardia"
                                         },
                                         {
                                             "name": "upper airway obstruction"
+                                        },
+                                        {
+                                            "name": "apnoea"
                                         },
                                         {
                                             "name": "myoclonus"
