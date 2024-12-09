@@ -7,6 +7,7 @@
 BRIDGEDB_ENDPOINT = "https://webservice.bridgedb.org"
 BGEE_ENDPOINT = "https://www.bgee.org/sparql/"
 DISGENET_ENDPOINT = "https://api.disgenet.com/api/v1/gda/summary"
+ENSEMBL_ENDPOINT = "https://rest.ensembl.org"
 KEGG_ENDPOINT = "https://rest.kegg.jp"
 MINERVA_ENDPOINT = "https://minerva-net.lcsb.uni.lu/api/"
 MOLMEDB_ENDPOINT = "https://idsm.elixir-czech.cz/sparql/endpoint/molmedb"
@@ -22,6 +23,7 @@ WIKIPATHWAYS_ENDPOINT = "https://sparql.wikipathways.org/sparql"
 BRIDGEDB = "BridgeDB"
 BGEE = "Bgee"
 DISGENET = "DISGENET"
+ENSEMBL = "Ensembl"
 KEGG = "KEGG"
 MINERVA = "MINERVA"
 MOLMEDB = "MolMeDB"
@@ -41,7 +43,9 @@ IDENTIFIER_SOURCE_COL = "identifier.source"
 TARGET_SOURCE_COL = "target.source"
 BGEE_GENE_EXPRESSION_LEVELS_COL = f"{BGEE}_gene_expression_levels"
 DISGENET_DISEASE_COL = f"{DISGENET}_diseases"
+ENSEMBL_HOMOLOG_COL = f"{ENSEMBL}_homologs"
 OPENTARGETS_DISEASE_COL = f"{OPENTARGETS}_diseases"
+KEGG_COL = f"{KEGG}_pathways"
 LITERATURE_DISEASE_COL = "literature_based_info"
 OPENTARGETS_REACTOME_COL = f"{OPENTARGETS}_reactome"
 OPENTARGETS_GO_COL = f"{OPENTARGETS}_go"
@@ -56,6 +60,7 @@ WIKIDATA_CC_COL = f"{WIKIDATA}_cellular_components"
 # Input type for each data source
 BGEE_GENE_INPUT_ID = "Ensembl"
 DISGENET_GENE_INPUT_ID = "NCBI Gene"
+ENSEMBL_GENE_INPUT_ID = "Ensembl"
 KEGG_GENE_INPUT_ID = "NCBI Gene"
 MINERVA_GENE_INPUT_ID = "Ensembl"
 MOLMEDB_PROTEIN_INPUT_ID = "Uniprot-TrEMBL"
@@ -311,9 +316,6 @@ DISGENET_EDGE_ATTRS = {
     "el": None,
     "label": GENE_DISEASE_EDGE_LABEL,
 }
-
-# KEGG
-KEGG_COL = f"{KEGG}_pathways"
 
 # Literature
 LITERATURE_NODE_MAIN_LABEL = "UMLS"

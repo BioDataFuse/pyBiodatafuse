@@ -1,0 +1,113 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import datetime
+import warnings
+
+import numpy as np
+import pandas as pd
+import requests
+
+from pyBiodatafuse.constants import (
+    ENSEMBL,
+    ENSEMBL_ENDPOINT,
+    ENSEMBL_HOMOLOG_COL,
+    ENSEMBL_GENE_INPUT_ID
+)
+
+from pyBiodatafuse.utils import get_identifier_of_interest
+
+def check_endpoint_ensembl() -> dict:
+    """Check if the endpoint of the Ensembl API is available.
+
+    :returns: A True statement if the endpoint is available, else return False
+    """
+    response = requests.get(f"{ENSEMBL_ENDPOINT}/info/ping")
+    # Check if API is down
+    if response.status_code == 200:
+        return True
+    else:
+        return False
+    
+def check_version_ensembl():
+    """Checks the current version of the REST API.
+
+    :returns: A True statement if the endpoint is available, else return False
+    """
+    response = requests.get(
+        f"{ENSEMBL_ENDPOINT}/info/rest",
+        headers={"Content-Type": "application/json"}
+    )
+    # Check if API is down
+    print(response.text)
+    return response.text
+
+def get_human_homologs(row):
+    """Retrieve human homologs for mouse genes using ensembl API.
+    
+    :param mouse_genes: list of gene ids.
+    :returns: dictionary mapping mouse genes to human homologs.
+    """
+
+    response = requests.get(
+        f"{ENSEMBL_ENDPOINT}/homology/id/mouse/{row['target']}",
+        headers={"Content-Type": "application/json"},
+        params={"target_species": "homo_sapiens"}
+    )
+    
+    if response.status_code == 200:
+        data = response.json()
+        for homology in data.get("data", [])[0].get("homologies", []):
+            if homology["target"]["species"] == "homo_sapiens":
+                homolog = homology["target"]["id"]
+                return {"homolog": homolog}
+    else:
+        return {"homolog": np.nan}
+
+
+def get_homologs(bridgedb_df):
+
+
+    api_available = check_endpoint_ensembl()
+    if not api_available:
+        warnings.warn(f"{ENSEMBL} endpoint is not available. Unable to retrieve data.", stacklevel=2)
+        return pd.DataFrame(), {}
+
+    ensembl_version = check_version_ensembl()
+
+    # Record the start time
+    start_time = datetime.datetime.now()
+
+    data_df = get_identifier_of_interest(bridgedb_df, ENSEMBL_GENE_INPUT_ID)
+    data_df = data_df.reset_index(drop=True)
+    gene_list = list(set(data_df["target"].tolist()))
+
+    # Get the human homologs
+    data_df[ENSEMBL_HOMOLOG_COL] = data_df.apply(lambda row: get_human_homologs(row), axis=1)
+
+    # Record the end time
+    end_time = datetime.datetime.now()
+
+    """Metadata details"""
+    # Get the current date and time
+    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    # Calculate the time elapsed
+    time_elapsed = str(end_time - start_time)
+    # Calculate new edges
+    num_new_edges = data_df.shape[0]
+
+    # Add the datasource, query, query time, and the date to metadata
+    kegg_metadata = {
+        "datasource": ENSEMBL,
+        "metadata": {"source_version": ensembl_version},
+        "query": {
+            "size": len(gene_list),
+            "input_type": ENSEMBL_GENE_INPUT_ID,
+            "number_of_added_edges": num_new_edges,
+            "time": time_elapsed,
+            "date": current_date,
+            "url": ENSEMBL_ENDPOINT,
+        },
+    }
+
+    return data_df, kegg_metadata
