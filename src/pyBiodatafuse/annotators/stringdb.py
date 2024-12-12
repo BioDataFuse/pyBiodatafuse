@@ -65,16 +65,19 @@ def _format_data(row, string_ids_df, network_df):
     """
     gene_ppi_links = []
     target_links_set = set()
-    print(row)
 
     for _i, row_str in string_ids_df.iterrows():
         for _i, row_arr in network_df.iterrows():
 
             if row_arr["preferredName_A"] == row_str["preferredName"] and row["identifier"] == row_str["queryItem"]:
+                for _i, row_str2 in string_ids_df.iterrows():
+                    if row_str2["preferredName"] == row_arr["preferredName_B"]:
+                        link = row_str2["queryItem"]
+
                 if row_arr["preferredName_B"] not in target_links_set:
                     gene_ppi_links.append(
                         {
-                            "stringdb_link_to": row_arr["preferredName_B"],
+                            "stringdb_link_to": link,
                             STRING_GENE_INPUT_ID: f"{STRING_GENE_INPUT_ID}:{row_arr['stringId_B'].split('.')[1]}",
                             "score": row_arr["score"],
                             "Uniprot-TrEMBL": row_arr["preferredName_A"]
@@ -83,47 +86,21 @@ def _format_data(row, string_ids_df, network_df):
                     target_links_set.add(row_arr["preferredName_B"])
 
             elif row_arr["preferredName_B"] == row_str["preferredName"] and row["identifier"] == row_str["queryItem"]:
+                for _i, row_str2 in string_ids_df.iterrows():
+                    if row_str2["preferredName"] == row_arr["preferredName_A"]:
+                        link = row_str2["queryItem"]
+
+
                 if row_arr["preferredName_A"] not in target_links_set:
                     gene_ppi_links.append(
                         {
-                            "stringdb_link_to": row_arr["preferredName_A"],
+                            "stringdb_link_to": link,
                             STRING_GENE_INPUT_ID: row_arr["stringId_A"].split(".")[1],
                             "score": row_arr["score"],
                             "Uniprot-TrEMBL": row_arr["preferredName_B"],
                         }
                     )
                     target_links_set.add(row_arr["preferredName_A"])
-
-    return gene_ppi_links
-
-    for _, row_arr in network_df.iterrows():
-        if (
-            row_arr["preferredName_A"] == row["identifier"]
-            and row_arr["preferredName_B"] not in target_links_set
-        ):
-            gene_ppi_links.append(
-                {
-                    "stringdb_link_to": row_arr["preferredName_B"],
-                    STRING_GENE_INPUT_ID: f"{STRING_GENE_INPUT_ID}:{row_arr['stringId_B'].split('.')[1]}",
-                    "score": row_arr["score"],
-                    "Uniprot-TrEMBL": row_arr["preferredName_A"],
-                }
-            )
-            target_links_set.add(row_arr["preferredName_B"])
-
-        elif (
-            row_arr["preferredName_B"] == row["identifier"]
-            and row_arr["preferredName_A"] not in target_links_set
-        ):
-            gene_ppi_links.append(
-                {
-                    "stringdb_link_to": row_arr["preferredName_A"],
-                    STRING_GENE_INPUT_ID: f"{STRING_GENE_INPUT_ID}:{row_arr['stringId_A'].split('.')[1]}",
-                    "score": row_arr["score"],
-                    "Uniprot-TrEMBL": row_arr["preferredName_B"],
-                }
-            )
-            target_links_set.add(row_arr["preferredName_A"])
 
     return gene_ppi_links
 
@@ -159,7 +136,6 @@ def _get_ppi_data(gene_ids: list, species) -> pd.DataFrame:
         response = requests.post(
             f"{STRING_ENDPOINT}/json/network", data=params, timeout=TIMEOUT
         ).json()
-        print(response)
         return pd.DataFrame(response)
     except RequestException as e:
         logger.error("Error getting PPI data: %s", e)
@@ -192,8 +168,6 @@ def get_ppi(bridgedb_df: pd.DataFrame, species: str = "human"):
     }
     response = requests.get(f"{NCBI_ENDPOINT}/entrez/eutils/esearch.fcgi", params=params).json()
     species_id = response["esearchresult"]["idlist"][0]
-
-    print(species_id)
 
     data_df = get_identifier_of_interest(bridgedb_df, STRING_GENE_INPUT_ID).reset_index(drop=True)
     gene_list = list(set(data_df["target"].tolist()))
