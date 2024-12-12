@@ -124,7 +124,7 @@ def get_pathway_info(row):
 
         for line in results_entry.text.splitlines():
             if line.startswith("NAME"):
-                pathway_info["pathway_name"] = line.split("  ", 1)[1].strip()
+                pathway_info["pathway_label"] = line.split("  ", 1)[1].strip()
                 break  
 
         pathway_info = get_compound_genes(pathway_info, results_entry)

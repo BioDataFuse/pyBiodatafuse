@@ -398,10 +398,15 @@ def add_kegg_gene_pathway_subgraph(g, gene_node_label, annot_list):
     :returns: a NetworkX MultiDiGraph
     """
     for annot in annot_list:
-        if not pd.isna(annot["pathway_name"]):
+        if pd.isna(annot["pathway_label"]):
+            continue
+
+    for annot in annot_list:
+        if not pd.isna(annot["pathway_label"]):
             annot_node_label = annot[PATHWAY_NODE_MAIN_LABEL]
             annot_node_attrs = PATHWAY_NODE_ATTRS.copy()
             annot_node_attrs["source"] = KEGG
+            annot_node_attrs["name"] = annot["pathway_label"]
             annot_node_attrs["id"] = annot["pathway_id"]
             annot_node_attrs["gene_count"] = annot["gene_count"]
             annot_node_attrs["compounds"] = annot["compounds"]
