@@ -12,6 +12,7 @@ from pyBiodatafuse.constants import (
     ENSEMBL,
     ENSEMBL_ENDPOINT,
     ENSEMBL_HOMOLOG_COL,
+    ENSEMBL_HOMOLOG_MAIN_LABEL,
     ENSEMBL_GENE_INPUT_ID
 )
 
@@ -60,9 +61,9 @@ def get_human_homologs(row):
         for homology in data.get("data", [])[0].get("homologies", []):
             if homology["target"]["species"] == "homo_sapiens":
                 homolog = homology["target"]["id"]
-                return {"homolog": homolog}
+                return [{ENSEMBL_HOMOLOG_MAIN_LABEL: homolog}]
     else:
-        return {"homolog": np.nan}
+        return [{ENSEMBL_HOMOLOG_MAIN_LABEL: np.nan}]
 
 
 def get_homologs(bridgedb_df):

@@ -466,6 +466,14 @@ OPENTARGETS_DISEASE_COMPOUND_EDGE_ATTRS = {
     "label": None,
 }
 
+# Ensembl Homologs
+ENSEMBL_HOMOLOG_MAIN_LABEL = "homolog"
+ENSEMBL_HOMOLOG_EDGE_LABEL = "is_homolog_of"
+ENSEMBL_HOMOLOG_EDGE_ATTRS = {
+    "datasource": ENSEMBL,
+    "label": ENSEMBL_HOMOLOG_EDGE_LABEL,
+}
+
 # Wikidata
 
 # TODO: to be checked
