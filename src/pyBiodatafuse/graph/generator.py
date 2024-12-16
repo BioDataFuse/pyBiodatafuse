@@ -27,6 +27,10 @@ from pyBiodatafuse.constants import (
     DISGENET_DISEASE_COL,
     DISGENET_DISEASE_NODE_ATTRS,
     DISGENET_EDGE_ATTRS,
+    ENSEMBL_HOMOLOG_MAIN_LABEL,
+    ENSEMBL_HOMOLOG_COL,
+    ENSEMBL_HOMOLOG_EDGE_ATTRS,
+    ENSEMBL_HOMOLOG_EDGE_LABEL,
     GENE_DISEASE_EDGE_LABEL,
     GENE_GO_EDGE_ATTRS,
     GENE_GO_EDGE_LABEL,
@@ -38,6 +42,8 @@ from pyBiodatafuse.constants import (
     GO_MF_NODE_LABELS,
     GO_NODE_ATTRS,
     GO_NODE_MAIN_LABEL,
+    KEGG,
+    KEGG_COL,
     LITERATURE_DISEASE_COL,
     LITERATURE_DISEASE_EDGE_ATTRS,
     LITERATURE_DISEASE_NODE_ATTRS,
@@ -387,6 +393,50 @@ def add_wikipathways_gene_pathway_subgraph(g, gene_node_label, annot_list):
 
     return g
 
+def add_kegg_gene_pathway_subgraph(g, gene_node_label, annot_list):
+    """Construct part of the graph by linking the gene to pathways from KEGG.
+
+    :param g: the input graph to extend with new nodes and edges.
+    :param gene_node_label: the gene node to be linked to pathways from KEGG.
+    :param annot_list: list of pathways from KEGG.
+    :returns: a NetworkX MultiDiGraph
+    """
+    for annot in annot_list:
+        if pd.isna(annot["pathway_label"]):
+            continue
+
+    for annot in annot_list:
+        if not pd.isna(annot["pathway_label"]):
+            annot_node_label = annot[PATHWAY_NODE_MAIN_LABEL]
+            annot_node_attrs = PATHWAY_NODE_ATTRS.copy()
+            annot_node_attrs["source"] = KEGG
+            annot_node_attrs["name"] = annot["pathway_label"]
+            annot_node_attrs["id"] = annot["pathway_id"]
+            annot_node_attrs["gene_count"] = annot["gene_count"]
+            annot_node_attrs["compounds"] = annot["compounds"]
+
+            g.add_node(annot_node_label, attr_dict=annot_node_attrs)
+
+            edge_attrs = GENE_PATHWAY_EDGE_ATTRS.copy()
+            edge_attrs["source"] = KEGG
+
+            edge_hash = hash(frozenset(edge_attrs.items()))
+            edge_attrs["edge_hash"] = edge_hash
+            edge_data = g.get_edge_data(gene_node_label, annot_node_label)
+            edge_data = {} if edge_data is None else edge_data
+            node_exists = [
+                x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash
+            ]
+
+            if len(node_exists) == 0:
+                g.add_edge(
+                    gene_node_label,
+                    annot_node_label,
+                    label=GENE_PATHWAY_EDGE_LABEL,
+                    attr_dict=edge_attrs,
+                )
+
+    return g
 
 def add_opentargets_gene_reactome_pathway_subgraph(g, gene_node_label, annot_list):
     """Construct part of the graph by linking the gene to Reactome pathways.
@@ -778,6 +828,33 @@ def add_opentargets_disease_compound_subgraph(g, disease_node_label, annot_list)
 
     return g
 
+def add_ensembl_homolog_subgraph(g, gene_node_label, annot_list):
+    """Construct part of the graph by linking the gene to genes.
+
+    :param g: the input graph to extend with new nodes and edges.
+    :param gene_node_label: the gene node to be linked to other genes entities.
+    :param annot_list: list of homologs from Ensembl.
+    :returns: a NetworkX MultiDiGraph
+    """
+    for hl in annot_list:
+        edge_attrs = ENSEMBL_HOMOLOG_EDGE_ATTRS.copy()
+
+        edge_hash = hash(frozenset(edge_attrs.items()))
+        edge_attrs["edge_hash"] = edge_hash
+        edge_data = g.get_edge_data(gene_node_label, hl[ENSEMBL_HOMOLOG_MAIN_LABEL])
+
+        edge_data = {} if edge_data is None else edge_data
+        node_exists = [x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash]
+        if len(node_exists) == 0 and not pd.isna(hl[ENSEMBL_HOMOLOG_MAIN_LABEL]):
+            g.add_edge(
+                gene_node_label,
+                hl[ENSEMBL_HOMOLOG_MAIN_LABEL],
+                label=ENSEMBL_HOMOLOG_EDGE_LABEL,
+                attr_dict=edge_attrs,
+            )
+
+    return g
+
 
 def add_gene_node(g, row, dea_columns):
     """Add gene node from each row of the combined_df to the graph.
@@ -843,14 +920,16 @@ def process_ppi(g, gene_node_label, row):
     :param gene_node_label: the gene node to be linked to annotation entities.
     :param row: row in the combined DataFrame.
     """
-    if STRING_PPI_COL in row:
-        ppi_list = json.loads(json.dumps(row[STRING_PPI_COL]))
-        for item in ppi_list:
-            if pd.isna(item["stringdb_link_to"]):
-                ppi_list = []
-
-        if not isinstance(ppi_list, float):
-            add_stringdb_ppi_subgraph(g, gene_node_label, ppi_list)
+    if STRING_PPI_COL in row and row[STRING_PPI_COL] is not None:
+        try:
+            ppi_list = json.loads(json.dumps(row[STRING_PPI_COL]))
+        except (ValueError, TypeError):
+            ppi_list = []
+        
+        if isinstance(ppi_list, list) and len(ppi_list) > 0:
+            valid_ppi_list = [item for item in ppi_list if pd.notna(item.get("stringdb_link_to"))]     
+            if valid_ppi_list:
+                add_stringdb_ppi_subgraph(g, gene_node_label, valid_ppi_list)
 
 
 def normalize_node_attributes(g):
@@ -902,11 +981,13 @@ def build_networkx_graph(
         LITERATURE_DISEASE_COL: add_literature_gene_disease_subgraph,
         MINERVA: add_minerva_gene_pathway_subgraph,
         WIKIPATHWAYS: add_wikipathways_gene_pathway_subgraph,
+        KEGG_COL: add_kegg_gene_pathway_subgraph,
         OPENTARGETS_REACTOME_COL: add_opentargets_gene_reactome_pathway_subgraph,
         OPENTARGETS_GO_COL: add_opentargets_gene_go_subgraph,
         OPENTARGETS_GENE_COMPOUND_COL: add_opentargets_gene_compound_subgraph,
         MOLMEDB_PROTEIN_COMPOUND_COL: add_molmedb_gene_inhibitor_subgraph,
         PUBCHEM_COMPOUND_ASSAYS_COL: add_pubchem_assay_subgraph,
+        ENSEMBL_HOMOLOG_COL: add_ensembl_homolog_subgraph,
     }
 
     for _i, row in tqdm(combined_df.iterrows(), total=combined_df.shape[0], desc="Building graph"):
