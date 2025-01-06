@@ -80,7 +80,7 @@ def _format_data(row, string_ids_df, network_df):
                             "stringdb_link_to": link,
                             STRING_GENE_INPUT_ID: f"{STRING_GENE_INPUT_ID}:{row_arr['stringId_B'].split('.')[1]}",
                             "score": row_arr["score"],
-                            "Uniprot-TrEMBL": row_arr["preferredName_A"]
+                            "gene_symbol": row_arr["preferredName_A"]
                         }
                     )
                     target_links_set.add(row_arr["preferredName_B"])
@@ -97,7 +97,7 @@ def _format_data(row, string_ids_df, network_df):
                             "stringdb_link_to": link,
                             STRING_GENE_INPUT_ID: row_arr["stringId_A"].split(".")[1],
                             "score": row_arr["score"],
-                            "Uniprot-TrEMBL": row_arr["preferredName_B"],
+                            "gene_symbol": row_arr["preferredName_B"],
                         }
                     )
                     target_links_set.add(row_arr["preferredName_A"])
