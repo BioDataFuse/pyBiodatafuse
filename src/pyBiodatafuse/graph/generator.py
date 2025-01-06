@@ -44,6 +44,9 @@ from pyBiodatafuse.constants import (
     GO_NODE_MAIN_LABEL,
     KEGG,
     KEGG_COL,
+    KEGG_COMPOUND_NODE_ATTRS,
+    KEGG_COMPOUND_EDGE_ATTRS,
+    KEGG_COMPOUND_EDGE_LABEL,
     LITERATURE_DISEASE_COL,
     LITERATURE_DISEASE_EDGE_ATTRS,
     LITERATURE_DISEASE_NODE_ATTRS,
@@ -437,6 +440,63 @@ def add_kegg_gene_pathway_subgraph(g, gene_node_label, annot_list):
                 )
 
     return g
+
+def add_kegg_compounds_subgraph(g, pathway_node_label, compounds_list):
+    """Construct part of the graph by linking the kegg compound to it's respective pathway.
+
+    :param g: the input graph to extend with new nodes and edges.
+    :param pathway_node_label: the pathway node to be linked to compound nodes.
+    :param compounds_list: list of compounds from KEGG.
+    :returns: a NetworkX MultiDiGraph
+    """
+    if isinstance(compounds_list, list):
+        for compound in compounds_list:
+            if pd.isna(compound["name"]):
+                continue
+
+            compound_node_label = compound["KEGG_identifier"]
+            compound_node_attrs = KEGG_COMPOUND_NODE_ATTRS.copy()
+            compound_node_attrs["name"] = compound["name"]
+            compound_node_attrs["id"] = compound["KEGG_identifier"]
+
+            g.add_node(compound_node_label, attr_dict=compound_node_attrs)
+
+            edge_attrs = KEGG_COMPOUND_EDGE_ATTRS.copy()
+            edge_hash = hash(frozenset(edge_attrs.items()))
+            edge_attrs["edge_hash"] = edge_hash
+            edge_data = g.get_edge_data(pathway_node_label, compound_node_label)
+            edge_data = {} if edge_data is None else edge_data
+            node_exists = [
+                x
+                for x, y in edge_data.items()
+                if "attr_dict" in y and y["attr_dict"].get("edge_hash") == edge_hash
+            ]
+
+            if len(node_exists) == 0:
+                g.add_edge(
+                    pathway_node_label,
+                    compound_node_label,
+                    label=KEGG_COMPOUND_EDGE_LABEL,
+                    attr_dict=edge_attrs,
+                )
+
+    return g
+
+def process_kegg_pathway_compound(g, kegg_pathway_compound):
+    """Process pathway-compound relationships from kegg and add them to the graph.
+
+    :param g: the input graph to extend with gene nodes.
+    :param kegg_pathway_compound: the input DataFrame containing pathway-compound relationships.
+    """
+    for _i, row in kegg_pathway_compound.iterrows():
+        pathway_node_label = row["KEGG_identifier"].replace("_", ":")
+        compounds_list = json.loads(json.dumps(row[KEGG_COL]))
+
+        if isinstance(compounds_list, float):
+            compounds_list = []
+
+        add_kegg_compounds_subgraph(g, pathway_node_label, compounds_list)
+
 
 def add_opentargets_gene_reactome_pathway_subgraph(g, gene_node_label, annot_list):
     """Construct part of the graph by linking the gene to Reactome pathways.

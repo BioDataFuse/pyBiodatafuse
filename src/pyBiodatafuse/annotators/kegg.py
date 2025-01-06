@@ -72,6 +72,8 @@ def get_compound_genes(pathway_info, results_entry):
     section = None
 
     for line in results_entry.text.splitlines():
+        current_compound = {}
+
         if line.startswith("GENE"):
             section = "GENE"
         elif line.startswith("COMPOUND"):
@@ -88,7 +90,14 @@ def get_compound_genes(pathway_info, results_entry):
             parts = line.split()
             for part in parts:
                 if part.startswith("C") and part[1:].isdigit():  # KEGG compound identifiers start with C
-                    compounds.append(part)
+                    current_compound["KEGG_identifier"] = part
+                    results = requests.get(f"{KEGG_ENDPOINT}/get/{part}") 
+                    for line in results.text.splitlines():
+                        if line.startswith("NAME"):
+                            parts = line.split()
+                            current_compound["name"] = [parts[1]]
+
+            compounds.append(current_compound)
         
     pathway_info["gene_count"] = len(genes)
     pathway_info["compounds"] = compounds
