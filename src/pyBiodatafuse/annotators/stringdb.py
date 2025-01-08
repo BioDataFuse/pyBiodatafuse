@@ -73,9 +73,9 @@ def _format_data(row, string_ids_df, network_df):
                 row_arr["preferredName_A"] == row_str["preferredName"]
                 and row["identifier"] == row_str["queryItem"]
             ):
-                for _i, row_str2 in string_ids_df.iterrows():
-                    if row_str2["preferredName"] == row_arr["preferredName_B"]:
-                        link = row_str2["queryItem"]
+                link = string_ids_df[string_ids_df["preferredName"] == row_arr["preferredName_B"]][
+                    "queryItem"
+                ].values[0]
 
                 if row_arr["preferredName_B"] not in target_links_set:
                     gene_ppi_links.append(
@@ -92,9 +92,9 @@ def _format_data(row, string_ids_df, network_df):
                 row_arr["preferredName_B"] == row_str["preferredName"]
                 and row["identifier"] == row_str["queryItem"]
             ):
-                for _i, row_str2 in string_ids_df.iterrows():
-                    if row_str2["preferredName"] == row_arr["preferredName_A"]:
-                        link = row_str2["queryItem"]
+                link = string_ids_df[string_ids_df["preferredName"] == row_arr["preferredName_A"]][
+                    "queryItem"
+                ].values[0]
 
                 if row_arr["preferredName_A"] not in target_links_set:
                     gene_ppi_links.append(
