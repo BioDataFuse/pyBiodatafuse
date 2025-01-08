@@ -13,12 +13,12 @@ import requests
 from requests.exceptions import RequestException
 
 from pyBiodatafuse.constants import (
+    NCBI_ENDPOINT,
     STRING,
     STRING_ENDPOINT,
     STRING_GENE_INPUT_ID,
     STRING_OUTPUT_DICT,
     STRING_PPI_COL,
-    NCBI_ENDPOINT
 )
 from pyBiodatafuse.utils import check_columns_against_constants, get_identifier_of_interest
 
@@ -60,6 +60,7 @@ def _format_data(row, string_ids_df, network_df):
     """Reformat STRING-DB response (Helper function).
 
     :param row: input_df row
+    :param string_ids_df: STRING-DB response identifier DataFrame
     :param network_df: STRING-DB response annotation DataFrame
     :returns: StringDB reformatted annotation.
     """
@@ -68,8 +69,10 @@ def _format_data(row, string_ids_df, network_df):
 
     for _i, row_str in string_ids_df.iterrows():
         for _i, row_arr in network_df.iterrows():
-
-            if row_arr["preferredName_A"] == row_str["preferredName"] and row["identifier"] == row_str["queryItem"]:
+            if (
+                row_arr["preferredName_A"] == row_str["preferredName"]
+                and row["identifier"] == row_str["queryItem"]
+            ):
                 for _i, row_str2 in string_ids_df.iterrows():
                     if row_str2["preferredName"] == row_arr["preferredName_B"]:
                         link = row_str2["queryItem"]
@@ -80,16 +83,18 @@ def _format_data(row, string_ids_df, network_df):
                             "stringdb_link_to": link,
                             STRING_GENE_INPUT_ID: f"{STRING_GENE_INPUT_ID}:{row_arr['stringId_B'].split('.')[1]}",
                             "score": row_arr["score"],
-                            "Uniprot-TrEMBL": row_arr["preferredName_A"]
+                            "Uniprot-TrEMBL": row_arr["preferredName_A"],
                         }
                     )
                     target_links_set.add(row_arr["preferredName_B"])
 
-            elif row_arr["preferredName_B"] == row_str["preferredName"] and row["identifier"] == row_str["queryItem"]:
+            elif (
+                row_arr["preferredName_B"] == row_str["preferredName"]
+                and row["identifier"] == row_str["queryItem"]
+            ):
                 for _i, row_str2 in string_ids_df.iterrows():
                     if row_str2["preferredName"] == row_arr["preferredName_A"]:
                         link = row_str2["queryItem"]
-
 
                 if row_arr["preferredName_A"] not in target_links_set:
                     gene_ppi_links.append(
@@ -149,7 +154,6 @@ def get_ppi(bridgedb_df: pd.DataFrame, species: str = "human"):
     :param species: The species to query. All species that are supported by both NCBI and STRINGDB can be used.
     :returns: a DataFrame containing the StringDB output and dictionary of the metadata.
     """
-
     # Check if the endpoint is available
     if not check_endpoint_stringdb():
         warnings.warn(f"{STRING} endpoint is not available. Unable to retrieve data.", stacklevel=2)
@@ -161,11 +165,7 @@ def get_ppi(bridgedb_df: pd.DataFrame, species: str = "human"):
     start_time = datetime.datetime.now()
 
     # Retrieve NCBI taxonomy identifier
-    params = {
-        "db": "taxonomy",
-        "term": species,
-        "retmode": "json" 
-    }
+    params = {"db": "taxonomy", "term": species, "retmode": "json"}
     response = requests.get(f"{NCBI_ENDPOINT}/entrez/eutils/esearch.fcgi", params=params).json()
     species_id = response["esearchresult"]["idlist"][0]
 
@@ -226,7 +226,9 @@ def get_ppi(bridgedb_df: pd.DataFrame, species: str = "human"):
         return pd.DataFrame(), string_metadata
 
     # Format the data
-    data_df[STRING_PPI_COL] = data_df.apply(lambda row: _format_data(row, stringdb_ids_df, network_df), axis=1)
+    data_df[STRING_PPI_COL] = data_df.apply(
+        lambda row: _format_data(row, stringdb_ids_df, network_df), axis=1
+    )
     data_df[STRING_PPI_COL] = data_df[STRING_PPI_COL].apply(
         lambda x: ([{key: np.nan for key in STRING_OUTPUT_DICT}] if len(x) == 0 else x)
     )
