@@ -1,6 +1,20 @@
 # coding: utf-8
 
-"""Python file for TFLink ETL process (https://tflink.net/download/)."""
+"""Python file for TFLink ETL process:
+You can download the Gene-TF interactions dataset from **TFLink**. Please visit the following page for the download:
+
+[TFLink Download Page](https://tflink.net/download/)
+
+The datasets you need can be downloaded from the following links:
+
+**For Humans (Homo sapiens):**
+- [TFLink_Homo_sapiens_interactions_All_simpleFormat_v1.0.tsv.gz](https://cdn.netbiol.org/tflink/download_files/TFLink_Homo_sapiens_interactions_All_simpleFormat_v1.0.tsv.gz)
+
+**For Mice (Mus musculus):**
+- [TFLink_Mus_musculus_interactions_All_simpleFormat_v1.0.tsv.gz](https://cdn.netbiol.org/tflink/download_files/TFLink_Mus_musculus_interactions_All_simpleFormat_v1.0.tsv.gz)
+
+These files contain the TF-target interaction data in a simple format for each species.
+"""
 
 import gzip
 import os
@@ -108,7 +122,7 @@ def add_target_and_tf_interaction(ncbi_df: pd.DataFrame, tflink_df: pd.DataFrame
     return ncbi_df
 
 
-def get_tf_target(tf_file: str, filename: str, filter_deg: boolean, bridgedb_df: pd.DataFrame):
+def get_tf_target(tf_file: str, filename: str, filter_deg: boolean, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
     """Add tfs and targets from tflink.
 
     :param tf_file: The TF-Target dataset to download. Human "TFLink_Homo_sapiens_interactions_All_simpleFormat_v1.0.tsv.gz"
