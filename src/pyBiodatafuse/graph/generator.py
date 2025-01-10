@@ -1313,12 +1313,14 @@ def add_gene_node(g, row, dea_columns):
         "datasource": BRIDGEDB,
         row["identifier.source"]: row["identifier"],
         "id": row["target"],
-        "is_tf": row["is_tf"] if "is_tf" in row else None,
-        "is_target": row["is_target"] if "is_target" in row else None,
         "name": row["GENE_SYMBOL_dea"] if "GENE_SYMBOL_dea" in row else "identifier",
         "labels": GENE_NODE_LABELS,
         row["target.source"]: row["target"],
     }
+    if "is_tf" in row:
+        gene_node_attrs["is_tf"] = row["is_tf"]
+    if "is_target" in row:
+        gene_node_attrs["is_target"] = row["is_target"]
     for c in dea_columns:
         gene_node_attrs[c[:-4]] = row[c]
 
