@@ -38,6 +38,7 @@ from pyBiodatafuse.constants import (
     GO_MF_NODE_LABELS,
     GO_NODE_ATTRS,
     GO_NODE_MAIN_LABEL,
+    GPROFILER,
     LITERATURE_DISEASE_COL,
     LITERATURE_DISEASE_EDGE_ATTRS,
     LITERATURE_DISEASE_NODE_ATTRS,
@@ -66,6 +67,7 @@ from pyBiodatafuse.constants import (
     STRING_PPI_EDGE_ATTRS,
     STRING_PPI_EDGE_LABEL,
     STRING_PPI_EDGE_MAIN_LABEL,
+    TFLINK,
     WIKIPATHWAYS,
 )
 
@@ -80,7 +82,7 @@ def load_dataframe_from_pickle(pickle_path: str) -> pd.DataFrame:
     """
     with open(pickle_path, "rb") as rin:
         df = pickle.load(rin)
-        df = df[(df["target.source"] == "Ensembl")]
+        # df = df[(df["target.source"] == "NCBI Gene")]
 
     return df
 
@@ -377,6 +379,482 @@ def add_wikipathways_gene_pathway_subgraph(g, gene_node_label, annot_list):
         edge_data = {} if edge_data is None else edge_data
         node_exists = [x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash]
 
+        if len(node_exists) == 0:
+            g.add_edge(
+                gene_node_label,
+                annot_node_label,
+                label=GENE_PATHWAY_EDGE_LABEL,
+                attr_dict=edge_attrs,
+            )
+
+    return g
+
+
+def add_gprofiler_gene_wikipathway_subgraph(g, gene_node_label, annot_list):
+    """Construct part of the graph by linking the gene to pathways from WikiPathways.
+
+    :param g: the input graph to extend with new nodes and edges.
+    :param gene_node_label: the gene node to be linked to pathways from WikiPathways.
+    :param annot_list: list of pathways from WikiPathways.
+    :returns: a NetworkX MultiDiGraph
+    """
+    for annot in annot_list:
+        if pd.isna(annot["name"]):
+            continue
+
+        annot_node_label = annot[PATHWAY_NODE_MAIN_LABEL]
+        annot_node_attrs = PATHWAY_NODE_ATTRS.copy()
+        annot_node_attrs["datasource"] = annot["datasource"]
+        annot_node_attrs["pathway_type"] = "WikiPathways"
+        annot_node_attrs["name"] = annot["name"]
+        annot_node_attrs["id"] = annot["id"]
+        annot_node_attrs["gene_count"] = annot["term_size"]
+        annot_node_attrs["p_value"] = annot["p_value"]
+        annot_node_attrs["significant"] = annot["significant"]
+
+        g.add_node(annot_node_label, attr_dict=annot_node_attrs)
+
+        edge_attrs = GENE_PATHWAY_EDGE_ATTRS.copy()
+        edge_attrs["datasource"] = annot["datasource"]
+
+        edge_hash = hash(frozenset(edge_attrs.items()))
+        edge_attrs["edge_hash"] = edge_hash
+        edge_data = g.get_edge_data(gene_node_label, annot_node_label)
+        edge_data = {} if edge_data is None else edge_data
+        node_exists = [x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash]
+        if len(node_exists) == 0:
+            g.add_edge(
+                gene_node_label,
+                annot_node_label,
+                label=GENE_PATHWAY_EDGE_LABEL,
+                attr_dict=edge_attrs,
+            )
+
+    return g
+
+
+def add_gprofiler_gene_HP_subgraph(g, gene_node_label, annot_list):
+    """Construct part of the graph by linking the gene to pathways from WikiPathways.
+
+    :param g: the input graph to extend with new nodes and edges.
+    :param gene_node_label: the gene node to be linked to pathways from WikiPathways.
+    :param annot_list: list of pathways from WikiPathways.
+    :returns: a NetworkX MultiDiGraph
+    """
+    for annot in annot_list:
+        if pd.isna(annot["name"]):
+            continue
+
+        annot_node_label = annot["id"]
+        annot_node_attrs = PATHWAY_NODE_ATTRS.copy()
+        annot_node_attrs["datasource"] = annot["datasource"]
+        annot_node_attrs["name"] = annot["name"]
+        annot_node_attrs["id"] = annot["id"]
+        annot_node_attrs["gene_count"] = annot["term_size"]
+        annot_node_attrs["p_value"] = annot["p_value"]
+        annot_node_attrs["significant"] = annot["significant"]
+        annot_node_attrs["labels"] = "HP"
+
+        g.add_node(annot_node_label, attr_dict=annot_node_attrs)
+
+        edge_attrs = GENE_PATHWAY_EDGE_ATTRS.copy()
+        edge_attrs["datasource"] = annot["datasource"]
+        edge_attrs["label"] = "linked_to"
+        edge_hash = hash(frozenset(edge_attrs.items()))
+        edge_attrs["edge_hash"] = edge_hash
+        edge_data = g.get_edge_data(gene_node_label, annot_node_label)
+        edge_data = {} if edge_data is None else edge_data
+        node_exists = [x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash]
+        if len(node_exists) == 0:
+            g.add_edge(
+                gene_node_label,
+                annot_node_label,
+                label=GENE_PATHWAY_EDGE_LABEL,
+                attr_dict=edge_attrs,
+            )
+
+    return g
+
+
+def add_gprofiler_gene_HPA_subgraph(g, gene_node_label, annot_list):
+    """Construct part of the graph by linking the gene to pathways from WikiPathways.
+
+    :param g: the input graph to extend with new nodes and edges.
+    :param gene_node_label: the gene node to be linked to pathways from WikiPathways.
+    :param annot_list: list of pathways from WikiPathways.
+    :returns: a NetworkX MultiDiGraph
+    """
+    for annot in annot_list:
+        if pd.isna(annot["name"]):
+            continue
+
+        annot_node_label = annot["id"]
+        annot_node_attrs = PATHWAY_NODE_ATTRS.copy()
+        annot_node_attrs["datasource"] = annot["datasource"]
+        annot_node_attrs["name"] = annot["name"]
+        annot_node_attrs["id"] = annot["id"]
+        annot_node_attrs["gene_count"] = annot["term_size"]
+        annot_node_attrs["p_value"] = annot["p_value"]
+        annot_node_attrs["significant"] = annot["significant"]
+        annot_node_attrs["labels"] = "HPA"
+
+        g.add_node(annot_node_label, attr_dict=annot_node_attrs)
+
+        edge_attrs = GENE_PATHWAY_EDGE_ATTRS.copy()
+        edge_attrs["datasource"] = annot["datasource"]
+        edge_attrs["label"] = "expressed_in"
+
+        edge_hash = hash(frozenset(edge_attrs.items()))
+        edge_attrs["edge_hash"] = edge_hash
+        edge_data = g.get_edge_data(gene_node_label, annot_node_label)
+        edge_data = {} if edge_data is None else edge_data
+        node_exists = [x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash]
+        if len(node_exists) == 0:
+            g.add_edge(
+                gene_node_label,
+                annot_node_label,
+                label=GENE_PATHWAY_EDGE_LABEL,
+                attr_dict=edge_attrs,
+            )
+
+    return g
+
+
+def add_gprofiler_gene_KEGG_subgraph(g, gene_node_label, annot_list):
+    """Construct part of the graph by linking the gene to pathways from WikiPathways.
+
+    :param g: the input graph to extend with new nodes and edges.
+    :param gene_node_label: the gene node to be linked to pathways from WikiPathways.
+    :param annot_list: list of pathways from WikiPathways.
+    :returns: a NetworkX MultiDiGraph
+    """
+    for annot in annot_list:
+        if pd.isna(annot["name"]):
+            continue
+
+        annot_node_label = annot["id"]
+        annot_node_attrs = PATHWAY_NODE_ATTRS.copy()
+        annot_node_attrs["datasource"] = annot["datasource"]
+        annot_node_attrs["pathway_type"] = "KEGG"
+        annot_node_attrs["name"] = annot["name"]
+        annot_node_attrs["id"] = annot["id"]
+        annot_node_attrs["gene_count"] = annot["term_size"]
+        annot_node_attrs["p_value"] = annot["p_value"]
+        annot_node_attrs["significant"] = annot["significant"]
+
+        g.add_node(annot_node_label, attr_dict=annot_node_attrs)
+
+        edge_attrs = GENE_PATHWAY_EDGE_ATTRS.copy()
+        edge_attrs["datasource"] = annot["datasource"]
+
+        edge_hash = hash(frozenset(edge_attrs.items()))
+        edge_attrs["edge_hash"] = edge_hash
+        edge_data = g.get_edge_data(gene_node_label, annot_node_label)
+        edge_data = {} if edge_data is None else edge_data
+        node_exists = [x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash]
+        if len(node_exists) == 0:
+            g.add_edge(
+                gene_node_label,
+                annot_node_label,
+                label=GENE_PATHWAY_EDGE_LABEL,
+                attr_dict=edge_attrs,
+            )
+
+    return g
+
+
+def add_gprofiler_gene_MIRNA_subgraph(g, gene_node_label, annot_list):
+    """Construct part of the graph by linking the gene to pathways from WikiPathways.
+
+    :param g: the input graph to extend with new nodes and edges.
+    :param gene_node_label: the gene node to be linked to pathways from WikiPathways.
+    :param annot_list: list of pathways from WikiPathways.
+    :returns: a NetworkX MultiDiGraph
+    """
+    for annot in annot_list:
+        if pd.isna(annot["name"]):
+            continue
+
+        annot_node_label = annot["id"]
+        annot_node_attrs = PATHWAY_NODE_ATTRS.copy()
+        annot_node_attrs["datasource"] = annot["datasource"]
+        annot_node_attrs["name"] = annot["name"]
+        annot_node_attrs["id"] = annot["id"]
+        annot_node_attrs["gene_count"] = annot["term_size"]
+        annot_node_attrs["p_value"] = annot["p_value"]
+        annot_node_attrs["significant"] = annot["significant"]
+        annot_node_attrs["labels"] = "MIRNA"
+
+        g.add_node(annot_node_label, attr_dict=annot_node_attrs)
+
+        edge_attrs = GENE_PATHWAY_EDGE_ATTRS.copy()
+        edge_attrs["datasource"] = annot["datasource"]
+        edge_attrs["label"] = "regulates"
+
+        edge_hash = hash(frozenset(edge_attrs.items()))
+        edge_attrs["edge_hash"] = edge_hash
+        edge_data = g.get_edge_data(gene_node_label, annot_node_label)
+        edge_data = {} if edge_data is None else edge_data
+        node_exists = [x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash]
+        if len(node_exists) == 0:
+            g.add_edge(
+                annot_node_label,
+                gene_node_label,
+                label=GENE_PATHWAY_EDGE_LABEL,
+                attr_dict=edge_attrs,
+            )
+
+    return g
+
+
+def add_gprofiler_gene_REAC_subgraph(g, gene_node_label, annot_list):
+    """Construct part of the graph by linking the gene to pathways from WikiPathways.
+
+    :param g: the input graph to extend with new nodes and edges.
+    :param gene_node_label: the gene node to be linked to pathways from WikiPathways.
+    :param annot_list: list of pathways from WikiPathways.
+    :returns: a NetworkX MultiDiGraph
+    """
+    for annot in annot_list:
+        if pd.isna(annot["name"]):
+            continue
+
+        annot_node_label = annot["id"]
+        annot_node_attrs = PATHWAY_NODE_ATTRS.copy()
+        annot_node_attrs["datasource"] = annot["datasource"]
+        annot_node_attrs["pathway_type"] = "Reactome"
+        annot_node_attrs["name"] = annot["name"]
+        annot_node_attrs["id"] = annot["id"]
+        annot_node_attrs["gene_count"] = annot["term_size"]
+        annot_node_attrs["p_value"] = annot["p_value"]
+        annot_node_attrs["significant"] = annot["significant"]
+
+        g.add_node(annot_node_label, attr_dict=annot_node_attrs)
+
+        edge_attrs = GENE_PATHWAY_EDGE_ATTRS.copy()
+        edge_attrs["datasource"] = annot["datasource"]
+
+        edge_hash = hash(frozenset(edge_attrs.items()))
+        edge_attrs["edge_hash"] = edge_hash
+        edge_data = g.get_edge_data(gene_node_label, annot_node_label)
+        edge_data = {} if edge_data is None else edge_data
+        node_exists = [x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash]
+        if len(node_exists) == 0:
+            g.add_edge(
+                gene_node_label,
+                annot_node_label,
+                label=GENE_PATHWAY_EDGE_LABEL,
+                attr_dict=edge_attrs,
+            )
+
+    return g
+
+
+def add_gprofiler_gene_TF_subgraph(g, gene_node_label, annot_list):
+    """Construct part of the graph by linking the gene to pathways from WikiPathways.
+
+    :param g: the input graph to extend with new nodes and edges.
+    :param gene_node_label: the gene node to be linked to pathways from WikiPathways.
+    :param annot_list: list of pathways from WikiPathways.
+    :returns: a NetworkX MultiDiGraph
+    """
+    for annot in annot_list:
+        if pd.isna(annot["name"]):
+            continue
+
+        annot_node_label = annot["id"]
+        annot_node_attrs = PATHWAY_NODE_ATTRS.copy()
+        annot_node_attrs["datasource"] = annot["datasource"]
+        annot_node_attrs["name"] = annot["name"]
+        annot_node_attrs["id"] = annot["id"]
+        annot_node_attrs["gene_count"] = annot["term_size"]
+        annot_node_attrs["p_value"] = annot["p_value"]
+        annot_node_attrs["significant"] = annot["significant"]
+        annot_node_attrs["labels"] = "TF"
+
+        g.add_node(annot_node_label, attr_dict=annot_node_attrs)
+
+        edge_attrs = GENE_PATHWAY_EDGE_ATTRS.copy()
+        edge_attrs["datasource"] = annot["datasource"]
+        edge_attrs["label"] = "regulated_by"
+
+        edge_hash = hash(frozenset(edge_attrs.items()))
+        edge_attrs["edge_hash"] = edge_hash
+        edge_data = g.get_edge_data(gene_node_label, annot_node_label)
+        edge_data = {} if edge_data is None else edge_data
+        node_exists = [x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash]
+        if len(node_exists) == 0:
+            g.add_edge(
+                gene_node_label,
+                annot_node_label,
+                label=GENE_PATHWAY_EDGE_LABEL,
+                attr_dict=edge_attrs,
+            )
+
+    return g
+
+
+def add_gprofiler_gene_GO_MF_subgraph(g, gene_node_label, annot_list):
+    """Construct part of the graph by linking the gene to pathways from WikiPathways.
+
+    :param g: the input graph to extend with new nodes and edges.
+    :param gene_node_label: the gene node to be linked to pathways from WikiPathways.
+    :param annot_list: list of pathways from WikiPathways.
+    :returns: a NetworkX MultiDiGraph
+    """
+    for annot in annot_list:
+        if pd.isna(annot["name"]):
+            continue
+
+        annot_node_label = annot["id"]
+        annot_node_attrs = PATHWAY_NODE_ATTRS.copy()
+        annot_node_attrs["datasource"] = annot["datasource"]
+        annot_node_attrs["name"] = annot["name"]
+        annot_node_attrs["id"] = annot["id"]
+        annot_node_attrs["gene_count"] = annot["term_size"]
+        annot_node_attrs["p_value"] = annot["p_value"]
+        annot_node_attrs["significant"] = annot["significant"]
+        annot_node_attrs["labels"] = "Molecular_Function"
+
+        g.add_node(annot_node_label, attr_dict=annot_node_attrs)
+
+        edge_attrs = GENE_PATHWAY_EDGE_ATTRS.copy()
+        edge_attrs["datasource"] = annot["datasource"]
+
+        edge_hash = hash(frozenset(edge_attrs.items()))
+        edge_attrs["edge_hash"] = edge_hash
+        edge_data = g.get_edge_data(gene_node_label, annot_node_label)
+        edge_data = {} if edge_data is None else edge_data
+        node_exists = [x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash]
+        if len(node_exists) == 0:
+            g.add_edge(
+                gene_node_label,
+                annot_node_label,
+                label=GENE_PATHWAY_EDGE_LABEL,
+                attr_dict=edge_attrs,
+            )
+
+    return g
+
+
+def add_gprofiler_gene_GO_CC_subgraph(g, gene_node_label, annot_list):
+    """Construct part of the graph by linking the gene to pathways from WikiPathways.
+
+    :param g: the input graph to extend with new nodes and edges.
+    :param gene_node_label: the gene node to be linked to pathways from WikiPathways.
+    :param annot_list: list of pathways from WikiPathways.
+    :returns: a NetworkX MultiDiGraph
+    """
+    for annot in annot_list:
+        if pd.isna(annot["name"]):
+            continue
+
+        annot_node_label = annot["id"]
+        annot_node_attrs = PATHWAY_NODE_ATTRS.copy()
+        annot_node_attrs["datasource"] = annot["datasource"]
+        annot_node_attrs["name"] = annot["name"]
+        annot_node_attrs["id"] = annot["id"]
+        annot_node_attrs["gene_count"] = annot["term_size"]
+        annot_node_attrs["p_value"] = annot["p_value"]
+        annot_node_attrs["significant"] = annot["significant"]
+        annot_node_attrs["labels"] = "Cellular_Component"
+
+        g.add_node(annot_node_label, attr_dict=annot_node_attrs)
+
+        edge_attrs = GENE_PATHWAY_EDGE_ATTRS.copy()
+        edge_attrs["datasource"] = annot["datasource"]
+
+        edge_hash = hash(frozenset(edge_attrs.items()))
+        edge_attrs["edge_hash"] = edge_hash
+        edge_data = g.get_edge_data(gene_node_label, annot_node_label)
+        edge_data = {} if edge_data is None else edge_data
+        node_exists = [x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash]
+        if len(node_exists) == 0:
+            g.add_edge(
+                gene_node_label,
+                annot_node_label,
+                label=GENE_PATHWAY_EDGE_LABEL,
+                attr_dict=edge_attrs,
+            )
+
+    return g
+
+
+def add_gprofiler_gene_GO_BP_subgraph(g, gene_node_label, annot_list):
+    """Construct part of the graph by linking the gene to pathways from WikiPathways.
+
+    :param g: the input graph to extend with new nodes and edges.
+    :param gene_node_label: the gene node to be linked to pathways from WikiPathways.
+    :param annot_list: list of pathways from WikiPathways.
+    :returns: a NetworkX MultiDiGraph
+    """
+    for annot in annot_list:
+        if pd.isna(annot["name"]):
+            continue
+
+        annot_node_label = annot["id"]
+        annot_node_attrs = PATHWAY_NODE_ATTRS.copy()
+        annot_node_attrs["datasource"] = annot["datasource"]
+        annot_node_attrs["name"] = annot["name"]
+        annot_node_attrs["id"] = annot["id"]
+        annot_node_attrs["gene_count"] = annot["term_size"]
+        annot_node_attrs["p_value"] = annot["p_value"]
+        annot_node_attrs["significant"] = annot["significant"]
+        annot_node_attrs["labels"] = "Biological_Process"
+
+        g.add_node(annot_node_label, attr_dict=annot_node_attrs)
+
+        edge_attrs = GENE_PATHWAY_EDGE_ATTRS.copy()
+        edge_attrs["datasource"] = annot["datasource"]
+
+        edge_hash = hash(frozenset(edge_attrs.items()))
+        edge_attrs["edge_hash"] = edge_hash
+        edge_data = g.get_edge_data(gene_node_label, annot_node_label)
+        edge_data = {} if edge_data is None else edge_data
+        node_exists = [x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash]
+        if len(node_exists) == 0:
+            g.add_edge(
+                gene_node_label,
+                annot_node_label,
+                label=GENE_PATHWAY_EDGE_LABEL,
+                attr_dict=edge_attrs,
+            )
+
+    return g
+
+
+def add_mitocarta_gene_mito_subgraph(g, gene_node_label, annot_list):
+    """Construct part of the graph by linking the gene to pathways from WikiPathways.
+
+    :param g: the input graph to extend with new nodes and edges.
+    :param gene_node_label: the gene node to be linked to pathways from WikiPathways.
+    :param annot_list: list of pathways from WikiPathways.
+    :returns: a NetworkX MultiDiGraph
+    """
+    for annot in annot_list:
+        if pd.isna(annot["hpa_location"]):
+            continue
+
+        annot_node_label = annot["mito_pathways"]
+        annot_node_attrs = {}
+        annot_node_attrs["name"] = annot["mito_pathways"]
+        annot_node_attrs["datasource"] = "mitocarta"
+        annot_node_attrs["hpa_location"] = annot["hpa_location"]
+        annot_node_attrs["sub_mito_localization"] = annot["sub_mito_localization"]
+        annot_node_attrs["evidence"] = annot["evidence"]
+        annot_node_attrs["labels"] = "mito_pathway"
+
+        g.add_node(annot_node_label, attr_dict=annot_node_attrs)
+
+        edge_attrs = GENE_PATHWAY_EDGE_ATTRS.copy()
+        edge_attrs["datasource"] = "mitocarta"
+        edge_attrs["label"] = "encodes_mitochondrial_protein"
+
+        edge_hash = hash(frozenset(edge_attrs.items()))
+        edge_attrs["edge_hash"] = edge_hash
+        edge_data = g.get_edge_data(gene_node_label, annot_node_label)
+        edge_data = {} if edge_data is None else edge_data
+        node_exists = [x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash]
         if len(node_exists) == 0:
             g.add_edge(
                 gene_node_label,
@@ -779,6 +1257,49 @@ def add_opentargets_disease_compound_subgraph(g, disease_node_label, annot_list)
     return g
 
 
+def add_tflink_gene_tf_subgraph(g, gene_node_label, annot_list):
+    """Construct part of the graph by linking the gene to genes.
+
+    :param g: the input graph to extend with new nodes and edges.
+    :param gene_node_label: the gene node to be linked to other genes entities.
+    :param annot_list: list of protein-protein interactions from StringDb.
+    :returns: a NetworkX MultiDiGraph
+    """
+    for tf in annot_list:
+        TFLINK_EDGE_LABEL = "tf_regulates"
+        edge_attrs = {
+            "datasource": TFLINK,
+            "name_target": None,
+            "uniprotid_target": None,
+            "detection_method": None,
+            "pubmedid": None,
+            "source_database": None,
+            "small_scale_evidence": None,
+            "label": TFLINK_EDGE_LABEL,
+        }
+        edge_attrs["name_target"] = tf["Name.Target"]
+        edge_attrs["uniprotid_target"] = tf["UniprotID.Target"]
+        edge_attrs["detection_method"] = tf["Detection.method"]
+        edge_attrs["pubmedid"] = tf["PubmedID"]
+        edge_attrs["source_database"] = tf["Source.database"]
+        edge_attrs["small_scale_evidence"] = tf["Small-scale.evidence"]
+
+        edge_hash = hash(frozenset(edge_attrs.items()))
+        edge_attrs["edge_hash"] = edge_hash
+
+        edge_data = g.get_edge_data(tf["Ensembl.GeneID.Target"], gene_node_label)
+        edge_data = {} if edge_data is None else edge_data
+        node_exists = [x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash]
+        if len(node_exists) == 0 and not pd.isna(tf["Ensembl.GeneID.Target"]):
+            g.add_edge(
+                gene_node_label,
+                tf["Ensembl.GeneID.Target"],
+                label="tf_regulates",
+                attr_dict=edge_attrs,
+            )
+    return g
+
+
 def add_gene_node(g, row, dea_columns):
     """Add gene node from each row of the combined_df to the graph.
 
@@ -790,12 +1311,14 @@ def add_gene_node(g, row, dea_columns):
     gene_node_label = row["identifier"]
     gene_node_attrs = {
         "datasource": BRIDGEDB,
-        "name": f"{row['identifier.source']}:{row['identifier']}",
+        row["identifier.source"]: row["identifier"],
         "id": row["target"],
+        "is_tf": row["is_tf"],
+        "is_target": row["is_target"],
+        "name": row["GENE_SYMBOL_dea"],
         "labels": GENE_NODE_LABELS,
         row["target.source"]: row["target"],
     }
-
     for c in dea_columns:
         gene_node_attrs[c[:-4]] = row[c]
 
@@ -816,7 +1339,6 @@ def process_annotations(g, gene_node_label, row, func_dict):
             annot_list = row[annot_key]
             if not isinstance(annot_list, list):
                 annot_list = []
-
             func_dict[annot_key](g, gene_node_label, annot_list)
 
 
@@ -845,12 +1367,27 @@ def process_ppi(g, gene_node_label, row):
     """
     if STRING_PPI_COL in row:
         ppi_list = json.loads(json.dumps(row[STRING_PPI_COL]))
-        for item in ppi_list:
-            if pd.isna(item["stringdb_link_to"]):
-                ppi_list = []
-
         if not isinstance(ppi_list, float):
+            for item in ppi_list:
+                if pd.isna(item["stringdb_link_to"]):
+                    ppi_list = []
             add_stringdb_ppi_subgraph(g, gene_node_label, ppi_list)
+
+
+def process_tf_target(g, gene_node_label, row):
+    """Process tf-target interactions and add them to the graph.
+
+    :param g: the input graph to extend with gene nodes.
+    :param gene_node_label: the gene node to be linked to annotation entities.
+    :param row: row in the combined DataFrame.
+    """
+    if "its_target" in row:
+        its_target_list = json.loads(json.dumps(row["its_target"]))
+        if not isinstance(its_target_list, float) and its_target_list is not None:
+            for item in its_target_list:
+                if pd.isna(item["Name.Target"]):
+                    its_target_list = []
+            add_tflink_gene_tf_subgraph(g, gene_node_label, its_target_list)
 
 
 def normalize_node_attributes(g):
@@ -892,7 +1429,7 @@ def build_networkx_graph(
     :returns: a NetworkX MultiDiGraph
     """
     g = nx.MultiDiGraph()
-    combined_df = combined_df[(combined_df["target.source"] == "Ensembl")]
+    # combined_df = combined_df[(combined_df["target.source"] == "NCBI Gene")]
 
     dea_columns = [c for c in combined_df.columns if c.endswith("_dea")]
 
@@ -907,6 +1444,17 @@ def build_networkx_graph(
         OPENTARGETS_GENE_COMPOUND_COL: add_opentargets_gene_compound_subgraph,
         MOLMEDB_PROTEIN_COMPOUND_COL: add_molmedb_gene_inhibitor_subgraph,
         PUBCHEM_COMPOUND_ASSAYS_COL: add_pubchem_assay_subgraph,
+        f"{GPROFILER}_wp": add_gprofiler_gene_wikipathway_subgraph,
+        f"{GPROFILER}_hp": add_gprofiler_gene_HP_subgraph,
+        f"{GPROFILER}_hpa": add_gprofiler_gene_HPA_subgraph,
+        f"{GPROFILER}_kegg": add_gprofiler_gene_KEGG_subgraph,
+        f"{GPROFILER}_mirna": add_gprofiler_gene_MIRNA_subgraph,
+        f"{GPROFILER}_reac": add_gprofiler_gene_REAC_subgraph,
+        # f"{GPROFILER}_tf": add_gprofiler_gene_TF_subgraph,
+        f"{GPROFILER}_go:bp": add_gprofiler_gene_GO_BP_subgraph,
+        f"{GPROFILER}_go:cc": add_gprofiler_gene_GO_CC_subgraph,
+        f"{GPROFILER}_go:mf": add_gprofiler_gene_GO_MF_subgraph,
+        "mitocarta": add_mitocarta_gene_mito_subgraph,
     }
 
     for _i, row in tqdm(combined_df.iterrows(), total=combined_df.shape[0], desc="Building graph"):
@@ -914,6 +1462,7 @@ def build_networkx_graph(
             continue
         gene_node_label = add_gene_node(g, row, dea_columns)
         process_annotations(g, gene_node_label, row, func_dict)
+        process_tf_target(g, gene_node_label, row)
         process_ppi(g, gene_node_label, row)
 
     if disease_compound is not None:
@@ -963,5 +1512,8 @@ def save_graph(
 
     with open(graph_path_pickle, "wb") as f:
         pickle.dump(g, f)
+    
     nx.write_gml(g, graph_path_gml)
     logger.warning(f"Graph saved in {graph_path_pickle} and {graph_path_gml}")
+
+    return g
