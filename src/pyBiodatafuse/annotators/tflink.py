@@ -47,9 +47,9 @@ def download_tflink_dataset(tf_file: str, filename: str) -> Tuple[pd.DataFrame, 
         else:
             with open(filename, "wb") as file:
                 file.write(response.content)
-    else:
-        with gzip.open(filename, "rt") as f:
-            tflink_df = pd.read_csv(f, sep="\t")
+    
+    with gzip.open(filename, "rt") as f:
+        tflink_df = pd.read_csv(f, sep="\t")
 
     # Add version
     tflink_metadata = {
