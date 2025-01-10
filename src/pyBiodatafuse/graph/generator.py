@@ -1313,9 +1313,9 @@ def add_gene_node(g, row, dea_columns):
         "datasource": BRIDGEDB,
         row["identifier.source"]: row["identifier"],
         "id": row["target"],
-        "is_tf": row["is_tf"],
-        "is_target": row["is_target"],
-        "name": row["GENE_SYMBOL_dea"],
+        "is_tf": row["is_tf"] if "is_tf" in row else None,
+        "is_target": row["is_target"] if "is_target" in row else None,
+        "name": row["GENE_SYMBOL_dea"] if "GENE_SYMBOL_dea" in row else "identifier",
         "labels": GENE_NODE_LABELS,
         row["target.source"]: row["target"],
     }
