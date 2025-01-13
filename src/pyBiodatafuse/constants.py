@@ -46,7 +46,6 @@ DISGENET_DISEASE_COL = f"{DISGENET}_diseases"
 ENSEMBL_HOMOLOG_COL = f"{ENSEMBL}_homologs"
 OPENTARGETS_DISEASE_COL = f"{OPENTARGETS}_diseases"
 KEGG_COL = f"{KEGG}_pathways"
-KEGG_COMPOUND_COL = f"{KEGG}_compounds"
 LITERATURE_DISEASE_COL = "literature_based_info"
 OPENTARGETS_REACTOME_COL = f"{OPENTARGETS}_reactome"
 OPENTARGETS_GO_COL = f"{OPENTARGETS}_go"
@@ -481,7 +480,8 @@ KEGG_COMPOUND_NODE_ATTRS = {
     "name": None,
     "id": None,
 }
-KEGG_COMPOUND_EDGE_LABEL = "is_in"
+KEGG_COMPOUND_NODE_MAIN_LABEL = "compounds"
+KEGG_COMPOUND_EDGE_LABEL = "contains"
 KEGG_COMPOUND_EDGE_ATTRS = {
     "datasource": KEGG,
     "label": None,

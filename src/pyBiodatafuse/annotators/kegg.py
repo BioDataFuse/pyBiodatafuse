@@ -91,7 +91,9 @@ def get_compound_genes(pathway_info, results_entry):
             for part in parts:
                 if part.startswith("C") and part[1:].isdigit():  # KEGG compound identifiers start with C
                     current_compound["KEGG_identifier"] = part
+                    print("querying")
                     results = requests.get(f"{KEGG_ENDPOINT}/get/{part}") 
+                    print("querying done")
                     for line in results.text.splitlines():
                         if line.startswith("NAME"):
                             parts = line.split()
@@ -113,11 +115,18 @@ def get_pathway_info(row):
     """
     kegg_dict = row[KEGG_COL]
     if kegg_dict is None or not isinstance(kegg_dict, dict) or kegg_dict.get("KEGG_id") is None:
-        return {"KEGG_id": None, "pathways": None}
-    
+        # Return default structure with np.nan
+        return {
+            "KEGG_id": np.nan,
+            "pathways": [{'pathway_id': np.nan, 'pathway_label': np.nan, 'gene_count': np.nan, 'compounds': np.nan}]
+        }
+
+    print("querying")
     results = requests.get(f"{KEGG_ENDPOINT}/link/pathway/{kegg_dict.get('KEGG_id')}") 
+    print("querying done")
     if len(results.text) <= 1:
-        kegg_dict["pathways"] = None
+        # Return default structure with np.nan when no pathways are found
+        kegg_dict["pathways"] = [{'pathway_id': np.nan, 'pathway_label': np.nan, 'gene_count': np.nan, 'compounds': np.nan}]
         return kegg_dict
 
     pathways = []
@@ -137,11 +146,9 @@ def get_pathway_info(row):
                 break  
 
         pathway_info = get_compound_genes(pathway_info, results_entry)
-
         pathways.append(pathway_info)
 
-    kegg_dict["pathways"] = pathways
-
+    kegg_dict["pathways"] = json.dumps(pathways if pathways else [{'pathway_id': np.nan, 'pathway_label': np.nan, 'gene_count': np.nan, 'compounds': np.nan}])
     return kegg_dict
     
 

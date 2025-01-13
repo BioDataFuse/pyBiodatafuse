@@ -47,6 +47,7 @@ from pyBiodatafuse.constants import (
     KEGG_COMPOUND_NODE_ATTRS,
     KEGG_COMPOUND_EDGE_ATTRS,
     KEGG_COMPOUND_EDGE_LABEL,
+    KEGG_COMPOUND_NODE_MAIN_LABEL,
     LITERATURE_DISEASE_COL,
     LITERATURE_DISEASE_EDGE_ATTRS,
     LITERATURE_DISEASE_NODE_ATTRS,
@@ -416,7 +417,6 @@ def add_kegg_gene_pathway_subgraph(g, gene_node_label, annot_list):
             annot_node_attrs["name"] = annot["pathway_label"]
             annot_node_attrs["id"] = annot["pathway_id"]
             annot_node_attrs["gene_count"] = annot["gene_count"]
-            annot_node_attrs["compounds"] = annot["compounds"]
 
             g.add_node(annot_node_label, attr_dict=annot_node_attrs)
 
@@ -437,6 +437,11 @@ def add_kegg_gene_pathway_subgraph(g, gene_node_label, annot_list):
                     annot_node_label,
                     label=GENE_PATHWAY_EDGE_LABEL,
                     attr_dict=edge_attrs,
+                )
+
+            if annot["compounds"]:
+                add_kegg_compounds_subgraph(
+                    g, annot_node_label, annot[KEGG_COMPOUND_NODE_MAIN_LABEL]
                 )
 
     return g
@@ -489,7 +494,7 @@ def process_kegg_pathway_compound(g, kegg_pathway_compound):
     :param kegg_pathway_compound: the input DataFrame containing pathway-compound relationships.
     """
     for _i, row in kegg_pathway_compound.iterrows():
-        pathway_node_label = row["KEGG_identifier"].replace("_", ":")
+        pathway_node_label = row["identifier"].replace("_", ":")
         compounds_list = json.loads(json.dumps(row[KEGG_COL]))
 
         if isinstance(compounds_list, float):
@@ -1023,6 +1028,7 @@ def normalize_edge_attributes(g):
 def build_networkx_graph(
     combined_df: pd.DataFrame,
     disease_compound=None,
+    pathway_compound=None,
 ) -> nx.MultiDiGraph:
     """Construct a NetWorkX graph from a Pandas DataFrame of genes and their multi-source annotations.
 
@@ -1059,6 +1065,9 @@ def build_networkx_graph(
 
     if disease_compound is not None:
         process_disease_compound(g, disease_compound)
+
+    if pathway_compound is not None:
+        process_kegg_pathway_compound(g, pathway_compound)
 
     normalize_node_attributes(g)
     normalize_edge_attributes(g)
