@@ -148,7 +148,7 @@ def get_pathway_info(row):
         pathway_info = get_compound_genes(pathway_info, results_entry)
         pathways.append(pathway_info)
 
-    kegg_dict["pathways"] = json.dumps(pathways if pathways else [{'pathway_id': np.nan, 'pathway_label': np.nan, 'gene_count': np.nan, 'compounds': np.nan}])
+    kegg_dict["pathways"] = pathways if pathways else [{'pathway_id': np.nan, 'pathway_label': np.nan, 'gene_count': np.nan, 'compounds': np.nan}]
     return kegg_dict
     
 

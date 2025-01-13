@@ -409,40 +409,38 @@ def add_kegg_gene_pathway_subgraph(g, gene_node_label, annot_list):
         if pd.isna(annot["pathway_label"]):
             continue
 
-    for annot in annot_list:
-        if not pd.isna(annot["pathway_label"]):
-            annot_node_label = annot[PATHWAY_NODE_MAIN_LABEL]
-            annot_node_attrs = PATHWAY_NODE_ATTRS.copy()
-            annot_node_attrs["source"] = KEGG
-            annot_node_attrs["name"] = annot["pathway_label"]
-            annot_node_attrs["id"] = annot["pathway_id"]
-            annot_node_attrs["gene_count"] = annot["gene_count"]
+        annot_node_label = annot[PATHWAY_NODE_MAIN_LABEL]
+        annot_node_attrs = PATHWAY_NODE_ATTRS.copy()
+        annot_node_attrs["datasource"] = KEGG
+        annot_node_attrs["name"] = annot["pathway_label"]
+        annot_node_attrs["id"] = annot["pathway_id"]
+        annot_node_attrs["gene_count"] = annot["gene_count"]
 
-            g.add_node(annot_node_label, attr_dict=annot_node_attrs)
+        g.add_node(annot_node_label, attr_dict=annot_node_attrs)
 
-            edge_attrs = GENE_PATHWAY_EDGE_ATTRS.copy()
-            edge_attrs["source"] = KEGG
+        edge_attrs = GENE_PATHWAY_EDGE_ATTRS.copy()
+        edge_attrs["datasource"] = KEGG
 
-            edge_hash = hash(frozenset(edge_attrs.items()))
-            edge_attrs["edge_hash"] = edge_hash
-            edge_data = g.get_edge_data(gene_node_label, annot_node_label)
-            edge_data = {} if edge_data is None else edge_data
-            node_exists = [
-                x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash
-            ]
+        edge_hash = hash(frozenset(edge_attrs.items()))
+        edge_attrs["edge_hash"] = edge_hash
+        edge_data = g.get_edge_data(gene_node_label, annot_node_label)
+        edge_data = {} if edge_data is None else edge_data
+        node_exists = [
+            x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash
+        ]
 
-            if len(node_exists) == 0:
-                g.add_edge(
-                    gene_node_label,
-                    annot_node_label,
-                    label=GENE_PATHWAY_EDGE_LABEL,
-                    attr_dict=edge_attrs,
-                )
+        if len(node_exists) == 0:
+            g.add_edge(
+                gene_node_label,
+                annot_node_label,
+                label=GENE_PATHWAY_EDGE_LABEL,
+                attr_dict=edge_attrs,
+            )
 
-            if annot["compounds"]:
-                add_kegg_compounds_subgraph(
-                    g, annot_node_label, annot[KEGG_COMPOUND_NODE_MAIN_LABEL]
-                )
+        if annot["compounds"]:
+            add_kegg_compounds_subgraph(
+                g, annot_node_label, annot[KEGG_COMPOUND_NODE_MAIN_LABEL]
+            )
 
     return g
 
