@@ -141,6 +141,7 @@ class BDFGraph(Graph):
             return
         disease_data = self.collect_disease_data(row)
         # New methods (e.g., new node types) can be called here
+        # self.process_nodetype_data(row.get(datatype_col))
         self.process_ppi_data(row.get(STRING_PPI_COL), gene_node)
         protein_nodes = list(self.objects(gene_node, URIRef(PREDICATES["translation_of"])))
         self.process_disease_data(disease_data, id_number, source_idx, gene_node)
