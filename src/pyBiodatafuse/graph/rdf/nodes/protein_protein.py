@@ -24,8 +24,6 @@ def add_ppi_data(g: Graph, gene_node: URIRef, entry: dict, base_uri: str, new_ur
     score = entry.get("score", None)
     uniprot = entry.get("Uniprot-TrEMBL", None)
     uniprot_link = entry.get("Uniprot-TrEMBL_link", None)
-    print("Link", entry.get("Uniprot-TrEMBL_link", None))
-    print("Prot", entry.get("Uniprot-TrEMBL", None))
     if score:
         score = float(score)
         # Nodes

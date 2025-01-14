@@ -132,7 +132,6 @@ def _get_ppi_data(gene_ids: list, species) -> pd.DataFrame:
         response = requests.post(
             f"{STRING_ENDPOINT}/json/network", data=params, timeout=TIMEOUT
         ).json()
-        print(response)
         return pd.DataFrame(response)
     except RequestException as e:
         logger.error("Error getting PPI data: %s", e)
@@ -228,7 +227,6 @@ def get_ppi(bridgedb_df: pd.DataFrame, species: str = "human"):
     ensp_ids = set(network_df['stringId_A'].str.split('.').str[1]) | set(network_df['stringId_B'].str.split('.').str[1])
     # Get UniProt mapping
     uniprot_map = ensp_to_uniprot(list(ensp_ids))
-    print(uniprot_map)
     # Add 'Uniprot-TrEMBL' and 'Uniprot-TrEMBL_link' keys to each element in data_df[STRING_PPI_COL]
     data_df[STRING_PPI_COL] = data_df[STRING_PPI_COL].apply(
         lambda lst: (
@@ -273,7 +271,6 @@ def ensp_to_uniprot(ensp_ids):
         status_url = f"https://rest.uniprot.org/idmapping/status/{job_id}"
         while True:
             try:
-                print(status_url)
                 status_response = requests.get(status_url)
                 status_response.raise_for_status()
                 status_data = status_response.json()
@@ -282,10 +279,10 @@ def ensp_to_uniprot(ensp_ids):
                 else:
                     sleep(10)
             except requests.HTTPError as e:
-                print(f"HTTP error occurred: {e}")
+                logger.error("HTTP error occurred: %s", e)
                 break
             except Exception as e:
-                print(f"An unexpected error occurred: {e}")
+                logger.error("An unexpected error occurred: %s", e)
                 break
 
         # Retrieve the results
@@ -301,6 +298,6 @@ def ensp_to_uniprot(ensp_ids):
             ensp_to_uniprot_map[ensp_id] = uniprot_id
 
     except Exception as e:
-        print(f"Error during ID mapping: {e}")
+        logger.error("Error during ID mapping: %s", e)
 
     return ensp_to_uniprot_map
