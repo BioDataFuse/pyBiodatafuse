@@ -255,7 +255,13 @@ OUTCOME = "active|inactive"
 INCHI = "InChI"
 
 # STRING
-STRING_OUTPUT_DICT = {"stringdb_link_to": str, STRING_GENE_INPUT_ID: str, "score": float}
+STRING_OUTPUT_DICT = {
+    "stringdb_link_to": str,
+    STRING_GENE_INPUT_ID: str,
+    "score": float,
+    "Uniprot-TrEMBL": str,
+    "Uniprot-TrEMBL_link": str
+}
 
 
 """ Node and edge main lable and attributes for each data source """
