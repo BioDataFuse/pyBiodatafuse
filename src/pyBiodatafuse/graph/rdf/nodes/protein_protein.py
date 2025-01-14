@@ -18,8 +18,8 @@ def add_ppi_data(g: Graph, gene_node: URIRef, entry: dict, base_uri: str, new_ur
     :param new_uris: dictionary with project node URIs
     :return: a ppi URIRef node
     """
-    gene_link = entry.get("Uniprot-TrEMBL_link", None)
-    gene_link_node =  URIRef(BASE_URLS_DBS["uniprot"] + gene_link)
+    gene_link = entry.get("stringdb_link_to", None)
+    gene_link_node = URIRef(BASE_URLS_DBS["uniprot"] + gene_link)
     # ensembl = entry.get("Ensembl", None).split(":")[1]
     score = entry.get("score", None)
     uniprot = entry.get("Uniprot-TrEMBL", None)

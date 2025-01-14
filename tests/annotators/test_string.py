@@ -52,6 +52,14 @@ class TestString(unittest.TestCase):
                         "taxonName": "Homo sapiens",
                         "preferredName": "CHRNA1",
                     },
+                    {
+                        "queryIndex": 2,
+                        "queryItem": "ENSG00000172339",
+                        "stringId": "9606.ENSP00000359224",
+                        "ncbiTaxonId": 9606,
+                        "taxonName": "Homo sapiens",
+                        "preferredName": "ALG14",
+                    },
                 ]
             )
         )
@@ -109,21 +117,40 @@ class TestString(unittest.TestCase):
                 [
                     {
                         "stringdb_link_to": "CHRNA1",
-                        "Ensembl": "Ensembl:ENSP00000261007",
-                        "Ensembl_link":"ENSP00000359224",
+                        "Ensembl": "ENSP00000261007",
                         "score": 0.543,
-                        "Uniprot-TrEMBL": "ALG14",
-                        "Uniprot-TrEMBL_link": "Q96F25"
+                        "Ensembl_link": "ENSP00000359224",
+                        "Uniprot-TrEMBL": "P02708",
+                        "Uniprot-TrEMBL_link": "Q96F25",
                     },
                     {
                         "stringdb_link_to": "ALG2",
-                        "Ensembl": "Ensembl:ENSP00000417764",
-                        "Ensembl_link":"ENSP00000359224",
+                        "Ensembl": "ENSP00000417764",
                         "score": 0.633,
-                        "Uniprot-TrEMBL": "ALG14",
-                        "Uniprot-TrEMBL_link": "Q96F25"
-
+                        "Ensembl_link": "ENSP00000359224",
+                        "Uniprot-TrEMBL": "Q9H553",
+                        "Uniprot-TrEMBL_link": "Q96F25",
                     },
+                ],
+                [
+                    {
+                        "stringdb_link_to": "ALG14",
+                        "Ensembl": "ENSP00000359224",
+                        "score": 0.633,
+                        "Ensembl_link": "ENSP00000417764",
+                        "Uniprot-TrEMBL": "Q96F25",
+                        "Uniprot-TrEMBL_link": "Q9H553",
+                    }
+                ],
+                [
+                    {
+                        "stringdb_link_to": "ALG14",
+                        "Ensembl": "ENSP00000359224",
+                        "score": 0.543,
+                        "Ensembl_link": "ENSP00000261007",
+                        "Uniprot-TrEMBL": "Q96F25",
+                        "Uniprot-TrEMBL_link": "P02708",
+                    }
                 ],
             ]
         )

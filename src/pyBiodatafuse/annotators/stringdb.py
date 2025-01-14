@@ -7,13 +7,12 @@ import datetime
 import logging
 import warnings
 import traceback
-from time import time
+from time import time, sleep
 
 import numpy as np
 import pandas as pd
 import requests
 from requests.exceptions import RequestException
-from biomart import BiomartServer
 
 from pyBiodatafuse.constants import (
     NCBI_ENDPOINT,
@@ -80,8 +79,6 @@ def _format_data(row, string_ids_df, network_df):
                     STRING_GENE_INPUT_ID: row_arr["stringId_B"].split(".")[1],
                     "score": row_arr["score"],
                     STRING_GENE_LINK_ID: row_arr["stringId_A"].split(".")[1],
-                            "score": row_arr["score"],
-                    # "Uniprot-TrEMBL": row_arr["preferredName_A"]
                 }
             )
             target_links_set.add(row_arr["preferredName_B"])
@@ -96,8 +93,6 @@ def _format_data(row, string_ids_df, network_df):
                     STRING_GENE_INPUT_ID: row_arr["stringId_A"].split(".")[1],
                     "score": row_arr["score"],
                     STRING_GENE_LINK_ID: row_arr["stringId_B"].split(".")[1],
-                            "score": row_arr["score"],
-                    # "Uniprot-TrEMBL": row_arr["preferredName_B"],
                 }
             )
             target_links_set.add(row_arr["preferredName_A"])
@@ -118,6 +113,7 @@ def get_string_ids(gene_list: list, species):
         results = requests.post(
             f"{STRING_ENDPOINT}/json/get_string_ids", data=params, timeout=TIMEOUT
         ).json()
+        print(results)
         return results
     except RequestException as e:
         logger.error("Error getting STRING IDs: %s", e)
@@ -136,6 +132,7 @@ def _get_ppi_data(gene_ids: list, species) -> pd.DataFrame:
         response = requests.post(
             f"{STRING_ENDPOINT}/json/network", data=params, timeout=TIMEOUT
         ).json()
+        print(response)
         return pd.DataFrame(response)
     except RequestException as e:
         logger.error("Error getting PPI data: %s", e)
@@ -250,48 +247,10 @@ def get_ppi(bridgedb_df: pd.DataFrame, species: str = "human"):
     )
     return data_df, string_metadata
 
-# TODO replace with bridgedb call when linkset is implemented there
-#def ensp_to_uniprot(ensp_ids):
-#    """
-#    Retrieve UniProt IDs from Ensembl protein IDs (ENSP).
-#    :param ensp_ids: List of Ensembl protein IDs (ENSP)
-#    :return: Dictionary mapping ENSP IDs to UniProt IDs
-#    """
-#    print(ensp_ids)
-#    ensp_to_uniprot_map = {}
-#    try:
-#        # Connect to the Biomart server
-#        server = BiomartServer("http://www.ensembl.org/biomart")
-#        hsapiens_mart = server.datasets["hsapiens_gene_ensembl"]
-#
-#        # Query the server
-#        response = hsapiens_mart.search(
-#            {
-#                "filters": {"ensembl_peptide_id": ensp_ids},
-#                "attributes": ["ensembl_peptide_id", "uniprotswissprot"],
-#            }
-#        )
-#        print(response.text)
-#        # Process the response
-#        for line in response.iter_lines():
-#            try:
-#                decoded_line = line.decode("utf-8").strip().split("\t")
-#                if "\t" in line.decode("utf-8") and "Service unavailable" not in decoded_line:
-#                    ensp_id = decoded_line[0]
-#                    uniprot_id = decoded_line[1] if len(decoded_line) > 1 else None
-#                    ensp_id = f"Ensembl:{ensp_id}"
-#                    ensp_to_uniprot_map[ensp_id] = uniprot_id
-#            except Exception as e:
-#                logger.warning("Error processing line from Biomart response: %s \n \%s #\nresponse body: %s", decoded_line, e, response.text)
-#    except Exception as e:
-#        logger.warning("Error querying Biomart\n%s\nTraceback:\n%s", e, traceback.format_exc())
-#        return ensp_to_uniprot_map
-#
-#    return ensp_to_uniprot_map
 
 def ensp_to_uniprot(ensp_ids):
-    """
-    Retrieve UniProt IDs from Ensembl protein IDs (ENSP).
+    """Retrieve UniProt IDs from Ensembl protein IDs (ENSP).
+
     :param ensp_ids: List of Ensembl protein IDs (ENSP)
     :return: Dictionary mapping ENSP IDs to UniProt IDs
     """
@@ -311,8 +270,6 @@ def ensp_to_uniprot(ensp_ids):
         job_id = response.json()["jobId"]
 
         # Check the status of the job
-
-        # Check the status of the job
         status_url = f"https://rest.uniprot.org/idmapping/status/{job_id}"
         while True:
             try:
@@ -321,9 +278,9 @@ def ensp_to_uniprot(ensp_ids):
                 status_response.raise_for_status()
                 status_data = status_response.json()
                 if status_data.get("results"):
-                    break  # Exit loop if the job is finished 
+                    break  # Exit loop if the job is finished
                 else:
-                    time.sleep(10)
+                    sleep(10)
             except requests.HTTPError as e:
                 print(f"HTTP error occurred: {e}")
                 break
