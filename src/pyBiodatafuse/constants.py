@@ -610,6 +610,7 @@ DATA_SOURCES = {
     PUBCHEM: "https://pubchem.ncbi.nlm.nih.gov/",
     WIKIDATA: "https://wikidata.org",
     OPENTARGETS_REACTOME: "https://www.opentargets.org/",
+    AOPWIKIRDF: "https://aopwiki.rdf.bigcat-bioinformatics.org",
 }
 
 DISEASE_IDENTIFIER_TYPES = [
@@ -643,4 +644,22 @@ NAMESPACE_SHAPES = {
     "https://reactome.org/content/detail/": "reactome",
     "https://www.uniprot.org/uniprotkb/": "uniprot",
     "http://identifiers.org/ensembl#": "ensembl",
+}
+
+AOPWIKI_LIFESTAGE_MAPPINGS = {
+    "All life stages": "",
+    "Adult": "",
+    "Juvenile": "",
+    "Development": "",
+    "Birth to < 1 month": "",
+    "Not Otherwise Specified": "",
+    "Adults": "",
+    "Adult, reproductively mature": "",
+    "During development and at adulthood": "",
+    "Old Age": "",
+    "Embryo": "",
+    "During brain development": "",
+    "During brain development, adulthood and aging": "",
+    "Foetal": "",
+    "Larvae": "",
 }

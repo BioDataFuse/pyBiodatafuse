@@ -1,0 +1,32 @@
+SELECT ?aop ?aopTitle ?casId ?chemicalName ?ao ?aoLabel ?lifeStage ?biologicalProcess  ?taxon ?ensembl
+WHERE {
+    VALUES ?biologicalProcess { ${processes} }
+    ?aop a aopo:AdverseOutcomePathway;
+             nci:C54571 ?stressor;
+             dc:title ?aopTitle;
+             aopo:has_adverse_outcome ?ao.
+             
+    ?ao rdfs:label ?aoLabel;
+            aopo:LifeStageContext ?lifeStage.
+  	OPTIONAL{
+    	?ao edam:data_1025 ?object.
+  		?object skos:exactMatch ?id.
+    	?id a edam:data_1033; 
+              edam:data_1033 ?ensembl.
+	}
+  
+    OPTIONAL { 
+            ?ao <http://purl.obolibrary.org/obo/GO_0008150> ?biologicalProcess.
+            FILTER(STRSTARTS(STR(?biologicalProcess), "http://purl.obolibrary.org/obo/GO"))
+    }
+
+    OPTIONAL {
+        ?ao ncbitaxon:131567 ?taxon.
+            FILTER(STRSTARTS(STR(?taxon), "http://purl.bioontology.org/ontology/NCBITAXON/"))
+    }
+
+    ?stressor aopo:has_chemical_entity ?chemical.
+    ?chemical cheminf:000446 ?casId;
+                     dc:title ?chemicalName.
+}
+
