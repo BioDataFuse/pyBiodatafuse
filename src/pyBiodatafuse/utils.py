@@ -136,11 +136,11 @@ def combine_sources(bridgedb_df: pd.DataFrame, df_list: List[pd.DataFrame]) -> p
 def combine_with_homologs(df: pd.DataFrame, homolog_dfs: list) -> pd.DataFrame:
     """
     Merge a DataFrame with a list of homolog DataFrames on `Ensembl_homologs`,
-    keeping only the last column from each homolog DataFrame and specific columns from `df1`.
+    keeping only the last column from each homolog DataFrame and specific columns from `df`.
 
     Parameters:
-    - df: An already combined df containing output of non-homolog annotators
-    - homolog_dfs: list of dataframes to be combined.
+    - df: An already combined df containing output of non-homolog annotators.
+    - homolog_dfs: List of homolog dataframes to be combined.
 
     Returns:
     - Merged DataFrame with only the required columns.
@@ -157,30 +157,31 @@ def combine_with_homologs(df: pd.DataFrame, homolog_dfs: list) -> pd.DataFrame:
     for homolog_df in homolog_dfs:
         # Get only the identifier and last column from the homolog DataFrame
         last_col = homolog_df.columns[-1]
-        temp_df = homolog_df[['identifier', last_col]]
+        temp_df = homolog_df[['identifier', last_col]].copy()
 
+        # Perform the merge
         merged_df = pd.merge(
             merged_df,
             temp_df,
             how='left',
             left_on='homolog',
-            right_on='identifier'
+            right_on='identifier',
+            suffixes=('', '_temp')  # Avoid default suffix conflicts
         )
 
-        if 'identifier_y' in merged_df.columns:
-            merged_df.drop(columns=['identifier_y'], inplace=True)
+        # Clean up the temporary 'identifier' column after merge
+        if 'identifier_temp' in merged_df.columns:
+            merged_df.drop(columns=['identifier_temp'], inplace=True)
 
-    if 'identifier_x' in merged_df.columns:
-        merged_df.rename(columns={'identifier_x': 'identifier'}, inplace=True)
-    if 'homolog' in merged_df.columns:
-        merged_df.drop(columns=['homolog'], inplace=True)
+    # Clean up duplicate columns
+    if 'identifier' in merged_df.columns:
+        merged_df = merged_df.loc[:, ~merged_df.columns.duplicated()]
 
     # Ensure that homolog column contains a nested dictionary
     merged_df['Ensembl_homologs'] = merged_df['Ensembl_homologs'].apply(
         lambda x: [{'homolog': x['homolog']}] if isinstance(x, dict) else x
     )
 
-    merged_df = merged_df.loc[:, ~merged_df.columns.duplicated()]
     return merged_df
 
 
