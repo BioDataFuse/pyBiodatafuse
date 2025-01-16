@@ -479,6 +479,7 @@ KEGG_COMPOUND_NODE_ATTRS = {
     "datasource": KEGG,
     "name": None,
     "id": None,
+    "labels": COMPOUND_NODE_LABELS,
 }
 KEGG_COMPOUND_NODE_MAIN_LABEL = "compounds"
 KEGG_COMPOUND_EDGE_LABEL = "contains"

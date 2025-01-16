@@ -461,6 +461,7 @@ def add_kegg_compounds_subgraph(g, pathway_node_label, compounds_list):
             compound_node_attrs = KEGG_COMPOUND_NODE_ATTRS.copy()
             compound_node_attrs["name"] = compound["name"]
             compound_node_attrs["id"] = compound["KEGG_identifier"]
+            compound_node_attrs["labels"] = compound["labels"]
 
             g.add_node(compound_node_label, attr_dict=compound_node_attrs)
 
