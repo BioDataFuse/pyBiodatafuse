@@ -461,7 +461,6 @@ def add_kegg_compounds_subgraph(g, pathway_node_label, compounds_list):
             compound_node_attrs = KEGG_COMPOUND_NODE_ATTRS.copy()
             compound_node_attrs["name"] = compound["name"]
             compound_node_attrs["id"] = compound["KEGG_identifier"]
-            compound_node_attrs["labels"] = compound["labels"]
 
             g.add_node(compound_node_label, attr_dict=compound_node_attrs)
 
@@ -995,6 +994,42 @@ def process_ppi(g, gene_node_label, row):
             if valid_ppi_list:
                 add_stringdb_ppi_subgraph(g, gene_node_label, valid_ppi_list)
 
+def process_homologs(g, combined_df, homolog_df_list, func_dict, dea_columns):
+    """Process homolog dataframes and combined df and add them to the graph.
+
+    :param g: the input graph to extend with gene nodes.
+    :param combined_df: dataframe without homolog information
+    :param homolog_df_list: list of dataframes from homolog queries.
+    :param func_dict: list of functions for node generation
+    """
+    func_dict_hl = {}
+
+    for homolog_df in homolog_df_list:
+        last_col = homolog_df.columns[-1]
+        for key, func in func_dict.items():
+            if last_col == key and last_col in combined_df.columns:
+                func_dict_hl[last_col] = func
+
+    # Process combined_df with functions from func_dict that are NOT in func_dict_hl
+    for _i, row in tqdm(combined_df.iterrows(), total=combined_df.shape[0], desc="Building graph"):
+        if pd.isna(row["identifier"]) or pd.isna(row["target"]):
+            continue
+        gene_node_label = add_gene_node(g, row, dea_columns)
+
+        # Filter out functions from func_dict_hl
+        func_dict_non_hl = {key: func for key, func in func_dict.items() if key not in func_dict_hl}
+        process_annotations(g, gene_node_label, row, func_dict_non_hl)  # Use only functions not in func_dict_hl
+        process_ppi(g, gene_node_label, row)
+
+    # Process the homolog dataframes using func_dict_hl
+    for homolog_df in homolog_df_list:
+        for _i, row in tqdm(homolog_df.iterrows(), total=homolog_df.shape[0]):
+            if pd.isna(row["identifier"]) or pd.isna(row["target"]):
+                continue
+            gene_node_label = add_gene_node(g, row, dea_columns)
+            process_annotations(g, gene_node_label, row, func_dict_hl)  # Use func_dict_hl for homolog dataframes
+            process_ppi(g, gene_node_label, row)
+
 
 def normalize_node_attributes(g):
     """Normalize node attributes by flattening the 'attr_dict'.
@@ -1028,6 +1063,7 @@ def build_networkx_graph(
     combined_df: pd.DataFrame,
     disease_compound=None,
     pathway_compound=None,
+    homolog_df_list=None,
 ) -> nx.MultiDiGraph:
     """Construct a NetWorkX graph from a Pandas DataFrame of genes and their multi-source annotations.
 
@@ -1055,12 +1091,16 @@ def build_networkx_graph(
         ENSEMBL_HOMOLOG_COL: add_ensembl_homolog_subgraph,
     }
 
-    for _i, row in tqdm(combined_df.iterrows(), total=combined_df.shape[0], desc="Building graph"):
-        if pd.isna(row["identifier"]) or pd.isna(row["target"]):
-            continue
-        gene_node_label = add_gene_node(g, row, dea_columns)
-        process_annotations(g, gene_node_label, row, func_dict)
-        process_ppi(g, gene_node_label, row)
+    if homolog_df_list is not None:
+        process_homologs(g, combined_df, homolog_df_list, func_dict, dea_columns)
+
+    if homolog_df_list is None:
+        for _i, row in tqdm(combined_df.iterrows(), total=combined_df.shape[0], desc="Building graph"):
+            if pd.isna(row["identifier"]) or pd.isna(row["target"]):
+                continue
+            gene_node_label = add_gene_node(g, row, dea_columns)
+            process_annotations(g, gene_node_label, row, func_dict)
+            process_ppi(g, gene_node_label, row)
 
     if disease_compound is not None:
         process_disease_compound(g, disease_compound)
@@ -1072,6 +1112,7 @@ def build_networkx_graph(
     normalize_edge_attributes(g)
 
     return g
+
 
 
 def save_graph(
