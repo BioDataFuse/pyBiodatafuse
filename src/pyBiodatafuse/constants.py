@@ -16,6 +16,7 @@ STRING_ENDPOINT = "https://string-db.org/api"
 UNIPROT_ENDPOINT = "https://rest.uniprot.org"
 WIKIDATA_ENDPOINT = "https://query-main.wikidata.org/sparql"
 WIKIPATHWAYS_ENDPOINT = "https://sparql.wikipathways.org/sparql"
+AOPWIKI_ENDPOINT = "https://aopwiki.rdf.bigcat-bioinformatics.org/sparql/"
 
 # Data sources
 BRIDGEDB = "BridgeDB"
@@ -29,6 +30,7 @@ STRING = "StringDB"
 WIKIDATA = "Wikidata"
 WIKIPATHWAYS = "WikiPathways"
 OPENTARGETS_REACTOME = "OpenTargets_reactome"
+AOPWIKIRDF = "AOP Wiki RDF"
 
 # DataFrame Columns
 
@@ -67,6 +69,7 @@ STRING_GENE_INPUT_ID = "Ensembl"
 WIKIDATA_GENE_INPUT_ID = "NCBI Gene"
 WIKIPATHWAYS_GENE_INPUT_ID = "NCBI Gene"
 PATENT_INPUT_ID = "PubChem Compound"
+AOPWIKI_GENE_INPUT_ID = "Ensembl"
 
 # Output annotation for each data source
 # Bgee
@@ -120,6 +123,20 @@ DISGENET_DISEASE_OUTPUT_DICT = {
     "ei": float,
     "el": str,
 }
+
+# AOPWIKI
+AOPWIKI_OUTPUT_DICT = {
+        "aop": "str",
+        "aop_title": "str",
+        "cas_id": "str",
+        "chemical_name": "str",
+        "ao": "str",
+        "aoLabel": "str",
+        "lifeStage": "str",
+        "biological_process": "str",
+        "taxon": "str",
+        "target": "str",
+    }
 HPO = "HPO"
 NCI = "NCI"
 OMIM = "OMIM|MIM"

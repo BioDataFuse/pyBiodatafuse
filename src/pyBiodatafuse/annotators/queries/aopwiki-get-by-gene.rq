@@ -1,23 +1,23 @@
-SELECT ?aop ?aopTitle ?casId ?chemicalName ?ao ?aoLabel ?lifeStage ?biologicalProcess  ?taxon ?ensembl
+SELECT ?aop ?aop_title ?cas_id ?compound_name ?ao ?ao_label ?life_stage ?biological_process ?taxon (REPLACE(STR(?Ensembl), "https://identifiers.org/ensembl/", "") AS ?Ensembl)
 WHERE {
-   VALUES ?ensembl { ${genes} }
+    VALUES ?Ensembl { $genes }
     ?aop a aopo:AdverseOutcomePathway;
              nci:C54571 ?stressor;
-             dc:title ?aopTitle;
+             dc:title ?aop_title;
              aopo:has_adverse_outcome ?ao.
              
-    ?ao rdfs:label ?aoLabel;
-            aopo:LifeStageContext ?lifeStage.
+    ?ao rdfs:label ?ao_label;
+            aopo:LifeStageContext ?life_stage.
   	OPTIONAL{
     	?ao edam:data_1025 ?object.
   		?object skos:exactMatch ?id.
     	?id a edam:data_1033; 
-              edam:data_1033 ?ensembl.
+              edam:data_1033 ?Ensembl.
 	}
   
     OPTIONAL { 
-            ?ao <http://purl.obolibrary.org/obo/GO_0008150> ?biologicalProcess.
-            FILTER(STRSTARTS(STR(?biologicalProcess), "http://purl.obolibrary.org/obo/GO"))
+            ?ao <http://purl.obolibrary.org/obo/GO_0008150> ?biological_process.
+            FILTER(STRSTARTS(STR(?biological_process), "http://purl.obolibrary.org/obo/GO"))
     }
 
     OPTIONAL {
@@ -26,6 +26,6 @@ WHERE {
     }
 
     ?stressor aopo:has_chemical_entity ?chemical.
-    ?chemical cheminf:000446 ?casId;
-                     dc:title ?chemicalName.
+    ?chemical cheminf:000446 ?cas_id;
+                     dc:title ?compound_name.
 }

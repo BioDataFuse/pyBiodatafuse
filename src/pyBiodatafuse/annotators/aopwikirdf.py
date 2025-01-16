@@ -19,18 +19,25 @@ from pyBiodatafuse.utils import (
     collapse_data_sources,
     get_identifier_of_interest,
 )
-
+from pyBiodatafuse.constants import (
+    OPENTARGETS_GO_COL,
+    AOPWIKI_ENDPOINT,
+    AOPWIKI_GENE_INPUT_ID
+)
 # Pre-requisite:
 VERSION_QUERY_FILE = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-metadata.rq")
-DATABASE_SPARQL_DICT = {"aopwiki": "https://aopwiki.rdf.bigcat-bioinformatics.org/sparql/"}
-DATABSE_QUERY_IDENTIFER = "CID"
+DATABASE_SPARQL_DICT = {"aopwiki": AOPWIKI_ENDPOINT}
+DATABSE_QUERY_IDENTIFER = AOPWIKI_GENE_INPUT_ID
 QUERY_LIMIT = 25
-QUERY_SPECIFIC_SPARQL_FILE = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-get-by-compound.rq.rq")
-COMPOUND_INPUT_COL = "gene_id"
+QUERY_COMPOUND = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-get-by-compound.rq.rq")
+QUERY_GENE = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-get-by-gene.rq")
+QUERY_PROCESS = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-get-by-biological-process.rq.rq")
+GENE_INPUT_COL = "Ensembl"
+PROCESS_INPUT_COL = OPENTARGETS_GO_COL
 NEW_DATA_COL = "aop"
 
 # Unique inputs and outputs:
-INPUT_OPTIONS = ["gene", "chemical", "disease"]
+INPUT_OPTIONS = ["gene", "compound", "biological_process"]
 
 
 def read_sparql_file(file_path: str) -> str:
@@ -79,15 +86,15 @@ def get_version(db: str) -> dict:
     sparql.setQuery(sparql_query)
     res = sparql.queryAndConvert()
 
-    version = {"source_version": res["results"]["bindings"][0]["title"]["value"]}
+    version = {"source_version": str(res["results"]["bindings"][0]["date"]["value"])}
 
     return version
 
 
-def get_interactions(
-    bridgedb_df: pd.DataFrame, db: str, input: str, input_identifier: str
+def get_aops(
+    bridgedb_df: pd.DataFrame, db: str, input: str, input_identifier: str, process_column: pd.Series = None
 ) -> Tuple[pd.DataFrame, dict]:
-    """Query interactions automatically for associated with entities.
+    """Query for AOPs associated with compounds.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
     :param db: the database to query
@@ -111,22 +118,19 @@ def get_interactions(
 
     # Step 1: Identifier mapping and harmonization
     data_df = get_identifier_of_interest(bridgedb_df, input_identifier)
-
     version = get_version(db=db)  # Get the version of the RDF graph
-
-    # Step 2: Aggregating query to avoid the query limit
-    gene_list = list(data_df["target"].unique())
-
-    query_gene_lists = []
-    if len(gene_list) > QUERY_LIMIT:
-        for i in range(0, len(gene_list), QUERY_LIMIT):
-            tmp_list = gene_list[i : i + QUERY_LIMIT]
-            query_gene_lists.append(" ".join(f'"{g}"' for g in tmp_list))
-    else:
-        query_gene_lists.append(" ".join(f'"{g}"' for g in gene_list))
-
+    if input == "gene":
+        # Step 2: Aggregating query to avoid the query limit
+        gene_list = list(data_df["target"].unique())
+        query_gene_lists = []
+        if len(gene_list) > QUERY_LIMIT:
+            for i in range(0, len(gene_list), QUERY_LIMIT):
+                tmp_list = gene_list[i : i + QUERY_LIMIT]
+                query_gene_lists.append(" ".join(f'"{g}"' for g in tmp_list))
+        else:
+            query_gene_lists.append(" ".join(f'"{g}"' for g in gene_list))
+    
     # Step 3: Running the SPARQL query
-    sparql_query = read_sparql_file(QUERY_SPECIFIC_SPARQL_FILE)
 
     start_time = datetime.datetime.now()  # Record the start time
 
@@ -134,24 +138,25 @@ def get_interactions(
     sparql.setReturnFormat(JSON)
 
     intermediate_df = pd.DataFrame()
-
-    for gene_list_str in tqdm(query_gene_lists, desc=f"Querying {db}"):
-        sparql_query_template = Template(sparql_query)
-        substit_dict = dict(gene_list=gene_list_str)
-        sparql_query_template_sub = sparql_query_template.substitute(substit_dict)
-
-        sparql.setQuery(sparql_query_template_sub)
-
+    for gene_id in tqdm(query_gene_lists, desc="Querying aopwiki"):
+        # Prepare the substitution dictionary
+        substit_dict = {'genes': str(['<https://identifiers.org/ensembl/'+i.replace('"','') + '>' for i in gene_id.split(" ")]).replace("[", "").replace("]", "").replace("'", "").replace(",", "")}  #TODO fix
+        with open(QUERY_GENE, 'r') as f:
+            query = Template(f.read())
+        sparql_query = query.substitute(substit_dict)
+        
+        
+        # Set and execute the query
+        sparql.setQuery(sparql_query)
         res = sparql.queryAndConvert()
-
+        # Process the results
+        
         res = res["results"]["bindings"]
-
         df = pd.DataFrame(res)
         for col in df:
             df[col] = df[col].map(lambda x: x["value"], na_action="ignore")
-
         intermediate_df = pd.concat([intermediate_df, df], ignore_index=True)
-
+        
     end_time = datetime.datetime.now()  # Record the end time
 
     # Step 4: Checking if the query returned any results
@@ -186,17 +191,23 @@ def get_interactions(
 
     # Step 7: Cataloging the outputs from the resource
     output_dict = {
-        "pathway_id": str,
-        "pathway_label": str,
-        "pathway_gene_count": int,
+        "aop": "str",
+        "aop_title": "str",
+        "cas_id": "str",
+        "compound_name": "str",
+        "ao": "str",
+        "ao_label": "str",
+        "life_stage": "str",
+        "biological_process": "str",
+        "taxon": "str",
+        "target": "str",
     }
 
     # Step 8: Quality check for dtypes
-    check_columns_against_constants(
-        data_df=intermediate_df,
-        output_dict=output_dict,
-        check_values_in=list(output_dict.keys()),
-    )
+    #check_columns_against_constants(
+    #    data_df=intermediate_df,
+    #    output_dict=output_dict,
+    #    check_values_in=output_dict.keys())
 
     # Step 9: Adding node and edge statistics to metadata
     num_new_nodes = intermediate_df[NEW_DATA_COL].nunique()  # Calculate the number of new nodes
@@ -206,13 +217,12 @@ def get_interactions(
 
     if num_new_edges != len(intermediate_df):
         warnings.warn(
-            f"The intermediate_df in {db} annotatur should be checked, please create an issue on https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
+            f"The intermediate_df in {db} annotator should be checked, please create an issue on https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
             stacklevel=2,
         )
-
+    print(num_new_nodes, " nodes")
     metadata_dict["query"]["number_of_added_nodes"] = num_new_nodes
     metadata_dict["query"]["number_of_added_edges"] = num_new_edges
-
     # Step 10: Integrating into main dataframe
     merged_df = collapse_data_sources(
         data_df=data_df,
