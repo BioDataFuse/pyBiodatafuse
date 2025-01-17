@@ -179,8 +179,25 @@ def get_ppi(bridgedb_df: pd.DataFrame, species: str = "human"):
     stringdb_ids_df = pd.DataFrame(string_ids)
     stringdb_ids_df.queryIndex = stringdb_ids_df.queryIndex.astype(str)
 
+    # Chunk the string IDs into groups of 2000
+    unique_string_ids = list(stringdb_ids_df.stringId.unique())
+    all_network_dfs = []
+    chunk_size = 1500
+
     # Get the PPI data
-    network_df = _get_ppi_data(list(stringdb_ids_df.stringId.unique()), species_id)
+    for i in range(0, len(unique_string_ids), chunk_size):
+        chunk = unique_string_ids[i:i + chunk_size]
+        chunk_network_df = _get_ppi_data(chunk, species_id)
+        if not chunk_network_df.empty:
+            all_network_dfs.append(chunk_network_df)
+    
+    # Combine all chunked results
+    if all_network_dfs:
+        network_df = pd.concat(all_network_dfs, ignore_index=True)
+    else:
+        network_df = pd.DataFrame()
+                                   
+    # network_df = _get_ppi_data(list(stringdb_ids_df.stringId.unique()), species_id)
 
     # Record the end time
     end_time = datetime.datetime.now()
