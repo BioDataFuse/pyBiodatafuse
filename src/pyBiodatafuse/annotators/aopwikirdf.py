@@ -22,22 +22,25 @@ from pyBiodatafuse.utils import (
 from pyBiodatafuse.constants import (
     OPENTARGETS_GO_COL,
     AOPWIKI_ENDPOINT,
-    AOPWIKI_GENE_INPUT_ID
+    AOPWIKI_GENE_INPUT_ID,
+    AOPWIKI_GENE_OUTPUT_DICT,
+    AOPWIKI_COMPOUND_OUTPUT_DICT
 )
 # Pre-requisite:
 VERSION_QUERY_FILE = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-metadata.rq")
 DATABASE_SPARQL_DICT = {"aopwiki": AOPWIKI_ENDPOINT}
-DATABSE_QUERY_IDENTIFER = AOPWIKI_GENE_INPUT_ID
+DATABASE_QUERY_IDENTIFER_GENE = AOPWIKI_GENE_INPUT_ID
 QUERY_LIMIT = 25
 QUERY_COMPOUND = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-get-by-compound.rq.rq")
 QUERY_GENE = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-get-by-gene.rq")
-QUERY_PROCESS = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-get-by-biological-process.rq.rq")
+#QUERY_PROCESS = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-get-by-biological-process.rq.rq")
 GENE_INPUT_COL = "Ensembl"
-PROCESS_INPUT_COL = OPENTARGETS_GO_COL
-NEW_DATA_COL = "aop"
+COMPOUND_INPUT = list()
+#PROCESS_INPUT_COL = OPENTARGETS_GO_COL
+NEW_DATA_COL_GENE = "aop"
 
 # Unique inputs and outputs:
-INPUT_OPTIONS = ["gene", "compound", "biological_process"]
+INPUT_OPTIONS = ["gene", "compound",]  #"biological_process"]
 
 
 def read_sparql_file(file_path: str) -> str:
@@ -91,8 +94,8 @@ def get_version(db: str) -> dict:
     return version
 
 
-def get_aops(
-    bridgedb_df: pd.DataFrame, db: str, input: str, input_identifier: str, process_column: pd.Series = None
+def get_aops_from_gene(
+    bridgedb_df: pd.DataFrame, db: str, input: str, input_identifier: str
 ) -> Tuple[pd.DataFrame, dict]:
     """Query for AOPs associated with compounds.
 
@@ -182,7 +185,7 @@ def get_aops(
         "metadata": version,
         "query": {
             "size": len(gene_list),
-            "input_type": DATABSE_QUERY_IDENTIFER,
+            "input_type": DATABASE_QUERY_IDENTIFER_GENE,
             "time": time_elapsed,
             "date": current_date,
             "url": DATABASE_SPARQL_DICT[db],
@@ -190,18 +193,7 @@ def get_aops(
     }
 
     # Step 7: Cataloging the outputs from the resource
-    output_dict = {
-        "aop": "str",
-        "aop_title": "str",
-        "cas_id": "str",
-        "compound_name": "str",
-        "ao": "str",
-        "ao_label": "str",
-        "life_stage": "str",
-        "biological_process": "str",
-        "taxon": "str",
-        "target": "str",
-    }
+    output_dict = AOPWIKI_GENE_OUTPUT_DICT
 
     # Step 8: Quality check for dtypes
     #check_columns_against_constants(
@@ -210,8 +202,8 @@ def get_aops(
     #    check_values_in=output_dict.keys())
 
     # Step 9: Adding node and edge statistics to metadata
-    num_new_nodes = intermediate_df[NEW_DATA_COL].nunique()  # Calculate the number of new nodes
-    num_new_edges = intermediate_df.drop_duplicates(subset=["target", NEW_DATA_COL]).shape[
+    num_new_nodes = intermediate_df[NEW_DATA_COL_GENE].nunique()  # Calculate the number of new nodes
+    num_new_edges = intermediate_df.drop_duplicates(subset=["target", NEW_DATA_COL_GENE]).shape[
         0
     ]  # Calculate the number of new edges
 
@@ -234,3 +226,4 @@ def get_aops(
     )
 
     return merged_df, metadata_dict
+
