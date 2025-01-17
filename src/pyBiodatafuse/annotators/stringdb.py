@@ -68,34 +68,45 @@ def _format_data(row, string_ids_df, network_df):
     gene_ppi_links = []
     target_links_set = set()
 
-    for _, row_arr in network_df.iterrows():
-        if (
-            row_arr["preferredName_A"] == row["identifier"]
-            and row_arr["preferredName_B"] not in target_links_set
-        ):
-            gene_ppi_links.append(
-                {
-                    "stringdb_link_to": row_arr["preferredName_B"],
-                    STRING_GENE_INPUT_ID: row_arr["stringId_B"].split(".")[1],
-                    "score": row_arr["score"],
-                    STRING_GENE_LINK_ID: row_arr["stringId_A"].split(".")[1],
-                }
-            )
-            target_links_set.add(row_arr["preferredName_B"])
+    for _i, row_str in string_ids_df.iterrows():
+        for _i, row_arr in network_df.iterrows():
+            if (
+                row_arr["preferredName_A"] == row_str["preferredName"]
+                and row["identifier"] == row_str["queryItem"]
+            ):
+                for _i, row_str2 in string_ids_df.iterrows():
+                    if row_str2["preferredName"] == row_arr["preferredName_B"]:
+                        link = row_str2["queryItem"]
 
-        elif (
-            row_arr["preferredName_B"] == row["identifier"]
-            and row_arr["preferredName_A"] not in target_links_set
-        ):
-            gene_ppi_links.append(
-                {
-                    "stringdb_link_to": row_arr["preferredName_A"],
-                    STRING_GENE_INPUT_ID: row_arr["stringId_A"].split(".")[1],
-                    "score": row_arr["score"],
-                    STRING_GENE_LINK_ID: row_arr["stringId_B"].split(".")[1],
-                }
-            )
-            target_links_set.add(row_arr["preferredName_A"])
+                if row_arr["preferredName_B"] not in target_links_set:
+                    gene_ppi_links.append(
+                        {
+                            "stringdb_link_to": link,
+                            STRING_GENE_INPUT_ID: row_arr['stringId_B'].split('.')[1],
+                            "score": row_arr["score"],
+                            "Uniprot-TrEMBL": row_arr["preferredName_A"],
+                        }
+                    )
+                    target_links_set.add(row_arr["preferredName_B"])
+
+            elif (
+                row_arr["preferredName_B"] == row_str["preferredName"]
+                and row["identifier"] == row_str["queryItem"]
+            ):
+                for _i, row_str2 in string_ids_df.iterrows():
+                    if row_str2["preferredName"] == row_arr["preferredName_A"]:
+                        link = row_str2["queryItem"]
+
+                if row_arr["preferredName_A"] not in target_links_set:
+                    gene_ppi_links.append(
+                        {
+                            "stringdb_link_to": link,
+                            STRING_GENE_INPUT_ID: row_arr["stringId_A"].split(".")[1],
+                            "score": row_arr["score"],
+                            "Uniprot-TrEMBL": row_arr["preferredName_B"],
+                        }
+                    )
+                    target_links_set.add(row_arr["preferredName_A"])
 
     return gene_ppi_links
 
