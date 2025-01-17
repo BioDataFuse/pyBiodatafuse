@@ -113,7 +113,6 @@ def get_string_ids(gene_list: list, species):
         results = requests.post(
             f"{STRING_ENDPOINT}/json/get_string_ids", data=params, timeout=TIMEOUT
         ).json()
-        print(results)
         return results
     except RequestException as e:
         logger.error("Error getting STRING IDs: %s", e)
