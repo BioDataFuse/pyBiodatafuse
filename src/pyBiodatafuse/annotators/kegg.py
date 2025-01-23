@@ -1,28 +1,23 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""Python file for queriying StringDB (https://rest.kegg.jp/)."""
+"""Python file for queriying KEGG (https://rest.kegg.jp/)."""
 
 import datetime
+import json
 import logging
+import time
 import warnings
 
 import numpy as np
 import pandas as pd
 import requests
-import time
-import json
 
-from pyBiodatafuse.constants import (
-    KEGG,
-    KEGG_ENDPOINT,
-    KEGG_GENE_INPUT_ID,
-    KEGG_COL
-)
-
+from pyBiodatafuse.constants import KEGG, KEGG_COL, KEGG_ENDPOINT, KEGG_GENE_INPUT_ID
 from pyBiodatafuse.utils import check_columns_against_constants, get_identifier_of_interest
 
-def check_endpoint_kegg() -> dict:
+
+def check_endpoint_kegg() -> bool:
     """Check if the endpoint of the KEGG API is available.
 
     :returns: A True statement if the endpoint is available, else return False
@@ -35,8 +30,8 @@ def check_endpoint_kegg() -> dict:
         return False
 
 
-def check_version_kegg() -> dict:
-    """Check the current version of the KEGG databass
+def check_version_kegg() -> str:
+    """Check the current version of the KEGG database.
 
     :returns: a dictionary containing the version information
     """
@@ -46,10 +41,11 @@ def check_version_kegg() -> dict:
             release_version = line.split()[2]
             release_version = release_version.rstrip(",")
             return release_version
+        else:
+            release_version = "Error: Release version not found."
 
 
-
-def get_kegg_ids(row):
+def get_kegg_ids(row) -> dict:
     """Get the KEGG identifiers of the gene list.
 
     :param row: input_df row
@@ -58,11 +54,14 @@ def get_kegg_ids(row):
     results = requests.get(f"{KEGG_ENDPOINT}/conv/genes/ncbi-geneid:{row['target']}")
     kegg_id = results.text.split()
     if len(kegg_id) > 1:
-       return {"KEGG_id": kegg_id[1]}
+        return {"KEGG_id": kegg_id[1]}
+    else:
+        return {"KEGG_id": pd.nan}
 
 
 def get_compound_genes(pathway_info, results_entry):
     """Get compounds and gene counts from a pathway.
+
     :param pathway_info: Dictionary containing all information of the pathway
     :param results_entry: KGML file from which further information gets extracted
     :returns: Dictionary containing compounds and gene count
@@ -79,7 +78,7 @@ def get_compound_genes(pathway_info, results_entry):
         elif line.startswith("COMPOUND"):
             section = "COMPOUND"
         elif line.startswith("REFERENCE"):
-            section = None 
+            section = None
 
         if section == "GENE":
             parts = line.split()
@@ -89,22 +88,25 @@ def get_compound_genes(pathway_info, results_entry):
         elif section == "COMPOUND":
             parts = line.split()
             for part in parts:
-                if part.startswith("C") and part[1:].isdigit():  # KEGG compound identifiers start with C
+                if (
+                    part.startswith("C") and part[1:].isdigit()
+                ):  # KEGG compound identifiers start with C
                     current_compound["KEGG_identifier"] = part
-                    
+
                     # Initialize "name" to None in case it's not found
                     current_compound["name"] = None
-                    
+
                     # Query KEGG API for the compound details
-                    print("querying")
-                    results = requests.get(f"{KEGG_ENDPOINT}/get/{part}") 
-                    print("querying done")
-                    
+                    results = requests.get(f"{KEGG_ENDPOINT}/get/{part}")
+
                     # Parse the compound name
                     for line in results.text.splitlines():
                         if line.startswith("NAME"):
                             parts = line.split()
                             current_compound["name"] = parts[1] if len(parts) > 1 else None
+                            # Remove any trailing semicolons from the name
+                            if current_compound["name"]:
+                                current_compound["name"] = current_compound["name"].rstrip(";")
                             break
 
                     compounds.append(current_compound)
@@ -119,10 +121,9 @@ def get_compound_genes(pathway_info, results_entry):
     return pathway_info
 
 
-
 def get_pathway_info(row):
     """Get pathway information for the input genes.
-    
+
     :param row: input_df row
     :returns: Dictionary containing pathway IDs and labels.
     """
@@ -131,15 +132,27 @@ def get_pathway_info(row):
         # Return default structure with np.nan
         return {
             "KEGG_id": np.nan,
-            "pathways": [{'pathway_id': np.nan, 'pathway_label': np.nan, 'gene_count': np.nan, 'compounds': [{"KEGG_identifier": None, "name": None}]}]
+            "pathways": [
+                {
+                    "pathway_id": np.nan,
+                    "pathway_label": np.nan,
+                    "gene_count": np.nan,
+                    "compounds": [{"KEGG_identifier": None, "name": None}],
+                }
+            ],
         }
 
-    print("querying")
-    results = requests.get(f"{KEGG_ENDPOINT}/link/pathway/{kegg_dict.get('KEGG_id')}") 
-    print("querying done")
+    results = requests.get(f"{KEGG_ENDPOINT}/link/pathway/{kegg_dict.get('KEGG_id')}")
     if len(results.text) <= 1:
         # Return default structure with np.nan when no pathways are found
-        kegg_dict["pathways"] = [{'pathway_id': np.nan, 'pathway_label': np.nan, 'gene_count': np.nan, 'compounds': [{"KEGG_identifier": None, "name": None}]}]
+        kegg_dict["pathways"] = [
+            {
+                "pathway_id": np.nan,
+                "pathway_label": np.nan,
+                "gene_count": np.nan,
+                "compounds": [{"KEGG_identifier": None, "name": None}],
+            }
+        ]
         return kegg_dict
 
     pathways = []
@@ -156,16 +169,27 @@ def get_pathway_info(row):
         for line in results_entry.text.splitlines():
             if line.startswith("NAME"):
                 pathway_info["pathway_label"] = line.split("  ", 1)[1].strip()
-                break  
+                break
 
         pathway_info = get_compound_genes(pathway_info, results_entry)
         pathways.append(pathway_info)
 
-    kegg_dict["pathways"] = pathways if pathways else [{'pathway_id': np.nan, 'pathway_label': np.nan, 'gene_count': np.nan, 'compounds': [{"KEGG_identifier": None, "name": None}]}]
+    kegg_dict["pathways"] = (
+        pathways
+        if pathways
+        else [
+            {
+                "pathway_id": np.nan,
+                "pathway_label": np.nan,
+                "gene_count": np.nan,
+                "compounds": [{"KEGG_identifier": None, "name": None}],
+            }
+        ]
+    )
     return kegg_dict
-    
 
-def get_pathways(bridgedb_df):    
+
+def get_pathways(bridgedb_df):
     """Annotate genes with KEGG pathway information."""
     api_available = check_endpoint_kegg()
     if not api_available:
@@ -187,8 +211,8 @@ def get_pathways(bridgedb_df):
     # Get the links for the KEGG pathways
     data_df[KEGG_COL] = data_df.apply(lambda row: get_pathway_info(row), axis=1)
 
-    data_df['KEGG_pathways'] = data_df['KEGG_pathways'].apply(
-        lambda x: x['pathways'] if isinstance(x, dict) and 'pathways' in x else []
+    data_df["KEGG_pathways"] = data_df["KEGG_pathways"].apply(
+        lambda x: x["pathways"] if isinstance(x, dict) and "pathways" in x else []
     )
 
     # Record the end time
