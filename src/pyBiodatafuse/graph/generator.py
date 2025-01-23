@@ -27,10 +27,10 @@ from pyBiodatafuse.constants import (
     DISGENET_DISEASE_COL,
     DISGENET_DISEASE_NODE_ATTRS,
     DISGENET_EDGE_ATTRS,
-    ENSEMBL_HOMOLOG_MAIN_LABEL,
     ENSEMBL_HOMOLOG_COL,
     ENSEMBL_HOMOLOG_EDGE_ATTRS,
     ENSEMBL_HOMOLOG_EDGE_LABEL,
+    ENSEMBL_HOMOLOG_MAIN_LABEL,
     GENE_DISEASE_EDGE_LABEL,
     GENE_GO_EDGE_ATTRS,
     GENE_GO_EDGE_LABEL,
@@ -44,9 +44,9 @@ from pyBiodatafuse.constants import (
     GO_NODE_MAIN_LABEL,
     KEGG,
     KEGG_COL,
-    KEGG_COMPOUND_NODE_ATTRS,
     KEGG_COMPOUND_EDGE_ATTRS,
     KEGG_COMPOUND_EDGE_LABEL,
+    KEGG_COMPOUND_NODE_ATTRS,
     KEGG_COMPOUND_NODE_MAIN_LABEL,
     LITERATURE_DISEASE_COL,
     LITERATURE_DISEASE_EDGE_ATTRS,
@@ -397,6 +397,7 @@ def add_wikipathways_gene_pathway_subgraph(g, gene_node_label, annot_list):
 
     return g
 
+
 def add_kegg_gene_pathway_subgraph(g, gene_node_label, annot_list):
     """Construct part of the graph by linking the gene to pathways from KEGG.
 
@@ -425,9 +426,7 @@ def add_kegg_gene_pathway_subgraph(g, gene_node_label, annot_list):
         edge_attrs["edge_hash"] = edge_hash
         edge_data = g.get_edge_data(gene_node_label, annot_node_label)
         edge_data = {} if edge_data is None else edge_data
-        node_exists = [
-            x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash
-        ]
+        node_exists = [x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash]
 
         if len(node_exists) == 0:
             g.add_edge(
@@ -438,11 +437,10 @@ def add_kegg_gene_pathway_subgraph(g, gene_node_label, annot_list):
             )
 
         if annot["compounds"]:
-            add_kegg_compounds_subgraph(
-                g, annot_node_label, annot[KEGG_COMPOUND_NODE_MAIN_LABEL]
-            )
+            add_kegg_compounds_subgraph(g, annot_node_label, annot[KEGG_COMPOUND_NODE_MAIN_LABEL])
 
     return g
+
 
 def add_kegg_compounds_subgraph(g, pathway_node_label, compounds_list):
     """Construct part of the graph by linking the kegg compound to it's respective pathway.
@@ -484,6 +482,7 @@ def add_kegg_compounds_subgraph(g, pathway_node_label, compounds_list):
                 )
 
     return g
+
 
 def process_kegg_pathway_compound(g, kegg_pathway_compound):
     """Process pathway-compound relationships from kegg and add them to the graph.
@@ -891,6 +890,7 @@ def add_opentargets_disease_compound_subgraph(g, disease_node_label, annot_list)
 
     return g
 
+
 def add_ensembl_homolog_subgraph(g, gene_node_label, annot_list):
     """Construct part of the graph by linking the gene to genes.
 
@@ -988,19 +988,21 @@ def process_ppi(g, gene_node_label, row):
             ppi_list = json.loads(json.dumps(row[STRING_PPI_COL]))
         except (ValueError, TypeError):
             ppi_list = []
-        
+
         if isinstance(ppi_list, list) and len(ppi_list) > 0:
-            valid_ppi_list = [item for item in ppi_list if pd.notna(item.get("stringdb_link_to"))]     
+            valid_ppi_list = [item for item in ppi_list if pd.notna(item.get("stringdb_link_to"))]
             if valid_ppi_list:
                 add_stringdb_ppi_subgraph(g, gene_node_label, valid_ppi_list)
+
 
 def process_homologs(g, combined_df, homolog_df_list, func_dict, dea_columns):
     """Process homolog dataframes and combined df and add them to the graph.
 
     :param g: the input graph to extend with gene nodes.
-    :param combined_df: dataframe without homolog information
+    :param combined_df: dataframe without homolog information.
     :param homolog_df_list: list of dataframes from homolog queries.
-    :param func_dict: list of functions for node generation
+    :param func_dict: list of functions for node generation.
+    :param dea_columns: columns ending with _dea
     """
     func_dict_hl = {}
 
@@ -1018,7 +1020,9 @@ def process_homologs(g, combined_df, homolog_df_list, func_dict, dea_columns):
 
         # Filter out functions from func_dict_hl
         func_dict_non_hl = {key: func for key, func in func_dict.items() if key not in func_dict_hl}
-        process_annotations(g, gene_node_label, row, func_dict_non_hl)  # Use only functions not in func_dict_hl
+        process_annotations(
+            g, gene_node_label, row, func_dict_non_hl
+        )  # Use only functions not in func_dict_hl
         process_ppi(g, gene_node_label, row)
 
     # Process the homolog dataframes using func_dict_hl
@@ -1027,7 +1031,9 @@ def process_homologs(g, combined_df, homolog_df_list, func_dict, dea_columns):
             if pd.isna(row["identifier"]) or pd.isna(row["target"]):
                 continue
             gene_node_label = add_gene_node(g, row, dea_columns)
-            process_annotations(g, gene_node_label, row, func_dict_hl)  # Use func_dict_hl for homolog dataframes
+            process_annotations(
+                g, gene_node_label, row, func_dict_hl
+            )  # Use func_dict_hl for homolog dataframes
             process_ppi(g, gene_node_label, row)
 
 
@@ -1069,6 +1075,8 @@ def build_networkx_graph(
 
     :param combined_df: the input DataFrame to be converted into a graph.
     :param disease_compound: the input DataFrame containing disease-compound relationships.
+    :param pathway_compound: the input DataFrame containing pathway-compound relationships from KEGG.
+    :param homolog_df_list: a list of DataFrame generated by querying homologs.
     :returns: a NetworkX MultiDiGraph
     """
     g = nx.MultiDiGraph()
@@ -1095,7 +1103,9 @@ def build_networkx_graph(
         process_homologs(g, combined_df, homolog_df_list, func_dict, dea_columns)
 
     if homolog_df_list is None:
-        for _i, row in tqdm(combined_df.iterrows(), total=combined_df.shape[0], desc="Building graph"):
+        for _i, row in tqdm(
+            combined_df.iterrows(), total=combined_df.shape[0], desc="Building graph"
+        ):
             if pd.isna(row["identifier"]) or pd.isna(row["target"]):
                 continue
             gene_node_label = add_gene_node(g, row, dea_columns)
@@ -1112,7 +1122,6 @@ def build_networkx_graph(
     normalize_edge_attributes(g)
 
     return g
-
 
 
 def save_graph(

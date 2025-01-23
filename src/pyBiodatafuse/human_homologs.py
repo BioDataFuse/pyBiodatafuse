@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+"""Python file for queriying Ensembl to get human homologs for mouse genes."""
+
 import datetime
 import warnings
 
@@ -11,14 +13,14 @@ import requests
 from pyBiodatafuse.constants import (
     ENSEMBL,
     ENSEMBL_ENDPOINT,
+    ENSEMBL_GENE_INPUT_ID,
     ENSEMBL_HOMOLOG_COL,
     ENSEMBL_HOMOLOG_MAIN_LABEL,
-    ENSEMBL_GENE_INPUT_ID
 )
-
 from pyBiodatafuse.utils import get_identifier_of_interest
 
-def check_endpoint_ensembl() -> dict:
+
+def check_endpoint_ensembl() -> bool:
     """Check if the endpoint of the Ensembl API is available.
 
     :returns: A True statement if the endpoint is available, else return False
@@ -29,49 +31,53 @@ def check_endpoint_ensembl() -> dict:
         return True
     else:
         return False
-    
-def check_version_ensembl():
-    """Checks the current version of the REST API.
+
+
+def check_version_ensembl() -> str:
+    """Check the current version of the REST API.
 
     :returns: A True statement if the endpoint is available, else return False
     """
     response = requests.get(
-        f"{ENSEMBL_ENDPOINT}/info/rest",
-        headers={"Content-Type": "application/json"}
+        f"{ENSEMBL_ENDPOINT}/info/rest", headers={"Content-Type": "application/json"}
     )
     # Check if API is down
-    print(response.text)
     return response.text
 
-def get_human_homologs(row):
+
+def get_human_homologs(row) -> dict:
     """Retrieve human homologs for mouse genes using ensembl API.
-    
-    :param mouse_genes: list of gene ids.
+
+    :param row: row from input dataframe.
     :returns: dictionary mapping mouse genes to human homologs.
     """
-
     response = requests.get(
         f"{ENSEMBL_ENDPOINT}/homology/id/mouse/{row['target']}",
         headers={"Content-Type": "application/json"},
-        params={"target_species": "homo_sapiens"}
+        params={"target_species": "homo_sapiens"},
     )
-    
+
     if response.status_code == 200:
         data = response.json()
         for homology in data.get("data", [])[0].get("homologies", []):
             if homology["target"]["species"] == "homo_sapiens":
                 homolog = homology["target"]["id"]
                 return [{ENSEMBL_HOMOLOG_MAIN_LABEL: homolog}]
-    else:
-        return [{ENSEMBL_HOMOLOG_MAIN_LABEL: np.nan}]
+
+    return [{ENSEMBL_HOMOLOG_MAIN_LABEL: np.nan}]
 
 
 def get_homologs(bridgedb_df):
+    """Retrieve homologs for input DataFrame.
 
-
+    :param bridgedb_df: input dataframe.
+    :returns: dataframe including the human homologs as well as the metadata.
+    """
     api_available = check_endpoint_ensembl()
     if not api_available:
-        warnings.warn(f"{ENSEMBL} endpoint is not available. Unable to retrieve data.", stacklevel=2)
+        warnings.warn(
+            f"{ENSEMBL} endpoint is not available. Unable to retrieve data.", stacklevel=2
+        )
         return pd.DataFrame(), {}
 
     ensembl_version = check_version_ensembl()
