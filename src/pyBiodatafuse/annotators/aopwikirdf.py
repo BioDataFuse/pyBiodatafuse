@@ -138,12 +138,12 @@ def get_aops(
         # Prepare the substitution dictionary
         if input_type == "gene":
             substit_dict = {
-                'genes': ' '.join(f"<https://identifiers.org/ensembl/{target.strip('"')}>" for target in batch.split())
+                'genes': str(["<https://identifiers.org/ensembl/" + target.replace('"','') + '>' for target in batch.split(" ")]).replace("[", "").replace("]", "").replace("'", "").replace(",", "")
             }
             query_file = QUERY_GENE
         else:  # input_type == "compound"
             substit_dict = {
-                'compounds': ' '.join(f"<https://identifiers.org/pubchem.compound/{target.strip('"')}>" for target in batch.split())
+                'compounds': str(["<<https://identifiers.org/pubchem.compound/" + target.replace('"','') + '>' for target in batch.split(" ")]).replace("[", "").replace("]", "").replace("'", "").replace(",", "")
             }
             query_file = QUERY_COMPOUND
 
