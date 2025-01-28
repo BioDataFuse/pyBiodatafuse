@@ -125,7 +125,7 @@ DISGENET_DISEASE_OUTPUT_DICT = {
 }
 
 # AOPWIKI
-AOPWIKI_GENE_OUTPUT_DICT = {
+AOPWIKI_OUTPUT_DICT = {
         "aop": str,
         "aop_title": "str",
         "chemical": str,
@@ -139,21 +139,6 @@ AOPWIKI_GENE_OUTPUT_DICT = {
         "target": str,
         "pubchem_compound": str,
         "chembl_compound": str
-    }
-
-# AOPWIKI
-AOPWIKI_COMPOUND_OUTPUT_DICT = {
-        "aop": str,
-        "aop_title": "str",
-        "chemical": str,
-        "cas_id": str,
-        "compound_name": str,
-        "ao": str,
-        "ao_label": str,
-        "life_stage": str,
-        "biological_process": str,
-        "taxon": str,
-        "target": str,
     }
 
 HPO = "HPO"

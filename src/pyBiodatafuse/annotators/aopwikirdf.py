@@ -23,7 +23,7 @@ from pyBiodatafuse.constants import (
     OPENTARGETS_GO_COL,
     AOPWIKI_ENDPOINT,
     AOPWIKI_GENE_INPUT_ID,
-    AOPWIKI_GENE_OUTPUT_DICT,
+    AOPWIKI_OUTPUT_DICT,
     AOPWIKI_COMPOUND_OUTPUT_DICT
 )
 # Pre-requisite:
@@ -35,7 +35,7 @@ QUERY_COMPOUND = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-get
 QUERY_GENE = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-get-by-gene.rq")
 #QUERY_PROCESS = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-get-by-biological-process.rq.rq")
 GENE_INPUT_COL = "Ensembl"
-COMPOUND_INPUT = list()
+COMPOUND_INPUT_COL = "pubchem_compound"
 #PROCESS_INPUT_COL = OPENTARGETS_GO_COL
 NEW_DATA_COL_GENE = "aop"
 
@@ -145,18 +145,15 @@ def get_aops(
             substit_dict = {
                 'compounds': str(["<https://identifiers.org/pubchem.compound/" + target.replace('"','') + '>' for target in batch.split(" ")]).replace("[", "").replace("]", "").replace("'", "").replace(",", "")
             }
-            print(substit_dict)
             query_file = QUERY_COMPOUND
 
         # Load and substitute the query template
         with open(query_file, 'r') as f:
             query = Template(f.read()).substitute(substit_dict)
-        print(query)
         # Execute the query and process results
         sparql.setQuery(query)
         res = sparql.queryAndConvert()
         res_df = pd.DataFrame([{k: v["value"] for k, v in item.items()} for item in res["results"]["bindings"]])
-        print(res_df)
         intermediate_df = pd.concat([intermediate_df, res_df], ignore_index=True)
 
     end_time = datetime.datetime.now()
@@ -167,7 +164,11 @@ def get_aops(
         return pd.DataFrame(), {}
 
     # Step 5: Clean and process the results
-    intermediate_df.rename(columns={GENE_INPUT_COL: "target"}, inplace=True)
+    if input_type == "gene":
+        input_col = GENE_INPUT_COL
+    else:
+        input_col = COMPOUND_INPUT_COL
+        intermediate_df.rename(columns={input_col: "target"}, inplace=True)
     intermediate_df = intermediate_df.drop_duplicates()
 
     # Step 6: Generate metadata
@@ -184,14 +185,14 @@ def get_aops(
             "number_of_added_edges": intermediate_df.drop_duplicates(subset=["target", NEW_DATA_COL_GENE]).shape[0],
         },
     }
-
+    print(intermediate_df)
     # Step 7: Integrate into main dataframe
     merged_df = collapse_data_sources(
         data_df=data_df,
         source_namespace=GENE_INPUT_COL,
         target_df=intermediate_df,
         common_cols=["target"],
-        target_specific_cols=list(AOPWIKI_GENE_OUTPUT_DICT.keys() if input_type == "gene" else AOPWIKI_COMPOUND_OUTPUT_DICT.keys()),
+        target_specific_cols=list(AOPWIKI_OUTPUT_DICT.keys()),
         col_name=db,
     )
 
