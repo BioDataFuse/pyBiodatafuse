@@ -109,13 +109,15 @@ def bridgedb_xref(
         raise ValueError("Please provide the identifier datasource, e.g. HGNC")
 
     if output_datasource is None or "All":
-        output_datasource = [
-            "Uniprot-TrEMBL",
-            "NCBI Gene",
-            "Ensembl",
-            "HGNC Accession Number",
-            "HGNC",
-            "PubChem Compound"
+        data_sources = read_resource_files()
+        output_datasource = list(data_sources["source")
+#        output_datasource = [
+#            "Uniprot-TrEMBL",
+#            "NCBI Gene",
+#            "Ensembl",
+#            "HGNC Accession Number",
+#            "HGNC",
+#            "PubChem Compound"
         ]
     else:
         assert isinstance(output_datasource, list), "output_datasource must be a list"
