@@ -138,13 +138,14 @@ def get_aops(
         # Prepare the substitution dictionary
         if input_type == "gene":
             substit_dict = {
-                'genes': ' '.join(f"<https://identifiers.org/ensembl/{target.strip('\"')}>" for target in batch.split())
+                'genes': ' '.join(f"<https://identifiers.org/ensembl/{target.strip('"')}>" for target in batch.split())
             }
             query_file = QUERY_GENE
         else:  # input_type == "compound"
             substit_dict = {
-                'compounds': ' '.join(f"<https://identifiers.org/pubchem.compound/{target.strip('\"')}>" for target in batch.split())
+                'compounds': ' '.join(f"<https://identifiers.org/pubchem.compound/{target.strip('"')}>" for target in batch.split())
             }
+            query_file = QUERY_COMPOUND
 
         # Load and substitute the query template
         with open(query_file, 'r') as f:
