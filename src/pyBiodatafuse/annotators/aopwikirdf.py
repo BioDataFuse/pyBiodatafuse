@@ -172,7 +172,8 @@ def get_aops(
         output_dict = AOPWIKI_COMPOUND_OUTPUT_DICT
     intermediate_df.rename(columns={input_col: "target"}, inplace=True)
     intermediate_df = intermediate_df.drop_duplicates()
-
+    # Strip all text before the last "/" in the 'target' column
+    intermediate_df['target'] = intermediate_df['target'].apply(lambda x: x.split('/')[-1])
     # Step 6: Generate metadata
     metadata_dict = {
         "datasource": db,
