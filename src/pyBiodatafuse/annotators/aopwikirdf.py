@@ -35,7 +35,7 @@ QUERY_COMPOUND = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-get
 QUERY_GENE = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-get-by-gene.rq")
 #QUERY_PROCESS = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-get-by-biological-process.rq.rq")
 GENE_INPUT_COL = "Ensembl"
-COMPOUND_INPUT_COL = "pubchem_compound"
+COMPOUND_INPUT_COL = "Pubchem Compound"
 #PROCESS_INPUT_COL = OPENTARGETS_GO_COL
 NEW_DATA_COL_GENE = "aop"
 
