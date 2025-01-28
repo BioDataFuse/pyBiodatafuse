@@ -110,7 +110,7 @@ def bridgedb_xref(
 
     if output_datasource is None or "All":
         data_sources = read_resource_files()
-        output_datasource = list(data_sources["source")
+        output_datasource = list(data_sources["source"])
 #        output_datasource = [
 #            "Uniprot-TrEMBL",
 #            "NCBI Gene",
