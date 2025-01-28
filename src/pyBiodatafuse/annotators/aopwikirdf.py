@@ -192,6 +192,9 @@ def get_aops(
         },
     }
     # Step 7: Integrate into main dataframe
+    print(data_df.target)
+    print("__")
+    print(intermediate_df.target)
     merged_df = collapse_data_sources(
         data_df=data_df,
         source_namespace=source_namespace,
