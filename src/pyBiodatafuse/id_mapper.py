@@ -115,6 +115,7 @@ def bridgedb_xref(
             "Ensembl",
             "HGNC Accession Number",
             "HGNC",
+            "PubChem Compound"
         ]
     else:
         assert isinstance(output_datasource, list), "output_datasource must be a list"
