@@ -35,7 +35,7 @@ QUERY_COMPOUND = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-get
 QUERY_GENE = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-get-by-gene.rq")
 #QUERY_PROCESS = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-get-by-biological-process.rq.rq")
 GENE_INPUT_COL = "Ensembl"
-COMPOUND_INPUT_COL = "Pubchem Compound"
+COMPOUND_INPUT_COL = "PubChem Compound"
 #PROCESS_INPUT_COL = OPENTARGETS_GO_COL
 NEW_DATA_COL_GENE = "aop"
 
@@ -172,10 +172,11 @@ def get_aops(
         input_col = COMPOUND_INPUT_COL
         output_dict = AOPWIKI_COMPOUND_OUTPUT_DICT
         source_namespace = "PubChem-compound"
+        intermediate_df[input_col] = intermediate_df[input_col].apply(lambda x: x.split('/')[-1])
     intermediate_df.rename(columns={input_col: "target"}, inplace=True)
     intermediate_df = intermediate_df.drop_duplicates()
     # Strip all text before the last "/" in the 'target' column
-    intermediate_df['target'] = intermediate_df['target'].apply(lambda x: x.split('/')[-1])
+    
     # Step 6: Generate metadata
     metadata_dict = {
         "datasource": db,
