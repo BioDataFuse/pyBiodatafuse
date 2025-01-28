@@ -143,7 +143,7 @@ def get_aops(
             query_file = QUERY_GENE
         else:  # input_type == "compound"
             substit_dict = {
-                'compounds': str(["<<https://identifiers.org/pubchem.compound/" + target.replace('"','') + '>' for target in batch.split(" ")]).replace("[", "").replace("]", "").replace("'", "").replace(",", "")
+                'compounds': str(["<https://identifiers.org/pubchem.compound/" + target.replace('"','') + '>' for target in batch.split(" ")]).replace("[", "").replace("]", "").replace("'", "").replace(",", "")
             }
             query_file = QUERY_COMPOUND
 
