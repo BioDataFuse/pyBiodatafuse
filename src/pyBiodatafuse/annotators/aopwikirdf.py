@@ -24,7 +24,6 @@ from pyBiodatafuse.constants import (
     AOPWIKI_ENDPOINT,
     AOPWIKI_GENE_INPUT_ID,
     AOPWIKI_OUTPUT_DICT,
-    AOPWIKI_COMPOUND_OUTPUT_DICT
 )
 # Pre-requisite:
 VERSION_QUERY_FILE = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-metadata.rq")
