@@ -169,7 +169,7 @@ def get_aops(
         input_col = GENE_INPUT_COL
         output_dict = AOPWIKI_GENE_OUTPUT_DICT
     else:
-        input_col = COMPOUND_INPUT_COL
+        input_col = 'pubchem_compound'
         output_dict = AOPWIKI_COMPOUND_OUTPUT_DICT
         source_namespace = "PubChem-compound"
         intermediate_df[input_col] = intermediate_df[input_col].apply(lambda x: x.split('/')[-1])
