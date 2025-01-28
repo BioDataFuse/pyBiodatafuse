@@ -145,16 +145,18 @@ def get_aops(
             substit_dict = {
                 'compounds': str(["<https://identifiers.org/pubchem.compound/" + target.replace('"','') + '>' for target in batch.split(" ")]).replace("[", "").replace("]", "").replace("'", "").replace(",", "")
             }
+            print(substit_dict)
             query_file = QUERY_COMPOUND
 
         # Load and substitute the query template
         with open(query_file, 'r') as f:
             query = Template(f.read()).substitute(substit_dict)
-
+        print(query)
         # Execute the query and process results
         sparql.setQuery(query)
         res = sparql.queryAndConvert()
         res_df = pd.DataFrame([{k: v["value"] for k, v in item.items()} for item in res["results"]["bindings"]])
+        print(res_df)
         intermediate_df = pd.concat([intermediate_df, res_df], ignore_index=True)
 
     end_time = datetime.datetime.now()
