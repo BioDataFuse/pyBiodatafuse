@@ -171,7 +171,7 @@ def get_aops(
     else:
         input_col = 'pubchem_compound'
         output_dict = AOPWIKI_COMPOUND_OUTPUT_DICT
-        source_namespace = "PubChem-compound"
+        source_namespace = "PubChem Compound"
         intermediate_df[input_col] = intermediate_df[input_col].apply(lambda x: x.split('/')[-1])
     intermediate_df.rename(columns={input_col: "target"}, inplace=True)
     intermediate_df = intermediate_df.drop_duplicates()
@@ -192,9 +192,6 @@ def get_aops(
         },
     }
     # Step 7: Integrate into main dataframe
-    print(data_df.target)
-    print("__")
-    print(intermediate_df.target)
     merged_df = collapse_data_sources(
         data_df=data_df,
         source_namespace=source_namespace,
