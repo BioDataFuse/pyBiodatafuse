@@ -164,12 +164,14 @@ def get_aops(
         return pd.DataFrame(), {}
 
     # Step 5: Clean and process the results
+    source_namespace = GENE_INPUT_COL
     if input_type == "gene":
         input_col = GENE_INPUT_COL
         output_dict = AOPWIKI_GENE_OUTPUT_DICT
     else:
         input_col = COMPOUND_INPUT_COL
         output_dict = AOPWIKI_COMPOUND_OUTPUT_DICT
+        source_namespace = "PubChem-compound"
     intermediate_df.rename(columns={input_col: "target"}, inplace=True)
     intermediate_df = intermediate_df.drop_duplicates()
     # Strip all text before the last "/" in the 'target' column
@@ -188,11 +190,10 @@ def get_aops(
             "number_of_added_edges": intermediate_df.drop_duplicates(subset=["target", NEW_DATA_COL_GENE]).shape[0],
         },
     }
-    print(intermediate_df)
     # Step 7: Integrate into main dataframe
     merged_df = collapse_data_sources(
         data_df=data_df,
-        source_namespace=GENE_INPUT_COL,
+        source_namespace=source_namespace,
         target_df=intermediate_df,
         common_cols=["target"],
         target_specific_cols=list(output_dict.keys()),
