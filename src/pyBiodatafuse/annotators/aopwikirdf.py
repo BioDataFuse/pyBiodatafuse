@@ -23,7 +23,8 @@ from pyBiodatafuse.constants import (
     OPENTARGETS_GO_COL,
     AOPWIKI_ENDPOINT,
     AOPWIKI_GENE_INPUT_ID,
-    AOPWIKI_OUTPUT_DICT,
+    AOPWIKI_GENE_OUTPUT_DICT,
+    AOPWIKI_COMPOUND_OUTPUT_DICT
 )
 # Pre-requisite:
 VERSION_QUERY_FILE = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-metadata.rq")
@@ -165,9 +166,11 @@ def get_aops(
     # Step 5: Clean and process the results
     if input_type == "gene":
         input_col = GENE_INPUT_COL
+        output_dict = AOPWIKI_GENE_OUTPUT_DICT
     else:
         input_col = COMPOUND_INPUT_COL
-        intermediate_df.rename(columns={input_col: "target"}, inplace=True)
+        output_dict = AOPWIKI_COMPOUND_OUTPUT_DICT
+    intermediate_df.rename(columns={input_col: "target"}, inplace=True)
     intermediate_df = intermediate_df.drop_duplicates()
 
     # Step 6: Generate metadata
@@ -191,7 +194,7 @@ def get_aops(
         source_namespace=GENE_INPUT_COL,
         target_df=intermediate_df,
         common_cols=["target"],
-        target_specific_cols=list(AOPWIKI_OUTPUT_DICT.keys()),
+        target_specific_cols=list(output_dict.keys()),
         col_name=db,
     )
 
