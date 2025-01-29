@@ -102,26 +102,6 @@ class BDFGraph(Graph):
             self.bind(key, new_value)
         for key, value in NAMESPACE_BINDINGS.items():
             self.bind(key, value)
-    def process_row_parallel(args):
-        """
-        Standalone function for multiprocessing. Processes a single row of the DataFrame 
-        and returns an RDF subgraph.
-
-        :param args: A tuple containing:
-            - row (pd.Series): A row from the DataFrame to be processed.
-            - i (int): Index of the row.
-            - open_only (bool): Whether to process only open-access data.
-            - base_uri (str): Base URI for RDF node creation.
-        :type args: tuple
-
-        :return: A subgraph containing RDF triples generated from the row.
-        :rtype: rdflib.Graph
-        """
-        row, i, open_only, base_uri = args
-        subgraph = Graph()
-        graph_instance = BDFGraph(base_uri, "", "", "")  # Create a new instance per process
-        graph_instance.process_row(row, i, open_only, subgraph)
-        return subgraph
 
     def generate_rdf(self, df: pd.DataFrame, metadata: dict, open_only: bool = False, num_workers: int = 4):
         """
@@ -144,7 +124,24 @@ class BDFGraph(Graph):
 
         :raises Exception: If any row processing fails, an error message is printed, and execution continues.
         """
-
+        def process_row_parallel(args):
+            """
+            Processes a single row of the DataFrame with multiprocessing 
+            and returns an RDF subgraph.
+            :param args: A tuple containing:
+                - row (pd.Series): A row from the DataFrame to be processed.
+                - i (int): Index of the row.
+                - open_only (bool): Whether to process only open-access data.
+                - base_uri (str): Base URI for RDF node creation.
+            :type args: tuple
+            :return: A subgraph containing RDF triples generated from the row.
+            :rtype: rdflib.Graph
+            """
+            row, i, open_only, base_uri = args
+            subgraph = Graph()
+            graph_instance = BDFGraph(base_uri, "", "", "")  # Create a new instance per process
+            graph_instance.process_row(row, i, open_only, subgraph)
+            return subgraph
         # Replace NaN values with None for compatibility
         df = df.applymap(replace_na_none)
 
@@ -153,11 +150,11 @@ class BDFGraph(Graph):
             df = df[df["target.source"] == "Ensembl"]
 
         # Use multiprocessing Pool to process rows in parallel
-        with Pool(num_workers) as pool:
-            subgraphs = pool.map(
-                process_row_parallel,
-                [(row, i, open_only, self.base_uri) for i, row in df.iterrows()],
-            )
+        subgraphs = []
+        for i, row in tqdm(df.iterrows(), total=len(df)):
+            subgraph = Graph()
+            self.process_row(row, i, open_only, subgraph)
+            subgraphs.append(subgraph)
 
         # Merge all subgraphs into the main RDF graph
         for subgraph in subgraphs:
