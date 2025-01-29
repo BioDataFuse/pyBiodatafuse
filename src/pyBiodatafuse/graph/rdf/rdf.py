@@ -152,10 +152,8 @@ class BDFGraph(Graph):
         #print("%d rows will be processed" % len(df))
         # Use multiprocessing Pool to process rows in parallel
         subgraphs = []
-        for i, row in tqdm(df.iterrows(), total=len(df)):
-            subgraph = Graph()
-            self.process_row_parallel(row, i, open_only, subgraph)
-            subgraphs.append(subgraph)
+        with Pool(num_workers) as pool:
+            subgraphs = list(tqdm(pool.imap(self.process_row_parallel, [(row, i, open_only, self.base_uri) for i, row in df.iterrows()]), total=len(df)))
 
         # Merge all subgraphs into the main RDF graph
         for subgraph in subgraphs:
