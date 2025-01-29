@@ -70,7 +70,7 @@ from pyBiodatafuse.graph.rdf.utils import get_shacl_prefixes, get_shapes, replac
 
 
 class BDFGraph(Graph):
-    """Main class for a BioDatafuse RDF Graph, superclass of `rdflib.Graph`."""
+    """Main class for a BioDatafuse RDF Graph, extending `rdflib.Graph`."""
 
     def __init__(self, base_uri: str, version_iri: str, author: str, orcid: str):
         """
@@ -104,49 +104,7 @@ class BDFGraph(Graph):
         for key, value in NAMESPACE_BINDINGS.items():
             self.bind(key, value)
 
-    def process_row_parallel(self, row, i, open_only):
-        """
-        Processes a single row of the DataFrame in parallel and returns an RDF subgraph.
-
-        :param instance: The instance of the BDFGraph class.
-        :param row: A dictionary-like object representing a single row of the DataFrame.
-        :param i: An integer representing the index of the row.
-        :param open_only: A boolean indicating whether to process only open data.
-        :return: An RDFLib Graph containing the processed RDF data for the row.
-        """
-        subgraph = Graph()
-        graph_instance = BDFGraph(self.base_uri, "", "", "")  # Create a new instance per process
-        graph_instance.process_row(row, i, open_only, subgraph)
-        return subgraph
-
-    def generate_rdf(self, df: pd.DataFrame, metadata: dict, open_only: bool = False, num_workers: int = 4):
-        """
-        Generate an RDF graph from the provided DataFrame using multiprocessing.
-
-        :param df: A Pandas DataFrame containing the data to be processed.
-        :param metadata: A dictionary containing metadata to be added to the RDF graph.
-        :param open_only: A boolean indicating whether to process only open data. Defaults to False.
-        :param num_workers: An integer specifying the number of parallel processes. Defaults to 4.
-        :return: None. The resulting RDF graph is stored in self.
-        """
-        df = df.applymap(replace_na_none)  # Handle NaN values
-
-        # Prepare data for parallel processing
-        data = [(self, row, i, open_only) for i, row in df.iterrows()]
-
-        # Use multiprocessing Pool for parallel execution
-        with Pool(num_workers) as pool:
-            func = partial(self.process_row_parallel)
-            subgraphs = list(tqdm(pool.starmap(func, data), total=len(df)))
-
-        # Merge all subgraphs into the main RDF graph
-        for subgraph in subgraphs:
-            self += subgraph
-
-        # Add metadata to the final RDF graph
-        self._add_metadata(metadata)
-
-    def process_row(self, row, i, open_only = False):
+    def process_row(self, row, i, open_only=False):
         """
         Process a single row of the DataFrame and update the RDF graph.
 
@@ -158,18 +116,27 @@ class BDFGraph(Graph):
         source_namespace = row.get(IDENTIFIER_SOURCE_COL)
         target_idx = row.get(TARGET_COL)
         target_namespace = row.get(TARGET_SOURCE_COL)
+
         if not self.valid_indices(source_idx, source_namespace, target_idx, target_namespace):
             return
+
+        # Normalize CURIEs (Compact URIs)
         source_curie = normalize_curie(f"{source_namespace}:{source_idx}")
         target_curie = normalize_curie(f"{target_namespace}:{target_idx}")
+
         if not source_curie or not target_curie:
             return
-        id_number = f"{i:06d}"
+
+        id_number = f"{i:06d}"  # Format index as a zero-padded string
         gene_node = self.get_gene_node(row)
+
         if not gene_node:
             return
+
+        # Collect disease-related data
         disease_data = self.collect_disease_data(row)
-        # New methods (e.g., new node types) can be called here
+
+        # Process multiple types of biological data
         self.process_ppi_data(row.get(STRING_PPI_COL), gene_node)
         protein_nodes = list(self.objects(gene_node, URIRef(PREDICATES["translation_of"])))
         self.process_disease_data(disease_data, id_number, source_idx, gene_node)
@@ -181,12 +148,59 @@ class BDFGraph(Graph):
             row.get(LITERATURE_DISEASE_COL), gene_node, id_number, source_idx, self.new_uris, i
         )
         self.process_transporter_inhibitor_data(row.get(MOLMEDB_PROTEIN_COMPOUND_COL))
+
+        # Optionally process protein variants if enabled
         if self.include_variants:
             self.process_protein_variants(protein_nodes)
-        #self.process_aop_data(row.get(AOPWIKI_COL))
+
+    def process_row_parallel(self, row, i, open_only):
+        """
+        Process a single row of the DataFrame in parallel.
+
+        This method is designed for use with multiprocessing and returns an RDF subgraph
+        containing the processed data for a single row.
+
+        :param row: A dictionary-like object representing a single row of the DataFrame.
+        :param i: An integer representing the index of the row.
+        :param open_only: A boolean indicating whether to process only open data.
+        :return: An RDFLib Graph containing the RDF data for the row.
+        """
+        subgraph = Graph()  # Create a temporary RDF graph for this row
+        graph_instance = BDFGraph(self.base_uri, self.version_iri, self.author, self.orcid)  
+
+        # Process the row and store results in the subgraph
+        graph_instance.process_row(row, i, open_only)
+        
+        return subgraph
+
+    def generate_rdf(self, df: pd.DataFrame, metadata: dict, open_only: bool = False, num_workers: int = 4):
+        """
+        Generate an RDF graph from the provided DataFrame using multiprocessing.
+
+        :param df: A Pandas DataFrame containing the data to be processed.
+        :param metadata: A dictionary containing metadata to be added to the RDF graph.
+        :param open_only: A boolean indicating whether to process only open data. Defaults to False.
+        :param num_workers: An integer specifying the number of parallel processes. Defaults to 4.
+        """
+        df = df.applymap(replace_na_none)  # Replace NaN values with None
+
+        # Prepare data for parallel processing (omit 'self' from tuples)
+        data = [(row, i, open_only) for i, row in df.iterrows()]
+
+        # Use multiprocessing Pool for parallel execution
+        with Pool(num_workers) as pool:
+            func = partial(BDFGraph.process_row_parallel, self)  # Bind self to the method
+            subgraphs = list(tqdm(pool.starmap(func, data), total=len(df)))
+
+        # Merge all subgraphs into the main RDF graph
+        for subgraph in subgraphs:
+            self += subgraph  # Combine results into the main graph
+
+        # Add metadata to the final RDF graph
+        self._add_metadata(metadata)
 
     # Class methods about specific nodes begin here
-    # If you add a new method, try to import most of the code from another script
+    # If you add a new method for a new type of data/nodes, try to import most of the code from another script
     # Add new methods below
 
     def collect_disease_data(
