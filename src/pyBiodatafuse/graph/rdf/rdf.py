@@ -35,6 +35,7 @@ from bioregistry import normalize_curie
 from multiprocessing import Pool
 from rdflib import Graph, URIRef
 from tqdm import tqdm
+from functools import partial
 
 from pyBiodatafuse.constants import (
     BGEE_GENE_EXPRESSION_LEVELS_COL,
@@ -103,15 +104,12 @@ class BDFGraph(Graph):
         for key, value in NAMESPACE_BINDINGS.items():
             self.bind(key, value)
 
-    def process_row_parallel(self, args):
+    def process_row_parallel(self, row, i, open_only):
         """
         Processes a single row of the DataFrame in parallel and returns an RDF subgraph.
-        :param args: A tuple containing (row, index, open_only, base_uri)
-        :return: RDF subgraph for the row.
         """
-        row, i, open_only, base_uri = args  # Unpacking the tuple
         subgraph = Graph()
-        graph_instance = BDFGraph(base_uri, "", "", "")  # Create a new instance per process
+        graph_instance = BDFGraph(self.base_uri, "", "", "")  # Create a new instance per process
         graph_instance.process_row(row, i, open_only, subgraph)
         return subgraph
 
@@ -122,15 +120,18 @@ class BDFGraph(Graph):
         df = df.applymap(replace_na_none)  # Handle NaN values
 
         # Prepare data for parallel processing
-        data = [(row, i, open_only, self.base_uri) for i, row in df.iterrows()]
+        data = [(row, i, open_only) for i, row in df.iterrows()]
 
         # Use multiprocessing Pool for parallel execution
         with Pool(num_workers) as pool:
-            subgraphs = list(tqdm(pool.starmap(self.process_row_parallel, data), total=len(df)))
+            # Use partial to fix the self argument issue
+            func = partial(self.process_row_parallel)
+            subgraphs = list(tqdm(pool.starmap(func, data), total=len(df)))
 
-            # Merge all subgraphs into the main RDF graph
-            for subgraph in subgraphs:
-                self += subgraph
+        # Merge all subgraphs into the main RDF graph
+        for subgraph in subgraphs:
+            self.graph += subgraph  # Assuming RDFLib supports this operation
+
         # Add metadata to the final RDF graph
         self._add_metadata(metadata)
 
