@@ -33,9 +33,9 @@ Classes:
 import pandas as pd
 from bioregistry import normalize_curie
 from multiprocessing import Pool
+from functools import partial
 from rdflib import Graph, URIRef
 from tqdm import tqdm
-from functools import partial
 
 from pyBiodatafuse.constants import (
     BGEE_GENE_EXPRESSION_LEVELS_COL,
@@ -107,6 +107,12 @@ class BDFGraph(Graph):
     def process_row_parallel(self, row, i, open_only):
         """
         Processes a single row of the DataFrame in parallel and returns an RDF subgraph.
+
+        :param instance: The instance of the BDFGraph class.
+        :param row: A dictionary-like object representing a single row of the DataFrame.
+        :param i: An integer representing the index of the row.
+        :param open_only: A boolean indicating whether to process only open data.
+        :return: An RDFLib Graph containing the processed RDF data for the row.
         """
         subgraph = Graph()
         graph_instance = BDFGraph(self.base_uri, "", "", "")  # Create a new instance per process
@@ -116,21 +122,26 @@ class BDFGraph(Graph):
     def generate_rdf(self, df: pd.DataFrame, metadata: dict, open_only: bool = False, num_workers: int = 4):
         """
         Generate an RDF graph from the provided DataFrame using multiprocessing.
+
+        :param df: A Pandas DataFrame containing the data to be processed.
+        :param metadata: A dictionary containing metadata to be added to the RDF graph.
+        :param open_only: A boolean indicating whether to process only open data. Defaults to False.
+        :param num_workers: An integer specifying the number of parallel processes. Defaults to 4.
+        :return: None. The resulting RDF graph is stored in self.
         """
         df = df.applymap(replace_na_none)  # Handle NaN values
 
         # Prepare data for parallel processing
-        data = [(row, i, open_only) for i, row in df.iterrows()]
+        data = [(self, row, i, open_only) for i, row in df.iterrows()]
 
         # Use multiprocessing Pool for parallel execution
         with Pool(num_workers) as pool:
-            # Use partial to fix the self argument issue
             func = partial(self.process_row_parallel)
             subgraphs = list(tqdm(pool.starmap(func, data), total=len(df)))
 
         # Merge all subgraphs into the main RDF graph
         for subgraph in subgraphs:
-            self.graph += subgraph  # Assuming RDFLib supports this operation
+            self += subgraph
 
         # Add metadata to the final RDF graph
         self._add_metadata(metadata)
