@@ -105,60 +105,32 @@ class BDFGraph(Graph):
 
     def process_row_parallel(args):
         """
-        Processes a single row of the DataFrame with multiprocessing 
-        and returns an RDF subgraph.
-        :param args: A tuple containing:
-            - row (pd.Series): A row from the DataFrame to be processed.
-            - i (int): Index of the row.
-            - open_only (bool): Whether to process only open-access data.
-            - base_uri (str): Base URI for RDF node creation.
-        :type args: tuple
-        :return: A subgraph containing RDF triples generated from the row.
-        :rtype: rdflib.Graph
+        Processes a single row of the DataFrame in parallel and returns an RDF subgraph.
+        :param args: A tuple containing (row, index, open_only, base_uri)
+        :return: RDF subgraph for the row.
         """
-        row, i, open_only, base_uri = args
+        row, i, open_only, base_uri = args  # Unpacking the tuple
         subgraph = Graph()
         graph_instance = BDFGraph(base_uri, "", "", "")  # Create a new instance per process
         graph_instance.process_row(row, i, open_only, subgraph)
         return subgraph
-        
+
     def generate_rdf(self, df: pd.DataFrame, metadata: dict, open_only: bool = False, num_workers: int = 4):
         """
         Generate an RDF graph from the provided DataFrame using multiprocessing.
-
-        Each process handles a row separately, generates an RDF subgraph, and returns it.
-        The main process then merges all subgraphs into the final BioDatafuse RDF graph.
-
-        :param df: The input DataFrame containing data to be converted into RDF triples.
-        :type df: pd.DataFrame
-        :param metadata: Metadata dictionary to be added to the final RDF graph.
-        :type metadata: dict
-        :param open_only: If True, processes only open-access data. Defaults to False.
-        :type open_only: bool, optional
-        :param num_workers: The number of processes to use for parallel processing. Defaults to 4.
-        :type num_workers: int, optional
-
-        :return: None (updates the RDF graph in place).
-        :rtype: None
-
-        :raises Exception: If any row processing fails, an error message is printed, and execution continues.
         """
-        # Replace NaN values with None for compatibility
-        df = df.applymap(replace_na_none)
+        df = df.applymap(replace_na_none)  # Handle NaN values
 
-        # Filter out non-Ensembl targets if include_variants is False
-        #if not self.include_variants:
-        #    df = df[df["target.source"] == "Ensembl"]
-        #print("%d rows will be processed" % len(df))
-        # Use multiprocessing Pool to process rows in parallel
-        subgraphs = []
+        # Prepare data for parallel processing
+        data = [(row, i, open_only, self.base_uri) for i, row in df.iterrows()]
+
+        # Use multiprocessing Pool for parallel execution
         with Pool(num_workers) as pool:
-            subgraphs = list(tqdm(pool.imap(self.process_row_parallel, [(row, i, open_only, self.base_uri) for i, row in df.iterrows()]), total=len(df)))
+            subgraphs = list(tqdm(pool.starmap(process_row_parallel, data), total=len(df)))
 
-        # Merge all subgraphs into the main RDF graph
-        for subgraph in subgraphs:
-            self += subgraph
-
+            # Merge all subgraphs into the main RDF graph
+            for subgraph in subgraphs:
+                self += subgraph
         # Add metadata to the final RDF graph
         self._add_metadata(metadata)
 
