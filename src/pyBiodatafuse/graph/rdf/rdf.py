@@ -153,20 +153,22 @@ class BDFGraph(Graph):
         if self.include_variants:
             self.process_protein_variants(protein_nodes)
 
-    def process_row_parallel(self, row, i, open_only):
+    @staticmethod
+    def process_row_parallel(base_uri, version_iri, author, orcid, row, i, open_only):
         """
         Process a single row of the DataFrame in parallel.
 
-        This method is designed for use with multiprocessing and returns an RDF subgraph
-        containing the processed data for a single row.
-
+        :param base_uri: The base URI for the RDF graph.
+        :param version_iri: The version IRI for the RDF graph.
+        :param author: The author of the BDF graph.
+        :param orcid: The ORCID identifier for the author.
         :param row: A dictionary-like object representing a single row of the DataFrame.
         :param i: An integer representing the index of the row.
         :param open_only: A boolean indicating whether to process only open data.
         :return: An RDFLib Graph containing the RDF data for the row.
         """
         subgraph = Graph()  # Create a temporary RDF graph for this row
-        graph_instance = BDFGraph(self.base_uri, self.version_iri, self.author, self.orcid)  
+        graph_instance = BDFGraph(base_uri, version_iri, author, orcid)  
 
         # Process the row and store results in the subgraph
         graph_instance.process_row(row, i, open_only)
@@ -184,13 +186,12 @@ class BDFGraph(Graph):
         """
         df = df.applymap(replace_na_none)  # Replace NaN values with None
 
-        # Prepare data for parallel processing (omit 'self' from tuples)
-        data = [(row, i, open_only) for i, row in df.iterrows()]
+        # Prepare data for parallel processing (pass base attributes explicitly)
+        data = [(self.base_uri, self.version_iri, self.author, self.orcid, row, i, open_only) for i, row in df.iterrows()]
 
         # Use multiprocessing Pool for parallel execution
         with Pool(num_workers) as pool:
-            func = partial(BDFGraph.process_row_parallel, self)  # Bind self to the method
-            subgraphs = list(tqdm(pool.starmap(func, data), total=len(df)))
+            subgraphs = list(tqdm(pool.starmap(BDFGraph.process_row_parallel, data), total=len(df)))
 
         # Merge all subgraphs into the main RDF graph
         for subgraph in subgraphs:
