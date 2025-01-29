@@ -148,12 +148,13 @@ class BDFGraph(Graph):
         # Filter out non-Ensembl targets if include_variants is False
         if not self.include_variants:
             df = df[df["target.source"] == "Ensembl"]
-
+        print("%s rows will be processed".format(len(df)))
         # Use multiprocessing Pool to process rows in parallel
         subgraphs = []
         for i, row in tqdm(df.iterrows(), total=len(df)):
+            print(i)
             subgraph = Graph()
-            self.process_row(row, i, open_only, subgraph)
+            self.process_row_parallel(row, i, open_only, subgraph)
             subgraphs.append(subgraph)
 
         # Merge all subgraphs into the main RDF graph
