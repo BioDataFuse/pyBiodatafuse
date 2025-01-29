@@ -126,7 +126,7 @@ class BDFGraph(Graph):
 
         # Use multiprocessing Pool for parallel execution
         with Pool(num_workers) as pool:
-            subgraphs = list(tqdm(pool.starmap(process_row_parallel, data), total=len(df)))
+            subgraphs = list(tqdm(pool.starmap(self.process_row_parallel, data), total=len(df)))
 
             # Merge all subgraphs into the main RDF graph
             for subgraph in subgraphs:
