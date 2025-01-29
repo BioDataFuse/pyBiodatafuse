@@ -539,8 +539,6 @@ class BDFGraph(Graph):
             g=self, gene_node=gene_node, entry=entry, base_uri=self.base_uri, new_uris=self.new_uris
         )
 
-    de
-
     def _add_metadata(self, metadata):
         """Add metadata to the RDF graph.
 
