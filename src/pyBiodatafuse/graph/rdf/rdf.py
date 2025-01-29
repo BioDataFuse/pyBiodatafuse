@@ -153,52 +153,61 @@ class BDFGraph(Graph):
         if self.include_variants:
             self.process_protein_variants(protein_nodes)
 
-    @staticmethod
-    def process_row_parallel(base_uri, version_iri, author, orcid, row, i, open_only):
-        """
-        Process a single row of the DataFrame in parallel.
 
-        :param base_uri: The base URI for the RDF graph.
-        :param version_iri: The version IRI for the RDF graph.
-        :param author: The author of the BDF graph.
-        :param orcid: The ORCID identifier for the author.
+    def generate_rdf(self, df: pd.DataFrame, metadata: dict, open_only: bool = False):
+        """
+        Generate an RDF graph from the provided DataFrame and metadata.
+
+        :param df: The DataFrame containing the data to be converted into RDF.
+        :param metadata: A dictionary containing metadata information for RDF generation.
+        :param open_only: A flag indicating whether to process only open data. Defaults to False.
+        :param metadata: Metadata information to be added to the RDF graph.
+        """
+        df = df.applymap(replace_na_none)
+        if not self.include_variants:
+            df = df[df["target.source"] == "Ensembl"]
+        for i, row in tqdm(df.iterrows(), total=df.shape[0], desc="Building RDF graph"):
+            self.process_row(row, i, open_only)
+        self._add_metadata(metadata)
+
+    def process_row(self, row, i, open_only):
+        """
+        Process a single row of the DataFrame and update the RDF graph.
+
         :param row: A dictionary-like object representing a single row of the DataFrame.
         :param i: An integer representing the index of the row.
         :param open_only: A boolean indicating whether to process only open data.
-        :return: An RDFLib Graph containing the RDF data for the row.
         """
-        subgraph = Graph()  # Create a temporary RDF graph for this row
-        graph_instance = BDFGraph(base_uri, version_iri, author, orcid)  
-
-        # Process the row and store results in the subgraph
-        graph_instance.process_row(row, i, open_only)
-        
-        return subgraph
-
-    def generate_rdf(self, df: pd.DataFrame, metadata: dict, open_only: bool = False, num_workers: int = 4):
-        """
-        Generate an RDF graph from the provided DataFrame using multiprocessing.
-
-        :param df: A Pandas DataFrame containing the data to be processed.
-        :param metadata: A dictionary containing metadata to be added to the RDF graph.
-        :param open_only: A boolean indicating whether to process only open data. Defaults to False.
-        :param num_workers: An integer specifying the number of parallel processes. Defaults to 4.
-        """
-        df = df.applymap(replace_na_none)  # Replace NaN values with None
-
-        # Prepare data for parallel processing (pass base attributes explicitly)
-        data = [(self.base_uri, self.version_iri, self.author, self.orcid, row, i, open_only) for i, row in df.iterrows()]
-
-        # Use multiprocessing Pool for parallel execution
-        with Pool(num_workers) as pool:
-            subgraphs = list(tqdm(pool.starmap(BDFGraph.process_row_parallel, data), total=len(df)))
-
-        # Merge all subgraphs into the main RDF graph
-        for subgraph in subgraphs:
-            self += subgraph  # Combine results into the main graph
-
-        # Add metadata to the final RDF graph
-        self._add_metadata(metadata)
+        source_idx = row.get(IDENTIFIER_COL)
+        source_namespace = row.get(IDENTIFIER_SOURCE_COL)
+        target_idx = row.get(TARGET_COL)
+        target_namespace = row.get(TARGET_SOURCE_COL)
+        if not self.valid_indices(source_idx, source_namespace, target_idx, target_namespace):
+            return
+        source_curie = normalize_curie(f"{source_namespace}:{source_idx}")
+        target_curie = normalize_curie(f"{target_namespace}:{target_idx}")
+        if not source_curie or not target_curie:
+            return
+        id_number = f"{i:06d}"
+        gene_node = self.get_gene_node(row)
+        if not gene_node:
+            return
+        disease_data = self.collect_disease_data(row)
+        # New methods (e.g., new node types) can be called here
+        # self.process_nodetype_data(row.get(datatype_col))
+        self.process_ppi_data(row.get(STRING_PPI_COL), gene_node)
+        protein_nodes = list(self.objects(gene_node, URIRef(PREDICATES["translation_of"])))
+        self.process_disease_data(disease_data, id_number, source_idx, gene_node)
+        self.process_expression_data(row, id_number, source_idx, gene_node)
+        self.process_pathways(row, gene_node, protein_nodes)
+        self.process_processes_data(row.get(OPENTARGETS_GO_COL), gene_node)
+        self.process_compound_data(row.get(OPENTARGETS_GENE_COMPOUND_COL), gene_node)
+        self.process_literature_data(
+            row.get(LITERATURE_DISEASE_COL), gene_node, id_number, source_idx, self.new_uris, i
+        )
+        self.process_transporter_inhibitor_data(row.get(MOLMEDB_PROTEIN_COMPOUND_COL))
+        if self.include_variants:
+            self.process_protein_variants(protein_nodes)
 
     # Class methods about specific nodes begin here
     # If you add a new method for a new type of data/nodes, try to import most of the code from another script
