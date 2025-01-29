@@ -103,8 +103,7 @@ class BDFGraph(Graph):
         for key, value in NAMESPACE_BINDINGS.items():
             self.bind(key, value)
 
-    @staticmethod
-    def process_row_parallel(args):
+    def process_row_parallel(self, args):
         """
         Processes a single row of the DataFrame in parallel and returns an RDF subgraph.
         :param args: A tuple containing (row, index, open_only, base_uri)
