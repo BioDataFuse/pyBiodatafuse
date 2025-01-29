@@ -191,14 +191,14 @@ class BDFGraph(Graph):
         id_number = f"{i:06d}"
         gene_node = self.get_gene_node(row)
         if not gene_node:
-            return
+            gene_node = None
         disease_data = self.collect_disease_data(row)
         # New methods (e.g., new node types) can be called here
         # self.process_nodetype_data(row.get(datatype_col))
         self.process_ppi_data(row.get(STRING_PPI_COL), gene_node)
         protein_nodes = list(self.objects(gene_node, URIRef(PREDICATES["translation_of"])))
-        self.process_disease_data(disease_data, id_number, source_idx, gene_node)
         self.process_expression_data(row, id_number, source_idx, gene_node)
+        self.process_disease_data(disease_data, id_number, source_idx, gene_node)
         self.process_pathways(row, gene_node, protein_nodes)
         self.process_processes_data(row.get(OPENTARGETS_GO_COL), gene_node)
         self.process_compound_data(row.get(OPENTARGETS_GENE_COMPOUND_COL), gene_node)
@@ -439,8 +439,7 @@ class BDFGraph(Graph):
         """
         if stringdb_data:
             for entry in stringdb_data:
-                if entry.get("Ensembl"):
-                    self._add_ppi_data(gene_node=gene_node, entry=entry)
+                self._add_ppi_data(gene_node=gene_node, entry=entry)
 
     def _add_gene_nodes(self, row):
         """Add gene and protein nodes based on the provided row data.
