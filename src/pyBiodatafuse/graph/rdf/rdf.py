@@ -164,8 +164,8 @@ class BDFGraph(Graph):
         :param metadata: Metadata information to be added to the RDF graph.
         """
         df = df.applymap(replace_na_none)
-        if not self.include_variants:
-            df = df[df["target.source"] == "Ensembl"]
+        #if not self.include_variants:
+        #    df = df[df["target.source"] == "Ensembl"]
         for i, row in tqdm(df.iterrows(), total=df.shape[0], desc="Building RDF graph"):
             self.process_row(row, i, open_only)
         self._add_metadata(metadata)
