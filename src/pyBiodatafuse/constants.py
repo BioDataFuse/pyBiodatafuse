@@ -468,6 +468,12 @@ OPENTARGETS_DISEASE_COMPOUND_EDGE_ATTRS = {
 }
 
 # Ensembl Homologs
+HOMOLOG_NODE_LABELS = "Homolog"
+ENSEMBL_HOMOLOG_NODE_ATTRS = {
+    "datasource": ENSEMBL,
+    "id": None,
+    "labels": HOMOLOG_NODE_LABELS,
+}
 ENSEMBL_HOMOLOG_MAIN_LABEL = "homolog"
 ENSEMBL_HOMOLOG_EDGE_LABEL = "is_homolog_of"
 ENSEMBL_HOMOLOG_EDGE_ATTRS = {
@@ -478,7 +484,6 @@ ENSEMBL_HOMOLOG_EDGE_ATTRS = {
 # KEGG compounds
 KEGG_COMPOUND_NODE_ATTRS = {
     "datasource": KEGG,
-    "name": None,
     "id": None,
     "labels": COMPOUND_NODE_LABELS,
 }

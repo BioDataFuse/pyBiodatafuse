@@ -31,6 +31,7 @@ from pyBiodatafuse.constants import (
     ENSEMBL_HOMOLOG_EDGE_ATTRS,
     ENSEMBL_HOMOLOG_EDGE_LABEL,
     ENSEMBL_HOMOLOG_MAIN_LABEL,
+    ENSEMBL_HOMOLOG_NODE_ATTRS,
     GENE_DISEASE_EDGE_LABEL,
     GENE_GO_EDGE_ATTRS,
     GENE_GO_EDGE_LABEL,
@@ -42,6 +43,7 @@ from pyBiodatafuse.constants import (
     GO_MF_NODE_LABELS,
     GO_NODE_ATTRS,
     GO_NODE_MAIN_LABEL,
+    HOMOLOG_NODE_LABELS,
     KEGG,
     KEGG_COL,
     KEGG_COMPOUND_COL,
@@ -417,8 +419,10 @@ def add_kegg_gene_pathway_subgraph(g, gene_node_label, annot_list):
         annot_node_attrs["name"] = annot["pathway_label"]
         annot_node_attrs["id"] = annot["pathway_id"]
         annot_node_attrs["gene_count"] = annot["gene_count"]
+        
 
-        g.add_node(annot_node_label, attr_dict=annot_node_attrs)
+        # g.add_node(annot_node_label, attr_dict=annot_node_attrs)
+        merge_node(g, annot_node_label, annot_node_attrs)
 
         edge_attrs = GENE_PATHWAY_EDGE_ATTRS.copy()
         edge_attrs["datasource"] = KEGG
@@ -453,17 +457,17 @@ def add_kegg_compounds_subgraph(g, pathway_node_label, compounds_list):
             if pd.isna(compound["name"]):
                 continue
 
-            compound_node_label = compound["KEGG_identifier"]
-            compound_node_attrs = KEGG_COMPOUND_NODE_ATTRS.copy()
-            compound_node_attrs["name"] = compound["name"]
-            compound_node_attrs["id"] = compound["KEGG_identifier"]
+            annot_node_label = compound["KEGG_identifier"]
+            annot_node_attrs = KEGG_COMPOUND_NODE_ATTRS.copy()
+            annot_node_attrs["id"] = compound["KEGG_identifier"]
 
-            g.add_node(compound_node_label, attr_dict=compound_node_attrs)
+            # g.add_node(compound_node_label, attr_dict=compound_node_attrs)
+            merge_node(g, annot_node_label, annot_node_attrs)
 
             edge_attrs = KEGG_COMPOUND_EDGE_ATTRS.copy()
             edge_hash = hash(frozenset(edge_attrs.items()))
             edge_attrs["edge_hash"] = edge_hash
-            edge_data = g.get_edge_data(pathway_node_label, compound_node_label)
+            edge_data = g.get_edge_data(pathway_node_label, annot_node_label)
             edge_data = {} if edge_data is None else edge_data
             node_exists = [
                 x
@@ -474,7 +478,7 @@ def add_kegg_compounds_subgraph(g, pathway_node_label, compounds_list):
             if len(node_exists) == 0:
                 g.add_edge(
                     pathway_node_label,
-                    compound_node_label,
+                    annot_node_label,
                     label=KEGG_COMPOUND_EDGE_LABEL,
                     attr_dict=edge_attrs,
                 )
@@ -1014,29 +1018,34 @@ def process_homologs(g, combined_df, homolog_df_list, func_dict, dea_columns):
             if last_col == key and last_col in combined_df.columns:
                 func_dict_hl[last_col] = func
 
-    # Process combined_df with functions from func_dict that are NOT in func_dict_hl
     for _i, row in tqdm(combined_df.iterrows(), total=combined_df.shape[0], desc="Building graph"):
         if pd.isna(row["identifier"]) or pd.isna(row["target"]):
             continue
         gene_node_label = add_gene_node(g, row, dea_columns)
-
-        # Filter out functions from func_dict_hl
         func_dict_non_hl = {key: func for key, func in func_dict.items() if key not in func_dict_hl}
-        process_annotations(
-            g, gene_node_label, row, func_dict_non_hl
-        )  # Use only functions not in func_dict_hl
+        process_annotations(g, gene_node_label, row, func_dict_non_hl) 
         process_ppi(g, gene_node_label, row)
 
-    # Process the homolog dataframes using func_dict_hl
-    for homolog_df in homolog_df_list:
-        for _i, row in tqdm(homolog_df.iterrows(), total=homolog_df.shape[0]):
-            if pd.isna(row["identifier"]) or pd.isna(row["target"]):
-                continue
-            gene_node_label = add_gene_node(g, row, dea_columns)
-            process_annotations(
-                g, gene_node_label, row, func_dict_hl
-            )  # Use func_dict_hl for homolog dataframes
-            process_ppi(g, gene_node_label, row)
+    for _i, row in tqdm(combined_df.iterrows(), total=combined_df.shape[0]):
+        if pd.isna(row["identifier"]) or pd.isna(row["Ensembl_homologs"]):
+            continue
+
+        homologs = row["Ensembl_homologs"]
+        
+        if isinstance(homologs, list) and homologs:
+            for homolog_entry in homologs:
+                homolog_node_label = homolog_entry.get("homolog")
+
+                if pd.isna(homolog_node_label) or homolog_node_label == 'nan':
+                    continue
+                
+                if homolog_node_label:
+                    annot_node_attrs = ENSEMBL_HOMOLOG_NODE_ATTRS.copy()
+                    annot_node_attrs["id"] = homolog_node_label
+                    annot_node_attrs["labels"] = HOMOLOG_NODE_LABELS 
+                    g.add_node(homolog_node_label, attr_dict=annot_node_attrs)
+
+                    process_annotations(g, homolog_node_label, row, func_dict_hl)
 
 
 def normalize_node_attributes(g):
@@ -1118,7 +1127,6 @@ def build_networkx_graph(
         process_disease_compound(g, disease_compound)
 
     if pathway_compound is not None:
-        print("1")
         process_kegg_pathway_compound(g, pathway_compound)
 
     normalize_node_attributes(g)
