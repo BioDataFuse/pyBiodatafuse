@@ -44,6 +44,7 @@ from pyBiodatafuse.constants import (
     GO_NODE_MAIN_LABEL,
     KEGG,
     KEGG_COL,
+    KEGG_COMPOUND_COL,
     KEGG_COMPOUND_EDGE_ATTRS,
     KEGG_COMPOUND_EDGE_LABEL,
     KEGG_COMPOUND_NODE_ATTRS,
@@ -436,9 +437,6 @@ def add_kegg_gene_pathway_subgraph(g, gene_node_label, annot_list):
                 attr_dict=edge_attrs,
             )
 
-        if annot["compounds"]:
-            add_kegg_compounds_subgraph(g, annot_node_label, annot[KEGG_COMPOUND_NODE_MAIN_LABEL])
-
     return g
 
 
@@ -490,11 +488,15 @@ def process_kegg_pathway_compound(g, kegg_pathway_compound):
     :param g: the input graph to extend with gene nodes.
     :param kegg_pathway_compound: the input DataFrame containing pathway-compound relationships.
     """
-    for _i, row in kegg_pathway_compound.iterrows():
+    for _, row in kegg_pathway_compound.iterrows():
         pathway_node_label = row["identifier"].replace("_", ":")
-        compounds_list = json.loads(json.dumps(row[KEGG_COL]))
+        compound_info = row["KEGG_compounds"]
 
-        if isinstance(compounds_list, float):
+        if isinstance(compound_info, dict):
+            compounds_list = [compound_info]
+        elif isinstance(compound_info, list):
+            compounds_list = compound_info
+        else:
             compounds_list = []
 
         add_kegg_compounds_subgraph(g, pathway_node_label, compounds_list)
@@ -1116,6 +1118,7 @@ def build_networkx_graph(
         process_disease_compound(g, disease_compound)
 
     if pathway_compound is not None:
+        print("1")
         process_kegg_pathway_compound(g, pathway_compound)
 
     normalize_node_attributes(g)
