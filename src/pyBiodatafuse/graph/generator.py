@@ -965,5 +965,5 @@ def save_graph(
         pickle.dump(g, f)
     nx.write_gml(g, graph_path_gml)
     logger.warning(f"Graph saved in {graph_path_pickle} and {graph_path_gml}")
-    
+
     return g
