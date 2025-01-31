@@ -11,4 +11,4 @@ import pyBiodatafuse.annotators.pubchem
 import pyBiodatafuse.annotators.stringdb
 import pyBiodatafuse.annotators.wikidata
 import pyBiodatafuse.annotators.wikipathways
-import pyBiodatafuse.annotators.aopwikirdf
+import pyBiodatafuse.annotators.aopwiki

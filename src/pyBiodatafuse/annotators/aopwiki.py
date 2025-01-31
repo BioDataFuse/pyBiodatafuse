@@ -24,20 +24,22 @@ from pyBiodatafuse.constants import (
     AOPWIKI_ENDPOINT,
     AOPWIKI_GENE_INPUT_ID,
     AOPWIKI_GENE_OUTPUT_DICT,
-    AOPWIKI_COMPOUND_OUTPUT_DICT
+    AOPWIKI_COMPOUND_OUTPUT_DICT,
+    AOPWIKI_GENE_INPUT_ID,
+    AOPWIKI_COMPOUND_INPUT_ID,
+    AOPWIKI_GENE_COL,
+    AOPWIKI_COMPOUND_COL,
 )
 # Pre-requisite:
 VERSION_QUERY_FILE = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-metadata.rq")
 DATABASE_SPARQL_DICT = {"aopwiki": AOPWIKI_ENDPOINT}
 DATABASE_QUERY_IDENTIFER_GENE = AOPWIKI_GENE_INPUT_ID
+DATABASE_QUERY_IDENTIFER_COMPOUND = AOPWIKI_COMPOUND_INPUT_ID
 QUERY_LIMIT = 25
 QUERY_COMPOUND = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-get-by-compound.rq")
 QUERY_GENE = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-get-by-gene.rq")
 #QUERY_PROCESS = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-get-by-biological-process.rq.rq")
-GENE_INPUT_COL = "Ensembl"
-COMPOUND_INPUT_COL = "PubChem Compound"
 #PROCESS_INPUT_COL = OPENTARGETS_GO_COL
-NEW_DATA_COL_GENE = "aop"
 
 # Unique inputs and outputs:
 INPUT_OPTIONS = ["gene", "compound",]  #"biological_process"]
@@ -133,15 +135,17 @@ def get_aops(
 
     intermediate_df = pd.DataFrame()
     start_time = datetime.datetime.now()
-
+    col = ""
     for batch in tqdm(query_batches, desc=f"Querying {db} for {input_type}"):
         # Prepare the substitution dictionary
         if input_type == "gene":
+            col = AOPWIKI_GENE_COL
             substit_dict = {
                 'genes': str(["<https://identifiers.org/ensembl/" + target.replace('"','') + '>' for target in batch.split(" ")]).replace("[", "").replace("]", "").replace("'", "").replace(",", "")
             }
             query_file = QUERY_GENE
         else:  # input_type == "compound"
+            col = AOPWIKI_COMPOUND_COL
             substit_dict = {
                 'compounds': str(["<https://identifiers.org/pubchem.compound/" + target.replace('"','') + '>' for target in batch.split(" ")]).replace("[", "").replace("]", "").replace("'", "").replace(",", "")
             }
@@ -159,14 +163,14 @@ def get_aops(
     end_time = datetime.datetime.now()
 
     # Step 4: Check if the query returned any results
-    if GENE_INPUT_COL not in intermediate_df.columns:
+    if AOPWIKI_GENE_INPUT_ID not in intermediate_df.columns:
         warnings.warn(f"There is no annotation for your input list in {db}.", stacklevel=2)
         return pd.DataFrame(), {}
 
     # Step 5: Clean and process the results
-    source_namespace = GENE_INPUT_COL
+    source_namespace = AOPWIKI_GENE_INPUT_ID
     if input_type == "gene":
-        input_col = GENE_INPUT_COL
+        input_col = AOPWIKI_GENE_INPUT_ID
         output_dict = AOPWIKI_GENE_OUTPUT_DICT
     else:
         input_col = 'pubchem_compound'
@@ -187,8 +191,8 @@ def get_aops(
             "time": str(end_time - start_time),
             "date": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             "url": DATABASE_SPARQL_DICT[db],
-            "number_of_added_nodes": intermediate_df[NEW_DATA_COL_GENE].nunique(),
-            "number_of_added_edges": intermediate_df.drop_duplicates(subset=["target", NEW_DATA_COL_GENE]).shape[0],
+            "number_of_added_nodes": intermediate_df[col].nunique(),
+            "number_of_added_edges": intermediate_df.drop_duplicates(subset=["target", col]).shape[0],
         },
     }
     # Step 7: Integrate into main dataframe

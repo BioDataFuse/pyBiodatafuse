@@ -52,6 +52,8 @@ MOLMEDB_COMPOUND_PROTEIN_COL = f"{MOLMEDB}_transporter_inhibited"
 PUBCHEM_COMPOUND_ASSAYS_COL = f"{PUBCHEM}_assays"
 STRING_PPI_COL = f"{STRING}_ppi"
 WIKIDATA_CC_COL = f"{WIKIDATA}_cellular_components"
+AOPWIKI_GENE_COL = "aop_gene"
+AOPWIKI_COMPOUND_COL = "aop_compound"
 
 # Input type for each data source
 BGEE_GENE_INPUT_ID = "Ensembl"
@@ -70,6 +72,7 @@ WIKIDATA_GENE_INPUT_ID = "NCBI Gene"
 WIKIPATHWAYS_GENE_INPUT_ID = "NCBI Gene"
 PATENT_INPUT_ID = "PubChem Compound"
 AOPWIKI_GENE_INPUT_ID = "Ensembl"
+AOPWIKI_COMPOUND_INPUT_ID = "PubChem Compound"
 
 # Output annotation for each data source
 # Bgee
@@ -273,6 +276,7 @@ MOLMEDB_COMPOUND_PROTEIN_OUTPUT_DICT = {
     "uniprot_trembl_id": str,
     "hgnc_symbol": str,
     "source_pmid": str,
+    "ensembl": str
 }
 UNIPROT_TREMBL_ID = "P"
 
@@ -698,4 +702,28 @@ AOPWIKI_LIFESTAGE_MAPPINGS = {
     "During brain development, adulthood and aging": "",
     "Foetal": "",
     "Larvae": "",
+}
+
+SOURCE_NAMESPACES = {
+
+    "CAS": "https://commonchemistry.cas.org/detail?cas_rn=",
+    "ChEBI": "https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI:",
+    "ChemSpider": "http://www.chemspider.com/Chemical-Structure.",
+    "ChEMBL compound": "https://www.ebi.ac.uk/chembl/compound_report_card/",
+    "DrugBank": "https://go.drugbank.com/drugs/",
+    "HMDB": "https://hmdb.ca/metabolites/",
+    "InChIKey": "https://www.chemspider.com/Search.aspx?q=",
+    "KEGG Compound": "https://www.genome.jp/dbget-bin/www_bget?cpd:",
+    "KEGG Drug": "https://www.genome.jp/dbget-bin/www_bget?dr:",
+    "KEGG Glycan": "https://www.genome.jp/dbget-bin/www_bget?gl:",
+    "LIPID MAPS": "https://www.lipidmaps.org/data/LMSDRecord.php?LMID=",
+    "LipidBank": "http://lipidbank.jp/cgi-bin/detail.cgi?id=",
+    "PharmGKB Drug": "https://www.pharmgkb.org/chemical/",
+    "PubChem Compound": "https://pubchem.ncbi.nlm.nih.gov/compound/",
+    "PubChem Substance": "https://pubchem.ncbi.nlm.nih.gov/substance/",
+    "SwissLipids": "https://www.swisslipids.org/#/entity/",
+    "TTD Drug": "http://db.idrblab.net/ttd/data/drug/details/",
+    "Wikidata": "https://www.wikidata.org/wiki/",
+    "Wikipedia": "https://en.wikipedia.org/wiki/",
+    #TODO ADD ALL
 }

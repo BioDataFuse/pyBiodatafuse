@@ -4,6 +4,7 @@
 """Python file for queriying MolMeDB (https://molmedb.upol.cz/detail/intro)."""
 
 import datetime
+import requests
 import os
 import warnings
 from string import Template
@@ -317,6 +318,17 @@ def get_compound_gene_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
     intermediate_df.rename(
         columns={"inhibitorInChIKey": "target", "hgcn_id": "hgnc_symbol"}, inplace=True
     )
+
+    # Convert all HGNC symbols to Ensembl
+    ids = list(intermediate_df["hgnc_symbol"].unique())
+    response = requests.post(
+    'https://webservice.bridgedb.org/Human/xrefsBatch/H',
+    headers={'Content-Type': 'text/plain', 'accept': 'application/json'},
+    data="\n".join(ids))
+    if response.status_code == 200:
+        res = response.json()
+        ensembl_ids = {hgnc: next((item.split("ensembl:")[1] for item in res[hgnc]['result set'] if 'ensembl:' in item), None) for hgnc in ids}
+        intermediate_df["ensembl"] = intermediate_df["hgnc_symbol"].map(ensembl_ids)
 
     # Check if all keys in df match the keys in OUTPUT_DICT
     check_columns_against_constants(

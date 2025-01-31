@@ -33,7 +33,6 @@ Classes:
 import pandas as pd
 from bioregistry import normalize_curie
 from multiprocessing import Pool
-from functools import partial
 from rdflib import Graph, URIRef
 from tqdm import tqdm
 
@@ -55,9 +54,13 @@ from pyBiodatafuse.constants import (
     TARGET_COL,
     TARGET_SOURCE_COL,
     URIS,
+    MOLMEDB_COMPOUND_PROTEIN_COL,
+    SOURCE_NAMESPACES,
+    AOPWIKI_GENE_COL,
+    AOPWIKI_COMPOUND_COL
 )
 from pyBiodatafuse.graph.rdf.metadata import add_metadata
-from pyBiodatafuse.graph.rdf.nodes.compound import add_compound_node, add_transporter_inhibitor_node
+from pyBiodatafuse.graph.rdf.nodes.compound import add_compound_gene_node, add_transporter_inhibitor_node, add_transporter_inhibited_node
 from pyBiodatafuse.graph.rdf.nodes.gene import add_gene_nodes
 from pyBiodatafuse.graph.rdf.nodes.gene_disease import add_gene_disease_associations
 from pyBiodatafuse.graph.rdf.nodes.gene_expression import add_gene_expression_data
@@ -65,8 +68,9 @@ from pyBiodatafuse.graph.rdf.nodes.go_terms import add_go_cpf
 from pyBiodatafuse.graph.rdf.nodes.literature import add_literature_based_data
 from pyBiodatafuse.graph.rdf.nodes.pathway import add_pathway_node
 from pyBiodatafuse.graph.rdf.nodes.protein_protein import add_ppi_data
-#from pyBiodatafuse.graph.rdf.nodes.aop import add_aop_data
+from pyBiodatafuse.graph.rdf.nodes.aop import add_aop_gene_node, add_aop_compound_node
 from pyBiodatafuse.graph.rdf.utils import get_shacl_prefixes, get_shapes, replace_na_none
+import os
 
 
 class BDFGraph(Graph):
@@ -103,6 +107,10 @@ class BDFGraph(Graph):
             self.bind(key, new_value)
         for key, value in NAMESPACE_BINDINGS.items():
             self.bind(key, value)
+        resources_path = os.path.join(os.path.dirname(__file__), os.path.pardir, os.path.pardir, 'resources', 'datasources.csv')
+        with open(resources_path, mode='r') as file:
+            df = pd.read_csv(file)
+            self.metabolite_sources = df[df['type'] == 'metabolite']['source'].tolist()
 
     def process_row(self, row, i, open_only=False):
         """
@@ -126,32 +134,32 @@ class BDFGraph(Graph):
 
         if not source_curie or not target_curie:
             return
-
-        id_number = f"{i:06d}"  # Format index as a zero-padded string
-        gene_node = self.get_gene_node(row)
-
-        if not gene_node:
-            return
-
         # Collect disease-related data
         disease_data = self.collect_disease_data(row)
+        id_number = f"{i:06d}"  # Format index as a zero-padded string
+        gene_node = self.get_row_gene_node(row)
+        compound_node = self.get_row_compound_node(row)
 
-        # Process multiple types of biological data
-        self.process_ppi_data(row.get(STRING_PPI_COL), gene_node)
-        protein_nodes = list(self.objects(gene_node, URIRef(PREDICATES["translation_of"])))
-        self.process_disease_data(disease_data, id_number, source_idx, gene_node)
-        self.process_expression_data(row, id_number, source_idx, gene_node)
-        self.process_pathways(row, gene_node, protein_nodes)
-        self.process_processes_data(row.get(OPENTARGETS_GO_COL), gene_node)
-        self.process_compound_data(row.get(OPENTARGETS_GENE_COMPOUND_COL), gene_node)
-        self.process_literature_data(
-            row.get(LITERATURE_DISEASE_COL), gene_node, id_number, source_idx, self.new_uris, i
-        )
-        self.process_transporter_inhibitor_data(row.get(MOLMEDB_PROTEIN_COMPOUND_COL))
-
-        # Optionally process protein variants if enabled
-        if self.include_variants:
-            self.process_protein_variants(protein_nodes)
+        if gene_node:
+            # Process multiple types of biological data
+            self.process_ppi_data(row.get(STRING_PPI_COL), gene_node)
+            protein_nodes = list(self.objects(gene_node, URIRef(PREDICATES["translation_of"])))
+            self.process_disease_data(disease_data, id_number, source_idx, gene_node)
+            self.process_expression_data(row, id_number, source_idx, gene_node)
+            self.process_pathways(row, gene_node, protein_nodes)
+            self.process_processes_data(row.get(OPENTARGETS_GO_COL), gene_node)
+            self.process_compound_data(row.get(OPENTARGETS_GENE_COMPOUND_COL), gene_node)
+            self.process_literature_data(
+                row.get(LITERATURE_DISEASE_COL), gene_node, id_number, source_idx, self.new_uris, i
+            )
+            self.process_transporter_inhibitor_data(row.get(MOLMEDB_PROTEIN_COMPOUND_COL))
+            if self.include_variants:
+                self.process_protein_variants(protein_nodes)
+            self.process_aop_gene_data(row.get(AOPWIKI_GENE_COL))
+        if compound_node:
+            self.process_transporter_inhibited_data(row.get(MOLMEDB_COMPOUND_PROTEIN_COL))
+            self.process_aop_compound_data(row.get(AOPWIKI_COMPOUND_COL))
+            self.process
 
 
     def generate_rdf(self, df: pd.DataFrame, metadata: dict, open_only: bool = False):
@@ -170,44 +178,6 @@ class BDFGraph(Graph):
             self.process_row(row, i, open_only)
         self._add_metadata(metadata)
 
-    def process_row(self, row, i, open_only):
-        """
-        Process a single row of the DataFrame and update the RDF graph.
-
-        :param row: A dictionary-like object representing a single row of the DataFrame.
-        :param i: An integer representing the index of the row.
-        :param open_only: A boolean indicating whether to process only open data.
-        """
-        source_idx = row.get(IDENTIFIER_COL)
-        source_namespace = row.get(IDENTIFIER_SOURCE_COL)
-        target_idx = row.get(TARGET_COL)
-        target_namespace = row.get(TARGET_SOURCE_COL)
-        if not self.valid_indices(source_idx, source_namespace, target_idx, target_namespace):
-            return
-        source_curie = normalize_curie(f"{source_namespace}:{source_idx}")
-        target_curie = normalize_curie(f"{target_namespace}:{target_idx}")
-        if not source_curie or not target_curie:
-            return
-        id_number = f"{i:06d}"
-        gene_node = self.get_gene_node(row)
-        if not gene_node:
-            gene_node = None
-        disease_data = self.collect_disease_data(row)
-        # New methods (e.g., new node types) can be called here
-        # self.process_nodetype_data(row.get(datatype_col))
-        self.process_ppi_data(row.get(STRING_PPI_COL), gene_node)
-        protein_nodes = list(self.objects(gene_node, URIRef(PREDICATES["translation_of"])))
-        self.process_expression_data(row, id_number, source_idx, gene_node)
-        self.process_disease_data(disease_data, id_number, source_idx, gene_node)
-        self.process_pathways(row, gene_node, protein_nodes)
-        self.process_processes_data(row.get(OPENTARGETS_GO_COL), gene_node)
-        self.process_compound_data(row.get(OPENTARGETS_GENE_COMPOUND_COL), gene_node)
-        self.process_literature_data(
-            row.get(LITERATURE_DISEASE_COL), gene_node, id_number, source_idx, self.new_uris, i
-        )
-        self.process_transporter_inhibitor_data(row.get(MOLMEDB_PROTEIN_COMPOUND_COL))
-        if self.include_variants:
-            self.process_protein_variants(protein_nodes)
 
     # Class methods about specific nodes begin here
     # If you add a new method for a new type of data/nodes, try to import most of the code from another script
@@ -248,7 +218,7 @@ class BDFGraph(Graph):
             pd.isna(val) for val in [source_idx, source_namespace, target_idx, target_namespace]
         )
 
-    def get_gene_node(self, row):
+    def get_row_gene_node(self, row):
         """
         Get gene node.
 
@@ -256,9 +226,30 @@ class BDFGraph(Graph):
                     It must include the key "target.source".
         :return: A URIRef for the gene, else None.
         """
-        if row["target.source"] == "Ensembl":
-            return self._add_gene_nodes(row)
-        return None
+        target = row.get("target", None)
+        source = row.get("target.source", None)
+        if source and source == "Ensembl":
+            if target:
+                return self._add_gene_nodes(self, target, source)
+            else:
+                return None
+
+    def get_row_compound_node(self, row):
+        """
+        Get compound node.
+
+        :param row: A dictionary containing the data for a single row.
+                    It must include the key "target.source".
+        :return: A URIRef for the gene, else None.
+        """
+        target = row.get("target", None)
+        source = row.get("target.source", None)
+        
+        if source and source.lower().isin(self.metabolite_sources):
+            if target:
+                return self._add_compound_nodes(self, row)
+            else:
+                return None
 
     def process_disease_data(self, disease_data, id_number, source_idx, gene_node):
         """
@@ -356,7 +347,7 @@ class BDFGraph(Graph):
         """
         if compound_data:
             for compound in compound_data:
-                self._add_compound_node(compound, gene_node)
+                self._add_compound_gene_node(compound, gene_node)
 
     def process_literature_data(
         self, literature_based_data, gene_node, id_number, source_idx, new_uris, i
@@ -405,6 +396,16 @@ class BDFGraph(Graph):
             for entry in transporter_inhibitor_data:
                 self._add_transporter_inhibitor_node(entry)
 
+    def process_transporter_inhibited_data(self, transporter_inhibited_data):
+        """
+        Process transporter inhibited data and add to the RDF graph.
+
+        :param transporter_inhibited_data: A list of transporter inhibitor data entries to be processed.
+        """
+        if transporter_inhibited_data:
+            for entry in transporter_inhibited_data:
+                self._add_transporter_inhibited_node(entry)
+
     def process_protein_variants(self, protein_nodes):
         """
         Process protein variants and add to the RDF graph.
@@ -419,16 +420,22 @@ class BDFGraph(Graph):
                 for other_protein_node in protein_nodes[i + 1 :]:
                     self.add((protein_node, URIRef(PREDICATES["variant_of"]), other_protein_node))
                     self.add((other_protein_node, URIRef(PREDICATES["variant_of"]), protein_node))
-
-    #def process_aop_data(self, aop_data):
-    #    """
-    #    Process AOP Wiki data and add to the RDF graph.
-#
-    #    :param aop_data: A list of AOP data entries to be processed.
-    #    """
-    #    if aop_data:
-    #        for entry in aop_data:
-    #            self._add_aop_node(entry)    
+    def process_aop_gene_data(self, aop_gene_data):
+        """
+        Process AOP Wiki gene data and add to the RDF graph.
+        :param aop_gene_data: A list of AOP gene data entries to be processed.
+        """
+        if aop_gene_data:
+            for entry in aop_gene_data:
+                self._add_aop_gene_node(entry)
+    def process_aop_compound_data(self, aop_compound_data):
+        """
+        Process AOP Wiki compound data and add to the RDF graph.
+        :param aop_compound_data: A list of AOP compound data entries to be processed.
+        """
+        if aop_compound_data:
+            for entry in aop_compound_data:
+                self._add_aop_compound_node(entry)
 
     def process_ppi_data(self, stringdb_data, gene_node):
         """
@@ -491,13 +498,28 @@ class BDFGraph(Graph):
         """
         return add_go_cpf(self, process_data)
 
-    def _add_compound_node(self, compound, protein_node):
+    def _add_compound_nodes(self, row):
+        """Add compound data to the RDF graph and associate it with a protein node.
+
+        :param row: A pandas DataFrame row.
+        """
+        sources = self.metabolite_sources
+        if row["identifier.source"] in sources:
+            iri = SOURCE_NAMESPACES[row["identifier.source"]] + row.identifier
+            self.add(URIRef(iri))
+        if row["target.source"] in sources:
+            iri = SOURCE_NAMESPACES[row["identifier.source"]] + row.target
+            self.add(URIRef(iri))
+
+
+
+    def _add_compound_gene_node(self, compound, gene_node):
         """Add compound data to the RDF graph and associate it with a protein node.
 
         :param compound: Compound data to be added.
         :param protein_node: Node representing the associated protein.
         """
-        add_compound_node(self, compound, protein_node)
+        add_compound_gene_node(self, compound, gene_node)
 
     def _add_transporter_inhibitor_node(self, entry):
         """Add transporter inhibitor data to the RDF graph.
@@ -505,6 +527,13 @@ class BDFGraph(Graph):
         :param entry: Data for the transporter inhibitor.
         """
         add_transporter_inhibitor_node(self, entry, self.base_uri)
+
+    def _add_transporter_inhibited_node(self, compound_node, entry):
+        """Add transporter inhibitor data to the RDF graph.
+
+        :param entry: Data for the transporter inhibitor.
+        """
+        add_transporter_inhibited_node(self, compound_node, entry, self.base_uri)
 
     def _add_pathway_node(self, data, source):
         """Add pathway data to the RDF graph.
@@ -541,6 +570,22 @@ class BDFGraph(Graph):
         add_ppi_data(
             g=self, gene_node=gene_node, entry=entry, base_uri=self.base_uri, new_uris=self.new_uris
         )
+
+    def _add_aop_gene_node(self, entry):
+        """
+        Add AOP Wiki gene data to the RDF graph.
+        :param entry: Data for the AOP gene.
+        """
+        # Implementation for adding AOP gene node
+        return None
+
+    def _add_aop_compound_node(self, entry):
+        """
+        Add AOP Wiki compound data to the RDF graph.
+        :param entry: Data for the AOP compound.
+        """
+        # Implementation for adding AOP compound node
+        return None
 
     def _add_metadata(self, metadata):
         """Add metadata to the RDF graph.
