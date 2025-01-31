@@ -44,6 +44,7 @@ from pyBiodatafuse.constants import (
     LITERATURE_DISEASE_NODE_ATTRS,
     LITERATURE_NODE_MAIN_LABEL,
     MINERVA,
+    MITOCARTA,
     MOLMEDB_COMPOUND_NODE_ATTRS,
     MOLMEDB_PROTEIN_COMPOUND_COL,
     MOLMEDB_PROTEIN_COMPOUND_EDGE_ATTRS,
@@ -832,22 +833,24 @@ def add_mitocarta_gene_mito_subgraph(g, gene_node_label, annot_list):
     :returns: a NetworkX MultiDiGraph
     """
     for annot in annot_list:
-        if pd.isna(annot["hpa_location"]):
+        if pd.isna(annot["mito_pathways"]):
             continue
 
         annot_node_label = annot["mito_pathways"]
         annot_node_attrs = {}
         annot_node_attrs["name"] = annot["mito_pathways"]
-        annot_node_attrs["datasource"] = "mitocarta"
-        annot_node_attrs["hpa_location"] = annot["hpa_location"]
-        annot_node_attrs["sub_mito_localization"] = annot["sub_mito_localization"]
+        annot_node_attrs["datasource"] = MITOCARTA
+        if not pd.isna(annot["hpa_location"]):
+            annot_node_attrs["hpa_location"] = annot["hpa_location"]
+        if not pd.isna(annot["sub_mito_localization"]):
+            annot_node_attrs["sub_mito_localization"] = annot["sub_mito_localization"]
         annot_node_attrs["evidence"] = annot["evidence"]
-        annot_node_attrs["labels"] = "mito_pathway"
+        annot_node_attrs["labels"] = "Mitochondrial_Pathway"
 
         g.add_node(annot_node_label, attr_dict=annot_node_attrs)
 
         edge_attrs = GENE_PATHWAY_EDGE_ATTRS.copy()
-        edge_attrs["datasource"] = "mitocarta"
+        edge_attrs["datasource"] = MITOCARTA
         edge_attrs["label"] = "encodes_mitochondrial_protein"
 
         edge_hash = hash(frozenset(edge_attrs.items()))
@@ -1448,7 +1451,7 @@ def build_networkx_graph(
         PUBCHEM_COMPOUND_ASSAYS_COL: add_pubchem_assay_subgraph,
         f"{GPROFILER}_wp": add_gprofiler_gene_wikipathway_subgraph,
         f"{GPROFILER}_hp": add_gprofiler_gene_HP_subgraph,
-        f"{GPROFILER}_hpa": add_gprofiler_gene_HPA_subgraph,
+        # f"{GPROFILER}_hpa": add_gprofiler_gene_HPA_subgraph,
         f"{GPROFILER}_kegg": add_gprofiler_gene_KEGG_subgraph,
         f"{GPROFILER}_mirna": add_gprofiler_gene_MIRNA_subgraph,
         f"{GPROFILER}_reac": add_gprofiler_gene_REAC_subgraph,
@@ -1456,7 +1459,7 @@ def build_networkx_graph(
         f"{GPROFILER}_go:bp": add_gprofiler_gene_GO_BP_subgraph,
         f"{GPROFILER}_go:cc": add_gprofiler_gene_GO_CC_subgraph,
         f"{GPROFILER}_go:mf": add_gprofiler_gene_GO_MF_subgraph,
-        "mitocarta": add_mitocarta_gene_mito_subgraph,
+        MITOCARTA: add_mitocarta_gene_mito_subgraph,
     }
 
     for _i, row in tqdm(combined_df.iterrows(), total=combined_df.shape[0], desc="Building graph"):
