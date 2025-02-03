@@ -34,6 +34,7 @@ import pandas as pd
 from bioregistry import normalize_curie
 from multiprocessing import Pool
 from rdflib import Graph, URIRef
+from rdflib.namespace import SKOS
 from tqdm import tqdm
 
 from pyBiodatafuse.constants import (
@@ -509,9 +510,10 @@ class BDFGraph(Graph):
             self.add(URIRef(iri))
             compound_node = URIRef(iri)
             nodes = True
-        elif row["target.source"] in sources:
+        elif row["target.source"] in sources and compound_node:
             iri = SOURCE_NAMESPACES[row["identifier.source"]] + row.target
             self.add(URIRef(iri))
+            self.add((compound_node, SKOS.exactMatch, URIRef(iri)))
         return compound_node
 
 
