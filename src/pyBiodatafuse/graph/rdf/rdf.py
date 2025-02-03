@@ -506,11 +506,12 @@ class BDFGraph(Graph):
         sources = self.metabolite_sources
         compound_node = None
         if row["identifier.source"] in sources:
+            print(iri)
             iri = SOURCE_NAMESPACES[row["identifier.source"]] + row.identifier
             self.add(URIRef(iri))
             compound_node = URIRef(iri)
-            nodes = True
         elif row["target.source"] in sources and compound_node:
+            print(iri)
             iri = SOURCE_NAMESPACES[row["identifier.source"]] + row.target
             self.add(URIRef(iri))
             self.add((compound_node, SKOS.exactMatch, URIRef(iri)))
