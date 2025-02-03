@@ -159,7 +159,6 @@ class BDFGraph(Graph):
         if compound_node:
             self.process_transporter_inhibited_data(row.get(MOLMEDB_COMPOUND_PROTEIN_COL))
             self.process_aop_compound_data(row.get(AOPWIKI_COMPOUND_COL))
-            self.process
 
 
     def generate_rdf(self, df: pd.DataFrame, metadata: dict, open_only: bool = False):
@@ -504,12 +503,18 @@ class BDFGraph(Graph):
         :param row: A pandas DataFrame row.
         """
         sources = self.metabolite_sources
+        compound_node = None
         if row["identifier.source"] in sources:
             iri = SOURCE_NAMESPACES[row["identifier.source"]] + row.identifier
             self.add(URIRef(iri))
-        if row["target.source"] in sources:
+            compound_node = URIRef(iri)
+            nodes = True
+        elif row["target.source"] in sources:
             iri = SOURCE_NAMESPACES[row["identifier.source"]] + row.target
             self.add(URIRef(iri))
+        return compound_node
+
+
 
 
 
