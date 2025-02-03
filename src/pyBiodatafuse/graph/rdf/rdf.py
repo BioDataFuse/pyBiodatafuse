@@ -245,7 +245,7 @@ class BDFGraph(Graph):
         target = row.get("target", None)
         source = row.get("target.source", None)
         
-        if source and source.lower().isin(self.metabolite_sources):
+        if source and source.lower() in self.metabolite_sources:
             if target:
                 return self._add_compound_nodes(self, row)
             else:
