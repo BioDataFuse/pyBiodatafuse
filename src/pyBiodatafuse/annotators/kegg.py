@@ -153,8 +153,7 @@ def get_pathway_info(row):
     :returns: Dictionary containing pathway IDs and labels.
     """
     kegg_dict = row[KEGG_COL]
-    if kegg_dict is None or not isinstance(kegg_dict, dict) or kegg_dict.get("KEGG_id") is None:
-        # Return default structure with np.nan
+    if kegg_dict is None or not isinstance(kegg_dict, dict) or kegg_dict.get("KEGG_id") is np.nan:
         return {
             "KEGG_id": np.nan,
             "pathways": [
@@ -168,8 +167,9 @@ def get_pathway_info(row):
         }
 
     results = requests.get(f"{KEGG_ENDPOINT}/link/pathway/{kegg_dict.get('KEGG_id')}")
+    print(kegg_dict.get('KEGG_id'))
+    print(results.text)
     if len(results.text) <= 1:
-        # Return default structure with np.nan when no pathways are found
         kegg_dict["pathways"] = [
             {
                 "pathway_id": np.nan,
