@@ -140,7 +140,7 @@ def load_graph(g: nx.MultiDiGraph, network_name: str):
         "OCTAGON",  # Pathways
         "DIAMOND",  # Compounds
         "TRIANGLE",  # Side Effects
-        "Ellipse", # Homologs
+        "Ellipse",  # Homologs
     ]
     colors = [
         "#42d4f4",  # Cyan for Genes
@@ -152,7 +152,7 @@ def load_graph(g: nx.MultiDiGraph, network_name: str):
         "#3cb44b",  # Green for Pathways
         "#ffd700",  # Gold for Compounds
         "#aaffc3",  # Mint for Side Effects
-        "#9b59b6",   # Purple for Homologs
+        "#9b59b6",  # Purple for Homologs
     ]
 
     # Apply node shape and color mappings

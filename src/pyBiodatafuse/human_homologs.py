@@ -45,7 +45,7 @@ def check_version_ensembl() -> str:
     return response.text
 
 
-def get_human_homologs(row) -> dict:
+def get_human_homologs(row) -> list[dict[str, Any]]::
     """Retrieve human homologs for mouse genes using ensembl API.
 
     :param row: row from input dataframe.
