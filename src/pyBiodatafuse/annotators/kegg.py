@@ -13,7 +13,13 @@ import numpy as np
 import pandas as pd
 import requests
 
-from pyBiodatafuse.constants import KEGG, KEGG_COL, KEGG_ENDPOINT, KEGG_GENE_INPUT_ID, KEGG_COMPOUND_COL
+from pyBiodatafuse.constants import (
+    KEGG,
+    KEGG_COL,
+    KEGG_COMPOUND_COL,
+    KEGG_ENDPOINT,
+    KEGG_GENE_INPUT_ID,
+)
 from pyBiodatafuse.utils import check_columns_against_constants, get_identifier_of_interest
 
 
@@ -40,9 +46,9 @@ def check_version_kegg() -> str:
         if "Release" in line:
             release_version = line.split()[2]
             release_version = release_version.rstrip(",")
-            return release_version
         else:
             release_version = "Error: Release version not found."
+    return release_version
 
 
 def get_kegg_ids(row) -> dict:
@@ -135,16 +141,18 @@ def get_compounds(kegg_df):
                     "name": compound_name,
                 }
 
-            transformed_data.append({
-                "identifier": row["identifier"],
-                "identifier.source": row["identifier.source"],
-                "target": kegg_id,
-                "target.source": row["target.source"],
-                "KEGG_compounds": queried_identifiers[kegg_id],
-            })
+            transformed_data.append(
+                {
+                    "identifier": row["identifier"],
+                    "identifier.source": row["identifier.source"],
+                    "target": kegg_id,
+                    "target.source": row["target.source"],
+                    "KEGG_compounds": queried_identifiers[kegg_id],
+                }
+            )
 
     return pd.DataFrame(transformed_data)
-                
+
 
 def get_pathway_info(row):
     """Get pathway information for the input genes.
@@ -167,7 +175,7 @@ def get_pathway_info(row):
         }
 
     results = requests.get(f"{KEGG_ENDPOINT}/link/pathway/{kegg_dict.get('KEGG_id')}")
-    print(kegg_dict.get('KEGG_id'))
+    print(kegg_dict.get("KEGG_id"))
     print(results.text)
     if len(results.text) <= 1:
         kegg_dict["pathways"] = [

@@ -419,7 +419,6 @@ def add_kegg_gene_pathway_subgraph(g, gene_node_label, annot_list):
         annot_node_attrs["name"] = annot["pathway_label"]
         annot_node_attrs["id"] = annot["pathway_id"]
         annot_node_attrs["gene_count"] = annot["gene_count"]
-        
 
         # g.add_node(annot_node_label, attr_dict=annot_node_attrs)
         merge_node(g, annot_node_label, annot_node_attrs)
@@ -444,57 +443,75 @@ def add_kegg_gene_pathway_subgraph(g, gene_node_label, annot_list):
     return g
 
 
-def add_kegg_compounds_subgraph(g, pathway_node_label, compounds_list):
-    """Construct part of the graph by linking the kegg compound to it's respective pathway.
+def add_kegg_compounds_subgraph(g, pathway_node_label, compounds_list, combined_df):
+    """Construct part of the graph by linking the KEGG compound to its respective pathway.
 
     :param g: the input graph to extend with new nodes and edges.
     :param pathway_node_label: the pathway node to be linked to compound nodes.
     :param compounds_list: list of compounds from KEGG.
+    :param combined_df: the combined dataframe.
     :returns: a NetworkX MultiDiGraph
     """
-    if isinstance(compounds_list, list):
-        for compound in compounds_list:
-            if pd.isna(compound["name"]):
-                continue
+    print(
+        f"Function called with pathway_node_label: {pathway_node_label}, compounds_list length: {len(compounds_list)}"
+    )
 
-            annot_node_label = compound["KEGG_identifier"]
-            annot_node_attrs = KEGG_COMPOUND_NODE_ATTRS.copy()
-            annot_node_attrs["id"] = compound["KEGG_identifier"]
+    for compound in compounds_list:
+        print(f"Processing compound: {compound}")  # Debugging
+        if pd.isna(compound.get("name")):
+            print(f"Skipping compound {compound.get('KEGG_identifier')} due to missing name")
+            continue
 
-            # g.add_node(compound_node_label, attr_dict=compound_node_attrs)
-            merge_node(g, annot_node_label, annot_node_attrs)
+        annot_node_label = compound["KEGG_identifier"]
+        annot_node_attrs = KEGG_COMPOUND_NODE_ATTRS.copy()
+        annot_node_attrs["id"] = compound["KEGG_identifier"]
+        annot_node_attrs["label"] = compound["name"]
 
-            edge_attrs = KEGG_COMPOUND_EDGE_ATTRS.copy()
-            edge_hash = hash(frozenset(edge_attrs.items()))
-            edge_attrs["edge_hash"] = edge_hash
-            edge_data = g.get_edge_data(pathway_node_label, annot_node_label)
-            edge_data = {} if edge_data is None else edge_data
-            node_exists = [
-                x
-                for x, y in edge_data.items()
-                if "attr_dict" in y and y["attr_dict"].get("edge_hash") == edge_hash
-            ]
+        print(f"Adding node: {annot_node_label}, with attributes: {annot_node_attrs}")
+        merge_node(g, annot_node_label, annot_node_attrs)
 
-            if len(node_exists) == 0:
-                g.add_edge(
-                    pathway_node_label,
-                    annot_node_label,
-                    label=KEGG_COMPOUND_EDGE_LABEL,
-                    attr_dict=edge_attrs,
-                )
+        for _, path_row in combined_df.iterrows():
+            pathways = path_row.get("KEGG_pathways", [])
+            if isinstance(pathways, list) and pathways:
+                for pathway in pathways:
+                    if pathway_node_label == pathway.get("pathway_id", ""):
+                        if "compounds" in pathway:
+                            pathway_compounds = [
+                                comp["KEGG_identifier"] for comp in pathway["compounds"]
+                            ]
+                            if compound["KEGG_identifier"] in pathway_compounds:
+                                edge_attrs = KEGG_COMPOUND_EDGE_ATTRS.copy()
+                                edge_hash = hash(frozenset(edge_attrs.items()))
+                                edge_attrs["edge_hash"] = edge_hash
+                                edge_data = g.get_edge_data(pathway_node_label, annot_node_label)
+                                edge_data = {} if edge_data is None else edge_data
+                                node_exists = [
+                                    x
+                                    for x, y in edge_data.items()
+                                    if "attr_dict" in y
+                                    and y["attr_dict"].get("edge_hash") == edge_hash
+                                ]
+
+                                if len(node_exists) == 0:
+                                    g.add_edge(
+                                        pathway_node_label,
+                                        annot_node_label,
+                                        label=KEGG_COMPOUND_EDGE_LABEL,
+                                        attr_dict=edge_attrs,
+                                    )
 
     return g
 
 
-def process_kegg_pathway_compound(g, kegg_pathway_compound):
-    """Process pathway-compound relationships from kegg and add them to the graph.
+def process_kegg_pathway_compound(g, kegg_pathway_compound, combined_df):
+    """Process pathway-compound relationships from KEGG and add them to the graph.
 
-    :param g: the input graph to extend with gene nodes.
-    :param kegg_pathway_compound: the input DataFrame containing pathway-compound relationships.
+    :param g: the input graph to extend with pathway-compound relationships.
+    :param kegg_pathway_compound: DataFrame containing pathway-compound relationships.
+    :param combined_df: DataFrame containing KEGG pathway data.
     """
     for _, row in kegg_pathway_compound.iterrows():
-        pathway_node_label = row["identifier"].replace("_", ":")
-        compound_info = row["KEGG_compounds"]
+        compound_info = row[KEGG_COMPOUND_COL]
 
         if isinstance(compound_info, dict):
             compounds_list = [compound_info]
@@ -503,7 +520,20 @@ def process_kegg_pathway_compound(g, kegg_pathway_compound):
         else:
             compounds_list = []
 
-        add_kegg_compounds_subgraph(g, pathway_node_label, compounds_list)
+        for compound in compounds_list:
+            compound_id = compound["KEGG_identifier"]
+
+            for _, pathway_row in combined_df.iterrows():
+                pathway_data = pathway_row["KEGG_pathways"]
+
+                if isinstance(pathway_data, list):
+                    for pathway in pathway_data:
+                        pathway_id = pathway.get("pathway_id")
+                        pathway_compounds = pathway.get("compounds", [])
+
+                        if any(c.get("KEGG_identifier") == compound_id for c in pathway_compounds):
+                            print(f"Mapping compound {compound_id} to pathway {pathway_id}")
+                            add_kegg_compounds_subgraph(g, pathway_id, compounds_list, combined_df)
 
 
 def add_opentargets_gene_reactome_pathway_subgraph(g, gene_node_label, annot_list):
@@ -684,10 +714,10 @@ def add_opentargets_gene_compound_subgraph(g, gene_node_label, annot_list):
             )
 
         # Add side effects
-        if annot["adverse_effect"]:
-            add_opentargets_compound_side_effect_subgraph(
-                g, annot_node_label, annot[SIDE_EFFECT_NODE_MAIN_LABEL]
-            )
+        # if annot["adverse_effect"]:
+        #     add_opentargets_compound_side_effect_subgraph(
+        #         g, annot_node_label, annot[SIDE_EFFECT_NODE_MAIN_LABEL]
+        #     )
 
     return g
 
@@ -889,10 +919,10 @@ def add_opentargets_disease_compound_subgraph(g, disease_node_label, annot_list)
             )
 
         # Add side effects
-        if annot["adverse_effect"]:
-            add_opentargets_compound_side_effect_subgraph(
-                g, annot_node_label, annot[SIDE_EFFECT_NODE_MAIN_LABEL]
-            )
+        # if annot["adverse_effect"]:
+        #     add_opentargets_compound_side_effect_subgraph(
+        #         g, annot_node_label, annot[SIDE_EFFECT_NODE_MAIN_LABEL]
+        #     )
 
     return g
 
@@ -1023,7 +1053,7 @@ def process_homologs(g, combined_df, homolog_df_list, func_dict, dea_columns):
             continue
         gene_node_label = add_gene_node(g, row, dea_columns)
         func_dict_non_hl = {key: func for key, func in func_dict.items() if key not in func_dict_hl}
-        process_annotations(g, gene_node_label, row, func_dict_non_hl) 
+        process_annotations(g, gene_node_label, row, func_dict_non_hl)
         process_ppi(g, gene_node_label, row)
 
     for _i, row in tqdm(combined_df.iterrows(), total=combined_df.shape[0]):
@@ -1031,18 +1061,18 @@ def process_homologs(g, combined_df, homolog_df_list, func_dict, dea_columns):
             continue
 
         homologs = row["Ensembl_homologs"]
-        
+
         if isinstance(homologs, list) and homologs:
             for homolog_entry in homologs:
                 homolog_node_label = homolog_entry.get("homolog")
 
-                if pd.isna(homolog_node_label) or homolog_node_label == 'nan':
+                if pd.isna(homolog_node_label) or homolog_node_label == "nan":
                     continue
-                
+
                 if homolog_node_label:
                     annot_node_attrs = ENSEMBL_HOMOLOG_NODE_ATTRS.copy()
                     annot_node_attrs["id"] = homolog_node_label
-                    annot_node_attrs["labels"] = HOMOLOG_NODE_LABELS 
+                    annot_node_attrs["labels"] = HOMOLOG_NODE_LABELS
                     g.add_node(homolog_node_label, attr_dict=annot_node_attrs)
 
                     process_annotations(g, homolog_node_label, row, func_dict_hl)
@@ -1127,7 +1157,7 @@ def build_networkx_graph(
         process_disease_compound(g, disease_compound)
 
     if pathway_compound is not None:
-        process_kegg_pathway_compound(g, pathway_compound)
+        process_kegg_pathway_compound(g, pathway_compound, combined_df)
 
     normalize_node_attributes(g)
     normalize_edge_attributes(g)
