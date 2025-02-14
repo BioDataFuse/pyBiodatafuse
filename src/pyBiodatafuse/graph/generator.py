@@ -452,14 +452,9 @@ def add_kegg_compounds_subgraph(g, pathway_node_label, compounds_list, combined_
     :param combined_df: the combined dataframe.
     :returns: a NetworkX MultiDiGraph
     """
-    print(
-        f"Function called with pathway_node_label: {pathway_node_label}, compounds_list length: {len(compounds_list)}"
-    )
 
     for compound in compounds_list:
-        print(f"Processing compound: {compound}")  # Debugging
         if pd.isna(compound.get("name")):
-            print(f"Skipping compound {compound.get('KEGG_identifier')} due to missing name")
             continue
 
         annot_node_label = compound["KEGG_identifier"]
@@ -467,7 +462,6 @@ def add_kegg_compounds_subgraph(g, pathway_node_label, compounds_list, combined_
         annot_node_attrs["id"] = compound["KEGG_identifier"]
         annot_node_attrs["label"] = compound["name"]
 
-        print(f"Adding node: {annot_node_label}, with attributes: {annot_node_attrs}")
         merge_node(g, annot_node_label, annot_node_attrs)
 
         for _, path_row in combined_df.iterrows():
@@ -532,7 +526,6 @@ def process_kegg_pathway_compound(g, kegg_pathway_compound, combined_df):
                         pathway_compounds = pathway.get("compounds", [])
 
                         if any(c.get("KEGG_identifier") == compound_id for c in pathway_compounds):
-                            print(f"Mapping compound {compound_id} to pathway {pathway_id}")
                             add_kegg_compounds_subgraph(g, pathway_id, compounds_list, combined_df)
 
 
