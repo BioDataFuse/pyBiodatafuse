@@ -18,6 +18,7 @@ from pyBiodatafuse.constants import (
     ENSEMBL_HOMOLOG_MAIN_LABEL,
 )
 from pyBiodatafuse.utils import get_identifier_of_interest
+from typing import Any
 
 
 def check_endpoint_ensembl() -> bool:
@@ -45,8 +46,8 @@ def check_version_ensembl() -> str:
     return response.text
 
 
-def get_human_homologs(row) -> list[dict[str, Any]]::
-    """Retrieve human homologs for mouse genes using ensembl API.
+def get_human_homologs(row) -> list[dict[str, Any]]:
+    """Retrieve human homologs for mouse genes using Ensembl API.
 
     :param row: row from input dataframe.
     :returns: dictionary mapping mouse genes to human homologs.
@@ -59,12 +60,14 @@ def get_human_homologs(row) -> list[dict[str, Any]]::
 
     if response.status_code == 200:
         data = response.json()
-        for homology in data.get("data", [])[0].get("homologies", []):
-            if homology["target"]["species"] == "homo_sapiens":
-                homolog = homology["target"]["id"]
-                return [{ENSEMBL_HOMOLOG_MAIN_LABEL: homolog}]
+        if "data" in data and len(data["data"]) > 0:
+            for homology in data["data"][0].get("homologies", []):
+                if homology["target"]["species"] == "homo_sapiens":
+                    homolog = homology["target"]["id"]
+                    return [{ENSEMBL_HOMOLOG_MAIN_LABEL: homolog}]
 
     return [{ENSEMBL_HOMOLOG_MAIN_LABEL: np.nan}]
+
 
 
 def get_homologs(bridgedb_df):
