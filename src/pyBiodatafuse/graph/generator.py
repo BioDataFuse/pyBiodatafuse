@@ -1171,6 +1171,8 @@ def save_graph(
     :param disease_compound: the input DataFrame containing disease-compound relationships.
     :param graph_name: the name of the graph.
     :param graph_dir: the directory to save the graph.
+    :returns: a NetworkX MultiDiGraph
+
     """
     graph_path = f"{graph_dir}/{graph_name}"
     os.makedirs(graph_path, exist_ok=True)
@@ -1197,3 +1199,5 @@ def save_graph(
         pickle.dump(g, f)
     nx.write_gml(g, graph_path_gml)
     logger.warning(f"Graph saved in {graph_path_pickle} and {graph_path_gml}")
+
+    return g

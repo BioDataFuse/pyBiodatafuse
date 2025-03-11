@@ -231,7 +231,6 @@ def get_ppi(bridgedb_df: pd.DataFrame, species: str = "human"):
     data_df[STRING_PPI_COL] = data_df.apply(
         lambda row: _format_data(row, stringdb_ids_df, network_df), axis=1
     )
-
     data_df[STRING_PPI_COL] = data_df[STRING_PPI_COL].apply(
         lambda x: ([{key: np.nan for key in STRING_OUTPUT_DICT}] if len(x) == 0 else x)
     )
