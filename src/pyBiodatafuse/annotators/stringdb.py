@@ -5,7 +5,9 @@
 
 import datetime
 import logging
+import traceback
 import warnings
+from time import sleep, time
 
 import numpy as np
 import pandas as pd
@@ -13,17 +15,15 @@ import requests
 from requests.exceptions import RequestException
 
 from pyBiodatafuse.constants import (
+    NCBI_ENDPOINT,
     STRING,
     STRING_ENDPOINT,
     STRING_GENE_INPUT_ID,
+    STRING_GENE_LINK_ID,
     STRING_OUTPUT_DICT,
     STRING_PPI_COL,
-    NCBI_ENDPOINT
 )
 from pyBiodatafuse.utils import check_columns_against_constants, get_identifier_of_interest
-
-# from biomart import BiomartServer
-
 
 logger = logging.getLogger("stringdb")
 
@@ -60,6 +60,7 @@ def _format_data(row, string_ids_df, network_df):
     """Reformat STRING-DB response (Helper function).
 
     :param row: input_df row
+    :param string_ids_df: STRING-DB response identifier DataFrame
     :param network_df: STRING-DB response annotation DataFrame
     :returns: StringDB reformatted annotation.
     """
@@ -69,7 +70,10 @@ def _format_data(row, string_ids_df, network_df):
     for _i, row_str in string_ids_df.iterrows():
         for _i, row_arr in network_df.iterrows():
 
-            if row_arr["preferredName_A"] == row_str["preferredName"] and row["identifier"] == row_str["queryItem"]:
+            if (
+                row_arr["preferredName_A"] == row_str["preferredName"]
+                and row["identifier"] == row_str["queryItem"]
+            ):
                 for _i, row_str2 in string_ids_df.iterrows():
                     if row_str2["preferredName"] == row_arr["preferredName_B"]:
                         link = row_str2["queryItem"]
@@ -80,16 +84,18 @@ def _format_data(row, string_ids_df, network_df):
                             "stringdb_link_to": link,
                             STRING_GENE_INPUT_ID: f"{STRING_GENE_INPUT_ID}:{row_arr['stringId_B'].split('.')[1]}",
                             "score": row_arr["score"],
-                            "gene_symbol": row_arr["preferredName_A"]
+                            "gene_symbol": row_arr["preferredName_A"],
                         }
                     )
                     target_links_set.add(row_arr["preferredName_B"])
 
-            elif row_arr["preferredName_B"] == row_str["preferredName"] and row["identifier"] == row_str["queryItem"]:
+            elif (
+                row_arr["preferredName_B"] == row_str["preferredName"]
+                and row["identifier"] == row_str["queryItem"]
+            ):
                 for _i, row_str2 in string_ids_df.iterrows():
                     if row_str2["preferredName"] == row_arr["preferredName_A"]:
                         link = row_str2["queryItem"]
-
 
                 if row_arr["preferredName_A"] not in target_links_set:
                     gene_ppi_links.append(
@@ -118,6 +124,7 @@ def get_string_ids(gene_list: list, species):
         results = requests.post(
             f"{STRING_ENDPOINT}/json/get_string_ids", data=params, timeout=TIMEOUT
         ).json()
+        print(results)
         return results
     except RequestException as e:
         logger.error("Error getting STRING IDs: %s", e)
@@ -149,7 +156,6 @@ def get_ppi(bridgedb_df: pd.DataFrame, species: str = "human"):
     :param species: The species to query. All species that are supported by both NCBI and STRINGDB can be used.
     :returns: a DataFrame containing the StringDB output and dictionary of the metadata.
     """
-
     # Check if the endpoint is available
     if not check_endpoint_stringdb():
         warnings.warn(f"{STRING} endpoint is not available. Unable to retrieve data.", stacklevel=2)
@@ -161,11 +167,7 @@ def get_ppi(bridgedb_df: pd.DataFrame, species: str = "human"):
     start_time = datetime.datetime.now()
 
     # Retrieve NCBI taxonomy identifier
-    params = {
-        "db": "taxonomy",
-        "term": species,
-        "retmode": "json" 
-    }
+    params = {"db": "taxonomy", "term": species, "retmode": "json"}
     response = requests.get(f"{NCBI_ENDPOINT}/entrez/eutils/esearch.fcgi", params=params).json()
     species_id = response["esearchresult"]["idlist"][0]
 
@@ -226,47 +228,86 @@ def get_ppi(bridgedb_df: pd.DataFrame, species: str = "human"):
         return pd.DataFrame(), string_metadata
 
     # Format the data
-    data_df[STRING_PPI_COL] = data_df.apply(lambda row: _format_data(row, stringdb_ids_df, network_df), axis=1)
+    data_df[STRING_PPI_COL] = data_df.apply(
+        lambda row: _format_data(row, stringdb_ids_df, network_df), axis=1
+    )
+
     data_df[STRING_PPI_COL] = data_df[STRING_PPI_COL].apply(
         lambda x: ([{key: np.nan for key in STRING_OUTPUT_DICT}] if len(x) == 0 else x)
     )
-    # # Collect all ENSP IDs from network_df
-    # ensp_ids = set(network_df['stringId_A'].str.split('.').str[1]) | set(network_df# ['stringId_B'].str.split('.').str[1])
-    # # Get UniProt mapping
-    # uniprot_map = ensp_to_uniprot(list(ensp_ids))
-    # Add 'Uniprot-TrEMBL' key to each element in data_df[STRING_PPI_COL]
-    # data_df[STRING_PPI_COL] = data_df[STRING_PPI_COL].apply(
-    #     lambda lst: [
-    #         {**ppi, "Uniprot-TrEMBL": uniprot_map.get(ppi.get("Ensembl"))}
-    #         for ppi in lst if lst
-    #     ] if lst else []
-    # )
+    # Collect all ENSP IDs from network_df
+    ensp_ids = set(network_df["stringId_A"].str.split(".").str[1]) | set(
+        network_df["stringId_B"].str.split(".").str[1]
+    )
+    # Get UniProt mapping
+    uniprot_map = ensp_to_uniprot(list(ensp_ids))
+    # Add 'Uniprot-TrEMBL' and 'Uniprot-TrEMBL_link' keys to each element in data_df[STRING_PPI_COL]
+    data_df[STRING_PPI_COL] = data_df[STRING_PPI_COL].apply(
+        lambda lst: (
+            [
+                {
+                    **ppi,
+                    "Uniprot-TrEMBL": uniprot_map.get(ppi.get(STRING_GENE_INPUT_ID, "")),
+                    "Uniprot-TrEMBL_link": uniprot_map.get(ppi.get(STRING_GENE_LINK_ID, "")),
+                }
+                for ppi in lst
+                if lst
+            ]
+            if lst
+            else []
+        )
+    )
     return data_df, string_metadata
 
 
-# def ensp_to_uniprot(ensp_ids):
-#     """
-#     Retrieve UniProt IDs from Ensembl protein IDs (ENSP).
-#
-#     :param ensp_ids: List of Ensembl protein IDs (ENSP)
-#     :return: Dictionary mapping ENSP IDs to UniProt IDs
-#     """
-#     server = BiomartServer("http://www.ensembl.org/biomart")
-#     hsapiens_mart = server.datasets["hsapiens_gene_ensembl"]
-#
-#     response = hsapiens_mart.search(
-#         {
-#             "filters": {"ensembl_peptide_id": ensp_ids},
-#             "attributes": ["ensembl_peptide_id", "uniprotswissprot"],
-#         }
-#     )
-#
-#     ensp_to_uniprot_map = {}
-#     for line in response.iter_lines():
-#         decoded_line = line.decode("utf-8").split("\t")
-#         ensp_id = decoded_line[0]
-#         uniprot_id = decoded_line[1] if len(decoded_line) > 1 else None
-#         ensp_id = f"Ensembl:{ensp_id}"
-#         ensp_to_uniprot_map[ensp_id] = uniprot_id
-#     return ensp_to_uniprot_map
-#
+def ensp_to_uniprot(ensp_ids):
+    """Retrieve UniProt IDs from Ensembl protein IDs (ENSP).
+
+    :param ensp_ids: List of Ensembl protein IDs (ENSP)
+    :return: Dictionary mapping ENSP IDs to UniProt IDs
+    """
+    ensp_to_uniprot_map = {}
+    url = "https://rest.uniprot.org/idmapping/run"
+    headers = {"Content-Type": "application/x-www-form-urlencoded"}
+    data = {"from": "Ensembl_Protein", "to": "UniProtKB", "ids": ",".join(ensp_ids)}
+
+    try:
+        # Submit the ID mapping request
+        response = requests.post(url, headers=headers, data=data)
+        response.raise_for_status()
+        job_id = response.json()["jobId"]
+
+        # Check the status of the job
+        status_url = f"https://rest.uniprot.org/idmapping/status/{job_id}"
+        while True:
+            try:
+                status_response = requests.get(status_url)
+                status_response.raise_for_status()
+                status_data = status_response.json()
+                if status_data.get("results"):
+                    break  # Exit loop if the job is finished
+                else:
+                    sleep(10)
+            except requests.HTTPError as e:
+                logger.error("HTTP error occurred: %s", e)
+                break
+            except Exception as e:
+                logger.error("An unexpected error occurred: %s", e)
+                break
+
+        # Retrieve the results
+        result_url = f"https://rest.uniprot.org/idmapping/results/{job_id}"
+        result_response = requests.get(result_url)
+        result_response.raise_for_status()
+        results = result_response.json()["results"]
+
+        # Process the results
+        for result in results:
+            ensp_id = result["from"]
+            uniprot_id = result["to"]
+            ensp_to_uniprot_map[ensp_id] = uniprot_id
+
+    except Exception as e:
+        logger.error("Error during ID mapping: %s", e)
+
+    return ensp_to_uniprot_map

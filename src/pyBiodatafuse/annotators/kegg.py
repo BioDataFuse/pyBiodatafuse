@@ -52,7 +52,7 @@ def check_version_kegg() -> str:
 
 
 def batch_request(urls):
-    """Helper function to batch process requests."""
+    """Define helper function to batch process requests."""
     results = []
     for i in range(0, len(urls), 10):
         batch_urls = urls[i : i + 10]

@@ -5,6 +5,7 @@
 
 import datetime
 import warnings
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -18,7 +19,6 @@ from pyBiodatafuse.constants import (
     ENSEMBL_HOMOLOG_MAIN_LABEL,
 )
 from pyBiodatafuse.utils import get_identifier_of_interest
-from typing import Any
 
 
 def check_endpoint_ensembl() -> bool:
@@ -67,7 +67,6 @@ def get_human_homologs(row) -> list[dict[str, Any]]:
                     return [{ENSEMBL_HOMOLOG_MAIN_LABEL: homolog}]
 
     return [{ENSEMBL_HOMOLOG_MAIN_LABEL: np.nan}]
-
 
 
 def get_homologs(bridgedb_df):

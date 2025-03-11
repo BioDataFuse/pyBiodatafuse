@@ -117,6 +117,9 @@ def bridgedb_xref(
             "HGNC",
             "MGI",
         ]
+
+        data_sources = read_resource_files()
+        output_datasource = list(data_sources["source"])
     else:
         assert isinstance(output_datasource, list), "output_datasource must be a list"
 

@@ -452,7 +452,6 @@ def add_kegg_compounds_subgraph(g, pathway_node_label, compounds_list, combined_
     :param combined_df: the combined dataframe.
     :returns: a NetworkX MultiDiGraph
     """
-
     for compound in compounds_list:
         if pd.isna(compound.get("name")):
             continue

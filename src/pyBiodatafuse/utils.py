@@ -135,8 +135,8 @@ def combine_sources(bridgedb_df: pd.DataFrame, df_list: List[pd.DataFrame]) -> p
 
 
 def combine_with_homologs(df: pd.DataFrame, homolog_dfs: list) -> pd.DataFrame:
-    """
-    Merge a DataFrame with a list of homolog dataframes.
+    """Merge a DataFrame with a list of homolog dataframes.
+
     :param df: An already combined df containing output of non-homolog annotators.
     :param homolog_dfs: List of homolog dataframes to be combined.
     :returns: Merged DataFrame with only the required columns.
