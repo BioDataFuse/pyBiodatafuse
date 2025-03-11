@@ -328,7 +328,7 @@ def add_minerva_gene_pathway_subgraph(g, gene_node_label, annot_list):
     :returns: a NetworkX MultiDiGraph
     """
     for annot in annot_list:
-        if pd.isna(annot["pathway_label"]):
+        if pd.isna(annot.get("pathway_label")):
             continue
 
         annot_node_label = annot[PATHWAY_NODE_MAIN_LABEL]
