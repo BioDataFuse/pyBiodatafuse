@@ -260,7 +260,7 @@ STRING_OUTPUT_DICT = {
     STRING_GENE_INPUT_ID: str,
     "score": float,
     "Uniprot-TrEMBL": str,
-    "Uniprot-TrEMBL_link": str
+    "Uniprot-TrEMBL_link": str,
 }
 
 

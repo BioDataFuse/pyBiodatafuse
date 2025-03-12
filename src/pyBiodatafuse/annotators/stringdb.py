@@ -5,9 +5,9 @@
 
 import datetime
 import logging
-import warnings
 import traceback
-from time import time, sleep
+import warnings
+from time import sleep, time
 
 import numpy as np
 import pandas as pd
@@ -19,12 +19,11 @@ from pyBiodatafuse.constants import (
     STRING,
     STRING_ENDPOINT,
     STRING_GENE_INPUT_ID,
+    STRING_GENE_LINK_ID,
     STRING_OUTPUT_DICT,
     STRING_PPI_COL,
-    STRING_GENE_LINK_ID,
 )
 from pyBiodatafuse.utils import check_columns_against_constants, get_identifier_of_interest
-
 
 logger = logging.getLogger("stringdb")
 
@@ -224,7 +223,9 @@ def get_ppi(bridgedb_df: pd.DataFrame, species: str = "human"):
         lambda x: ([{key: np.nan for key in STRING_OUTPUT_DICT}] if len(x) == 0 else x)
     )
     # Collect all ENSP IDs from network_df
-    ensp_ids = set(network_df['stringId_A'].str.split('.').str[1]) | set(network_df['stringId_B'].str.split('.').str[1])
+    ensp_ids = set(network_df["stringId_A"].str.split(".").str[1]) | set(
+        network_df["stringId_B"].str.split(".").str[1]
+    )
     # Get UniProt mapping
     uniprot_map = ensp_to_uniprot(list(ensp_ids))
     # Add 'Uniprot-TrEMBL' and 'Uniprot-TrEMBL_link' keys to each element in data_df[STRING_PPI_COL]
@@ -255,11 +256,7 @@ def ensp_to_uniprot(ensp_ids):
     ensp_to_uniprot_map = {}
     url = "https://rest.uniprot.org/idmapping/run"
     headers = {"Content-Type": "application/x-www-form-urlencoded"}
-    data = {
-        "from": "Ensembl_Protein",
-        "to": "UniProtKB",
-        "ids": ",".join(ensp_ids)
-    }
+    data = {"from": "Ensembl_Protein", "to": "UniProtKB", "ids": ",".join(ensp_ids)}
 
     try:
         # Submit the ID mapping request
