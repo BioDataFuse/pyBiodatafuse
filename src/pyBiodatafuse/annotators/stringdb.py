@@ -3,6 +3,7 @@
 
 """Python file for querying StringDB (https://string-db.org/)."""
 
+from collections import defaultdict
 import datetime
 import logging
 import traceback
@@ -67,38 +68,53 @@ def _format_data(row, string_ids_df, network_df):
     gene_ppi_links = []
     target_links_set = set()
 
-    for _, row_arr in network_df.iterrows():
-        if (
-            row_arr["preferredName_A"] == row["identifier"]
-            and row_arr["preferredName_B"] not in target_links_set
-        ):
-            gene_ppi_links.append(
-                {
-                    "stringdb_link_to": row_arr["preferredName_B"],
-                    STRING_GENE_INPUT_ID: row_arr["stringId_B"].split(".")[1],
-                    "score": row_arr["score"],
-                    STRING_GENE_LINK_ID: row_arr["stringId_A"].split(".")[1],
-                }
-            )
-            target_links_set.add(row_arr["preferredName_B"])
+    # Create a mapping from preferredName to all corresponding queryItem values
+    preferredName_to_queryItems = defaultdict(list)
+    for _, r in string_ids_df.iterrows():
+        preferredName_to_queryItems[r["preferredName"]].append(r["queryItem"])
 
-        elif (
-            row_arr["preferredName_B"] == row["identifier"]
-            and row_arr["preferredName_A"] not in target_links_set
-        ):
-            gene_ppi_links.append(
-                {
-                    "stringdb_link_to": row_arr["preferredName_A"],
-                    STRING_GENE_INPUT_ID: row_arr["stringId_A"].split(".")[1],
-                    "score": row_arr["score"],
-                    STRING_GENE_LINK_ID: row_arr["stringId_B"].split(".")[1],
-                }
-            )
-            target_links_set.add(row_arr["preferredName_A"])
+    for _, row_arr in network_df.iterrows():
+        # Check for condition where row_arr["preferredName_A"] matches and identifier fits one possibility
+        if row_arr["preferredName_A"] in preferredName_to_queryItems:
+            for query_item in preferredName_to_queryItems[row_arr["preferredName_A"]]:
+                if row["identifier"] == query_item:
+                    # For each possible link corresponding to preferredName_B
+                    if row_arr["preferredName_B"] in preferredName_to_queryItems:
+                        for link in preferredName_to_queryItems[row_arr["preferredName_B"]]:
+                            if row_arr["preferredName_B"] not in target_links_set:
+                                gene_ppi_links.append(
+                                    {
+                                        "stringdb_link_to": link,
+                                        STRING_GENE_INPUT_ID: row_arr["stringId_B"].split('.')[1],
+                                        "score": row_arr["score"],
+                                        "Uniprot-TrEMBL": row_arr["preferredName_A"],
+                                    }
+                                )
+                                target_links_set.add(row_arr["preferredName_B"])
+                    # Once a matching identifier is found for A, no need to check other possibilities for this row_arr
+                    break
+
+        # Check for condition where row_arr["preferredName_B"] matches and identifier fits one possibility
+        if row_arr["preferredName_B"] in preferredName_to_queryItems:
+            for query_item in preferredName_to_queryItems[row_arr["preferredName_B"]]:
+                if row["identifier"] == query_item:
+                    # For each possible link corresponding to preferredName_A
+                    if row_arr["preferredName_A"] in preferredName_to_queryItems:
+                        for link in preferredName_to_queryItems[row_arr["preferredName_A"]]:
+                            if row_arr["preferredName_A"] not in target_links_set:
+                                gene_ppi_links.append(
+                                    {
+                                        "stringdb_link_to": link,
+                                        STRING_GENE_INPUT_ID: row_arr["stringId_A"].split('.')[1],
+                                        "score": row_arr["score"],
+                                        "Uniprot-TrEMBL": row_arr["preferredName_B"],
+                                    }
+                                )
+                                target_links_set.add(row_arr["preferredName_A"])
+                    # Once a matching identifier is found for B, break out of loop for this row_arr
+                    break
 
     return gene_ppi_links
-
-
 def get_string_ids(gene_list: list, species):
     """Get the String identifiers of the gene list."""
     params = {
@@ -112,7 +128,6 @@ def get_string_ids(gene_list: list, species):
         results = requests.post(
             f"{STRING_ENDPOINT}/json/get_string_ids", data=params, timeout=TIMEOUT
         ).json()
-        print(results)
         return results
     except RequestException as e:
         logger.error("Error getting STRING IDs: %s", e)
@@ -178,8 +193,25 @@ def get_ppi(bridgedb_df: pd.DataFrame, species: str = "human"):
     stringdb_ids_df = pd.DataFrame(string_ids)
     stringdb_ids_df.queryIndex = stringdb_ids_df.queryIndex.astype(str)
 
+    # Chunk the string IDs into groups of 2000
+    unique_string_ids = list(stringdb_ids_df.stringId.unique())
+    all_network_dfs = []
+    chunk_size = 1500
+
     # Get the PPI data
-    network_df = _get_ppi_data(list(stringdb_ids_df.stringId.unique()), species_id)
+    for i in range(0, len(unique_string_ids), chunk_size):
+        chunk = unique_string_ids[i:i + chunk_size]
+        chunk_network_df = _get_ppi_data(chunk, species_id)
+        if not chunk_network_df.empty:
+            all_network_dfs.append(chunk_network_df)
+    
+    # Combine all chunked results
+    if all_network_dfs:
+        network_df = pd.concat(all_network_dfs, ignore_index=True)
+    else:
+        network_df = pd.DataFrame()
+                                   
+    # network_df = _get_ppi_data(list(stringdb_ids_df.stringId.unique()), species_id)
 
     # Record the end time
     end_time = datetime.datetime.now()
