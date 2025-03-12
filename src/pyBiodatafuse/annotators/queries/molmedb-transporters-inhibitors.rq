@@ -5,23 +5,23 @@ PREFIX bao: <http://www.bioassayontology.org/bao#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX mmdbvoc: <https://rdf.molmedb.upol.cz/vocabulary#>
 PREFIX repr: <https://w3id.org/reproduceme#>
-PREFIX cito: <http://purl.org/spar/cito/>
+PREFIX dcterms: <http://purl.org/dc/terms/>
 
 SELECT DISTINCT ?transporterID ?label ?InChIKey ?SMILES
 ?chembl_id ?chebi_id ?drugbank_id ?pubchem_compound_id ?molmedb_id
 ?source_doi ?source_pmid
 
 WHERE {
-VALUES ?transporterID { $transporter_list }
-  	BIND(IRI(CONCAT("http://purl.uniprot.org/uniprot/", ?transporterID)) AS ?transporterIDurl)
+ VALUES ?transporterID { $transporter_list }
   
-  ?transporterIDurl rdf:type bao:BAO_0000283 .
+  ?transporter rdf:type bao:BAO_0000283 ;
+               sio:SIO_000008 [ sio:SIO_000300 ?transporterID ] .
   ?transporterAssay rdf:type bao:BAO_0000040 ;
-                    bao:BAO_0090012 ?transporterIDurl;
-                    bao:BAO_0000426 [cito:citesAsDataSource	?ref];
-                    bao:BAO_0090012 ?inhibitor;
+                    bao:BAO_0090012 ?transporter ;
+                    bao:BAO_0000426 [dcterms:references	?ref] ;
+                    bao:BAO_0090012 ?inhibitor ;
                     bao:BAO_0000208 [rdf:type mmdbvoc:InhibitionAssay;
-                                     bao:BAO_0095007 repr:PositiveResult].
+                                     sio:SIO_000300 repr:PositiveResult].
   ?inhibitor rdf:type bao:BAO_0000076;
              rdfs:label ?label;
              sio:SIO_000008 [rdf:type sio:CHEMINF_000059;
