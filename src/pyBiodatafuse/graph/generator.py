@@ -328,7 +328,7 @@ def add_minerva_gene_pathway_subgraph(g, gene_node_label, annot_list):
     :returns: a NetworkX MultiDiGraph
     """
     for annot in annot_list:
-        if pd.isna(annot["pathway_label"]):
+        if pd.isna(annot.get("pathway_label")):
             continue
 
         annot_node_label = annot[PATHWAY_NODE_MAIN_LABEL]
@@ -403,7 +403,6 @@ def add_wikipathways_gene_pathway_subgraph(g, gene_node_label, annot_list):
 
 def add_kegg_gene_pathway_subgraph(g, gene_node_label, annot_list):
     """Construct part of the graph by linking the gene to pathways from KEGG.
-
     :param g: the input graph to extend with new nodes and edges.
     :param gene_node_label: the gene node to be linked to pathways from KEGG.
     :param annot_list: list of pathways from KEGG.
@@ -445,7 +444,6 @@ def add_kegg_gene_pathway_subgraph(g, gene_node_label, annot_list):
 
 def add_kegg_compounds_subgraph(g, pathway_node_label, compounds_list, combined_df):
     """Construct part of the graph by linking the KEGG compound to its respective pathway.
-
     :param g: the input graph to extend with new nodes and edges.
     :param pathway_node_label: the pathway node to be linked to compound nodes.
     :param compounds_list: list of compounds from KEGG.
@@ -499,7 +497,6 @@ def add_kegg_compounds_subgraph(g, pathway_node_label, compounds_list, combined_
 
 def process_kegg_pathway_compound(g, kegg_pathway_compound, combined_df):
     """Process pathway-compound relationships from KEGG and add them to the graph.
-
     :param g: the input graph to extend with pathway-compound relationships.
     :param kegg_pathway_compound: DataFrame containing pathway-compound relationships.
     :param combined_df: DataFrame containing KEGG pathway data.
@@ -707,10 +704,10 @@ def add_opentargets_gene_compound_subgraph(g, gene_node_label, annot_list):
             )
 
         # Add side effects
-        # if annot["adverse_effect"]:
-        #     add_opentargets_compound_side_effect_subgraph(
-        #         g, annot_node_label, annot[SIDE_EFFECT_NODE_MAIN_LABEL]
-        #     )
+        if annot["adverse_effect"]:
+            add_opentargets_compound_side_effect_subgraph(
+                g, annot_node_label, annot[SIDE_EFFECT_NODE_MAIN_LABEL]
+            )
 
     return g
 
@@ -912,17 +909,15 @@ def add_opentargets_disease_compound_subgraph(g, disease_node_label, annot_list)
             )
 
         # Add side effects
-        # if annot["adverse_effect"]:
-        #     add_opentargets_compound_side_effect_subgraph(
-        #         g, annot_node_label, annot[SIDE_EFFECT_NODE_MAIN_LABEL]
-        #     )
+        if annot["adverse_effect"]:
+            add_opentargets_compound_side_effect_subgraph(
+                g, annot_node_label, annot[SIDE_EFFECT_NODE_MAIN_LABEL]
+            )
 
     return g
 
-
 def add_ensembl_homolog_subgraph(g, gene_node_label, annot_list):
     """Construct part of the graph by linking the gene to genes.
-
     :param g: the input graph to extend with new nodes and edges.
     :param gene_node_label: the gene node to be linked to other genes entities.
     :param annot_list: list of homologs from Ensembl.
@@ -1023,10 +1018,12 @@ def process_ppi(g, gene_node_label, row):
             if valid_ppi_list:
                 add_stringdb_ppi_subgraph(g, gene_node_label, valid_ppi_list)
 
+        if not isinstance(ppi_list, float):
+            add_stringdb_ppi_subgraph(g, gene_node_label, ppi_list)
+
 
 def process_homologs(g, combined_df, homolog_df_list, func_dict, dea_columns):
     """Process homolog dataframes and combined df and add them to the graph.
-
     :param g: the input graph to extend with gene nodes.
     :param combined_df: dataframe without homolog information.
     :param homolog_df_list: list of dataframes from homolog queries.
@@ -1133,6 +1130,13 @@ def build_networkx_graph(
         ENSEMBL_HOMOLOG_COL: add_ensembl_homolog_subgraph,
     }
 
+    for _i, row in tqdm(combined_df.iterrows(), total=combined_df.shape[0], desc="Building graph"):
+        if pd.isna(row["identifier"]) or pd.isna(row["target"]):
+            continue
+        gene_node_label = add_gene_node(g, row, dea_columns)
+        process_annotations(g, gene_node_label, row, func_dict)
+        process_ppi(g, gene_node_label, row)
+
     if homolog_df_list is not None:
         process_homologs(g, combined_df, homolog_df_list, func_dict, dea_columns)
 
@@ -1172,6 +1176,8 @@ def save_graph(
     :param disease_compound: the input DataFrame containing disease-compound relationships.
     :param graph_name: the name of the graph.
     :param graph_dir: the directory to save the graph.
+    :returns: a NetworkX MultiDiGraph
+
     """
     graph_path = f"{graph_dir}/{graph_name}"
     os.makedirs(graph_path, exist_ok=True)
@@ -1198,3 +1204,5 @@ def save_graph(
         pickle.dump(g, f)
     nx.write_gml(g, graph_path_gml)
     logger.warning(f"Graph saved in {graph_path_pickle} and {graph_path_gml}")
+
+    return g

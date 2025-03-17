@@ -137,7 +137,6 @@ def combine_sources(bridgedb_df: pd.DataFrame, df_list: List[pd.DataFrame]) -> p
 def combine_with_homologs(df: pd.DataFrame, homolog_dfs: list) -> pd.DataFrame:
     """
     Merge a DataFrame with a list of homolog dataframes.
-
     :param df: An already combined df containing output of non-homolog annotators.
     :param homolog_dfs: List of homolog dataframes to be combined.
     :returns: Merged DataFrame with only the required columns.
@@ -152,8 +151,9 @@ def combine_with_homologs(df: pd.DataFrame, homolog_dfs: list) -> pd.DataFrame:
     )
 
     merged_df = exploded_df.copy()
-
+    homolog_dfs = [df for df in homolog_dfs if not df.empty and df is not None and len(df) > 0]
     for homolog_df in homolog_dfs:
+
         # Get only the identifier and last column from the homolog DataFrame
         last_col = homolog_df.columns[-1]
         temp_df = homolog_df[["identifier", last_col]].copy()

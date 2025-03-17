@@ -51,18 +51,31 @@ def check_version_kegg() -> str:
     return release_version
 
 
-def get_kegg_ids(row) -> dict:
-    """Get the KEGG identifiers of the gene list.
+def batch_request(urls):
+    """Helper function to batch process requests."""
+    results = []
+    for i in range(0, len(urls), 10):
+        batch_urls = urls[i : i + 10]
+        response = requests.get(f"{KEGG_ENDPOINT}/get/{'+'.join(batch_urls)}")
+        results.append(response.text)
+    return "\n///\n".join(results)
 
-    :param row: input_df row
-    :returns: a dictionary containing the KEGG identifier
+
+def get_kegg_ids_batch(gene_list):
+    """Get the KEGG identifiers for a list of gene IDs.
+
+    :param gene_list: List of gene IDs
+    :returns: Dictionary mapping gene IDs to KEGG identifiers
     """
-    results = requests.get(f"{KEGG_ENDPOINT}/conv/genes/ncbi-geneid:{row['target']}")
-    kegg_id = results.text.split()
-    if len(kegg_id) > 1:
-        return {"KEGG_id": kegg_id[1]}
-    else:
-        return {"KEGG_id": np.nan}
+    kegg_ids = {}
+    for i in range(0, len(gene_list), 10):
+        batch_genes = gene_list[i:i + 10]
+        response = requests.get(f"{KEGG_ENDPOINT}/conv/genes/{'+'.join(['ncbi-geneid:'+i for i in batch_genes])}")
+        for line in response.text.splitlines():
+            parts = line.split()
+            if len(parts) > 1:
+                kegg_ids[parts[0].split(":")[1]] = parts[1]
+    return kegg_ids
 
 
 def get_compound_genes(pathway_info, results_entry):
@@ -76,7 +89,7 @@ def get_compound_genes(pathway_info, results_entry):
     compounds = []  # Initialize an empty list to hold compound dictionaries
     section = None
 
-    for line in results_entry.text.splitlines():
+    for line in results_entry.splitlines():  # Changed from results_entry.text.splitlines()
         current_compound = {}
 
         if line.startswith("GENE"):
@@ -119,35 +132,42 @@ def get_compounds(kegg_df):
     """
     queried_identifiers = {}  # Cache to avoid duplicate requests
     transformed_data = []
+    kegg_ids = kegg_df[kegg_df["target.source"] == "KEGG Compound"]["target"].tolist()
+    kegg_ids = list(set(kegg_ids))  # Remove duplicates
+
+    # Batch request for KEGG compounds
+    results_text = batch_request(kegg_ids)
+
+    for entry in results_text.split("\n///\n"):
+        compound_name = None
+        kegg_id = None
+        for line in entry.splitlines():
+            if line.startswith("ENTRY"):
+                kegg_id = line.split()[1]
+            if line.startswith("NAME"):
+                parts = line.split()
+                compound_name = parts[1] if len(parts) > 1 else None
+                if compound_name:
+                    compound_name = compound_name.rstrip(";")
+                break
+        if kegg_id:
+            queried_identifiers[kegg_id] = {
+                "KEGG_identifier": kegg_id,
+                "name": compound_name,
+            }
 
     for _, row in kegg_df.iterrows():
         if row["target.source"] == "KEGG Compound":
             kegg_id = row["target"]
-
-            if kegg_id not in queried_identifiers:
-                response = requests.get(f"{KEGG_ENDPOINT}/get/{kegg_id}")
-                compound_name = None
-
-                for line in response.text.splitlines():
-                    if line.startswith("NAME"):
-                        parts = line.split()
-                        compound_name = parts[1] if len(parts) > 1 else None
-                        if compound_name:
-                            compound_name = compound_name.rstrip(";")
-                        break
-
-                queried_identifiers[kegg_id] = {
-                    "KEGG_identifier": kegg_id,
-                    "name": compound_name,
-                }
-
             transformed_data.append(
                 {
                     "identifier": row["identifier"],
                     "identifier.source": row["identifier.source"],
                     "target": kegg_id,
                     "target.source": row["target.source"],
-                    "KEGG_compounds": queried_identifiers[kegg_id],
+                    "KEGG_compounds": queried_identifiers.get(
+                        kegg_id, {"KEGG_identifier": kegg_id, "name": None}
+                    ),
                 }
             )
 
@@ -175,8 +195,6 @@ def get_pathway_info(row):
         }
 
     results = requests.get(f"{KEGG_ENDPOINT}/link/pathway/{kegg_dict.get('KEGG_id')}")
-    print(kegg_dict.get("KEGG_id"))
-    print(results.text)
     if len(results.text) <= 1:
         kegg_dict["pathways"] = [
             {
@@ -188,23 +206,19 @@ def get_pathway_info(row):
         ]
         return kegg_dict
 
+    pathway_ids = [line.split("\t")[1] for line in results.text.strip().split("\n")]
+    results_text = batch_request(pathway_ids)
+
     pathways = []
-
-    for line in results.text.strip().split("\n"):
+    for entry in results_text.split("\n///\n"):
         pathway_info = {}
-        parts = line.split("\t")
-        pathway_id = parts[1]
-        pathway_info["pathway_id"] = pathway_id
-
-        # Get entry from KEGG API
-        results_entry = requests.get(f"{KEGG_ENDPOINT}/get/{pathway_id}")
-
-        for line in results_entry.text.splitlines():
+        for line in entry.splitlines():
+            if line.startswith("ENTRY"):
+                pathway_info["pathway_id"] = "path:" + line.split()[1]
             if line.startswith("NAME"):
                 pathway_info["pathway_label"] = line.split("  ", 1)[1].strip()
                 break
-
-        pathway_info = get_compound_genes(pathway_info, results_entry)
+        pathway_info = get_compound_genes(pathway_info, entry)
         pathways.append(pathway_info)
 
     kegg_dict["pathways"] = (
@@ -239,7 +253,8 @@ def get_pathways(bridgedb_df):
     gene_list = list(set(data_df["target"].tolist()))
 
     # Get the KEGG identifiers
-    data_df[KEGG_COL] = data_df.apply(lambda row: get_kegg_ids(row), axis=1)
+    kegg_ids = get_kegg_ids_batch(gene_list)
+    data_df[KEGG_COL] = data_df["target"].apply(lambda x: {"KEGG_id": kegg_ids.get(x, np.nan)})
 
     # Get the links for the KEGG pathways
     data_df[KEGG_COL] = data_df.apply(lambda row: get_pathway_info(row), axis=1)

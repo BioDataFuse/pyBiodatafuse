@@ -69,7 +69,6 @@ def get_human_homologs(row) -> list[dict[str, Any]]:
     return [{ENSEMBL_HOMOLOG_MAIN_LABEL: np.nan}]
 
 
-
 def get_homologs(bridgedb_df):
     """Retrieve homologs for input DataFrame.
 
