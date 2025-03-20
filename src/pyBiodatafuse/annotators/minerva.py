@@ -102,11 +102,12 @@ def get_minerva_components(
     :param get_reactions: boolean to get reactions of the chosen diagram
     :returns: a tuple of map endpoint and dictionary containing:
         - 'map_elements' contains a list for each of the pathways in the model.
-            Those lists provide information about Compartment, Complex, Drug, Gene, Ion, Phenotype,
-            Protein, RNA and Simple molecules involved in that pathway
+        Those lists provide information about Compartment, Complex, Drug, Gene, Ion, Phenotype,
+        Protein, RNA and Simple molecules involved in that pathway
         - 'map_reactions' contains a list for each of the pathways in the model.
-            Those lists provide information about the reactions involed in that pathway.
-        - 'models' is a list containing pathway-specific information for each of the pathways in the model
+        Those lists provide information about the reactions involed in that pathway.
+        - 'models' is a list containing pathway-specific information for each of the pathways in the model.
+
     """
     # Get list of projects
     project_df = list_projects()
