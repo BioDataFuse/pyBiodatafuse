@@ -403,6 +403,7 @@ def add_wikipathways_gene_pathway_subgraph(g, gene_node_label, annot_list):
 
 def add_kegg_gene_pathway_subgraph(g, gene_node_label, annot_list):
     """Construct part of the graph by linking the gene to pathways from KEGG.
+
     :param g: the input graph to extend with new nodes and edges.
     :param gene_node_label: the gene node to be linked to pathways from KEGG.
     :param annot_list: list of pathways from KEGG.
@@ -444,6 +445,7 @@ def add_kegg_gene_pathway_subgraph(g, gene_node_label, annot_list):
 
 def add_kegg_compounds_subgraph(g, pathway_node_label, compounds_list, combined_df):
     """Construct part of the graph by linking the KEGG compound to its respective pathway.
+
     :param g: the input graph to extend with new nodes and edges.
     :param pathway_node_label: the pathway node to be linked to compound nodes.
     :param compounds_list: list of compounds from KEGG.
@@ -496,6 +498,7 @@ def add_kegg_compounds_subgraph(g, pathway_node_label, compounds_list, combined_
 
 def process_kegg_pathway_compound(g, kegg_pathway_compound, combined_df):
     """Process pathway-compound relationships from KEGG and add them to the graph.
+    
     :param g: the input graph to extend with pathway-compound relationships.
     :param kegg_pathway_compound: DataFrame containing pathway-compound relationships.
     :param combined_df: DataFrame containing KEGG pathway data.
@@ -915,8 +918,10 @@ def add_opentargets_disease_compound_subgraph(g, disease_node_label, annot_list)
 
     return g
 
+
 def add_ensembl_homolog_subgraph(g, gene_node_label, annot_list):
     """Construct part of the graph by linking the gene to genes.
+
     :param g: the input graph to extend with new nodes and edges.
     :param gene_node_label: the gene node to be linked to other genes entities.
     :param annot_list: list of homologs from Ensembl.
@@ -1023,6 +1028,7 @@ def process_ppi(g, gene_node_label, row):
 
 def process_homologs(g, combined_df, homolog_df_list, func_dict, dea_columns):
     """Process homolog dataframes and combined df and add them to the graph.
+
     :param g: the input graph to extend with gene nodes.
     :param combined_df: dataframe without homolog information.
     :param homolog_df_list: list of dataframes from homolog queries.

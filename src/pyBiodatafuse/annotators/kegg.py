@@ -52,7 +52,7 @@ def check_version_kegg() -> str:
 
 
 def batch_request(urls):
-    """Helper function to batch process requests."""
+    """Batch process requests."""
     results = []
     for i in range(0, len(urls), 10):
         batch_urls = urls[i : i + 10]
@@ -69,8 +69,10 @@ def get_kegg_ids_batch(gene_list):
     """
     kegg_ids = {}
     for i in range(0, len(gene_list), 10):
-        batch_genes = gene_list[i:i + 10]
-        response = requests.get(f"{KEGG_ENDPOINT}/conv/genes/{'+'.join(['ncbi-geneid:'+i for i in batch_genes])}")
+        batch_genes = gene_list[i : i + 10]
+        response = requests.get(
+            f"{KEGG_ENDPOINT}/conv/genes/{'+'.join(['ncbi-geneid:'+i for i in batch_genes])}"
+        )
         for line in response.text.splitlines():
             parts = line.split()
             if len(parts) > 1:
