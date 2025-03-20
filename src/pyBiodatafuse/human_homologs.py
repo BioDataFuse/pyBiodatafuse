@@ -5,6 +5,7 @@
 
 import datetime
 import warnings
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -18,7 +19,6 @@ from pyBiodatafuse.constants import (
     ENSEMBL_HOMOLOG_MAIN_LABEL,
 )
 from pyBiodatafuse.utils import get_identifier_of_interest
-from typing import Any
 
 
 def check_endpoint_ensembl() -> bool:
@@ -46,7 +46,7 @@ def check_version_ensembl() -> str:
     return response.text
 
 
-def get_human_homologs(row) -> list[dict[str, Any]]:
+def get_human_homologs(row):
     """Retrieve human homologs for mouse genes using Ensembl API.
 
     :param row: row from input dataframe.

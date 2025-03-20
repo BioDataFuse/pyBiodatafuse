@@ -409,7 +409,7 @@ def add_kegg_gene_pathway_subgraph(g, gene_node_label, annot_list):
     :returns: a NetworkX MultiDiGraph
     """
     for annot in annot_list:
-        if pd.isna(annot["pathway_label"]):
+        if pd.isna(annot.get("pathway_label")):
             continue
 
         annot_node_label = annot[PATHWAY_NODE_MAIN_LABEL]
@@ -450,7 +450,6 @@ def add_kegg_compounds_subgraph(g, pathway_node_label, compounds_list, combined_
     :param combined_df: the combined dataframe.
     :returns: a NetworkX MultiDiGraph
     """
-
     for compound in compounds_list:
         if pd.isna(compound.get("name")):
             continue

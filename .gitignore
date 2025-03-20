@@ -927,6 +927,4 @@ src/pyBiodatafuse/resources/biodatafuse.properties
 
 # PCS Graph (DisGeNET data)
 examples/usecases/PCS/BDF_PCS_graph.ttl
-
-# Env
-*.env
+examples/usecases/PKD/disgenet.env
