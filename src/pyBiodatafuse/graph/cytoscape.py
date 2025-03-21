@@ -17,6 +17,7 @@ from pyBiodatafuse.constants import (
     GO_BP_NODE_LABELS,
     GO_CC_NODE_LABELS,
     GO_MF_NODE_LABELS,
+    HOMOLOG_NODE_LABELS,
     PATHWAY_NODE_LABELS,
     SIDE_EFFECT_NODE_LABELS,
 )
@@ -127,6 +128,7 @@ def load_graph(g: nx.MultiDiGraph, network_name: str):
         PATHWAY_NODE_LABELS,
         COMPOUND_NODE_LABELS,
         SIDE_EFFECT_NODE_LABELS,
+        HOMOLOG_NODE_LABELS,
     ]
     shapes = [
         "ELLIPSE",  # Genes
@@ -138,6 +140,7 @@ def load_graph(g: nx.MultiDiGraph, network_name: str):
         "OCTAGON",  # Pathways
         "DIAMOND",  # Compounds
         "TRIANGLE",  # Side Effects
+        "Ellipse",  # Homologs
     ]
     colors = [
         "#42d4f4",  # Cyan for Genes
@@ -149,6 +152,7 @@ def load_graph(g: nx.MultiDiGraph, network_name: str):
         "#3cb44b",  # Green for Pathways
         "#ffd700",  # Gold for Compounds
         "#aaffc3",  # Mint for Side Effects
+        "#9b59b6",  # Purple for Homologs
     ]
 
     # Apply node shape and color mappings
