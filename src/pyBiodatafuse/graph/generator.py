@@ -498,7 +498,7 @@ def add_kegg_compounds_subgraph(g, pathway_node_label, compounds_list, combined_
 
 def process_kegg_pathway_compound(g, kegg_pathway_compound, combined_df):
     """Process pathway-compound relationships from KEGG and add them to the graph.
-    
+
     :param g: the input graph to extend with pathway-compound relationships.
     :param kegg_pathway_compound: DataFrame containing pathway-compound relationships.
     :param combined_df: DataFrame containing KEGG pathway data.
