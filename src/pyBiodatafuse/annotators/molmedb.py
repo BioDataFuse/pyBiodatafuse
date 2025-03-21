@@ -9,7 +9,7 @@ import warnings
 from string import Template
 from typing import Any, Dict, Tuple
 
-import numpy as np
+from math import isnan
 import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
 
@@ -55,7 +55,7 @@ def check_endpoint_molmedb() -> bool:
 
 
 def get_gene_compound_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
-    """Query MolMeDB for inhibitors of transporters encoded by genes.
+    """Query MolMeDB for inhibitors of transporters encoded by genes in input.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
     :returns: a DataFrame containing the MolMeDB output and dictionary of the MolMeDB metadata.
@@ -364,9 +364,13 @@ def get_unique_dicts(list_of_list_of_dicts: list) -> list:
         for d in list_of_dicts:
             # Convert dictionary to frozenset of its items (which is hashable)
             dict_items = frozenset(d.items())
-
+            if not isinstance(d['inchikey'],str) and isnan(d['inchikey']):
+                empty = d
+                continue
             if dict_items not in seen:
                 seen.add(dict_items)
                 unique_dicts.append(d)
 
+    if len(unique_dicts) == 0:
+        return [empty]
     return unique_dicts
