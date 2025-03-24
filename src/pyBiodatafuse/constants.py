@@ -24,6 +24,7 @@ BRIDGEDB = "BridgeDB"
 BGEE = "Bgee"
 DISGENET = "DISGENET"
 ENSEMBL = "Ensembl"
+INTACT = "IntAct"
 KEGG = "KEGG"
 MINERVA = "MINERVA"
 MOLMEDB = "MolMeDB"
@@ -63,6 +64,7 @@ WIKIDATA_CC_COL = f"{WIKIDATA}_cellular_components"
 BGEE_GENE_INPUT_ID = "Ensembl"
 DISGENET_GENE_INPUT_ID = "NCBI Gene"
 ENSEMBL_GENE_INPUT_ID = "Ensembl"
+INTACT_GENE_INPUT_ID = "Ensembl"
 KEGG_GENE_INPUT_ID = "NCBI Gene"
 MINERVA_GENE_INPUT_ID = "Ensembl"
 MOLMEDB_PROTEIN_INPUT_ID = "Uniprot-TrEMBL"
@@ -501,6 +503,9 @@ KEGG_COMPOUND_EDGE_ATTRS = {
     "datasource": KEGG,
     "label": None,
 }
+
+# IntAct interactions
+
 
 # Wikidata
 
