@@ -19,7 +19,7 @@ def get_intact_interactions(gene_id: str):
 
     if response.status_code == 200:
         data = response.json()
-        if not data.get("content"):  # Check if response is empty
+        if not data.get("content"):
             return []
         
         interactions = [
@@ -39,12 +39,14 @@ def get_intact_interactions(gene_id: str):
                 "interactor_B_name": item.get("intactNameB", ""),
                 "interactor_A_species": item.get("speciesA", ""),
                 "interactor_B_species": item.get("speciesB", ""),
+                "id_A": item.get("idA", ""),
+                "id_B": item.get("idB", ""),
             }
             for item in data["content"]
         ]
         return interactions
     
-    return []  # Return empty list if API call fails
+    return []
 
 def get_interactions(bridgedb_df):
     """Annotate genes with interaction data from IntAct."""
@@ -59,7 +61,7 @@ def get_interactions(bridgedb_df):
     # Get identifiers of interest
     data_df = get_identifier_of_interest(bridgedb_df, INTACT_GENE_INPUT_ID)
 
-    if isinstance(data_df, tuple):  # Ensure it's a DataFrame
+    if isinstance(data_df, tuple):
         data_df = data_df[0]
 
     data_df = data_df.reset_index(drop=True)
