@@ -236,6 +236,42 @@ def add_disgenet_gene_disease_subgraph(g, gene_node_label, annot_list):
 
     return g
 
+def add_intact_interactions_subgraph(g, gene_node_label, interaction_list):
+    """
+    Add IntAct interactions to the graph.
+
+    :param g: The input NetworkX graph to extend with new nodes and edges.
+    :param gene_node_label: The label of the gene node to be linked to interactions.
+    :param interaction_list: A list of interaction dictionaries from IntAct.
+    :returns: A NetworkX MultiDiGraph with added IntAct interactions.
+    """
+        annot_node_attrs["name"] = annot["compound_name"]
+        annot_node_attrs["id"] = annot_node_label
+        annot_node_attrs["chembl_id"] = annot["chembl_id"]
+        if not pd.isna(annot["drugbank_id"]):
+            annot_node_attrs["drugbank_id"] = annot["drugbank_id"]
+    
+    for annot in annot_list:
+        if not interaction:
+            continue
+        
+        annot_node_attrs["interactor_id"] = annot["interaction_id"]
+        annot_node_attrs["interactor_A"] = annot["interactor_A"]
+        annot_node_attrs["interactor_B"] = annot["interactor_B"]
+        annot_node_attrs["molecule_A"] = annot["molecule_A"]
+        annot_node_attrs["molecule_B"] = annot["molecule_B"]
+        annot_node_attrs["detection_method"] = annot["detection_method"]
+        annot_node_attrs["type"] = annot["type"]
+        annot_node_attrs["intact_score"] = annot["intact_score"]
+        annot_node_attrs["pubmed_publication_id"] = annot["pubmed_publication_id"]
+
+        # annot_node_label = nteraction_label = annot[]
+
+        merge_node(g, interaction_label, interaction_node_attrs)
+
+        g.add_edge(gene_node_label, interaction_label, label='IntAct_interaction', attr_dict=interaction_node_attrs)
+
+    return g
 
 def add_literature_gene_disease_subgraph(g, gene_node_label, annot_list):
     """Construct part of the graph by linking the gene to diseases form literature.
