@@ -716,25 +716,32 @@ def get_compound_disease_interactions(
     opentargets_version = get_version_opentargets()
     start_time = datetime.datetime.now()
     query_string = """
-    query KnownDrugsQuery{
-        drugs (chemblIds: $chemblIds) {
-            id
-            name
-            maximumClinicalTrialPhase
-            hasBeenWithdrawn
-            linkedDiseases {
-                rows {
-                    id
-                    name
-                    dbXRefs
-                    therapeuticAreas {
-                        id
-                        name
-                    }
-                }
-            }
+query KnownDrugsQuery {
+  drugs(chemblIds: $chemblIds) {
+    id
+    name
+    maximumClinicalTrialPhase
+    hasBeenWithdrawn
+    adverseEvents {
+      count
+      rows {
+        name
+      }
+    }
+    linkedDiseases {
+      rows {
+        id
+        name
+        dbXRefs
+        therapeuticAreas {
+          id
+          name
         }
-    }"""
+      }
+    }
+  }
+}
+"""
     query_string = query_string.replace("$chemblIds", str(chembl_ids).replace("'", '"'))
     r = requests.post(OPENTARGETS_ENDPOINT, json={"query": query_string}).json()
 
