@@ -25,6 +25,7 @@ Raises:
 import pandas as pd
 import requests
 
+
 def update_datasources_file():
     """
     Updates the datasources.csv file with pattern data fetched from the Bioregistry API.

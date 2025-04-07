@@ -2,11 +2,14 @@
 
 import unittest
 import warnings
+
 import pandas as pd
+
 from pyBiodatafuse.id_mapper import match_input_datasource
 
 # Suppress specific warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning, module="pydantic")
+
 
 class TestMatchInputDatasource(unittest.TestCase):
     """Test cases for the match_input_datasource function."""
@@ -22,7 +25,9 @@ class TestMatchInputDatasource(unittest.TestCase):
         identifiers = pd.Series(["12345"])
         with self.assertRaises(ValueError) as context:
             match_input_datasource(identifiers)
-        self.assertIn("Multiple data sources match the provided identifiers", str(context.exception))
+        self.assertIn(
+            "Multiple data sources match the provided identifiers", str(context.exception)
+        )
 
     def test_empty_series(self):
         """Test that an empty series raises a ValueError."""

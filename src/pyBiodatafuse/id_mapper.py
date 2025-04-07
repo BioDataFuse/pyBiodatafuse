@@ -43,7 +43,9 @@ def match_input_datasource(identifiers) -> str:
     for identifier in identifiers:
         match_found = False
         for _, row in datasources.iterrows():
-            pattern = str(row["pattern"]) if pd.notna(row["pattern"]) else None  # Handle NaN patterns
+            pattern = (
+                str(row["pattern"]) if pd.notna(row["pattern"]) else None
+            )  # Handle NaN patterns
             if not pattern:
                 continue  # Skip rows with invalid patterns
             if "ENS" in identifier:
@@ -162,14 +164,14 @@ def bridgedb_xref(
     if output_datasource is None or "All":
         data_sources = read_resource_files()
         output_datasource = list(data_sources["source"])
-#        output_datasource = [
-#            "Uniprot-TrEMBL",
-#            "NCBI Gene",
-#            "Ensembl",
-#            "HGNC Accession Number",
-#            "HGNC",
-#            "PubChem Compound"
-#        ]
+    #        output_datasource = [
+    #            "Uniprot-TrEMBL",
+    #            "NCBI Gene",
+    #            "Ensembl",
+    #            "HGNC Accession Number",
+    #            "HGNC",
+    #            "PubChem Compound"
+    #        ]
     else:
         assert isinstance(output_datasource, list), "output_datasource must be a list"
 
