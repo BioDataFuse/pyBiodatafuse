@@ -36,20 +36,30 @@ def match_input_datasource(identifiers) -> str:
     if identifiers.empty:
         raise ValueError("The identifiers series is empty.")
 
-    with resources.files("pyBiodatafuse.resources").joinpath("datasources.csv").open() as df_file:
-        datasources = pd.read_csv(df_file)
+    if os.getenv("PYTHON_VERSION", "").startswith("3.8"):
+        with resources.path("pyBiodatafuse.resources", "datasources.csv") as df_file:
+            datasources = pd.read_csv(df_file)
+    else:
+        with resources.files("pyBiodatafuse.resources").joinpath("datasources.csv").open() as df_file:
+            datasources = pd.read_csv(df_file)
 
     matched_sources = set()
     for identifier in identifiers:
         match_found = False
         for _, row in datasources.iterrows():
-            pattern = str(row["pattern"])  # Ensure the pattern is a string
+            pattern = str(row["pattern"]) if pd.notna(row["pattern"]) else None  # Handle NaN patterns
+            if not pattern:
+                continue  # Skip rows with invalid patterns
             if "ENS" in identifier:
                 return "Ensembl"
-            if re.fullmatch(pattern, identifier):
-                if pattern not in [r"^\d+$", r"^\S+$"]:
-                    matched_sources.add(row["source"])
-                    match_found = True
+            try:
+                if re.fullmatch(pattern, identifier):
+                    if pattern not in [r"^\d+$", r"^\S+$"]:
+                        matched_sources.add(row["source"])
+                        match_found = True
+            except re.error as e:
+                logger.warning(f"Invalid regex pattern '{pattern}': {e}")
+                continue  # Skip invalid regex patterns
         if not match_found:
             raise ValueError(f"Identifier '{identifier}' does not match any known pattern.")
 
