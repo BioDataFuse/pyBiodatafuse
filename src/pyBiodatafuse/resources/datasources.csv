@@ -33,11 +33,11 @@ Ck,KEGG Compound,metabolite,kegg,"^([CHDEGTMKR]\d+)|(\w+:[\w\d\.-]*)|([a-z]{3,5}
 Kd,KEGG Drug,metabolite,kegg,"^([CHDEGTMKR]\d+)|(\w+:[\w\d\.-]*)|([a-z]{3,5})|(\w{2,4}\d{5})$"
 Kl,KEGG Glycan,metabolite,kegg,"^([CHDEGTMKR]\d+)|(\w+:[\w\d\.-]*)|([a-z]{3,5})|(\w{2,4}\d{5})$"
 Lm,LIPID MAPS,metabolite,lipidmaps,"^LM(FA|GL|GP|SP|ST|PR|SL|PK)[0-9]{4}([0-9a-zA-Z]{4,6})?$"
-Lb,LipidBank,metabolite,lipidbank,^\w+\d+$
+Lb,LipidBank,metabolite,lipidbank,^(?!ENS)\w+\d+$
 Pgd,PharmGKB Drug,metabolite,pharmgkb.drug,^PA\d+$
 Cpc,PubChem Compound,metabolite,pubchem,^\d+$
 Cps,PubChem Substance,metabolite,pubchem,^\d+$
 Sl,SwissLipids,metabolite,swisslipids,^\d+$
 Td,TTD Drug,metabolite,ttd.drug,^DAP\d+$
 Wd,Wikidata,metabolite,wikidata,^(Q|P|E|L)\d+$
-Wi,Wikipedia,metabolite,wikipedia,^\S+$
+Wi,Wikipedia,metabolite,wikipedia,
