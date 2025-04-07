@@ -22,6 +22,34 @@ from pyBiodatafuse.constants import BRIDGEDB_ENDPOINT
 logger = logging.getLogger(__name__)
 
 
+def match_input_datasource(identifiers) -> str:
+    """Check if the input identifiers match the datasource.
+    :param identifiers: a pandas DataFrame containing the identifiers to be matched
+    :returns: data source
+    """
+    if identifiers.empty:
+        raise ValueError("The identifiers series is empty.")
+
+    with resources.path("pyBiodatafuse.resources", "datasources.csv") as df_path:
+        datasources = pd.read_csv(df_path)
+
+    matched_sources = set()
+    for identifier in identifiers:
+        matches = datasources[datasources["pattern"].str.fullmatch(identifier, na=False)]
+        if matches.empty:
+            raise ValueError(f"Identifier '{identifier}' does not match any known pattern.")
+        matched_sources.update(matches["source"])
+
+    if len(matched_sources) > 1:
+        logger.info(f"Matched data sources: {', '.join(matched_sources)}")
+        raise ValueError(
+            f"Multiple data sources match the provided identifiers: {', '.join(matched_sources)}. "
+            "Please specify the datasource explicitly."
+        )
+
+    return matched_sources.pop()
+
+
 def read_resource_files() -> pd.DataFrame:
     """Read the datasource file.
 
@@ -90,7 +118,7 @@ def get_version_datasource_bridgedb(input_species: Optional[str] = None) -> List
 def bridgedb_xref(
     identifiers: pd.DataFrame,
     input_species: Optional[str] = None,
-    input_datasource: str = "HGNC",
+    input_datasource: Optional[str] = "HGNC",
     output_datasource: Optional[list] = None,
 ) -> Tuple[pd.DataFrame, dict]:
     """Map input list using BridgeDb.
@@ -102,6 +130,10 @@ def bridgedb_xref(
     :returns: a DataFrame containing the mapped identifiers and dictionary of the data resource metadata.
     :raises ValueError: if the input_datasource is not provided or if the request fails
     """
+    if not input_datasource:
+        input_datasource = match_input_datasource(identifiers)
+        logger.info(f"Input datasource is set to {input_datasource}")
+
     if input_species is None:
         input_species = "Human"
 
