@@ -245,12 +245,6 @@ def add_intact_interactions_subgraph(g, gene_node_label, interaction_list):
     :param interaction_list: A list of interaction dictionaries from IntAct.
     :returns: A NetworkX MultiDiGraph with added IntAct interactions.
     """
-        annot_node_attrs["name"] = annot["compound_name"]
-        annot_node_attrs["id"] = annot_node_label
-        annot_node_attrs["chembl_id"] = annot["chembl_id"]
-        if not pd.isna(annot["drugbank_id"]):
-            annot_node_attrs["drugbank_id"] = annot["drugbank_id"]
-    
     for annot in annot_list:
         if not interaction:
             continue
