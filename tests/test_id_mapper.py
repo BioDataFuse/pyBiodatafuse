@@ -1,9 +1,12 @@
 """Unit tests for the id_mapper module."""
 
 import unittest
+import warnings
 import pandas as pd
 from pyBiodatafuse.id_mapper import match_input_datasource
 
+# Suppress specific warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning, module="pydantic")
 
 class TestMatchInputDatasource(unittest.TestCase):
     """Test cases for the match_input_datasource function."""
