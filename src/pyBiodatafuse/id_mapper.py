@@ -25,8 +25,13 @@ logger = logging.getLogger(__name__)
 
 def match_input_datasource(identifiers) -> str:
     """Check if the input identifiers match the datasource.
+
+    This function attempts to match the provided identifiers against known patterns
+    in the datasource file and returns the corresponding data source.
+
     :param identifiers: a pandas DataFrame containing the identifiers to be matched
     :returns: data source
+    :raises ValueError: if the identifiers series is empty, no match is found, or multiple matches are found
     """
     if identifiers.empty:
         raise ValueError("The identifiers series is empty.")
@@ -38,10 +43,11 @@ def match_input_datasource(identifiers) -> str:
     for identifier in identifiers:
         match_found = False
         for _, row in datasources.iterrows():
+            pattern = str(row["pattern"])  # Ensure the pattern is a string
             if "ENS" in identifier:
                 return "Ensembl"
-            if re.fullmatch(row["pattern"], identifier):
-                if row["pattern"] not in ["^\d+$", "^\S+$"]:
+            if re.fullmatch(pattern, identifier):
+                if pattern not in [r"^\d+$", r"^\S+$"]:
                     matched_sources.add(row["source"])
                     match_found = True
         if not match_found:
