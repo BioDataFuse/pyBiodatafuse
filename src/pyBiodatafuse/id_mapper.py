@@ -36,7 +36,7 @@ def match_input_datasource(identifiers) -> str:
     if identifiers.empty:
         raise ValueError("The identifiers series is empty.")
 
-    with resources.files("pyBiodatafuse.resources").joinpath("datasources.csv").open() as df_file:
+    with resources.path("pyBiodatafuse.resources", "datasources.csv") as df_file:
         datasources = pd.read_csv(df_file)
 
     matched_sources = set()
