@@ -430,6 +430,60 @@ def add_wikipathways_gene_pathway_subgraph(g, gene_node_label, annot_list):
 
     return g
 
+def add_intact_ppi_subgraph(g, gene_node_label, annot_list):
+    """Construct part of the graph by linking the gene to genes through IntAct interactions.
+
+    :param g: the input graph to extend with new nodes and edges.
+    :param gene_node_label: the gene node to be linked to other genes entities.
+    :param annot_list: list of protein-protein interactions from IntAct.
+    :returns: a NetworkX MultiDiGraph
+    """
+    for ppi in annot_list:
+        interactor_A = ppi.get("acA", None)  
+        interactor_B = ppi.get("acB", None)
+        
+        if pd.isna(interactor_A) or pd.isna(interactor_B):
+            continue
+
+        edge_attrs = {
+            "interaction_id": ppi.get("ac", ""),
+            "confidence_values": ppi.get("confidence_values", []),
+            "intact_score": ppi.get("intact_score", []),
+            "biological_role_A": ppi.get("biological_role_A", ""),
+            "biological_role_B": ppi.get("biological_role_B", ""),
+            "type": ppi.get("type", ""),
+            "stoichiometry_A": ppi.get("stoichiometry_A", ""),
+            "stoichiometry_B": ppi.get("stoichiometry_B", ""),
+            "detection_method": ppi.get("detection_method", ""),
+            "detection_method_id": ppi.get("detection_method_id", ""),
+            "host_organism": ppi.get("host_organism", ""),
+            "pubmed_publication_id": ppi.get("pubmed_publication_id", []),
+        }
+
+        edge_hash = hash(frozenset(edge_attrs.items()))
+        edge_attrs["edge_hash"] = edge_hash
+
+        if interactor_A in g and interactor_B in g:
+            edge_data = g.get_edge_data(interactor_A, interactor_B)
+            edge_data = {} if edge_data is None else edge_data
+            node_exists = [x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash]
+            
+            if len(node_exists) == 0:
+                g.add_edge(
+                    interactor_A,
+                    interactor_B,
+                    label="IntAct_PPI",
+                    attr_dict=edge_attrs,
+                )
+                g.add_edge(
+                    interactor_B,
+                    interactor_A,
+                    label="IntAct_PPI",
+                    attr_dict=edge_attrs,
+                )
+
+    return g
+
 
 def add_kegg_gene_pathway_subgraph(g, gene_node_label, annot_list):
     """Construct part of the graph by linking the gene to pathways from KEGG.
@@ -1036,7 +1090,7 @@ def process_disease_compound(g, disease_compound):
 
 def process_ppi(g, gene_node_label, row):
     """Process protein-protein interactions and add them to the graph.
-
+    
     :param g: the input graph to extend with gene nodes.
     :param gene_node_label: the gene node to be linked to annotation entities.
     :param row: row in the combined DataFrame.
@@ -1054,6 +1108,17 @@ def process_ppi(g, gene_node_label, row):
 
         if not isinstance(ppi_list, float):
             add_stringdb_ppi_subgraph(g, gene_node_label, ppi_list)
+
+    if "IntAct_interactions" in row and row["IntAct_interactions"] is not None:
+        try:
+            intact_ppi_list = row["IntAct_interactions"]
+        except (ValueError, TypeError):
+            intact_ppi_list = []
+
+        if isinstance(intact_ppi_list, list) and len(intact_ppi_list) > 0:
+            valid_intact_ppi_list = [item for item in intact_ppi_list if pd.notna(item.get("id_A")) and pd.notna(item.get("id_B"))]
+            if valid_intact_ppi_list:
+                add_intact_ppi_subgraph(g, gene_node_label, valid_intact_ppi_list)
 
 
 def process_homologs(g, combined_df, homolog_df_list, func_dict, dea_columns):
