@@ -7,6 +7,7 @@ import datetime
 import json
 import logging
 import os
+import re
 import time
 from importlib import resources
 from typing import List, Optional, Tuple
@@ -30,21 +31,27 @@ def match_input_datasource(identifiers) -> str:
     if identifiers.empty:
         raise ValueError("The identifiers series is empty.")
 
-    with resources.path("pyBiodatafuse.resources", "datasources.csv") as df_path:
-        datasources = pd.read_csv(df_path)
+    with resources.files("pyBiodatafuse.resources").joinpath("datasources.csv").open() as df_file:
+        datasources = pd.read_csv(df_file)
 
     matched_sources = set()
     for identifier in identifiers:
-        matches = datasources[datasources["pattern"].str.fullmatch(identifier, na=False)]
-        if matches.empty:
+        match_found = False
+        for _, row in datasources.iterrows():
+            if "ENS" in identifier:
+                return "Ensembl"
+            if re.fullmatch(row["pattern"], identifier):
+                if row["pattern"] not in ["^\d+$", "^\S+$"]:
+                    matched_sources.add(row["source"])
+                    match_found = True
+        if not match_found:
             raise ValueError(f"Identifier '{identifier}' does not match any known pattern.")
-        matched_sources.update(matches["source"])
 
     if len(matched_sources) > 1:
         logger.info(f"Matched data sources: {', '.join(matched_sources)}")
         raise ValueError(
-            f"Multiple data sources match the provided identifiers: {', '.join(matched_sources)}. "
-            "Please specify the datasource explicitly."
+            f"Multiple data sources match the provided identifiers (e.g., {identifier}): {', '.join(matched_sources)}. "
+            "Please specify the datasource explicitly using `input_datasource`."
         )
 
     return matched_sources.pop()
