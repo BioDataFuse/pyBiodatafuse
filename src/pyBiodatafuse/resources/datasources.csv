@@ -1,44 +1,43 @@
-systemCode,source,type
-En,Ensembl,gene
-L,NCBI Gene,gene
-H,HGNC,gene
-Hac,HGNC Accession Number,gene
-M,MGI,gene
-Mbm,miRBase mature sequence,gene
-Mb,miRBase Sequence,gene
-Om,OMIM,gene
-Q,RefSeq,gene
-Rf,Rfam,gene
-R,RGD,gene
-D,SGD,gene
-Uc,UCSC Genome Browser,gene
-Wg,WikiGenes,gene
-Np,NCBI Protein,gene
-Pd,PDB,gene
-Pf,Pfam,gene
-S,Uniprot-TrEMBL,gene
-Sp,Uniprot-SwissProt,gene
-X,Affy,gene
-Ag,Agilent,gene
-Il,Illumina,gene
-T,Gene Ontology,gene
-Ca,CAS,metabolite
-Ce,ChEBI,metabolite
-Cs,ChemSpider,metabolite
-Cl,ChEMBL compound,metabolite
-Dr,DrugBank,metabolite
-Ch,HMDB,metabolite
-Gpl,Guide to Pharmacology Ligand ID (aka IUPHAR),metabolite
-Ik,InChIKey,metabolite
-Ck,KEGG Compound,metabolite
-Kd,KEGG Drug,metabolite
-Kl,KEGG Glycan,metabolite
-Lm,LIPID MAPS,metabolite
-Lb,LipidBank,metabolite
-Pgd,PharmGKB Drug,metabolite
-Cpc,PubChem Compound,metabolite
-Cps,PubChem Substance,metabolite
-Sl,SwissLipids,metabolite
-Td,TTD Drug,metabolite
-Wd,Wikidata,metabolite
-Wi,Wikipedia,metabolite
+systemCode,source,type,prefix,pattern
+En,Ensembl,gene,ensembl,^((ENS[FPTG]\d{11}(\.\d+)?)|(FB\w{2}\d{7})|(Y[A-Z]{2}\d{3}[a-zA-Z](\-[A-Z])?)|([A-Z_a-z0-9]+(\.)?(t)?(\d+)?([a-z])?))$
+L,NCBI Gene,gene,ncbi_gene,^\d+$
+H,HGNC,gene,hgnc,"^\d{1,5}$"
+Hac,HGNC Accession Number,gene,hgnc,"^\d{1,5}$"
+M,MGI,gene,mgi,^\d+$
+Mbm,miRBase mature sequence,gene,mirbase,^MI\d{7}$
+Mb,miRBase Sequence,gene,mirbase,^MI\d{7}$
+Om,OMIM,gene,omim,^\d+$
+Q,RefSeq,gene,refseq,"^(((AC|AP|NC|NG|NM|NP|NR|NT|NW|WP|XM|XP|XR|YP|ZP)_\d+)|(NZ_[A-Z]{2,4}\d+))(\.\d+)?$"
+Rf,Rfam,gene,rfam,^RF\d{5}$
+R,RGD,gene,rgd,"^\d{4,}$"
+D,SGD,gene,sgd,^((S\d+$)|(Y[A-Z]{2}\d{3}[a-zA-Z](\-[A-Z])?))$
+Uc,UCSC Genome Browser,gene,ucsc,^ucsc:.+$
+Np,NCBI Protein,gene,ncbi_protein,^\w+_?\d+(.\d+)?$
+Pd,PDB,gene,pdb,^[0-9][A-Za-z0-9]{3}$
+Pf,Pfam,gene,pfam,^PF\d{5}$
+S,Uniprot-TrEMBL,gene,uniprot,"^([A-N,R-Z][0-9]([A-Z][A-Z, 0-9][A-Z, 0-9][0-9]){1,2})|([O,P,Q][0-9][A-Z, 0-9][A-Z, 0-9][A-Z, 0-9][0-9])(\.\d+)?$"
+Sp,Uniprot-SwissProt,gene,uniprot,"^([A-N,R-Z][0-9]([A-Z][A-Z, 0-9][A-Z, 0-9][0-9]){1,2})|([O,P,Q][0-9][A-Z, 0-9][A-Z, 0-9][A-Z, 0-9][0-9])(\.\d+)?$"
+X,Affy,gene,affy.probeset,"^\d{4,}((_[asx])?_at)$"
+Ag,Agilent,gene,agilent.probe,^A_\d+_.+$
+Il,Illumina,gene,illumina.probe,^ILMN_\d+$
+T,Gene Ontology,gene,go,^\d{7}$
+Ca,CAS,metabolite,cas,"^\d{1,7}\-\d{2}\-\d$"
+Ce,ChEBI,metabolite,chebi,^\d+$
+Cs,ChemSpider,metabolite,chemspider,^\d+$
+Cl,ChEMBL compound,metabolite,chembl,^CHEMBL\d+$
+Dr,DrugBank,metabolite,drugbank,^DB\d{5}$
+Ch,HMDB,metabolite,hmdb,^HMDB\d+$
+Gpl,Guide to Pharmacology Ligand ID (aka IUPHAR),metabolite,iuphar.family,^\d+$
+Ik,InChIKey,metabolite,inchikey,^[A-Z]{14}\-[A-Z]{10}(\-[A-Z])?$
+Ck,KEGG Compound,metabolite,kegg,"^([CHDEGTMKR]\d+)|(\w+:[\w\d\.-]*)|([a-z]{3,5})|(\w{2,4}\d{5})$"
+Kd,KEGG Drug,metabolite,kegg,"^([CHDEGTMKR]\d+)|(\w+:[\w\d\.-]*)|([a-z]{3,5})|(\w{2,4}\d{5})$"
+Kl,KEGG Glycan,metabolite,kegg,"^([CHDEGTMKR]\d+)|(\w+:[\w\d\.-]*)|([a-z]{3,5})|(\w{2,4}\d{5})$"
+Lm,LIPID MAPS,metabolite,lipidmaps,"^LM(FA|GL|GP|SP|ST|PR|SL|PK)[0-9]{4}([0-9a-zA-Z]{4,6})?$"
+Lb,LipidBank,metabolite,lipidbank,^(?!ENS)\w+\d+$
+Pgd,PharmGKB Drug,metabolite,pharmgkb.drug,^PA\d+$
+Cpc,PubChem Compound,metabolite,pubchem,^\d+$
+Cps,PubChem Substance,metabolite,pubchem,^\d+$
+Sl,SwissLipids,metabolite,swisslipids,^\d+$
+Td,TTD Drug,metabolite,ttd.drug,^DAP\d+$
+Wd,Wikidata,metabolite,wikidata,^(Q|P|E|L)\d+$
+Wi,Wikipedia,metabolite,wikipedia,
