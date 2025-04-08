@@ -38,7 +38,7 @@ DATABASE_QUERY_IDENTIFER_GENE = AOPWIKI_GENE_INPUT_ID
 DATABASE_QUERY_IDENTIFER_COMPOUND = AOPWIKI_COMPOUND_INPUT_ID
 QUERY_LIMIT = 25
 QUERY_COMPOUND = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-compound.rq")
-QUERY_GENE = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-get-by-gene.rq")
+QUERY_GENE = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-gene.rq")
 # QUERY_PROCESS = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-get-by-biological-process.rq.rq")
 # PROCESS_INPUT_COL = OPENTARGETS_GO_COL
 
@@ -182,8 +182,17 @@ def get_aops(
         sparql.setQuery(query)
         res = sparql.queryAndConvert()
         res_df = pd.DataFrame(
-            [{k: v["value"] for k, v in item.items()} for item in res["results"]["bindings"]]
-        )
+            [{k: (v["value"] if "value" in v else "") for k, v in item.items()} for item in res["results"]["bindings"]]
+        )  #
+        # Retrieve the expected columns from the SPARQL query results' "vars"
+        expected_columns = res["head"]["vars"]
+        
+        # Ensure all expected columns are present in intermediate_df
+        for col in expected_columns:
+            if col not in intermediate_df.columns:
+                intermediate_df[col] = None  # Add missing columns with default value None
+
+        # Concatenate the new results into the intermediate DataFrame
         intermediate_df = pd.concat([intermediate_df, res_df], ignore_index=True)
         
     end_time = datetime.datetime.now()
@@ -191,7 +200,7 @@ def get_aops(
     if intermediate_df.empty:
         warnings.warn(f"There are no results for your input list in {db}.", stacklevel=2)
         return pd.DataFrame(), {}
-    #if AOPWIKI_GENE_INPUT_ID or AOPWIKI_COMPOUND_INPUT_ID not in intermediate_df.columns:
+    # if AOPWIKI_GENE_INPUT_ID or AOPWIKI_COMPOUND_INPUT_ID not in intermediate_df.columns:
     #    warnings.warn(f"There is no annotation for your input list in {db}.", stacklevel=2)
     #    return pd.DataFrame(), {}
 

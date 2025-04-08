@@ -131,18 +131,19 @@ DISGENET_DISEASE_OUTPUT_DICT = {
 # AOPWIKI
 AOPWIKI_GENE_OUTPUT_DICT = {
     "aop": str,
-    "aop_title": "str",
-    "chemical": str,
-    "cas_id": str,
-    "compound_name": str,
+    "aop_title": str,
+    "MIEtitle": str,
+    "MIE": str,
+    "KE_downstream": str,
+    "KE_downstream_title": str,
+    "KER": str,
     "ao": str,
-    "ao_label": str,
-    "life_stage": str,
-    "biological_process": str,
-    "taxon": str,
-    "target": str,
-    "pubchem_compound": str,
-    "chembl_compound": str,
+    "ao_title": str,
+    "KE_upstream": str,
+    "KE_upstream_title": str,
+    "KE_upstream_organ": str,
+    "KE_downstream_organ": str,
+    "pubchem_compound" : str
 }
 
 AOPWIKI_COMPOUND_OUTPUT_DICT = {
