@@ -68,6 +68,7 @@ OPENTARGETS_DISEASE_INPUT_ID_1 = "EFO"
 OPENTARGETS_DISEASE_INPUT_ID_2 = "MONOD"
 PUBCHEM_COMPOUND_INPUT_ID = "Uniprot-TrEMBL"
 STRING_GENE_INPUT_ID = "Ensembl"
+STRING_GENE_LINK_ID = "Ensembl_link"
 WIKIDATA_GENE_INPUT_ID = "NCBI Gene"
 WIKIPATHWAYS_GENE_INPUT_ID = "NCBI Gene"
 PATENT_INPUT_ID = "PubChem Compound"
@@ -129,36 +130,36 @@ DISGENET_DISEASE_OUTPUT_DICT = {
 
 # AOPWIKI
 AOPWIKI_GENE_OUTPUT_DICT = {
-        "aop": str,
-        "aop_title": "str",
-        "chemical": str,
-        "cas_id": str,
-        "compound_name": str,
-        "ao": str,
-        "ao_label": str,
-        "life_stage": str,
-        "biological_process": str,
-        "taxon": str,
-        "target": str,
-        "pubchem_compound": str,
-        "chembl_compound": str
-    }
+    "aop": str,
+    "aop_title": "str",
+    "chemical": str,
+    "cas_id": str,
+    "compound_name": str,
+    "ao": str,
+    "ao_label": str,
+    "life_stage": str,
+    "biological_process": str,
+    "taxon": str,
+    "target": str,
+    "pubchem_compound": str,
+    "chembl_compound": str,
+}
 
 AOPWIKI_COMPOUND_OUTPUT_DICT = {
-        "aop": str,
-        "aop_title": "str",
-        "chemical": str,
-        "cas_id": str,
-        "compound_name": str,
-        "ao": str,
-        "ao_label": str,
-        "life_stage": str,
-        "biological_process": str,
-        "taxon": str,
-        "target": str,
-        "Ensembl": str,
-        "chembl_compound": str
-    }
+    "aop": str,
+    "aop_title": "str",
+    "chemical": str,
+    "cas_id": str,
+    "compound_name": str,
+    "ao": str,
+    "ao_label": str,
+    "life_stage": str,
+    "biological_process": str,
+    "taxon": str,
+    "target": str,
+    "Ensembl": str,
+    "chembl_compound": str,
+}
 HPO = "HPO"
 NCI = "NCI"
 OMIM = "OMIM|MIM"
@@ -276,7 +277,7 @@ MOLMEDB_COMPOUND_PROTEIN_OUTPUT_DICT = {
     "uniprot_trembl_id": str,
     "hgnc_symbol": str,
     "source_pmid": str,
-    "ensembl": str
+    "ensembl": str,
 }
 UNIPROT_TREMBL_ID = "P"
 
@@ -294,7 +295,13 @@ OUTCOME = "active|inactive"
 INCHI = "InChI"
 
 # STRING
-STRING_OUTPUT_DICT = {"stringdb_link_to": str, STRING_GENE_INPUT_ID: str, "score": float}
+STRING_OUTPUT_DICT = {
+    "stringdb_link_to": str,
+    STRING_GENE_INPUT_ID: str,
+    "score": float,
+    "Uniprot-TrEMBL": str,
+    "Uniprot-TrEMBL_link": str,
+}
 
 
 """ Node and edge main lable and attributes for each data source """
@@ -575,12 +582,12 @@ NODE_TYPES = {
     "ensemble": "http://identifiers.org/ensembl/",
     "ncbi_disease": "https://www.ncbi.nlm.nih.gov/medgen/",
     "article": f"{NAMESPACE_BINDINGS['obo']}IAO_0000013",
-    "protein_node": "http://purl.obolibrary.org/obo/NCIT_C17021",
-    "ppi_node": "http://purl.obolibrary.org/obo/NCIT_C18469",
+    "protein_node": f"{NAMESPACE_BINDINGS['obo']}NCIT_C17021",
+    "ppi_node": f"{NAMESPACE_BINDINGS['obo']}NCIT_C18469",
     "compound_node": "http://semanticscience.org/resource/SIO_010038",
-    "approved_compound": "http://purl.obolibrary.org/obo/NCIT_C172573",
-    "aid": "http://purl.obolibrary.org/obo/CLO_0037244",
-    "developmental_stage_node": "http://purl.obolibrary.org/obo/NCIT_C43531",
+    "approved_compound": f"{NAMESPACE_BINDINGS['obo']}NCIT_C172573",
+    "aid": f"{NAMESPACE_BINDINGS['obo']}CLO_0037244",
+    "developmental_stage_node": f"{NAMESPACE_BINDINGS['obo']}NCIT_C43531",
     "el_node": "https://biodatafuse.org/onto/bdf#DisGeNET_Evidence_Level",
     "ei_node": "https://biodatafuse.org/onto/bdf#DisGeNET_Evidence_Index",
 }
@@ -594,8 +601,8 @@ PREDICATES = {
     "sio_has_value": f"{NAMESPACE_BINDINGS['sio']}SIO_000300",
     "sio_has_input": f"{NAMESPACE_BINDINGS['sio']}SIO_000230",
     "sio_has_output": f"{NAMESPACE_BINDINGS['sio']}SIO_000229",
-    "chebi_inchi": "http://purl.obolibrary.org/obo/chebi/inchi",
-    "chebi_smiles": "http://purl.obolibrary.org/obo/chebi/smiles",
+    "chebi_inchi": f"{NAMESPACE_BINDINGS['obo']}chebi/inchi",
+    "chebi_smiles": f"{NAMESPACE_BINDINGS['obo']}chebi/smiles",
     "cheminf_compound_id": "http://semanticscience.org/resource/CHEMINF_000140",
     "sio_is_part_of": f"{NAMESPACE_BINDINGS['sio']}SIO_000068",
     "has_gene_count": "",  # TODO gene count
@@ -603,38 +610,38 @@ PREDICATES = {
     "is_preceded_by": "http://semanticscience.org/resource/SIO_000248",
     "sio_has_part": f"{NAMESPACE_BINDINGS['sio']}SIO_000028",
     "negatively_regulates": f"{NAMESPACE_BINDINGS['obo']}RO_0002449",
-    "phase": "http://purl.obolibrary.org/obo/PATO_0000083",
-    "translation_of": "http://purl.obolibrary.org/obo/so#translation_of",
-    "translates_to": "http://purl.obolibrary.org/obo/so#translates_to",
-    "variant_of": "http://purl.obolibrary.org/obo/so#variant_of",
+    "phase": f"{NAMESPACE_BINDINGS['obo']}PATO_0000083",
+    "translation_of": f"{NAMESPACE_BINDINGS['obo']}so#translation_of",
+    "translates_to": f"{NAMESPACE_BINDINGS['obo']}so#translates_to",
+    "variant_of": f"{NAMESPACE_BINDINGS['obo']}so#variant_of",
 }
 
 # Classes for clinical phases
 
 CLINICAL_PHASES = {
-    "1.0": "http://purl.obolibrary.org/obo/OPMI_0000368",
-    "2.0": "http://purl.obolibrary.org/obo/OPMI_0000369",
-    "3.0": "http://purl.obolibrary.org/obo/OPMI_0000370",
-    "4.0": "http://purl.obolibrary.org/obo/OPMI_0000371",
+    "1.0": f"{NAMESPACE_BINDINGS['obo']}OPMI_0000368",
+    "2.0": f"{NAMESPACE_BINDINGS['obo']}OPMI_0000369",
+    "3.0": f"{NAMESPACE_BINDINGS['obo']}OPMI_0000370",
+    "4.0": f"{NAMESPACE_BINDINGS['obo']}OPMI_0000371",
 }
 
 # GO Types
 GO_TYPES = {
-    "C": "http://purl.obolibrary.org/obo/GO_0005575",
-    "P": "http://purl.obolibrary.org/obo/GO_0008150",
-    "F": "http://purl.obolibrary.org/obo/GO_0003674",
+    "C": f"{NAMESPACE_BINDINGS['obo']}GO_0005575",
+    "P": f"{NAMESPACE_BINDINGS['obo']}GO_0008150",
+    "F": f"{NAMESPACE_BINDINGS['obo']}GO_0003674",
 }
 
 # Compound MoA
 
 MOAS = {
-    "ANTAGONIST": "http://purl.obolibrary.org/obo/RO_0018029",
-    "AGONIST": "http://purl.obolibrary.org/obo/RO_0018027",
-    "BLOCKER": "http://purl.obolibrary.org/obo/RO_0003002",
-    "INHIBITOR": "http://purl.obolibrary.org/obo/RO_0012006",  # TODO this predicate has the wrong range
-    "MODULATOR": "http://purl.obolibrary.org/obo/RO_0011002",  # TODO needs more granularity
-    "PARTIAL AGONIST": "http://purl.obolibrary.org/obo/RO_0018027",  # TODO needs more granularity
-    "INVERSE AGONIST": "http://purl.obolibrary.org/obo/RO_0018028",
+    "ANTAGONIST": f"{NAMESPACE_BINDINGS['obo']}RO_0018029",
+    "AGONIST": f"{NAMESPACE_BINDINGS['obo']}RO_0018027",
+    "BLOCKER": f"{NAMESPACE_BINDINGS['obo']}RO_0003002",
+    "INHIBITOR": f"{NAMESPACE_BINDINGS['obo']}RO_0012006",  # TODO this predicate has the wrong range
+    "MODULATOR": f"{NAMESPACE_BINDINGS['obo']}RO_0011002",  # TODO needs more granularity
+    "PARTIAL AGONIST": f"{NAMESPACE_BINDINGS['obo']}RO_0018027",  # TODO needs more granularity
+    "INVERSE AGONIST": f"{NAMESPACE_BINDINGS['obo']}RO_0018028",
 }
 
 # Data sources
@@ -677,8 +684,8 @@ NAMESPACE_SHAPES = {
     "http://weso.es/shapes/": ":",
     "http://www.w3.org/2001/XMLSchema#": "xsd",
     "http://www.w3.org/2002/07/owl#": "owl",
-    "http://purl.obolibrary.org/obo/": "obo",
-    "http://purl.obolibrary.org/obo/so#": "so",
+    f"{NAMESPACE_BINDINGS['obo']}": "obo",
+    f"{NAMESPACE_BINDINGS['obo']}so#": "so",
     "https://biodatafuse.org/onto/bdf#": "bdfo",
     "https://minerva-net.lcsb.uni.lu/api/": "minerva",
     "https://reactome.org/content/detail/": "reactome",
@@ -705,7 +712,6 @@ AOPWIKI_LIFESTAGE_MAPPINGS = {
 }
 
 SOURCE_NAMESPACES = {
-
     "CAS": "https://commonchemistry.cas.org/detail?cas_rn=",
     "ChEBI": "https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI:",
     "ChemSpider": "http://www.chemspider.com/Chemical-Structure.",
@@ -725,5 +731,5 @@ SOURCE_NAMESPACES = {
     "TTD Drug": "http://db.idrblab.net/ttd/data/drug/details/",
     "Wikidata": "https://www.wikidata.org/wiki/",
     "Wikipedia": "https://en.wikipedia.org/wiki/",
-    #TODO ADD ALL
+    # TODO ADD ALL
 }

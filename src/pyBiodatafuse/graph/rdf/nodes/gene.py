@@ -22,5 +22,5 @@ def add_gene_nodes(g: Graph, target, source) -> URIRef:
         gene_node = URIRef(f"http://identifiers.org/ensembl#{target}")
         g.add((gene_node, RDF.type, URIRef(NODE_TYPES["gene_node"])))
         g.add((gene_node, RDFS.label, Literal(row["identifier"], datatype=XSD.string)))
-    #if source and source == "HGNC":
+    # if source and source == "HGNC":
     return gene_node

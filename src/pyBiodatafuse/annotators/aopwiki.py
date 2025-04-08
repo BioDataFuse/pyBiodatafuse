@@ -14,22 +14,22 @@ from SPARQLWrapper import JSON, SPARQLWrapper
 from SPARQLWrapper.SPARQLExceptions import SPARQLWrapperException
 from tqdm import tqdm
 
+from pyBiodatafuse.constants import (
+    AOPWIKI_COMPOUND_COL,
+    AOPWIKI_COMPOUND_INPUT_ID,
+    AOPWIKI_COMPOUND_OUTPUT_DICT,
+    AOPWIKI_ENDPOINT,
+    AOPWIKI_GENE_COL,
+    AOPWIKI_GENE_INPUT_ID,
+    AOPWIKI_GENE_OUTPUT_DICT,
+    OPENTARGETS_GO_COL,
+)
 from pyBiodatafuse.utils import (
     check_columns_against_constants,
     collapse_data_sources,
     get_identifier_of_interest,
 )
-from pyBiodatafuse.constants import (
-    OPENTARGETS_GO_COL,
-    AOPWIKI_ENDPOINT,
-    AOPWIKI_GENE_INPUT_ID,
-    AOPWIKI_GENE_OUTPUT_DICT,
-    AOPWIKI_COMPOUND_OUTPUT_DICT,
-    AOPWIKI_GENE_INPUT_ID,
-    AOPWIKI_COMPOUND_INPUT_ID,
-    AOPWIKI_GENE_COL,
-    AOPWIKI_COMPOUND_COL,
-)
+
 # Pre-requisite:
 VERSION_QUERY_FILE = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-metadata.rq")
 DATABASE_SPARQL_DICT = {"aopwiki": AOPWIKI_ENDPOINT}
@@ -38,11 +38,14 @@ DATABASE_QUERY_IDENTIFER_COMPOUND = AOPWIKI_COMPOUND_INPUT_ID
 QUERY_LIMIT = 25
 QUERY_COMPOUND = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-get-by-compound.rq")
 QUERY_GENE = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-get-by-gene.rq")
-#QUERY_PROCESS = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-get-by-biological-process.rq.rq")
-#PROCESS_INPUT_COL = OPENTARGETS_GO_COL
+# QUERY_PROCESS = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-get-by-biological-process.rq.rq")
+# PROCESS_INPUT_COL = OPENTARGETS_GO_COL
 
 # Unique inputs and outputs:
-INPUT_OPTIONS = ["gene", "compound",]  #"biological_process"]
+INPUT_OPTIONS = [
+    "gene",
+    "compound",
+]  # "biological_process"]
 
 
 def read_sparql_file(file_path: str) -> str:
@@ -115,7 +118,9 @@ def get_aops(
 
     # Check if the endpoint is available
     if not check_endpoint(db=db):
-        warnings.warn(f"{db} SPARQL endpoint is not available. Unable to retrieve data.", stacklevel=2)
+        warnings.warn(
+            f"{db} SPARQL endpoint is not available. Unable to retrieve data.", stacklevel=2
+        )
         return pd.DataFrame(), {}
 
     # Step 1: Identifier mapping and harmonization
@@ -125,7 +130,7 @@ def get_aops(
     # Step 2: Prepare target list and batch queries
     target_list = data_df["target"].unique().tolist()
     query_batches = [
-        " ".join(f'"{target}"' for target in target_list[i:i + QUERY_LIMIT])
+        " ".join(f'"{target}"' for target in target_list[i : i + QUERY_LIMIT])
         for i in range(0, len(target_list), QUERY_LIMIT)
     ]
 
@@ -141,23 +146,43 @@ def get_aops(
         if input_type == "gene":
             col = AOPWIKI_GENE_COL
             substit_dict = {
-                'genes': str(["<https://identifiers.org/ensembl/" + target.replace('"','') + '>' for target in batch.split(" ")]).replace("[", "").replace("]", "").replace("'", "").replace(",", "")
+                "genes": str(
+                    [
+                        "<https://identifiers.org/ensembl/" + target.replace('"', "") + ">"
+                        for target in batch.split(" ")
+                    ]
+                )
+                .replace("[", "")
+                .replace("]", "")
+                .replace("'", "")
+                .replace(",", "")
             }
             query_file = QUERY_GENE
         else:  # input_type == "compound"
             col = AOPWIKI_COMPOUND_COL
             substit_dict = {
-                'compounds': str(["<https://identifiers.org/pubchem.compound/" + target.replace('"','') + '>' for target in batch.split(" ")]).replace("[", "").replace("]", "").replace("'", "").replace(",", "")
+                "compounds": str(
+                    [
+                        "<https://identifiers.org/pubchem.compound/" + target.replace('"', "") + ">"
+                        for target in batch.split(" ")
+                    ]
+                )
+                .replace("[", "")
+                .replace("]", "")
+                .replace("'", "")
+                .replace(",", "")
             }
             query_file = QUERY_COMPOUND
 
         # Load and substitute the query template
-        with open(query_file, 'r') as f:
+        with open(query_file, "r") as f:
             query = Template(f.read()).substitute(substit_dict)
         # Execute the query and process results
         sparql.setQuery(query)
         res = sparql.queryAndConvert()
-        res_df = pd.DataFrame([{k: v["value"] for k, v in item.items()} for item in res["results"]["bindings"]])
+        res_df = pd.DataFrame(
+            [{k: v["value"] for k, v in item.items()} for item in res["results"]["bindings"]]
+        )
         intermediate_df = pd.concat([intermediate_df, res_df], ignore_index=True)
 
     end_time = datetime.datetime.now()
@@ -173,14 +198,14 @@ def get_aops(
         input_col = AOPWIKI_GENE_INPUT_ID
         output_dict = AOPWIKI_GENE_OUTPUT_DICT
     else:
-        input_col = 'pubchem_compound'
+        input_col = "pubchem_compound"
         output_dict = AOPWIKI_COMPOUND_OUTPUT_DICT
         source_namespace = "PubChem Compound"
-        intermediate_df[input_col] = intermediate_df[input_col].apply(lambda x: x.split('/')[-1])
+        intermediate_df[input_col] = intermediate_df[input_col].apply(lambda x: x.split("/")[-1])
     intermediate_df.rename(columns={input_col: "target"}, inplace=True)
     intermediate_df = intermediate_df.drop_duplicates()
     # Strip all text before the last "/" in the 'target' column
-    
+
     # Step 6: Generate metadata
     metadata_dict = {
         "datasource": db,
@@ -192,7 +217,9 @@ def get_aops(
             "date": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             "url": DATABASE_SPARQL_DICT[db],
             "number_of_added_nodes": intermediate_df[col].nunique(),
-            "number_of_added_edges": intermediate_df.drop_duplicates(subset=["target", col]).shape[0],
+            "number_of_added_edges": intermediate_df.drop_duplicates(subset=["target", col]).shape[
+                0
+            ],
         },
     }
     # Step 7: Integrate into main dataframe

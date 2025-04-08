@@ -118,7 +118,10 @@ def add_transporter_inhibitor_node(g: Graph, inhibitor_data: dict, base_uri: str
         g.add((compound_node, URIRef(PREDICATES["sio_is_part_of"]), inhibition_node))
         g.add((inhibition_node, RDF.type, URIRef("https://purl.obolibrary.org/GO_0032410")))
 
-def add_transporter_inhibited_node(g: Graph, compound_node, inhibitor_data: dict, base_uri: str) -> None:
+
+def add_transporter_inhibited_node(
+    g: Graph, compound_node, inhibitor_data: dict, base_uri: str
+) -> None:
     """Add a transporter inhibitor node to the RDF graph.
 
     :param g: RDF graph to which the transporter inhibitor node is added.
@@ -141,6 +144,7 @@ def add_transporter_inhibited_node(g: Graph, compound_node, inhibitor_data: dict
         )
         g.add((compound_node, URIRef(PREDICATES["sio_is_part_of"]), inhibited_node))
         g.add((inhibited_node, RDF.type, URIRef("https://purl.obolibrary.org/GO_0032410")))
+
 
 def add_tested_compound_node(
     g: Graph,

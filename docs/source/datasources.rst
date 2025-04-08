@@ -33,8 +33,6 @@ OpenTargets
 
 `OpenTargets database <https://www.opentargets.org/>` uses human genetics and genomics data for systematic drug target identification and prioritisation.
 
-.. autofunction:: pyBiodatafuse.annotators.opentargets.get_gene_location
-
 .. autofunction:: pyBiodatafuse.annotators.opentargets.get_gene_go_process
 
 .. autofunction:: pyBiodatafuse.annotators.opentargets.get_gene_reactome_pathways
@@ -56,8 +54,6 @@ Wikidata
 ~~~~~~~~~~~~~~~
 
 `Wikidata <https://www.wikidata.org/>` acts as central storage for the structured data of its Wikimedia sister projects including Wikipedia, Wikivoyage, Wiktionary, Wikisource, and others.
-
-.. autofunction:: pyBiodatafuse.annotators.wikidata.get_gene_literature
 
 .. autofunction:: pyBiodatafuse.annotators.wikidata.get_gene_cellular_component
 

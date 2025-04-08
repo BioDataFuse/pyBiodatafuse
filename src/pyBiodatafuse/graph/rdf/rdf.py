@@ -30,20 +30,25 @@ Classes:
     - `shacl_prefixes`: Retrieves SHACL prefixes for the graph.
 """
 
+import os
+from multiprocessing import Pool
+
 import pandas as pd
 from bioregistry import normalize_curie
-from multiprocessing import Pool
 from rdflib import Graph, URIRef
 from rdflib.namespace import SKOS
 from tqdm import tqdm
 
 from pyBiodatafuse.constants import (
+    AOPWIKI_COMPOUND_COL,
+    AOPWIKI_GENE_COL,
     BGEE_GENE_EXPRESSION_LEVELS_COL,
     DATA_SOURCES,
     DISGENET_DISEASE_COL,
     IDENTIFIER_COL,
     IDENTIFIER_SOURCE_COL,
     LITERATURE_DISEASE_COL,
+    MOLMEDB_COMPOUND_PROTEIN_COL,
     MOLMEDB_PROTEIN_COMPOUND_COL,
     NAMESPACE_BINDINGS,
     OPENTARGETS_DISEASE_COL,
@@ -51,17 +56,19 @@ from pyBiodatafuse.constants import (
     OPENTARGETS_GO_COL,
     PREDICATES,
     PUBCHEM_COMPOUND_ASSAYS_COL,
+    SOURCE_NAMESPACES,
     STRING_PPI_COL,
     TARGET_COL,
     TARGET_SOURCE_COL,
     URIS,
-    MOLMEDB_COMPOUND_PROTEIN_COL,
-    SOURCE_NAMESPACES,
-    AOPWIKI_GENE_COL,
-    AOPWIKI_COMPOUND_COL
 )
 from pyBiodatafuse.graph.rdf.metadata import add_metadata
-from pyBiodatafuse.graph.rdf.nodes.compound import add_compound_gene_node, add_transporter_inhibitor_node, add_transporter_inhibited_node
+from pyBiodatafuse.graph.rdf.nodes.aop import add_aop_compound_node, add_aop_gene_node
+from pyBiodatafuse.graph.rdf.nodes.compound import (
+    add_compound_gene_node,
+    add_transporter_inhibited_node,
+    add_transporter_inhibitor_node,
+)
 from pyBiodatafuse.graph.rdf.nodes.gene import add_gene_nodes
 from pyBiodatafuse.graph.rdf.nodes.gene_disease import add_gene_disease_associations
 from pyBiodatafuse.graph.rdf.nodes.gene_expression import add_gene_expression_data
@@ -69,9 +76,7 @@ from pyBiodatafuse.graph.rdf.nodes.go_terms import add_go_cpf
 from pyBiodatafuse.graph.rdf.nodes.literature import add_literature_based_data
 from pyBiodatafuse.graph.rdf.nodes.pathway import add_pathway_node
 from pyBiodatafuse.graph.rdf.nodes.protein_protein import add_ppi_data
-from pyBiodatafuse.graph.rdf.nodes.aop import add_aop_gene_node, add_aop_compound_node
 from pyBiodatafuse.graph.rdf.utils import get_shacl_prefixes, get_shapes, replace_na_none
-import os
 
 
 class BDFGraph(Graph):
@@ -108,10 +113,16 @@ class BDFGraph(Graph):
             self.bind(key, new_value)
         for key, value in NAMESPACE_BINDINGS.items():
             self.bind(key, value)
-        resources_path = os.path.join(os.path.dirname(__file__), os.path.pardir, os.path.pardir, 'resources', 'datasources.csv')
-        with open(resources_path, mode='r') as file:
+        resources_path = os.path.join(
+            os.path.dirname(__file__),
+            os.path.pardir,
+            os.path.pardir,
+            "resources",
+            "datasources.csv",
+        )
+        with open(resources_path, mode="r") as file:
             df = pd.read_csv(file)
-            self.metabolite_sources = df[df['type'] == 'metabolite']['source'].tolist()
+            self.metabolite_sources = df[df["type"] == "metabolite"]["source"].tolist()
 
     def process_row(self, row, i, open_only=False):
         """
@@ -161,7 +172,6 @@ class BDFGraph(Graph):
             self.process_transporter_inhibited_data(row.get(MOLMEDB_COMPOUND_PROTEIN_COL))
             self.process_aop_compound_data(row.get(AOPWIKI_COMPOUND_COL))
 
-
     def generate_rdf(self, df: pd.DataFrame, metadata: dict, open_only: bool = False):
         """
         Generate an RDF graph from the provided DataFrame and metadata.
@@ -172,12 +182,11 @@ class BDFGraph(Graph):
         :param metadata: Metadata information to be added to the RDF graph.
         """
         df = df.applymap(replace_na_none)
-        #if not self.include_variants:
+        # if not self.include_variants:
         #    df = df[df["target.source"] == "Ensembl"]
         for i, row in tqdm(df.iterrows(), total=df.shape[0], desc="Building RDF graph"):
             self.process_row(row, i, open_only)
         self._add_metadata(metadata)
-
 
     # Class methods about specific nodes begin here
     # If you add a new method for a new type of data/nodes, try to import most of the code from another script
@@ -244,7 +253,7 @@ class BDFGraph(Graph):
         """
         target = row.get("target", None)
         source = row.get("target.source", None)
-        
+
         if source and source.lower() in self.metabolite_sources:
             if target:
                 return self._add_compound_nodes(self, row)
@@ -420,6 +429,7 @@ class BDFGraph(Graph):
                 for other_protein_node in protein_nodes[i + 1 :]:
                     self.add((protein_node, URIRef(PREDICATES["variant_of"]), other_protein_node))
                     self.add((other_protein_node, URIRef(PREDICATES["variant_of"]), protein_node))
+
     def process_aop_gene_data(self, aop_gene_data):
         """
         Process AOP Wiki gene data and add to the RDF graph.
@@ -428,6 +438,7 @@ class BDFGraph(Graph):
         if aop_gene_data:
             for entry in aop_gene_data:
                 self._add_aop_gene_node(entry)
+
     def process_aop_compound_data(self, aop_compound_data):
         """
         Process AOP Wiki compound data and add to the RDF graph.
@@ -516,10 +527,6 @@ class BDFGraph(Graph):
             self.add(URIRef(iri))
             self.add((compound_node, SKOS.exactMatch, URIRef(iri)))
         return compound_node
-
-
-
-
 
     def _add_compound_gene_node(self, compound, gene_node):
         """Add compound data to the RDF graph and associate it with a protein node.
