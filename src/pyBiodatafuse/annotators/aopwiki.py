@@ -4,6 +4,7 @@
 """Python file for queriying the AOP Wiki RDF SPARQL endpoint ()."""
 
 import datetime
+import logging
 import os
 import warnings
 from string import Template
@@ -36,7 +37,7 @@ DATABASE_SPARQL_DICT = {"aopwiki": AOPWIKI_ENDPOINT}
 DATABASE_QUERY_IDENTIFER_GENE = AOPWIKI_GENE_INPUT_ID
 DATABASE_QUERY_IDENTIFER_COMPOUND = AOPWIKI_COMPOUND_INPUT_ID
 QUERY_LIMIT = 25
-QUERY_COMPOUND = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-get-by-compound.rq")
+QUERY_COMPOUND = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-compound.rq")
 QUERY_GENE = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-get-by-gene.rq")
 # QUERY_PROCESS = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-get-by-biological-process.rq.rq")
 # PROCESS_INPUT_COL = OPENTARGETS_GO_COL
@@ -184,13 +185,15 @@ def get_aops(
             [{k: v["value"] for k, v in item.items()} for item in res["results"]["bindings"]]
         )
         intermediate_df = pd.concat([intermediate_df, res_df], ignore_index=True)
-
+        
     end_time = datetime.datetime.now()
-
     # Step 4: Check if the query returned any results
-    if AOPWIKI_GENE_INPUT_ID not in intermediate_df.columns:
-        warnings.warn(f"There is no annotation for your input list in {db}.", stacklevel=2)
+    if intermediate_df.empty:
+        warnings.warn(f"There are no results for your input list in {db}.", stacklevel=2)
         return pd.DataFrame(), {}
+    #if AOPWIKI_GENE_INPUT_ID or AOPWIKI_COMPOUND_INPUT_ID not in intermediate_df.columns:
+    #    warnings.warn(f"There is no annotation for your input list in {db}.", stacklevel=2)
+    #    return pd.DataFrame(), {}
 
     # Step 5: Clean and process the results
     source_namespace = AOPWIKI_GENE_INPUT_ID
@@ -203,9 +206,9 @@ def get_aops(
         source_namespace = "PubChem Compound"
         intermediate_df[input_col] = intermediate_df[input_col].apply(lambda x: x.split("/")[-1])
     intermediate_df.rename(columns={input_col: "target"}, inplace=True)
+    col = "target"
     intermediate_df = intermediate_df.drop_duplicates()
     # Strip all text before the last "/" in the 'target' column
-
     # Step 6: Generate metadata
     metadata_dict = {
         "datasource": db,

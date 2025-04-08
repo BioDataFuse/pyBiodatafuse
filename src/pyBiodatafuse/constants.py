@@ -53,7 +53,7 @@ PUBCHEM_COMPOUND_ASSAYS_COL = f"{PUBCHEM}_assays"
 STRING_PPI_COL = f"{STRING}_ppi"
 WIKIDATA_CC_COL = f"{WIKIDATA}_cellular_components"
 AOPWIKI_GENE_COL = "aop_gene"
-AOPWIKI_COMPOUND_COL = "aop_compound"
+AOPWIKI_COMPOUND_COL = "pubchem_compound"
 
 # Input type for each data source
 BGEE_GENE_INPUT_ID = "Ensembl"
@@ -147,19 +147,20 @@ AOPWIKI_GENE_OUTPUT_DICT = {
 
 AOPWIKI_COMPOUND_OUTPUT_DICT = {
     "aop": str,
-    "aop_title": "str",
-    "chemical": str,
-    "cas_id": str,
-    "compound_name": str,
+    "aop_title": str,
+    "MIEtitle": str,
+    "MIE": str,
+    "KE_downstream": str,
+    "KE_downstream_title": str,
+    "KER": str,
     "ao": str,
-    "ao_label": str,
-    "life_stage": str,
-    "biological_process": str,
-    "taxon": str,
-    "target": str,
-    "Ensembl": str,
-    "chembl_compound": str,
+    "ao_title": str,
+    "KE_upstream": str,
+    "KE_upstream_title": str,
+    "KE_upstream_organ": str,
+    "KE_downstream_organ": str,
 }
+
 HPO = "HPO"
 NCI = "NCI"
 OMIM = "OMIM|MIM"
