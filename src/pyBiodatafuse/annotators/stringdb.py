@@ -1,13 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""Python file for querying StringDB (https://string-db.org/)."""
+"""Python file for querying StringDB (https://string-db.org/).
+
+This version keeps the core functionalities of code 1 and adds the new functionalities from code 2.
+"""
 
 import datetime
 import logging
 import warnings
-import traceback
-from time import time, sleep
+from time import sleep
 
 import numpy as np
 import pandas as pd
@@ -19,12 +21,11 @@ from pyBiodatafuse.constants import (
     STRING,
     STRING_ENDPOINT,
     STRING_GENE_INPUT_ID,
+    STRING_GENE_LINK_ID,
     STRING_OUTPUT_DICT,
     STRING_PPI_COL,
-    STRING_GENE_LINK_ID,
 )
 from pyBiodatafuse.utils import check_columns_against_constants, get_identifier_of_interest
-
 
 logger = logging.getLogger("stringdb")
 
@@ -58,44 +59,51 @@ def get_version_stringdb() -> dict:
 
 
 def _format_data(row, string_ids_df, network_df):
-    """Reformat STRING-DB response (Helper function).
+    """Reformat STRING-DB response to match expected output.
 
-    :param row: input_df row
-    :param string_ids_df: STRING-DB response identifier DataFrame
-    :param network_df: STRING-DB response annotation DataFrame
-    :returns: StringDB reformatted annotation.
+    For a given input row (with key 'identifier'), if the network row
+    indicates that the input gene appears as preferredName_A then its partner is
+    preferredName_B, and vice versa. The output dictionaries will have the following keys:
+      - "stringdb_link_to": the partner gene symbol,
+      - "Ensembl": the partner's Ensembl id,
+      - "score": the interaction score,
+      - "Ensembl_link": the input gene's Ensembl id.
+
+    :param row: Row from the input DataFrame (with at least 'identifier' column).
+    :param string_ids_df: DataFrame returned from get_string_ids (not used in this version).
+    :param network_df: DataFrame returned from the network call.
+    :returns: List of dictionaries describing the interactions.
     """
     gene_ppi_links = []
     target_links_set = set()
 
     for _, row_arr in network_df.iterrows():
-        if (
-            row_arr["preferredName_A"] == row["identifier"]
-            and row_arr["preferredName_B"] not in target_links_set
-        ):
-            gene_ppi_links.append(
-                {
-                    "stringdb_link_to": row_arr["preferredName_B"],
-                    STRING_GENE_INPUT_ID: row_arr["stringId_B"].split(".")[1],
-                    "score": row_arr["score"],
-                    STRING_GENE_LINK_ID: row_arr["stringId_A"].split(".")[1],
-                }
-            )
-            target_links_set.add(row_arr["preferredName_B"])
-
-        elif (
-            row_arr["preferredName_B"] == row["identifier"]
-            and row_arr["preferredName_A"] not in target_links_set
-        ):
-            gene_ppi_links.append(
-                {
-                    "stringdb_link_to": row_arr["preferredName_A"],
-                    STRING_GENE_INPUT_ID: row_arr["stringId_A"].split(".")[1],
-                    "score": row_arr["score"],
-                    STRING_GENE_LINK_ID: row_arr["stringId_B"].split(".")[1],
-                }
-            )
-            target_links_set.add(row_arr["preferredName_A"])
+        # If the input gene appears as preferredName_A, then the partner is in preferredName_B.
+        if row_arr["preferredName_A"] == row["identifier"]:
+            partner = row_arr["preferredName_B"]
+            if partner not in target_links_set:
+                gene_ppi_links.append(
+                    {
+                        "stringdb_link_to": partner,
+                        "Ensembl": row_arr["stringId_B"].split(".")[1],
+                        "score": row_arr["score"],
+                        "Ensembl_link": row_arr["stringId_A"].split(".")[1],
+                    }
+                )
+                target_links_set.add(partner)
+        # If the input gene appears as preferredName_B, then the partner is in preferredName_A.
+        elif row_arr["preferredName_B"] == row["identifier"]:
+            partner = row_arr["preferredName_A"]
+            if partner not in target_links_set:
+                gene_ppi_links.append(
+                    {
+                        "stringdb_link_to": partner,
+                        "Ensembl": row_arr["stringId_A"].split(".")[1],
+                        "score": row_arr["score"],
+                        "Ensembl_link": row_arr["stringId_B"].split(".")[1],
+                    }
+                )
+                target_links_set.add(partner)
 
     return gene_ppi_links
 
@@ -113,7 +121,7 @@ def get_string_ids(gene_list: list, species):
         results = requests.post(
             f"{STRING_ENDPOINT}/json/get_string_ids", data=params, timeout=TIMEOUT
         ).json()
-        print(results)
+        logger.debug("STRING get_string_ids results: %s", results)
         return results
     except RequestException as e:
         logger.error("Error getting STRING IDs: %s", e)
@@ -142,8 +150,8 @@ def get_ppi(bridgedb_df: pd.DataFrame, species: str = "human"):
     """Annotate genes with protein-protein interactions from STRING-DB.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
-    :param species: The species to query. All species that are supported by both NCBI and STRINGDB can be used.
-    :returns: a DataFrame containing the StringDB output and dictionary of the metadata.
+    :param species: The species to query. (Try 'Homo sapiens' if 'human' is not working.)
+    :returns: a tuple (DataFrame containing the StringDB output, metadata dictionary)
     """
     # Check if the endpoint is available
     if not check_endpoint_stringdb():
@@ -155,15 +163,20 @@ def get_ppi(bridgedb_df: pd.DataFrame, species: str = "human"):
     # Record the start time
     start_time = datetime.datetime.now()
 
-    # Retrieve NCBI taxonomy identifier
+    # Retrieve NCBI taxonomy identifier using the given species term
     params = {"db": "taxonomy", "term": species, "retmode": "json"}
     response = requests.get(f"{NCBI_ENDPOINT}/entrez/eutils/esearch.fcgi", params=params).json()
-    species_id = response["esearchresult"]["idlist"][0]
+    try:
+        species_id = response["esearchresult"]["idlist"][0]
+    except (KeyError, IndexError):
+        logger.error("NCBI taxonomy search did not return an ID for species: %s", species)
+        return pd.DataFrame(), {}
 
     data_df = get_identifier_of_interest(bridgedb_df, STRING_GENE_INPUT_ID).reset_index(drop=True)
     gene_list = list(set(data_df["target"].tolist()))
+    logger.debug("Gene list: %s", gene_list)
 
-    # Return empty dataframe when only one input submitted
+    # Return empty dataframe when only one input is submitted
     if len(gene_list) == 1:
         warnings.warn(
             f"There is only one input gene/protein. Provide at least two input to extract their interactions from {STRING}.",
@@ -171,7 +184,7 @@ def get_ppi(bridgedb_df: pd.DataFrame, species: str = "human"):
         )
         return pd.DataFrame(), {}
 
-    # Get ids
+    # Get STRING IDs
     string_ids = get_string_ids(gene_list, species_id)
     if len(string_ids) == 0:
         return pd.DataFrame(), {}
@@ -181,11 +194,10 @@ def get_ppi(bridgedb_df: pd.DataFrame, species: str = "human"):
 
     # Get the PPI data
     network_df = _get_ppi_data(list(stringdb_ids_df.stringId.unique()), species_id)
+    logger.debug("Network DataFrame: %s", network_df)
 
-    # Record the end time
+    # Record the end time and build metadata
     end_time = datetime.datetime.now()
-
-    # Metadata details
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     time_elapsed = str(end_time - start_time)
     num_new_edges = network_df.drop_duplicates(subset=["stringId_A", "stringId_B"]).shape[0]
@@ -223,8 +235,11 @@ def get_ppi(bridgedb_df: pd.DataFrame, species: str = "human"):
     data_df[STRING_PPI_COL] = data_df[STRING_PPI_COL].apply(
         lambda x: ([{key: np.nan for key in STRING_OUTPUT_DICT}] if len(x) == 0 else x)
     )
+
     # Collect all ENSP IDs from network_df
-    ensp_ids = set(network_df['stringId_A'].str.split('.').str[1]) | set(network_df['stringId_B'].str.split('.').str[1])
+    ensp_ids = set(network_df["stringId_A"].str.split(".").str[1]) | set(
+        network_df["stringId_B"].str.split(".").str[1]
+    )
     # Get UniProt mapping
     uniprot_map = ensp_to_uniprot(list(ensp_ids))
     # Add 'Uniprot-TrEMBL' and 'Uniprot-TrEMBL_link' keys to each element in data_df[STRING_PPI_COL]
@@ -237,7 +252,6 @@ def get_ppi(bridgedb_df: pd.DataFrame, species: str = "human"):
                     "Uniprot-TrEMBL_link": uniprot_map.get(ppi.get(STRING_GENE_LINK_ID, "")),
                 }
                 for ppi in lst
-                if lst
             ]
             if lst
             else []
@@ -255,11 +269,7 @@ def ensp_to_uniprot(ensp_ids):
     ensp_to_uniprot_map = {}
     url = "https://rest.uniprot.org/idmapping/run"
     headers = {"Content-Type": "application/x-www-form-urlencoded"}
-    data = {
-        "from": "Ensembl_Protein",
-        "to": "UniProtKB",
-        "ids": ",".join(ensp_ids)
-    }
+    data = {"from": "Ensembl_Protein", "to": "UniProtKB", "ids": ",".join(ensp_ids)}
 
     try:
         # Submit the ID mapping request
