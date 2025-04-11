@@ -229,6 +229,16 @@ WIKIPATHWAYS_PATHWAYS_OUTPUT_DICT = {
     "pathway_gene_count": int,
 }
 
+WIKIPATHWAYS_MOLECULAR_GENE_OUTPUT_DICT = {
+    "pathway_id": str,
+    "pathway_label": str,
+    "targetGene": str,
+    "targetProtein": str,
+    "targetMetabolite": str,
+    "mimtype": str,
+    "rhea_id": str,
+}
+
 # Open Targets - Reactome
 OPENTARGETS_REACTOME_OUTPUT_DICT = {
     "pathway_id": str,
