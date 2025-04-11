@@ -1,0 +1,188 @@
+# coding: utf-8
+
+"""Python file for adding enrichment analysis using g:Profiler Python package. All the pathways and annotations are being added despite not being significance."""
+
+import datetime
+from typing import Any, Dict
+
+import pandas as pd
+import requests
+from gprofiler.gprofiler import GProfiler
+
+from pyBiodatafuse.constants import GPROFILER, GPROFILER_GENE_INPUT_ID, GPROFILER_VERSION_ENDPOINT
+from pyBiodatafuse.utils import get_identifier_of_interest
+
+
+def get_data_versions(species: str = "hsapiens") -> dict:
+    """Get version of g:Profiler.
+
+    :param species: The species to retrieve the version information for.
+    :returns: a dictionary containing the version information
+    """
+    params = {"organism": species}
+    try:
+        response = requests.get(GPROFILER_VERSION_ENDPOINT, params=params)
+
+        if response.status_code == 200:
+            gprofiler_version = response.json()
+            return gprofiler_version
+        else:
+            raise Exception(f"Failed to retrieve data: {response.status_code}")
+    except Exception as e:
+        return {"error": str(e)}
+
+
+def gene_enrichment_gprofiler(
+    bridgedb_df: pd.DataFrame,
+    sig_column: str = "padj_dea",
+    sig_threshold: float = 0.01,
+    species: str = "hsapiens",
+) -> tuple[pd.DataFrame, dict]:
+    """Enrichment analysis using g:Profiler for input gene list.
+
+    :param bridgedb_df: DataFrame containing gene data with columns "identifier" and a significance column.
+    :param sig_column: Name of the column used to filter significant genes (default is "padj_dea").
+    :param sig_threshold: Significance threshold to filter genes (default is 0.01).
+    :param species: Species code for g:Profiler query, e.g., "hsapiens" for human (default is "hsapiens").
+    :returns: A tuple containing:
+              - DataFrame containing g:Profiler analysis results.
+              - Dictionary with g:Profiler version information.
+        :raises RuntimeError: If the g:Profiler query fails.
+    :raises RuntimeError: If the g:Profiler query fails.
+    """
+    # Extract the "target" values in bridgedb_df
+    data_df = get_identifier_of_interest(bridgedb_df, GPROFILER_GENE_INPUT_ID)
+    query_genes = data_df[data_df[sig_column] <= sig_threshold]["target"].unique().tolist()
+    background_genes = data_df["target"].unique().tolist()
+
+    # Record the start time
+    start_time = datetime.datetime.now()
+
+    gp = GProfiler(return_dataframe=True)
+    try:
+        gprofiler_df = gp.profile(
+            organism=species,
+            all_results=True,
+            query=query_genes,
+            background=background_genes,
+            no_evidences=False,
+            significance_threshold_method="fdr",
+            user_threshold=0.05,
+        )
+    except Exception as e:
+        raise RuntimeError(f"g:Profiler query failed: {e}")
+
+    # Record the end time
+    end_time = datetime.datetime.now()
+
+    """Metadata details"""
+    # Get the current date and time
+    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    # Calculate the time elapsed
+    time_elapsed = str(end_time - start_time)
+
+    # Add version, datasource, query, query time, and the date to metadata
+    # Retrieve g:Profiler version information for the specified species
+    gprofiler_version = get_data_versions(species)
+    gprofiler_metadata: Dict[str, Any] = {
+        "datasource": GPROFILER,
+        "metadata": gprofiler_version,
+        "query": {
+            "size": len(query_genes),
+            "time": time_elapsed,
+            "date": current_date,
+        },
+    }
+
+    gprofiler_df.rename(columns={"native": "id"}, inplace=True)
+    gprofiler_df["datasource"] = "g:Profiler"
+
+    gprofiler_df = gprofiler_df[
+        ~gprofiler_df["parents"].apply(lambda x: x == [])
+    ]  # rm the root terms
+
+    return gprofiler_df, gprofiler_metadata
+
+
+def process_gprofiler_data(gprofiler_df: pd.DataFrame) -> pd.DataFrame:
+    """Process raw g:Profiler results.
+
+    :param gprofiler_df: DataFrame containing raw g:Profiler analysis results.
+    :returns: Processed DataFrame structured by intersections and sources.
+    """
+    # Inner helper function to create a dictionary of path info for each row
+    def create_path_info(row):
+        path_info = {
+            col: row[col] for col in gprofiler_df.columns if col not in ["intersections", "source"]
+        }
+        return path_info
+
+    # Create a 'gprofiler' column using the helper function
+    gprofiler_df["gprofiler"] = gprofiler_df.apply(create_path_info, axis=1)
+
+    # Drop all columns except for "source", "id", "intersections", and "gprofiler"
+    cols_to_keep = {"source", "id", "intersections", "gprofiler"}
+    cols_to_drop = [col for col in gprofiler_df.columns if col not in cols_to_keep]
+    gprofiler_df = gprofiler_df.drop(columns=cols_to_drop)
+
+    # Explode the 'intersections' column so that each intersection gets its own row
+    gprofiler_df = gprofiler_df.explode("intersections").reset_index(drop=True)
+
+    # Prepare a final DataFrame with unique intersections
+    unique_sources = sorted(gprofiler_df["source"].unique())
+    intermediate_df = pd.DataFrame()
+    intermediate_df["intersections"] = gprofiler_df["intersections"].unique()
+
+    # For each unique source, group data by intersections and map to the final DataFrame
+    for source in unique_sources:
+        source_subset = gprofiler_df[gprofiler_df["source"] == source]
+        source_dictionaries = (
+            source_subset.groupby("intersections")["gprofiler"].apply(list).to_dict()
+        )
+        column_name = f"{GPROFILER}_{source.lower()}"
+        intermediate_df[column_name] = intermediate_df["intersections"].map(source_dictionaries)
+
+    return intermediate_df
+
+
+def get_gene_enrichment(
+    bridgedb_df: pd.DataFrame,
+    species: str = "hsapiens",
+    sig_column: str = "padj_dea",
+    sig_threshold: float = 0.01,
+) -> tuple[pd.DataFrame, dict]:
+    """Enrichment analysis using g:Profiler and retrieve version info.
+
+    :param bridgedb_df: DataFrame containing gene data with columns "identifier"
+                        and a significance column.
+    :param species: species for both version retrieval and g:Profiler query
+                     (default is "hsapiens").
+    :param sig_column: Name of the column used to filter significant genes
+                       (default is "padj_dea").
+    :param sig_threshold: Significance threshold to filter genes (default is 0.01).
+    :returns: A tuple containing:
+              - Processed DataFrame from g:Profiler analysis.
+              - Dictionary with g:Profiler version information.
+    """
+    # Perform gene enrichment analysis to get raw g:Profiler results
+    gprofiler_df, gprofiler_metadata = gene_enrichment_gprofiler(
+        bridgedb_df=bridgedb_df, sig_column=sig_column, sig_threshold=sig_threshold, species=species
+    )
+
+    # Process the raw g:Profiler results
+    intermediate_df = process_gprofiler_data(gprofiler_df)
+    intermediate_df = intermediate_df.rename(columns={"intersections": "target"})
+
+    # Merge the processed DataFrame with the original bridgedb_df
+    data_df = bridgedb_df[bridgedb_df["target.source"] == GPROFILER_GENE_INPUT_ID]
+
+    merged_df = (
+        pd.merge(  # TODO: check if we can modify collapse_data_sources to handle multiple columns
+            data_df,
+            intermediate_df,
+            on="target",
+            how="left",
+        )
+    )
+
+    return merged_df, gprofiler_metadata

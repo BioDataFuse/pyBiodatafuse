@@ -118,7 +118,10 @@ def combine_sources(bridgedb_df: pd.DataFrame, df_list: List[pd.DataFrame]) -> p
         if not df.empty:
             m = pd.merge(
                 m,
-                df.drop(columns=["target.source", "identifier.source", "target"], errors="ignore"),
+                df.drop(
+                    columns=["target.source", "identifier.source", "target"]
+                            + [col for col in df.columns if col.endswith("_dea")],
+                    errors="ignore"),
                 on="identifier",
                 how="outer",
             )
