@@ -97,33 +97,35 @@ def get_intact_interactions(gene_id: str):
     return []
 
 def get_protein_intact_acs(ensembl_id: str) -> list:
-    """Get all IntAct protein ACs for a given Ensembl ID."""
+    """Get all IntAct ACs for protein interactors from a given Ensembl ID."""
+    url = f"{INTACT_ENDPOINT}/ws/interactor/findInteractor/{ensembl_id}"
     try:
-        url = f"{INTACT_ENDPOINT}/ws/interactor/findInteractor/{ensembl_id}"
         response = requests.get(url, timeout=10)
         response.raise_for_status()
-        data = response.json().get("content", [])
-
+        data = response.json()
         protein_acs = [
-            item.get("interactorAc") for item in data
+            item["interactorAc"]
+            for item in data.get("content", [])
             if item.get("interactorType") == "protein"
         ]
         return protein_acs
-    except Exception as e:
-        logging.error(f"Failed to get IntAct ACs for {ensembl_id}: {e}")
+    except requests.exceptions.RequestException as e:
+        logging.warning(f"Failed to get interactors for {ensembl_id}: {e}")
         return []
 
 
 def get_filtered_interactions(gene_id: str, valid_intact_acs: set) -> list:
-    """Filter interactions to include only those where both interactors are in the valid IntAct AC set."""
+    """Get IntAct interactions for a gene, filtered to include only protein-protein interactions between input genes."""
+
     interactions = get_intact_interactions(gene_id)
     filtered = []
 
     for interaction in interactions:
-        ac_a = interaction.get("interactor_id_A")
-        ac_b = interaction.get("interactor_id_B")
+        print("interaction", interaction.get("interactor_id_A"), interaction.get("interactor_id_B"))
+        id_a = interaction.get("interactor_id_A")
+        id_b = interaction.get("interactor_id_B")
 
-        if ac_a in valid_intact_acs and ac_b in valid_intact_acs:
+        if id_a in valid_intact_acs and id_b in valid_intact_acs:
             filtered.append(interaction)
 
     return filtered
@@ -158,30 +160,25 @@ def get_interactions(bridgedb_df: pd.DataFrame):
             uniprot_map[ensembl_id] = []
         uniprot_map[ensembl_id].append(uniprot_id)
 
-    ensembl_to_ac_map = {}
+    print(uniprot_map)
+
+    ensembl_to_intact_map = {}
     for ensembl_id in ensembl_gene_list:
         intact_acs = get_protein_intact_acs(ensembl_id)
-        if intact_acs:
-            ensembl_to_ac_map[ensembl_id] = intact_acs
+        ensembl_to_intact_map[ensembl_id] = intact_acs
+        print(ensembl_id, ensembl_gene_list)
+    print(ensembl_to_intact_map)
 
-    valid_intact_acs = set(ac for acs in ensembl_to_ac_map.values() for ac in acs if ac)
+    # Flatten to a set of all valid IntAct ACs (e.g., {'EBI-123', 'EBI-456'})
+    valid_intact_acs = {ac for acs in ensembl_to_intact_map.values() for ac in acs}
+    print(valid_intact_acs)
 
     # Retrieve interactions from IntAct using Ensembl IDs
     intact_interactions = []
     for ensembl_id in ensembl_gene_list:
         intact_interactions.extend(get_intact_interactions(ensembl_id))
 
-    # Filter interactions based on UniProt IDs
-    filtered_interactions = []
-    for interaction in intact_interactions:
-        print("interaction: ", interaction)
-        id_A = interaction.get("id_A")
-        id_B = interaction.get("id_B")
-
-        if id_A in uniprot_map and id_B in uniprot_map:
-            filtered_interactions.append(interaction)
-
-    data_df["IntAct_interactions"] = data_df["target"].apply(lambda gene_id: get_filtered_interactions(gene_id, ensembl_to_ac_map))
+    data_df["IntAct_interactions"] = data_df["target"].apply(lambda gene_id: get_filtered_interactions(gene_id, valid_intact_acs))
     end_time = datetime.datetime.now()
     time_elapsed = str(end_time - start_time)
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
