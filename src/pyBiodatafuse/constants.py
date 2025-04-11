@@ -52,8 +52,10 @@ MOLMEDB_COMPOUND_PROTEIN_COL = f"{MOLMEDB}_transporter_inhibited"
 PUBCHEM_COMPOUND_ASSAYS_COL = f"{PUBCHEM}_assays"
 STRING_PPI_COL = f"{STRING}_ppi"
 WIKIDATA_CC_COL = f"{WIKIDATA}_cellular_components"
-AOPWIKI_GENE_COL = "aop_gene"
-AOPWIKI_COMPOUND_COL = "pubchem_compound"
+AOPWIKI_GENE_COL = "aop_gene"  # todo fix this
+AOPWIKI_COMPOUND_COL = "pubchem_compound"  # todo fix this
+WIKIPATHWAYS_MOLECULAR_COL = f"{WIKIPATHWAYS}_molecular"
+
 
 # Input type for each data source
 BGEE_GENE_INPUT_ID = "Ensembl"
@@ -411,6 +413,8 @@ PATHWAY_NODE_ATTRS = {
 }  # TODO: Yojana, would it be possible to add pathway size here (gene_count)
 GENE_PATHWAY_EDGE_LABEL = "part_of"
 GENE_PATHWAY_EDGE_ATTRS = {"datasource": None, "label": GENE_PATHWAY_EDGE_LABEL}
+
+# molecular pathway node
 
 # GO nodes
 # Open Targets - GO processes
