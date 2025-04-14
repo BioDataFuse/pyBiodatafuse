@@ -158,7 +158,7 @@ def get_ppi(bridgedb_df: pd.DataFrame, species: str = "human"):
     response = requests.get(f"{NCBI_ENDPOINT}/entrez/eutils/esearch.fcgi", params=params).json()
     species_id = response["esearchresult"]["idlist"][0]
 
-    data_df = get_identifier_of_interest(bridgedb_df, STRING_GENE_INPUT_ID).reset_index(drop=True)
+    data_df = get_identifier_of_interest(bridgedb_df, STRING_GENE_INPUT_ID, ["HGNC"]).reset_index(drop=True)
     gene_list = list(set(data_df["target"].tolist()))
 
     # Return empty dataframe when only one input submitted
@@ -213,10 +213,9 @@ def get_ppi(bridgedb_df: pd.DataFrame, species: str = "human"):
             stacklevel=2,
         )
         return pd.DataFrame(), string_metadata
-    data_df = bridgedb_df.copy()
     # Format the data
     data_df[STRING_PPI_COL] = data_df.apply(
-        lambda row: [item for item in _format_data(row, stringdb_ids_df, network_df)], axis=1
+        lambda row: _format_data(row, stringdb_ids_df, network_df), axis=1
     )
     data_df[STRING_PPI_COL] = data_df[STRING_PPI_COL].apply(
         lambda x: ([{key: np.nan for key in STRING_OUTPUT_DICT}] if len(x) == 0 else x)
