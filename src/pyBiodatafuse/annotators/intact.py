@@ -29,6 +29,7 @@ def check_endpoint_intact() -> bool:
     response = requests.get(f"{INTACT_ENDPOINT}/ws/interaction/findInteractions/P53")
     return response.status_code == 200
 
+
 def check_version_intact() -> dict:
     """Get version of IntAct API.
 
@@ -44,11 +45,23 @@ def check_version_intact() -> dict:
         return {"source_version": "unknown"}
 
 
+def get_compound_related_interactions():
+    # Use 'CHEBI:' prefix to search for compound interactions
+    response = requests.get(f"{INTACT_ENDPOINT}/ws/interaction/search/CHEBI", timeout=10)
+    if response.status_code != 200:
+        print("Failed to query IntAct.")
+        return []
+
+    data = response.json()
+    return data.get("content", [])
+
+
 def clean_id(identifier: str) -> str:
     """Strip the source suffix (e.g., ' (uniprotkb)') from an identifier string."""
     if identifier and isinstance(identifier, str):
         return identifier.split(" ")[0]
     return identifier
+
 
 def get_intact_interactions(gene_id: str):
     """Retrieve protein interactions for a given gene from IntAct.
@@ -96,6 +109,7 @@ def get_intact_interactions(gene_id: str):
 
     return []
 
+
 def get_protein_intact_acs(ensembl_id: str) -> list:
     """Get all IntAct ACs for protein interactors from a given Ensembl ID."""
     url = f"{INTACT_ENDPOINT}/ws/interactor/findInteractor/{ensembl_id}"
@@ -114,18 +128,43 @@ def get_protein_intact_acs(ensembl_id: str) -> list:
         return []
 
 
-def get_filtered_interactions(gene_id: str, valid_intact_acs: set) -> list:
-    """Get IntAct interactions for a gene, filtered to include only protein-protein interactions between input genes."""
-
+def get_filtered_interactions(gene_id: str, valid_intact_acs: set, intact_ac_to_ensembl: dict) -> list:
+    """Get IntAct interactions for a gene, filtered to include only protein-protein interactions between input genes.
+       Adds the Ensembl ID of the partner gene to each interaction.
+    """
     interactions = get_intact_interactions(gene_id)
     filtered = []
 
     for interaction in interactions:
-        print("interaction", interaction.get("interactor_id_A"), interaction.get("interactor_id_B"))
         id_a = interaction.get("interactor_id_A")
         id_b = interaction.get("interactor_id_B")
 
         if id_a in valid_intact_acs and id_b in valid_intact_acs:
+            if intact_ac_to_ensembl.get(id_a) == gene_id:
+                partner_gene = intact_ac_to_ensembl.get(id_b, None)
+            else:
+                partner_gene = intact_ac_to_ensembl.get(id_a, None)
+
+            interaction["intact_link_to"] = partner_gene
+            filtered.append(interaction)
+
+    return filtered
+
+
+def get_compound_filtered_interactions(gene_id: str) -> list:
+    """
+    Get IntAct interactions for a gene that involve chemical compounds (e.g., ChEBI).
+
+    Returns interactions where at least one interactor has a ChEBI ID.
+    """
+    interactions = get_intact_interactions(gene_id)
+    filtered = []
+
+    for interaction in interactions:
+        id_a = interaction.get("id_A", "")
+        id_b = interaction.get("id_B", "")
+
+        if isinstance(id_a, str) and "CHEBI:" in id_a or isinstance(id_b, str) and "CHEBI:" in id_b:
             filtered.append(interaction)
 
     return filtered
@@ -160,29 +199,77 @@ def get_interactions(bridgedb_df: pd.DataFrame):
             uniprot_map[ensembl_id] = []
         uniprot_map[ensembl_id].append(uniprot_id)
 
-    print(uniprot_map)
-
     ensembl_to_intact_map = {}
     for ensembl_id in ensembl_gene_list:
         intact_acs = get_protein_intact_acs(ensembl_id)
         ensembl_to_intact_map[ensembl_id] = intact_acs
         print(ensembl_id, ensembl_gene_list)
-    print(ensembl_to_intact_map)
 
-    # Flatten to a set of all valid IntAct ACs (e.g., {'EBI-123', 'EBI-456'})
+    intact_ac_to_ensembl = {
+        ac: ensembl for ensembl, acs in ensembl_to_intact_map.items() for ac in acs
+    }
+
     valid_intact_acs = {ac for acs in ensembl_to_intact_map.values() for ac in acs}
-    print(valid_intact_acs)
 
-    # Retrieve interactions from IntAct using Ensembl IDs
+    # Retrieve interactions from IntAct using input IDs
     intact_interactions = []
     for ensembl_id in ensembl_gene_list:
         intact_interactions.extend(get_intact_interactions(ensembl_id))
 
-    data_df["IntAct_interactions"] = data_df["target"].apply(lambda gene_id: get_filtered_interactions(gene_id, valid_intact_acs))
+    data_df["IntAct_interactions"] = data_df["target"].apply(
+    lambda gene_id: get_filtered_interactions(gene_id, valid_intact_acs, intact_ac_to_ensembl)
+    )
+
     end_time = datetime.datetime.now()
     time_elapsed = str(end_time - start_time)
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     num_new_edges = sum(data_df["IntAct_interactions"].apply(len))
+
+    intact_metadata = {
+        "datasource": INTACT,
+        "metadata": {"source_version": intact_version},
+        "query": {
+            "size": len(ensembl_gene_list),
+            "input_type": INTACT_GENE_INPUT_ID,
+            "number_of_added_edges": num_new_edges,
+            "time": time_elapsed,
+            "date": current_date,
+            "url": INTACT_ENDPOINT,
+        },
+    }
+
+    return data_df, intact_metadata
+
+
+def get_compound_interactions(bridgedb_df: pd.DataFrame):
+    """Annotate genes with compound-related interaction data from IntAct."""
+
+    api_available = check_endpoint_intact()
+    if not api_available:
+        warnings.warn("IntAct API endpoint is unavailable. Cannot retrieve data.", stacklevel=2)
+        return pd.DataFrame(), {}
+
+    intact_version = check_version_intact()
+    start_time = datetime.datetime.now()
+
+    # Get identifiers of interest
+    data_df = get_identifier_of_interest(bridgedb_df, INTACT_GENE_INPUT_ID)
+
+    if isinstance(data_df, tuple):
+        data_df = data_df[0]
+
+    data_df = data_df.reset_index(drop=True)
+    ensembl_gene_list = set(data_df["target"].tolist())
+
+    # Fetch compound interactions for each gene
+    data_df["IntAct_compound_interactions"] = data_df["target"].apply(
+        lambda gene_id: get_compound_filtered_interactions(gene_id)
+    )
+
+    end_time = datetime.datetime.now()
+    time_elapsed = str(end_time - start_time)
+    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    num_new_edges = sum(data_df["IntAct_compound_interactions"].apply(len))
 
     intact_metadata = {
         "datasource": INTACT,

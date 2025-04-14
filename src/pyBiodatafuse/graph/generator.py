@@ -44,6 +44,10 @@ from pyBiodatafuse.constants import (
     GO_NODE_ATTRS,
     GO_NODE_MAIN_LABEL,
     HOMOLOG_NODE_LABELS,
+    INTACT,
+    INTACT_PPI_EDGE_ATTRS,
+    INTACT_PPI_EDGE_LABEL,
+    INTACT_PPI_EDGE_MAIN_LABEL,
     KEGG,
     KEGG_COL,
     KEGG_COMPOUND_COL,
@@ -236,36 +240,94 @@ def add_disgenet_gene_disease_subgraph(g, gene_node_label, annot_list):
 
     return g
 
-def add_intact_interactions_subgraph(g, gene_node_label, interaction_list):
-    """
-    Add IntAct interactions to the graph.
+def add_intact_ppi_subgraph(g, gene_node_label, annot_list):
+    """Construct part of the graph by linking the gene to genes via IntAct PPI, filtering based on unique interaction IDs.
 
-    :param g: The input NetworkX graph to extend with new nodes and edges.
-    :param gene_node_label: The label of the gene node to be linked to interactions.
-    :param interaction_list: A list of interaction dictionaries from IntAct.
-    :returns: A NetworkX MultiDiGraph with added IntAct interactions.
+    :param g: the input graph to extend with new nodes and edges.
+    :param gene_node_label: the gene node to be linked to other gene nodes.
+    :param annot_list: list of protein-protein interactions from IntAct.
+    :returns: a NetworkX MultiDiGraph
     """
-    for annot in annot_list:
-        if not interaction:
+    seen_interaction_ids = set()
+
+    for interaction in annot_list:
+        partner_gene = interaction.get("intact_link_to")
+        if not partner_gene or pd.isna(partner_gene):
+            continue  
+
+        interaction_id = interaction.get("binary_interaction_id", None)
+        if not interaction_id:
             continue
-        
-        annot_node_attrs["interactor_id"] = annot["interaction_id"]
-        annot_node_attrs["interactor_A"] = annot["interactor_A"]
-        annot_node_attrs["interactor_B"] = annot["interactor_B"]
-        annot_node_attrs["molecule_A"] = annot["molecule_A"]
-        annot_node_attrs["molecule_B"] = annot["molecule_B"]
-        annot_node_attrs["detection_method"] = annot["detection_method"]
-        annot_node_attrs["type"] = annot["type"]
-        annot_node_attrs["intact_score"] = annot["intact_score"]
-        annot_node_attrs["pubmed_publication_id"] = annot["pubmed_publication_id"]
 
-        # annot_node_label = nteraction_label = annot[]
+        if interaction_id in seen_interaction_ids:
+            continue 
 
-        merge_node(g, interaction_label, interaction_node_attrs)
+        edge_attrs = INTACT_PPI_EDGE_ATTRS.copy()
 
-        g.add_edge(gene_node_label, interaction_label, label='IntAct_interaction', attr_dict=interaction_node_attrs)
+        if "interaction_id" in interaction:
+            edge_attrs["interaction_id"] = interaction["interaction_id"]
+        if "interactor_id_A" in interaction:
+            edge_attrs["interactor_id_A"] = interaction["interactor_id_A"]
+        if "interactor_id_B" in interaction:
+            edge_attrs["interactor_id_B"] = interaction["interactor_id_B"]
+        if "binary_interaction_id" in interaction:
+            edge_attrs["binary_interaction_id"] = interaction["binary_interaction_id"]
+        if "confidence_values" in interaction:
+            edge_attrs["confidence_values"] = interaction["confidence_values"]
+        if "intact_score" in interaction:
+            edge_attrs["intact_score"] = interaction["intact_score"]
+        if "biological_role_A" in interaction:
+            edge_attrs["biological_role_A"] = interaction["biological_role_A"]
+        if "biological_role_B" in interaction:
+            edge_attrs["biological_role_B"] = interaction["biological_role_B"]
+        if "type" in interaction:
+            edge_attrs["type"] = interaction["type"]
+        if "stoichiometry_A" in interaction:
+            edge_attrs["stoichiometry_A"] = interaction["stoichiometry_A"]
+        if "stoichiometry_B" in interaction:
+            edge_attrs["stoichiometry_B"] = interaction["stoichiometry_B"]
+        if "detection_method" in interaction:
+            edge_attrs["detection_method"] = interaction["detection_method"]
+        if "detection_method_id" in interaction:
+            edge_attrs["detection_method_id"] = interaction["detection_method_id"]
+        if "host_organism" in interaction:
+            edge_attrs["host_organism"] = interaction["host_organism"]
+        if "interactor_A_name" in interaction:
+            edge_attrs["interactor_A_name"] = interaction["interactor_A_name"]
+        if "interactor_B_name" in interaction:
+            edge_attrs["interactor_B_name"] = interaction["interactor_B_name"]
+        if "interactor_A_species" in interaction:
+            edge_attrs["interactor_A_species"] = interaction["interactor_A_species"]
+        if "interactor_B_species" in interaction:
+            edge_attrs["interactor_B_species"] = interaction["interactor_B_species"]
+        if "molecule_A" in interaction:
+            edge_attrs["molecule_A"] = interaction["molecule_A"]
+        if "molecule_B" in interaction:
+            edge_attrs["molecule_B"] = interaction["molecule_B"]
+        if "id_A" in interaction:
+            edge_attrs["id_A"] = interaction["id_A"]
+        if "id_B" in interaction:
+            edge_attrs["id_B"] = interaction["id_B"]
+
+        for k, v in edge_attrs.items():
+            if isinstance(v, list):
+                edge_attrs[k] = ",".join(map(str, v))
+
+        edge_hash = hash(frozenset(edge_attrs.items()))
+        edge_attrs["edge_hash"] = edge_hash
+
+        g.add_edge(
+            gene_node_label,
+            partner_gene,
+            label=INTACT_PPI_EDGE_LABEL,
+            attr_dict=edge_attrs,
+        )
+
+        seen_interaction_ids.add(interaction_id)
 
     return g
+
+
 
 def add_literature_gene_disease_subgraph(g, gene_node_label, annot_list):
     """Construct part of the graph by linking the gene to diseases form literature.
@@ -427,60 +489,6 @@ def add_wikipathways_gene_pathway_subgraph(g, gene_node_label, annot_list):
                 label=GENE_PATHWAY_EDGE_LABEL,
                 attr_dict=edge_attrs,
             )
-
-    return g
-
-def add_intact_ppi_subgraph(g, gene_node_label, annot_list):
-    """Construct part of the graph by linking the gene to genes through IntAct interactions.
-
-    :param g: the input graph to extend with new nodes and edges.
-    :param gene_node_label: the gene node to be linked to other genes entities.
-    :param annot_list: list of protein-protein interactions from IntAct.
-    :returns: a NetworkX MultiDiGraph
-    """
-    for ppi in annot_list:
-        interactor_A = ppi.get("acA", None)  
-        interactor_B = ppi.get("acB", None)
-        
-        if pd.isna(interactor_A) or pd.isna(interactor_B):
-            continue
-
-        edge_attrs = {
-            "interaction_id": ppi.get("ac", ""),
-            "confidence_values": ppi.get("confidence_values", []),
-            "intact_score": ppi.get("intact_score", []),
-            "biological_role_A": ppi.get("biological_role_A", ""),
-            "biological_role_B": ppi.get("biological_role_B", ""),
-            "type": ppi.get("type", ""),
-            "stoichiometry_A": ppi.get("stoichiometry_A", ""),
-            "stoichiometry_B": ppi.get("stoichiometry_B", ""),
-            "detection_method": ppi.get("detection_method", ""),
-            "detection_method_id": ppi.get("detection_method_id", ""),
-            "host_organism": ppi.get("host_organism", ""),
-            "pubmed_publication_id": ppi.get("pubmed_publication_id", []),
-        }
-
-        edge_hash = hash(frozenset(edge_attrs.items()))
-        edge_attrs["edge_hash"] = edge_hash
-
-        if interactor_A in g and interactor_B in g:
-            edge_data = g.get_edge_data(interactor_A, interactor_B)
-            edge_data = {} if edge_data is None else edge_data
-            node_exists = [x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash]
-            
-            if len(node_exists) == 0:
-                g.add_edge(
-                    interactor_A,
-                    interactor_B,
-                    label="IntAct_PPI",
-                    attr_dict=edge_attrs,
-                )
-                g.add_edge(
-                    interactor_B,
-                    interactor_A,
-                    label="IntAct_PPI",
-                    attr_dict=edge_attrs,
-                )
 
     return g
 
@@ -1229,13 +1237,6 @@ def build_networkx_graph(
         PUBCHEM_COMPOUND_ASSAYS_COL: add_pubchem_assay_subgraph,
         ENSEMBL_HOMOLOG_COL: add_ensembl_homolog_subgraph,
     }
-
-    for _i, row in tqdm(combined_df.iterrows(), total=combined_df.shape[0], desc="Building graph"):
-        if pd.isna(row["identifier"]) or pd.isna(row["target"]):
-            continue
-        gene_node_label = add_gene_node(g, row, dea_columns)
-        process_annotations(g, gene_node_label, row, func_dict)
-        process_ppi(g, gene_node_label, row)
 
     if homolog_df_list is not None:
         process_homologs(g, combined_df, homolog_df_list, func_dict, dea_columns)

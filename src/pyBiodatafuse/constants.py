@@ -506,7 +506,12 @@ KEGG_COMPOUND_EDGE_ATTRS = {
 }
 
 # IntAct interactions
-
+INTACT_PPI_EDGE_LABEL = "intact_ppi"
+INTACT_PPI_EDGE_MAIN_LABEL = "intact_link_to"
+INTACT_PPI_EDGE_ATTRS = {
+    "source": INTACT,
+    "type": "protein-protein interaction"
+}
 
 # Wikidata
 
