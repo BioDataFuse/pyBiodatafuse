@@ -69,7 +69,7 @@ def _format_data(row, string_ids_df, network_df):
 
     for _, row_arr in network_df.iterrows():
         if (
-            row_arr["preferredName_A"] == row["identifier"]
+            row_arr["preferredName_A"] == row["target"]
             and row_arr["preferredName_B"] not in target_links_set
         ):
             gene_ppi_links.append(
@@ -83,7 +83,7 @@ def _format_data(row, string_ids_df, network_df):
             target_links_set.add(row_arr["preferredName_B"])
 
         elif (
-            row_arr["preferredName_B"] == row["identifier"]
+            row_arr["preferredName_B"] == row["target"]
             and row_arr["preferredName_A"] not in target_links_set
         ):
             gene_ppi_links.append(
@@ -112,7 +112,6 @@ def get_string_ids(gene_list: list, species):
         results = requests.post(
             f"{STRING_ENDPOINT}/json/get_string_ids", data=params, timeout=TIMEOUT
         ).json()
-        print(results)
         return results
     except RequestException as e:
         logger.error("Error getting STRING IDs: %s", e)
@@ -214,14 +213,15 @@ def get_ppi(bridgedb_df: pd.DataFrame, species: str = "human"):
             stacklevel=2,
         )
         return pd.DataFrame(), string_metadata
-
+    data_df = bridgedb_df.copy()
     # Format the data
     data_df[STRING_PPI_COL] = data_df.apply(
-        lambda row: _format_data(row, stringdb_ids_df, network_df), axis=1
+        lambda row: [item for item in _format_data(row, stringdb_ids_df, network_df)], axis=1
     )
     data_df[STRING_PPI_COL] = data_df[STRING_PPI_COL].apply(
         lambda x: ([{key: np.nan for key in STRING_OUTPUT_DICT}] if len(x) == 0 else x)
     )
+
     # Collect all ENSP IDs from network_df
     ensp_ids = set(network_df["stringId_A"].str.split(".").str[1]) | set(
         network_df["stringId_B"].str.split(".").str[1]
