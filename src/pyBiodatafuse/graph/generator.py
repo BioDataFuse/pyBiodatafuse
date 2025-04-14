@@ -250,19 +250,22 @@ def add_intact_ppi_subgraph(g, gene_node_label, annot_list):
     """
     seen_interaction_ids = set()
 
-    for interaction in annot_list:
+    for interaction in annot_list:   
         partner_gene = interaction.get("intact_link_to")
         if not partner_gene or pd.isna(partner_gene):
             continue  
 
         interaction_id = interaction.get("binary_interaction_id", None)
-        if not interaction_id:
+        if not interaction_id or interaction_id in seen_interaction_ids:
             continue
 
-        if interaction_id in seen_interaction_ids:
-            continue 
-
         edge_attrs = INTACT_PPI_EDGE_ATTRS.copy()
+
+        conf_vals = interaction.get("confidence_values")
+        if isinstance(conf_vals, list):
+            edge_attrs["confidence_values"] = ",".join(map(str, conf_vals))
+        else:
+            edge_attrs["confidence_values"] = str(conf_vals) if conf_vals else ""
 
         if "interaction_id" in interaction:
             edge_attrs["interaction_id"] = interaction["interaction_id"]
@@ -272,8 +275,6 @@ def add_intact_ppi_subgraph(g, gene_node_label, annot_list):
             edge_attrs["interactor_id_B"] = interaction["interactor_id_B"]
         if "binary_interaction_id" in interaction:
             edge_attrs["binary_interaction_id"] = interaction["binary_interaction_id"]
-        if "confidence_values" in interaction:
-            edge_attrs["confidence_values"] = interaction["confidence_values"]
         if "intact_score" in interaction:
             edge_attrs["intact_score"] = interaction["intact_score"]
         if "biological_role_A" in interaction:
@@ -304,6 +305,8 @@ def add_intact_ppi_subgraph(g, gene_node_label, annot_list):
             edge_attrs["molecule_A"] = interaction["molecule_A"]
         if "molecule_B" in interaction:
             edge_attrs["molecule_B"] = interaction["molecule_B"]
+        if "pubmed_publication_id" in interaction:
+            edge_attrs["pubmed_publication_id"] = interaction["pubmed_publication_id"]
         if "id_A" in interaction:
             edge_attrs["id_A"] = interaction["id_A"]
         if "id_B" in interaction:
@@ -316,6 +319,10 @@ def add_intact_ppi_subgraph(g, gene_node_label, annot_list):
         edge_hash = hash(frozenset(edge_attrs.items()))
         edge_attrs["edge_hash"] = edge_hash
 
+        print(f"\nAdding edge from {gene_node_label} to {partner_gene}")
+        print(f" → confidence_values: {edge_attrs.get('confidence_values')}")
+        print(f" → pubmed_publication_id: {edge_attrs.get('pubmed_publication_id')}")
+
         g.add_edge(
             gene_node_label,
             partner_gene,
@@ -323,10 +330,12 @@ def add_intact_ppi_subgraph(g, gene_node_label, annot_list):
             attr_dict=edge_attrs,
         )
 
+        edge_data = g.get_edge_data(gene_node_label, partner_gene)
+        print(f"Edge data in graph: {edge_data}")
+        
         seen_interaction_ids.add(interaction_id)
 
     return g
-
 
 
 def add_literature_gene_disease_subgraph(g, gene_node_label, annot_list):

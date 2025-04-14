@@ -100,7 +100,7 @@ def get_intact_interactions(gene_id: str):
                 "molecule_B": item.get("moleculeB", np.nan),
                 "id_A": clean_id(item.get("idA", np.nan)),
                 "id_B": clean_id(item.get("idB", np.nan)),
-                "pubmed_publication_id": item.get("publicationPubmedIdentifier", []),
+                "pubmed_publication_id": item.get("publicationPubmedIdentifier", np.nan),
                 "ensembl": gene_id,
             }
             for item in data["content"]
