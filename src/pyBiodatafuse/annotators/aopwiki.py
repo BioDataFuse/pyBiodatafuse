@@ -186,7 +186,7 @@ def get_aops(
         )  #
         # Retrieve the expected columns from the SPARQL query results' "vars"
         expected_columns = res["head"]["vars"]
-        
+
         # Ensure all expected columns are present in intermediate_df
         for col in expected_columns:
             if col not in intermediate_df.columns:
@@ -194,7 +194,7 @@ def get_aops(
 
         # Concatenate the new results into the intermediate DataFrame
         intermediate_df = pd.concat([intermediate_df, res_df], ignore_index=True)
-        
+
     end_time = datetime.datetime.now()
     # Step 4: Check if the query returned any results
     if intermediate_df.empty:

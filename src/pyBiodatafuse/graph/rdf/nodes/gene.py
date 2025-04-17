@@ -16,7 +16,7 @@ def add_gene_nodes(g: Graph, target, source) -> URIRef:
     :param g: (Graph): RDF graph to which the gene nodes are added.
     :param row: (pd.Series): Data row containing gene information.
 
-    :return: URIRef for the gene node.
+    :returns: URIRef for the gene node.
     """
     if source and source == "Ensembl":
         gene_node = URIRef(f"http://identifiers.org/ensembl#{target}")

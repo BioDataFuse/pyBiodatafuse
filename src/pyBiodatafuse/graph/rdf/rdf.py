@@ -433,6 +433,7 @@ class BDFGraph(Graph):
     def process_aop_gene_data(self, aop_gene_data):
         """
         Process AOP Wiki gene data and add to the RDF graph.
+
         :param aop_gene_data: A list of AOP gene data entries to be processed.
         """
         if aop_gene_data:
@@ -442,6 +443,7 @@ class BDFGraph(Graph):
     def process_aop_compound_data(self, aop_compound_data):
         """
         Process AOP Wiki compound data and add to the RDF graph.
+        
         :param aop_compound_data: A list of AOP compound data entries to be processed.
         """
         if aop_compound_data:
@@ -505,7 +507,7 @@ class BDFGraph(Graph):
         """Add Gene Ontology (GO) terms to the RDF graph.
 
         :param process_data: Process data related to GO and CPF.
-        :return: Corresponding GO node.
+        :returns: Corresponding GO node.
         """
         return add_go_cpf(self, process_data)
 
@@ -517,22 +519,22 @@ class BDFGraph(Graph):
         sources = self.metabolite_sources
         compound_node = None
         if row["identifier.source"] in sources:
-            print(iri)
             iri = SOURCE_NAMESPACES[row["identifier.source"]] + row.identifier
+            print(iri)
             self.add(URIRef(iri))
             compound_node = URIRef(iri)
         elif row["target.source"] in sources and compound_node:
-            print(iri)
             iri = SOURCE_NAMESPACES[row["identifier.source"]] + row.target
+            print(iri)
             self.add(URIRef(iri))
             self.add((compound_node, SKOS.exactMatch, URIRef(iri)))
         return compound_node
 
     def _add_compound_gene_node(self, compound, gene_node):
-        """Add compound data to the RDF graph and associate it with a protein node.
+        """Add compound data to the RDF graph and associate it with a gene node.
 
         :param compound: Compound data to be added.
-        :param protein_node: Node representing the associated protein.
+        :param gene_node: Node representing the associated protein.
         """
         add_compound_gene_node(self, compound, gene_node)
 
@@ -546,6 +548,7 @@ class BDFGraph(Graph):
     def _add_transporter_inhibited_node(self, compound_node, entry):
         """Add transporter inhibitor data to the RDF graph.
 
+        :param compound_node: [TODO]I don't know what to put here.
         :param entry: Data for the transporter inhibitor.
         """
         add_transporter_inhibited_node(self, compound_node, entry, self.base_uri)
@@ -589,7 +592,9 @@ class BDFGraph(Graph):
     def _add_aop_gene_node(self, entry):
         """
         Add AOP Wiki gene data to the RDF graph.
+
         :param entry: Data for the AOP gene.
+        :returns: None
         """
         # Implementation for adding AOP gene node
         return None
@@ -597,7 +602,9 @@ class BDFGraph(Graph):
     def _add_aop_compound_node(self, entry):
         """
         Add AOP Wiki compound data to the RDF graph.
+
         :param entry: Data for the AOP compound.
+        :returns: None 
         """
         # Implementation for adding AOP compound node
         return None
