@@ -46,13 +46,14 @@ TARGET_SOURCE_COL = "target.source"
 BGEE_GENE_EXPRESSION_LEVELS_COL = f"{BGEE}_gene_expression_levels"
 DISGENET_DISEASE_COL = f"{DISGENET}_diseases"
 ENSEMBL_HOMOLOG_COL = f"{ENSEMBL}_homologs"
-OPENTARGETS_DISEASE_COL = f"{OPENTARGETS}_diseases"
+INTACT_INTERACT_COL = f"{INTACT}_interactions"
+INTACT_COMPOUND_INTERACT_COL = f"{INTACT}_compound_interactions"
 KEGG_COL = f"{KEGG}_pathways"
 KEGG_COMPOUND_COL = f"{KEGG}_compounds"
 LITERATURE_DISEASE_COL = "literature_based_info"
 OPENTARGETS_REACTOME_COL = f"{OPENTARGETS}_reactome"
 OPENTARGETS_GO_COL = f"{OPENTARGETS}_go"
-
+OPENTARGETS_DISEASE_COL = f"{OPENTARGETS}_diseases"
 OPENTARGETS_DISEASE_COMPOUND_COL = f"{OPENTARGETS}_disease_compounds"
 OPENTARGETS_GENE_COMPOUND_COL = f"{OPENTARGETS}_gene_compounds"
 MOLMEDB_PROTEIN_COMPOUND_COL = f"{MOLMEDB}_transporter_inhibitor"
@@ -64,6 +65,9 @@ WIKIDATA_CC_COL = f"{WIKIDATA}_cellular_components"
 # Input type for each data source
 BGEE_GENE_INPUT_ID = "Ensembl"
 DISGENET_GENE_INPUT_ID = "NCBI Gene"
+ENSEMBL_GENE_INPUT_ID = "Ensembl"
+KEGG_GENE_INPUT_ID = "NCBI Gene"
+INTACT_GENE_INPUT_ID = "Ensembl"
 MINERVA_GENE_INPUT_ID = "Ensembl"
 MOLMEDB_PROTEIN_INPUT_ID = "Uniprot-TrEMBL"
 MOLMEDB_COMPOUND_INPUT_ID = "InChIKey"
@@ -503,13 +507,25 @@ KEGG_COMPOUND_EDGE_ATTRS = {
 }
 
 # IntAct interactions
-INTACT_PPI_EDGE_LABEL = "intact_ppi"
+INTACT_PPI_EDGE_LABEL = "intact_interaction"
 INTACT_PPI_EDGE_MAIN_LABEL = "intact_link_to"
 INTACT_PPI_EDGE_ATTRS = {
     "source": INTACT,
-    "type": "protein-protein interaction"
+    "type": "interaction"
 }
 
+# IntAct compounds
+INTACT_COMPOUND_NODE_ATTRS = {
+    "datasource": INTACT,
+    "id": None,
+    "labels": COMPOUND_NODE_LABELS,
+}
+INTACT_COMPOUND_NODE_MAIN_LABEL = "compounds"
+INTACT_COMPOUND_EDGE_LABEL = "interacts_with"
+INTACT_COMPOUND_EDGE_ATTRS = {
+    "datasource": INTACT,
+    "label": None,
+}
 # Wikidata
 
 # TODO: to be checked

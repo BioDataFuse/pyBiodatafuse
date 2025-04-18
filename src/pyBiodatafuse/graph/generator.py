@@ -44,13 +44,16 @@ from pyBiodatafuse.constants import (
     GO_NODE_ATTRS,
     GO_NODE_MAIN_LABEL,
     HOMOLOG_NODE_LABELS,
-<<<<<<< HEAD
     INTACT,
+    INTACT_COMPOUND_INTERACT_COL,
+    INTACT_COMPOUND_NODE_ATTRS,
+    INTACT_COMPOUND_NODE_MAIN_LABEL,
+    INTACT_COMPOUND_EDGE_LABEL,
+    INTACT_COMPOUND_EDGE_ATTRS,
+    INTACT_INTERACT_COL,
     INTACT_PPI_EDGE_ATTRS,
     INTACT_PPI_EDGE_LABEL,
     INTACT_PPI_EDGE_MAIN_LABEL,
-=======
->>>>>>> upstream/main
     KEGG,
     KEGG_COL,
     KEGG_COMPOUND_COL,
@@ -322,10 +325,6 @@ def add_intact_ppi_subgraph(g, gene_node_label, annot_list):
         edge_hash = hash(frozenset(edge_attrs.items()))
         edge_attrs["edge_hash"] = edge_hash
 
-        print(f"\nAdding edge from {gene_node_label} to {partner_gene}")
-        print(f" → confidence_values: {edge_attrs.get('confidence_values')}")
-        print(f" → pubmed_publication_id: {edge_attrs.get('pubmed_publication_id')}")
-
         g.add_edge(
             gene_node_label,
             partner_gene,
@@ -334,9 +333,84 @@ def add_intact_ppi_subgraph(g, gene_node_label, annot_list):
         )
 
         edge_data = g.get_edge_data(gene_node_label, partner_gene)
-        print(f"Edge data in graph: {edge_data}")
         
         seen_interaction_ids.add(interaction_id)
+
+    return g
+
+
+def add_intact_compound_subgraph(g, gene_node_label, annot_list):
+    """Construct part of the graph by linking the gene to compounds via IntAct compound interactions.
+
+    :param g: the input graph to extend with new nodes and edges.
+    :param gene_node_label: the gene node to be linked to compounds.
+    :param annot_list: list of compound-gene interaction dicts from IntAct.
+    :returns: a NetworkX MultiDiGraph
+    """
+    seen_edge_signatures = set()
+
+    for interaction in annot_list:
+        # Determine which interactor is the compound
+        if str(interaction.get("id_A", "")).startswith("CHEBI:"):
+            compound_id = interaction.get("id_A")
+            compound_name = interaction.get("interactor_A_name", "")
+            compound_species = interaction.get("interactor_A_species", "")
+            molecule = interaction.get("molecule_A", "")
+            compound_node_label = compound_id
+        elif str(interaction.get("id_B", "")).startswith("CHEBI:"):
+            compound_id = interaction.get("id_B")
+            compound_name = interaction.get("interactor_B_name", "")
+            compound_species = interaction.get("interactor_B_species", "")
+            molecule = interaction.get("molecule_B", "")
+            compound_node_label = compound_id
+        else:
+            continue  # No CHEBI compound found
+
+        if not compound_id or pd.isna(compound_id):
+            continue
+
+        # Build compound node attributes
+        compound_attrs = {
+            "compound_id": compound_id,
+            "compound_name": compound_name,
+            "compound_species": compound_species,
+            "molecule": molecule,
+        }
+
+        merge_node(g, compound_node_label, compound_attrs)
+
+        # Build edge attributes
+        edge_attrs = INTACT_PPI_EDGE_ATTRS.copy()
+
+        conf_vals = interaction.get("confidence_values")
+        edge_attrs["confidence_values"] = ",".join(map(str, conf_vals)) if isinstance(conf_vals, list) else str(conf_vals or "")
+
+        # Include all known keys from interaction
+        for key, value in interaction.items():
+            if isinstance(value, list):
+                edge_attrs[key] = ",".join(map(str, value))
+            else:
+                edge_attrs[key] = value
+
+        # Create a deduplication signature based on stable content only
+        unstable_keys = {"interaction_id", "interactor_id_A", "interactor_id_B", "binary_interaction_id"}
+        signature_attrs = {k: v for k, v in edge_attrs.items() if k not in unstable_keys}
+        edge_signature = frozenset(signature_attrs.items())
+
+        if edge_signature in seen_edge_signatures:
+            continue
+
+        edge_hash = hash(edge_signature)
+        edge_attrs["edge_hash"] = edge_hash
+
+        g.add_edge(
+            compound_node_label,
+            gene_node_label,
+            label="compound-gene",
+            attr_dict=edge_attrs,
+        )
+
+        seen_edge_signatures.add(edge_signature)
 
     return g
 
@@ -1129,9 +1203,9 @@ def process_ppi(g, gene_node_label, row):
         if not isinstance(ppi_list, float):
             add_stringdb_ppi_subgraph(g, gene_node_label, ppi_list)
 
-    if "IntAct_interactions" in row and row["IntAct_interactions"] is not None:
+    if INTACT_INTERACT_COL in row and row[INTACT_INTERACT_COL] is not None:
         try:
-            intact_ppi_list = row["IntAct_interactions"]
+            intact_ppi_list = json.loads(json.dumps(row[INTACT_INTERACT_COL]))
         except (ValueError, TypeError):
             intact_ppi_list = []
 
@@ -1288,6 +1362,7 @@ def build_networkx_graph(
         LITERATURE_DISEASE_COL: add_literature_gene_disease_subgraph,
         MINERVA: add_minerva_gene_pathway_subgraph,
         WIKIPATHWAYS: add_wikipathways_gene_pathway_subgraph,
+        INTACT_COMPOUND_INTERACT_COL: add_intact_compound_subgraph,
         KEGG_COL: add_kegg_gene_pathway_subgraph,
         OPENTARGETS_REACTOME_COL: add_opentargets_gene_reactome_pathway_subgraph,
         OPENTARGETS_GO_COL: add_opentargets_gene_go_subgraph,
@@ -1296,19 +1371,6 @@ def build_networkx_graph(
         PUBCHEM_COMPOUND_ASSAYS_COL: add_pubchem_assay_subgraph,
         ENSEMBL_HOMOLOG_COL: add_ensembl_homolog_subgraph,
     }
-
-    if homolog_df_list is not None:
-        process_homologs(g, combined_df, homolog_df_list, func_dict, dea_columns)
-
-    if homolog_df_list is None:
-        for _i, row in tqdm(
-            combined_df.iterrows(), total=combined_df.shape[0], desc="Building graph"
-        ):
-            if pd.isna(row["identifier"]) or pd.isna(row["target"]):
-                continue
-            gene_node_label = add_gene_node(g, row, dea_columns)
-            process_annotations(g, gene_node_label, row, func_dict)
-            process_ppi(g, gene_node_label, row)
 
     if homolog_df_list is not None:
         process_homologs(g, combined_df, homolog_df_list, func_dict, dea_columns)
