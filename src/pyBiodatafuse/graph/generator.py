@@ -356,43 +356,37 @@ def add_intact_compound_subgraph(g, gene_node_label, annot_list):
             compound_name = interaction.get("interactor_A_name", "")
             compound_species = interaction.get("interactor_A_species", "")
             molecule = interaction.get("molecule_A", "")
-            compound_node_label = compound_id
         elif str(interaction.get("id_B", "")).startswith("CHEBI:"):
             compound_id = interaction.get("id_B")
             compound_name = interaction.get("interactor_B_name", "")
             compound_species = interaction.get("interactor_B_species", "")
             molecule = interaction.get("molecule_B", "")
-            compound_node_label = compound_id
         else:
-            continue  # No CHEBI compound found
+            continue
 
         if not compound_id or pd.isna(compound_id):
             continue
 
-        # Build compound node attributes
-        compound_attrs = {
-            "compound_id": compound_id,
-            "compound_name": compound_name,
-            "compound_species": compound_species,
-            "molecule": molecule,
-        }
+        annot_node_label = compound_id
+        annot_node_attrs = INTACT_COMPOUND_NODE_ATTRS.copy()
+        annot_node_attrs["id"] = compound_id
+        annot_node_attrs["label"] = compound_name
+        annot_node_attrs["species"] = compound_species
+        annot_node_attrs["molecule"] = molecule
 
-        merge_node(g, compound_node_label, compound_attrs)
+        merge_node(g, annot_node_label, annot_node_attrs)
 
-        # Build edge attributes
         edge_attrs = INTACT_PPI_EDGE_ATTRS.copy()
 
         conf_vals = interaction.get("confidence_values")
         edge_attrs["confidence_values"] = ",".join(map(str, conf_vals)) if isinstance(conf_vals, list) else str(conf_vals or "")
 
-        # Include all known keys from interaction
         for key, value in interaction.items():
             if isinstance(value, list):
                 edge_attrs[key] = ",".join(map(str, value))
             else:
                 edge_attrs[key] = value
 
-        # Create a deduplication signature based on stable content only
         unstable_keys = {"interaction_id", "interactor_id_A", "interactor_id_B", "binary_interaction_id"}
         signature_attrs = {k: v for k, v in edge_attrs.items() if k not in unstable_keys}
         edge_signature = frozenset(signature_attrs.items())
@@ -404,7 +398,7 @@ def add_intact_compound_subgraph(g, gene_node_label, annot_list):
         edge_attrs["edge_hash"] = edge_hash
 
         g.add_edge(
-            compound_node_label,
+            annot_node_label,
             gene_node_label,
             label="compound-gene",
             attr_dict=edge_attrs,
