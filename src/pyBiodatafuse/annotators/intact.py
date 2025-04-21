@@ -136,13 +136,14 @@ def get_protein_intact_acs(ensembl_id: str) -> list:
         return []
 
 
-def get_filtered_interactions(gene_id: str, valid_intact_acs: set, intact_ac_to_ensembl: dict) -> list:
+def get_filtered_interactions(gene_id: str, valid_intact_acs: set, intact_ac_to_ensembl: dict, ensembl_to_input_id: dict) -> list:
     """Filter interactions to include only valid protein-protein interactions.
 
     :param interactions: List of interactions to filter.
     :param valid_intact_acs: Set of valid IntAct ACs.
     :param intact_ac_to_ensembl: Dictionary mapping IntAct ACs to Ensembl gene IDs.
     :param gene_id: The gene identifier to filter interactions for.
+    :param ensembl_to_input_id: Dictionary mapping Ensembl IDs to input IDs.
     :returns: A list of filtered interactions.
     """
     interactions = get_intact_interactions(gene_id)
@@ -158,12 +159,16 @@ def get_filtered_interactions(gene_id: str, valid_intact_acs: set, intact_ac_to_
 
         if id_a in valid_intact_acs and id_b in valid_intact_acs:
             if intact_ac_to_ensembl.get(id_a) == gene_id:
-                partner_gene = intact_ac_to_ensembl.get(id_b, None)
+                partner_ensembl = intact_ac_to_ensembl.get(id_b, None)
             else:
-                partner_gene = intact_ac_to_ensembl.get(id_a, None)
+                partner_ensembl = intact_ac_to_ensembl.get(id_a, None)
+
+            partner_gene = ensembl_to_input_id.get(partner_ensembl, partner_ensembl)
+
 
             interaction["intact_link_to"] = partner_gene
             filtered.append(interaction)
+
     if filtered == []:
         return [{
             "interaction_id": np.nan,
@@ -275,10 +280,16 @@ def get_interactions(bridgedb_df: pd.DataFrame):
             uniprot_map[ensembl_id] = []
         uniprot_map[ensembl_id].append(uniprot_id)
 
-    ensembl_to_intact_map = {}
-    for ensembl_id in ensembl_gene_list:
-        intact_acs = get_protein_intact_acs(ensembl_id)
-        ensembl_to_intact_map[ensembl_id] = intact_acs
+    ensembl_to_input_id = {}
+    for _, row in data_df.iterrows():
+        input_id = row["identifier"]
+        ensembl_id = row["target"]
+        ensembl_to_input_id[ensembl_id] = input_id
+
+    ensembl_to_intact_map = {
+        ensembl_id: get_protein_intact_acs(ensembl_id)
+        for ensembl_id in ensembl_gene_list
+    }
         
     intact_ac_to_ensembl = {
         ac: ensembl for ensembl, acs in ensembl_to_intact_map.items() for ac in acs
@@ -292,7 +303,7 @@ def get_interactions(bridgedb_df: pd.DataFrame):
         intact_interactions.extend(get_intact_interactions(ensembl_id))
 
     data_df[INTACT_INTERACT_COL] = data_df["target"].apply(
-    lambda gene_id: get_filtered_interactions(gene_id, valid_intact_acs, intact_ac_to_ensembl)
+    lambda gene_id: get_filtered_interactions(gene_id, valid_intact_acs, intact_ac_to_ensembl, ensembl_to_input_id)
     )
 
     end_time = datetime.datetime.now()

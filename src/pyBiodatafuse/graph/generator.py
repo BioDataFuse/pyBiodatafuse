@@ -350,7 +350,6 @@ def add_intact_compound_subgraph(g, gene_node_label, annot_list):
     seen_edge_signatures = set()
 
     for interaction in annot_list:
-        # Determine which interactor is the compound
         if str(interaction.get("id_A", "")).startswith("CHEBI:"):
             compound_id = interaction.get("id_A")
             compound_name = interaction.get("interactor_A_name", "")
