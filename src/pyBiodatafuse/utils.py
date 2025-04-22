@@ -10,7 +10,9 @@ import pandas as pd
 from pyBiodatafuse.id_mapper import read_resource_files
 
 
-def get_identifier_of_interest(bridgedb_df: pd.DataFrame, db_source: str, keep: list) -> pd.DataFrame:
+def get_identifier_of_interest(
+    bridgedb_df: pd.DataFrame, db_source: str, keep: list
+) -> pd.DataFrame:
     """Get identifier of interest from BridgeDb output file.
 
     :param bridgedb_df: DataFrame containing the output from BridgeDb

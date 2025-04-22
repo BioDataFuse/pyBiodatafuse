@@ -173,7 +173,9 @@ def get_ppi(bridgedb_df: pd.DataFrame, species: str = "human"):
         logger.error("NCBI taxonomy search did not return an ID for species: %s", species)
         return pd.DataFrame(), {}
 
-    data_df = get_identifier_of_interest(bridgedb_df, STRING_GENE_INPUT_ID, ["HGNC"]).reset_index(drop=True)
+    data_df = get_identifier_of_interest(bridgedb_df, STRING_GENE_INPUT_ID, ["HGNC"]).reset_index(
+        drop=True
+    )
     gene_list = list(set(data_df["target"].tolist()))
     logger.debug("Gene list: %s", gene_list)
 
