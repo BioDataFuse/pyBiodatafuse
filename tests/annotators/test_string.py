@@ -155,6 +155,6 @@ class TestString(unittest.TestCase):
             ]
         )
         expected_data.name = STRING_PPI_COL
-
+        obtained_data[STRING_PPI_COL]
         pd.testing.assert_series_equal(obtained_data[STRING_PPI_COL], expected_data)
         self.assertIsInstance(metadata, dict)

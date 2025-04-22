@@ -11,7 +11,7 @@ from pyBiodatafuse.id_mapper import read_resource_files
 
 
 def get_identifier_of_interest(
-    bridgedb_df: pd.DataFrame, db_source: str, keep: list
+    bridgedb_df: pd.DataFrame, db_source: str, keep: Optional[List] = None
 ) -> pd.DataFrame:
     """Get identifier of interest from BridgeDb output file.
 
@@ -21,7 +21,9 @@ def get_identifier_of_interest(
     :returns: a DataFrame containing the identifiers of interest
     """
     # Load identifier options
-    identifier_options = read_resource_files()["source"].tolist() + [i for i in keep]
+    identifier_options = read_resource_files()["source"].tolist() + (
+        [i for i in keep] if keep else []
+    )
 
     # Check if source is in identifier options
     assert db_source in identifier_options, f"Source {db_source} is not in identifier options"

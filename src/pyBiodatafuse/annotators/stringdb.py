@@ -80,9 +80,10 @@ def _format_data(row, string_ids_df, network_df):
     for _, row_arr in network_df.iterrows():
 
         if (
-            row_arr["preferredName_A"] == row["target"]
+            row_arr["preferredName_A"] == row["identifier"]
             and row_arr["preferredName_B"] not in target_links_set
         ):
+
             gene_ppi_links.append(
                 {
                     "stringdb_link_to": row_arr["preferredName_B"],
@@ -91,12 +92,14 @@ def _format_data(row, string_ids_df, network_df):
                     STRING_GENE_LINK_ID: row_arr["stringId_A"].split(".")[1],
                 }
             )
+
             target_links_set.add(row_arr["preferredName_B"])
 
         elif (
-            row_arr["preferredName_B"] == row["target"]
+            row_arr["preferredName_B"] == row["identifier"]
             and row_arr["preferredName_A"] not in target_links_set
         ):
+
             gene_ppi_links.append(
                 {
                     "stringdb_link_to": row_arr["preferredName_A"],
@@ -105,6 +108,7 @@ def _format_data(row, string_ids_df, network_df):
                     STRING_GENE_LINK_ID: row_arr["stringId_B"].split(".")[1],
                 }
             )
+
             target_links_set.add(row_arr["preferredName_A"])
 
     return gene_ppi_links
