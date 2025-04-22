@@ -22,6 +22,7 @@ from pyBiodatafuse.constants import (
     WIKIPATHWAYS_GENE_INPUT_ID,
     WIKIPATHWAYS_PATHWAYS_OUTPUT_DICT,
     WIKIPATHWAYS_MOLECULAR_GENE_OUTPUT_DICT,
+    WIKIPATHWAYS_MOLECULAR_COL,
 )
 from pyBiodatafuse.utils import (
     check_columns_against_constants,
@@ -102,12 +103,15 @@ def get_gene_wikipathways(bridgedb_df: pd.DataFrame, query_interactions: bool = 
         if query_interactions:
             gene_list = [f"<https://identifiers.org/ncbigene/{g}>" for g in gene_list]
         query_gene_lists.append(" ".join(g for g in gene_list))
+    col_name = ""
     if query_interactions:
         file = "/queries/wikipathways-mims.rq"
         output_dict = WIKIPATHWAYS_MOLECULAR_GENE_OUTPUT_DICT
+        col_name = WIKIPATHWAYS_MOLECULAR_COL
     else:
         file = "/queries/wikipathways-genes-pathways.rq"
         output_dict = WIKIPATHWAYS_PATHWAYS_OUTPUT_DICT
+        col_name = WIKIPATHWAYS
     with open(os.path.dirname(__file__) + file, "r") as fin:
         sparql_query = fin.read()
 
@@ -133,7 +137,7 @@ def get_gene_wikipathways(bridgedb_df: pd.DataFrame, query_interactions: bool = 
 
         result = sparql.queryAndConvert()
 
-        res = result["results"]["bindings"]  #get data
+        res = result["results"]["bindings"]  # get data
 
         df = pd.DataFrame(res)
         for col in df:
@@ -209,7 +213,7 @@ def get_gene_wikipathways(bridgedb_df: pd.DataFrame, query_interactions: bool = 
         target_df=intermediate_df,
         common_cols=["target"],
         target_specific_cols=list(output_dict.keys()),
-        col_name=WIKIPATHWAYS,
+        col_name=col_name,
     )
 
     """Update metadata"""

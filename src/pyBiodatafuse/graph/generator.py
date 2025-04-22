@@ -68,7 +68,12 @@ from pyBiodatafuse.constants import (
     STRING_PPI_EDGE_MAIN_LABEL,
     WIKIPATHWAYS,
     WIKIPATHWAYS_MOLECULAR_COL,
-    PATHWAY_MOLECULAR_EDGE_ATTRS,
+    MOLECULAR_PATHWAY_NODE_LABELS,
+    MOLECULAR_PATHWAY_NODE_MAIN_LABEL,
+    MOLECULAR_PATHWAY_NODE_ATTRS,
+    MOLECULAR_GENE_NODE_ATTRS,
+    MOLECULAR_GENE_PATHWAY_EDGE_LABEL,
+    MOLECULAR_INTERACTION_EDGE_ATTRS
 )
 
 logger = Logger(__name__)
@@ -794,9 +799,6 @@ def add_wikipathways_molecular_gene(g, gene_node_label, annot_list):
         edge_attrs = (
             MOLECULAR_INTERACTION_EDGE_ATTRS.copy()
         )  # PLACEHOLDER: Define appropriate edge attributes
-        edge_attrs["datasource"] = WIKIPATHWAYS
-        edge_attrs["pathway_id"] = annot["pathway_id"]
-        edge_attrs["pathway_label"] = annot.get("pathway_label", "")
         edge_attrs["interaction_type"] = interaction_type
 
         # Add rhea_id if available
@@ -810,15 +812,16 @@ def add_wikipathways_molecular_gene(g, gene_node_label, annot_list):
         # Handle target gene
         if not pd.isna(annot.get("targetGene")):
             target_node_label = (
-                f"gene:{annot['targetGene']}"  # PLACEHOLDER: Use your gene node label format
+                f"{annot['targetGene']}"  # PLACEHOLDER
             )
 
             # Add target gene node if it doesn't exist
             if not g.has_node(target_node_label):
                 target_node_attrs = (
-                    GENE_NODE_ATTRS.copy()
-                )  # PLACEHOLDER: Define appropriate node attributes
-                target_node_attrs["id"] = annot["targetGene"]
+                    MOLECULAR_GENE_NODE_ATTRS.copy()
+                )  
+                target_node_attrs["label"] = target_node_label
+                #target_node_attrs["gene_id"] = annot["targetGene"]
                 g.add_node(target_node_label, attr_dict=target_node_attrs)
 
             # Check if edge already exists
@@ -836,41 +839,13 @@ def add_wikipathways_molecular_gene(g, gene_node_label, annot_list):
                     attr_dict=edge_attrs,
                 )
 
-        # Handle target protein
-        #if not pd.isna(annot.get("targetProtein")) and annot["targetProtein"]:
-        #    target_node_label = f"protein:{annot['targetProtein']}"  # PLACEHOLDER: Use your protein node label format
-
-            # Add target protein node if it doesn't exist
-        #    if not g.has_node(target_node_label):
-        #        target_node_attrs = (
-        #            PROTEIN_NODE_ATTRS.copy()
-        #        )  # PLACEHOLDER: Define appropriate node attributes
-        #        target_node_attrs["id"] = annot["targetProtein"]
-        #        g.add_node(target_node_label, attr_dict=target_node_attrs)
-
-            # Check if edge already exists
-            #edge_data = g.get_edge_data(gene_node_label, target_node_label)
-            #edge_data = {} if edge_data is None else edge_data
-            #node_exists = [
-            #    x for x, y in edge_data.items() if y["attr_dict"].get("edge_hash") == edge_hash
-            #]
-
-            #if len(node_exists) == 0:
-                #g.add_edge(
-                #    gene_node_label,
-                #    target_node_label,
-                #    label=interaction_type.upper(),
-                #    attr_dict=edge_attrs,
-                #)
-
-        # Handle target metabolite
         if not pd.isna(annot.get("targetMetabolite")) and annot["targetMetabolite"]:
             target_node_label = f"metabolite:{annot['targetMetabolite']}"  # PLACEHOLDER: Use your metabolite node label format
 
             # Add target metabolite node if it doesn't exist
             if not g.has_node(target_node_label):
                 target_node_attrs = (
-                    METABOLITE_NODE_ATTRS.copy()
+                    MOLECULAR_GENE_NODE_ATTRS.copy()
                 )  # PLACEHOLDER: Define appropriate node attributes
                 target_node_attrs["id"] = annot["targetMetabolite"]
                 g.add_node(target_node_label, attr_dict=target_node_attrs)
@@ -947,7 +922,7 @@ def process_annotations(g, gene_node_label, row, func_dict):
             annot_list = row[annot_key]
             if not isinstance(annot_list, list):
                 annot_list = []
-
+        
             func_dict[annot_key](g, gene_node_label, annot_list)
 
 
@@ -1097,6 +1072,8 @@ def save_graph(
 
     with open(graph_path_pickle, "wb") as f:
         pickle.dump(g, f)
+        print(type(g))
+        print(type(graph_path_gml))
     nx.write_gml(g, graph_path_gml)
     logger.warning(f"Graph saved in {graph_path_pickle} and {graph_path_gml}")
 
