@@ -1,13 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""Python file for querying StringDB (https://string-db.org/)."""
+"""Python file for querying StringDB (https://string-db.org/).
+
+This version keeps the core functionalities of code 1 and adds the new functionalities from code 2.
+"""
 
 import datetime
 import logging
-import traceback
 import warnings
-from time import sleep, time
+from time import sleep
 
 import numpy as np
 import pandas as pd
@@ -57,17 +59,26 @@ def get_version_stringdb() -> dict:
 
 
 def _format_data(row, string_ids_df, network_df):
-    """Reformat STRING-DB response (Helper function).
+    """Reformat STRING-DB response to match expected output.
 
-    :param row: input_df row
-    :param string_ids_df: STRING-DB response identifier DataFrame
-    :param network_df: STRING-DB response annotation DataFrame
-    :returns: StringDB reformatted annotation.
+    For a given input row (with key 'identifier'), if the network row
+    indicates that the input gene appears as preferredName_A then its partner is
+    preferredName_B, and vice versa. The output dictionaries will have the following keys:
+      - "stringdb_link_to": the partner gene symbol,
+      - "Ensembl": the partner's Ensembl id,
+      - "score": the interaction score,
+      - "Ensembl_link": the input gene's Ensembl id.
+
+    :param row: Row from the input DataFrame (with at least 'identifier' column).
+    :param string_ids_df: DataFrame returned from get_string_ids (not used in this version).
+    :param network_df: DataFrame returned from the network call.
+    :returns: List of dictionaries describing the interactions.
     """
     gene_ppi_links = []
     target_links_set = set()
 
     for _, row_arr in network_df.iterrows():
+
         if (
             row_arr["preferredName_A"] == row["target"]
             and row_arr["preferredName_B"] not in target_links_set
@@ -140,8 +151,8 @@ def get_ppi(bridgedb_df: pd.DataFrame, species: str = "human"):
     """Annotate genes with protein-protein interactions from STRING-DB.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
-    :param species: The species to query. All species that are supported by both NCBI and STRINGDB can be used.
-    :returns: a DataFrame containing the StringDB output and dictionary of the metadata.
+    :param species: The species to query. (Try 'Homo sapiens' if 'human' is not working.)
+    :returns: a tuple (DataFrame containing the StringDB output, metadata dictionary)
     """
     # Check if the endpoint is available
     if not check_endpoint_stringdb():
@@ -153,15 +164,20 @@ def get_ppi(bridgedb_df: pd.DataFrame, species: str = "human"):
     # Record the start time
     start_time = datetime.datetime.now()
 
-    # Retrieve NCBI taxonomy identifier
+    # Retrieve NCBI taxonomy identifier using the given species term
     params = {"db": "taxonomy", "term": species, "retmode": "json"}
     response = requests.get(f"{NCBI_ENDPOINT}/entrez/eutils/esearch.fcgi", params=params).json()
-    species_id = response["esearchresult"]["idlist"][0]
+    try:
+        species_id = response["esearchresult"]["idlist"][0]
+    except (KeyError, IndexError):
+        logger.error("NCBI taxonomy search did not return an ID for species: %s", species)
+        return pd.DataFrame(), {}
 
     data_df = get_identifier_of_interest(bridgedb_df, STRING_GENE_INPUT_ID, ["HGNC"]).reset_index(drop=True)
     gene_list = list(set(data_df["target"].tolist()))
+    logger.debug("Gene list: %s", gene_list)
 
-    # Return empty dataframe when only one input submitted
+    # Return empty dataframe when only one input is submitted
     if len(gene_list) == 1:
         warnings.warn(
             f"There is only one input gene/protein. Provide at least two input to extract their interactions from {STRING}.",
@@ -169,7 +185,7 @@ def get_ppi(bridgedb_df: pd.DataFrame, species: str = "human"):
         )
         return pd.DataFrame(), {}
 
-    # Get ids
+    # Get STRING IDs
     string_ids = get_string_ids(gene_list, species_id)
     if len(string_ids) == 0:
         return pd.DataFrame(), {}
@@ -179,11 +195,10 @@ def get_ppi(bridgedb_df: pd.DataFrame, species: str = "human"):
 
     # Get the PPI data
     network_df = _get_ppi_data(list(stringdb_ids_df.stringId.unique()), species_id)
+    logger.debug("Network DataFrame: %s", network_df)
 
-    # Record the end time
+    # Record the end time and build metadata
     end_time = datetime.datetime.now()
-
-    # Metadata details
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     time_elapsed = str(end_time - start_time)
     num_new_edges = network_df.drop_duplicates(subset=["stringId_A", "stringId_B"]).shape[0]
@@ -237,7 +252,6 @@ def get_ppi(bridgedb_df: pd.DataFrame, species: str = "human"):
                     "Uniprot-TrEMBL_link": uniprot_map.get(ppi.get(STRING_GENE_LINK_ID, "")),
                 }
                 for ppi in lst
-                if lst
             ]
             if lst
             else []
