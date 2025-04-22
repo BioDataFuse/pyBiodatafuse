@@ -30,7 +30,6 @@ def get_identifier_of_interest(
 
     # Filter rows where "target.source" is specific datasource for eg. "NCBI Gene"
     subset_df = bridgedb_df[bridgedb_df["target.source"].isin(identifier_options)]
-
     return subset_df.reset_index(drop=True)
 
 
