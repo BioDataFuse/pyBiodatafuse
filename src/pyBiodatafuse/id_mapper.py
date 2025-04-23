@@ -10,7 +10,7 @@ import os
 import re
 import time
 from importlib import resources
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Literal
 
 import pandas as pd
 import requests
@@ -134,6 +134,7 @@ def get_version_datasource_bridgedb(input_species: Optional[str] = None) -> List
         raise ValueError(f"Failed to retrieve data. Status code: {datasource_response.status_code}")
 
     return datasource_version
+
 
 def bridgedb_xref(
     identifiers: pd.DataFrame,
