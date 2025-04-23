@@ -137,6 +137,53 @@ def combine_sources(bridgedb_df: pd.DataFrame, df_list: List[pd.DataFrame]) -> p
     return m
 
 
+def combine_with_homologs(df: pd.DataFrame, homolog_dfs: list) -> pd.DataFrame:
+    """Merge a DataFrame with a list of homolog dataframes.
+
+    :param df: An already combined df containing output of non-homolog annotators.
+    :param homolog_dfs: List of homolog dataframes to be combined.
+    :returns: Merged DataFrame with only the required columns.
+    """
+    df["Ensembl_homologs"] = df["Ensembl_homologs"].apply(
+        lambda x: [{"homolog": x["homolog"]}] if isinstance(x, dict) else x
+    )
+
+    exploded_df = df.explode("Ensembl_homologs")
+    exploded_df["homolog"] = exploded_df["Ensembl_homologs"].apply(
+        lambda x: x["homolog"] if isinstance(x, dict) else None
+    )
+
+    merged_df = exploded_df.copy()
+    homolog_dfs = [df for df in homolog_dfs if not df.empty and df is not None and len(df) > 0]
+    for homolog_df in homolog_dfs:
+
+        # Get only the identifier and last column from the homolog DataFrame
+        last_col = homolog_df.columns[-1]
+        temp_df = homolog_df[["identifier", last_col]].copy()
+
+        merged_df = pd.merge(
+            merged_df,
+            temp_df,
+            how="left",
+            left_on="homolog",
+            right_on="identifier",
+            suffixes=("", "_temp"),
+        )
+
+        if "identifier_temp" in merged_df.columns:
+            merged_df.drop(columns=["identifier_temp"], inplace=True)
+
+    if "identifier" in merged_df.columns:
+        merged_df = merged_df.loc[:, ~merged_df.columns.duplicated()]
+
+    # Ensure that homolog column contains a nested dictionary
+    merged_df["Ensembl_homologs"] = merged_df["Ensembl_homologs"].apply(
+        lambda x: [{"homolog": x["homolog"]}] if isinstance(x, dict) else x
+    )
+
+    return merged_df
+
+
 def check_columns_against_constants(
     data_df: pd.DataFrame, output_dict: dict, check_values_in: list
 ):
