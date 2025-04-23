@@ -139,7 +139,8 @@ def bridgedb_xref(
     identifiers: pd.DataFrame,
     input_species: Optional[str] = None,
     input_datasource: Literal[
-        "Ensembl" "NCBI Gene",
+        "Ensembl",
+        "NCBI Gene",
         "HGNC",
         "HGNC Accession Number",
         "MGI",
