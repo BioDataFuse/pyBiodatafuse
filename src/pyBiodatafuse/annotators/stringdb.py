@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""Python file for querying StringDB (https://string-db.org/).
-
-"""
+"""Module for querying StringDB (https://string-db.org/)."""
 
 import datetime
 import logging
@@ -235,11 +233,11 @@ def get_ppi(bridgedb_df: pd.DataFrame, species: str = "human"):
     )
     # Drop rows where STRING_PPI_COL is an empty list
     data_df = data_df[data_df[STRING_PPI_COL].apply(bool)].reset_index(drop=True)
-    ## Get matching rows
-    ## Filter rows with non-empty STRING_PPI_COL
+    # Get matching rows
+    # Filter rows with non-empty STRING_PPI_COL
     # rows_with_ppi = data_df[data_df[STRING_PPI_COL].apply(bool)]
     #
-    ## Iterate over rows with STRING_PPI_COL values
+    # Iterate over rows with STRING_PPI_COL values
     # for _, row in rows_with_ppi.iterrows():
     #    identifier = row["identifier"]
     #    target = row["target"]
