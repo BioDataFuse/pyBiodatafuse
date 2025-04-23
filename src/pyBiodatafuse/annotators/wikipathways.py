@@ -5,11 +5,11 @@
 
 import datetime
 import os
+import re
 import time
 import warnings
 from string import Template
 from typing import Any, Dict
-import re
 
 import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
@@ -20,9 +20,9 @@ from pyBiodatafuse.constants import (
     WIKIPATHWAYS,
     WIKIPATHWAYS_ENDPOINT,
     WIKIPATHWAYS_GENE_INPUT_ID,
-    WIKIPATHWAYS_PATHWAYS_OUTPUT_DICT,
-    WIKIPATHWAYS_MOLECULAR_GENE_OUTPUT_DICT,
     WIKIPATHWAYS_MOLECULAR_COL,
+    WIKIPATHWAYS_MOLECULAR_GENE_OUTPUT_DICT,
+    WIKIPATHWAYS_PATHWAYS_OUTPUT_DICT,
 )
 from pyBiodatafuse.utils import (
     check_columns_against_constants,
@@ -70,7 +70,9 @@ def get_version_wikipathways() -> dict:
     return wikipathways_version
 
 
-def get_gene_wikipathways(bridgedb_df: pd.DataFrame, query_interactions: bool = False) -> pd.DataFrame:
+def get_gene_wikipathways(
+    bridgedb_df: pd.DataFrame, query_interactions: bool = False
+) -> pd.DataFrame:
     """Query WikiPathways for pathways associated with genes.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
@@ -127,7 +129,9 @@ def get_gene_wikipathways(bridgedb_df: pd.DataFrame, query_interactions: bool = 
         sparql_query_template = Template(sparql_query)
         substit_dict = dict()
         if query_interactions:
-            substit_dict = dict(gene_list=gene_list_str, organism_name='"Homo sapiens"')  #TODO allow setting organism
+            substit_dict = dict(
+                gene_list=gene_list_str, organism_name='"Homo sapiens"'
+            )  # TODO allow setting organism
         if not query_interactions:
             substit_dict = dict(gene_list=gene_list_str)
         sparql_query_template_sub = sparql_query_template.substitute(substit_dict)
@@ -138,7 +142,8 @@ def get_gene_wikipathways(bridgedb_df: pd.DataFrame, query_interactions: bool = 
         result = sparql.queryAndConvert()
 
         res = result["results"]["bindings"]  # get data
-
+        with open("res.json", "w") as f:
+            f.write(str(res))
         df = pd.DataFrame(res)
         for col in df:
             df[col] = df[col].map(lambda x: x["value"], na_action="ignore")
@@ -181,24 +186,36 @@ def get_gene_wikipathways(bridgedb_df: pd.DataFrame, query_interactions: bool = 
         )
         return pd.DataFrame(), wikipathways_metadata
     # Fix identifiers
-    intermediate_df["gene_id"] = df["gene_id"].str.removeprefix("https://identifiers.org/ncbigene/").fillna("")
-    intermediate_df["targetGene"] = intermediate_df["gene_id"].str.removeprefix(
-        "http://identifiers.org/ncbigene/").fillna("")
-    intermediate_df["targetMetabolite"] = intermediate_df["targetMetabolite"].str.removeprefix(
-        "http://rdf.ncbi.nlm.nih.gov/pubchem/compound/").fillna("")
-    intermediate_df["targetProtein"] = intermediate_df["targetProtein"].str.removeprefix(
-        "https://identifiers.org/uniprot/").fillna("")
-    intermediate_df["mimtype"] = intermediate_df["mimtype"].str.removeprefix(
-        "http://vocabularies.wikipathways.org/wp#").fillna("")
+    intermediate_df["gene_id"] = (
+        df["gene_id"].str.removeprefix("https://identifiers.org/ncbigene/").fillna("")
+    )
+    intermediate_df["targetGene"] = (
+        df["targetGene"].str.removeprefix("http://identifiers.org/ncbigene/").fillna("")
+    )
+    intermediate_df["targetMetabolite"] = (
+        df["targetMetabolite"]
+        .str.removeprefix("http://rdf.ncbi.nlm.nih.gov/pubchem/compound/")
+        .fillna("")
+    )
+    intermediate_df["targetProtein"] = (
+        df["targetProtein"]
+        .str.removeprefix("https://identifiers.org/uniprot/")
+        .fillna("")
+    )
+    intermediate_df["mimtype"] = (
+        df["mimtype"]
+        .str.removeprefix("http://vocabularies.wikipathways.org/wp#")
+        .fillna("")
+    )
     # Organize the annotation results as an array of dictionaries
     intermediate_df.rename(columns={"gene_id": "target"}, inplace=True)
     if not query_interactions:
         intermediate_df["pathway_gene_count"] = pd.to_numeric(intermediate_df["pathway_gene_count"])
-    intermediate_df = intermediate_df.drop_duplicates()
-    if not query_interactions:
-        intermediate_df["pathway_id"] = intermediate_df["pathway_id"].apply(lambda x: f"WP:{x}")
+    if query_interactions:
+        intermediate_df["pathway_id"] = intermediate_df["pathway_id"].str.removeprefix("https://identifiers.org/wikipathways/").str.replace(r"(WP\d+)_.*", r"\1", regex=True).str.replace("WP", "WP:", regex=False).str.strip()
     else:
-        intermediate_df["pathway_id"] = intermediate_df["pathway_id"].apply(lambda x: re.search(r'WP\d+', x).group() if re.search(r'WP\d+', x) else x)
+        intermediate_df["pathway_id"] = intermediate_df["pathway_id"].apply(lambda x: x.replace("WP", "WP:") if "WP" in x else x)
+        
     # Check if all keys in df match the keys in OUTPUT_DICT
     check_columns_against_constants(
         data_df=intermediate_df,
