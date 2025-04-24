@@ -22,6 +22,8 @@ AOPWIKI_ENDPOINT = "https://aopwiki.rdf.bigcat-bioinformatics.org/sparql/"
 BRIDGEDB = "BridgeDB"
 BGEE = "Bgee"
 DISGENET = "DISGENET"
+ENSEMBL = "Ensembl"
+KEGG = "KEGG"
 MINERVA = "MINERVA"
 MOLMEDB = "MolMeDB"
 OPENTARGETS = "OpenTargets"
@@ -30,7 +32,6 @@ STRING = "StringDB"
 WIKIDATA = "Wikidata"
 WIKIPATHWAYS = "WikiPathways"
 OPENTARGETS_REACTOME = "OpenTargets_reactome"
-AOPWIKIRDF = "AOP Wiki RDF"
 
 # DataFrame Columns
 
@@ -530,6 +531,34 @@ STRING_PPI_EDGE_ATTRS = {
 # Disease - Compound edge
 OPENTARGETS_DISEASE_COMPOUND_EDGE_ATTRS = {
     "datasource": OPENTARGETS,
+    "label": None,
+}
+
+
+# Ensembl Homologs
+HOMOLOG_NODE_LABELS = "Homolog"
+ENSEMBL_HOMOLOG_NODE_ATTRS = {
+    "datasource": ENSEMBL,
+    "id": None,
+    "labels": HOMOLOG_NODE_LABELS,
+}
+ENSEMBL_HOMOLOG_MAIN_LABEL = "homolog"
+ENSEMBL_HOMOLOG_EDGE_LABEL = "is_homolog_of"
+ENSEMBL_HOMOLOG_EDGE_ATTRS = {
+    "datasource": ENSEMBL,
+    "label": ENSEMBL_HOMOLOG_EDGE_LABEL,
+}
+
+# KEGG compounds
+KEGG_COMPOUND_NODE_ATTRS = {
+    "datasource": KEGG,
+    "id": None,
+    "labels": COMPOUND_NODE_LABELS,
+}
+KEGG_COMPOUND_NODE_MAIN_LABEL = "compounds"
+KEGG_COMPOUND_EDGE_LABEL = "contains"
+KEGG_COMPOUND_EDGE_ATTRS = {
+    "datasource": KEGG,
     "label": None,
 }
 
