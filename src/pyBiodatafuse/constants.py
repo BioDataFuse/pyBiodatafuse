@@ -32,6 +32,7 @@ STRING = "StringDB"
 WIKIDATA = "Wikidata"
 WIKIPATHWAYS = "WikiPathways"
 OPENTARGETS_REACTOME = "OpenTargets_reactome"
+AOPWIKIRDF = "AOP-Wiki RDF"
 
 # DataFrame Columns
 
