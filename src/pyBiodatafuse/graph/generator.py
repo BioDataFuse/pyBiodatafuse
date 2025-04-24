@@ -786,6 +786,7 @@ def add_opentargets_disease_compound_subgraph(g, disease_node_label, annot_list)
 
 def add_wikipathways_molecular_subgraph(g, gene_node_label, annot_list):
     """Construct part of the graph by linking molecular entities from WP with MIMs.
+
     :param g: the input graph to extend with new nodes and edges.
     :param gene_node_label: the disease node to be linked to compounds.
     :param annot_list: result of querying WP for molecular interactions.

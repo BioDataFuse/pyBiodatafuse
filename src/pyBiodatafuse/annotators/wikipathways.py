@@ -76,6 +76,7 @@ def get_gene_wikipathways(
     """Query WikiPathways for pathways associated with genes.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
+    :param query_interactions: Set whether to retrieve gene part_of pathways relationships (False) or all molecular interactions (True).
     :returns: a DataFrame containing the WikiPathways output and dictionary of the WikiPathways metadata.
     """
     # Check if the endpoint is available
@@ -135,15 +136,11 @@ def get_gene_wikipathways(
         if not query_interactions:
             substit_dict = dict(gene_list=gene_list_str)
         sparql_query_template_sub = sparql_query_template.substitute(substit_dict)
-        with open("query.rq", "w") as query_file:  # debug
-            query_file.write(sparql_query_template_sub)  # debug
         sparql.setQuery(sparql_query_template_sub)
 
         result = sparql.queryAndConvert()
 
         res = result["results"]["bindings"]  # get data
-        with open("res.json", "w") as f:
-            f.write(str(res))
         df = pd.DataFrame(res)
         for col in df:
             df[col] = df[col].map(lambda x: x["value"], na_action="ignore")
