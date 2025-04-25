@@ -43,6 +43,8 @@ from pyBiodatafuse.constants import (
     LITERATURE_DISEASE_NODE_ATTRS,
     LITERATURE_NODE_MAIN_LABEL,
     MINERVA,
+    MOLECULAR_INTERACTION_EDGE_ATTRS,
+    MOLECULAR_PATHWAY_NODE_ATTRS,
     MOLMEDB_COMPOUND_NODE_ATTRS,
     MOLMEDB_PROTEIN_COMPOUND_COL,
     MOLMEDB_PROTEIN_COMPOUND_EDGE_ATTRS,
@@ -68,12 +70,6 @@ from pyBiodatafuse.constants import (
     STRING_PPI_EDGE_MAIN_LABEL,
     WIKIPATHWAYS,
     WIKIPATHWAYS_MOLECULAR_COL,
-    MOLECULAR_PATHWAY_NODE_LABELS,
-    MOLECULAR_PATHWAY_NODE_MAIN_LABEL,
-    MOLECULAR_PATHWAY_NODE_ATTRS,
-    MOLECULAR_GENE_NODE_ATTRS,
-    MOLECULAR_GENE_PATHWAY_EDGE_LABEL,
-    MOLECULAR_INTERACTION_EDGE_ATTRS
 )
 
 logger = Logger(__name__)
@@ -99,6 +95,8 @@ def merge_node(g, node_label, node_attrs):
     :param node_label: node label.
     :param node_attrs: dictionary of node attributes.
     """
+    # Ensure all node attributes are strings or set to None
+    node_attrs = {k: (v if isinstance(v, str) else "") for k, v in node_attrs.items()}
     if node_label not in g.nodes():
         g.add_node(node_label, attr_dict=node_attrs)
     else:
@@ -151,9 +149,11 @@ def add_gene_bgee_subgraph(g, gene_node_label, annot_list):
         edge_attrs["edge_hash"] = edge_hash
         edge_data = g.get_edge_data(gene_node_label, annot_node_label)
         edge_data = {} if edge_data is None else edge_data
-        node_exists = [x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash]
+        edge_exists = any(
+            y.get("attr_dict", {}).get("edge_hash") == edge_hash for y in edge_data.values()
+        )
 
-        if len(node_exists) == 0:
+        if not edge_exists:
             g.add_edge(
                 gene_node_label,
                 annot_node_label,
@@ -786,103 +786,58 @@ def add_opentargets_disease_compound_subgraph(g, disease_node_label, annot_list)
     return g
 
 
-def add_wikipathways_molecular_gene(g, gene_node_label, annot_list):
-    """Construct part of the graph by linking the gene to pathway molecular entities.
+def add_wikipathways_molecular_subgraph(g, gene_node_label, annot_list):
+    """Construct part of the graph by linking molecular entities from WP with MIMs.
+
     :param g: the input graph to extend with new nodes and edges.
-    :param gene_node_label: the gene node to be linked to pathway molecular entities.
-    :param annot_list: list of pathway molecular interactions from WikiPathways.
+    :param gene_node_label: the disease node to be linked to compounds.
+    :param annot_list: result of querying WP for molecular interactions.
     :returns: a NetworkX MultiDiGraph
     """
     for annot in annot_list:
-        # Process based on interaction type and target entity
-        interaction_type = annot["mimtype"]
-        edge_attrs = (
-            MOLECULAR_INTERACTION_EDGE_ATTRS.copy()
-        )  # PLACEHOLDER: Define appropriate edge attributes
-        edge_attrs["interaction_type"] = interaction_type
+        for target_key in ["targetGene", "targetMetabolite"]:
+            target = annot.get(target_key)
+            target_node_label = None
+            if target and target != gene_node_label:  # No interactions with self
+                target_node_label = str(target)
 
-        # Add rhea_id if available
-        if not pd.isna(annot.get("rhea_id")):
-            edge_attrs["rhea_id"] = annot["rhea_id"]
+            if target_node_label is not None:
+                interaction_type = annot.get("mimtype", "Interaction")
+                edge_attrs = MOLECULAR_INTERACTION_EDGE_ATTRS.copy()
+                edge_attrs["interaction_type"] = interaction_type
+                edge_attrs["rhea_id"] = annot.get("rhea_id", "")
+                edge_attrs["edge_hash"] = hash(frozenset(edge_attrs.items()))
 
-        # Generate a hash for edge deduplication
-        edge_hash = hash(frozenset(edge_attrs.items()))
-        edge_attrs["edge_hash"] = edge_hash
+                if not g.has_node(target_node_label):
+                    node_attrs = MOLECULAR_PATHWAY_NODE_ATTRS.copy()
+                    node_attrs.update(
+                        {
+                            "pathway_id": annot.get("pathway_id", ""),
+                            "pathway_label": annot.get("pathway_label", ""),
+                            "id": target_node_label,
+                        }
+                    )
+                    g.add_node(target_node_label, attr_dict=node_attrs)
 
-        # Handle target gene
-        if not pd.isna(annot.get("targetGene")):
-            target_node_label = (
-                f"{annot['targetGene']}"  # PLACEHOLDER
-            )
+                edge_exists = False
+                if g.has_edge(gene_node_label, target_node_label):
+                    edge_data = g.get_edge_data(gene_node_label, target_node_label)
+                    for edge_key in edge_data:
+                        if (
+                            edge_data[edge_key].get("attr_dict", {}).get("edge_hash")
+                            == edge_attrs["edge_hash"]
+                        ):
+                            edge_exists = True
+                            break
 
-            # Add target gene node if it doesn't exist
-            if not g.has_node(target_node_label):
-                target_node_attrs = (
-                    MOLECULAR_GENE_NODE_ATTRS.copy()
-                )  
-                target_node_attrs["label"] = target_node_label
-                #target_node_attrs["gene_id"] = annot["targetGene"]
-                g.add_node(target_node_label, attr_dict=target_node_attrs)
-
-            # Check if edge already exists
-            edge_data = g.get_edge_data(gene_node_label, target_node_label)
-            edge_data = {} if edge_data is None else edge_data
-            node_exists = [
-                x for x, y in edge_data.items() if y["attr_dict"].get("edge_hash") == edge_hash
-            ]
-
-            if len(node_exists) == 0:
-                g.add_edge(
-                    gene_node_label,
-                    target_node_label,
-                    label=interaction_type.upper(),
-                    attr_dict=edge_attrs,
-                )
-
-        if not pd.isna(annot.get("targetMetabolite")) and annot["targetMetabolite"]:
-            target_node_label = f"metabolite:{annot['targetMetabolite']}"  # PLACEHOLDER: Use your metabolite node label format
-
-            # Add target metabolite node if it doesn't exist
-            if not g.has_node(target_node_label):
-                target_node_attrs = (
-                    MOLECULAR_GENE_NODE_ATTRS.copy()
-                )  # PLACEHOLDER: Define appropriate node attributes
-                target_node_attrs["id"] = annot["targetMetabolite"]
-                g.add_node(target_node_label, attr_dict=target_node_attrs)
-
-            # Check if edge already exists
-            edge_data = g.get_edge_data(gene_node_label, target_node_label)
-            edge_data = {} if edge_data is None else edge_data
-            node_exists = [
-                x for x, y in edge_data.items() if y["attr_dict"].get("edge_hash") == edge_hash
-            ]
-
-            if len(node_exists) == 0:
-                g.add_edge(
-                    gene_node_label,
-                    target_node_label,
-                    label=interaction_type.upper(),
-                    attr_dict=edge_attrs,
-                )
-
+                if not edge_exists:
+                    g.add_edge(
+                        gene_node_label,
+                        target_node_label,
+                        label=interaction_type.upper(),
+                        attr_dict=edge_attrs,
+                    )
     return g
-
-
-def process_molecular_interactions(g, gene_node_label, row):
-    """Process molecular interactions and add them to the graph.
-
-    :param g: the input graph to extend with gene nodes.
-    :param gene_node_label: the gene node to be linked to annotation entities.
-    :param row: row in the combined DataFrame.
-    """
-    if WIKIPATHWAYS_MOLECULAR_COL in row:
-        annot_list = json.loads(json.dumps(row[WIKIPATHWAYS_MOLECULAR_COL]))
-        for item in annot_list:
-            if pd.isna(item["pathway_id"]):
-                annot_list = []
-
-        if not isinstance(annot_list, float):
-            add_wikipathways_molecular_gene(g, gene_node_label, annot_list)
 
 
 def add_gene_node(g, row, dea_columns):
@@ -922,7 +877,7 @@ def process_annotations(g, gene_node_label, row, func_dict):
             annot_list = row[annot_key]
             if not isinstance(annot_list, list):
                 annot_list = []
-        
+
             func_dict[annot_key](g, gene_node_label, annot_list)
 
 
@@ -1013,7 +968,7 @@ def build_networkx_graph(
         OPENTARGETS_GENE_COMPOUND_COL: add_opentargets_gene_compound_subgraph,
         MOLMEDB_PROTEIN_COMPOUND_COL: add_molmedb_gene_inhibitor_subgraph,
         PUBCHEM_COMPOUND_ASSAYS_COL: add_pubchem_assay_subgraph,
-        WIKIPATHWAYS_MOLECULAR_COL: add_wikipathways_molecular_gene
+        WIKIPATHWAYS_MOLECULAR_COL: add_wikipathways_molecular_subgraph,
     }
 
     for _i, row in tqdm(combined_df.iterrows(), total=combined_df.shape[0], desc="Building graph"):
@@ -1072,8 +1027,6 @@ def save_graph(
 
     with open(graph_path_pickle, "wb") as f:
         pickle.dump(g, f)
-        print(type(g))
-        print(type(graph_path_gml))
     nx.write_gml(g, graph_path_gml)
     logger.warning(f"Graph saved in {graph_path_pickle} and {graph_path_gml}")
 

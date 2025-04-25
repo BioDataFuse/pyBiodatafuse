@@ -158,7 +158,7 @@ def get_gene_go_process(
     # Record the end time
     end_time = datetime.datetime.now()
 
-    """Metdata details"""
+    """Metadata details"""
     # Get the current date and time
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # Calculate the time elapsed
@@ -1045,7 +1045,7 @@ def get_disease_compound_interactions(
     # Generate the OpenTargets DataFrame
     intermediate_df = pd.DataFrame()
 
-    if r["data"]["diseases"] is None:
+    if not r.get("data", {}).get("diseases"):
         warnings.warn(
             f"There is no annotation for your input list in {OPENTARGETS_DISEASE_COMPOUND_COL}.",
             stacklevel=2,
