@@ -34,15 +34,15 @@ def get_data_versions(species: str = "hsapiens") -> dict:
 
 def gene_enrichment_gprofiler(
     bridgedb_df: pd.DataFrame,
-    sig_column: str = "padj_dea",
-    sig_threshold: float = 0.01,
+    padj_colname: str = "padj",
+    padj_filter: float = 0.05,
     species: str = "hsapiens",
 ) -> tuple[pd.DataFrame, dict]:
     """Enrichment analysis using g:Profiler for input gene list.
 
     :param bridgedb_df: DataFrame containing gene data with columns "identifier" and a significance column.
-    :param sig_column: Name of the column used to filter significant genes (default is "padj_dea").
-    :param sig_threshold: Significance threshold to filter genes (default is 0.01).
+    :param padj_colname: Name of the column used to filter significant genes (default is "padj").
+    :param padj_filter: Significance threshold to filter genes (default is 0.05).
     :param species: Species code for g:Profiler query, e.g., "hsapiens" for human (default is "hsapiens").
     :returns: A tuple containing:
               - DataFrame containing g:Profiler analysis results.
@@ -52,7 +52,7 @@ def gene_enrichment_gprofiler(
     """
     # Extract the "target" values in bridgedb_df
     data_df = get_identifier_of_interest(bridgedb_df, GPROFILER_GENE_INPUT_ID)
-    query_genes = data_df[data_df[sig_column] <= sig_threshold]["target"].unique().tolist()
+    query_genes = data_df[data_df[f"{padj_colname}_dea"] <= padj_filter]["target"].unique().tolist()
     background_genes = data_df["target"].unique().tolist()
 
     # Record the start time
@@ -148,8 +148,8 @@ def process_gprofiler_data(gprofiler_df: pd.DataFrame) -> pd.DataFrame:
 def get_gene_enrichment(
     bridgedb_df: pd.DataFrame,
     species: str = "hsapiens",
-    sig_column: str = "padj_dea",
-    sig_threshold: float = 0.01,
+    padj_colname: str = "padj",
+    padj_filter: float = 0.05,
 ) -> tuple[pd.DataFrame, dict]:
     """Enrichment analysis using g:Profiler and retrieve version info.
 
@@ -157,16 +157,16 @@ def get_gene_enrichment(
                         and a significance column.
     :param species: species for both version retrieval and g:Profiler query
                      (default is "hsapiens").
-    :param sig_column: Name of the column used to filter significant genes
-                       (default is "padj_dea").
-    :param sig_threshold: Significance threshold to filter genes (default is 0.01).
+    :param padj_colname: Name of the column used to filter significant genes
+                       (default is "padj").
+    :param padj_filter: Significance threshold to filter genes (default is 0.05).
     :returns: A tuple containing:
               - Processed DataFrame from g:Profiler analysis.
               - Dictionary with g:Profiler version information.
     """
     # Perform gene enrichment analysis to get raw g:Profiler results
     gprofiler_df, gprofiler_metadata = gene_enrichment_gprofiler(
-        bridgedb_df=bridgedb_df, sig_column=sig_column, sig_threshold=sig_threshold, species=species
+        bridgedb_df=bridgedb_df, padj_colname=padj_colname, padj_filter=padj_filter, species=species
     )
 
     # Process the raw g:Profiler results
