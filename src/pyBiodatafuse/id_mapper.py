@@ -10,7 +10,7 @@ import os
 import re
 import time
 from importlib import resources
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Literal
 
 import pandas as pd
 import requests
@@ -139,7 +139,50 @@ def get_version_datasource_bridgedb(input_species: Optional[str] = None) -> List
 def bridgedb_xref(
     identifiers: pd.DataFrame,
     input_species: Optional[str] = None,
-    input_datasource: Optional[str] = "HGNC",
+    input_datasource: Literal[
+        "Ensembl",
+        "NCBI Gene",
+        "HGNC",
+        "HGNC Accession Number",
+        "MGI",
+        "miRBase mature sequence",
+        "miRBase Sequence",
+        "OMIM",
+        "RefSeq",
+        "Rfam",
+        "RGD",
+        "SGD",
+        "UCSC Genome Browser",
+        "NCBI Protein",
+        "PDB",
+        "Pfam",
+        "Uniprot-TrEMBL",
+        "Uniprot-SwissProt",
+        "Affy",
+        "Agilent",
+        "Illumina",
+        "Gene Ontology",
+        "CAS",
+        "ChEBI",
+        "ChemSpider",
+        "ChEMBL compound",
+        "DrugBank",
+        "HMDB",
+        "Guide to Pharmacology Ligand ID",
+        "InChIKey",
+        "KEGG Compound",
+        "KEGG Drug",
+        "KEGG Glycan",
+        "LIPID MAPS",
+        "LipidBank",
+        "PharmGKB Drug",
+        "PubChem Compound",
+        "PubChem Substance",
+        "SwissLipids",
+        "TTD Drug",
+        "Wikidata",
+        "Wikipedia",
+    ] = "HGNC",
     output_datasource: Optional[list] = None,
 ) -> Tuple[pd.DataFrame, dict]:
     """Map input list using BridgeDb.
