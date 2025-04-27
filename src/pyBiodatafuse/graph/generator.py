@@ -247,76 +247,102 @@ def add_disgenet_gene_disease_subgraph(g, gene_node_label, annot_list):
     return g
 
 def add_intact_ppi_subgraph(g, gene_node_label, annot_list):
-    """Construct part of the graph by linking the gene to genes via IntAct PPI, filtering based on unique interaction IDs.
-
-    :param g: the input graph to extend with new nodes and edges.
-    :param gene_node_label: the gene node to be linked to other gene nodes.
-    :param annot_list: list of protein-protein interactions from IntAct.
-    :returns: a NetworkX MultiDiGraph
-    """
+    """Construct part of the graph by linking the gene to genes via IntAct PPI, filtering based on unique interaction IDs."""
     seen_interaction_ids = set()
+    edges_seen = {}
 
-    for interaction in annot_list:   
+    for interaction in annot_list:
         partner_gene = interaction.get("intact_link_to")
         if not partner_gene or pd.isna(partner_gene):
-            continue  
-
-        interaction_id = interaction.get("binary_interaction_id", None)
-        if not interaction_id or interaction_id in seen_interaction_ids:
             continue
 
-        edge_attrs = INTACT_PPI_EDGE_ATTRS.copy()
+        interaction_id = interaction.get("binary_interaction_id", None)
+        if not interaction_id:
+            continue
 
-        conf_vals = interaction.get("confidence_values")
-        if isinstance(conf_vals, list):
-            edge_attrs["confidence_values"] = ",".join(map(str, conf_vals))
+        edge_key = (gene_node_label, partner_gene)
+
+        if edge_key not in edges_seen:
+            edge_attrs = INTACT_PPI_EDGE_ATTRS.copy()
+
+            conf_vals = interaction.get("confidence_values")
+            if isinstance(conf_vals, list):
+                edge_attrs["confidence_values"] = ",".join(map(str, conf_vals))
+            else:
+                edge_attrs["confidence_values"] = str(conf_vals) if conf_vals else ""
+
+            if "interaction_id" in interaction:
+                edge_attrs["interaction_id"] = interaction["interaction_id"]
+            if "interactor_id_A" in interaction:
+                edge_attrs["interactor_id_A"] = interaction["interactor_id_A"]
+            if "interactor_id_B" in interaction:
+                edge_attrs["interactor_id_B"] = interaction["interactor_id_B"]
+            if "binary_interaction_id" in interaction:
+                edge_attrs["binary_interaction_id"] = interaction["binary_interaction_id"]
+            if "intact_score" in interaction:
+                edge_attrs["intact_score"] = interaction["intact_score"]
+            if "biological_role_A" in interaction:
+                edge_attrs["biological_role_A"] = interaction["biological_role_A"]
+            if "biological_role_B" in interaction:
+                edge_attrs["biological_role_B"] = interaction["biological_role_B"]
+            if "type" in interaction:
+                edge_attrs["type"] = interaction["type"]
+            if "stoichiometry_A" in interaction:
+                edge_attrs["stoichiometry_A"] = interaction["stoichiometry_A"]
+            if "stoichiometry_B" in interaction:
+                edge_attrs["stoichiometry_B"] = interaction["stoichiometry_B"]
+            if "host_organism" in interaction:
+                edge_attrs["host_organism"] = interaction["host_organism"]
+            if "interactor_A_name" in interaction:
+                edge_attrs["interactor_A_name"] = interaction["interactor_A_name"]
+            if "interactor_B_name" in interaction:
+                edge_attrs["interactor_B_name"] = interaction["interactor_B_name"]
+            if "interactor_A_species" in interaction:
+                edge_attrs["interactor_A_species"] = interaction["interactor_A_species"]
+            if "interactor_B_species" in interaction:
+                edge_attrs["interactor_B_species"] = interaction["interactor_B_species"]
+            if "molecule_A" in interaction:
+                edge_attrs["molecule_A"] = interaction["molecule_A"]
+            if "molecule_B" in interaction:
+                edge_attrs["molecule_B"] = interaction["molecule_B"]
+            if "pubmed_publication_id" in interaction:
+                edge_attrs["pubmed_publication_id"] = interaction["pubmed_publication_id"]
+            if "id_A" in interaction:
+                edge_attrs["id_A"] = interaction["id_A"]
+            if "id_B" in interaction:
+                edge_attrs["id_B"] = interaction["id_B"]
+
+            interaction_type = interaction["type"]
+            detection_method = interaction.get("detection_method")
+            if detection_method:
+                edge_attrs["detection_method"] = [detection_method]
+            else:
+                edge_attrs["detection_method"] = []
+
+            if "detection_method_id" in interaction:
+                edge_attrs["detection_method_id"] = interaction["detection_method_id"]
+
+            edges_seen[edge_key] = edge_attrs
+
         else:
-            edge_attrs["confidence_values"] = str(conf_vals) if conf_vals else ""
+            # If we've seen this edge already, append detection methods
+            detection_method = interaction.get("detection_method")
+            if detection_method:
+                if isinstance(edges_seen[edge_key]["detection_method"], list):
+                    edges_seen[edge_key]["detection_method"].append(detection_method)
+                else:
+                    edges_seen[edge_key]["detection_method"] = [edges_seen[edge_key]["detection_method"], detection_method]
 
-        if "interaction_id" in interaction:
-            edge_attrs["interaction_id"] = interaction["interaction_id"]
-        if "interactor_id_A" in interaction:
-            edge_attrs["interactor_id_A"] = interaction["interactor_id_A"]
-        if "interactor_id_B" in interaction:
-            edge_attrs["interactor_id_B"] = interaction["interactor_id_B"]
-        if "binary_interaction_id" in interaction:
-            edge_attrs["binary_interaction_id"] = interaction["binary_interaction_id"]
-        if "intact_score" in interaction:
-            edge_attrs["intact_score"] = interaction["intact_score"]
-        if "biological_role_A" in interaction:
-            edge_attrs["biological_role_A"] = interaction["biological_role_A"]
-        if "biological_role_B" in interaction:
-            edge_attrs["biological_role_B"] = interaction["biological_role_B"]
-        if "type" in interaction:
-            edge_attrs["type"] = interaction["type"]
-        if "stoichiometry_A" in interaction:
-            edge_attrs["stoichiometry_A"] = interaction["stoichiometry_A"]
-        if "stoichiometry_B" in interaction:
-            edge_attrs["stoichiometry_B"] = interaction["stoichiometry_B"]
-        if "detection_method" in interaction:
-            edge_attrs["detection_method"] = interaction["detection_method"]
-        if "detection_method_id" in interaction:
-            edge_attrs["detection_method_id"] = interaction["detection_method_id"]
-        if "host_organism" in interaction:
-            edge_attrs["host_organism"] = interaction["host_organism"]
-        if "interactor_A_name" in interaction:
-            edge_attrs["interactor_A_name"] = interaction["interactor_A_name"]
-        if "interactor_B_name" in interaction:
-            edge_attrs["interactor_B_name"] = interaction["interactor_B_name"]
-        if "interactor_A_species" in interaction:
-            edge_attrs["interactor_A_species"] = interaction["interactor_A_species"]
-        if "interactor_B_species" in interaction:
-            edge_attrs["interactor_B_species"] = interaction["interactor_B_species"]
-        if "molecule_A" in interaction:
-            edge_attrs["molecule_A"] = interaction["molecule_A"]
-        if "molecule_B" in interaction:
-            edge_attrs["molecule_B"] = interaction["molecule_B"]
-        if "pubmed_publication_id" in interaction:
-            edge_attrs["pubmed_publication_id"] = interaction["pubmed_publication_id"]
-        if "id_A" in interaction:
-            edge_attrs["id_A"] = interaction["id_A"]
-        if "id_B" in interaction:
-            edge_attrs["id_B"] = interaction["id_B"]
+        seen_interaction_ids.add(interaction_id)
+
+    # After processing all, add edges to graph
+    for (source, target), edge_attrs in edges_seen.items():
+        # Deduplicate detection methods and join them
+        if "detection_method" in edge_attrs:
+            methods = edge_attrs["detection_method"]
+            if isinstance(methods, list):
+                methods = list(set(methods))  # remove duplicates
+                edge_attrs["detection_method"] = ",".join(map(str, methods))
 
         for k, v in edge_attrs.items():
             if isinstance(v, list):
@@ -326,15 +352,11 @@ def add_intact_ppi_subgraph(g, gene_node_label, annot_list):
         edge_attrs["edge_hash"] = edge_hash
 
         g.add_edge(
-            gene_node_label,
-            partner_gene,
-            label=INTACT_PPI_EDGE_LABEL,
+            source,
+            target,
+            label=interaction_type,
             attr_dict=edge_attrs,
         )
-
-        edge_data = g.get_edge_data(gene_node_label, partner_gene)
-        
-        seen_interaction_ids.add(interaction_id)
 
     return g
 

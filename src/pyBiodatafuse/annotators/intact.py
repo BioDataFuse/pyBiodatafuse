@@ -47,16 +47,6 @@ def check_endpoint_intact() -> bool:
 #         return {"source_version": "unknown"}
 
 
-def get_compound_related_interactions():
-    response = requests.get(f"{INTACT_ENDPOINT}/ws/interaction/search/CHEBI", timeout=10)
-    if response.status_code != 200:
-        print("Failed to query IntAct.")
-        return []
-
-    data = response.json()
-    return data.get("content", [])
-
-
 def clean_id(identifier: str) -> str:
     """Strip the source suffix (e.g., ' (uniprotkb)') from an identifier string.
 
@@ -73,6 +63,7 @@ def get_intact_interactions(gene_id: str):
     :returns: List of interactions for the given gene
     """
     response = requests.get(f"{INTACT_ENDPOINT}/ws/interaction/findInteractions/{gene_id}")
+    print(gene_id)
 
     if response.status_code == 200:
         data = response.json()
@@ -264,6 +255,10 @@ def get_interactions(bridgedb_df: pd.DataFrame):
 
     # Get identifiers of interest
     data_df = get_identifier_of_interest(bridgedb_df, INTACT_GENE_INPUT_ID)
+    if isinstance(data_df, tuple):
+        data_df = data_df[0]
+    data_df = data_df[data_df["target.source"] == INTACT_GENE_INPUT_ID].reset_index(drop=True)
+
     uniprot_data_df = get_identifier_of_interest(bridgedb_df, "Uniprot-TrEMBL")
 
     if isinstance(data_df, tuple):
@@ -276,6 +271,7 @@ def get_interactions(bridgedb_df: pd.DataFrame):
     for _, row in uniprot_data_df.iterrows():
         ensembl_id = row["identifier"]
         uniprot_id = row["target"]
+        print(ensembl_id, uniprot_id)
         if ensembl_id not in uniprot_map:
             uniprot_map[ensembl_id] = []
         uniprot_map[ensembl_id].append(uniprot_id)
@@ -343,6 +339,7 @@ def get_compound_interactions(bridgedb_df: pd.DataFrame):
 
     # Get identifiers of interest
     data_df = get_identifier_of_interest(bridgedb_df, INTACT_GENE_INPUT_ID)
+    data_df = data_df[data_df["target.source"] == INTACT_GENE_INPUT_INPUT_ID].reset_index(drop=True)
 
     if isinstance(data_df, tuple):
         data_df = data_df[0]
