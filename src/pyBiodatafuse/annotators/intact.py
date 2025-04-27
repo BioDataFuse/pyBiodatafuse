@@ -239,10 +239,11 @@ def get_compound_filtered_interactions(gene_id: str) -> list:
     return filtered
 
 
-def get_interactions(bridgedb_df: pd.DataFrame):
+def get_interactions(bridgedb_df: pd.DataFrame, data_type: str = "gene"):
     """Annotate genes with interaction data from IntAct.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
+    :param data_type: Either 'gene' or 'compound', depending on the input data
     :returns: a tuple (DataFrame containing the IntAct output, metadata dictionary)
     """
     api_available = check_endpoint_intact()
@@ -250,16 +251,10 @@ def get_interactions(bridgedb_df: pd.DataFrame):
         warnings.warn("IntAct API endpoint is unavailable. Cannot retrieve data.", stacklevel=2)
         return pd.DataFrame(), {}
 
-    # intact_version = check_version_intact()
     start_time = datetime.datetime.now()
 
     # Get identifiers of interest
     data_df = get_identifier_of_interest(bridgedb_df, INTACT_GENE_INPUT_ID)
-    if isinstance(data_df, tuple):
-        data_df = data_df[0]
-    data_df = data_df[data_df["target.source"] == INTACT_GENE_INPUT_ID].reset_index(drop=True)
-
-    uniprot_data_df = get_identifier_of_interest(bridgedb_df, "Uniprot-TrEMBL")
 
     if isinstance(data_df, tuple):
         data_df = data_df[0]
@@ -267,40 +262,35 @@ def get_interactions(bridgedb_df: pd.DataFrame):
     data_df = data_df.reset_index(drop=True)
     ensembl_gene_list = set(data_df["target"].tolist())
 
-    uniprot_map = {}
-    for _, row in uniprot_data_df.iterrows():
-        ensembl_id = row["identifier"]
-        uniprot_id = row["target"]
-        print(ensembl_id, uniprot_id)
-        if ensembl_id not in uniprot_map:
-            uniprot_map[ensembl_id] = []
-        uniprot_map[ensembl_id].append(uniprot_id)
-
     ensembl_to_input_id = {}
     for _, row in data_df.iterrows():
         input_id = row["identifier"]
         ensembl_id = row["target"]
         ensembl_to_input_id[ensembl_id] = input_id
 
-    ensembl_to_intact_map = {
-        ensembl_id: get_protein_intact_acs(ensembl_id)
-        for ensembl_id in ensembl_gene_list
-    }
-        
-    intact_ac_to_ensembl = {
-        ac: ensembl for ensembl, acs in ensembl_to_intact_map.items() for ac in acs
-    }
+    if data_type == "gene":
+        ensembl_to_intact_map = {
+            ensembl_id: get_protein_intact_acs(ensembl_id)
+            for ensembl_id in ensembl_gene_list
+        }
+            
+        intact_ac_to_ensembl = {
+            ac: ensembl for ensembl, acs in ensembl_to_intact_map.items() for ac in acs
+        }
 
-    valid_intact_acs = {ac for acs in ensembl_to_intact_map.values() for ac in acs}
+        valid_intact_acs = {ac for acs in ensembl_to_intact_map.values() for ac in acs}
 
-    # Retrieve interactions from IntAct using input IDs
-    intact_interactions = []
-    for ensembl_id in ensembl_gene_list:
-        intact_interactions.extend(get_intact_interactions(ensembl_id))
+        data_df[INTACT_INTERACT_COL] = data_df["target"].apply(
+            lambda gene_id: get_filtered_interactions(gene_id, valid_intact_acs, intact_ac_to_ensembl, ensembl_to_input_id)
+        )
 
-    data_df[INTACT_INTERACT_COL] = data_df["target"].apply(
-    lambda gene_id: get_filtered_interactions(gene_id, valid_intact_acs, intact_ac_to_ensembl, ensembl_to_input_id)
-    )
+    elif data_type == "compound":
+        data_df[INTACT_INTERACT_COL] = data_df["target"].apply(
+            lambda gene_id: get_intact_interactions(gene_id)
+        )
+
+    else:
+        raise ValueError(f"Invalid data_type: {data_type}. Must be 'gene' or 'compound'.")
 
     end_time = datetime.datetime.now()
     time_elapsed = str(end_time - start_time)
@@ -339,7 +329,6 @@ def get_compound_interactions(bridgedb_df: pd.DataFrame):
 
     # Get identifiers of interest
     data_df = get_identifier_of_interest(bridgedb_df, INTACT_GENE_INPUT_ID)
-    data_df = data_df[data_df["target.source"] == INTACT_GENE_INPUT_INPUT_ID].reset_index(drop=True)
 
     if isinstance(data_df, tuple):
         data_df = data_df[0]
