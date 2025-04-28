@@ -9,7 +9,7 @@ import re
 import time
 import warnings
 from string import Template
-from typing import Any, Dict
+from typing import Any, Dict, Type
 
 import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
@@ -96,7 +96,7 @@ def get_gene_wikipathways(
     gene_list = list(set(gene_list))
 
     query_gene_lists = []
-
+    output_dict: Dict[str, Type]
     if len(gene_list) > 25:
         for i in range(0, len(gene_list), 25):
             tmp_list = gene_list[i : i + 25]
@@ -109,11 +109,11 @@ def get_gene_wikipathways(
     col_name = ""
     if query_interactions:
         file = os.path.join("queries", "wikipathways-mims.rq")
-        output_dict = output_dict = {key: str for key in WIKIPATHWAYS_MOLECULAR_GENE_OUTPUT_DICT.keys()}
+        output_dict = WIKIPATHWAYS_MOLECULAR_GENE_OUTPUT_DICT
         col_name = WIKIPATHWAYS_MOLECULAR_COL
     else:
         file = os.path.join("queries", "wikipathways-genes-pathways.rq")
-        output_dict = output_dict = {key: str for key in WIKIPATHWAYS_PATHWAYS_OUTPUT_DICT.keys()}
+        output_dict = WIKIPATHWAYS_PATHWAYS_OUTPUT_DICT
         col_name = WIKIPATHWAYS
     with open(os.path.join(os.path.dirname(__file__), file), "r", encoding="utf-8") as fin:
         sparql_query = fin.read()
@@ -207,6 +207,8 @@ def get_gene_wikipathways(
             .str.removeprefix("http://vocabularies.wikipathways.org/wp#")
             .fillna("")
         )
+    else:
+        intermediate_df["pathway_gene_count"] = pd.to_numeric(intermediate_df["pathway_gene_count"], errors="coerce")
     # Organize the annotation results as an array of dictionaries
     intermediate_df.rename(columns={"gene_id": "target"}, inplace=True)
     if not query_interactions:
@@ -246,13 +248,13 @@ def get_gene_wikipathways(
     num_new_nodes = intermediate_df["pathway_id"].nunique()
     # Calculate the number of new edges
     num_new_edges = intermediate_df.drop_duplicates(subset=["target", "pathway_id"]).shape[0]
-
-    # Check the intermediate_df
-    if num_new_edges != len(intermediate_df):
-        warnings.warn(
-            f"The intermediate_df in {WIKIPATHWAYS} annotator should be checked, please create an issue on https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
-            stacklevel=2,
-        )
+    if not query_interactions:
+        # Check the intermediate_df
+        if num_new_edges != len(intermediate_df):
+            warnings.warn(
+                f"The intermediate_df in {WIKIPATHWAYS} annotator should be checked, please create an issue on https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
+                stacklevel=2,
+            )
 
     # Add the number of new nodes and edges to metadata
     wikipathways_metadata["query"]["number_of_added_nodes"] = num_new_nodes
