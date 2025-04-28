@@ -12,7 +12,7 @@ from pyBiodatafuse.graph.rdf.nodes.compound import add_compound_gene_node
 
 def add_aop_compound_node(args):
     """
-    Placeholder.
+    Add placeholder.
 
     :param args: Arguments for adding the AOP compound node.
     :return: None
@@ -22,7 +22,7 @@ def add_aop_compound_node(args):
 
 def add_aop_gene_node(args):
     """
-    Placeholder.
+    Add placeholder.
 
     :param args: Arguments for adding the gene node.
     :return: None

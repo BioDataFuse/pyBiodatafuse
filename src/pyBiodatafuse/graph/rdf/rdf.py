@@ -411,6 +411,7 @@ class BDFGraph(Graph):
         """
         Process transporter inhibited data and add to the RDF graph.
 
+        :param compound_node: The compound node to which the transporter inhibited data will be added.
         :param transporter_inhibited_data: A list of transporter inhibitor data entries to be processed.
         """
         if transporter_inhibited_data:
@@ -445,6 +446,7 @@ class BDFGraph(Graph):
     def process_aop_compound_data(self, aop_compound_data):
         """
         Process AOP Wiki compound data and add to the RDF graph.
+
         :param aop_compound_data: A list of AOP compound data entries to be processed.
         """
         if aop_compound_data:
