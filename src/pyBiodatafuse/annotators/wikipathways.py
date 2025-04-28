@@ -138,10 +138,6 @@ def get_gene_wikipathways(
             substit_dict = dict(gene_list=gene_list_str)
         sparql_query_template_sub = sparql_query_template.substitute(substit_dict)
         sparql.setQuery(sparql_query_template_sub)
-        # Save the query to a file for debugging purposes
-        debug_query_file = os.path.join(os.path.dirname(__file__), "debug_query.rq")
-        with open(debug_query_file, "w", encoding="utf-8") as debug_file:
-            debug_file.write(sparql_query_template_sub)
 
         result = sparql.queryAndConvert()
 
