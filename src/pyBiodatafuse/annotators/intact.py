@@ -15,8 +15,8 @@ import requests
 
 from pyBiodatafuse.constants import (
     INTACT,
-    INTACT_COMPOUND_INTERACT_COL,
     INTACT_COMPOUND_INPUT_ID,
+    INTACT_COMPOUND_INTERACT_COL,
     INTACT_ENDPOINT,
     INTACT_GENE_INPUT_ID,
     INTACT_INTERACT_COL,
@@ -278,13 +278,14 @@ def get_interactions(bridgedb_df: pd.DataFrame, data_type: str = "gene"):
             input_id = f"ChEBI:{row['identifier']}"
         else:
             input_id = row["identifier"]
-        
+
         id_of_interest = row["target"]
         ensembl_to_input_id[id_of_interest] = input_id
 
     if data_type == "gene":
         ensembl_to_intact_map = {
-            id_of_interest: get_protein_intact_acs(id_of_interest) for id_of_interest in ensembl_gene_list
+            id_of_interest: get_protein_intact_acs(id_of_interest)
+            for id_of_interest in ensembl_gene_list
         }
 
         intact_ac_to_ensembl = {
@@ -325,11 +326,12 @@ def get_interactions(bridgedb_df: pd.DataFrame, data_type: str = "gene"):
     return data_df, intact_metadata
 
 
-def get_compound_interactions(bridgedb_df: pd.DataFrame, data_type: str = "compound"):
+def get_compound_interactions(bridgedb_df: pd.DataFrame, data_type: str = "gene"):
     """Annotate genes with compound-related interaction data from IntAct.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
     :param data_type: Either 'gene' or 'compound'
+    :raises ValueError: If an invalid data_type is provided.
     :returns: a tuple (DataFrame containing the IntAct output, metadata dictionary)
     """
     api_available = check_endpoint_intact()
@@ -353,7 +355,12 @@ def get_compound_interactions(bridgedb_df: pd.DataFrame, data_type: str = "compo
     data_df = data_df.reset_index(drop=True)
     ensembl_gene_list = set(data_df["target"].tolist())
 
-    if data_type == "compound":
+    if data_type == "gene":
+        data_df[INTACT_COMPOUND_INTERACT_COL] = data_df["target"].apply(
+            lambda gene_id: get_compound_filtered_interactions(f"{gene_id}")
+        )
+
+    elif data_type == "compound":
         data_df[INTACT_COMPOUND_INTERACT_COL] = data_df["target"].apply(
             lambda compound_id: get_compound_filtered_interactions(f"ChEBI:{compound_id}")
         )
