@@ -9,7 +9,7 @@ import re
 import time
 import warnings
 from string import Template
-from typing import Any, Dict, Type
+from typing import Any, Dict, Mapping, Type
 
 import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
@@ -96,7 +96,7 @@ def get_gene_wikipathways(
     gene_list = list(set(gene_list))
 
     query_gene_lists = []
-    output_dict: Dict[str, Type]
+    output_dict: Dict[Any, Any]
     if len(gene_list) > 25:
         for i in range(0, len(gene_list), 25):
             tmp_list = gene_list[i : i + 25]
@@ -208,7 +208,9 @@ def get_gene_wikipathways(
             .fillna("")
         )
     else:
-        intermediate_df["pathway_gene_count"] = pd.to_numeric(intermediate_df["pathway_gene_count"], errors="coerce")
+        intermediate_df["pathway_gene_count"] = pd.to_numeric(
+            intermediate_df["pathway_gene_count"], errors="coerce"
+        )
     # Organize the annotation results as an array of dictionaries
     intermediate_df.rename(columns={"gene_id": "target"}, inplace=True)
     if not query_interactions:

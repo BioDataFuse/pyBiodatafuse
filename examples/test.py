@@ -23,6 +23,7 @@ from pyBiodatafuse.utils import (
     create_harmonized_input_file,
     create_or_append_to_metadata,
 )
+
 genes_of_interest = """PIK3CA
 BRCA2
 TP53"""

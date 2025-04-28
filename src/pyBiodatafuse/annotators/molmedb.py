@@ -6,10 +6,10 @@
 import datetime
 import os
 import warnings
+from math import isnan
 from string import Template
 from typing import Any, Dict, Tuple
 
-from math import isnan
 import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
 
@@ -364,7 +364,7 @@ def get_unique_dicts(list_of_list_of_dicts: list) -> list:
         for d in list_of_dicts:
             # Convert dictionary to frozenset of its items (which is hashable)
             dict_items = frozenset(d.items())
-            if not isinstance(d['inchikey'], str) and isnan(d['inchikey']):
+            if not isinstance(d["inchikey"], str) and isnan(d["inchikey"]):
                 empty = d
                 continue
             if dict_items not in seen:
