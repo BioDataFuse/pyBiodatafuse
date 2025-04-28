@@ -106,7 +106,6 @@ def get_gene_wikipathways(
         if query_interactions:
             gene_list = [f"<https://identifiers.org/ncbigene/{g}>" for g in gene_list]
         query_gene_lists.append(" ".join(g for g in gene_list))
-    print(query_gene_lists)
     col_name = ""
     if query_interactions:
         file = os.path.join("queries", "wikipathways-mims.rq")
