@@ -308,7 +308,7 @@ def get_interactions(bridgedb_df: pd.DataFrame, data_type: str = "gene"):
     end_time = datetime.datetime.now()
     time_elapsed = str(end_time - start_time)
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    num_new_edges = sum(data_df["IntAct_interactions"].apply(len))
+    num_new_edges = sum(data_df[INTACT_INTERACT_COL].apply(len))
 
     intact_metadata = {
         "datasource": INTACT,
@@ -330,7 +330,7 @@ def get_compound_interactions(bridgedb_df: pd.DataFrame, data_type: str = "gene"
     """Annotate genes with compound-related interaction data from IntAct.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
-    :param data_type: Either 'gene' or 'compound', depending on the input 
+    :param data_type: Either 'gene' or 'compound', depending on the input
     :raises ValueError: If an invalid data_type is provided.
     :returns: a tuple (DataFrame containing the IntAct output, metadata dictionary)
     """
@@ -355,12 +355,11 @@ def get_compound_interactions(bridgedb_df: pd.DataFrame, data_type: str = "gene"
     data_df = data_df.reset_index(drop=True)
     ensembl_gene_list = set(data_df["target"].tolist())
 
-    # Log raw identifiers to check if they are correct
-    if data_type == "compound":
-        print(f"Raw Compound Identifiers: {data_df['identifier'].tolist()}")  # Debugging step
-
-    # Format identifiers for compounds if data_type is "compound"
-    if data_type == "compound":
+    if data_type == "gene":
+        data_df[INTACT_COMPOUND_INTERACT_COL] = data_df["target"].apply(
+            lambda gene_id: get_compound_filtered_interactions(gene_id)
+        )
+    elif data_type == "compound":
         data_df[INTACT_COMPOUND_INTERACT_COL] = data_df["target"].apply(
             lambda compound_id: get_compound_filtered_interactions(f"ChEBI:{compound_id}")
         )

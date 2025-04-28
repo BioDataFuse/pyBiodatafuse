@@ -1047,6 +1047,14 @@ def add_stringdb_ppi_subgraph(g, gene_node_label, annot_list):
     :returns: a NetworkX MultiDiGraph
     """
     for ppi in annot_list:
+        if pd.isna(ppi[STRING_PPI_EDGE_MAIN_LABEL]):
+            continue
+
+        node1 = str(gene_node_label)
+        node2 = str(ppi[STRING_PPI_EDGE_MAIN_LABEL])
+
+        source_node, target_node = sorted([node1, node2])
+
         edge_attrs = STRING_PPI_EDGE_ATTRS.copy()
         edge_attrs["score"] = ppi["score"]
 
@@ -1056,19 +1064,8 @@ def add_stringdb_ppi_subgraph(g, gene_node_label, annot_list):
 
         edge_data = {} if edge_data is None else edge_data
         node_exists = [x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash]
-        if len(node_exists) == 0 and not pd.isna(ppi[STRING_PPI_EDGE_MAIN_LABEL]):
-            g.add_edge(
-                gene_node_label,
-                ppi[STRING_PPI_EDGE_MAIN_LABEL],
-                label=STRING_PPI_EDGE_LABEL,
-                attr_dict=edge_attrs,
-            )
-            g.add_edge(
-                ppi[STRING_PPI_EDGE_MAIN_LABEL],
-                gene_node_label,
-                label=STRING_PPI_EDGE_LABEL,
-                attr_dict=edge_attrs,
-            )
+        if not g.has_edge(source_node, target_node):
+            g.add_edge(source_node, target_node, label=STRING_PPI_EDGE_LABEL, attr_dict=edge_attrs)
 
     return g
 
