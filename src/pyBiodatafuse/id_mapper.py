@@ -10,7 +10,7 @@ import os
 import re
 import time
 from importlib import resources
-from typing import List, Optional, Tuple, Literal
+from typing import List, Literal, Optional, Tuple
 
 import pandas as pd
 import requests

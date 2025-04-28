@@ -106,16 +106,17 @@ def get_gene_wikipathways(
         if query_interactions:
             gene_list = [f"<https://identifiers.org/ncbigene/{g}>" for g in gene_list]
         query_gene_lists.append(" ".join(g for g in gene_list))
+    print(query_gene_lists)
     col_name = ""
     if query_interactions:
-        file = "/queries/wikipathways-mims.rq"
+        file = os.path.join("queries", "wikipathways-mims.rq")
         output_dict = WIKIPATHWAYS_MOLECULAR_GENE_OUTPUT_DICT
         col_name = WIKIPATHWAYS_MOLECULAR_COL
     else:
-        file = "/queries/wikipathways-genes-pathways.rq"
+        file = os.path.join("queries", "wikipathways-genes-pathways.rq")
         output_dict = WIKIPATHWAYS_PATHWAYS_OUTPUT_DICT
         col_name = WIKIPATHWAYS
-    with open(os.path.dirname(__file__) + file, "r") as fin:
+    with open(os.path.join(os.path.dirname(__file__), file), "r", encoding="utf-8") as fin:
         sparql_query = fin.read()
 
     # Record the start time
@@ -137,6 +138,10 @@ def get_gene_wikipathways(
             substit_dict = dict(gene_list=gene_list_str)
         sparql_query_template_sub = sparql_query_template.substitute(substit_dict)
         sparql.setQuery(sparql_query_template_sub)
+        # Save the query to a file for debugging purposes
+        debug_query_file = os.path.join(os.path.dirname(__file__), "debug_query.rq")
+        with open(debug_query_file, "w", encoding="utf-8") as debug_file:
+            debug_file.write(sparql_query_template_sub)
 
         result = sparql.queryAndConvert()
 
@@ -184,22 +189,28 @@ def get_gene_wikipathways(
         return pd.DataFrame(), wikipathways_metadata
     # Fix identifiers
     intermediate_df["gene_id"] = (
-        df["gene_id"].str.removeprefix("https://identifiers.org/ncbigene/").fillna("")
+        intermediate_df["gene_id"].str.removeprefix("https://identifiers.org/ncbigene/").fillna("")
     )
     if query_interactions:
         intermediate_df["targetGene"] = (
-            df["targetGene"].str.removeprefix("https://identifiers.org/ncbigene/").fillna("")
+            intermediate_df["targetGene"]
+            .str.removeprefix("https://identifiers.org/ncbigene/")
+            .fillna("")
         )
         intermediate_df["targetMetabolite"] = (
-            df["targetMetabolite"]
+            intermediate_df["targetMetabolite"]
             .str.removeprefix("http://rdf.ncbi.nlm.nih.gov/pubchem/compound/")
             .fillna("")
         )
         intermediate_df["targetProtein"] = (
-            df["targetProtein"].str.removeprefix("https://identifiers.org/uniprot/").fillna("")
+            intermediate_df["targetProtein"]
+            .str.removeprefix("https://identifiers.org/uniprot/")
+            .fillna("")
         )
         intermediate_df["mimtype"] = (
-            df["mimtype"].str.removeprefix("http://vocabularies.wikipathways.org/wp#").fillna("")
+            intermediate_df["mimtype"]
+            .str.removeprefix("http://vocabularies.wikipathways.org/wp#")
+            .fillna("")
         )
     # Organize the annotation results as an array of dictionaries
     intermediate_df.rename(columns={"gene_id": "target"}, inplace=True)

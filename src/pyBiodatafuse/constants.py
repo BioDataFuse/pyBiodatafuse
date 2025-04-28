@@ -155,7 +155,7 @@ AOPWIKI_GENE_OUTPUT_DICT = {
     "KE_upstream_title": str,
     "KE_upstream_organ": str,
     "KE_downstream_organ": str,
-    "pubchem_compound" : str
+    "pubchem_compound": str,
 }
 
 AOPWIKI_COMPOUND_OUTPUT_DICT = {
@@ -427,13 +427,12 @@ GENE_PATHWAY_EDGE_ATTRS = {"datasource": None, "label": GENE_PATHWAY_EDGE_LABEL}
 # molecular pathway node
 MOLECULAR_PATHWAY_NODE_LABELS = "Pathway"
 MOLECULAR_PATHWAY_NODE_MAIN_LABEL = "pathway_id"
-MOLECULAR_GENE_NODE_ATTRS = {"datasource": WIKIPATHWAYS, "label": 
-                             ''}
+MOLECULAR_GENE_NODE_ATTRS = {"datasource": WIKIPATHWAYS, "label": ""}
 MOLECULAR_PATHWAY_NODE_ATTRS = {
     "pathway_id": "str",
     "pathway_label": "str",
     "id": "str",
-    "labels": MOLECULAR_PATHWAY_NODE_LABELS
+    "labels": MOLECULAR_PATHWAY_NODE_LABELS,
 }
 MOLECULAR_GENE_PATHWAY_EDGE_LABEL = ""  # todo
 MOLECULAR_INTERACTION_EDGE_ATTRS = {"interaction_type": "str", "rhea_id": str}

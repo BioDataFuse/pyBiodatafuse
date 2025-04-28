@@ -977,6 +977,7 @@ def add_wikipathways_molecular_subgraph(g, gene_node_label, annot_list):
                         label=interaction_type.upper(),
                         attr_dict=edge_attrs,
                     )
+    return g
 
 
 def add_ensembl_homolog_subgraph(g, gene_node_label, annot_list):

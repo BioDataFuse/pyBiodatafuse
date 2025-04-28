@@ -169,7 +169,9 @@ class BDFGraph(Graph):
                 self.process_protein_variants(protein_nodes)
             self.process_aop_gene_data(row.get(AOPWIKI_GENE_COL))
         if compound_node:
-            self.process_transporter_inhibited_data(row.get(MOLMEDB_COMPOUND_PROTEIN_COL))
+            self.process_transporter_inhibited_data(
+                compound_node, row.get(MOLMEDB_COMPOUND_PROTEIN_COL)
+            )
             self.process_aop_compound_data(row.get(AOPWIKI_COMPOUND_COL))
 
     def generate_rdf(self, df: pd.DataFrame, metadata: dict, open_only: bool = False):
@@ -405,7 +407,7 @@ class BDFGraph(Graph):
             for entry in transporter_inhibitor_data:
                 self._add_transporter_inhibitor_node(entry)
 
-    def process_transporter_inhibited_data(self, transporter_inhibited_data):
+    def process_transporter_inhibited_data(self, compound_node, transporter_inhibited_data):
         """
         Process transporter inhibited data and add to the RDF graph.
 
@@ -413,7 +415,7 @@ class BDFGraph(Graph):
         """
         if transporter_inhibited_data:
             for entry in transporter_inhibited_data:
-                self._add_transporter_inhibited_node(entry)
+                self._add_transporter_inhibited_node(compound_node, entry)
 
     def process_protein_variants(self, protein_nodes):
         """
@@ -433,6 +435,7 @@ class BDFGraph(Graph):
     def process_aop_gene_data(self, aop_gene_data):
         """
         Process AOP Wiki gene data and add to the RDF graph.
+
         :param aop_gene_data: A list of AOP gene data entries to be processed.
         """
         if aop_gene_data:
@@ -513,11 +516,11 @@ class BDFGraph(Graph):
         """Add compound data to the RDF graph and associate it with a protein node.
 
         :param row: A pandas DataFrame row.
+        :return: A URIRef for the compound node.
         """
         sources = self.metabolite_sources
         compound_node = None
         if row["identifier.source"] in sources:
-            print(iri)
             iri = SOURCE_NAMESPACES[row["identifier.source"]] + row.identifier
             self.add(URIRef(iri))
             compound_node = URIRef(iri)
@@ -532,7 +535,7 @@ class BDFGraph(Graph):
         """Add compound data to the RDF graph and associate it with a protein node.
 
         :param compound: Compound data to be added.
-        :param protein_node: Node representing the associated protein.
+        :param gene_node: Node representing the associated gene.
         """
         add_compound_gene_node(self, compound, gene_node)
 
@@ -547,6 +550,7 @@ class BDFGraph(Graph):
         """Add transporter inhibitor data to the RDF graph.
 
         :param entry: Data for the transporter inhibitor.
+        :param compound_node: URIRef representing the compound.
         """
         add_transporter_inhibited_node(self, compound_node, entry, self.base_uri)
 
@@ -589,17 +593,23 @@ class BDFGraph(Graph):
     def _add_aop_gene_node(self, entry):
         """
         Add AOP Wiki gene data to the RDF graph.
+
         :param entry: Data for the AOP gene.
+        :return: None
         """
         # Implementation for adding AOP gene node
+        print(entry)
         return None
 
     def _add_aop_compound_node(self, entry):
         """
         Add AOP Wiki compound data to the RDF graph.
+
         :param entry: Data for the AOP compound.
+        :return: None
         """
         # Implementation for adding AOP compound node
+        print(entry)
         return None
 
     def _add_metadata(self, metadata):

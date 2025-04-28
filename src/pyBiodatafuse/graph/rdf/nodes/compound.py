@@ -125,12 +125,13 @@ def add_transporter_inhibited_node(
     """Add a transporter inhibitor node to the RDF graph.
 
     :param g: RDF graph to which the transporter inhibitor node is added.
+    :param compound_node: URIRef of the compound node associated with the inhibitor function.
     :param inhibitor_data: Dictionary containing transporter inhibitor data (e.g., "compound_cid", "inchikey").
     :param base_uri: The base URI for constructing nodes in the graph.
     """
     uniprot_id = inhibitor_data.get("uniprot_trembl_id")
-    hgnc = inhibitor_data.get("hgnc_symbol")
-    source_pmid = inhibitor_data.get("source_pmid")
+    #  hgnc = inhibitor_data.get("hgnc_symbol")
+    #  source_pmid = inhibitor_data.get("source_pmid")
     compound_cid = g.value(compound_node, RDFS.label)
     if uniprot_id:
         # Add relationship
