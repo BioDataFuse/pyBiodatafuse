@@ -110,11 +110,11 @@ def get_gene_wikipathways(
     col_name = ""
     if query_interactions:
         file = os.path.join("queries", "wikipathways-mims.rq")
-        output_dict = WIKIPATHWAYS_MOLECULAR_GENE_OUTPUT_DICT
+        output_dict = output_dict = {key: str for key in WIKIPATHWAYS_MOLECULAR_GENE_OUTPUT_DICT.keys()}
         col_name = WIKIPATHWAYS_MOLECULAR_COL
     else:
         file = os.path.join("queries", "wikipathways-genes-pathways.rq")
-        output_dict = WIKIPATHWAYS_PATHWAYS_OUTPUT_DICT
+        output_dict = output_dict = {key: str for key in WIKIPATHWAYS_PATHWAYS_OUTPUT_DICT.keys()}
         col_name = WIKIPATHWAYS
     with open(os.path.join(os.path.dirname(__file__), file), "r", encoding="utf-8") as fin:
         sparql_query = fin.read()
