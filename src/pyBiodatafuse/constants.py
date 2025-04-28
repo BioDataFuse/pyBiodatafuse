@@ -509,10 +509,7 @@ KEGG_COMPOUND_EDGE_ATTRS = {
 # IntAct interactions
 INTACT_PPI_EDGE_LABEL = "intact_interaction"
 INTACT_PPI_EDGE_MAIN_LABEL = "intact_link_to"
-INTACT_PPI_EDGE_ATTRS = {
-    "source": INTACT,
-    "type": "interaction"
-}
+INTACT_PPI_EDGE_ATTRS = {"source": INTACT, "type": "interaction"}
 
 # IntAct compounds
 INTACT_COMPOUND_NODE_ATTRS = {

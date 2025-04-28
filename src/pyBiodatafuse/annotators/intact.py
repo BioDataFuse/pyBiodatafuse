@@ -23,6 +23,7 @@ from pyBiodatafuse.constants import (
 )
 from pyBiodatafuse.utils import get_identifier_of_interest
 
+
 def check_endpoint_intact() -> bool:
     """Check if the IntAct API is reachable by making a test request.
 
@@ -34,7 +35,7 @@ def check_endpoint_intact() -> bool:
 
 # def check_version_intact() -> dict:
 #     """Get version of IntAct API.
-# 
+#
 #     :returns: a dictionary containing the version information
 #     """
 #     try:
@@ -107,13 +108,13 @@ def get_intact_interactions(gene_id: str):
 
 def get_protein_intact_acs(ensembl_id: str) -> list:
     """Get all IntAct ACs for protein interactors from a given Ensembl ID.
-    
+
     :param ensembl_id: input gene Ensembl identifier.
     :returns: Interactor information if possible, empty list if not.
     """
     url = f"{INTACT_ENDPOINT}/ws/interactor/findInteractor/{ensembl_id}"
     try:
-        response = requests.get(url, timeout=10)
+        response = requests.get(url, timeout=120)
         response.raise_for_status()
         data = response.json()
         protein_acs = [
@@ -127,7 +128,9 @@ def get_protein_intact_acs(ensembl_id: str) -> list:
         return []
 
 
-def get_filtered_interactions(gene_id: str, valid_intact_acs: set, intact_ac_to_ensembl: dict, ensembl_to_input_id: dict) -> list:
+def get_filtered_interactions(
+    gene_id: str, valid_intact_acs: set, intact_ac_to_ensembl: dict, ensembl_to_input_id: dict
+) -> list:
     """Filter interactions to include only valid protein-protein interactions.
 
     :param interactions: List of interactions to filter.
@@ -156,37 +159,38 @@ def get_filtered_interactions(gene_id: str, valid_intact_acs: set, intact_ac_to_
 
             partner_gene = ensembl_to_input_id.get(partner_ensembl, partner_ensembl)
 
-
             interaction["intact_link_to"] = partner_gene
             filtered.append(interaction)
 
     if filtered == []:
-        return [{
-            "interaction_id": np.nan,
-            "interactor_id_A": np.nan,
-            "interactor_id_B": np.nan,
-            "binary_interaction_id": np.nan,
-            "confidence_values": [],
-            "intact_score": [],
-            "biological_role_A": np.nan,
-            "biological_role_B": np.nan,
-            "type": np.nan,
-            "stoichiometry_A": np.nan,
-            "stoichiometry_B": np.nan,
-            "detection_method": np.nan,
-            "detection_method_id": np.nan,
-            "host_organism": np.nan,
-            "interactor_A_name": np.nan,
-            "interactor_B_name": np.nan,
-            "interactor_A_species": np.nan,
-            "interactor_B_species": np.nan,
-            "molecule_A": np.nan,
-            "molecule_B": np.nan,
-            "id_A": np.nan,
-            "id_B": np.nan,
-            "pubmed_publication_id": np.nan,
-            "ensembl": gene_id,
-        }]
+        return [
+            {
+                "interaction_id": np.nan,
+                "interactor_id_A": np.nan,
+                "interactor_id_B": np.nan,
+                "binary_interaction_id": np.nan,
+                "confidence_values": [],
+                "intact_score": [],
+                "biological_role_A": np.nan,
+                "biological_role_B": np.nan,
+                "type": np.nan,
+                "stoichiometry_A": np.nan,
+                "stoichiometry_B": np.nan,
+                "detection_method": np.nan,
+                "detection_method_id": np.nan,
+                "host_organism": np.nan,
+                "interactor_A_name": np.nan,
+                "interactor_B_name": np.nan,
+                "interactor_A_species": np.nan,
+                "interactor_B_species": np.nan,
+                "molecule_A": np.nan,
+                "molecule_B": np.nan,
+                "id_A": np.nan,
+                "id_B": np.nan,
+                "pubmed_publication_id": np.nan,
+                "ensembl": gene_id,
+            }
+        ]
 
     return filtered
 
@@ -209,32 +213,34 @@ def get_compound_filtered_interactions(gene_id: str) -> list:
             filtered.append(interaction)
 
     if not filtered:
-        return [{
-            "interaction_id": np.nan,
-            "interactor_id_A": np.nan,
-            "interactor_id_B": np.nan,
-            "binary_interaction_id": np.nan,
-            "confidence_values": [],
-            "intact_score": [],
-            "biological_role_A": np.nan,
-            "biological_role_B": np.nan,
-            "type": np.nan,
-            "stoichiometry_A": np.nan,
-            "stoichiometry_B": np.nan,
-            "detection_method": np.nan,
-            "detection_method_id": np.nan,
-            "host_organism": np.nan,
-            "interactor_A_name": np.nan,
-            "interactor_B_name": np.nan,
-            "interactor_A_species": np.nan,
-            "interactor_B_species": np.nan,
-            "molecule_A": np.nan,
-            "molecule_B": np.nan,
-            "id_A": np.nan,
-            "id_B": np.nan,
-            "pubmed_publication_id": np.nan,
-            "ensembl": gene_id,
-        }]
+        return [
+            {
+                "interaction_id": np.nan,
+                "interactor_id_A": np.nan,
+                "interactor_id_B": np.nan,
+                "binary_interaction_id": np.nan,
+                "confidence_values": [],
+                "intact_score": [],
+                "biological_role_A": np.nan,
+                "biological_role_B": np.nan,
+                "type": np.nan,
+                "stoichiometry_A": np.nan,
+                "stoichiometry_B": np.nan,
+                "detection_method": np.nan,
+                "detection_method_id": np.nan,
+                "host_organism": np.nan,
+                "interactor_A_name": np.nan,
+                "interactor_B_name": np.nan,
+                "interactor_A_species": np.nan,
+                "interactor_B_species": np.nan,
+                "molecule_A": np.nan,
+                "molecule_B": np.nan,
+                "id_A": np.nan,
+                "id_B": np.nan,
+                "pubmed_publication_id": np.nan,
+                "ensembl": gene_id,
+            }
+        ]
 
     return filtered
 
@@ -270,10 +276,9 @@ def get_interactions(bridgedb_df: pd.DataFrame, data_type: str = "gene"):
 
     if data_type == "gene":
         ensembl_to_intact_map = {
-            ensembl_id: get_protein_intact_acs(ensembl_id)
-            for ensembl_id in ensembl_gene_list
+            ensembl_id: get_protein_intact_acs(ensembl_id) for ensembl_id in ensembl_gene_list
         }
-            
+
         intact_ac_to_ensembl = {
             ac: ensembl for ensembl, acs in ensembl_to_intact_map.items() for ac in acs
         }
@@ -281,7 +286,9 @@ def get_interactions(bridgedb_df: pd.DataFrame, data_type: str = "gene"):
         valid_intact_acs = {ac for acs in ensembl_to_intact_map.values() for ac in acs}
 
         data_df[INTACT_INTERACT_COL] = data_df["target"].apply(
-            lambda gene_id: get_filtered_interactions(gene_id, valid_intact_acs, intact_ac_to_ensembl, ensembl_to_input_id)
+            lambda gene_id: get_filtered_interactions(
+                gene_id, valid_intact_acs, intact_ac_to_ensembl, ensembl_to_input_id
+            )
         )
 
     elif data_type == "compound":

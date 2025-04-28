@@ -246,9 +246,21 @@ def add_disgenet_gene_disease_subgraph(g, gene_node_label, annot_list):
 
     return g
 
+
 def add_intact_ppi_subgraph(g, gene_node_label, annot_list):
-    """Construct part of the graph by linking the gene to genes via IntAct PPI, filtering based on unique interaction IDs."""
-    seen_interaction_ids = set()
+    """Construct part of the graph by linking the gene to genes via IntAct PPI, filtering based on unique interaction IDs.
+
+    :param g: the input graph to extend with new nodes and edges.
+    :param gene_node_label: the gene node to be linked to diseases.
+    :param annot_list: list of diseases from DisGeNET.
+    :returns: a NetworkX MultiDiGraph
+    """
+
+    if not hasattr(add_intact_ppi_subgraph, "seen_interaction_ids"):
+        add_intact_ppi_subgraph.seen_interaction_ids = set()
+
+    seen_interaction_ids = add_intact_ppi_subgraph.seen_interaction_ids
+
     edges_seen = {}
 
     for interaction in annot_list:
@@ -259,6 +271,11 @@ def add_intact_ppi_subgraph(g, gene_node_label, annot_list):
         interaction_id = interaction.get("binary_interaction_id", None)
         if not interaction_id:
             continue
+
+        if interaction_id in seen_interaction_ids:
+            continue
+
+        seen_interaction_ids.add(interaction_id)
 
         edge_key = (gene_node_label, partner_gene)
 
@@ -325,23 +342,21 @@ def add_intact_ppi_subgraph(g, gene_node_label, annot_list):
             edges_seen[edge_key] = edge_attrs
 
         else:
-            # If we've seen this edge already, append detection methods
             detection_method = interaction.get("detection_method")
             if detection_method:
                 if isinstance(edges_seen[edge_key]["detection_method"], list):
                     edges_seen[edge_key]["detection_method"].append(detection_method)
                 else:
-                    edges_seen[edge_key]["detection_method"] = [edges_seen[edge_key]["detection_method"], detection_method]
+                    edges_seen[edge_key]["detection_method"] = [
+                        edges_seen[edge_key]["detection_method"],
+                        detection_method,
+                    ]
 
-        seen_interaction_ids.add(interaction_id)
-
-    # After processing all, add edges to graph
     for (source, target), edge_attrs in edges_seen.items():
-        # Deduplicate detection methods and join them
         if "detection_method" in edge_attrs:
             methods = edge_attrs["detection_method"]
             if isinstance(methods, list):
-                methods = list(set(methods))  # remove duplicates
+                methods = list(set(methods))
                 edge_attrs["detection_method"] = ",".join(map(str, methods))
 
         for k, v in edge_attrs.items():
@@ -400,7 +415,9 @@ def add_intact_compound_subgraph(g, gene_node_label, annot_list):
         edge_attrs = INTACT_PPI_EDGE_ATTRS.copy()
 
         conf_vals = interaction.get("confidence_values")
-        edge_attrs["confidence_values"] = ",".join(map(str, conf_vals)) if isinstance(conf_vals, list) else str(conf_vals or "")
+        edge_attrs["confidence_values"] = (
+            ",".join(map(str, conf_vals)) if isinstance(conf_vals, list) else str(conf_vals or "")
+        )
 
         for key, value in interaction.items():
             if isinstance(value, list):
@@ -408,7 +425,12 @@ def add_intact_compound_subgraph(g, gene_node_label, annot_list):
             else:
                 edge_attrs[key] = value
 
-        unstable_keys = {"interaction_id", "interactor_id_A", "interactor_id_B", "binary_interaction_id"}
+        unstable_keys = {
+            "interaction_id",
+            "interactor_id_A",
+            "interactor_id_B",
+            "binary_interaction_id",
+        }
         signature_attrs = {k: v for k, v in edge_attrs.items() if k not in unstable_keys}
         edge_signature = frozenset(signature_attrs.items())
 
@@ -1199,7 +1221,7 @@ def process_disease_compound(g, disease_compound):
 
 def process_ppi(g, gene_node_label, row):
     """Process protein-protein interactions and add them to the graph.
-    
+
     :param g: the input graph to extend with gene nodes.
     :param gene_node_label: the gene node to be linked to annotation entities.
     :param row: row in the combined DataFrame.
@@ -1225,7 +1247,11 @@ def process_ppi(g, gene_node_label, row):
             intact_ppi_list = []
 
         if isinstance(intact_ppi_list, list) and len(intact_ppi_list) > 0:
-            valid_intact_ppi_list = [item for item in intact_ppi_list if pd.notna(item.get("id_A")) and pd.notna(item.get("id_B"))]
+            valid_intact_ppi_list = [
+                item
+                for item in intact_ppi_list
+                if pd.notna(item.get("id_A")) and pd.notna(item.get("id_B"))
+            ]
             if valid_intact_ppi_list:
                 add_intact_ppi_subgraph(g, gene_node_label, valid_intact_ppi_list)
 
