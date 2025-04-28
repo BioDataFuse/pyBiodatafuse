@@ -45,11 +45,11 @@ from pyBiodatafuse.constants import (
     GO_NODE_MAIN_LABEL,
     HOMOLOG_NODE_LABELS,
     INTACT,
+    INTACT_COMPOUND_EDGE_ATTRS,
+    INTACT_COMPOUND_EDGE_LABEL,
     INTACT_COMPOUND_INTERACT_COL,
     INTACT_COMPOUND_NODE_ATTRS,
     INTACT_COMPOUND_NODE_MAIN_LABEL,
-    INTACT_COMPOUND_EDGE_LABEL,
-    INTACT_COMPOUND_EDGE_ATTRS,
     INTACT_INTERACT_COL,
     INTACT_PPI_EDGE_ATTRS,
     INTACT_PPI_EDGE_LABEL,
@@ -255,7 +255,6 @@ def add_intact_ppi_subgraph(g, gene_node_label, annot_list):
     :param annot_list: list of diseases from DisGeNET.
     :returns: a NetworkX MultiDiGraph
     """
-
     if not hasattr(add_intact_ppi_subgraph, "seen_interaction_ids"):
         add_intact_ppi_subgraph.seen_interaction_ids = set()
 
@@ -1254,53 +1253,6 @@ def process_ppi(g, gene_node_label, row):
             ]
             if valid_intact_ppi_list:
                 add_intact_ppi_subgraph(g, gene_node_label, valid_intact_ppi_list)
-
-
-def process_homologs(g, combined_df, homolog_df_list, func_dict, dea_columns):
-    """Process homolog dataframes and combined df and add them to the graph.
-
-    :param g: the input graph to extend with gene nodes.
-    :param combined_df: dataframe without homolog information.
-    :param homolog_df_list: list of dataframes from homolog queries.
-    :param func_dict: list of functions for node generation.
-    :param dea_columns: columns ending with _dea
-    """
-    func_dict_hl = {}
-
-    for homolog_df in homolog_df_list:
-        last_col = homolog_df.columns[-1]
-        for key, func in func_dict.items():
-            if last_col == key and last_col in combined_df.columns:
-                func_dict_hl[last_col] = func
-
-    for _i, row in tqdm(combined_df.iterrows(), total=combined_df.shape[0], desc="Building graph"):
-        if pd.isna(row["identifier"]) or pd.isna(row["target"]):
-            continue
-        gene_node_label = add_gene_node(g, row, dea_columns)
-        func_dict_non_hl = {key: func for key, func in func_dict.items() if key not in func_dict_hl}
-        process_annotations(g, gene_node_label, row, func_dict_non_hl)
-        process_ppi(g, gene_node_label, row)
-
-    for _i, row in tqdm(combined_df.iterrows(), total=combined_df.shape[0]):
-        if pd.isna(row["identifier"]) or pd.isna(row["Ensembl_homologs"]):
-            continue
-
-        homologs = row["Ensembl_homologs"]
-
-        if isinstance(homologs, list) and homologs:
-            for homolog_entry in homologs:
-                homolog_node_label = homolog_entry.get("homolog")
-
-                if pd.isna(homolog_node_label) or homolog_node_label == "nan":
-                    continue
-
-                if homolog_node_label:
-                    annot_node_attrs = ENSEMBL_HOMOLOG_NODE_ATTRS.copy()
-                    annot_node_attrs["id"] = homolog_node_label
-                    annot_node_attrs["labels"] = HOMOLOG_NODE_LABELS
-                    g.add_node(homolog_node_label, attr_dict=annot_node_attrs)
-
-                    process_annotations(g, homolog_node_label, row, func_dict_hl)
 
 
 def process_homologs(g, combined_df, homolog_df_list, func_dict, dea_columns):

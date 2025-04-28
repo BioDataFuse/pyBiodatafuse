@@ -1,25 +1,25 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""
-Python file for querying IntAct (https://www.ebi.ac.uk/intact/).
-"""
+"""Python file for querying IntAct (https://www.ebi.ac.uk/intact/)."""
 
 import datetime
 import json
 import logging
-import numpy as np
-import pandas as pd
-import requests
 import warnings
 from time import sleep
 
+import numpy as np
+import pandas as pd
+import requests
+
 from pyBiodatafuse.constants import (
     INTACT,
-    INTACT_INTERACT_COL,
     INTACT_COMPOUND_INTERACT_COL,
-    INTACT_GENE_INPUT_ID,
+    INTACT_COMPOUND_INPUT_ID,
     INTACT_ENDPOINT,
+    INTACT_GENE_INPUT_ID,
+    INTACT_INTERACT_COL,
 )
 from pyBiodatafuse.utils import get_identifier_of_interest
 
@@ -60,11 +60,10 @@ def clean_id(identifier: str) -> str:
 def get_intact_interactions(gene_id: str):
     """Retrieve protein interactions for a given gene from IntAct.
 
-    :param gene_id: Gene identifier (Ensembl ID)
+    :param gene_id: Gene identifier
     :returns: List of interactions for the given gene
     """
     response = requests.get(f"{INTACT_ENDPOINT}/ws/interaction/findInteractions/{gene_id}")
-    print(gene_id)
 
     if response.status_code == 200:
         data = response.json()
@@ -106,13 +105,13 @@ def get_intact_interactions(gene_id: str):
     return []
 
 
-def get_protein_intact_acs(ensembl_id: str) -> list:
+def get_protein_intact_acs(id_of_interest: str) -> list:
     """Get all IntAct ACs for protein interactors from a given Ensembl ID.
 
-    :param ensembl_id: input gene Ensembl identifier.
+    :param id_of_interest: input gene Ensembl identifier.
     :returns: Interactor information if possible, empty list if not.
     """
-    url = f"{INTACT_ENDPOINT}/ws/interactor/findInteractor/{ensembl_id}"
+    url = f"{INTACT_ENDPOINT}/ws/interactor/findInteractor/{id_of_interest}"
     try:
         response = requests.get(url, timeout=120)
         response.raise_for_status()
@@ -124,7 +123,7 @@ def get_protein_intact_acs(ensembl_id: str) -> list:
         ]
         return protein_acs
     except requests.exceptions.RequestException as e:
-        logging.warning(f"Failed to get interactors for {ensembl_id}: {e}")
+        logging.warning(f"Failed to get interactors for {id_of_interest}: {e}")
         return []
 
 
@@ -133,10 +132,9 @@ def get_filtered_interactions(
 ) -> list:
     """Filter interactions to include only valid protein-protein interactions.
 
-    :param interactions: List of interactions to filter.
+    :param gene_id: The gene identifier to filter interactions for.
     :param valid_intact_acs: Set of valid IntAct ACs.
     :param intact_ac_to_ensembl: Dictionary mapping IntAct ACs to Ensembl gene IDs.
-    :param gene_id: The gene identifier to filter interactions for.
     :param ensembl_to_input_id: Dictionary mapping Ensembl IDs to input IDs.
     :returns: A list of filtered interactions.
     """
@@ -197,9 +195,9 @@ def get_filtered_interactions(
 
 def get_compound_filtered_interactions(gene_id: str) -> list:
     """
-    Get IntAct interactions for a gene that involve chemical compounds (e.g., ChEBI).
+    Get IntAct interactions for a gene that involve compounds.
 
-    :params gene_id: input gene identifier.
+    :param gene_id: input gene identifier.
     :returns: interactions where at least one interactor has a ChEBI ID.
     """
     interactions = get_intact_interactions(gene_id)
@@ -249,7 +247,8 @@ def get_interactions(bridgedb_df: pd.DataFrame, data_type: str = "gene"):
     """Annotate genes with interaction data from IntAct.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
-    :param data_type: Either 'gene' or 'compound', depending on the input data
+    :param data_type: Either 'gene' or 'compound'
+    :raises ValueError: If an invalid data_type is provided.
     :returns: a tuple (DataFrame containing the IntAct output, metadata dictionary)
     """
     api_available = check_endpoint_intact()
@@ -260,7 +259,12 @@ def get_interactions(bridgedb_df: pd.DataFrame, data_type: str = "gene"):
     start_time = datetime.datetime.now()
 
     # Get identifiers of interest
-    data_df = get_identifier_of_interest(bridgedb_df, INTACT_GENE_INPUT_ID)
+    if data_type == "gene":
+        data_df = get_identifier_of_interest(bridgedb_df, INTACT_GENE_INPUT_ID)
+    elif data_type == "compound":
+        data_df = get_identifier_of_interest(bridgedb_df, INTACT_COMPOUND_INPUT_ID)
+    else:
+        raise ValueError(f"Invalid data_type: {data_type}. Must be 'gene' or 'compound'.")
 
     if isinstance(data_df, tuple):
         data_df = data_df[0]
@@ -270,13 +274,17 @@ def get_interactions(bridgedb_df: pd.DataFrame, data_type: str = "gene"):
 
     ensembl_to_input_id = {}
     for _, row in data_df.iterrows():
-        input_id = row["identifier"]
-        ensembl_id = row["target"]
-        ensembl_to_input_id[ensembl_id] = input_id
+        if data_type == "compound":
+            input_id = f"ChEBI:{row['identifier']}"
+        else:
+            input_id = row["identifier"]
+        
+        id_of_interest = row["target"]
+        ensembl_to_input_id[id_of_interest] = input_id
 
     if data_type == "gene":
         ensembl_to_intact_map = {
-            ensembl_id: get_protein_intact_acs(ensembl_id) for ensembl_id in ensembl_gene_list
+            id_of_interest: get_protein_intact_acs(id_of_interest) for id_of_interest in ensembl_gene_list
         }
 
         intact_ac_to_ensembl = {
@@ -295,9 +303,6 @@ def get_interactions(bridgedb_df: pd.DataFrame, data_type: str = "gene"):
         data_df[INTACT_INTERACT_COL] = data_df["target"].apply(
             lambda gene_id: get_intact_interactions(gene_id)
         )
-
-    else:
-        raise ValueError(f"Invalid data_type: {data_type}. Must be 'gene' or 'compound'.")
 
     end_time = datetime.datetime.now()
     time_elapsed = str(end_time - start_time)
@@ -320,10 +325,11 @@ def get_interactions(bridgedb_df: pd.DataFrame, data_type: str = "gene"):
     return data_df, intact_metadata
 
 
-def get_compound_interactions(bridgedb_df: pd.DataFrame):
+def get_compound_interactions(bridgedb_df: pd.DataFrame, data_type: str = "compound"):
     """Annotate genes with compound-related interaction data from IntAct.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
+    :param data_type: Either 'gene' or 'compound'
     :returns: a tuple (DataFrame containing the IntAct output, metadata dictionary)
     """
     api_available = check_endpoint_intact()
@@ -331,11 +337,15 @@ def get_compound_interactions(bridgedb_df: pd.DataFrame):
         warnings.warn("IntAct API endpoint is unavailable. Cannot retrieve data.", stacklevel=2)
         return pd.DataFrame(), {}
 
-    # intact_version = check_version_intact()
     start_time = datetime.datetime.now()
 
     # Get identifiers of interest
-    data_df = get_identifier_of_interest(bridgedb_df, INTACT_GENE_INPUT_ID)
+    if data_type == "gene":
+        data_df = get_identifier_of_interest(bridgedb_df, INTACT_GENE_INPUT_ID)
+    elif data_type == "compound":
+        data_df = get_identifier_of_interest(bridgedb_df, INTACT_COMPOUND_INPUT_ID)
+    else:
+        raise ValueError(f"Invalid data_type: {data_type}. Must be 'gene' or 'compound'.")
 
     if isinstance(data_df, tuple):
         data_df = data_df[0]
@@ -343,10 +353,10 @@ def get_compound_interactions(bridgedb_df: pd.DataFrame):
     data_df = data_df.reset_index(drop=True)
     ensembl_gene_list = set(data_df["target"].tolist())
 
-    # Fetch compound interactions for each gene
-    data_df["IntAct_compound_interactions"] = data_df["target"].apply(
-        lambda gene_id: get_compound_filtered_interactions(gene_id)
-    )
+    if data_type == "compound":
+        data_df[INTACT_COMPOUND_INTERACT_COL] = data_df["target"].apply(
+            lambda compound_id: get_compound_filtered_interactions(f"ChEBI:{compound_id}")
+        )
 
     end_time = datetime.datetime.now()
     time_elapsed = str(end_time - start_time)
@@ -358,7 +368,7 @@ def get_compound_interactions(bridgedb_df: pd.DataFrame):
         "metadata": {"source_version": "unknown version"},
         "query": {
             "size": len(ensembl_gene_list),
-            "input_type": INTACT_GENE_INPUT_ID,
+            "input_type": INTACT_COMPOUND_INPUT_ID,
             "number_of_added_edges": num_new_edges,
             "time": time_elapsed,
             "date": current_date,

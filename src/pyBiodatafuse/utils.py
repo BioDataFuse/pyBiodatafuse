@@ -15,7 +15,6 @@ def get_identifier_of_interest(bridgedb_df: pd.DataFrame, db_source: str) -> pd.
 
     :param bridgedb_df: DataFrame containing the output from BridgeDb
     :param db_source: identifier of interest from BridgeDB (e.g. "NCBI Gene")
-    :param keep: list of additional identifier sources to keep in the output
     :returns: a DataFrame containing the identifiers of interest
     """
     # Load identifier options
