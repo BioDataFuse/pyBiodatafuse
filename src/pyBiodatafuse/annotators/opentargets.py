@@ -603,6 +603,7 @@ def get_gene_compound_interactions(
     mapped_df["identifier"] = "CHEMBL:" + mapped_df["identifier"]
     mapped_dict = mapped_df.set_index("identifier").to_dict()["target"]
     intermediate_df["compound_cid"] = intermediate_df["chembl_id"].map(mapped_dict)
+    intermediate_df["compound_cid"] = intermediate_df["compound_cid"].str.replace("pubchem.compound:", "", regex=False)
 
     # Check if all keys in df match the keys in OUTPUT_DICT
     check_columns_against_constants(
@@ -1127,7 +1128,7 @@ def get_disease_compound_interactions(
     mapped_df = mapped_df[["identifier", "target"]]
     mapped_df["identifier"] = "CHEMBL:" + mapped_df["identifier"]
     mapped_dict = mapped_df.set_index("identifier").to_dict()["target"]
-    intermediate_df["compound_cid"] = intermediate_df["chembl_id"].map(mapped_dict)
+    intermediate_df["compound_cid"] = intermediate_df["chembl_id"].map(mapped_dict).str.replace("pubchem.compound:", "", regex=False)
     intermediate_df["relation"] = OPENTARGETS_COMPOUND_DISEASE_RELATION
 
     # Check if all keys in df match the keys in OUTPUT_DICT
