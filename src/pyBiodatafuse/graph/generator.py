@@ -946,6 +946,7 @@ def add_wikipathways_molecular_subgraph(g, gene_node_label, annot_list):
                 edge_attrs = MOLECULAR_INTERACTION_EDGE_ATTRS.copy()
                 edge_attrs["interaction_type"] = interaction_type
                 edge_attrs["rhea_id"] = annot.get("rhea_id", "")
+                edge_attrs["pathway_id"] = annot.get("pathway_id", "")
                 edge_attrs["edge_hash"] = hash(frozenset(edge_attrs.items()))
 
                 if not g.has_node(target_node_label):
