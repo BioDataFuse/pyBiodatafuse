@@ -46,7 +46,7 @@ TARGET_SOURCE_COL = "target.source"
 BGEE_GENE_EXPRESSION_LEVELS_COL = f"{BGEE}_gene_expression_levels"
 DISGENET_DISEASE_COL = f"{DISGENET}_diseases"
 ENSEMBL_HOMOLOG_COL = f"{ENSEMBL}_homologs"
-INTACT_INTERACT_COL = f"{INTACT}_interactions"
+INTACT_INTERACT_COL = f"{INTACT}_gene_interactions"
 INTACT_COMPOUND_INTERACT_COL = f"{INTACT}_compound_interactions"
 KEGG_COL = f"{KEGG}_pathways"
 KEGG_COMPOUND_COL = f"{KEGG}_compounds"
@@ -508,7 +508,6 @@ KEGG_COMPOUND_EDGE_ATTRS = {
 }
 
 # IntAct interactions
-INTACT_PPI_EDGE_LABEL = "intact_interaction"
 INTACT_PPI_EDGE_MAIN_LABEL = "intact_link_to"
 INTACT_PPI_EDGE_ATTRS = {"source": INTACT, "type": "interaction"}
 
@@ -519,7 +518,6 @@ INTACT_COMPOUND_NODE_ATTRS = {
     "labels": COMPOUND_NODE_LABELS,
 }
 INTACT_COMPOUND_NODE_MAIN_LABEL = "compounds"
-INTACT_COMPOUND_EDGE_LABEL = "interacts_with"
 INTACT_COMPOUND_EDGE_ATTRS = {
     "datasource": INTACT,
     "label": None,

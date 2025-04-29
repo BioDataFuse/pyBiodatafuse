@@ -111,7 +111,7 @@ def combine_sources(bridgedb_df: pd.DataFrame, df_list: List[pd.DataFrame]) -> p
     """
     m = bridgedb_df[
         (bridgedb_df["target.source"] == "Ensembl")
-        | (bridgedb_df["target.source"] == "PubChem-compound")
+        | (bridgedb_df["target.source"] == "PubChem Compound")
     ]
     for df in df_list:
         if not df.empty:
