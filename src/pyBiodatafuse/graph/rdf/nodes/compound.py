@@ -9,7 +9,7 @@ from rdflib.namespace import OWL, RDF, RDFS, XSD
 from pyBiodatafuse.constants import CLINICAL_PHASES, MOAS, NODE_TYPES, PREDICATES
 
 
-def add_compound_gene_node(g: Graph, compound: dict, gene_node: URIRef) -> URIRef:
+def add_compound_node(g: Graph, compound: dict, gene_node: URIRef) -> URIRef:
     """Create and add a compound node to the RDF graph.
 
     :param g: RDF graph to which the compound node will be added.
@@ -117,34 +117,6 @@ def add_transporter_inhibitor_node(g: Graph, inhibitor_data: dict, base_uri: str
         )
         g.add((compound_node, URIRef(PREDICATES["sio_is_part_of"]), inhibition_node))
         g.add((inhibition_node, RDF.type, URIRef("https://purl.obolibrary.org/GO_0032410")))
-
-
-def add_transporter_inhibited_node(
-    g: Graph, compound_node, inhibitor_data: dict, base_uri: str
-) -> None:
-    """Add a transporter inhibitor node to the RDF graph.
-
-    :param g: RDF graph to which the transporter inhibitor node is added.
-    :param compound_node: URIRef of the compound node associated with the inhibitor function.
-    :param inhibitor_data: Dictionary containing transporter inhibitor data (e.g., "compound_cid", "inchikey").
-    :param base_uri: The base URI for constructing nodes in the graph.
-    """
-    uniprot_id = inhibitor_data.get("uniprot_trembl_id")
-    #  hgnc = inhibitor_data.get("hgnc_symbol")
-    #  source_pmid = inhibitor_data.get("source_pmid")
-    compound_cid = g.value(compound_node, RDFS.label)
-    if uniprot_id:
-        # Add relationship
-        inhibited_node = URIRef(f"{base_uri}inhibition/{uniprot_id}_{compound_cid}")
-        g.add(
-            (
-                URIRef(f"https://www.uniprot.org/uniprotkb/{uniprot_id}"),
-                URIRef(PREDICATES["sio_is_part_of"]),
-                inhibited_node,
-            )
-        )
-        g.add((compound_node, URIRef(PREDICATES["sio_is_part_of"]), inhibited_node))
-        g.add((inhibited_node, RDF.type, URIRef("https://purl.obolibrary.org/GO_0032410")))
 
 
 def add_tested_compound_node(
