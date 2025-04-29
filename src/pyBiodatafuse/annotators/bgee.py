@@ -9,6 +9,7 @@ from string import Template
 from typing import Any, Dict
 
 import pandas as pd
+from tqdm import tqdm
 from SPARQLWrapper import JSON, SPARQLWrapper
 from SPARQLWrapper.SPARQLExceptions import SPARQLWrapperException
 
@@ -128,7 +129,7 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
 
     intermediate_df = pd.DataFrame()
 
-    for gene_list_str in query_gene_lists:
+    for gene_list_str in tqdm(query_gene_lists, desc="Querying Bgee"):
         query_count += 1
 
         gene_ids = gene_list_str.split(" ")
