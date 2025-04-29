@@ -21,15 +21,16 @@ def get_identifier_of_interest(
     :returns: a DataFrame containing the identifiers of interest
     """
     # Load identifier options
-    identifier_options = read_resource_files()["source"].tolist() + (
-        [i for i in keep] if keep else []
-    )
+    identifier_options = read_resource_files()["source"].tolist()
 
     # Check if source is in identifier options
     assert db_source in identifier_options, f"Source {db_source} is not in identifier options"
 
+    if keep is None:
+        keep = []
+    keep.append(db_source)
     # Filter rows where "target.source" is specific datasource for eg. "NCBI Gene"
-    subset_df = bridgedb_df[bridgedb_df["target.source"].isin(identifier_options)]
+    subset_df = bridgedb_df[bridgedb_df["target.source"].isin(keep)]
     return subset_df.reset_index(drop=True)
 
 
@@ -116,7 +117,7 @@ def combine_sources(bridgedb_df: pd.DataFrame, df_list: List[pd.DataFrame]) -> p
     """
     m = bridgedb_df[
         (bridgedb_df["target.source"] == "Ensembl")
-        | (bridgedb_df["target.source"] == "PubChem-compound")
+        | (bridgedb_df["target.source"] == "PubChem Compound")
     ]
     for df in df_list:
         if not df.empty:
