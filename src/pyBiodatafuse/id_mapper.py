@@ -10,7 +10,7 @@ import os
 import re
 import time
 from importlib import resources
-from typing import List, Optional, Tuple, Literal
+from typing import List, Literal, Optional, Tuple
 
 import pandas as pd
 import requests
@@ -139,6 +139,7 @@ def get_version_datasource_bridgedb(input_species: Optional[str] = None) -> List
 def bridgedb_xref(
     identifiers: pd.DataFrame,
     input_species: Optional[str] = None,
+    output_datasource: Optional[list] = None,
     input_datasource: Literal[
         "Ensembl",
         "NCBI Gene",
@@ -183,7 +184,6 @@ def bridgedb_xref(
         "Wikidata",
         "Wikipedia",
     ] = "HGNC",
-    output_datasource: Optional[list] = None,
 ) -> Tuple[pd.DataFrame, dict]:
     """Map input list using BridgeDb.
 
@@ -194,15 +194,8 @@ def bridgedb_xref(
     :returns: a DataFrame containing the mapped identifiers and dictionary of the data resource metadata.
     :raises ValueError: if the input_datasource is not provided or if the request fails
     """
-    if not input_datasource:
-        input_datasource = match_input_datasource(identifiers)
-        logger.info(f"Input datasource is set to {input_datasource}")
-
     if input_species is None:
         input_species = "Human"
-
-    if not input_datasource:
-        raise ValueError("Please provide the identifier datasource, e.g. HGNC")
 
     if output_datasource is None or "All":
         output_datasource = [
