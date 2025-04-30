@@ -301,7 +301,6 @@ MOLMEDB_COMPOUND_PROTEIN_OUTPUT_DICT = {
     "uniprot_trembl_id": str,
     "hgnc_symbol": str,
     "source_pmid": str,
-    "ensembl": str,
 }
 UNIPROT_TREMBL_ID = "P"
 

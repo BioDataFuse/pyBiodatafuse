@@ -106,10 +106,16 @@ def get_aops(
     """Query for AOPs associated with genes or compounds.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene/compound ids to query
+    :type bridgedb_df: pd.DataFrame
     :param db: the database to query
+    :type db: str
     :param input_type: the input type used to query the database (e.g., "gene" or "compound")
+    :type input_type: str
     :param input_identifier: the input identifier used to query the database
-    :returns: a DataFrame containing the AOP Wiki RDF output and dictionary of the AOP Wiki RDF metadata.
+    :type input_identifier: str
+    :returns: a DataFrame containing the AOP Wiki RDF output and a dictionary of the AOP Wiki RDF metadata
+    :rtype: Tuple[pd.DataFrame, dict]
+    :raises ValueError: If the database (`db`) is not valid or the input type (`input_type`) is not valid
     """
     # Validate inputs
     if db not in DATABASE_SPARQL_DICT:
