@@ -400,13 +400,13 @@ class TestOpentarget(unittest.TestCase):
                             "name",
                         ],
                         "target": [
-                            "pubchem.compound:62887",
-                            "pubchem.compound:62886",
-                            "pubchem.compound:5314",
-                            "pubchem.compound:441290",
-                            "pubchem.compound:39765",
-                            "pubchem.compound:22475",
-                            "pubchem.compound:441351",
+                            "62887",
+                            "62886",
+                            "5314",
+                            "441290",
+                            "39765",
+                            "22475",
+                            "441351",
                         ],
                         "target.source": [
                             "PubChem Compound",
@@ -469,7 +469,7 @@ class TestOpentarget(unittest.TestCase):
                     {
                         "chembl_id": "CHEMBL:CHEMBL1201248",
                         "drugbank_id": "DrugBank:DB00565",
-                        "compound_cid": "pubchem.compound:62887",
+                        "compound_cid": "62887",
                         "compound_name": "CISATRACURIUM",
                         "clincal_trial_phase": 4.0,
                         "is_approved": True,
@@ -506,7 +506,7 @@ class TestOpentarget(unittest.TestCase):
                     {
                         "chembl_id": "CHEMBL:CHEMBL1200641",
                         "drugbank_id": None,
-                        "compound_cid": "pubchem.compound:62886",
+                        "compound_cid": "62886",
                         "compound_name": "CISATRACURIUM BESYLATE",
                         "clincal_trial_phase": 4.0,
                         "is_approved": True,
@@ -543,7 +543,7 @@ class TestOpentarget(unittest.TestCase):
                     {
                         "chembl_id": "CHEMBL:CHEMBL703",
                         "drugbank_id": "DrugBank:DB00202",
-                        "compound_cid": "pubchem.compound:5314",
+                        "compound_cid": "5314",
                         "compound_name": "SUXAMETHONIUM",
                         "clincal_trial_phase": 4.0,
                         "is_approved": True,
@@ -580,7 +580,7 @@ class TestOpentarget(unittest.TestCase):
                     {
                         "chembl_id": "CHEMBL:CHEMBL1201244",
                         "drugbank_id": "DrugBank:DB00728",
-                        "compound_cid": "pubchem.compound:441290",
+                        "compound_cid": "441290",
                         "compound_name": "ROCURONIUM",
                         "clincal_trial_phase": 4.0,
                         "is_approved": True,
@@ -617,7 +617,7 @@ class TestOpentarget(unittest.TestCase):
                     {
                         "chembl_id": "CHEMBL:CHEMBL1201219",
                         "drugbank_id": "DrugBank:DB01339",
-                        "compound_cid": "pubchem.compound:39765",
+                        "compound_cid": "39765",
                         "compound_name": "VECURONIUM",
                         "clincal_trial_phase": 4.0,
                         "is_approved": True,
@@ -654,7 +654,7 @@ class TestOpentarget(unittest.TestCase):
                     {
                         "chembl_id": "CHEMBL:CHEMBL983",
                         "drugbank_id": None,
-                        "compound_cid": "pubchem.compound:22475",
+                        "compound_cid": "22475",
                         "compound_name": "SUCCINYLCHOLINE CHLORIDE",
                         "clincal_trial_phase": 4.0,
                         "is_approved": True,
@@ -691,7 +691,7 @@ class TestOpentarget(unittest.TestCase):
                     {
                         "chembl_id": "CHEMBL:CHEMBL1200648",
                         "drugbank_id": None,
-                        "compound_cid": "pubchem.compound:441351",
+                        "compound_cid": "441351",
                         "compound_name": "ROCURONIUM BROMIDE",
                         "clincal_trial_phase": 4.0,
                         "is_approved": True,
@@ -784,18 +784,18 @@ class TestOpentarget(unittest.TestCase):
                             "name",
                         ],
                         "target": [
-                            "pubchem.compound:4636",
-                            "pubchem.compound:441336",
-                            "pubchem.compound:5281040",
-                            "pubchem.compound:5288826",
-                            "pubchem.compound:3883",
-                            "pubchem.compound:3345",
-                            "pubchem.compound:1549000",
-                            "pubchem.compound:5755",
-                            "pubchem.compound:5743",
-                            "pubchem.compound:6436",
-                            "pubchem.compound:4192",
-                            "pubchem.compound:5311068",
+                            "4636",
+                            "441336",
+                            "5281040",
+                            "5288826",
+                            "3883",
+                            "3345",
+                            "1549000",
+                            "5755",
+                            "5743",
+                            "6436",
+                            "4192",
+                            "5311068",
                         ],
                         "target.source": [
                             "PubChem Compound",
@@ -837,7 +837,7 @@ class TestOpentarget(unittest.TestCase):
                     {
                         "chembl_id": "CHEMBL:CHEMBL762",
                         "drugbank_id": "DrugBank:DB00935",
-                        "compound_cid": "pubchem.compound:4636",
+                        "compound_cid": "4636",
                         "compound_name": "OXYMETAZOLINE",
                         "clincal_trial_phase": 4.0,
                         "is_approved": True,
@@ -854,7 +854,7 @@ class TestOpentarget(unittest.TestCase):
                     {
                         "chembl_id": "CHEMBL:CHEMBL1161",
                         "drugbank_id": "DrugBank:DB14512",
-                        "compound_cid": "pubchem.compound:441336",
+                        "compound_cid": "441336",
                         "compound_name": "MOMETASONE FUROATE",
                         "clincal_trial_phase": 4.0,
                         "is_approved": True,
@@ -891,7 +891,7 @@ class TestOpentarget(unittest.TestCase):
                     {
                         "chembl_id": "CHEMBL:CHEMBL787",
                         "drugbank_id": "DrugBank:DB00471",
-                        "compound_cid": "pubchem.compound:5281040",
+                        "compound_cid": "5281040",
                         "compound_name": "MONTELUKAST",
                         "clincal_trial_phase": 4.0,
                         "is_approved": True,
@@ -928,7 +928,7 @@ class TestOpentarget(unittest.TestCase):
                     {
                         "chembl_id": "CHEMBL:CHEMBL70",
                         "drugbank_id": "DrugBank:DB00295",
-                        "compound_cid": "pubchem.compound:5288826",
+                        "compound_cid": "5288826",
                         "compound_name": "MORPHINE",
                         "clincal_trial_phase": 4.0,
                         "is_approved": True,
@@ -965,7 +965,7 @@ class TestOpentarget(unittest.TestCase):
                     {
                         "chembl_id": "CHEMBL:CHEMBL480",
                         "drugbank_id": "DrugBank:DB00448",
-                        "compound_cid": "pubchem.compound:3883",
+                        "compound_cid": "3883",
                         "compound_name": "LANSOPRAZOLE",
                         "clincal_trial_phase": 4.0,
                         "is_approved": True,
@@ -999,7 +999,7 @@ class TestOpentarget(unittest.TestCase):
                     {
                         "chembl_id": "CHEMBL:CHEMBL596",
                         "drugbank_id": "DrugBank:DB00813",
-                        "compound_cid": "pubchem.compound:3345",
+                        "compound_cid": "3345",
                         "compound_name": "FENTANYL",
                         "clincal_trial_phase": 4.0,
                         "is_approved": True,
@@ -1036,7 +1036,7 @@ class TestOpentarget(unittest.TestCase):
                     {
                         "chembl_id": "CHEMBL:CHEMBL1201191",
                         "drugbank_id": "DrugBank:DB06282",
-                        "compound_cid": "pubchem.compound:1549000",
+                        "compound_cid": "1549000",
                         "compound_name": "LEVOCETIRIZINE",
                         "clincal_trial_phase": 4.0,
                         "is_approved": True,
@@ -1073,7 +1073,7 @@ class TestOpentarget(unittest.TestCase):
                     {
                         "chembl_id": "CHEMBL:CHEMBL131",
                         "drugbank_id": "DrugBank:DB00860",
-                        "compound_cid": "pubchem.compound:5755",
+                        "compound_cid": "5755",
                         "compound_name": "PREDNISOLONE",
                         "clincal_trial_phase": 4.0,
                         "is_approved": True,
@@ -1096,7 +1096,7 @@ class TestOpentarget(unittest.TestCase):
                     {
                         "chembl_id": "CHEMBL:CHEMBL384467",
                         "drugbank_id": "DrugBank:DB01234",
-                        "compound_cid": "pubchem.compound:5743",
+                        "compound_cid": "5743",
                         "compound_name": "DEXAMETHASONE",
                         "clincal_trial_phase": 4.0,
                         "is_approved": True,
@@ -1114,7 +1114,7 @@ class TestOpentarget(unittest.TestCase):
                     {
                         "chembl_id": "CHEMBL:CHEMBL1504",
                         "drugbank_id": None,
-                        "compound_cid": "pubchem.compound:6436",
+                        "compound_cid": "6436",
                         "compound_name": "TRIAMCINOLONE ACETONIDE",
                         "clincal_trial_phase": 4.0,
                         "is_approved": True,
@@ -1151,7 +1151,7 @@ class TestOpentarget(unittest.TestCase):
                     {
                         "chembl_id": "CHEMBL:CHEMBL655",
                         "drugbank_id": "DrugBank:DB00683",
-                        "compound_cid": "pubchem.compound:4192",
+                        "compound_cid": "4192",
                         "compound_name": "MIDAZOLAM",
                         "clincal_trial_phase": 4.0,
                         "is_approved": True,
@@ -1188,7 +1188,7 @@ class TestOpentarget(unittest.TestCase):
                     {
                         "chembl_id": "CHEMBL:CHEMBL778",
                         "drugbank_id": "DrugBank:DB00633",
-                        "compound_cid": "pubchem.compound:5311068",
+                        "compound_cid": "5311068",
                         "compound_name": "DEXMEDETOMIDINE",
                         "clincal_trial_phase": 4.0,
                         "is_approved": True,

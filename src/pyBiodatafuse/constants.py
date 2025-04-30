@@ -7,6 +7,8 @@
 BRIDGEDB_ENDPOINT = "https://webservice.bridgedb.org"
 BGEE_ENDPOINT = "https://www.bgee.org/sparql/"
 DISGENET_ENDPOINT = "https://api.disgenet.com/api/v1/gda/summary"
+ENSEMBL_ENDPOINT = "https://rest.ensembl.org"
+KEGG_ENDPOINT = "https://rest.kegg.jp"
 MINERVA_ENDPOINT = "https://minerva-net.lcsb.uni.lu/api/"
 MOLMEDB_ENDPOINT = "https://idsm.elixir-czech.cz/sparql/endpoint/molmedb"
 NCBI_ENDPOINT = "https://eutils.ncbi.nlm.nih.gov"
@@ -22,6 +24,8 @@ AOPWIKI_ENDPOINT = "https://aopwiki.rdf.bigcat-bioinformatics.org/sparql/"
 BRIDGEDB = "BridgeDB"
 BGEE = "Bgee"
 DISGENET = "DISGENET"
+ENSEMBL = "Ensembl"
+KEGG = "KEGG"
 MINERVA = "MINERVA"
 MOLMEDB = "MolMeDB"
 OPENTARGETS = "OpenTargets"
@@ -41,10 +45,14 @@ IDENTIFIER_SOURCE_COL = "identifier.source"
 TARGET_SOURCE_COL = "target.source"
 BGEE_GENE_EXPRESSION_LEVELS_COL = f"{BGEE}_gene_expression_levels"
 DISGENET_DISEASE_COL = f"{DISGENET}_diseases"
+ENSEMBL_HOMOLOG_COL = f"{ENSEMBL}_homologs"
 OPENTARGETS_DISEASE_COL = f"{OPENTARGETS}_diseases"
+KEGG_COL = f"{KEGG}_pathways"
+KEGG_COMPOUND_COL = f"{KEGG}_compounds"
 LITERATURE_DISEASE_COL = "literature_based_info"
 OPENTARGETS_REACTOME_COL = f"{OPENTARGETS}_reactome"
 OPENTARGETS_GO_COL = f"{OPENTARGETS}_go"
+
 OPENTARGETS_DISEASE_COMPOUND_COL = f"{OPENTARGETS}_disease_compounds"
 OPENTARGETS_GENE_COMPOUND_COL = f"{OPENTARGETS}_gene_compounds"
 MOLMEDB_PROTEIN_COMPOUND_COL = f"{MOLMEDB}_transporter_inhibitor"
@@ -52,12 +60,16 @@ MOLMEDB_COMPOUND_PROTEIN_COL = f"{MOLMEDB}_transporter_inhibited"
 PUBCHEM_COMPOUND_ASSAYS_COL = f"{PUBCHEM}_assays"
 STRING_PPI_COL = f"{STRING}_ppi"
 WIKIDATA_CC_COL = f"{WIKIDATA}_cellular_components"
-AOPWIKI_GENE_COL = "aop_gene"
-AOPWIKI_COMPOUND_COL = "pubchem_compound"
+AOPWIKI_GENE_COL = "aop_gene"  # todo fix this
+AOPWIKI_COMPOUND_COL = "pubchem_compound"  # todo fix this
+WIKIPATHWAYS_MOLECULAR_COL = f"{WIKIPATHWAYS}_molecular"
+
 
 # Input type for each data source
 BGEE_GENE_INPUT_ID = "Ensembl"
 DISGENET_GENE_INPUT_ID = "NCBI Gene"
+ENSEMBL_GENE_INPUT_ID = "Ensembl"
+KEGG_GENE_INPUT_ID = "NCBI Gene"
 MINERVA_GENE_INPUT_ID = "Ensembl"
 MOLMEDB_PROTEIN_INPUT_ID = "Uniprot-TrEMBL"
 MOLMEDB_COMPOUND_INPUT_ID = "InChIKey"
@@ -143,7 +155,7 @@ AOPWIKI_GENE_OUTPUT_DICT = {
     "KE_upstream_title": str,
     "KE_upstream_organ": str,
     "KE_downstream_organ": str,
-    "pubchem_compound" : str
+    "pubchem_compound": str,
 }
 
 AOPWIKI_COMPOUND_OUTPUT_DICT = {
@@ -227,6 +239,16 @@ WIKIPATHWAYS_PATHWAYS_OUTPUT_DICT = {
     "pathway_id": str,
     "pathway_label": str,
     "pathway_gene_count": int,
+}
+
+WIKIPATHWAYS_MOLECULAR_GENE_OUTPUT_DICT = {
+    "pathway_id": str,
+    "pathway_label": str,
+    "targetGene": str,
+    "targetProtein": str,
+    "targetMetabolite": str,
+    "mimtype": str,
+    "rhea_id": str,
 }
 
 # Open Targets - Reactome
@@ -402,6 +424,18 @@ PATHWAY_NODE_ATTRS = {
 GENE_PATHWAY_EDGE_LABEL = "part_of"
 GENE_PATHWAY_EDGE_ATTRS = {"datasource": None, "label": GENE_PATHWAY_EDGE_LABEL}
 
+# molecular pathway node
+MOLECULAR_PATHWAY_NODE_LABELS = "Pathway"
+MOLECULAR_PATHWAY_NODE_MAIN_LABEL = "pathway_id"
+MOLECULAR_GENE_NODE_ATTRS = {"datasource": WIKIPATHWAYS, "label": ""}
+MOLECULAR_PATHWAY_NODE_ATTRS = {
+    "pathway_id": "str",
+    "pathway_label": "str",
+    "id": "str",
+    "labels": MOLECULAR_PATHWAY_NODE_LABELS,
+}
+MOLECULAR_GENE_PATHWAY_EDGE_LABEL = ""  # todo
+MOLECULAR_INTERACTION_EDGE_ATTRS = {"interaction_type": "str", "rhea_id": str}
 # GO nodes
 # Open Targets - GO processes
 GO_BP_NODE_LABELS = "Biological Process"
@@ -504,6 +538,33 @@ STRING_PPI_EDGE_ATTRS = {
 # Disease - Compound edge
 OPENTARGETS_DISEASE_COMPOUND_EDGE_ATTRS = {
     "datasource": OPENTARGETS,
+    "label": None,
+}
+
+# Ensembl Homologs
+HOMOLOG_NODE_LABELS = "Homolog"
+ENSEMBL_HOMOLOG_NODE_ATTRS = {
+    "datasource": ENSEMBL,
+    "id": None,
+    "labels": HOMOLOG_NODE_LABELS,
+}
+ENSEMBL_HOMOLOG_MAIN_LABEL = "homolog"
+ENSEMBL_HOMOLOG_EDGE_LABEL = "is_homolog_of"
+ENSEMBL_HOMOLOG_EDGE_ATTRS = {
+    "datasource": ENSEMBL,
+    "label": ENSEMBL_HOMOLOG_EDGE_LABEL,
+}
+
+# KEGG compounds
+KEGG_COMPOUND_NODE_ATTRS = {
+    "datasource": KEGG,
+    "id": None,
+    "labels": COMPOUND_NODE_LABELS,
+}
+KEGG_COMPOUND_NODE_MAIN_LABEL = "compounds"
+KEGG_COMPOUND_EDGE_LABEL = "contains"
+KEGG_COMPOUND_EDGE_ATTRS = {
+    "datasource": KEGG,
     "label": None,
 }
 

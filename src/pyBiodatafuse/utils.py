@@ -10,11 +10,14 @@ import pandas as pd
 from pyBiodatafuse.id_mapper import read_resource_files
 
 
-def get_identifier_of_interest(bridgedb_df: pd.DataFrame, db_source: str) -> pd.DataFrame:
+def get_identifier_of_interest(
+    bridgedb_df: pd.DataFrame, db_source: str, keep: Optional[List] = None
+) -> pd.DataFrame:
     """Get identifier of interest from BridgeDb output file.
 
     :param bridgedb_df: DataFrame containing the output from BridgeDb
     :param db_source: identifier of interest from BridgeDB (e.g. "NCBI Gene")
+    :param keep: list of additional identifier sources to keep in the output
     :returns: a DataFrame containing the identifiers of interest
     """
     # Load identifier options
@@ -23,9 +26,11 @@ def get_identifier_of_interest(bridgedb_df: pd.DataFrame, db_source: str) -> pd.
     # Check if source is in identifier options
     assert db_source in identifier_options, f"Source {db_source} is not in identifier options"
 
+    if keep is None:
+        keep = []
+    keep.append(db_source)
     # Filter rows where "target.source" is specific datasource for eg. "NCBI Gene"
-    subset_df = bridgedb_df[bridgedb_df["target.source"] == db_source]
-
+    subset_df = bridgedb_df[bridgedb_df["target.source"].isin(keep)]
     return subset_df.reset_index(drop=True)
 
 
@@ -132,6 +137,53 @@ def combine_sources(bridgedb_df: pd.DataFrame, df_list: List[pd.DataFrame]) -> p
     #    uniprot_trembl_df.rename(columns={"target": "Uniprot-TrEMBL"}, inplace=True)
     #    m = pd.merge(m, uniprot_trembl_df, on="identifier", how="left")
     return m
+
+
+def combine_with_homologs(df: pd.DataFrame, homolog_dfs: list) -> pd.DataFrame:
+    """Merge a DataFrame with a list of homolog dataframes.
+
+    :param df: An already combined df containing output of non-homolog annotators.
+    :param homolog_dfs: List of homolog dataframes to be combined.
+    :returns: Merged DataFrame with only the required columns.
+    """
+    df["Ensembl_homologs"] = df["Ensembl_homologs"].apply(
+        lambda x: [{"homolog": x["homolog"]}] if isinstance(x, dict) else x
+    )
+
+    exploded_df = df.explode("Ensembl_homologs")
+    exploded_df["homolog"] = exploded_df["Ensembl_homologs"].apply(
+        lambda x: x["homolog"] if isinstance(x, dict) else None
+    )
+
+    merged_df = exploded_df.copy()
+    homolog_dfs = [df for df in homolog_dfs if not df.empty and df is not None and len(df) > 0]
+    for homolog_df in homolog_dfs:
+
+        # Get only the identifier and last column from the homolog DataFrame
+        last_col = homolog_df.columns[-1]
+        temp_df = homolog_df[["identifier", last_col]].copy()
+
+        merged_df = pd.merge(
+            merged_df,
+            temp_df,
+            how="left",
+            left_on="homolog",
+            right_on="identifier",
+            suffixes=("", "_temp"),
+        )
+
+        if "identifier_temp" in merged_df.columns:
+            merged_df.drop(columns=["identifier_temp"], inplace=True)
+
+    if "identifier" in merged_df.columns:
+        merged_df = merged_df.loc[:, ~merged_df.columns.duplicated()]
+
+    # Ensure that homolog column contains a nested dictionary
+    merged_df["Ensembl_homologs"] = merged_df["Ensembl_homologs"].apply(
+        lambda x: [{"homolog": x["homolog"]}] if isinstance(x, dict) else x
+    )
+
+    return merged_df
 
 
 def check_columns_against_constants(
