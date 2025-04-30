@@ -372,7 +372,7 @@ class TestMolMeDb(unittest.TestCase):
         bridgedb_dataframe_compounds = pd.DataFrame(
             {
                 "identifier": ["10041551", "10025195", "2153"],
-                "identifier.source": ["PubChem Compound", "PubChem Compound", "PubChem Compound"],
+                "identifier.source": ["PubChem-compound", "PubChem-compound", "PubChem-compound"],
                 "target": [
                     "OVVBIIBBRZVPAL-UHFFFAOYSA-N",
                     "LEJRLSZVESQKJK-UHFFFAOYSA-N",
