@@ -443,7 +443,7 @@ class BDFGraph(Graph):
     def process_aop_compound_data(self, aop_compound_data):
         """
         Process AOP Wiki compound data and add to the RDF graph.
-        
+
         :param aop_compound_data: A list of AOP compound data entries to be processed.
         """
         if aop_compound_data:
@@ -604,7 +604,7 @@ class BDFGraph(Graph):
         Add AOP Wiki compound data to the RDF graph.
 
         :param entry: Data for the AOP compound.
-        :returns: None 
+        :returns: None
         """
         # Implementation for adding AOP compound node
         return None

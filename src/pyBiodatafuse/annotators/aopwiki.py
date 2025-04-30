@@ -32,7 +32,7 @@ from pyBiodatafuse.utils import (
 )
 
 # Pre-requisite:
-VERSION_QUERY_FILE = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-metadata.rq")
+# VERSION_QUERY_FILE = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-metadata.rq")
 DATABASE_SPARQL_DICT = {"aopwiki": AOPWIKI_ENDPOINT}
 DATABASE_QUERY_IDENTIFER_GENE = AOPWIKI_GENE_INPUT_ID
 DATABASE_QUERY_IDENTIFER_COMPOUND = AOPWIKI_COMPOUND_INPUT_ID
@@ -61,43 +61,43 @@ def read_sparql_file(file_path: str) -> str:
     return sparql_query
 
 
-def check_endpoint(db: str) -> bool:
-    """Check the availability of the a SPARQL endpoint.
+# def check_endpoint(db: str) -> bool:
+#    """Check the availability of the a SPARQL endpoint.
+#
+#    :param db: the database to query
+#    :returns: True if the endpoint is available, False otherwise.
+#    """
+#    sparql_query = read_sparql_file(VERSION_QUERY_FILE)
+#
+#    sparql = SPARQLWrapper(DATABASE_SPARQL_DICT[db])
+#
+#    sparql.setReturnFormat(JSON)
+#    sparql.setQuery(sparql_query)
+#
+#    try:
+#        sparql.queryAndConvert()
+#        return True
+#    except SPARQLWrapperException:
+#        return False
 
-    :param db: the database to query
-    :returns: True if the endpoint is available, False otherwise.
-    """
-    sparql_query = read_sparql_file(VERSION_QUERY_FILE)
 
-    sparql = SPARQLWrapper(DATABASE_SPARQL_DICT[db])
-
-    sparql.setReturnFormat(JSON)
-    sparql.setQuery(sparql_query)
-
-    try:
-        sparql.queryAndConvert()
-        return True
-    except SPARQLWrapperException:
-        return False
-
-
-def get_version(db: str) -> dict:
-    """Get version of RDF graph.
-
-    :param db: the database to query
-    :returns: a dictionary containing the version information
-    """
-    sparql_query = read_sparql_file(VERSION_QUERY_FILE)
-
-    sparql = SPARQLWrapper(DATABASE_SPARQL_DICT[db])
-    sparql.setReturnFormat(JSON)
-
-    sparql.setQuery(sparql_query)
-    res = sparql.queryAndConvert()
-
-    version = {"source_version": str(res["results"]["bindings"][0]["date"]["value"])}
-
-    return version
+#  def get_version(db: str) -> dict:
+#      """Get version of RDF graph.
+#
+#      :param db: the database to query
+#      :returns: a dictionary containing the version information
+#      """
+#      sparql_query = read_sparql_file(VERSION_QUERY_FILE)
+#
+#      sparql = SPARQLWrapper(DATABASE_SPARQL_DICT[db])
+#      sparql.setReturnFormat(JSON)
+#
+#      sparql.setQuery(sparql_query)
+#      res = sparql.queryAndConvert()
+#
+#      version = {"source_version": str(res["results"]["bindings"][0]["date"]["value"])}
+#
+#      return version
 
 
 def get_aops(
@@ -118,15 +118,15 @@ def get_aops(
         raise ValueError(f"{input_type} is not a valid input.")
 
     # Check if the endpoint is available
-    if not check_endpoint(db=db):
-        warnings.warn(
-            f"{db} SPARQL endpoint is not available. Unable to retrieve data.", stacklevel=2
-        )
-        return pd.DataFrame(), {}
+    # if not check_endpoint(db=db):
+    #    warnings.warn(
+    #        f"{db} SPARQL endpoint is not available. Unable to retrieve data.", stacklevel=2
+    #    )
+    #    return pd.DataFrame(), {}
 
     # Step 1: Identifier mapping and harmonization
     data_df = get_identifier_of_interest(bridgedb_df, input_identifier)
-    version = get_version(db=db)  # Get the version of the RDF graph
+    # version = get_version(db=db)  # Get the version of the RDF graph
 
     # Step 2: Prepare target list and batch queries
     target_list = data_df["target"].unique().tolist()
@@ -182,7 +182,10 @@ def get_aops(
         sparql.setQuery(query)
         res = sparql.queryAndConvert()
         res_df = pd.DataFrame(
-            [{k: (v["value"] if "value" in v else "") for k, v in item.items()} for item in res["results"]["bindings"]]
+            [
+                {k: (v["value"] if "value" in v else "") for k, v in item.items()}
+                for item in res["results"]["bindings"]
+            ]
         )  #
         # Retrieve the expected columns from the SPARQL query results' "vars"
         expected_columns = res["head"]["vars"]
@@ -214,6 +217,10 @@ def get_aops(
         output_dict = AOPWIKI_COMPOUND_OUTPUT_DICT
         source_namespace = "PubChem Compound"
         intermediate_df[input_col] = intermediate_df[input_col].apply(lambda x: x.split("/")[-1])
+    for key in output_dict.keys():
+        intermediate_df[key] = intermediate_df[key].apply(
+            lambda x: x.split("/")[-1] if isinstance(x, str) and "http" in x else x
+        )
     intermediate_df.rename(columns={input_col: "target"}, inplace=True)
     col = "target"
     intermediate_df = intermediate_df.drop_duplicates()
@@ -221,7 +228,7 @@ def get_aops(
     # Step 6: Generate metadata
     metadata_dict = {
         "datasource": db,
-        "metadata": version,
+        # "metadata": version,
         "query": {
             "size": len(target_list),
             "input_type": input_type,
@@ -241,7 +248,7 @@ def get_aops(
         target_df=intermediate_df,
         common_cols=["target"],
         target_specific_cols=list(output_dict.keys()),
-        col_name=db,
+        col_name=AOPWIKI_GENE_COL,
     )
 
     return merged_df, metadata_dict

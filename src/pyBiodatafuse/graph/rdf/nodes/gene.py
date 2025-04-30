@@ -10,7 +10,7 @@ from rdflib.namespace import RDF, RDFS, XSD
 from pyBiodatafuse.constants import NODE_TYPES
 
 
-def add_gene_nodes(g: Graph, target, source) -> URIRef:
+def add_gene_nodes(g: Graph, row) -> URIRef:
     """Create and add a gene node to the RDF graph.
 
     :param g: (Graph): RDF graph to which the gene nodes are added.
@@ -18,6 +18,8 @@ def add_gene_nodes(g: Graph, target, source) -> URIRef:
 
     :returns: URIRef for the gene node.
     """
+    target = row["target"]
+    source = row["target.source"]
     if source and source == "Ensembl":
         gene_node = URIRef(f"http://identifiers.org/ensembl#{target}")
         g.add((gene_node, RDF.type, URIRef(NODE_TYPES["gene_node"])))

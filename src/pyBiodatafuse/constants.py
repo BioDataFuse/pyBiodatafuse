@@ -428,14 +428,13 @@ GENE_PATHWAY_EDGE_ATTRS = {"datasource": None, "label": GENE_PATHWAY_EDGE_LABEL}
 MOLECULAR_PATHWAY_NODE_LABELS = "Pathway"
 MOLECULAR_PATHWAY_NODE_MAIN_LABEL = "pathway_id"
 MOLECULAR_GENE_NODE_ATTRS = {"datasource": WIKIPATHWAYS, "label": ""}
-MOLECULAR_PATHWAY_NODE_ATTRS = {
+WIKIPATHWAYS_MOLECULAR_NODE_ATTRS = {
     "pathway_id": "str",
     "pathway_label": "str",
     "id": "str",
     "labels": MOLECULAR_PATHWAY_NODE_LABELS,
 }
-MOLECULAR_GENE_PATHWAY_EDGE_LABEL = ""  # todo
-MOLECULAR_INTERACTION_EDGE_ATTRS = {"interaction_type": "str", "rhea_id": str}
+WIKIPATHWAYS_MOLECULAR_EDGE_ATTRS = {"interaction_type": "str", "rhea_id": str}
 # GO nodes
 # Open Targets - GO processes
 GO_BP_NODE_LABELS = "Biological Process"
@@ -570,7 +569,37 @@ KEGG_COMPOUND_EDGE_ATTRS = {
 
 # Wikidata
 
-# TODO: to be checked
+
+# AOPWIKI
+
+KEY_EVENT_NODE_LABELS = "Key Event"
+MIE_NODE_LABELS = "Molecular Initiating Event"
+AOP_NODE_LABELS = "Adverse Outcome Pathway"
+AO_NODE_LABELS = "Adverse Outcome"
+
+# AOPWIKI Edge Labels
+AOP_GENE_EDGE_LABEL = "associated_with"  # Gene to AOP edge
+MIE_AOP_EDGE_LABEL = "upstream"  # MIE to AOP edge
+KE_UPSTREAM_MIE_EDGE_LABEL = "upstream"  # KE upstream to MIE edge
+KE_DOWNSTREAM_KE_EDGE_LABEL = "downstream"  # KE downstream to KE upstream edge
+KE_DOWNSTREAM_AO_EDGE_LABEL = "downstream"  # KE downstream to AO edge
+AOPWIKI_EDGE_ATTRS = {
+    "datasource": AOPWIKIRDF,
+    "relation": None,
+    "label": None,
+}
+AOP_NODE_LABELS = "Adverse Outcome Pathway"
+MIE_NODE_LABELS = "Molecular Initiating Event"
+KE_NODE_LABELS = "Key Event"
+AO_NODE_LABELS = "Adverse Outcome"
+
+AOPWIKI_NODE_ATTRS = {
+    "datasource": AOPWIKIRDF,
+    "title": None,
+    "type": None,
+    "organ": None,
+    "labels": None,
+}
 
 # Mapper from namespace to BridgeDB datasource
 COMPOUND_NAMESPACE_MAPPER = {"pubchem.compound": "PubChem Compound", "CHEMBL": "ChEMBL compound"}
