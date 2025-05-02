@@ -2,60 +2,77 @@
 
 """Python module to export a NetworkX graph to neo4j-compliant format and set the styling for Neo4j."""
 
+import typing
 from collections import defaultdict
-from tqdm import tqdm
+
 import networkx as nx
 from neo4j import GraphDatabase
-
-from pyBiodatafuse.graph.saver import save_graph_to_graphml
-
 from neomodel import (
-    StructuredNode,
-    StringProperty,
-    RelationshipTo,
-    StructuredRel,
-    FloatProperty,
     BooleanProperty,
+    FloatProperty,
     RelationshipFrom,
+    RelationshipTo,
+    StringProperty,
+    StructuredNode,
+    StructuredRel,
     config,
     db,
 )
+from tqdm import tqdm
+
+from pyBiodatafuse.graph.saver import save_graph_to_graphml
 
 
 # Predifinding relationship classes
 class AssociatedWith(StructuredRel):
+    """Relationship between a gene and a disease."""
+
     datasource = StringProperty()
     score = FloatProperty()
     ei = FloatProperty()
 
 
 class PartOf(StructuredRel):
+    """Relationship between a gene and a pathway."""
+
     datasource = StringProperty()
 
 
 class InteractsWith(StructuredRel):
+    """Relationship between a gene and a gene."""
+
     datasource = StringProperty()
     score = FloatProperty()
 
 
 class Activates(StructuredRel):
+    """Relationship between a compound and a gene."""
+
     datasource = StringProperty()
 
 
 class HasSideEffect(StructuredRel):
+    """Relationship between a compound and a side effect."""
+
     datasource = StringProperty()
 
 
 class Treats(StructuredRel):
+    """Relationship between a compound and a disease."""
+
     datasource = StringProperty()
 
 
 class Inhibits(StructuredRel):
+    """Relationship between a compound and a gene."""
+
     datasource = StringProperty()
 
 
 # Defining the nodes
 class Gene(StructuredNode):
+    """Gene node."""
+
     idx = StringProperty(required=True, unique_index=True, unique=True)
     name = StringProperty(required=True)
     datasource = StringProperty(required=True)
@@ -79,6 +96,8 @@ class Gene(StructuredNode):
 
 
 class Disease(StructuredNode):
+    """Disease node."""
+
     idx = StringProperty(required=True, unique_index=True, unique=True)
     name = StringProperty(required=True)
     datasource = StringProperty(required=True)
@@ -95,6 +114,8 @@ class Disease(StructuredNode):
 
 
 class Pathway(StructuredNode):
+    """Pathway node."""
+
     idx = StringProperty(required=True, unique_index=True, unique=True)
     name = StringProperty(required=True)
     datasource = StringProperty(required=True)
@@ -104,6 +125,8 @@ class Pathway(StructuredNode):
 
 
 class BiologicalProcess(StructuredNode):
+    """Biological process node."""
+
     idx = StringProperty(required=True, unique_index=True, unique=True)
     name = StringProperty(required=True)
     datasource = StringProperty(required=True)
@@ -113,6 +136,8 @@ class BiologicalProcess(StructuredNode):
 
 
 class MolecularFunction(StructuredNode):
+    """Molecular function node."""
+
     idx = StringProperty(required=True, unique_index=True, unique=True)
     name = StringProperty(required=True)
     datasource = StringProperty(required=True)
@@ -122,6 +147,8 @@ class MolecularFunction(StructuredNode):
 
 
 class CellularComponent(StructuredNode):
+    """Cellular component node."""
+
     idx = StringProperty(required=True, unique_index=True, unique=True)
     name = StringProperty(required=True)
     datasource = StringProperty(required=True)
@@ -131,11 +158,15 @@ class CellularComponent(StructuredNode):
 
 
 class SideEffect(StructuredNode):
+    """Side effect node."""
+
     name = StringProperty(required=True, unique_index=True, unique=True)
     datasource = StringProperty(required=True)
 
 
 class Compound(StructuredNode):
+    """Compound node."""
+
     idx = StringProperty(required=True, unique_index=True, unique=True)
     name = StringProperty(required=True)
     datasource = StringProperty(required=True)
@@ -253,12 +284,12 @@ def connect_db(uri: str, username: str, password: str):
     db.cypher_query("MATCH (n) DETACH DELETE n")  # delete all nodes
 
 
+@typing.no_type_check
 def load_graph(g: nx.MultiDiGraph, uri: str, username: str, password: str):
-    """Loading the BDF graph to Neo4j."""
-
+    """Load the BDF graph to Neo4j."""
     connect_db(uri, username, password)
 
-    source_nodes = defaultdict()
+    source_nodes = defaultdict(dict)
     for node, node_data in tqdm(g.nodes(data=True), desc="Loading nodes"):
         node_type = node_data["labels"].lower()
         if node_type == "gene":

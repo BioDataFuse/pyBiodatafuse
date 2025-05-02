@@ -243,7 +243,7 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
             while gda_response.ok is False:
                 try:
                     time.sleep(int(gda_response.headers["x-rate-limit-retry-after-seconds"]))
-                except:
+                except Exception:
                     time.sleep(10)
 
                 # Repeat your query
