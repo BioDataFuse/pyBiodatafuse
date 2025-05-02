@@ -134,7 +134,6 @@ DISGENET_DISEASE_OUTPUT_DICT = {
     "MESH": str,  # "MESH_D000067877"
     "UMLS": str,  # "UMLS_C1510586"
     "disease_type": str,
-    "disease_umlscui": str,  # "C1510586"
     "score": float,
     "ei": float,
     "el": str,
@@ -367,7 +366,6 @@ DISGENET_DISEASE_NODE_ATTRS = {
     "MESH": None,
     "UMLS": None,
     "disease_type": None,
-    "disease_umlscui": None,
     "labels": DISEASE_NODE_LABELS,
 }
 GENE_DISEASE_EDGE_LABEL = "associated_with"

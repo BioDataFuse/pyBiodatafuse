@@ -7,7 +7,7 @@ Usage:
     python update_datasources.py
 
 Requirements:
-    - Python 3.8-3.10
+    - Python 3.9-3.10
     - pandas
     - requests
 

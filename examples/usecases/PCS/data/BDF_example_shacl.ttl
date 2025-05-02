@@ -1,0 +1,186 @@
+@prefix bdfo: <https://biodatafuse.org/onto/bdf#> .
+@prefix obo: <http://purl.obolibrary.org/obo/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix schema: <https://schema.org/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix sio: <http://semanticscience.org/resource/> .
+@prefix weso-s: <http://weso.es/shapes/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+weso-s:DisGeNET_Evidence_Index a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:dataType xsd:double ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path sio:SIO_000300 ],
+        [ a sh:PropertyShape ;
+            sh:in ( bdfo:DisGeNET_Evidence_Index ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ] ;
+    sh:targetClass bdfo:DisGeNET_Evidence_Index .
+
+weso-s:DisGeNET_Evidence_Level a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:in ( bdfo:DisGeNET_Evidence_Level ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path sio:SIO_000300 ] ;
+    sh:targetClass bdfo:DisGeNET_Evidence_Level .
+
+weso-s:IAO_0000013 a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:maxCount 29 ;
+            sh:minCount 29 ;
+            sh:node weso-s:NCIT_C16612 ;
+            sh:path sio:SIO_000628 ],
+        [ a sh:PropertyShape ;
+            sh:in ( obo:IAO_0000013 ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ] ;
+    sh:targetClass obo:IAO_0000013 .
+
+weso-s:NCIT_C172573 a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdfs:label ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:node weso-s:SIO_010038 ;
+            sh:path owl:sameAs ],
+        [ a sh:PropertyShape ;
+            sh:in ( obo:NCIT_C172573 ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ] ;
+    sh:targetClass obo:NCIT_C172573 .
+
+weso-s:NCIT_C7057 a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path owl:sameAs ],
+        [ a sh:PropertyShape ;
+            sh:in ( obo:NCIT_C7057 ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:minCount 1 ;
+            sh:path rdfs:label ] ;
+    sh:targetClass obo:NCIT_C7057 .
+
+weso-s:PW_0000001 a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:minCount 1 ;
+            sh:node weso-s:NCIT_C16612 ;
+            sh:path sio:SIO_000028 ],
+        [ a sh:PropertyShape ;
+            sh:in ( obo:PW_0000001 ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdfs:label ],
+        [ a sh:PropertyShape ;
+            sh:minCount 1 ;
+            sh:node weso-s:SIO_000750 ;
+            sh:path sio:SIO_000253 ] ;
+    sh:targetClass obo:PW_0000001 .
+
+weso-s:SIO_000983 a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:node weso-s:NCIT_C16612 ;
+            sh:path sio:SIO_000628 ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:node weso-s:NCIT_C25338 ;
+            sh:path sio:SIO_000216 ],
+        [ a sh:PropertyShape ;
+            sh:in ( sio:SIO_000983 ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ] ;
+    sh:targetClass sio:SIO_000983 .
+
+weso-s:WebAPI a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:in ( schema:WebAPI ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ] ;
+    sh:targetClass schema:WebAPI .
+
+weso-s:NCIT_C25338 a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:in ( obo:NCIT_C25338 ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:double ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path sio:SIO_000300 ] ;
+    sh:targetClass obo:NCIT_C25338 .
+
+weso-s:SIO_000750 a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:in ( sio:SIO_000750 ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdfs:label ] ;
+    sh:targetClass sio:SIO_000750 .
+
+weso-s:SIO_010038 a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:in ( sio:SIO_010038 ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:nodeKind sh:IRI ;
+            sh:path owl:sameAs ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:path rdfs:label ] ;
+    sh:targetClass sio:SIO_010038 .
+
+weso-s:NCIT_C16612 a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:in ( obo:NCIT_C16612 ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdfs:label ],
+        [ a sh:PropertyShape ;
+            sh:nodeKind sh:IRI ;
+            sh:path sio:SIO_000068 ] ;
+    sh:targetClass obo:NCIT_C16612 .
+
