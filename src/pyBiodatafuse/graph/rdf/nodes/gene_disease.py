@@ -32,7 +32,7 @@ def add_gene_disease_associations(
     disease_node = add_disease_node(g, disease_data)
     if not disease_node:
         return
-    umlscui = disease_data.get("disease_umlscui", "")
+    umlscui = disease_data.get("UMLS", "")
     assoc_node = URIRef(f"{new_uris['gene_disease_association']}/{gene_id}{umlscui}")
     g.add((assoc_node, RDF.type, URIRef(NODE_TYPES["gene_disease_association"])))
     g.add((assoc_node, URIRef(PREDICATES["sio_refers_to"]), gene_node))
@@ -71,7 +71,7 @@ def add_disease_node(g: Graph, disease_data: dict) -> URIRef:
     :param disease_data: Dictionary containing disease information.
     :return: URIRef for the created disease node.
     """
-    disease_curie = disease_data.get("disease_umlscui") or disease_data.get("UMLS")
+    disease_curie = disease_data.get("UMLS")
     if not disease_curie:
         return None
 
@@ -148,7 +148,7 @@ def add_evidence_node(
         return None
 
     node = URIRef(
-        f"{new_uris['score_base_node']}/{evidence_type}/{id_number}{i}{source_idx}_{disease_data['disease_umlscui']}"
+        f"{new_uris['score_base_node']}/{evidence_type}/{id_number}{i}{source_idx}_{disease_data['UMLS']}"
     )
     datatype = XSD.double
     if evidence_type == "el":

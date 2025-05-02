@@ -1,10 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""Python file for querying StringDB (https://string-db.org/).
-
-This version keeps the core functionalities of code 1 and adds the new functionalities from code 2.
-"""
+"""Module for querying StringDB (https://string-db.org/)."""
 
 import datetime
 import logging
@@ -76,34 +73,35 @@ def _format_data(row, string_ids_df, network_df):
     """
     gene_ppi_links = []
     target_links_set = set()
-
     for _, row_arr in network_df.iterrows():
-        # If the input gene appears as preferredName_A, then the partner is in preferredName_B.
-        if row_arr["preferredName_A"] == row["identifier"]:
-            partner = row_arr["preferredName_B"]
-            if partner not in target_links_set:
+        if row_arr["preferredName_A"]:
+            if (
+                row_arr["preferredName_A"] == row["target"]
+                or row_arr["preferredName_A"] == row["identifier"]
+            ) and row_arr["preferredName_B"] not in target_links_set:
                 gene_ppi_links.append(
                     {
-                        "stringdb_link_to": partner,
-                        "Ensembl": row_arr["stringId_B"].split(".")[1],
+                        "stringdb_link_to": row_arr["preferredName_B"],
+                        STRING_GENE_INPUT_ID: row_arr["stringId_B"].split(".")[1],
                         "score": row_arr["score"],
-                        "Ensembl_link": row_arr["stringId_A"].split(".")[1],
+                        STRING_GENE_LINK_ID: row_arr["stringId_A"].split(".")[1],
                     }
                 )
-                target_links_set.add(partner)
-        # If the input gene appears as preferredName_B, then the partner is in preferredName_A.
-        elif row_arr["preferredName_B"] == row["identifier"]:
-            partner = row_arr["preferredName_A"]
-            if partner not in target_links_set:
+                target_links_set.add(row_arr["preferredName_B"])
+
+            elif (
+                row_arr["preferredName_B"] == row["target"]
+                or row_arr["preferredName_B"] == row["identifier"]
+            ) and row_arr["preferredName_A"] not in target_links_set:
                 gene_ppi_links.append(
                     {
-                        "stringdb_link_to": partner,
-                        "Ensembl": row_arr["stringId_A"].split(".")[1],
+                        "stringdb_link_to": row_arr["preferredName_A"],
+                        STRING_GENE_INPUT_ID: row_arr["stringId_A"].split(".")[1],
                         "score": row_arr["score"],
-                        "Ensembl_link": row_arr["stringId_B"].split(".")[1],
+                        STRING_GENE_LINK_ID: row_arr["stringId_B"].split(".")[1],
                     }
                 )
-                target_links_set.add(partner)
+                target_links_set.add(row_arr["preferredName_A"])
 
     return gene_ppi_links
 
@@ -121,7 +119,6 @@ def get_string_ids(gene_list: list, species):
         results = requests.post(
             f"{STRING_ENDPOINT}/json/get_string_ids", data=params, timeout=TIMEOUT
         ).json()
-        logger.debug("STRING get_string_ids results: %s", results)
         return results
     except RequestException as e:
         logger.error("Error getting STRING IDs: %s", e)
@@ -172,7 +169,10 @@ def get_ppi(bridgedb_df: pd.DataFrame, species: str = "human"):
         logger.error("NCBI taxonomy search did not return an ID for species: %s", species)
         return pd.DataFrame(), {}
 
-    data_df = get_identifier_of_interest(bridgedb_df, STRING_GENE_INPUT_ID).reset_index(drop=True)
+    data_df = get_identifier_of_interest(
+        bridgedb_df,
+        STRING_GENE_INPUT_ID,
+    ).reset_index(drop=True)
     gene_list = list(set(data_df["target"].tolist()))
     logger.debug("Gene list: %s", gene_list)
 
@@ -227,14 +227,32 @@ def get_ppi(bridgedb_df: pd.DataFrame, species: str = "human"):
             stacklevel=2,
         )
         return pd.DataFrame(), string_metadata
-
     # Format the data
     data_df[STRING_PPI_COL] = data_df.apply(
         lambda row: _format_data(row, stringdb_ids_df, network_df), axis=1
     )
-    data_df[STRING_PPI_COL] = data_df[STRING_PPI_COL].apply(
-        lambda x: ([{key: np.nan for key in STRING_OUTPUT_DICT}] if len(x) == 0 else x)
-    )
+    # Drop rows where STRING_PPI_COL is an empty list
+    data_df = data_df[data_df[STRING_PPI_COL].apply(bool)].reset_index(drop=True)
+    # Get matching rows
+    # Filter rows with non-empty STRING_PPI_COL
+    # rows_with_ppi = data_df[data_df[STRING_PPI_COL].apply(bool)]
+    #
+    # Iterate over rows with STRING_PPI_COL values
+    # for _, row in rows_with_ppi.iterrows():
+    #    identifier = row["identifier"]
+    #    target = row["target"]
+    #    ppi_value = row[STRING_PPI_COL]
+    #
+    #    # Update rows where target or identifier matches
+    #    data_df.loc[
+    #        (data_df["identifier"] == target)
+    #        | (data_df["target"] == target)
+    #        | (data_df["identifier"] == identifier)
+    #        | (data_df["target"] == identifier),
+    #        STRING_PPI_COL,
+    #    ] = data_df[STRING_PPI_COL].apply(
+    #        lambda x: ppi_value if not x else (x + ppi_value if #isinstance(x, list) else ppi_value)
+    #    )
 
     # Collect all ENSP IDs from network_df
     ensp_ids = set(network_df["stringId_A"].str.split(".").str[1]) | set(

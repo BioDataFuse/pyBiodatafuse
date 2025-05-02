@@ -1,0 +1,27 @@
+SELECT DISTINCT ?gene_id ?interaction ?sourceDb ?targetDb ?targetGene ?targetProtein ?targetMetabolite ?mimtype 
+?pathway_id (str(?titleLit) as ?pathway_label) ?rhea_id  
+WHERE {  
+?source wp:bdbEntrezGene ?gene_id .
+VALUES ?gene_id { $gene_list }
+## Select pathway
+?pathway_id a wp:Pathway ;
+         wp:organismName $organism_name; 
+         dc:title ?titleLit . 	
+         
+## Break PW down into interactions between source and target nodes
+?interaction dcterms:isPartOf ?pathway_id ;			
+	           wp:source ?source ;
+	           wp:target ?target .  
+## Get MIM type
+OPTIONAL{?interaction a ?mimtype}.
+
+## Source DB, CrossRefs, determine node types (gene/protein/metabolite)
+?source wp:bdbWikidata ?sourceDb .
+?target wp:bdbWikidata ?targetDb .
+OPTIONAL{?target wp:bdbEntrezGene ?targetGene} .
+OPTIONAL{?target wp:bdbPubChem ?targetMetabolite} .
+OPTIONAL{?target wp:bdbUniprot  ?targetProtein} .
+
+## Rhea ID
+OPTIONAL{?interaction wp:bdbRhea ?rhea_id} .
+} ORDER BY DESC(?rhea_id)

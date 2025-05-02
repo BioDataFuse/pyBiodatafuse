@@ -10,11 +10,14 @@ import pandas as pd
 from pyBiodatafuse.id_mapper import read_resource_files
 
 
-def get_identifier_of_interest(bridgedb_df: pd.DataFrame, db_source: str) -> pd.DataFrame:
+def get_identifier_of_interest(
+    bridgedb_df: pd.DataFrame, db_source: str, keep: Optional[List] = None
+) -> pd.DataFrame:
     """Get identifier of interest from BridgeDb output file.
 
     :param bridgedb_df: DataFrame containing the output from BridgeDb
     :param db_source: identifier of interest from BridgeDB (e.g. "NCBI Gene")
+    :param keep: list of additional identifier sources to keep in the output
     :returns: a DataFrame containing the identifiers of interest
     """
     # Load identifier options
@@ -23,9 +26,11 @@ def get_identifier_of_interest(bridgedb_df: pd.DataFrame, db_source: str) -> pd.
     # Check if source is in identifier options
     assert db_source in identifier_options, f"Source {db_source} is not in identifier options"
 
+    if keep is None:
+        keep = []
+    keep.append(db_source)
     # Filter rows where "target.source" is specific datasource for eg. "NCBI Gene"
-    subset_df = bridgedb_df[bridgedb_df["target.source"] == db_source]
-
+    subset_df = bridgedb_df[bridgedb_df["target.source"].isin(keep)]
     return subset_df.reset_index(drop=True)
 
 
@@ -112,7 +117,7 @@ def combine_sources(bridgedb_df: pd.DataFrame, df_list: List[pd.DataFrame]) -> p
     """
     m = bridgedb_df[
         (bridgedb_df["target.source"] == "Ensembl")
-        | (bridgedb_df["target.source"] == "PubChem-compound")
+        | (bridgedb_df["target.source"] == "PubChem Compound")
     ]
     for df in df_list:
         if not df.empty:

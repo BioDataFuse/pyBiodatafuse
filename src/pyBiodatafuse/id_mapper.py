@@ -10,7 +10,7 @@ import os
 import re
 import time
 from importlib import resources
-from typing import List, Optional, Tuple
+from typing import List, Literal, Optional, Tuple
 
 import pandas as pd
 import requests
@@ -139,8 +139,51 @@ def get_version_datasource_bridgedb(input_species: Optional[str] = None) -> List
 def bridgedb_xref(
     identifiers: pd.DataFrame,
     input_species: Optional[str] = None,
-    input_datasource: Optional[str] = "HGNC",
     output_datasource: Optional[list] = None,
+    input_datasource: Literal[
+        "Ensembl",
+        "NCBI Gene",
+        "HGNC",
+        "HGNC Accession Number",
+        "MGI",
+        "miRBase mature sequence",
+        "miRBase Sequence",
+        "OMIM",
+        "RefSeq",
+        "Rfam",
+        "RGD",
+        "SGD",
+        "UCSC Genome Browser",
+        "NCBI Protein",
+        "PDB",
+        "Pfam",
+        "Uniprot-TrEMBL",
+        "Uniprot-SwissProt",
+        "Affy",
+        "Agilent",
+        "Illumina",
+        "Gene Ontology",
+        "CAS",
+        "ChEBI",
+        "ChemSpider",
+        "ChEMBL compound",
+        "DrugBank",
+        "HMDB",
+        "Guide to Pharmacology Ligand ID",
+        "InChIKey",
+        "KEGG Compound",
+        "KEGG Drug",
+        "KEGG Glycan",
+        "LIPID MAPS",
+        "LipidBank",
+        "PharmGKB Drug",
+        "PubChem Compound",
+        "PubChem Substance",
+        "SwissLipids",
+        "TTD Drug",
+        "Wikidata",
+        "Wikipedia",
+    ] = "HGNC",
 ) -> Tuple[pd.DataFrame, dict]:
     """Map input list using BridgeDb.
 
@@ -151,15 +194,8 @@ def bridgedb_xref(
     :returns: a DataFrame containing the mapped identifiers and dictionary of the data resource metadata.
     :raises ValueError: if the input_datasource is not provided or if the request fails
     """
-    if not input_datasource:
-        input_datasource = match_input_datasource(identifiers)
-        logger.info(f"Input datasource is set to {input_datasource}")
-
     if input_species is None:
         input_species = "Human"
-
-    if not input_datasource:
-        raise ValueError("Please provide the identifier datasource, e.g. HGNC")
 
     if output_datasource is None or "All":
         output_datasource = [

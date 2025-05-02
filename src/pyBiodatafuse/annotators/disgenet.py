@@ -241,7 +241,10 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
             disgenet_output.extend(response_parsed["payload"])
         elif gda_response.status_code == 429:
             while gda_response.ok is False:
-                time.sleep(int(gda_response.headers["x-rate-limit-retry-after-seconds"]))
+                try:
+                    time.sleep(int(gda_response.headers["x-rate-limit-retry-after-seconds"]))
+                except Exception:
+                    time.sleep(10)
 
                 # Repeat your query
                 gda_response = s.get(

@@ -158,7 +158,7 @@ def get_gene_go_process(
     # Record the end time
     end_time = datetime.datetime.now()
 
-    """Metdata details"""
+    """Metadata details"""
     # Get the current date and time
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # Calculate the time elapsed
@@ -523,66 +523,67 @@ def get_gene_compound_interactions(
 
     # Generate the OpenTargets DataFrame
     intermediate_df = pd.DataFrame()
-    for gene in tqdm(r["data"]["targets"], desc="Processing gene-drug interactions"):
-        if not gene["knownDrugs"]:
-            continue
+    if r.get("data") and r.get("data").get("targets"):
+        for gene in tqdm(r["data"]["targets"], desc="Processing gene-drug interactions"):
+            if not gene["knownDrugs"]:
+                continue
 
-        drug_info = gene["knownDrugs"]["rows"]
-        drug_df = pd.DataFrame(drug_info)
+            drug_info = gene["knownDrugs"]["rows"]
+            drug_df = pd.DataFrame(drug_info)
 
-        if drug_df.empty:
-            continue
-        # drug_df["unique_action_type"] = drug_df["drug"]["mechanismsOfAction"]["uniqueActionTypes"]
-        drug_df[
-            [
-                "chembl_id",
-                "compound_name",
-                "is_approved",
-                "clincal_trial_phase",
-                "cross_references",
-                "adverse_events",
-                "mechanisms_of_action",
-            ]
-        ] = drug_df["drug"].apply(pd.Series)
-        drug_df.drop(columns=["drug"], inplace=True)
+            if drug_df.empty:
+                continue
+            # drug_df["unique_action_type"] = drug_df["drug"]["mechanismsOfAction"]["uniqueActionTypes"]
+            drug_df[
+                [
+                    "chembl_id",
+                    "compound_name",
+                    "is_approved",
+                    "clincal_trial_phase",
+                    "cross_references",
+                    "adverse_events",
+                    "mechanisms_of_action",
+                ]
+            ] = drug_df["drug"].apply(pd.Series)
+            drug_df.drop(columns=["drug"], inplace=True)
 
-        drug_df["target"] = gene["id"]
-        drug_df["chembl_id"] = "CHEMBL:" + drug_df["chembl_id"].astype(str)
+            drug_df["target"] = gene["id"]
+            drug_df["chembl_id"] = "CHEMBL:" + drug_df["chembl_id"].astype(str)
 
-        drug_df["relation"] = drug_df["mechanismOfAction"].apply(
-            lambda x: "inhibits" if "antagonist" in x else "activates"
-        )
-        # drug_df.rename(columns={"mechanismOfAction": "relation"}, inplace=True)
-
-        drug_df["drugbank_id"] = drug_df["cross_references"].apply(
-            lambda x: (
-                next((ref["reference"][0] for ref in x if ref["source"] == "drugbank"), None)
-                if x
-                else None
+            drug_df["relation"] = drug_df["mechanismOfAction"].apply(
+                lambda x: "inhibits" if "antagonist" in x else "activates"
             )
-        )
-        drug_df["drugbank_id"] = drug_df["drugbank_id"].apply(
-            lambda x: "DrugBank:" + x if x else None
-        )
+            # drug_df.rename(columns={"mechanismOfAction": "relation"}, inplace=True)
 
-        drug_df[["adverse_effect_count", "adverse_effect"]] = drug_df.apply(
-            lambda row: (
-                pd.Series([row["adverse_events"]["count"], row["adverse_events"]["rows"]])
-                if row["adverse_events"]
-                else pd.Series([0, None])
-            ),
-            axis=1,
-        )
+            drug_df["drugbank_id"] = drug_df["cross_references"].apply(
+                lambda x: (
+                    next((ref["reference"][0] for ref in x if ref["source"] == "drugbank"), None)
+                    if x
+                    else None
+                )
+            )
+            drug_df["drugbank_id"] = drug_df["drugbank_id"].apply(
+                lambda x: "DrugBank:" + x if x else None
+            )
 
-        intermediate_df = pd.concat([intermediate_df, drug_df], ignore_index=True)
-        intermediate_df.drop(["cross_references", "adverse_events"], axis=1, inplace=True)
-        intermediate_df = intermediate_df.drop_duplicates(
-            subset=[
-                col
-                for col in intermediate_df.columns
-                if col not in ["adverse_effect", "mechanisms_of_action"]
-            ]
-        )
+            drug_df[["adverse_effect_count", "adverse_effect"]] = drug_df.apply(
+                lambda row: (
+                    pd.Series([row["adverse_events"]["count"], row["adverse_events"]["rows"]])
+                    if row["adverse_events"]
+                    else pd.Series([0, None])
+                ),
+                axis=1,
+            )
+
+            intermediate_df = pd.concat([intermediate_df, drug_df], ignore_index=True)
+            intermediate_df.drop(["cross_references", "adverse_events"], axis=1, inplace=True)
+            intermediate_df = intermediate_df.drop_duplicates(
+                subset=[
+                    col
+                    for col in intermediate_df.columns
+                    if col not in ["adverse_effect", "mechanisms_of_action"]
+                ]
+            )
 
     if intermediate_df.empty:
         warnings.warn(
@@ -602,6 +603,9 @@ def get_gene_compound_interactions(
     mapped_df["identifier"] = "CHEMBL:" + mapped_df["identifier"]
     mapped_dict = mapped_df.set_index("identifier").to_dict()["target"]
     intermediate_df["compound_cid"] = intermediate_df["chembl_id"].map(mapped_dict)
+    intermediate_df["compound_cid"] = intermediate_df["compound_cid"].str.replace(
+        "pubchem.compound:", "", regex=False
+    )
 
     # Check if all keys in df match the keys in OUTPUT_DICT
     check_columns_against_constants(
@@ -1052,7 +1056,7 @@ def get_disease_compound_interactions(
     # Generate the OpenTargets DataFrame
     intermediate_df = pd.DataFrame()
 
-    if r["data"]["diseases"] is None:
+    if not r.get("data", {}).get("diseases"):
         warnings.warn(
             f"There is no annotation for your input list in {OPENTARGETS_DISEASE_COMPOUND_COL}.",
             stacklevel=2,
@@ -1133,7 +1137,11 @@ def get_disease_compound_interactions(
     mapped_df = mapped_df[["identifier", "target"]]
     mapped_df["identifier"] = "CHEMBL:" + mapped_df["identifier"]
     mapped_dict = mapped_df.set_index("identifier").to_dict()["target"]
-    intermediate_df["compound_cid"] = intermediate_df["chembl_id"].map(mapped_dict)
+    intermediate_df["compound_cid"] = (
+        intermediate_df["chembl_id"]
+        .map(mapped_dict)
+        .str.replace("pubchem.compound:", "", regex=False)
+    )
     intermediate_df["relation"] = OPENTARGETS_COMPOUND_DISEASE_RELATION
 
     # Check if all keys in df match the keys in OUTPUT_DICT
