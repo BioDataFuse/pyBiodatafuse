@@ -14,9 +14,9 @@ from tqdm import tqdm
 from pyBiodatafuse.constants import (
     KEGG,
     KEGG_COL,
+    KEGG_COMPOUND_COL,
     KEGG_ENDPOINT,
     KEGG_GENE_INPUT_ID,
-    KEGG_COMPOUND_COL,
 )
 from pyBiodatafuse.utils import get_identifier_of_interest
 
