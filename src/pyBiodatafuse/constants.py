@@ -431,7 +431,7 @@ MOLECULAR_PATHWAY_NODE_ATTRS = {
     "id": "str",
     "labels": MOLECULAR_PATHWAY_NODE_LABELS,
 }
-MOLECULAR_GENE_PATHWAY_EDGE_LABEL = ""  # todo
+MOLECULAR_GENE_PATHWAY_EDGE_LABEL = "part_of"
 MOLECULAR_INTERACTION_EDGE_ATTRS = {"interaction_type": "str", "rhea_id": str}
 # GO nodes
 # Open Targets - GO processes

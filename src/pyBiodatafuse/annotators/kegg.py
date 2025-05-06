@@ -4,14 +4,12 @@
 """Python file for queriying KEGG (https://rest.kegg.jp/)."""
 
 import datetime
-import json
-import logging
-import time
 import warnings
 
 import numpy as np
 import pandas as pd
 import requests
+from tqdm import tqdm
 
 from pyBiodatafuse.constants import (
     KEGG,
@@ -20,7 +18,9 @@ from pyBiodatafuse.constants import (
     KEGG_ENDPOINT,
     KEGG_GENE_INPUT_ID,
 )
-from pyBiodatafuse.utils import check_columns_against_constants, get_identifier_of_interest
+from pyBiodatafuse.utils import get_identifier_of_interest
+
+tqdm.pandas()
 
 
 def check_endpoint_kegg() -> bool:
@@ -68,7 +68,7 @@ def get_kegg_ids_batch(gene_list):
     :returns: Dictionary mapping gene IDs to KEGG identifiers
     """
     kegg_ids = {}
-    for i in range(0, len(gene_list), 10):
+    for i in tqdm(range(0, len(gene_list), 10), desc="Getting KEGG IDs"):
         batch_genes = gene_list[i : i + 10]
         response = requests.get(
             f"{KEGG_ENDPOINT}/conv/genes/{'+'.join(['ncbi-geneid:'+i for i in batch_genes])}"
@@ -126,7 +126,7 @@ def get_compound_genes(pathway_info, results_entry):
     return pathway_info
 
 
-def get_compounds(kegg_df):
+def get_compounds(kegg_df: pd.DataFrame):
     """Get compound names for KEGG compounds in the dataframe.
 
     :param kegg_df: Bridgedb dataframe.
@@ -167,7 +167,7 @@ def get_compounds(kegg_df):
                     "identifier.source": row["identifier.source"],
                     "target": kegg_id,
                     "target.source": row["target.source"],
-                    "KEGG_compounds": queried_identifiers.get(
+                    KEGG_COMPOUND_COL: queried_identifiers.get(
                         kegg_id, {"KEGG_identifier": kegg_id, "name": None}
                     ),
                 }
@@ -238,7 +238,7 @@ def get_pathway_info(row):
     return kegg_dict
 
 
-def get_pathways(bridgedb_df):
+def get_pathways(bridgedb_df: pd.DataFrame):
     """Annotate genes with KEGG pathway information."""
     api_available = check_endpoint_kegg()
     if not api_available:
@@ -256,12 +256,14 @@ def get_pathways(bridgedb_df):
 
     # Get the KEGG identifiers
     kegg_ids = get_kegg_ids_batch(gene_list)
-    data_df[KEGG_COL] = data_df["target"].apply(lambda x: {"KEGG_id": kegg_ids.get(x, np.nan)})
+    data_df[KEGG_COL] = data_df["target"].progress_apply(
+        lambda x: {"KEGG_id": kegg_ids.get(x, np.nan)}
+    )
 
     # Get the links for the KEGG pathways
-    data_df[KEGG_COL] = data_df.apply(lambda row: get_pathway_info(row), axis=1)
+    data_df[KEGG_COL] = data_df.progress_apply(lambda row: get_pathway_info(row), axis=1)
 
-    data_df["KEGG_pathways"] = data_df["KEGG_pathways"].apply(
+    data_df[KEGG_COL] = data_df[KEGG_COL].apply(
         lambda x: x["pathways"] if isinstance(x, dict) and "pathways" in x else []
     )
 
