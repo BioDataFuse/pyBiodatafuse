@@ -1,4 +1,4 @@
-SELECT ?gene_id ?pathway_id ?pathway_label ?pathway_gene_count
+SELECT DISTINCT ?gene_id ?pathway_id ?pathway_label ?pathway_gene_count
 WHERE {
 	
   	VALUES ?gene_id { $gene_list }

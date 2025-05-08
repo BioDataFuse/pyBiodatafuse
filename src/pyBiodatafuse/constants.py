@@ -19,6 +19,7 @@ STRING_ENDPOINT = "https://string-db.org/api"
 UNIPROT_ENDPOINT = "https://rest.uniprot.org"
 WIKIDATA_ENDPOINT = "https://query-main.wikidata.org/sparql"
 WIKIPATHWAYS_ENDPOINT = "https://sparql.wikipathways.org/sparql"
+AOPWIKI_ENDPOINT = "https://aopwiki.rdf.bigcat-bioinformatics.org/sparql/"
 
 # Data sources
 BRIDGEDB = "BridgeDB"
@@ -35,6 +36,7 @@ STRING = "StringDB"
 WIKIDATA = "Wikidata"
 WIKIPATHWAYS = "WikiPathways"
 OPENTARGETS_REACTOME = "OpenTargets_reactome"
+AOPWIKIRDF = "AOP Wiki RDF"
 
 # DataFrame Columns
 
@@ -61,6 +63,10 @@ MOLMEDB_COMPOUND_PROTEIN_COL = f"{MOLMEDB}_transporter_inhibited"
 PUBCHEM_COMPOUND_ASSAYS_COL = f"{PUBCHEM}_assays"
 STRING_PPI_COL = f"{STRING}_ppi"
 WIKIDATA_CC_COL = f"{WIKIDATA}_cellular_components"
+AOPWIKI_GENE_COL = "aop_gene"  # todo fix this
+AOPWIKI_COMPOUND_COL = "pubchem_compound"  # todo fix this
+WIKIPATHWAYS_MOLECULAR_COL = f"{WIKIPATHWAYS}_molecular"
+
 
 # Input type for each data source
 BGEE_GENE_INPUT_ID = "Ensembl"
@@ -83,6 +89,8 @@ STRING_GENE_LINK_ID = "Ensembl_link"
 WIKIDATA_GENE_INPUT_ID = "NCBI Gene"
 WIKIPATHWAYS_GENE_INPUT_ID = "NCBI Gene"
 PATENT_INPUT_ID = "PubChem Compound"
+AOPWIKI_GENE_INPUT_ID = "Ensembl"
+AOPWIKI_COMPOUND_INPUT_ID = "PubChem Compound"
 
 # Output annotation for each data source
 # Bgee
@@ -131,11 +139,45 @@ DISGENET_DISEASE_OUTPUT_DICT = {
     "MESH": str,  # "MESH_D000067877"
     "UMLS": str,  # "UMLS_C1510586"
     "disease_type": str,
-    "disease_umlscui": str,  # "C1510586"
     "score": float,
     "ei": float,
     "el": str,
 }
+
+# AOPWIKI
+AOPWIKI_GENE_OUTPUT_DICT = {
+    "aop": str,
+    "aop_title": str,
+    "MIEtitle": str,
+    "MIE": str,
+    "KE_downstream": str,
+    "KE_downstream_title": str,
+    "KER": str,
+    "ao": str,
+    "ao_title": str,
+    "KE_upstream": str,
+    "KE_upstream_title": str,
+    "KE_upstream_organ": str,
+    "KE_downstream_organ": str,
+    "pubchem_compound": str,
+}
+
+AOPWIKI_COMPOUND_OUTPUT_DICT = {
+    "aop": str,
+    "aop_title": str,
+    "MIEtitle": str,
+    "MIE": str,
+    "KE_downstream": str,
+    "KE_downstream_title": str,
+    "KER": str,
+    "ao": str,
+    "ao_title": str,
+    "KE_upstream": str,
+    "KE_upstream_title": str,
+    "KE_upstream_organ": str,
+    "KE_downstream_organ": str,
+}
+
 HPO = "HPO"
 NCI = "NCI"
 OMIM = "OMIM|MIM"
@@ -201,6 +243,16 @@ WIKIPATHWAYS_PATHWAYS_OUTPUT_DICT = {
     "pathway_id": str,
     "pathway_label": str,
     "pathway_gene_count": int,
+}
+
+WIKIPATHWAYS_MOLECULAR_GENE_OUTPUT_DICT = {
+    "pathway_id": str,
+    "pathway_label": str,
+    "targetGene": str,
+    "targetProtein": str,
+    "targetMetabolite": str,
+    "mimtype": str,
+    "rhea_id": str,
 }
 
 # Open Targets - Reactome
@@ -319,7 +371,6 @@ DISGENET_DISEASE_NODE_ATTRS = {
     "MESH": None,
     "UMLS": None,
     "disease_type": None,
-    "disease_umlscui": None,
     "labels": DISEASE_NODE_LABELS,
 }
 GENE_DISEASE_EDGE_LABEL = "associated_with"
@@ -375,6 +426,18 @@ PATHWAY_NODE_ATTRS = {
 GENE_PATHWAY_EDGE_LABEL = "part_of"
 GENE_PATHWAY_EDGE_ATTRS = {"datasource": None, "label": GENE_PATHWAY_EDGE_LABEL}
 
+# molecular pathway node
+MOLECULAR_PATHWAY_NODE_LABELS = "Pathway"
+MOLECULAR_PATHWAY_NODE_MAIN_LABEL = "pathway_id"
+MOLECULAR_GENE_NODE_ATTRS = {"datasource": WIKIPATHWAYS, "label": ""}
+MOLECULAR_PATHWAY_NODE_ATTRS = {
+    "pathway_id": "str",
+    "pathway_label": "str",
+    "id": "str",
+    "labels": MOLECULAR_PATHWAY_NODE_LABELS,
+}
+MOLECULAR_GENE_PATHWAY_EDGE_LABEL = ""  # todo
+MOLECULAR_INTERACTION_EDGE_ATTRS = {"interaction_type": "str", "rhea_id": str}
 # GO nodes
 # Open Targets - GO processes
 GO_BP_NODE_LABELS = "Biological Process"
@@ -674,6 +737,7 @@ DATA_SOURCES = {
     PUBCHEM: "https://pubchem.ncbi.nlm.nih.gov/",
     WIKIDATA: "https://wikidata.org",
     OPENTARGETS_REACTOME: "https://www.opentargets.org/",
+    AOPWIKIRDF: "https://aopwiki.rdf.bigcat-bioinformatics.org",
 }
 
 DISEASE_IDENTIFIER_TYPES = [
@@ -707,4 +771,45 @@ NAMESPACE_SHAPES = {
     "https://reactome.org/content/detail/": "reactome",
     "https://www.uniprot.org/uniprotkb/": "uniprot",
     "http://identifiers.org/ensembl#": "ensembl",
+}
+
+AOPWIKI_LIFESTAGE_MAPPINGS = {
+    "All life stages": "",
+    "Adult": "",
+    "Juvenile": "",
+    "Development": "",
+    "Birth to < 1 month": "",
+    "Not Otherwise Specified": "",
+    "Adults": "",
+    "Adult, reproductively mature": "",
+    "During development and at adulthood": "",
+    "Old Age": "",
+    "Embryo": "",
+    "During brain development": "",
+    "During brain development, adulthood and aging": "",
+    "Foetal": "",
+    "Larvae": "",
+}
+
+SOURCE_NAMESPACES = {
+    "CAS": "https://commonchemistry.cas.org/detail?cas_rn=",
+    "ChEBI": "https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI:",
+    "ChemSpider": "http://www.chemspider.com/Chemical-Structure.",
+    "ChEMBL compound": "https://www.ebi.ac.uk/chembl/compound_report_card/",
+    "DrugBank": "https://go.drugbank.com/drugs/",
+    "HMDB": "https://hmdb.ca/metabolites/",
+    "InChIKey": "https://www.chemspider.com/Search.aspx?q=",
+    "KEGG Compound": "https://www.genome.jp/dbget-bin/www_bget?cpd:",
+    "KEGG Drug": "https://www.genome.jp/dbget-bin/www_bget?dr:",
+    "KEGG Glycan": "https://www.genome.jp/dbget-bin/www_bget?gl:",
+    "LIPID MAPS": "https://www.lipidmaps.org/data/LMSDRecord.php?LMID=",
+    "LipidBank": "http://lipidbank.jp/cgi-bin/detail.cgi?id=",
+    "PharmGKB Drug": "https://www.pharmgkb.org/chemical/",
+    "PubChem Compound": "https://pubchem.ncbi.nlm.nih.gov/compound/",
+    "PubChem Substance": "https://pubchem.ncbi.nlm.nih.gov/substance/",
+    "SwissLipids": "https://www.swisslipids.org/#/entity/",
+    "TTD Drug": "http://db.idrblab.net/ttd/data/drug/details/",
+    "Wikidata": "https://www.wikidata.org/wiki/",
+    "Wikipedia": "https://en.wikipedia.org/wiki/",
+    # TODO ADD ALL
 }

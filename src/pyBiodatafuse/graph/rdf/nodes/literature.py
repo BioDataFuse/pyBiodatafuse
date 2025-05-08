@@ -34,7 +34,7 @@ def add_literature_based_data(
     """
     source = entry.get("source", None)
     if source and "PMID" in source:
-        source_id = source.split(": ")[1]
+        source_id = source.split(":")[1].rstrip().lstrip()
         source_url = f"https://pubmed.ncbi.nlm.nih.gov/{source_id}"
         article_node = URIRef(source_url)
         umls = entry.get("UMLS", None)

@@ -1,0 +1,31 @@
+SELECT DISTINCT ?aop ?aop_title ?MIEtitle ?MIE ?KE_downstream ?KE_downstream_title ?KER ?ao ?ao_title ?KE_upstream ?KE_upstream_title ?KE_upstream_organ ?KE_downstream_organ ?pubchem_compound (REPLACE(STR(?Ensembl), "https://identifiers.org/ensembl/", "") AS ?Ensembl)
+WHERE {
+  VALUES ?Ensembl { $genes }
+  ?chemical skos:exactMatch ?pubchem_compound .
+  FILTER(STRSTARTS(STR(?pubchem_compound), "https://identifiers.org/pubchem.compound/"))
+  ?aop a aopo:AdverseOutcomePathway ;
+       dc:title ?aop_title ;
+       aopo:has_adverse_outcome ?ao ;
+       aopo:has_molecular_initiating_event ?MIE ;
+       nci:C54571 ?stressor .
+
+  OPTIONAL { ?ao
+      edam:data_1025 ?object .
+  ?object skos:exactMatch ?id .
+  ?id a edam:data_1033 ; 
+      edam:data_1033 ?Ensembl .}
+  ?stressor aopo:has_chemical_entity ?chemical .
+    ?chemical cheminf:000446 ?cas_id ;
+              dc:title ?compound_name .
+  ?MIE dc:title ?MIEtitle .
+  ?aop aopo:has_key_event_relationship ?KER .
+  ?KER a aopo:KeyEventRelationship ;
+       aopo:has_upstream_key_event ?KE_upstream ;
+       aopo:has_downstream_key_event ?KE_downstream .
+  ?KE_upstream dc:title ?KE_upstream_title .
+  ?KE_downstream dc:title ?KE_downstream_title .
+  OPTIONAL { 
+    ?KE_upstream aopo:OrganContext ?KE_upstream_organ . 
+    ?KE_downstream aopo:OrganContext ?KE_downstream_organ . 
+  }
+}

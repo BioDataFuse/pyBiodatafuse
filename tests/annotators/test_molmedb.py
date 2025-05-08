@@ -225,17 +225,6 @@ class TestMolMeDb(unittest.TestCase):
                 ],
                 [
                     {
-                        "compound_name": nan,
-                        "inchikey": nan,
-                        "smiles": nan,
-                        "compound_cid": nan,
-                        "molmedb_id": nan,
-                        "source_pmid": nan,
-                        "chebi_id": nan,
-                        "drugbank_id": nan,
-                        "uniprot_trembl_id": nan,
-                    },
-                    {
                         "compound_name": "[dichloro(phosphono)methyl]phosphonic acid",
                         "inchikey": "ACSIXWWBWUQEHA-UHFFFAOYSA-N",
                         "smiles": "O=P(O)(O)C(Cl)(Cl)P(=O)(O)O",
@@ -248,17 +237,6 @@ class TestMolMeDb(unittest.TestCase):
                     },
                 ],
                 [
-                    {
-                        "compound_name": nan,
-                        "inchikey": nan,
-                        "smiles": nan,
-                        "compound_cid": nan,
-                        "molmedb_id": nan,
-                        "source_pmid": nan,
-                        "chebi_id": nan,
-                        "drugbank_id": nan,
-                        "uniprot_trembl_id": nan,
-                    },
                     {
                         "compound_name": "[dichloro(phosphono)methyl]phosphonic acid",
                         "inchikey": "ACSIXWWBWUQEHA-UHFFFAOYSA-N",

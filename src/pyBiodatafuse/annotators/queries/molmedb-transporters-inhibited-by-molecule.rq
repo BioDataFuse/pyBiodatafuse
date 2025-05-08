@@ -1,12 +1,11 @@
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-PREFIX obo: <http://purl.obolibrary.org/obo/>
 PREFIX bibo: <http://purl.org/ontology/bibo/>
 PREFIX sio: <http://semanticscience.org/resource/>
 PREFIX bao: <http://www.bioassayontology.org/bao#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX mmdbvoc: <https://rdf.molmedb.upol.cz/vocabulary#>
 PREFIX repr: <https://w3id.org/reproduceme#>
-PREFIX cito: <http://purl.org/spar/cito/>
+PREFIX dcterms: <http://purl.org/dc/terms/>
 
 SELECT DISTINCT ?inhibitorInChIKey ?uniprot_trembl_id ?hgcn_id ?source_doi ?source_pmid
 
@@ -16,11 +15,12 @@ VALUES ?inhibitorInChIKey { $inhibitor_list }
                              sio:SIO_000300 ?inhibitorInChIKey].
   ?transporterAssay rdf:type bao:BAO_0000040 ;
                     bao:BAO_0090012 ?inhibitor;
-                    bao:BAO_0000426 [cito:citesAsDataSource	?ref];
+                    bao:BAO_0000426 [dcterms:references	?ref] ;
                     bao:BAO_0090012 [rdf:type bao:BAO_0000283;
-                                     obo:ERO_0000547 ?uniprot_trembl_id;
-                                     rdfs:label ?hgcn_id];
+    								sio:SIO_000008 [ sio:SIO_000300 ?uniprot_trembl_id];
+                                     rdfs:label ?hgcn_id;
+									];
                     bao:BAO_0000208 [rdf:type mmdbvoc:InhibitionAssay;
-                                     bao:BAO_0095007 repr:PositiveResult].
+                                     sio:SIO_000300 repr:PositiveResult].
   ?ref bibo:pmid ?source_pmid
 }

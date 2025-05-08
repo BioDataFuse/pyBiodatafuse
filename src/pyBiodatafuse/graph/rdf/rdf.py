@@ -330,7 +330,6 @@ class BDFGraph(Graph):
                     if not umlscui:
                         continue
                     disease_data_lit = {
-                        "disease_umlscui": umlscui,
                         "UMLS": umlscui,
                         "score": None,
                         "ei": None,
