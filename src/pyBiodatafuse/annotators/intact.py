@@ -96,7 +96,6 @@ def get_intact_interactions(gene_id: str):
                 "id_A": clean_id(item.get("idA", np.nan)),
                 "id_B": clean_id(item.get("idB", np.nan)),
                 "pubmed_publication_id": item.get("publicationPubmedIdentifier", np.nan),
-                "ensembl": gene_id,
                 "altIdsA": item.get("altIdsA", np.nan),
                 "altIdsB": item.get("altIdsB", np.nan),
             }
@@ -246,7 +245,6 @@ def get_filtered_interactions(
                 "id_A": np.nan,
                 "id_B": np.nan,
                 "pubmed_publication_id": np.nan,
-                "ensembl": query_id,
                 "altIdsA": np.nan,
                 "altIdsB": np.nan,
             }
@@ -276,7 +274,7 @@ def get_gene_interactions(bridgedb_df: pd.DataFrame, interaction_type: str = "bo
 
     if interaction_type not in ["gene_gene", "gene_compound", "both"]:
         raise ValueError(
-            f"Invalid interaction_type: {interaction_type}. Must be 'gene' or 'compound'."
+            f"Invalid interaction_type: {interaction_type}. Must be 'gene_gene' or 'gene_compound'."
         )
 
     if isinstance(data_df, tuple):

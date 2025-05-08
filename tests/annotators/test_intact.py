@@ -64,7 +64,6 @@ class TestIntact(unittest.TestCase):
                         "id_A": "P04637-2",
                         "id_B": "Q00987-11",
                         "pubmed_publication_id": "28514442",
-                        "ensembl": "ENSG00000141510",
                         "altIdsA": [
                             "P04637-2 (uniprotkb)",
                             "ENSP00000391127.2 (ensembl)",
@@ -103,7 +102,6 @@ class TestIntact(unittest.TestCase):
                         "id_A": "Q00987",
                         "id_B": "Q00987",
                         "pubmed_publication_id": "17936559",
-                        "ensembl": "ENSG00000135679",
                         "altIdsA": [
                             "Q13226 (uniprotkb)",
                             "EBI-389668 (intact)",
@@ -170,7 +168,6 @@ class TestIntact(unittest.TestCase):
                         "id_A": "Q00987",
                         "id_B": "Q00987",
                         "pubmed_publication_id": "22493164",
-                        "ensembl": "ENSG00000135679",
                         "altIdsA": [
                             "Q13226 (uniprotkb)",
                             "EBI-389668 (intact)",
@@ -237,7 +234,6 @@ class TestIntact(unittest.TestCase):
                         "id_A": "Q00987",
                         "id_B": "Q00987",
                         "pubmed_publication_id": "17159902",
-                        "ensembl": "ENSG00000135679",
                         "altIdsA": [
                             "Q13226 (uniprotkb)",
                             "EBI-389668 (intact)",
@@ -304,7 +300,6 @@ class TestIntact(unittest.TestCase):
                         "id_A": "Q00987",
                         "id_B": "Q00987",
                         "pubmed_publication_id": "17159902",
-                        "ensembl": "ENSG00000135679",
                         "altIdsA": [
                             "Q13226 (uniprotkb)",
                             "EBI-389668 (intact)",
@@ -371,7 +366,6 @@ class TestIntact(unittest.TestCase):
                         "id_A": "P04637-2",
                         "id_B": "Q00987-11",
                         "pubmed_publication_id": "28514442",
-                        "ensembl": "ENSG00000135679",
                         "altIdsA": [
                             "P04637-2 (uniprotkb)",
                             "ENSP00000391127.2 (ensembl)",
@@ -434,7 +428,6 @@ class TestIntact(unittest.TestCase):
                         "id_A": "P07342",
                         "id_B": "CHEBI:15361",
                         "pubmed_publication_id": "16390333",
-                        "ensembl": "CHEBI:15361",
                         "altIdsA": [
                             "P07342 (uniprotkb)",
                             "D6VZT1 (uniprotkb)",
@@ -467,7 +460,6 @@ class TestIntact(unittest.TestCase):
                         "id_A": "P00338",
                         "id_B": "CHEBI:15361",
                         "pubmed_publication_id": "23523103",
-                        "ensembl": "CHEBI:15361",
                         "altIdsA": [
                             "ENSP00000395337.3 (ensembl)",
                             "Q53G53 (uniprotkb)",

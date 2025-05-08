@@ -246,11 +246,11 @@ def add_disgenet_gene_disease_subgraph(g, gene_node_label, annot_list):
 
 
 def add_intact_interactions_subgraph(g, gene_node_label, annot_list):
-    """Construct part of the graph by linking the gene to genes via IntAct PPI, filtering based on unique interaction IDs.
+    """Construct part of the graph by linking the gene to genes via IntAct PPI, including all interaction attributes.
 
     :param g: the input graph to extend with new nodes and edges.
-    :param gene_node_label: the gene node to be linked to diseases.
-    :param annot_list: list of diseases from DisGeNET.
+    :param gene_node_label: the gene node to be linked to compounds or proteins.
+    :param annot_list: list of interactions from IntAct.
     :returns: a NetworkX MultiDiGraph
     """
     if not hasattr(add_intact_interactions_subgraph, "seen_interaction_ids"):
@@ -258,8 +258,6 @@ def add_intact_interactions_subgraph(g, gene_node_label, annot_list):
 
     seen_interaction_ids = add_intact_interactions_subgraph.seen_interaction_ids
     edges_seen = {}
-
-    attrs_to_exclude = {"altIdsA", "altIdsB", "intact_link_to", "ensembl"}
 
     for interaction in annot_list:
         interaction_id = interaction.get("binary_interaction_id")
@@ -312,14 +310,8 @@ def add_intact_interactions_subgraph(g, gene_node_label, annot_list):
             merge_node(g, partner_node_label, annot_node_attrs)
 
         edge_attrs = INTACT_PPI_EDGE_ATTRS.copy()
-        conf_vals = interaction.get("confidence_values")
-        edge_attrs["confidence_values"] = (
-            ",".join(map(str, conf_vals)) if isinstance(conf_vals, list) else str(conf_vals or "")
-        )
 
         for key, value in interaction.items():
-            if key in attrs_to_exclude:
-                continue
             if value is None or (isinstance(value, str) and not value.strip()):
                 continue
             edge_attrs[key] = ",".join(map(str, value)) if isinstance(value, list) else value
@@ -344,25 +336,22 @@ def add_intact_interactions_subgraph(g, gene_node_label, annot_list):
     return g
 
 
-def add_intact_compound_interactions_subgraph(g, compound_node_label, annot_list):
-    """Construct part of the graph by linking the compound to other entities.
+def add_intact_compound_interactions_subgraph(g, gene_node_label, annot_list):
+    """Construct part of the graph by linking the compound (gene_node_label) to other interactors (proteins/compounds).
 
     :param g: the input graph to extend with new nodes and edges.
-    :param compound_node_label: the compound node to be linked via IntAct interactions.
-    :param annot_list: list of interactions involving this compound.
+    :param gene_node_label: the compound node label (used as source node).
+    :param annot_list: list of interaction dicts from IntAct.
     :returns: a NetworkX MultiDiGraph
     """
-    print("a")
     if not hasattr(add_intact_compound_interactions_subgraph, "seen_interaction_ids"):
         add_intact_compound_interactions_subgraph.seen_interaction_ids = set()
 
     seen_interaction_ids = add_intact_compound_interactions_subgraph.seen_interaction_ids
     edges_seen = {}
 
-    attrs_to_exclude = {"altIdsA", "altIdsB", "intact_link_to", "ensembl"}
-
     for interaction in annot_list:
-        interaction_id = interaction.get("interaction_id")
+        interaction_id = interaction.get("binary_interaction_id")
         if not interaction_id or interaction_id in seen_interaction_ids:
             continue
         seen_interaction_ids.add(interaction_id)
@@ -370,21 +359,24 @@ def add_intact_compound_interactions_subgraph(g, compound_node_label, annot_list
         id_a = interaction.get("id_A", "")
         id_b = interaction.get("id_B", "")
 
-        if id_a == compound_node_label:
+        compound_id = f"CHEBI:{gene_node_label.strip()}"
+        if compound_id == id_a:
             partner_node_label = id_b
             partner_name = interaction.get("interactor_B_name", "")
             partner_species = interaction.get("interactor_B_species", "")
             molecule = interaction.get("molecule_B", "")
-        else:
+        elif compound_id == id_b:
             partner_node_label = id_a
             partner_name = interaction.get("interactor_A_name", "")
             partner_species = interaction.get("interactor_A_species", "")
             molecule = interaction.get("molecule_A", "")
+        else:
+            continue
 
         if not partner_node_label or pd.isna(partner_node_label):
             continue
 
-        edge_key = (compound_node_label, partner_node_label)
+        edge_key = (gene_node_label, partner_node_label)
         if edge_key in edges_seen:
             existing = edges_seen[edge_key]
             method = interaction.get("detection_method")
@@ -395,34 +387,28 @@ def add_intact_compound_interactions_subgraph(g, compound_node_label, annot_list
                     existing["detection_method"] = [existing["detection_method"], method]
             continue
 
-        # Add partner node to graph
-        annot_node_attrs = INTACT_COMPOUND_NODE_ATTRS.copy()
-        annot_node_attrs["id"] = partner_node_label
-        annot_node_attrs["label"] = partner_name
-        annot_node_attrs["species"] = partner_species
-        annot_node_attrs["molecule"] = molecule
+        # Add the partner node (protein or compound)
+        annot_node_attrs = {
+            "id": partner_node_label,
+            "label": partner_name,
+            "species": partner_species,
+            "molecule": molecule,
+        }
         merge_node(g, partner_node_label, annot_node_attrs)
 
-        # Add edge attributes
-        edge_attrs = INTACT_PPI_EDGE_ATTRS.copy()
-        conf_vals = interaction.get("confidence_values")
-        edge_attrs["confidence_values"] = (
-            ",".join(map(str, conf_vals)) if isinstance(conf_vals, list) else str(conf_vals or "")
-        )
-
+        # Collect edge attributes
+        edge_attrs = {}
         for key, value in interaction.items():
-            if key in attrs_to_exclude:
-                continue
             if value is None or (isinstance(value, str) and not value.strip()):
                 continue
             edge_attrs[key] = ",".join(map(str, value)) if isinstance(value, list) else value
 
         edge_attrs["detection_method"] = interaction.get("detection_method", "")
-        edge_attrs["interaction_type"] = interaction.get("type", "compound-interaction")
+        edge_attrs["interaction_type"] = interaction.get("type", "compound-ppi")
         edge_attrs["edge_hash"] = hash(frozenset(edge_attrs.items()))
-
         edges_seen[edge_key] = edge_attrs
 
+    # Add edges to the graph
     for (source, target), edge_attrs in edges_seen.items():
         if isinstance(edge_attrs["detection_method"], list):
             edge_attrs["detection_method"] = ",".join(set(edge_attrs["detection_method"]))
@@ -435,6 +421,7 @@ def add_intact_compound_interactions_subgraph(g, compound_node_label, annot_list
         )
 
     return g
+
 
 
 def add_literature_gene_disease_subgraph(g, gene_node_label, annot_list):
@@ -1313,7 +1300,7 @@ def build_networkx_graph(
     :returns: a NetworkX MultiDiGraph
     """
     g = nx.MultiDiGraph()
-    combined_df = combined_df[(combined_df["target.source"] == "Ensembl")]
+    # combined_df = combined_df[(combined_df["target.source"] == "Ensembl")]
 
     dea_columns = [c for c in combined_df.columns if c.endswith("_dea")]
 
