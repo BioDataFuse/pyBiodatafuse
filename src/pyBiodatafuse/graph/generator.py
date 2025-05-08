@@ -1311,7 +1311,7 @@ def build_networkx_graph(
         MINERVA: add_minerva_gene_pathway_subgraph,
         WIKIPATHWAYS: add_wikipathways_gene_pathway_subgraph,
         INTACT_INTERACT_COL: add_intact_interactions_subgraph,
-        INTACT_COMPOUND_INTERACT_COL: add_intact_compound_interactions_subgraph,
+        INTACT_COMPOUND_INTERACT_COL: add_intact_interactions_subgraph,
         KEGG_COL: add_kegg_gene_pathway_subgraph,
         OPENTARGETS_REACTOME_COL: add_opentargets_gene_reactome_pathway_subgraph,
         OPENTARGETS_GO_COL: add_opentargets_gene_go_subgraph,
