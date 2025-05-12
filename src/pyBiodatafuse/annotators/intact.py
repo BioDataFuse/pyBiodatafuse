@@ -57,15 +57,21 @@ def clean_id(identifier: str) -> str:
     return identifier.split(" ")[0] if identifier else identifier
 
 
-def get_intact_interactions(gene_id: str):
-    """Retrieve protein interactions for a given gene from IntAct.
+def get_intact_interactions(gene_ids: list[str]) -> list:
+    """Retrieve protein interactions for a list of genes from IntAct.
 
-    :param gene_id: Gene identifier
-    :returns: List of interactions for the given gene
+    :param gene_ids: List of gene identifiers.
+    :returns: List of interactions for the given genes.
     """
-    response = requests.get(f"{INTACT_ENDPOINT}/ws/interaction/findInteractions/{gene_id}")
+    if not gene_ids:
+        return []
 
-    if response.status_code == 200:
+    joined_ids = "%20-%20".join(gene_ids)
+    url = f"{INTACT_ENDPOINT}/ws/interaction/findInteractions/{joined_ids}?pageSize=200"
+
+    try:
+        response = requests.get(url, timeout=60)
+        response.raise_for_status()
         data = response.json()
         content = data.get("content", [])
         if not content:
@@ -99,11 +105,14 @@ def get_intact_interactions(gene_id: str):
                 "altIdsA": item.get("altIdsA", np.nan),
                 "altIdsB": item.get("altIdsB", np.nan),
             }
-            for item in data["content"]
+            for item in content
         ]
+        print(interactions)
         return interactions
 
-    return []
+    except requests.RequestException as e:
+        logging.warning(f"Batch request failed for genes {gene_ids}: {e}")
+        return []
 
 
 def get_protein_intact_acs(id_of_interest: str) -> list:
@@ -136,12 +145,12 @@ def get_protein_intact_acs(id_of_interest: str) -> list:
 
 
 def get_filtered_interactions(
-    query_id: str,
+    batch_ids: list,
     valid_intact_acs: set,
     intact_ac_to_entity: dict,
     entity_to_input_id: dict,
     interaction_type: str = "gene_gene",
-) -> list:
+) -> dict:
     """Filter interactions based on data type.
 
     :param query_id: The identifier to filter interactions for.
@@ -151,12 +160,8 @@ def get_filtered_interactions(
     :param interaction_type: Either 'gene_gene', 'gene_compound' or 'both'.
     :returns: A list of filtered interactions.
     """
-    interactions = get_intact_interactions(query_id)
-
-    if len(interactions) == 1 and pd.isna(interactions[0].get("interaction_id", None)):
-        return interactions
-
-    filtered = []
+    results = {gene_id: [] for gene_id in batch_ids}
+    interactions = get_intact_interactions(batch_ids)
 
     for interaction in interactions:
         id_a = interaction.get("interactor_id_A")
@@ -172,18 +177,26 @@ def get_filtered_interactions(
         keep_interaction = False
 
         if interaction_type == "gene_gene":
-            if has_uniprot_a and has_uniprot_b:
-                if id_a in valid_intact_acs and id_b in valid_intact_acs:
-                    keep_interaction = True
+            if (
+                has_uniprot_a
+                and has_uniprot_b
+                and id_a in valid_intact_acs
+                and id_b in valid_intact_acs
+            ):
+                keep_interaction = True
 
         elif interaction_type == "gene_compound":
             if has_chebi_a or has_chebi_b:
                 keep_interaction = True
 
         elif interaction_type == "compound_compound":
-            if has_chebi_a and has_chebi_b:
-                if id_a in valid_intact_acs and id_b in valid_intact_acs:
-                    keep_interaction = True
+            if (
+                has_chebi_a
+                and has_chebi_b
+                and id_a in valid_intact_acs
+                and id_b in valid_intact_acs
+            ):
+                keep_interaction = True
 
         elif interaction_type == "compound_gene":
             if (has_chebi_a and has_uniprot_b) or (has_chebi_b and has_uniprot_a):
@@ -209,48 +222,53 @@ def get_filtered_interactions(
         if not keep_interaction:
             continue
 
-        if id_a in valid_intact_acs and intact_ac_to_entity.get(id_a) == query_id:
-            partner_id = intact_ac_to_entity.get(id_b)
-        else:
-            partner_id = intact_ac_to_entity.get(id_a)
 
-        partner_display_id = entity_to_input_id.get(partner_id, partner_id)
-        interaction["intact_link_to"] = partner_display_id
+        for gene_id in batch_ids:
+            if id_a in valid_intact_acs and intact_ac_to_entity.get(id_a) == gene_id:
+                partner_id = intact_ac_to_entity.get(id_b)
+            elif id_b in valid_intact_acs and intact_ac_to_entity.get(id_b) == gene_id:
+                partner_id = intact_ac_to_entity.get(id_a)
+            else:
+                continue
 
-        filtered.append(interaction)
+            partner_display_id = entity_to_input_id.get(partner_id, partner_id)
+            interaction_copy = dict(interaction)
+            interaction_copy["intact_link_to"] = partner_display_id
+            results[gene_id].append(interaction_copy)
 
-    if not filtered:
-        return [
-            {
-                "interaction_id": np.nan,
-                "interactor_id_A": np.nan,
-                "interactor_id_B": np.nan,
-                "binary_interaction_id": np.nan,
-                "confidence_values": [],
-                "score": np.nan,
-                "biological_role_A": np.nan,
-                "biological_role_B": np.nan,
-                "type": np.nan,
-                "stoichiometry_A": np.nan,
-                "stoichiometry_B": np.nan,
-                "detection_method": np.nan,
-                "detection_method_id": np.nan,
-                "host_organism": np.nan,
-                "interactor_A_name": np.nan,
-                "interactor_B_name": np.nan,
-                "interactor_A_species": np.nan,
-                "interactor_B_species": np.nan,
-                "molecule_A": np.nan,
-                "molecule_B": np.nan,
-                "id_A": np.nan,
-                "id_B": np.nan,
-                "pubmed_publication_id": np.nan,
-                "altIdsA": np.nan,
-                "altIdsB": np.nan,
-            }
-        ]
+    for gene_id in batch_ids:
+        if not results[gene_id]:
+            results[gene_id] = [
+                {
+                    "interaction_id": np.nan,
+                    "interactor_id_A": np.nan,
+                    "interactor_id_B": np.nan,
+                    "binary_interaction_id": np.nan,
+                    "confidence_values": [],
+                    "score": np.nan,
+                    "biological_role_A": np.nan,
+                    "biological_role_B": np.nan,
+                    "type": np.nan,
+                    "stoichiometry_A": np.nan,
+                    "stoichiometry_B": np.nan,
+                    "detection_method": np.nan,
+                    "detection_method_id": np.nan,
+                    "host_organism": np.nan,
+                    "interactor_A_name": np.nan,
+                    "interactor_B_name": np.nan,
+                    "interactor_A_species": np.nan,
+                    "interactor_B_species": np.nan,
+                    "molecule_A": np.nan,
+                    "molecule_B": np.nan,
+                    "id_A": np.nan,
+                    "id_B": np.nan,
+                    "pubmed_publication_id": np.nan,
+                    "altIdsA": np.nan,
+                    "altIdsB": np.nan,
+                }
+            ]
 
-    return filtered
+    return results
 
 
 def get_gene_interactions(bridgedb_df: pd.DataFrame, interaction_type: str = "both"):
@@ -267,10 +285,7 @@ def get_gene_interactions(bridgedb_df: pd.DataFrame, interaction_type: str = "bo
         return pd.DataFrame(), {}
 
     start_time = datetime.datetime.now()
-    data_df = get_identifier_of_interest(
-        bridgedb_df,
-        INTACT_GENE_INPUT_ID,
-    ).reset_index(drop=True)
+    data_df = get_identifier_of_interest(bridgedb_df, INTACT_GENE_INPUT_ID).reset_index(drop=True)
 
     if interaction_type not in ["gene_gene", "gene_compound", "both"]:
         raise ValueError(
@@ -281,34 +296,32 @@ def get_gene_interactions(bridgedb_df: pd.DataFrame, interaction_type: str = "bo
         data_df = data_df[0]
 
     data_df = data_df.reset_index(drop=True)
-    ensembl_gene_list = set(data_df["target"].tolist())
+    ensembl_gene_list = list(set(data_df["target"].tolist()))
 
-    ensembl_to_input_id = {}
-    for _, row in data_df.iterrows():
-        id_of_interest = row["target"]
-        input_id = row["identifier"]
-        ensembl_to_input_id[id_of_interest] = input_id
+    ensembl_to_input_id = {row["target"]: row["identifier"] for _, row in data_df.iterrows()}
 
     ensembl_to_intact_map = {
-        id_of_interest: get_protein_intact_acs(id_of_interest)
-        for id_of_interest in ensembl_gene_list
+        gene_id: get_protein_intact_acs(gene_id) for gene_id in ensembl_gene_list
     }
 
-    intact_ac_to_ensembl = {
-        ac: ensembl for ensembl, acs in ensembl_to_intact_map.items() for ac in acs
-    }
+    intact_ac_to_ensembl = {ac: gene for gene, acs in ensembl_to_intact_map.items() for ac in acs}
 
     valid_intact_acs = {ac for acs in ensembl_to_intact_map.values() for ac in acs}
 
-    data_df[INTACT_INTERACT_COL] = data_df["target"].apply(
-        lambda gene_id: get_filtered_interactions(
-            gene_id,
+    all_results = {}
+    batch_size = 10
+    for i in range(0, len(ensembl_gene_list), batch_size):
+        batch = ensembl_gene_list[i : i + batch_size]
+        batch_results = get_filtered_interactions(
+            batch,
             valid_intact_acs,
             intact_ac_to_ensembl,
             ensembl_to_input_id,
             interaction_type=interaction_type,
         )
-    )
+        all_results.update(batch_results)
+
+    data_df[INTACT_INTERACT_COL] = data_df["target"].map(all_results)
 
     end_time = datetime.datetime.now()
     time_elapsed = str(end_time - start_time)
@@ -345,11 +358,7 @@ def get_compound_interactions(bridgedb_df: pd.DataFrame, interaction_type: str =
         return pd.DataFrame(), {}
 
     start_time = datetime.datetime.now()
-    data_df = get_identifier_of_interest(
-        bridgedb_df,
-        INTACT_COMPOUND_INPUT_ID,
-    ).reset_index(drop=True)
-
+    data_df = get_identifier_of_interest(bridgedb_df, INTACT_COMPOUND_INPUT_ID).reset_index(drop=True)
     data_df = data_df[data_df["target"].str.startswith("CHEBI:")].reset_index(drop=True)
 
     if interaction_type not in ["compound_compound", "compound_gene", "both"]:
@@ -361,23 +370,26 @@ def get_compound_interactions(bridgedb_df: pd.DataFrame, interaction_type: str =
         data_df = data_df[0]
 
     data_df = data_df.reset_index(drop=True)
-    chebi_list = set(data_df["target"].tolist())
+    chebi_list = list(set(data_df["target"].tolist()))
 
     chebi_to_input_id = {row["target"]: row["identifier"] for _, row in data_df.iterrows()}
-
     intact_ac_to_chebi = {chebi_id: chebi_id for chebi_id in chebi_list}
-
     valid_intact_acs = chebi_list
 
-    data_df[INTACT_COMPOUND_INTERACT_COL] = data_df["target"].apply(
-        lambda compound_id: get_filtered_interactions(
-            compound_id,
+    all_results = {}
+    batch_size = 10
+    for i in range(0, len(chebi_list), batch_size):
+        batch = chebi_list[i : i + batch_size]
+        batch_results = get_filtered_interactions(
+            batch,
             valid_intact_acs,
             intact_ac_to_chebi,
             chebi_to_input_id,
             interaction_type=interaction_type,
         )
-    )
+        all_results.update(batch_results)
+
+    data_df[INTACT_COMPOUND_INTERACT_COL] = data_df["target"].map(all_results)
 
     end_time = datetime.datetime.now()
     time_elapsed = str(end_time - start_time)
