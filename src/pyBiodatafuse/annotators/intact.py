@@ -420,4 +420,3 @@ def get_compound_interactions(bridgedb_df: pd.DataFrame, interaction_type: str =
     }
 
     return data_df, intact_metadata
-    
