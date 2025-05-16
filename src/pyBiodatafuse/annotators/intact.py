@@ -318,7 +318,7 @@ def get_gene_interactions(bridgedb_df: pd.DataFrame, interaction_type: str = "bo
         batch = ensembl_gene_list[i : i + batch_size]
         batch_results = get_filtered_interactions(
             batch,
-            valid_intact_acs,
+            set(valid_intact_acs),
             intact_ac_to_ensembl,
             ensembl_to_input_id,
             interaction_type=interaction_type,
@@ -392,7 +392,7 @@ def get_compound_interactions(bridgedb_df: pd.DataFrame, interaction_type: str =
         batch = chebi_list[i : i + batch_size]
         batch_results = get_filtered_interactions(
             batch,
-            valid_intact_acs,
+            set(valid_intact_acs),
             intact_ac_to_chebi,
             chebi_to_input_id,
             interaction_type=interaction_type,
