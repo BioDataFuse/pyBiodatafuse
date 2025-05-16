@@ -17,6 +17,7 @@ from pyBiodatafuse.constants import (
     BGEE_GENE_ANATOMICAL_EDGE_LABEL,
     BGEE_GENE_EXPRESSION_LEVELS_COL,
     BRIDGEDB,
+    COMPOUND_NODE_LABELS,
     COMPOUND_NODE_MAIN_LABEL,
     COMPOUND_SIDE_EFFECT_EDGE_ATTRS,
     COMPOUND_SIDE_EFFECT_EDGE_LABEL,
@@ -1124,6 +1125,8 @@ def add_gene_node(g, row, dea_columns):
 
     g.add_node(gene_node_label, attr_dict=gene_node_attrs)
     return gene_node_label
+
+
 def add_compound_node(g, row):
     """Add compound node from each row of the combined_df to the graph.
 
