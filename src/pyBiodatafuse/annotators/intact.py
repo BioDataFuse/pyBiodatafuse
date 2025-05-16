@@ -6,6 +6,7 @@
 import datetime
 import json
 import logging
+import urllib.parse
 import warnings
 from time import sleep
 
@@ -66,8 +67,9 @@ def get_intact_interactions(gene_ids: list[str]) -> list:
     if not gene_ids:
         return []
 
-    joined_ids = "%20-%20".join(gene_ids)
-    url = f"{INTACT_ENDPOINT}/ws/interaction/findInteractions/{joined_ids}?pageSize=200"
+    joined_ids = " - ".join(gene_ids)
+    encoded_ids = urllib.parse.quote(joined_ids)
+    url = f"{INTACT_ENDPOINT}/ws/interaction/findInteractions/{encoded_ids}?pageSize=200"
 
     try:
         response = requests.get(url, timeout=60)
@@ -107,7 +109,6 @@ def get_intact_interactions(gene_ids: list[str]) -> list:
             }
             for item in content
         ]
-        print(interactions)
         return interactions
 
     except requests.RequestException as e:
@@ -153,19 +154,23 @@ def get_filtered_interactions(
 ) -> dict:
     """Filter interactions based on data type.
 
-    :param query_id: The identifier to filter interactions for.
+    :param batch_ids: List of input IDs.
     :param valid_intact_acs: Set of valid IntAct ACs.
     :param intact_ac_to_entity: Dictionary mapping IntAct ACs to entity.
     :param entity_to_input_id: Dictionary mapping entities to input IDs.
-    :param interaction_type: Either 'gene_gene', 'gene_compound' or 'both'.
-    :returns: A list of filtered interactions.
+    :param interaction_type: Either 'gene_gene', 'gene_compound', 'compound_compound', 'compound_gene', or 'both'.
+    :returns: A dictionary of filtered interactions per input ID.
     """
     results = {gene_id: [] for gene_id in batch_ids}
     interactions = get_intact_interactions(batch_ids)
 
     for interaction in interactions:
-        id_a = interaction.get("interactor_id_A")
-        id_b = interaction.get("interactor_id_B")
+        if interaction_type in ["gene_gene", "gene_compound", "both"]:
+            id_a = interaction.get("interactor_id_A")
+            id_b = interaction.get("interactor_id_B")
+        else:
+            id_a = interaction.get("id_A")
+            id_b = interaction.get("id_B")
         alt_ids_a = interaction.get("altIdsA", []) or []
         alt_ids_b = interaction.get("altIdsB", []) or []
 
@@ -186,7 +191,7 @@ def get_filtered_interactions(
                 keep_interaction = True
 
         elif interaction_type == "gene_compound":
-            if has_chebi_a or has_chebi_b:
+            if (has_chebi_a and has_uniprot_b) or (has_chebi_b and has_uniprot_a):
                 keep_interaction = True
 
         elif interaction_type == "compound_compound":
@@ -202,7 +207,7 @@ def get_filtered_interactions(
             if (has_chebi_a and has_uniprot_b) or (has_chebi_b and has_uniprot_a):
                 keep_interaction = True
 
-        elif interaction_type == "both":
+        elif interaction_type == "both" or interaction_type == "both_compound":
             is_gene_gene = (
                 has_uniprot_a
                 and has_uniprot_b
@@ -222,12 +227,13 @@ def get_filtered_interactions(
         if not keep_interaction:
             continue
 
-
         for gene_id in batch_ids:
             if id_a in valid_intact_acs and intact_ac_to_entity.get(id_a) == gene_id:
                 partner_id = intact_ac_to_entity.get(id_b)
+                added = True
             elif id_b in valid_intact_acs and intact_ac_to_entity.get(id_b) == gene_id:
                 partner_id = intact_ac_to_entity.get(id_a)
+                added = True
             else:
                 continue
 
@@ -358,13 +364,19 @@ def get_compound_interactions(bridgedb_df: pd.DataFrame, interaction_type: str =
         return pd.DataFrame(), {}
 
     start_time = datetime.datetime.now()
-    data_df = get_identifier_of_interest(bridgedb_df, INTACT_COMPOUND_INPUT_ID).reset_index(drop=True)
+    data_df = get_identifier_of_interest(bridgedb_df, INTACT_COMPOUND_INPUT_ID).reset_index(
+        drop=True
+    )
     data_df = data_df[data_df["target"].str.startswith("CHEBI:")].reset_index(drop=True)
+    data_df.head()
 
     if interaction_type not in ["compound_compound", "compound_gene", "both"]:
         raise ValueError(
             f"Invalid interaction_type: {interaction_type}. Must be 'compound_compound', 'compound_gene' or 'both'."
         )
+
+    if interaction_type == "both":
+        interaction_type = "both_compound"
 
     if isinstance(data_df, tuple):
         data_df = data_df[0]
