@@ -17,6 +17,7 @@ from pyBiodatafuse.constants import (
     BGEE_GENE_ANATOMICAL_EDGE_LABEL,
     BGEE_GENE_EXPRESSION_LEVELS_COL,
     BRIDGEDB,
+    COMPOUND_NODE_LABELS,
     COMPOUND_NODE_MAIN_LABEL,
     COMPOUND_SIDE_EFFECT_EDGE_ATTRS,
     COMPOUND_SIDE_EFFECT_EDGE_LABEL,
@@ -1126,6 +1127,26 @@ def add_gene_node(g, row, dea_columns):
     return gene_node_label
 
 
+def add_compound_node(g, row):
+    """Add compound node from each row of the combined_df to the graph.
+
+    :param g: the input graph to extend with compound nodes.
+    :param row: row in the combined DataFrame.
+    :returns: label for compound node
+    """
+    compound_node_label = row["identifier"]
+    compound_node_attrs = {
+        "datasource": BRIDGEDB,
+        "name": f"{row['identifier.source']}:{row['identifier']}",
+        "id": row["target"],
+        "labels": COMPOUND_NODE_LABELS,
+        row["target.source"]: row["target"],
+    }
+
+    g.add_node(compound_node_label, attr_dict=compound_node_attrs)
+    return compound_node_label
+
+
 def process_annotations(g, gene_node_label, row, func_dict):
     """Process the annotations for gene node from each row of the combined_df to the graph.
 
@@ -1275,9 +1296,10 @@ def build_networkx_graph(
     :returns: a NetworkX MultiDiGraph
     """
     g = nx.MultiDiGraph()
-    combined_df = combined_df[(combined_df["target.source"] == "Ensembl")]
 
     dea_columns = [c for c in combined_df.columns if c.endswith("_dea")]
+
+    compound_identifiers = ["PubChem Compound", "CHEBI", "InChIKey"]
 
     func_dict = {
         BGEE_GENE_EXPRESSION_LEVELS_COL: add_gene_bgee_subgraph,
@@ -1291,22 +1313,31 @@ def build_networkx_graph(
         OPENTARGETS_GENE_COMPOUND_COL: add_opentargets_gene_compound_subgraph,
         MOLMEDB_PROTEIN_COMPOUND_COL: add_molmedb_gene_inhibitor_subgraph,
         PUBCHEM_COMPOUND_ASSAYS_COL: add_pubchem_assay_subgraph,
-        WIKIPATHWAYS_MOLECULAR_COL: add_wikipathways_molecular_subgraph,
         ENSEMBL_HOMOLOG_COL: add_ensembl_homolog_subgraph,
     }
 
     if homolog_df_list is not None:
         process_homologs(g, combined_df, homolog_df_list, func_dict, dea_columns)
 
-    else:
+    if homolog_df_list is None:
+        is_compound_input = any(
+            combined_df["target.source"].astype(str).str.contains(ci, case=False, na=False).any()
+            or combined_df["identifier"].astype(str).str.contains(ci, case=False, na=False).any()
+            for ci in compound_identifiers
+        )
+
         for _i, row in tqdm(
             combined_df.iterrows(), total=combined_df.shape[0], desc="Building graph"
         ):
             if pd.isna(row["identifier"]) or pd.isna(row["target"]):
                 continue
-            gene_node_label = add_gene_node(g, row, dea_columns)
-            process_annotations(g, gene_node_label, row, func_dict)
-            process_ppi(g, gene_node_label, row)
+            if is_compound_input:
+                node_label = add_compound_node(g, row)
+            else:
+                node_label = add_gene_node(g, row, dea_columns)
+
+            process_annotations(g, node_label, row, func_dict)
+            process_ppi(g, node_label, row)
 
     if disease_compound is not None:
         process_disease_compound(g, disease_compound)
