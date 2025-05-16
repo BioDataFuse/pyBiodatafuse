@@ -423,7 +423,6 @@ def add_intact_compound_interactions_subgraph(g, gene_node_label, annot_list):
     return g
 
 
-
 def add_literature_gene_disease_subgraph(g, gene_node_label, annot_list):
     """Construct part of the graph by linking the gene to diseases form literature.
 

@@ -230,10 +230,8 @@ def get_filtered_interactions(
         for gene_id in batch_ids:
             if id_a in valid_intact_acs and intact_ac_to_entity.get(id_a) == gene_id:
                 partner_id = intact_ac_to_entity.get(id_b)
-                added = True
             elif id_b in valid_intact_acs and intact_ac_to_entity.get(id_b) == gene_id:
                 partner_id = intact_ac_to_entity.get(id_a)
-                added = True
             else:
                 continue
 
@@ -422,3 +420,4 @@ def get_compound_interactions(bridgedb_df: pd.DataFrame, interaction_type: str =
     }
 
     return data_df, intact_metadata
+    
