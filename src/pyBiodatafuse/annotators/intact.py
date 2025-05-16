@@ -9,6 +9,7 @@ import logging
 import urllib.parse
 import warnings
 from time import sleep
+from typing import Dict, List, Any
 
 import numpy as np
 import pandas as pd
@@ -161,7 +162,7 @@ def get_filtered_interactions(
     :param interaction_type: Either 'gene_gene', 'gene_compound', 'compound_compound', 'compound_gene', or 'both'.
     :returns: A dictionary of filtered interactions per input ID.
     """
-    results = {gene_id: [] for gene_id in batch_ids}
+    results: Dict[str, List[dict]] = {gene_id: [] for gene_id in batch_ids}
     interactions = get_intact_interactions(batch_ids)
 
     for interaction in interactions:
