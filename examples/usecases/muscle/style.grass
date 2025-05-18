@@ -1,0 +1,154 @@
+node {
+  diameter: 50px;
+  color: #A5ABB6;
+  border-color: #9AA1AC;
+  border-width: 2px;
+  text-color-internal: #FFFFFF;
+  font-size: 10px;
+}
+relationship {
+  color: #A5ABB6;
+  shaft-width: 1px;
+  font-size: 8px;
+  padding: 3px;
+  text-color-external: #000000;
+  text-color-internal: #FFFFFF;
+  caption: "<type>";
+}
+node.Movie {
+  color: #C990C0;
+  border-color: #b261a5;
+  text-color-internal: #FFFFFF;
+  defaultCaption: "<id>";
+  caption: "{title}";
+}
+node.Gene {
+  color: #4c4c00;
+  border-width: 3px;
+  border-color: #4c4c00;
+  defaultCaption: "<id>";
+  caption: "{name}";
+}
+node.Gene[is_f = true] {
+  color: #4c4c00;
+  border-width: 3px;
+  border-color: #4c4c00;
+  shape: diamond;
+  defaultCaption: "<id>";
+  caption: "{name}";
+}
+node.DownRegulatedGene {
+  color: #4c4c00;
+  border-width: 5px;
+  border-color: #57C7E3;
+  defaultCaption: "<id>";
+  caption: "{name}";
+}
+
+node.UpRegulatedGene {
+  color: #4c4c00;
+  border-width: 5px;
+  border-color: #E35C57;
+  defaultCaption: "<id>";
+  caption: "{name}";
+}
+node.adverse_effect {
+  color: #F16667;
+  border-color: #eb2728;
+  text-color-internal: #FFFFFF;
+  defaultCaption: "<id>";
+  caption: "{name}";
+}
+node.Disease {
+  color: #D9C8AE;
+  border-color: #c0a378;
+  text-color-internal: #2A2C34;
+  defaultCaption: "<id>";
+  caption: "{name}";
+}
+node.Side Effect {
+  color: #8DCC93;
+  border-color: #5db665;
+  text-color-internal: #2A2C34;
+  defaultCaption: "<id>";
+  caption: "{name}";
+}
+node.Anatomical Entity {
+  color: #ECB5C9;
+  border-color: #da7298;
+  text-color-internal: #2A2C34;
+  defaultCaption: "<id>";
+  caption: "{name}";
+}
+node.Location {
+  color: #4C8EDA;
+  border-color: #2870c2;
+  text-color-internal: #FFFFFF;
+  defaultCaption: "<id>";
+  caption: "{name}";
+}
+node.Compound {
+  color: #FFC454;
+  border-color: #d7a013;
+  text-color-internal: #2A2C34;
+  defaultCaption: "<id>";
+  caption: "{name}";
+}
+relationship.associated_with {
+  caption: "<type>";
+}
+node.Gene Ontology {
+  color: #DA7194;
+  border-color: #cc3c6c;
+  text-color-internal: #FFFFFF;
+  caption: "{name}";
+}
+node.Pathway {
+  color: #569480;
+  border-color: #447666;
+  text-color-internal: #FFFFFF;
+  caption: "{name}";
+}
+node.Cellular_Component {
+  color: #ffcd90;
+  border-color: #447666;
+  defaultCaption: "<id>";
+  caption: "{name}";
+}
+node.Molecular_Function {
+  color: #ffa652;
+  defaultCaption: "<id>";
+  caption: "{name}";
+}
+node.Biological_Process {
+  color: #ff7b00;
+  defaultCaption: "<id>";
+  caption: "{name}";
+}
+node.HPA {
+  color: #9467bd;
+  border-color: #447666;
+  caption: "{name}";
+}
+node.HP {
+  color: #d62728;
+  caption: "{name}";
+}
+node.MIRNA {
+  color: #8c564b;
+  caption: "{name}";
+}
+node.TF {
+  color: #bcbd22;
+  caption: "{name}";
+}
+node.Mitochondrial_Pathway {
+  color: #3876B2;
+  border-color: #447666;
+  text-color-internal: #FFFFFF;
+  caption: "{name}";
+}
+relationship.tf_regulates {
+  color: #FF0000;
+  text-color-external: #FF0000;
+}

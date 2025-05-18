@@ -18,6 +18,9 @@ STRING_ENDPOINT = "https://string-db.org/api"
 UNIPROT_ENDPOINT = "https://rest.uniprot.org"
 WIKIDATA_ENDPOINT = "https://query-main.wikidata.org/sparql"
 WIKIPATHWAYS_ENDPOINT = "https://sparql.wikipathways.org/sparql"
+TFLINK_DOWNLOAD_URL = "https://cdn.netbiol.org/tflink/download_files"
+GPROFILER_VERSION_ENDPOINT = "https://biit.cs.ut.ee/gprofiler/api/util/data_versions"
+MITOCARTA_DOWNLOAD_URL = "https://personal.broadinstitute.org/scalvo/MitoCarta3.0/"
 AOPWIKI_ENDPOINT = "https://aopwiki.rdf.bigcat-bioinformatics.org/sparql/"
 
 # Data sources
@@ -34,10 +37,12 @@ STRING = "StringDB"
 WIKIDATA = "Wikidata"
 WIKIPATHWAYS = "WikiPathways"
 OPENTARGETS_REACTOME = "OpenTargets_reactome"
+TFLINK = "TFLink"
+GPROFILER = "g:Profiler"
+MITOCARTA = "MitoCarta"
 AOPWIKIRDF = "AOP Wiki RDF"
 
 # DataFrame Columns
-
 TARGET_SOURCE_COL = "target.source"
 TARGET_COL = "target"
 IDENTIFIER_COL = "identifier"
@@ -84,6 +89,9 @@ STRING_GENE_LINK_ID = "Ensembl_link"
 WIKIDATA_GENE_INPUT_ID = "NCBI Gene"
 WIKIPATHWAYS_GENE_INPUT_ID = "NCBI Gene"
 PATENT_INPUT_ID = "PubChem Compound"
+TFLINK_GENE_INPUT_ID = "NCBI Gene"
+GPROFILER_GENE_INPUT_ID = "Ensembl"
+MITOCARTA_GENE_INPUT_ID = "Ensembl"
 AOPWIKI_GENE_INPUT_ID = "Ensembl"
 AOPWIKI_COMPOUND_INPUT_ID = "PubChem Compound"
 
@@ -410,7 +418,7 @@ LITERATURE_DISEASE_EDGE_ATTRS = {
 # Pathway node
 # MINERVA, WikiPathways, Open Targets - Reactome
 PATHWAY_NODE_LABELS = "Pathway"
-PATHWAY_NODE_MAIN_LABEL = "pathway_id"
+PATHWAY_NODE_MAIN_LABEL = "id"
 PATHWAY_NODE_ATTRS = {
     "datasource": None,
     "name": None,
