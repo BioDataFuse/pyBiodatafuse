@@ -43,7 +43,7 @@ def download_mitocarta_dataset(mitocarta_file: str, filename: str, sheet_name:st
         try:
             response.raise_for_status()
         except requests.HTTPError as e:
-            print(f"Failed to download file. HTTP Error: {e}")
+            raise ValueError(f"Failed to download file. HTTP Error: {e}")
         else:
             with open(filename, "wb") as file:
                 file.write(response.content)
