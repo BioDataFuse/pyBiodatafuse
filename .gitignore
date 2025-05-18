@@ -930,3 +930,4 @@ examples/usecases/PCS/BDF_PCS_graph.ttl
 examples/usecases/PKD/disgenet.env
 src/pyBiodatafuse/test.py
 test.py
+*.edgelist
