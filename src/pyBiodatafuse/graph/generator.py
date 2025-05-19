@@ -247,7 +247,7 @@ def add_disgenet_gene_disease_subgraph(g, gene_node_label, annot_list):
 
 
 def add_intact_interactions_subgraph(g, gene_node_label, annot_list):
-    """Construct part of the graph by linking the gene to genes via IntAct PPI, including all interaction attributes.
+    """Construct part of the graph by linking the gene interactions via IntAct, including all interaction attributes.
 
     :param g: the input graph to extend with new nodes and edges.
     :param gene_node_label: the gene node to be linked to compounds or proteins.
@@ -338,7 +338,7 @@ def add_intact_interactions_subgraph(g, gene_node_label, annot_list):
 
 
 def add_intact_compound_interactions_subgraph(g, compound_node_label, annot_list):
-    """Constructs part of the graph by linking the compound to interacting molecules (e.g., proteins, other compounds).
+    """Construct part of the graph by linking the compound interactions via IntAct, including all interaction attributes.
 
     :param g: the input graph to extend with new nodes and edges.
     :param compound_node_label: the compound node label (used as source node), expected as a ChEBI ID (e.g., '15361').
@@ -418,8 +418,6 @@ def add_intact_compound_interactions_subgraph(g, compound_node_label, annot_list
         )
 
     return g
-
-
 
 
 def add_literature_gene_disease_subgraph(g, gene_node_label, annot_list):
