@@ -3,7 +3,10 @@
 """Python module to construct a NetworkX graph from the annotated data frame."""
 
 import json
+import os
 import pickle
+from logging import Logger
+from typing import Any, Dict
 
 import networkx as nx
 import pandas as pd
@@ -1097,7 +1100,7 @@ def add_aopwiki_gene_subgraph(g, gene_node_label, annot_list):
     """
     for annot in annot_list:
         # Add AOP node
-        aop_node_label = annot.get("aop", "")
+        aop_node_label = "AOP:" + annot.get("aop", "")
         if aop_node_label:
             aop_node_attrs = AOPWIKI_NODE_ATTRS.copy()
             aop_node_attrs["type"] = AOP_NODE_LABELS
@@ -1117,7 +1120,7 @@ def add_aopwiki_gene_subgraph(g, gene_node_label, annot_list):
                 )
 
         # Add MIE node
-        mie_node_label = annot.get("MIE", "")
+        mie_node_label = "MIE:" + annot.get("MIE", "")
         if mie_node_label:
             mie_node_attrs = AOPWIKI_NODE_ATTRS.copy()
             mie_node_attrs["type"] = MIE_NODE_LABELS
@@ -1138,7 +1141,7 @@ def add_aopwiki_gene_subgraph(g, gene_node_label, annot_list):
                     )
 
         # Add KE upstream node
-        ke_upstream_node_label = annot.get("KE_upstream", "")
+        ke_upstream_node_label = "KE:" + annot.get("KE_upstream", "")
         if ke_upstream_node_label:
             ke_upstream_node_attrs = AOPWIKI_NODE_ATTRS.copy()
             ke_upstream_node_attrs["title"] = annot.get("KE_upstream_title", "")
@@ -1160,7 +1163,7 @@ def add_aopwiki_gene_subgraph(g, gene_node_label, annot_list):
                     )
 
         # Add KE downstream node
-        ke_downstream_node_label = annot.get("KE_downstream", "")
+        ke_downstream_node_label = "KE:" + annot.get("KE_downstream", "")
         if ke_downstream_node_label:
             ke_downstream_node_attrs = AOPWIKI_NODE_ATTRS.copy()
             ke_downstream_node_attrs["title"] = annot.get("KE_downstream_title", "")
@@ -1182,7 +1185,7 @@ def add_aopwiki_gene_subgraph(g, gene_node_label, annot_list):
                     )
 
         # Add AO node
-        ao_node_label = annot.get("ao", "")
+        ao_node_label = "KE:" + annot.get("ao", "")
         if ao_node_label:
             ao_node_attrs = AOPWIKI_NODE_ATTRS.copy()
             ao_node_attrs["title"] = annot.get("ao_title", "")
