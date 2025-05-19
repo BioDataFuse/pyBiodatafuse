@@ -308,59 +308,59 @@ def add_literature_gene_disease_subgraph(
     return g
 
 
+def add_opentargets_compound_disease_subgraph(g, compound_node_label, annot_list):
+    """Construct part of the graph by linking the compound to disease annotations.
+
+    :param g: the input graph to extend with new nodes and edges.
+    :param compound_node_label: the compound node to be linked to disease entities.
+    :param annot_list: list of disease annotations from OpenTargets.
+    :returns: a NetworkX MultiDiGraph
+    """
+    for annot in annot_list:
+        if pd.isna(annot.get("disease_name")):
+            continue
+
+        annot_node_label = annot[DISEASE_NODE_MAIN_LABEL]
+
+        annot_node_attrs = OPENTARGETS_DISEASE_NODE_ATTRS.copy()
+        annot_node_attrs.update({
+            "name": annot.get("disease_name"),
+            "therapeutic_areas": annot.get("therapeutic_areas"),
+            "HPO": annot.get("HPO"),
+            "NCI": annot.get("NCI"),
+            "OMIM": annot.get("OMIM"),
+            "MONDO": annot.get("MONDO"),
+            "ORDO": annot.get("ORDO"),
+            "EFO": annot.get("EFO"),
+            "DO": annot.get("DO"),
+            "MESH": annot.get("MESH"),
+            "UMLS": annot.get("UMLS"),
+        })
+
+        merge_node(g, annot_node_label, annot_node_attrs)
+
+        edge_attrs = OPENTARGETS_DISEASE_EDGE_ATTRS.copy()
+        edge_hash = hash(frozenset(edge_attrs.items()))
+        edge_attrs["edge_hash"] = edge_hash
+
+        edge_data = g.get_edge_data(compound_node_label, annot_node_label)
+        edge_data = {} if edge_data is None else edge_data
+        node_exists = [
+            x for x, y in edge_data.items()
+            if y["attr_dict"]["edge_hash"] == edge_hash
+        ]
+
+        if len(node_exists) == 0:
+            g.add_edge(
+                compound_node_label,
+                annot_node_label,
+                label=COMPOUND_DISEASE_EDGE_LABEL,
+                attr_dict=edge_attrs,
+            )
+
+    return g
+
 # TODO: The disease annotations are not curated and will be used again when the OpenTarget annotation improves.
-# def add_opentargets_compound_disease_subgraph(g, compound_node_label, annot_list):
-#     """Construct part of the graph by linking the compound to disease annotations.
-
-#     :param g: the input graph to extend with new nodes and edges.
-#     :param compound_node_label: the compound node to be linked to disease entities.
-#     :param annot_list: list of disease annotations from OpenTargets.
-#     :returns: a NetworkX MultiDiGraph
-#     """
-#     for annot in annot_list:
-#         if pd.isna(annot.get("disease_name")):
-#             continue
-
-#         annot_node_label = annot[DISEASE_NODE_MAIN_LABEL]
-
-#         annot_node_attrs = OPENTARGETS_DISEASE_NODE_ATTRS.copy()
-#         annot_node_attrs.update({
-#             "name": annot.get("disease_name"),
-#             "therapeutic_areas": annot.get("therapeutic_areas"),
-#             "HPO": annot.get("HPO"),
-#             "NCI": annot.get("NCI"),
-#             "OMIM": annot.get("OMIM"),
-#             "MONDO": annot.get("MONDO"),
-#             "ORDO": annot.get("ORDO"),
-#             "EFO": annot.get("EFO"),
-#             "DO": annot.get("DO"),
-#             "MESH": annot.get("MESH"),
-#             "UMLS": annot.get("UMLS"),
-#         })
-
-#         merge_node(g, annot_node_label, annot_node_attrs)
-
-#         edge_attrs = OPENTARGETS_DISEASE_EDGE_ATTRS.copy()
-#         edge_hash = hash(frozenset(edge_attrs.items()))
-#         edge_attrs["edge_hash"] = edge_hash
-
-#         edge_data = g.get_edge_data(compound_node_label, annot_node_label)
-#         edge_data = {} if edge_data is None else edge_data
-#         node_exists = [
-#             x for x, y in edge_data.items()
-#             if y["attr_dict"]["edge_hash"] == edge_hash
-#         ]
-
-#         if len(node_exists) == 0:
-#             g.add_edge(
-#                 compound_node_label,
-#                 annot_node_label,
-#                 label=COMPOUND_DISEASE_EDGE_LABEL,
-#                 attr_dict=edge_attrs,
-#             )
-
-#     return g
-
 # def add_opentargets_gene_disease_subgraph(g, gene_node_label, annot_list):  # TODO: should be updated
 #     """Construct part of the graph by linking the gene to a list of annotation entities (disease, compound ..etc).
 
@@ -1421,6 +1421,7 @@ def build_networkx_graph(
         MINERVA: add_minerva_gene_pathway_subgraph,
         WIKIPATHWAYS: add_wikipathways_gene_pathway_subgraph,
         KEGG_COL: add_kegg_gene_pathway_subgraph,
+        OPENTARGETS_DISEASE_COL: add_opentargets_compound_disease_subgraph,
         OPENTARGETS_REACTOME_COL: add_opentargets_gene_reactome_pathway_subgraph,
         OPENTARGETS_GO_COL: add_opentargets_gene_go_subgraph,
         OPENTARGETS_GENE_COMPOUND_COL: add_opentargets_gene_compound_subgraph,
