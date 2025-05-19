@@ -394,17 +394,19 @@ LITERATURE_DISEASE_EDGE_ATTRS = {
 
 # TODO: The disease annotations are not curated and will be used again when the OpenTarget annotation improves.
 # Open Targets - Disease
-# OPENTARGETS_DISEASE_NODE_ATTRS = {
-#     "datasource": OPENTARGETS,
-#     "name": None,
-#     "id": None,
-#     "therapeutic_areas": None,
-#     "labels": DISEASE_NODE_LABELS,
-# }
-# OPENTARGETS_DISEASE_EDGE_ATTRS = {
-#     "datasource": OPENTARGETS,
-#     "label": GENE_DISEASE_EDGE_LABEL,
-# }
+COMPOUND_DISEASE_EDGE_LABEL = "associated_with"
+OPENTARGETS_DISEASE_NODE_MAIN_LABEL = "label"
+OPENTARGETS_DISEASE_NODE_ATTRS = {
+    "datasource": OPENTARGETS,
+    "name": None,
+    "id": None,
+    "therapeutic_areas": None,
+    "labels": DISEASE_NODE_LABELS,
+}
+OPENTARGETS_DISEASE_EDGE_ATTRS = {
+    "datasource": OPENTARGETS,
+    "label": GENE_DISEASE_EDGE_LABEL,
+}
 
 
 # Pathway node
@@ -523,6 +525,10 @@ PUBCHEM_GENE_COMPOUND_EDGE_ATTRS = {
 
 # Gene node
 GENE_NODE_LABELS = "Gene"
+GENE_NODE_MAIN_LABEL = "gene_id"
+GENE_NODE_ATTRS = {
+    "labels": GENE_NODE_LABELS
+}
 # STRING
 STRING_PPI_EDGE_MAIN_LABEL = "stringdb_link_to"
 STRING_PPI_EDGE_LABEL = "interacts_with"
