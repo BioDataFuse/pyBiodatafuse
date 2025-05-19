@@ -20,6 +20,7 @@ from pyBiodatafuse.constants import (
     BGEE_GENE_ANATOMICAL_EDGE_LABEL,
     BGEE_GENE_EXPRESSION_LEVELS_COL,
     BRIDGEDB,
+    COMPOUND_NODE_LABELS,
     COMPOUND_NODE_MAIN_LABEL,
     COMPOUND_SIDE_EFFECT_EDGE_ATTRS,
     COMPOUND_SIDE_EFFECT_EDGE_LABEL,
@@ -336,11 +337,11 @@ def add_intact_interactions_subgraph(g, gene_node_label, annot_list):
     return g
 
 
-def add_intact_compound_interactions_subgraph(g, gene_node_label, annot_list):
-    """Construct part of the graph by linking the compound (gene_node_label) to other interactors (proteins/compounds).
+def add_intact_compound_interactions_subgraph(g, compound_node_label, annot_list):
+    """Constructs part of the graph by linking the compound to interacting molecules (e.g., proteins, other compounds).
 
     :param g: the input graph to extend with new nodes and edges.
-    :param gene_node_label: the compound node label (used as source node).
+    :param compound_node_label: the compound node label (used as source node), expected as a ChEBI ID (e.g., '15361').
     :param annot_list: list of interaction dicts from IntAct.
     :returns: a NetworkX MultiDiGraph
     """
@@ -350,69 +351,65 @@ def add_intact_compound_interactions_subgraph(g, gene_node_label, annot_list):
     seen_interaction_ids = add_intact_compound_interactions_subgraph.seen_interaction_ids
     edges_seen = {}
 
+    compound_full_id = f"CHEBI:{compound_node_label.strip()}"
+
     for interaction in annot_list:
         interaction_id = interaction.get("binary_interaction_id")
         if not interaction_id or interaction_id in seen_interaction_ids:
             continue
         seen_interaction_ids.add(interaction_id)
 
-        id_a = interaction.get("id_A", "")
-        id_b = interaction.get("id_B", "")
+        id_a = interaction.get("id_A", "").strip()
+        id_b = interaction.get("id_B", "").strip()
 
-        compound_id = f"CHEBI:{gene_node_label.strip()}"
-        if compound_id == id_a:
-            partner_node_label = id_b
+        if compound_full_id == id_a:
+            partner_id = id_b
             partner_name = interaction.get("interactor_B_name", "")
             partner_species = interaction.get("interactor_B_species", "")
-            molecule = interaction.get("molecule_B", "")
-        elif compound_id == id_b:
-            partner_node_label = id_a
+            partner_molecule = interaction.get("molecule_B", "")
+        elif compound_full_id == id_b:
+            partner_id = id_a
             partner_name = interaction.get("interactor_A_name", "")
             partner_species = interaction.get("interactor_A_species", "")
-            molecule = interaction.get("molecule_A", "")
+            partner_molecule = interaction.get("molecule_A", "")
         else:
             continue
 
-        if not partner_node_label or pd.isna(partner_node_label):
+        if not partner_id or pd.isna(partner_id):
             continue
 
-        edge_key = (gene_node_label, partner_node_label)
+        edge_key = (compound_node_label, partner_id)
         if edge_key in edges_seen:
-            existing = edges_seen[edge_key]
-            method = interaction.get("detection_method")
-            if method:
-                if isinstance(existing["detection_method"], list):
-                    existing["detection_method"].append(method)
-                else:
-                    existing["detection_method"] = [existing["detection_method"], method]
+            existing_methods = edges_seen[edge_key].get("detection_method", "")
+            new_method = interaction.get("detection_method", "")
+            if new_method and new_method not in existing_methods:
+                existing_methods += f",{new_method}"
+                edges_seen[edge_key]["detection_method"] = existing_methods
             continue
 
-        # Add the partner node (protein or compound)
-        annot_node_attrs = {
-            "id": partner_node_label,
+        node_label_type = COMPOUND_NODE_LABELS if partner_id.startswith("CHEBI:") else GENE_NODE_LABELS
+
+        partner_node_attrs = {
+            "id": partner_id,
             "label": partner_name,
             "species": partner_species,
-            "molecule": molecule,
+            "molecule": partner_molecule,
+            "labels": node_label_type,
         }
-        merge_node(g, partner_node_label, annot_node_attrs)
+        merge_node(g, partner_id, partner_node_attrs)
 
-        # Collect edge attributes
-        edge_attrs = {}
-        for key, value in interaction.items():
-            if value is None or (isinstance(value, str) and not value.strip()):
-                continue
-            edge_attrs[key] = ",".join(map(str, value)) if isinstance(value, list) else value
-
+        edge_attrs = {
+            key: ",".join(map(str, value)) if isinstance(value, list) else value
+            for key, value in interaction.items()
+            if value is not None and not (isinstance(value, str) and not value.strip())
+        }
         edge_attrs["detection_method"] = interaction.get("detection_method", "")
         edge_attrs["interaction_type"] = interaction.get("type", "compound-ppi")
         edge_attrs["edge_hash"] = hash(frozenset(edge_attrs.items()))
+
         edges_seen[edge_key] = edge_attrs
 
-    # Add edges to the graph
     for (source, target), edge_attrs in edges_seen.items():
-        if isinstance(edge_attrs["detection_method"], list):
-            edge_attrs["detection_method"] = ",".join(set(edge_attrs["detection_method"]))
-
         g.add_edge(
             source,
             target,
@@ -421,6 +418,8 @@ def add_intact_compound_interactions_subgraph(g, gene_node_label, annot_list):
         )
 
     return g
+
+
 
 
 def add_literature_gene_disease_subgraph(g, gene_node_label, annot_list):
@@ -1154,6 +1153,26 @@ def add_gene_node(g, row, dea_columns):
     return gene_node_label
 
 
+def add_compound_node(g, row):
+    """Add compound node from each row of the combined_df to the graph.
+
+    :param g: the input graph to extend with compound nodes.
+    :param row: row in the combined DataFrame.
+    :returns: label for compound node
+    """
+    compound_node_label = row["identifier"]
+    compound_node_attrs = {
+        "datasource": BRIDGEDB,
+        "name": f"{row['identifier.source']}:{row['identifier']}",
+        "id": row["target"],
+        "labels": COMPOUND_NODE_LABELS,
+        row["target.source"]: row["target"],
+    }
+
+    g.add_node(compound_node_label, attr_dict=compound_node_attrs)
+    return compound_node_label
+
+
 def process_annotations(g, gene_node_label, row, func_dict):
     """Process the annotations for gene node from each row of the combined_df to the graph.
 
@@ -1303,6 +1322,8 @@ def build_networkx_graph(
 
     dea_columns = [c for c in combined_df.columns if c.endswith("_dea")]
 
+    compound_identifiers = ["PubChem Compound", "CHEBI", "InChIKey"]
+
     func_dict = {
         BGEE_GENE_EXPRESSION_LEVELS_COL: add_gene_bgee_subgraph,
         DISGENET_DISEASE_COL: add_disgenet_gene_disease_subgraph,
@@ -1310,7 +1331,7 @@ def build_networkx_graph(
         MINERVA: add_minerva_gene_pathway_subgraph,
         WIKIPATHWAYS: add_wikipathways_gene_pathway_subgraph,
         INTACT_INTERACT_COL: add_intact_interactions_subgraph,
-        INTACT_COMPOUND_INTERACT_COL: add_intact_interactions_subgraph,
+        INTACT_COMPOUND_INTERACT_COL: add_intact_compound_interactions_subgraph,
         KEGG_COL: add_kegg_gene_pathway_subgraph,
         OPENTARGETS_REACTOME_COL: add_opentargets_gene_reactome_pathway_subgraph,
         OPENTARGETS_GO_COL: add_opentargets_gene_go_subgraph,
@@ -1324,14 +1345,24 @@ def build_networkx_graph(
         process_homologs(g, combined_df, homolog_df_list, func_dict, dea_columns)
 
     if homolog_df_list is None:
+        is_compound_input = any(
+            combined_df["target.source"].astype(str).str.contains(ci, case=False, na=False).any()
+            or combined_df["identifier"].astype(str).str.contains(ci, case=False, na=False).any()
+            for ci in compound_identifiers
+        )
+
         for _i, row in tqdm(
             combined_df.iterrows(), total=combined_df.shape[0], desc="Building graph"
         ):
             if pd.isna(row["identifier"]) or pd.isna(row["target"]):
                 continue
-            gene_node_label = add_gene_node(g, row, dea_columns)
-            process_annotations(g, gene_node_label, row, func_dict)
-            process_ppi(g, gene_node_label, row)
+            if is_compound_input:
+                node_label = add_compound_node(g, row)
+            else:
+                node_label = add_gene_node(g, row, dea_columns)
+
+            process_annotations(g, node_label, row, func_dict)
+            process_ppi(g, node_label, row)
 
     if disease_compound is not None:
         process_disease_compound(g, disease_compound)
