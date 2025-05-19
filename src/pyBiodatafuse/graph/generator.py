@@ -925,6 +925,7 @@ def add_molmedb_gene_inhibitor_subgraph(g, gene_node_label, annot_list):
 
     return g
 
+
 def add_molmedb_compound_transporter_subgraph(g, compound_node_label, annot_list):
     """Construct part of the graph by linking the compound to transporters it inhibits.
 
@@ -1239,6 +1240,7 @@ def add_gene_node(g, row, dea_columns):
 
     g.add_node(gene_node_label, attr_dict=gene_node_attrs)
     return gene_node_label
+
 
 def add_compound_node(g, row):
     """Add compound node from each row of the combined_df to the graph.
