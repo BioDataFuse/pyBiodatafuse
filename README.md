@@ -61,6 +61,30 @@ $ pyBiodatafuse --help
 > TODO show the most useful thing the CLI does! The CLI will have documentation auto-generated
 > by `sphinx`. -->
 
+We support exporting of the graphs in Cytoscape, Neo4J and GraphDB. You can use the following functions:
+
+```python
+# on neo4j
+neo4j.load_graph(pygraph, uri="bolt://localhost:7687", username="YOUR_USERNAME", password="YOUR_PASSWORD")  # change username and password
+
+# on cytoscape
+cytoscape.load_graph(pygraph, network_name="YOUR_CUSTOM_NAME")
+
+# rdf ttl files
+bdf = BDFGraph(
+    base_uri="https://biodatafuse.org/YOUR_CUSTOM_NAME/",
+    version_iri="https://biodatafuse.org/example/YOUR_CUSTOM_NAME.ttl",
+    orcid="YOUR_ORCID",
+    author="YOUR_NAME",
+)
+
+bdf.generate_rdf(combined_df, combined_metadata)  # Generate the RDF from the (meta)data files from the example runs
+bdf.serialize(
+    "YOUR_CUSTOM_NAME.ttl",
+    format="ttl",
+)
+```
+
 ## 🚀 Installation
 
 The most recent release can be installed from
