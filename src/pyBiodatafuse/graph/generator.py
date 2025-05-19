@@ -17,6 +17,8 @@ from pyBiodatafuse.constants import (
     BGEE_GENE_ANATOMICAL_EDGE_LABEL,
     BGEE_GENE_EXPRESSION_LEVELS_COL,
     BRIDGEDB,
+    COMPOUND_DISEASE_EDGE_LABEL,
+    COMPOUND_NODE_LABELS,
     COMPOUND_NODE_MAIN_LABEL,
     COMPOUND_SIDE_EFFECT_EDGE_ATTRS,
     COMPOUND_SIDE_EFFECT_EDGE_LABEL,
@@ -33,6 +35,8 @@ from pyBiodatafuse.constants import (
     GENE_DISEASE_EDGE_LABEL,
     GENE_GO_EDGE_ATTRS,
     GENE_GO_EDGE_LABEL,
+    GENE_NODE_ATTRS,
+    GENE_NODE_MAIN_LABEL,
     GENE_NODE_LABELS,
     GENE_PATHWAY_EDGE_ATTRS,
     GENE_PATHWAY_EDGE_LABEL,
@@ -57,13 +61,17 @@ from pyBiodatafuse.constants import (
     MOLECULAR_PATHWAY_NODE_ATTRS,
     MOLMEDB,
     MOLMEDB_COMPOUND_NODE_ATTRS,
+    MOLMEDB_COMPOUND_PROTEIN_COL,
     MOLMEDB_PROTEIN_COMPOUND_COL,
     MOLMEDB_PROTEIN_COMPOUND_EDGE_ATTRS,
     MOLMEDB_PROTEIN_COMPOUND_EDGE_LABEL,
     OPENTARGETS,
     OPENTARGETS_COMPOUND_NODE_ATTRS,
+    OPENTARGETS_DISEASE_COL,
     OPENTARGETS_DISEASE_COMPOUND_COL,
     OPENTARGETS_DISEASE_COMPOUND_EDGE_ATTRS,
+    OPENTARGETS_DISEASE_EDGE_ATTRS,
+    OPENTARGETS_DISEASE_NODE_ATTRS,
     OPENTARGETS_GENE_COMPOUND_COL,
     OPENTARGETS_GENE_COMPOUND_EDGE_ATTRS,
     OPENTARGETS_GO_COL,
@@ -301,6 +309,58 @@ def add_literature_gene_disease_subgraph(
 
 
 # TODO: The disease annotations are not curated and will be used again when the OpenTarget annotation improves.
+# def add_opentargets_compound_disease_subgraph(g, compound_node_label, annot_list):
+#     """Construct part of the graph by linking the compound to disease annotations.
+
+#     :param g: the input graph to extend with new nodes and edges.
+#     :param compound_node_label: the compound node to be linked to disease entities.
+#     :param annot_list: list of disease annotations from OpenTargets.
+#     :returns: a NetworkX MultiDiGraph
+#     """
+#     for annot in annot_list:
+#         if pd.isna(annot.get("disease_name")):
+#             continue
+
+#         annot_node_label = annot[DISEASE_NODE_MAIN_LABEL]
+
+#         annot_node_attrs = OPENTARGETS_DISEASE_NODE_ATTRS.copy()
+#         annot_node_attrs.update({
+#             "name": annot.get("disease_name"),
+#             "therapeutic_areas": annot.get("therapeutic_areas"),
+#             "HPO": annot.get("HPO"),
+#             "NCI": annot.get("NCI"),
+#             "OMIM": annot.get("OMIM"),
+#             "MONDO": annot.get("MONDO"),
+#             "ORDO": annot.get("ORDO"),
+#             "EFO": annot.get("EFO"),
+#             "DO": annot.get("DO"),
+#             "MESH": annot.get("MESH"),
+#             "UMLS": annot.get("UMLS"),
+#         })
+
+#         merge_node(g, annot_node_label, annot_node_attrs)
+
+#         edge_attrs = OPENTARGETS_DISEASE_EDGE_ATTRS.copy()
+#         edge_hash = hash(frozenset(edge_attrs.items()))
+#         edge_attrs["edge_hash"] = edge_hash
+
+#         edge_data = g.get_edge_data(compound_node_label, annot_node_label)
+#         edge_data = {} if edge_data is None else edge_data
+#         node_exists = [
+#             x for x, y in edge_data.items()
+#             if y["attr_dict"]["edge_hash"] == edge_hash
+#         ]
+
+#         if len(node_exists) == 0:
+#             g.add_edge(
+#                 compound_node_label,
+#                 annot_node_label,
+#                 label=COMPOUND_DISEASE_EDGE_LABEL,
+#                 attr_dict=edge_attrs,
+#             )
+
+#     return g
+
 # def add_opentargets_gene_disease_subgraph(g, gene_node_label, annot_list):  # TODO: should be updated
 #     """Construct part of the graph by linking the gene to a list of annotation entities (disease, compound ..etc).
 
@@ -865,6 +925,61 @@ def add_molmedb_gene_inhibitor_subgraph(g, gene_node_label, annot_list):
 
     return g
 
+def add_molmedb_compound_transporter_subgraph(g, compound_node_label, annot_list):
+    """Construct part of the graph by linking the compound to transporters it inhibits.
+
+    :param g: the input graph to extend with new nodes and edges.
+    :param compound_node_label: the compound node to be linked to its transporters.
+    :param annot_list: list of transporters inhibited by the compound from MolMeDB.
+    :returns: a NetworkX MultiDiGraph
+    """
+    for annot in annot_list:
+        if pd.isna(annot["hgnc_symbol"]) and pd.isna(annot["uniprot_trembl_id"]):
+            continue
+
+        if not pd.isna(annot.get(GENE_NODE_MAIN_LABEL)):
+            annot_node_label = annot[GENE_NODE_MAIN_LABEL]
+        elif not pd.isna(annot.get("hgnc_symbol")):
+            annot_node_label = annot["hgnc_symbol"]
+        elif not pd.isna(annot.get("uniprot_trembl_id")):
+            annot_node_label = annot["uniprot_trembl_id"]
+        else:
+            continue
+
+        annot_node_attrs = GENE_NODE_ATTRS.copy()
+        annot_node_attrs.update(
+            {
+                "symbol": annot.get("hgnc_symbol"),
+                "uniprot_trembl_id": annot.get("uniprot_trembl_id"),
+                "datasource": MOLMEDB,
+            }
+        )
+
+        merge_node(g, annot_node_label, annot_node_attrs)
+
+        edge_attrs = MOLMEDB_PROTEIN_COMPOUND_EDGE_ATTRS.copy()
+        edge_attrs.update({
+            "direction": "compound_to_protein",
+            "source_pmid": annot.get("source_pmid"),
+        })
+
+        edge_hash = hash(frozenset(edge_attrs.items()))
+        edge_attrs["edge_hash"] = edge_hash  # type: ignore
+
+        edge_data = g.get_edge_data(compound_node_label, annot_node_label)
+        edge_data = {} if edge_data is None else edge_data
+        node_exists = [x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash]
+
+        if len(node_exists) == 0:
+            g.add_edge(
+                compound_node_label,
+                annot_node_label,
+                label=MOLMEDB_PROTEIN_COMPOUND_EDGE_LABEL,
+                attr_dict=edge_attrs,
+            )
+
+    return g
+
 
 def add_pubchem_assay_subgraph(g, gene_node_label, annot_list):
     """Construct part of the graph by linking the gene to a list of compounds tested on it.
@@ -1125,6 +1240,25 @@ def add_gene_node(g, row, dea_columns):
     g.add_node(gene_node_label, attr_dict=gene_node_attrs)
     return gene_node_label
 
+def add_compound_node(g, row):
+    """Add compound node from each row of the combined_df to the graph.
+
+    :param g: the input graph to extend with compound nodes.
+    :param row: row in the combined DataFrame.
+    :returns: label for compound node
+    """
+    compound_node_label = row["identifier"]
+    compound_node_attrs = {
+        "datasource": BRIDGEDB,
+        "name": f"{row['identifier.source']}:{row['identifier']}",
+        "id": row["target"],
+        "labels": COMPOUND_NODE_LABELS,
+        row["target.source"]: row["target"],
+    }
+
+    g.add_node(compound_node_label, attr_dict=compound_node_attrs)
+    return compound_node_label
+
 
 def process_annotations(g, gene_node_label, row, func_dict):
     """Process the annotations for gene node from each row of the combined_df to the graph.
@@ -1275,9 +1409,10 @@ def build_networkx_graph(
     :returns: a NetworkX MultiDiGraph
     """
     g = nx.MultiDiGraph()
-    combined_df = combined_df[(combined_df["target.source"] == "Ensembl")]
 
     dea_columns = [c for c in combined_df.columns if c.endswith("_dea")]
+
+    compound_identifiers = ["PubChem Compound", "CHEBI", "InChIKey"]
 
     func_dict = {
         BGEE_GENE_EXPRESSION_LEVELS_COL: add_gene_bgee_subgraph,
@@ -1289,24 +1424,34 @@ def build_networkx_graph(
         OPENTARGETS_REACTOME_COL: add_opentargets_gene_reactome_pathway_subgraph,
         OPENTARGETS_GO_COL: add_opentargets_gene_go_subgraph,
         OPENTARGETS_GENE_COMPOUND_COL: add_opentargets_gene_compound_subgraph,
+        MOLMEDB_COMPOUND_PROTEIN_COL: add_molmedb_compound_transporter_subgraph,
         MOLMEDB_PROTEIN_COMPOUND_COL: add_molmedb_gene_inhibitor_subgraph,
         PUBCHEM_COMPOUND_ASSAYS_COL: add_pubchem_assay_subgraph,
-        WIKIPATHWAYS_MOLECULAR_COL: add_wikipathways_molecular_subgraph,
         ENSEMBL_HOMOLOG_COL: add_ensembl_homolog_subgraph,
     }
 
     if homolog_df_list is not None:
         process_homologs(g, combined_df, homolog_df_list, func_dict, dea_columns)
 
-    else:
+    if homolog_df_list is None:
+        is_compound_input = any(
+            combined_df["target.source"].astype(str).str.contains(ci, case=False, na=False).any()
+            or combined_df["identifier"].astype(str).str.contains(ci, case=False, na=False).any()
+            for ci in compound_identifiers
+        )
+
         for _i, row in tqdm(
             combined_df.iterrows(), total=combined_df.shape[0], desc="Building graph"
         ):
             if pd.isna(row["identifier"]) or pd.isna(row["target"]):
                 continue
-            gene_node_label = add_gene_node(g, row, dea_columns)
-            process_annotations(g, gene_node_label, row, func_dict)
-            process_ppi(g, gene_node_label, row)
+            if is_compound_input:
+                node_label = add_compound_node(g, row)
+            else:
+                node_label = add_gene_node(g, row, dea_columns)
+
+            process_annotations(g, node_label, row, func_dict)
+            process_ppi(g, node_label, row)
 
     if disease_compound is not None:
         process_disease_compound(g, disease_compound)
