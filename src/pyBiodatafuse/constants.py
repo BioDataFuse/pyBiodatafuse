@@ -432,6 +432,8 @@ WIKIPATHWAYS_MOLECULAR_NODE_ATTRS = {
     "labels": MOLECULAR_PATHWAY_NODE_LABELS,
 }
 WIKIPATHWAYS_MOLECULAR_EDGE_ATTRS = {"interaction_type": "str", "rhea_id": str}
+MOLECULAR_GENE_PATHWAY_EDGE_LABEL = "part_of"
+MOLECULAR_INTERACTION_EDGE_ATTRS = {"interaction_type": "str", "rhea_id": str}
 # GO nodes
 # Open Targets - GO processes
 GO_BP_NODE_LABELS = "Biological Process"
