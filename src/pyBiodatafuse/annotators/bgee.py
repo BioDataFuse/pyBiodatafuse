@@ -223,7 +223,7 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
     # Check the intermediate_df
     if num_new_edges != len(intermediate_df):
         warnings.warn(
-            f"The intermediate_df in {Cons.BGEE} annotatur should be checked, please create an issue on https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
+            f"The intermediate_df in {Cons.BGEE} annotator should be checked, please create an issue on https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
             stacklevel=2,
         )
 
