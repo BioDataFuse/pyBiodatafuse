@@ -1195,6 +1195,62 @@ def add_opentargets_disease_compound_subgraph(g, disease_node_label, annot_list)
     return g
 
 
+# TODO: clean the function
+def add_wikipathways_molecular_subgraph(g, gene_node_label, annot_list):
+    """Construct part of the graph by linking molecular entities from WP with MIMs.
+
+    :param g: the input graph to extend with new nodes and edges.
+    :param gene_node_label: the disease node to be linked to compounds.
+    :param annot_list: result of querying WP for molecular interactions.
+    :returns: a NetworkX MultiDiGraph
+    """
+    for annot in annot_list:
+        for target_key in ["targetGene", "targetMetabolite"]:
+            target = annot.get(target_key)
+            target_node_label = None
+            if target and target != gene_node_label:  # No interactions with self
+                target_node_label = str(target)
+
+            if target_node_label is not None:
+                interaction_type = annot.get("mimtype", "Interaction")
+                edge_attrs = Cons.MOLECULAR_INTERACTION_EDGE_ATTRS.copy()
+                edge_attrs["interaction_type"] = interaction_type
+                edge_attrs["rhea_id"] = annot.get("rhea_id", "")
+                edge_attrs["pathway_id"] = annot.get("pathway_id", "")
+                edge_attrs["edge_hash"] = hash(frozenset(edge_attrs.items()))  # type: ignore
+
+                if not g.has_node(target_node_label):
+                    node_attrs = Cons.MOLECULAR_PATHWAY_NODE_ATTRS.copy()
+                    node_attrs.update(
+                        {
+                            "pathway_id": annot.get("pathway_id", ""),
+                            "pathway_label": annot.get("pathway_label", ""),
+                            "id": target_node_label,
+                        }
+                    )
+                    g.add_node(target_node_label, attr_dict=node_attrs)
+
+                edge_exists = False
+                if g.has_edge(gene_node_label, target_node_label):
+                    edge_data = g.get_edge_data(gene_node_label, target_node_label)
+                    for edge_key in edge_data:
+                        if (
+                            edge_data[edge_key].get("attr_dict", {}).get("edge_hash")
+                            == edge_attrs["edge_hash"]
+                        ):
+                            edge_exists = True
+                            break
+
+                if not edge_exists:
+                    g.add_edge(
+                        gene_node_label,
+                        target_node_label,
+                        label=interaction_type.upper(),
+                        attr_dict=edge_attrs,
+                    )
+    return g
+
+
 def add_ensembl_homolog_subgraph(g, gene_node_label, annot_list):
     """Construct part of the graph by linking the gene to genes.
 
@@ -1425,7 +1481,7 @@ def _built_gene_based_graph(
         Cons.OPENTARGETS_GENE_COMPOUND_COL: add_opentargets_gene_compound_subgraph,
         Cons.MOLMEDB_PROTEIN_COMPOUND_COL: add_molmedb_gene_inhibitor_subgraph,
         Cons.PUBCHEM_COMPOUND_ASSAYS_COL: add_pubchem_assay_subgraph,
-        # Cons.WIKIPATHWAYS_MOLECULAR_COL: add_wikipathways_molecular_subgraph,
+        Cons.WIKIPATHWAYS_MOLECULAR_COL: add_wikipathways_molecular_subgraph,
         Cons.ENSEMBL_HOMOLOG_COL: add_ensembl_homolog_subgraph,
         Cons.INTACT_INTERACT_COL: add_intact_interactions_subgraph,
         Cons.INTACT_COMPOUND_INTERACT_COL: add_intact_compound_interactions_subgraph,
