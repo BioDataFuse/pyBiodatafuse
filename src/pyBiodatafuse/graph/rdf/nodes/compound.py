@@ -55,7 +55,11 @@ def add_compound_node(g: Graph, compound: dict, gene_node: URIRef) -> URIRef:
                 iri = (
                     f"https://go.compoundbank.com/compounds/{source_id}"
                     if source_id == compoundbank_id
-                    else f"https://pubchem.ncbi.nlm.nih.gov/compound/{compound_cid.split(':')[1]}"
+                    else (
+                        f"https://pubchem.ncbi.nlm.nih.gov/compound/{compound_cid.split(':')[1]}"
+                        if ":" in compound_cid
+                        else f"https://pubchem.ncbi.nlm.nih.gov/compound/{compound_cid}"
+                    )
                 )
                 id_node = URIRef(iri)
                 g.add((compound_node, OWL.sameAs, id_node))

@@ -31,6 +31,7 @@ Classes:
 """
 
 import pandas as pd
+import requests
 from bioregistry import normalize_curie
 from rdflib import Graph, URIRef
 from tqdm import tqdm
@@ -174,7 +175,7 @@ class BDFGraph(Graph):
             # if open_only and source_col == DISGENET_DISEASE_COL:
             #     continue  # TODO fix open data only feature
             source_data = row.get(source_col, None)
-            if source_data:
+            if source_data is not None:
                 disease_data.extend(source_data)
         return disease_data
 
@@ -300,7 +301,7 @@ class BDFGraph(Graph):
         :param compound_data: List of compounds to be processed.
         :param gene_node: URIRef of gene node.
         """
-        if compound_data:
+        if compound_data is not None:
             for compound in compound_data:
                 self._add_compound_node(compound, gene_node)
 
@@ -564,6 +565,3 @@ class BDFGraph(Graph):
             path=output_path,
             new_uris=self.new_uris,
         )
-
-
-# Define new methods here
