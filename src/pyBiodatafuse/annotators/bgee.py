@@ -13,14 +13,7 @@ from SPARQLWrapper import JSON, SPARQLWrapper
 from SPARQLWrapper.SPARQLExceptions import SPARQLWrapperException
 from tqdm import tqdm
 
-from pyBiodatafuse.constants import (
-    ANATOMICAL_ENTITIES_LIST,
-    BGEE,
-    BGEE_ENDPOINT,
-    BGEE_GENE_EXPRESSION_LEVELS_COL,
-    BGEE_GENE_EXPRESSION_OUTPUT_DICT,
-    BGEE_GENE_INPUT_ID,
-)
+import pyBiodatafuse.constants as Cons
 from pyBiodatafuse.utils import (
     check_columns_against_constants,
     collapse_data_sources,
@@ -39,7 +32,7 @@ def check_sparql_endpoint_bgee() -> bool:
     with open(query_file_path, "r", encoding="utf-8") as fin:
         sparql_query = fin.read()
 
-    sparql = SPARQLWrapper(BGEE_ENDPOINT)
+    sparql = SPARQLWrapper(Cons.BGEE_ENDPOINT)
     sparql.setReturnFormat(JSON)
 
     sparql.setQuery(sparql_query)
@@ -65,7 +58,7 @@ def get_version_bgee() -> dict:
     ) as fin:
         sparql_query = fin.read()
 
-    sparql = SPARQLWrapper(BGEE_ENDPOINT)
+    sparql = SPARQLWrapper(Cons.BGEE_ENDPOINT)
     sparql.setReturnFormat(JSON)
 
     sparql.setQuery(sparql_query)
@@ -86,13 +79,13 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
 
     if not api_available:
         warnings.warn(
-            f"{BGEE} SPARQL endpoint is not available. Unable to retrieve data.", stacklevel=2
+            f"{Cons.BGEE} SPARQL endpoint is not available. Unable to retrieve data.", stacklevel=2
         )
         return pd.DataFrame(), {}
 
     # Extract the "target" values and join them into a single string separated by commas
-    data_df = get_identifier_of_interest(bridgedb_df, BGEE_GENE_INPUT_ID)
-    gene_list = data_df["target"].tolist()
+    data_df = get_identifier_of_interest(bridgedb_df, Cons.BGEE_GENE_INPUT_ID)
+    gene_list = data_df[Cons.TARGET_COL].tolist()
     gene_list = list(set(gene_list))
 
     query_gene_lists = []
@@ -106,7 +99,7 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
 
     anatomical_entities_list = [
         anatomical_entity.strip()
-        for anatomical_entity in ANATOMICAL_ENTITIES_LIST
+        for anatomical_entity in Cons.ANATOMICAL_ENTITIES_LIST
         if anatomical_entity.strip() != ""
     ]
 
@@ -122,7 +115,7 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
     # Record the start time
     start_time = datetime.datetime.now()
 
-    sparql = SPARQLWrapper(BGEE_ENDPOINT)
+    sparql = SPARQLWrapper(Cons.BGEE_ENDPOINT)
     sparql.setReturnFormat(JSON)
 
     query_count = 0
@@ -153,7 +146,7 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
                 if df.empty:
                     continue
 
-                df.drop_duplicates(subset=["anatomical_entity_id"], inplace=True)
+                df.drop_duplicates(subset=[Cons.ANATOMICAL_ID], inplace=True)
                 intermediate_df = pd.concat([intermediate_df, df], ignore_index=True)
 
     # Record the end time
@@ -167,75 +160,75 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
 
     # Add the datasource, query, query time, and the date to metadata
     bgee_metadata: Dict[str, Any] = {
-        "datasource": BGEE,
+        "datasource": Cons.BGEE,
         "metadata": bgee_version,
         "query": {
             "size": len(gene_list),
-            "input_type": BGEE_GENE_INPUT_ID,
+            "input_type": Cons.BGEE_GENE_INPUT_ID,
             "time": time_elapsed,
             "date": current_date,
-            "url": BGEE_ENDPOINT,
+            "url": Cons.BGEE_ENDPOINT,
         },
     }
 
-    if "anatomical_entity_id" not in intermediate_df:
+    if Cons.ANATOMICAL_ID not in intermediate_df:
         warnings.warn(
-            f"There is no annotation for your input list in {BGEE}.",
+            f"There is no annotation for your input list in {Cons.BGEE}.",
             stacklevel=2,
         )
         return pd.DataFrame(), bgee_metadata
 
     # Organize the annotation results as an array of dictionaries
-    intermediate_df.rename(columns={"ensembl_id": "target"}, inplace=True)
-    intermediate_df["anatomical_entity_id"] = intermediate_df["anatomical_entity_id"].apply(
+    intermediate_df.rename(columns={"ensembl_id": Cons.TARGET_COL}, inplace=True)
+    intermediate_df[Cons.ANATOMICAL_ID] = intermediate_df[Cons.ANATOMICAL_ID].apply(
         lambda x: x.split("/")[-1]
     )
-    intermediate_df["confidence_level_id"] = intermediate_df["confidence_level_id"].apply(
+    intermediate_df[Cons.CONFIDENCE_ID] = intermediate_df[Cons.CONFIDENCE_ID].apply(
         lambda x: x.split("/")[-1]
     )
-    intermediate_df["developmental_stage_id"] = intermediate_df["developmental_stage_id"].apply(
+    intermediate_df[Cons.DEVELOPMENTAL_ID] = intermediate_df[Cons.DEVELOPMENTAL_ID].apply(
         lambda x: x.split("/")[-1]
     )
-    intermediate_df["expression_level"] = pd.to_numeric(intermediate_df["expression_level"])
+    intermediate_df[Cons.EXPRESSION_LEVEL] = pd.to_numeric(intermediate_df[Cons.EXPRESSION_LEVEL])
 
     # Check if all keys in df match the keys in OUTPUT_DICT
     check_columns_against_constants(
         data_df=intermediate_df,
-        output_dict=BGEE_GENE_EXPRESSION_OUTPUT_DICT,
+        output_dict=Cons.BGEE_GENE_EXPRESSION_OUTPUT_DICT,
         check_values_in=[
-            "anatomical_entity_id",
-            "confidence_level_id",
-            "developmental_stage_id",
+            Cons.ANATOMICAL_ID,
+            Cons.CONFIDENCE_ID,
+            Cons.DEVELOPMENTAL_ID,
         ],
     )
 
     # Merge the two DataFrames on the target column
     merged_df = collapse_data_sources(
         data_df=data_df,
-        source_namespace=BGEE_GENE_INPUT_ID,
+        source_namespace=Cons.BGEE_GENE_INPUT_ID,
         target_df=intermediate_df,
-        common_cols=["target"],
-        target_specific_cols=list(BGEE_GENE_EXPRESSION_OUTPUT_DICT.keys()),
-        col_name=BGEE_GENE_EXPRESSION_LEVELS_COL,
+        common_cols=[Cons.TARGET_COL],
+        target_specific_cols=list(Cons.BGEE_GENE_EXPRESSION_OUTPUT_DICT.keys()),
+        col_name=Cons.BGEE_GENE_EXPRESSION_LEVELS_COL,
     )
 
     """Update metadata"""
     # Calculate the number of new nodes
-    num_new_nodes = intermediate_df["anatomical_entity_id"].nunique()
+    num_new_nodes = intermediate_df[Cons.ANATOMICAL_ID].nunique()
     # Calculate the number of new edges
     num_new_edges = intermediate_df.drop_duplicates(
-        subset=["anatomical_entity_id", "gene_id"]
+        subset=[Cons.ANATOMICAL_ID, Cons.TARGET_COL]
     ).shape[0]
 
     # Check the intermediate_df
     if num_new_edges != len(intermediate_df):
         warnings.warn(
-            f"The intermediate_df in {BGEE} annotatur should be checked, please create an issue on https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
+            f"The intermediate_df in {Cons.BGEE} annotatur should be checked, please create an issue on https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
             stacklevel=2,
         )
 
     # Add the number of new nodes and edges to metadata
-    bgee_metadata["query"]["number_of_added_nodes"] = num_new_nodes
-    bgee_metadata["query"]["number_of_added_edges"] = num_new_edges
+    bgee_metadata[Cons.QUERY][Cons.NUM_NODES] = num_new_nodes
+    bgee_metadata[Cons.QUERY][Cons.NUM_EDGES] = num_new_edges
 
     return merged_df, bgee_metadata
