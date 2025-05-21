@@ -1,5 +1,7 @@
 """
+
 Module for managing GraphDB repositories via REST API.
+
 This module provides functions to create, list, and manage GraphDB repositories,
 as well as upload RDF data and execute SPARQL queries.
 """
@@ -30,7 +32,6 @@ class GraphDBManager:
         :param repository_name: The name of the repository to create.
         :param username: The username for authentication.
         :param password: The password for authentication.
-        :raises HTTPError: If the request to create the repository fails.
         """
         url = f"{base_url.rstrip('/')}/rest/repositories"
         auth = (username, password) if username and password else None
@@ -112,7 +113,6 @@ class GraphDBManager:
         :param username: Optional username for authentication.
         :param password: Optional password for authentication.
         :return: List of repositories as JSON.
-        :raises HTTPError: If the request to list repositories fails.
         """
         url = f"{base_url.rstrip('/')}/rest/repositories"
         auth = (username, password) if username and password else None
@@ -157,7 +157,6 @@ class GraphDBManager:
         :param username: Optional username for authentication.
         :param password: Optional password for authentication.
         :return: Number of triples in the repository.
-        :raises HTTPError: If the request to count triples fails.
         """
         url = f"{base_url.rstrip('/')}/rest/repositories/{repository_id}/size"
         auth = (username, password) if username and password else None
@@ -176,7 +175,6 @@ class GraphDBManager:
         :param repository_id: The ID of the repository.
         :param username: Optional username for authentication.
         :param password: Optional password for authentication.
-        :raises HTTPError: If the request to restart the repository fails.
         """
         url = f"{base_url.rstrip('/')}/rest/repositories/{repository_id}/restart"
         auth = (username, password) if username and password else None
@@ -194,7 +192,6 @@ class GraphDBManager:
         :param repository_id: The ID of the repository.
         :param username: Optional username for authentication.
         :param password: Optional password for authentication.
-        :raises HTTPError: If the request to delete the repository fails.
         """
         url = f"{base_url.rstrip('/')}/rest/repositories/{repository_id}"
         auth = (username, password) if username and password else None
@@ -219,7 +216,6 @@ class GraphDBManager:
         :param password: The password for authentication.
         :param bdf_graph: The RDF graph to upload.
         :param file_format: The format of the RDF graph (default is "turtle").
-        :raises HTTPError: If the request to upload the graph fails.
         """
         url = f"{base_url.rstrip('/')}/repositories/{repository_id}/statements"
         auth = (username, password)
@@ -262,7 +258,6 @@ class GraphDBManager:
         :return: Query results as a dictionary or pandas DataFrame.
         :raises HTTPError: If the request to execute the query fails.
         """
-
         endpoint = f"{base_url.rstrip('/')}/repositories/{repository_name}"
         headers = {"Accept": "application/sparql-results+json"}
         auth = (username, password)
