@@ -1040,7 +1040,7 @@ def add_wikipathways_molecular_subgraph(g, gene_node_label, annot_list):
                 edge_attrs["edge_hash"] = hash(frozenset(edge_attrs.items()))  # type: ignore
 
                 if not g.has_node(target_node_label):
-                    node_attrs = Cons.MOLECULAR_PATHWAY_NODE_ATTRS.copy()
+                    node_attrs = Cons.WIKIPATHWAYS_MOLECULAR_NODE_ATTRS.copy()
                     node_attrs.update(
                         {
                             "pathway_id": annot.get("pathway_id", ""),
@@ -1083,100 +1083,106 @@ def add_aopwiki_gene_subgraph(g, gene_node_label, annot_list):
         # Add AOP node
         aop_node_label = "AOP:" + annot.get("aop", "")
         if aop_node_label:
-            aop_node_attrs = AOPWIKI_NODE_ATTRS.copy()
-            aop_node_attrs["type"] = AOP_NODE_LABELS
+            aop_node_attrs = Cons.AOPWIKI_NODE_ATTRS.copy()
+            aop_node_attrs["type"] = Cons.AOP_NODE_LABELS
             aop_node_attrs["title"] = annot.get("aop_title", "")
-            aop_node_attrs["labels"] = AOP_NODE_LABELS
+            aop_node_attrs["labels"] = Cons.AOP_NODE_LABELS
             g.add_node(aop_node_label, attr_dict=aop_node_attrs)
 
             # Connect gene to AOP node
-            edge_attrs = {**AOPWIKI_EDGE_ATTRS, "relation": AOP_GENE_EDGE_LABEL}
+            edge_attrs = {**Cons.AOPWIKI_EDGE_ATTRS, "relation": Cons.AOP_GENE_EDGE_LABEL}
             edge_attrs["edge_hash"] = hash(frozenset(edge_attrs.items()))
             if not edge_exists(g, gene_node_label, aop_node_label, edge_attrs):
                 g.add_edge(
                     gene_node_label,
                     aop_node_label,
-                    label=AOP_GENE_EDGE_LABEL,
+                    label=Cons.AOP_GENE_EDGE_LABEL,
                     attr_dict=edge_attrs,
                 )
 
         # Add MIE node
         mie_node_label = "MIE:" + annot.get("MIE", "")
         if mie_node_label:
-            mie_node_attrs = AOPWIKI_NODE_ATTRS.copy()
-            mie_node_attrs["type"] = MIE_NODE_LABELS
+            mie_node_attrs = Cons.AOPWIKI_NODE_ATTRS.copy()
+            mie_node_attrs["type"] = Cons.MIE_NODE_LABELS
             mie_node_attrs["title"] = annot.get("MIE_title", "")
-            mie_node_attrs["labels"] = MIE_NODE_LABELS
+            mie_node_attrs["labels"] = Cons.MIE_NODE_LABELS
             g.add_node(mie_node_label, attr_dict=mie_node_attrs)
 
             # Connect MIE to AOP node
             if aop_node_label:
-                edge_attrs = {**AOPWIKI_EDGE_ATTRS, "relation": MIE_AOP_EDGE_LABEL}
+                edge_attrs = {**Cons.AOPWIKI_EDGE_ATTRS, "relation": Cons.MIE_AOP_EDGE_LABEL}
                 edge_attrs["edge_hash"] = hash(frozenset(edge_attrs.items()))
                 if not edge_exists(g, mie_node_label, aop_node_label, edge_attrs):
                     g.add_edge(
                         mie_node_label,
                         aop_node_label,
-                        label=MIE_AOP_EDGE_LABEL,
+                        label=Cons.MIE_AOP_EDGE_LABEL,
                         attr_dict=edge_attrs,
                     )
 
         # Add KE upstream node
         ke_upstream_node_label = "KE:" + annot.get("KE_upstream", "")
         if ke_upstream_node_label:
-            ke_upstream_node_attrs = AOPWIKI_NODE_ATTRS.copy()
+            ke_upstream_node_attrs = Cons.AOPWIKI_NODE_ATTRS.copy()
             ke_upstream_node_attrs["title"] = annot.get("KE_upstream_title", "")
             ke_upstream_node_attrs["organ"] = annot.get("KE_upstream_organ", "")
-            ke_upstream_node_attrs["type"] = KEY_EVENT_NODE_LABELS
-            ke_upstream_node_attrs["labels"] = KEY_EVENT_NODE_LABELS
+            ke_upstream_node_attrs["type"] = Cons.KEY_EVENT_NODE_LABELS
+            ke_upstream_node_attrs["labels"] = Cons.KEY_EVENT_NODE_LABELS
             g.add_node(ke_upstream_node_label, attr_dict=ke_upstream_node_attrs)
 
             # Connect KE upstream to MIE node
             if mie_node_label:
-                edge_attrs = {**AOPWIKI_EDGE_ATTRS, "relation": KE_UPSTREAM_MIE_EDGE_LABEL}
+                edge_attrs = {
+                    **Cons.AOPWIKI_EDGE_ATTRS,
+                    "relation": Cons.KE_UPSTREAM_MIE_EDGE_LABEL,
+                }
                 edge_attrs["edge_hash"] = hash(frozenset(edge_attrs.items()))
                 if not edge_exists(g, ke_upstream_node_label, mie_node_label, edge_attrs):
                     g.add_edge(
                         ke_upstream_node_label,
                         mie_node_label,
-                        label=KE_UPSTREAM_MIE_EDGE_LABEL,
+                        label=Cons.KE_UPSTREAM_MIE_EDGE_LABEL,
                         attr_dict=edge_attrs,
                     )
 
         # Add KE downstream node
         ke_downstream_node_label = "KE:" + annot.get("KE_downstream", "")
         if ke_downstream_node_label:
-            ke_downstream_node_attrs = AOPWIKI_NODE_ATTRS.copy()
+            ke_downstream_node_attrs = Cons.AOPWIKI_NODE_ATTRS.copy()
             ke_downstream_node_attrs["title"] = annot.get("KE_downstream_title", "")
             ke_downstream_node_attrs["organ"] = annot.get("KE_downstream_organ", "")
-            ke_downstream_node_attrs["type"] = KEY_EVENT_NODE_LABELS
-            ke_downstream_node_attrs["labels"] = KEY_EVENT_NODE_LABELS
+            ke_downstream_node_attrs["type"] = Cons.KEY_EVENT_NODE_LABELS
+            ke_downstream_node_attrs["labels"] = Cons.KEY_EVENT_NODE_LABELS
             g.add_node(ke_downstream_node_label, attr_dict=ke_downstream_node_attrs)
 
             # Connect KE downstream to KE upstream node
             if ke_upstream_node_label:
-                edge_attrs = {**AOPWIKI_EDGE_ATTRS, "relation": KE_DOWNSTREAM_KE_EDGE_LABEL}
+                edge_attrs = {
+                    **Cons.AOPWIKI_EDGE_ATTRS,
+                    "relation": Cons.KE_DOWNSTREAM_KE_EDGE_LABEL,
+                }
                 edge_attrs["edge_hash"] = hash(frozenset(edge_attrs.items()))
                 if not edge_exists(g, ke_upstream_node_label, ke_downstream_node_label, edge_attrs):
                     g.add_edge(
                         ke_upstream_node_label,
                         ke_downstream_node_label,
-                        label=KE_DOWNSTREAM_KE_EDGE_LABEL,
+                        label=Cons.KE_DOWNSTREAM_KE_EDGE_LABEL,
                         attr_dict=edge_attrs,
                     )
 
         # Add AO node
         ao_node_label = "KE:" + annot.get("ao", "")
         if ao_node_label:
-            ao_node_attrs = AOPWIKI_NODE_ATTRS.copy()
+            ao_node_attrs = Cons.AOPWIKI_NODE_ATTRS.copy()
             ao_node_attrs["title"] = annot.get("ao_title", "")
-            ao_node_attrs["type"] = AO_NODE_LABELS
-            ao_node_attrs["labels"] = AO_NODE_LABELS
+            ao_node_attrs["type"] = Cons.AO_NODE_LABELS
+            ao_node_attrs["labels"] = Cons.AO_NODE_LABELS
             g.add_node(ao_node_label, attr_dict=ao_node_attrs)
 
             # Connect AO directly to KE downstream node
             if ke_downstream_node_label:
-                edge_attrs = {**AOPWIKI_EDGE_ATTRS, "relation": "associated_with"}
+                edge_attrs = {**Cons.AOPWIKI_EDGE_ATTRS, "relation": "associated_with"}
                 edge_attrs["edge_hash"] = hash(frozenset(edge_attrs.items()))
                 if not edge_exists(g, ke_downstream_node_label, ao_node_label, edge_attrs):
                     g.add_edge(
@@ -1516,6 +1522,7 @@ def save_graph(
     nx.write_gml(g, graph_path_gml)
 
     return g
+
 
 def _built_compound_based_graph(
     g: nx.MultiDiGraph,

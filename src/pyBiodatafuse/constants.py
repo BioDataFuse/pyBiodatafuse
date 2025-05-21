@@ -60,7 +60,7 @@ MOLMEDB_COMPOUND_PROTEIN_COL = f"{MOLMEDB}_transporter_inhibited"
 PUBCHEM_COMPOUND_ASSAYS_COL = f"{PUBCHEM}_assays"
 STRING_PPI_COL = f"{STRING}_ppi"
 WIKIDATA_CC_COL = f"{WIKIDATA}_cellular_components"
-AOPWIKI_GENE_COL = "aop_gene"  # todo fix this
+AOPWIKIRDF = "aop_gene"  # todo fix this
 AOPWIKI_COMPOUND_COL = "pubchem_compound"  # todo fix this
 WIKIPATHWAYS_MOLECULAR_COL = f"{WIKIPATHWAYS}_molecular"
 

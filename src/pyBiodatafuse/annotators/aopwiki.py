@@ -20,9 +20,9 @@ from pyBiodatafuse.constants import (
     AOPWIKI_COMPOUND_INPUT_ID,
     AOPWIKI_COMPOUND_OUTPUT_DICT,
     AOPWIKI_ENDPOINT,
-    AOPWIKI_GENE_COL,
     AOPWIKI_GENE_INPUT_ID,
     AOPWIKI_GENE_OUTPUT_DICT,
+    AOPWIKIRDF,
     OPENTARGETS_GO_COL,
 )
 from pyBiodatafuse.utils import (
@@ -151,7 +151,7 @@ def get_aops(
     for batch in tqdm(query_batches, desc=f"Querying {db} for {input_type}"):
         # Prepare the substitution dictionary
         if input_type == "gene":
-            col = AOPWIKI_GENE_COL
+            col = AOPWIKIRDF
             substit_dict = {
                 "genes": str(
                     [
@@ -254,7 +254,7 @@ def get_aops(
         target_df=intermediate_df,
         common_cols=["target"],
         target_specific_cols=list(output_dict.keys()),
-        col_name=AOPWIKI_GENE_COL,
+        col_name=AOPWIKIRDF,
     )
 
     return merged_df, metadata_dict

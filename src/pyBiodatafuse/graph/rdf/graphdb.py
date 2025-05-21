@@ -1,3 +1,9 @@
+"""
+Module for managing GraphDB repositories via REST API.
+This module provides functions to create, list, and manage GraphDB repositories,
+as well as upload RDF data and execute SPARQL queries.
+"""
+
 import tempfile
 
 import pandas as pd
