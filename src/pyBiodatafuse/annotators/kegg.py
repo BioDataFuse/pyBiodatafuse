@@ -112,8 +112,8 @@ def get_compound_genes(pathway_info, results_entry):
     if not compounds:
         compounds = [{Cons.KEGG_IDENTIFIER: None}]
 
-    pathway_info[Cons.KEGG_GENE_COUNTS] = len(genes)
-    pathway_info[Cons.KEGG_PATHWAY_COMPOUNDS] = compounds
+    pathway_info[Cons.PATHWAY_GENE_COUNTS] = len(genes)
+    pathway_info[Cons.PATHWAY_COMPOUNDS] = compounds
 
     return pathway_info
 
@@ -182,12 +182,12 @@ def get_pathway_info(row):
     ):
         return {
             Cons.KEGG_IDENTIFIER: np.nan,
-            Cons.KEGG_PATHWAYS: [
+            Cons.PATHWAYS: [
                 {
-                    Cons.KEGG_PATHWAY_ID: np.nan,
-                    Cons.KEGG_PATHWAY_LABEL: np.nan,
-                    Cons.KEGG_GENE_COUNTS: np.nan,
-                    Cons.KEGG_PATHWAY_COMPOUNDS: [
+                    Cons.PATHWAY_ID: np.nan,
+                    Cons.PATHWAY_LABEL: np.nan,
+                    Cons.PATHWAY_GENE_COUNTS: np.nan,
+                    Cons.PATHWAY_COMPOUNDS: [
                         {Cons.KEGG_IDENTIFIER: None, Cons.KEGG_COMPOUND_NAME: None}
                     ],
                 }
@@ -196,12 +196,12 @@ def get_pathway_info(row):
 
     results = requests.get(f"{Cons.KEGG_ENDPOINT}/link/pathway/{kegg_dict.get('KEGG_id')}")
     if len(results.text) <= 1:
-        kegg_dict[Cons.KEGG_PATHWAYS] = [
+        kegg_dict[Cons.PATHWAYS] = [
             {
-                Cons.KEGG_PATHWAY_ID: np.nan,
-                Cons.KEGG_PATHWAY_LABEL: np.nan,
-                Cons.KEGG_GENE_COUNTS: np.nan,
-                Cons.KEGG_PATHWAY_COMPOUNDS: [
+                Cons.PATHWAY_ID: np.nan,
+                Cons.PATHWAY_LABEL: np.nan,
+                Cons.PATHWAY_GENE_COUNTS: np.nan,
+                Cons.PATHWAY_COMPOUNDS: [
                     {Cons.KEGG_IDENTIFIER: None, Cons.KEGG_COMPOUND_NAME: None}
                 ],
             }
@@ -216,26 +216,24 @@ def get_pathway_info(row):
         pathway_info = {}
         for line in entry.splitlines():
             if line.startswith("ENTRY"):
-                pathway_info[Cons.KEGG_PATHWAY_ID] = "path:" + line.split()[1]
+                pathway_info[Cons.PATHWAY_ID] = "path:" + line.split()[1]
             if line.startswith("NAME"):
-                pathway_info[Cons.KEGG_PATHWAY_LABEL] = line.split("  ", 1)[1].strip()
+                pathway_info[Cons.PATHWAY_LABEL] = line.split("  ", 1)[1].strip()
                 break
         pathway_info = get_compound_genes(pathway_info, entry)
-        if (
-            Cons.KEGG_PATHWAY_ID not in pathway_info
-        ):  # If the pathway ID is not found, skip the entry
+        if Cons.PATHWAY_ID not in pathway_info:  # If the pathway ID is not found, skip the entry
             continue
         pathways.append(pathway_info)
 
-    kegg_dict[Cons.KEGG_PATHWAYS] = (
+    kegg_dict[Cons.PATHWAYS] = (
         pathways
         if pathways
         else [
             {
-                Cons.KEGG_PATHWAY_ID: np.nan,
-                Cons.KEGG_PATHWAY_LABEL: np.nan,
-                Cons.KEGG_GENE_COUNTS: np.nan,
-                Cons.KEGG_PATHWAY_COMPOUNDS: [
+                Cons.PATHWAY_ID: np.nan,
+                Cons.PATHWAY_LABEL: np.nan,
+                Cons.PATHWAY_GENE_COUNTS: np.nan,
+                Cons.PATHWAY_COMPOUNDS: [
                     {Cons.KEGG_IDENTIFIER: None, Cons.KEGG_COMPOUND_NAME: None}
                 ],
             }
@@ -272,7 +270,7 @@ def get_pathways(bridgedb_df: pd.DataFrame):
     data_df[Cons.KEGG_PATHWAY_COL] = data_df.apply(lambda row: get_pathway_info(row), axis=1)
 
     data_df[Cons.KEGG_PATHWAY_COL] = data_df[Cons.KEGG_PATHWAY_COL].apply(
-        lambda x: x[Cons.KEGG_PATHWAYS] if isinstance(x, dict) and Cons.KEGG_PATHWAYS in x else []
+        lambda x: x[Cons.PATHWAYS] if isinstance(x, dict) and Cons.PATHWAYS in x else []
     )
 
     # Record the end time

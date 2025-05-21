@@ -36,16 +36,16 @@ class TestKEGG(unittest.TestCase):
             [
                 [
                     {
-                        "KEGG_pathway_id": "path:mmu03010",
-                        "KEGG_pathway_label": "Ribosome - Mus musculus (house mouse)",
-                        "KEGG_gene_counts": 274,
-                        "KEGG_pathway_compounds": [{"KEGG_id": None}],
+                        "pathway_id": "path:mmu03010",
+                        "pathway_label": "Ribosome - Mus musculus (house mouse)",
+                        "pathway_gene_counts": 274,
+                        "pathway_compounds": [{"KEGG_id": None}],
                     },
                     {
-                        "KEGG_pathway_id": "path:mmu05171",
-                        "KEGG_pathway_label": "Coronavirus disease - COVID-19 - Mus musculus (house mouse)",
-                        "KEGG_gene_counts": 333,
-                        "KEGG_pathway_compounds": [
+                        "pathway_id": "path:mmu05171",
+                        "pathway_label": "Coronavirus disease - COVID-19 - Mus musculus (house mouse)",
+                        "pathway_gene_counts": 333,
+                        "pathway_compounds": [
                             {"KEGG_id": "C00027"},
                             {"KEGG_id": "C00046"},
                             {"KEGG_id": "C00165"},
