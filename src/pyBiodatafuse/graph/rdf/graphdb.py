@@ -14,9 +14,7 @@ from requests.exceptions import HTTPError
 
 
 class GraphDBManager:
-    """
-    A class to manage GraphDB repositories via REST API.
-    """
+    """A class to manage GraphDB repositories via REST API."""
 
     @staticmethod
     def create_repository(
