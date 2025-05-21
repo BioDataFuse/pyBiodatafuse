@@ -24,13 +24,13 @@ class GraphDBManager:
         password: str = None,
     ):
         """
-        Create a new repository in a GraphDB instance.
+        Create a new repository in GraphDB.
 
-        :param base_url: Base URL of the GraphDB instance (e.g., http://localhost:7200).
-        :param repository_name: Name of the repository to create. Defaults to "default".
-        :param username: Optional username for authentication.
-        :param password: Optional password for authentication.
-        :raises HTTPError: If the HTTP request fails.
+        :param base_url: The base URL of the GraphDB instance.
+        :param repository_name: The name of the repository to create.
+        :param username: The username for authentication.
+        :param password: The password for authentication.
+        :raises HTTPError: If the request to create the repository fails.
         """
         url = f"{base_url.rstrip('/')}/rest/repositories"
         auth = (username, password) if username and password else None
@@ -108,10 +108,11 @@ class GraphDBManager:
         """
         List all repositories in the GraphDB instance.
 
-        :param base_url: Base URL of the GraphDB instance.
+        :param base_url: The base URL of the GraphDB instance.
         :param username: Optional username for authentication.
         :param password: Optional password for authentication.
         :return: List of repositories as JSON.
+        :raises HTTPError: If the request to list repositories fails.
         """
         url = f"{base_url.rstrip('/')}/rest/repositories"
         auth = (username, password) if username and password else None
@@ -126,11 +127,12 @@ class GraphDBManager:
         """
         Retrieve detailed information about a specific repository.
 
-        :param base_url: Base URL of the GraphDB instance.
-        :param repository_id: ID of the repository.
+        :param base_url: The base URL of the GraphDB instance.
+        :param repository_id: The ID of the repository.
         :param username: Optional username for authentication.
         :param password: Optional password for authentication.
         :return: Repository information as JSON.
+        :raises HTTPError: If the request to retrieve repository info fails.
         """
         url = f"{base_url.rstrip('/')}/rest/repositories/{repository_id}"
         auth = (username, password) if username and password else None
@@ -150,11 +152,12 @@ class GraphDBManager:
         """
         Count the number of triples in a repository.
 
-        :param base_url: Base URL of the GraphDB instance.
-        :param repository_id: ID of the repository.
+        :param base_url: The base URL of the GraphDB instance.
+        :param repository_id: The ID of the repository.
         :param username: Optional username for authentication.
         :param password: Optional password for authentication.
         :return: Number of triples in the repository.
+        :raises HTTPError: If the request to count triples fails.
         """
         url = f"{base_url.rstrip('/')}/rest/repositories/{repository_id}/size"
         auth = (username, password) if username and password else None
@@ -169,10 +172,11 @@ class GraphDBManager:
         """
         Restart a specific repository.
 
-        :param base_url: Base URL of the GraphDB instance.
-        :param repository_id: ID of the repository.
+        :param base_url: The base URL of the GraphDB instance.
+        :param repository_id: The ID of the repository.
         :param username: Optional username for authentication.
         :param password: Optional password for authentication.
+        :raises HTTPError: If the request to restart the repository fails.
         """
         url = f"{base_url.rstrip('/')}/rest/repositories/{repository_id}/restart"
         auth = (username, password) if username and password else None
@@ -186,10 +190,11 @@ class GraphDBManager:
         """
         Delete a specific repository.
 
-        :param base_url: Base URL of the GraphDB instance.
-        :param repository_id: ID of the repository.
+        :param base_url: The base URL of the GraphDB instance.
+        :param repository_id: The ID of the repository.
         :param username: Optional username for authentication.
         :param password: Optional password for authentication.
+        :raises HTTPError: If the request to delete the repository fails.
         """
         url = f"{base_url.rstrip('/')}/rest/repositories/{repository_id}"
         auth = (username, password) if username and password else None
@@ -206,15 +211,15 @@ class GraphDBManager:
         file_format: str = "turtle",
     ):
         """
-        Upload a BDFGraph to the specified GraphDB repository.
+        Upload an RDF graph to a GraphDB repository.
 
-        :param base_url: Base URL of the GraphDB instance (e.g., http://localhost:7200).
-        :param repository_id: ID of the repository to upload the graph to.
-        :param username: Username for authentication.
-        :param password: Password for authentication.
-        :param bdf_graph: The BDFGraph object to upload.
-        :param format: Format of the RDF data (e.g., "turtle", "rdfxml").
-        :raises HTTPError: If the HTTP request fails.
+        :param base_url: The base URL of the GraphDB instance.
+        :param repository_id: The ID of the repository to upload the graph to.
+        :param username: The username for authentication.
+        :param password: The password for authentication.
+        :param bdf_graph: The RDF graph to upload.
+        :param file_format: The format of the RDF graph (default is "turtle").
+        :raises HTTPError: If the request to upload the graph fails.
         """
         url = f"{base_url.rstrip('/')}/repositories/{repository_id}/statements"
         auth = (username, password)
@@ -244,23 +249,18 @@ class GraphDBManager:
         response.raise_for_status()
 
     @staticmethod
-    def query_graphdb(base_url, repository_name, username, password, query, response_format="json"):
+    def query_graphdb(base_url: str, repository_name: str, username: str, password: str, query: str, response_format: str = "json"):
         """
-        Sends a SPARQL SELECT query to the specified GraphDB repository.
+        Execute a SPARQL query on a GraphDB repository.
 
-        Args:
-            base_url (str): The base URL of the GraphDB instance.
-            repository_name (str): The name of the repository to query.
-            username (str): The username for authentication.
-            password (str): The password for authentication.
-            query (str): The SPARQL query to execute.
-            response_format (str): The desired response format ("json" or "dataframe").
-
-        Returns:
-            dict or pandas.DataFrame: The query results in JSON format or as a DataFrame.
-
-        Raises:
-            Exception: If the query fails or the response is invalid.
+        :param base_url: The base URL of the GraphDB instance.
+        :param repository_name: The name of the repository to query.
+        :param username: The username for authentication.
+        :param password: The password for authentication.
+        :param query: The SPARQL query to execute.
+        :param response_format: The format of the query response (default is "json").
+        :return: Query results as a dictionary or pandas DataFrame.
+        :raises HTTPError: If the request to execute the query fails.
         """
 
         endpoint = f"{base_url.rstrip('/')}/repositories/{repository_name}"
