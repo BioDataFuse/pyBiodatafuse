@@ -115,7 +115,7 @@ class GraphDBManager:
         """
         url = f"{base_url.rstrip('/')}/rest/repositories"
         auth = (username, password) if username and password else None
-        response = requests.get(url, auth=auth, headers={"Accept": "application/json"})
+        response = requests.get(url, auth=auth, headers={"Accept": "application/json"}, timeout=10)
         response.raise_for_status()
         return response.json()
 
@@ -134,8 +134,13 @@ class GraphDBManager:
         """
         url = f"{base_url.rstrip('/')}/rest/repositories/{repository_id}"
         auth = (username, password) if username and password else None
-        response = requests.get(url, auth=auth, headers={"Accept": "application/json"})
-        response.raise_for_status()
+        response = requests.get(url, auth=auth, headers={"Accept": "application/json"}, timeout=10)
+        try:
+            response.raise_for_status()
+        except HTTPError as e:
+            raise HTTPError(
+                f"Failed to retrieve repository info: {e.response.status_code} - {e.response.text}"
+            ) from e
         return response.json()
 
     @staticmethod
@@ -153,7 +158,7 @@ class GraphDBManager:
         """
         url = f"{base_url.rstrip('/')}/rest/repositories/{repository_id}/size"
         auth = (username, password) if username and password else None
-        response = requests.get(url, auth=auth)
+        response = requests.get(url, auth=auth, timeout=10)
         response.raise_for_status()
         return dict(response.json())
 
@@ -171,7 +176,7 @@ class GraphDBManager:
         """
         url = f"{base_url.rstrip('/')}/rest/repositories/{repository_id}/restart"
         auth = (username, password) if username and password else None
-        response = requests.post(url, auth=auth)
+        response = requests.post(url, auth=auth, timeout=10)
         response.raise_for_status()
 
     @staticmethod
@@ -188,7 +193,7 @@ class GraphDBManager:
         """
         url = f"{base_url.rstrip('/')}/rest/repositories/{repository_id}"
         auth = (username, password) if username and password else None
-        response = requests.delete(url, auth=auth)
+        response = requests.delete(url, auth=auth, timeout=10)
         response.raise_for_status()
 
     @staticmethod
@@ -198,7 +203,7 @@ class GraphDBManager:
         username: str,
         password: str,
         bdf_graph,
-        format: str = "turtle",
+        file_format: str = "turtle",
     ):
         """
         Upload a BDFGraph to the specified GraphDB repository.
@@ -215,7 +220,7 @@ class GraphDBManager:
         auth = (username, password)
 
         # Serialize the BDFGraph to the specified format
-        rdf_data = bdf_graph.serialize(format=format)
+        rdf_data = bdf_graph.serialize(format=file_format)
 
         # Map format to Content-Type
         content_type_map = {
@@ -224,7 +229,7 @@ class GraphDBManager:
             "ntriples": "application/n-triples",
             "jsonld": "application/ld+json",
         }
-        content_type = content_type_map.get(format, "text/turtle")
+        content_type = content_type_map.get(file_format, "text/turtle")
 
         headers = {"Content-Type": content_type, "Accept": "application/json"}
 
@@ -263,7 +268,7 @@ class GraphDBManager:
         auth = (username, password)
         params = {"query": query}
 
-        response = requests.get(endpoint, headers=headers, auth=auth, params=params)
+        response = requests.get(endpoint, headers=headers, auth=auth, params=params, timeout=10)
 
         if response.status_code == 200:
             results = response.json()
@@ -277,6 +282,6 @@ class GraphDBManager:
                 return pd.DataFrame(rows, columns=columns)
             return results
         else:
-            raise Exception(
+            raise HTTPError(
                 f"Query failed with status code {response.status_code}: {response.text}"
             )
