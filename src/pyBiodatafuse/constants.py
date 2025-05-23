@@ -3,7 +3,9 @@
 """Python constant file."""
 
 
-# Endpoints / API
+"""
+API endpoints for each data source
+"""
 BRIDGEDB_ENDPOINT = "https://webservice.bridgedb.org"
 BGEE_ENDPOINT = "https://www.bgee.org/sparql/"
 DISGENET_ENDPOINT = "https://api.disgenet.com/api/v1/gda/summary"
@@ -12,16 +14,18 @@ INTACT_ENDPOINT = "https://www.ebi.ac.uk/intact"
 KEGG_ENDPOINT = "https://rest.kegg.jp"
 MINERVA_ENDPOINT = "https://minerva-net.lcsb.uni.lu/api/"
 MOLMEDB_ENDPOINT = "https://idsm.elixir-czech.cz/sparql/endpoint/molmedb"
-NCBI_ENDPOINT = "https://eutils.ncbi.nlm.nih.gov"
 OPENTARGETS_ENDPOINT = "https://api.platform.opentargets.org/api/v4/graphql"
 PUBCHEM_ENDPOINT = "https://idsm.elixir-czech.cz/sparql/endpoint/idsm"
 STRING_ENDPOINT = "https://string-db.org/api"
-UNIPROT_ENDPOINT = "https://rest.uniprot.org"
 WIKIDATA_ENDPOINT = "https://query-main.wikidata.org/sparql"
 WIKIPATHWAYS_ENDPOINT = "https://sparql.wikipathways.org/sparql"
 AOPWIKI_ENDPOINT = "https://aopwiki.rdf.bigcat-bioinformatics.org/sparql/"
+NCBI_ENDPOINT = "https://eutils.ncbi.nlm.nih.gov"  # part of StringDB
+UNIPROT_ID_MAPPER_ENDPOINT = "https://rest.uniprot.org/idmapping/"
 
-# Data sources
+"""
+All data sources
+"""
 BRIDGEDB = "BridgeDB"
 BGEE = "Bgee"
 DISGENET = "DISGENET"
@@ -35,77 +39,146 @@ PUBCHEM = "PubChem"
 STRING = "StringDB"
 WIKIDATA = "Wikidata"
 WIKIPATHWAYS = "WikiPathways"
-OPENTARGETS_REACTOME = "OpenTargets_reactome"
 AOPWIKIRDF = "AOP Wiki RDF"
+
+"""
+All weblinks for the datasources
+"""
+DATA_SOURCES = {
+    BRIDGEDB: "https://www.bridgedb.org/",
+    BGEE: "https://www.bgee.org/",
+    DISGENET: "https://disgenet.com/",
+    ENSEMBL: "https://www.ensembl.org/",
+    INTACT: "https://www.ebi.ac.uk/intact/",
+    KEGG: "https://www.genome.jp/kegg/pathway.html",
+    MINERVA: "https://minerva.pages.uni.lu/doc/",
+    MOLMEDB: "https://molmedb.upol.cz",
+    OPENTARGETS: "https://www.opentargets.org/",
+    PUBCHEM: "https://pubchem.ncbi.nlm.nih.gov/",
+    STRING: "https://string-db.org/",
+    WIKIDATA: "https://wikidata.org",
+    WIKIPATHWAYS: "https://wikipathways.org",
+    AOPWIKIRDF: "https://aopwiki.rdf.bigcat-bioinformatics.org",
+}
+
+"""
+Annotator statistics constants
+"""
+QUERY = "query"
+NUM_NODES = "number_of_added_nodes"
+NUM_EDGES = "number_of_added_edges"
 
 # DataFrame Columns
 
-TARGET_SOURCE_COL = "target.source"
 TARGET_COL = "target"
+TARGET_SOURCE_COL = "target.source"
 IDENTIFIER_COL = "identifier"
 IDENTIFIER_SOURCE_COL = "identifier.source"
-TARGET_SOURCE_COL = "target.source"
+
 BGEE_GENE_EXPRESSION_LEVELS_COL = f"{BGEE}_gene_expression_levels"
 DISGENET_DISEASE_COL = f"{DISGENET}_diseases"
 ENSEMBL_HOMOLOG_COL = f"{ENSEMBL}_homologs"
 INTACT_INTERACT_COL = f"{INTACT}_gene_interactions"
 INTACT_COMPOUND_INTERACT_COL = f"{INTACT}_compound_interactions"
-KEGG_COL = f"{KEGG}_pathways"
-KEGG_COMPOUND_COL = f"{KEGG}_compounds"
+KEGG_PATHWAY_COL = f"{KEGG}_pathways"
 LITERATURE_DISEASE_COL = "literature_based_info"
 OPENTARGETS_REACTOME_COL = f"{OPENTARGETS}_reactome"
 OPENTARGETS_GO_COL = f"{OPENTARGETS}_go"
 OPENTARGETS_DISEASE_COL = f"{OPENTARGETS}_diseases"
 OPENTARGETS_DISEASE_COMPOUND_COL = f"{OPENTARGETS}_disease_compounds"
 OPENTARGETS_GENE_COMPOUND_COL = f"{OPENTARGETS}_gene_compounds"
+MINERVA_PATHWAY_COL = f"{MINERVA}_pathways"
 MOLMEDB_PROTEIN_COMPOUND_COL = f"{MOLMEDB}_transporter_inhibitor"
 MOLMEDB_COMPOUND_PROTEIN_COL = f"{MOLMEDB}_transporter_inhibited"
 PUBCHEM_COMPOUND_ASSAYS_COL = f"{PUBCHEM}_assays"
-STRING_PPI_COL = f"{STRING}_ppi"
+STRING_INTERACT_COL = f"{STRING}_ppi"
 WIKIDATA_CC_COL = f"{WIKIDATA}_cellular_components"
+WIKIPATHWAYS_MOLECULAR_COL = f"{WIKIPATHWAYS}_molecular"
 AOPWIKI_GENE_COL = "aop_gene"  # todo fix this
 AOPWIKI_COMPOUND_COL = "pubchem_compound"  # todo fix this
-WIKIPATHWAYS_MOLECULAR_COL = f"{WIKIPATHWAYS}_molecular"
 
+# Ontologies and vocabularies namespaces
+PUBCHEM_COMPOUND = "PubChem Compound"
+HPO = "HPO"
+NCI = "NCI"
+OMIM_IDS = "OMIM|MIM"
+OMIM = "OMIM"
+MONDO = "MONDO"
+ORDO = "ORDO"
+EFO = "EFO"
+DO = "DO"
+MESH = "MESH"
+UMLS = "UMLS"
+NCBI_GENE = "NCBI Gene"
+CHEBI = "ChEBI"
+UNIPROT = "Uniprot-TrEMBL"
+CHEMBL = "chembl_id"
+INCHIKEY = "InChIKey"
+SMILES = "SMILES"
+DRUGBANK = "DrugBank"
 
 # Input type for each data source
-BGEE_GENE_INPUT_ID = "Ensembl"
-DISGENET_GENE_INPUT_ID = "NCBI Gene"
-ENSEMBL_GENE_INPUT_ID = "Ensembl"
-KEGG_GENE_INPUT_ID = "NCBI Gene"
-INTACT_GENE_INPUT_ID = "Ensembl"
-INTACT_COMPOUND_INPUT_ID = "ChEBI"
-MINERVA_GENE_INPUT_ID = "Ensembl"
-MOLMEDB_PROTEIN_INPUT_ID = "Uniprot-TrEMBL"
-MOLMEDB_COMPOUND_INPUT_ID = "InChIKey"
-OPENTARGETS_GENE_INPUT_ID = "Ensembl"
-OPENTARGETS_COMPOUND_INPUT_ID = "PubChem Compound"  # If using bridgedb mapping
-OPENTARGETS_COMPOUND_QUERY_INPUT_ID = "chembl_id"
-OPENTARGETS_DISEASE_INPUT_ID_1 = "EFO"
-OPENTARGETS_DISEASE_INPUT_ID_2 = "MONOD"
-PUBCHEM_COMPOUND_INPUT_ID = "Uniprot-TrEMBL"
-STRING_GENE_INPUT_ID = "Ensembl"
-STRING_GENE_LINK_ID = "Ensembl_link"
-WIKIDATA_GENE_INPUT_ID = "NCBI Gene"
-WIKIPATHWAYS_GENE_INPUT_ID = "NCBI Gene"
-PATENT_INPUT_ID = "PubChem Compound"
-AOPWIKI_GENE_INPUT_ID = "Ensembl"
-AOPWIKI_COMPOUND_INPUT_ID = "PubChem Compound"
+BGEE_GENE_INPUT_ID = ENSEMBL
+DISGENET_GENE_INPUT_ID = NCBI_GENE
+ENSEMBL_GENE_INPUT_ID = ENSEMBL
+INTACT_GENE_INPUT_ID = ENSEMBL
+INTACT_COMPOUND_INPUT_ID = CHEBI
+KEGG_GENE_INPUT_ID = NCBI_GENE
+OPENTARGETS_GENE_INPUT_ID = ENSEMBL
+OPENTARGETS_COMPOUND_INPUT_ID = PUBCHEM_COMPOUND
+OPENTARGETS_COMPOUND_QUERY_INPUT_ID = CHEMBL
+OPENTARGETS_DISEASE_INPUT_ID_1 = EFO
+OPENTARGETS_DISEASE_INPUT_ID_2 = MONDO
+MINERVA_GENE_INPUT_ID = ENSEMBL
+MOLMEDB_PROTEIN_INPUT_ID = UNIPROT
+MOLMEDB_COMPOUND_INPUT_ID = INCHIKEY
+PUBCHEM_COMPOUND_INPUT_ID = UNIPROT
+STRING_GENE_INPUT_ID = ENSEMBL
+STRING_GENE_LINK_ID = f"{ENSEMBL}_link"
+WIKIDATA_GENE_INPUT_ID = NCBI_GENE
+WIKIPATHWAYS_GENE_INPUT_ID = NCBI_GENE
+PATENT_INPUT_ID = PUBCHEM_COMPOUND
+AOPWIKI_GENE_INPUT_ID = ENSEMBL
+AOPWIKI_COMPOUND_INPUT_ID = PUBCHEM_COMPOUND
+
+PATHWAY_ID = "pathway_id"
+PATHWAY_LABEL = "pathway_label"
+PATHWAY_GENE_COUNTS = "pathway_gene_counts"
+PATHWAY_COMPOUNDS = "pathway_compounds"
+PATHWAYS = "pathways"
+
+SOURCE_PMID = "source_pmid"
+
+ENTITY_SYMBOL = "symbol"
+ENTITY_REFS = "references"
+ENTITY_TYPE = "type"
+ENTITY_NAME = "name"
 
 # Output annotation for each data source
-# Bgee
-BGEE_GENE_EXPRESSION_OUTPUT_DICT = {
-    "anatomical_entity_id": str,
-    "anatomical_entity_name": str,
-    "expression_level": float,
-    "confidence_level_id": str,
-    "confidence_level_name": str,
-    "developmental_stage_id": str,
-    "developmental_stage_name": str,
-}
+"""
+BGEE variables
+"""
+ANATOMICAL_ID = "anatomical_entity_id"
 ANATOMICAL_ENTITY_ID = "UBERON"
-DEVELOPMENTAL_STAGE_ID = "HsapDv|UBERON"
+ANATOMICAL_NAME = "anatomical_entity_name"
+EXPRESSION_LEVEL = "expression_level"
+CONFIDENCE_ID = "confidence_level_id"
 CONFIDENCE_LEVEL_ID = "CIO"
+CONFIDENCE_LEVEL_NAME = "confidence_level_name"
+DEVELOPMENTAL_ID = "developmental_stage_id"
+DEVELOPMENTAL_STAGE_ID = "HsapDv|UBERON"
+DEVELOPMENTAL_STAGE_NAME = "developmental_stage_name"
+
+BGEE_GENE_EXPRESSION_OUTPUT_DICT = {
+    ANATOMICAL_ID: str,
+    ANATOMICAL_NAME: str,
+    EXPRESSION_LEVEL: float,
+    CONFIDENCE_ID: str,
+    CONFIDENCE_LEVEL_NAME: str,
+    DEVELOPMENTAL_ID: str,
+    DEVELOPMENTAL_STAGE_NAME: str,
+}
+
 ANATOMICAL_ENTITIES_LIST = [
     "blood",
     "bone marrow",
@@ -126,73 +199,179 @@ ANATOMICAL_ENTITIES_LIST = [
     "skeletal system",
 ]
 
-# DISGENET
+"""
+DISGENET variables
+"""
+DISEASE_NAME = "disease_name"
+DISEASE_TYPE = "disease_type"
+DISEASE_UMLSCUI = "disease_umlscui"
+DISGENET_SCORE = "score"
+DISGENET_EI = "ei"
+DISGENET_EL = "el"
+
 DISGENET_DISEASE_OUTPUT_DICT = {
-    "disease_name": str,
-    "HPO": str,  # "HPO_HP:0100013"
-    "NCI": str,  # "NCI_C2910"
-    "OMIM": str,  # "OMIM_607906"
-    "MONDO": str,  # "MONDO_0021100"
-    "ORDO": str,  # "ORDO_137"
-    "EFO": str,  # "EFO_0003756"
-    "DO": str,  # "DO_0060041"
-    "MESH": str,  # "MESH_D000067877"
-    "UMLS": str,  # "UMLS_C1510586"
-    "disease_type": str,
-    "score": float,
-    "ei": float,
-    "el": str,
+    DISEASE_NAME: str,
+    HPO: str,  # "HPO_HP:0100013"
+    NCI: str,  # "NCI_C2910"
+    OMIM: str,  # "OMIM_607906"
+    MONDO: str,  # "MONDO_0021100"
+    ORDO: str,  # "ORDO_137"
+    EFO: str,  # "EFO_0003756"
+    DO: str,  # "DO_0060041"
+    MESH: str,  # "MESH_D000067877"
+    UMLS: str,  # "UMLS_C1510586"
+    DISEASE_TYPE: str,
+    DISGENET_SCORE: float,
+    DISGENET_EI: float,
+    DISGENET_EL: str,
 }
 
-# AOPWIKI
-AOPWIKI_GENE_OUTPUT_DICT = {
-    "aop": str,
-    "aop_title": str,
-    "MIEtitle": str,
-    "MIE": str,
-    "KE_downstream": str,
-    "KE_downstream_title": str,
-    "KER": str,
-    "ao": str,
-    "ao_title": str,
-    "KE_upstream": str,
-    "KE_upstream_title": str,
-    "KE_upstream_organ": str,
-    "KE_downstream_organ": str,
-    "pubchem_compound": str,
+VALUE_CHECK_LIST = [
+    HPO,
+    NCI,
+    OMIM,
+    MONDO,
+    ORDO,
+    EFO,
+    DO,
+    MESH,
+    UMLS,
+]
+
+"""
+INTACT variables
+"""
+INTACT_INTERACTION_ID = "interaction_id"
+INTACT_INTERACTOR_ID_A = "interactor_id_A"
+INTACT_INTERACTOR_ID_B = "interactor_id_B"
+INTACT_SCORE = "score"
+INTACT_BIOLOGICAL_ROLE_A = "biological_role_A"
+INTACT_BIOLOGICAL_ROLE_B = "biological_role_B"
+INTACT_TYPE = "type"
+INTACT_DETECTION_METHOD = "detection_method"
+INTACT_HOST_ORGANISM = "host_organism"
+INTACT_INTERACTOR_A_NAME = "interactor_A_name"
+INTACT_INTERACTOR_B_NAME = "interactor_B_name"
+INTACT_INTERACTOR_A_SPECIES = "interactor_A_species"
+INTACT_INTERACTOR_B_SPECIES = "interactor_B_species"
+INTACT_MOLECULE_A = "molecule_A"
+INTACT_MOLECULE_B = "molecule_B"
+INTACT_ID_A = "id_A"
+INTACT_ID_B = "id_B"
+INTACT_PUBMED_PUBLICATION_ID = "pubmed_publication_id"
+
+INTACT_COMPOUND_INTERACTION_TYPES = ["compound_compound", "compound_gene", "both_compounds"]
+INTACT_GENE_INTERACTION_TYPES = ["gene_gene", "gene_compound", "both"]
+
+INTACT_OUTPUT_DICT = {
+    INTACT_INTERACTION_ID: str,
+    INTACT_INTERACTOR_ID_A: str,
+    INTACT_INTERACTOR_ID_B: str,
+    INTACT_SCORE: float,
+    INTACT_BIOLOGICAL_ROLE_A: str,
+    INTACT_BIOLOGICAL_ROLE_B: str,
+    INTACT_TYPE: str,
+    INTACT_DETECTION_METHOD: str,
+    INTACT_HOST_ORGANISM: str,
+    INTACT_INTERACTOR_A_NAME: str,
+    INTACT_INTERACTOR_B_NAME: str,
+    INTACT_INTERACTOR_A_SPECIES: str,
+    INTACT_INTERACTOR_B_SPECIES: str,
+    INTACT_MOLECULE_A: str,
+    INTACT_MOLECULE_B: str,
+    INTACT_ID_A: str,
+    INTACT_ID_B: str,
+    INTACT_PUBMED_PUBLICATION_ID: str,
 }
 
-AOPWIKI_COMPOUND_OUTPUT_DICT = {
-    "aop": str,
-    "aop_title": str,
-    "MIEtitle": str,
-    "MIE": str,
-    "KE_downstream": str,
-    "KE_downstream_title": str,
-    "KER": str,
-    "ao": str,
-    "ao_title": str,
-    "KE_upstream": str,
-    "KE_upstream_title": str,
-    "KE_upstream_organ": str,
-    "KE_downstream_organ": str,
+"""
+KEGG variables
+"""
+KEGG_IDENTIFIER = f"{KEGG}_id"
+KEGG_COMPOUND_NAME = f"{KEGG}_compound_name"
+KEGG_COMPOUND_OUTPUT_DICT = {
+    KEGG_IDENTIFIER: str,
+    KEGG_COMPOUND_NAME: str,
 }
 
-HPO = "HPO"
-NCI = "NCI"
-OMIM = "OMIM|MIM"
-MONDO = "MONDO"
-ORDO = "ORDO"
-EFO = "EFO"
-DO = "DO"
-MESH = "MESH"
-UMLS = "UMLS"
-LITERATURE_DISEASE_OUTPUT_DICT = {
-    "disease_name": str,
-    "UMLS": str,
-    "MONDO": str,
-    "source": str,
+KEGG_PATHWAY_OUTPUT_DICT = {
+    KEGG_IDENTIFIER: str,
+    PATHWAYS: {
+        PATHWAY_ID: str,
+        PATHWAY_LABEL: str,
+        PATHWAY_GENE_COUNTS: int,
+        PATHWAY_COMPOUNDS: list,
+    },
 }
+
+"""
+MINERVA variables
+"""
+VALID_MINERVA_ENTITIES = [
+    "Compartment",
+    "Complex",
+    "Drug",
+    "Gene",
+    "Ion",
+    "Phenotype",
+    "Protein",
+    "RNA",
+    "Simple molecule",
+    "Pathway",
+]
+INTERESTED_INFO = [ENTITY_TYPE, ENTITY_REFS, ENTITY_SYMBOL, ENTITY_NAME, ENSEMBL]
+
+MINERVA_PATHWAY_OUTPUT_DICT = {
+    PATHWAY_ID: str,
+    PATHWAY_LABEL: str,
+    PATHWAY_GENE_COUNTS: int,
+}
+
+MINERVA_PATHWAY_DEFAULT_ID = MINERVA
+
+"""
+MolMeDB variables
+"""
+MOLMEDB_COMPOUND_NAME = f"{MOLMEDB}_compound_name"
+MOLMEDB_INCHIKEY = f"{MOLMEDB}_inchikey"
+MOLMEDB_SMILES = f"{MOLMEDB}_smiles"
+MOLMEDB_ID = f"{MOLMEDB}_id"
+MOLMEDB_HGNC_SYMBOL = f"{MOLMEDB}_hgnc_symbol"
+
+MAP_COMPOUND_COL_NAMES = {
+    "transporterID": TARGET_COL,
+    "label": MOLMEDB_COMPOUND_NAME,
+    "InChIKey": MOLMEDB_INCHIKEY,
+    "SMILES": MOLMEDB_SMILES,
+    "molmedb_id": MOLMEDB_ID,
+    "pubchem_compound_id": "compound_cid",
+}
+
+MOLMEDB_PROTEIN_COMPOUND_OUTPUT_DICT = {
+    MOLMEDB_COMPOUND_NAME: str,
+    MOLMEDB_INCHIKEY: str,
+    MOLMEDB_SMILES: str,
+    MOLMEDB_ID: str,
+    SOURCE_PMID: str,
+}
+MOLMEDB_COMPOUND_DEFAULT_ID = "MM"
+
+MOLMEDB_INHIBITOR_INCHIKEY = "inhibitorInChIKey"
+MOLMEDB_UNIPROT_TREMBL_ID = "uniprot_trembl_id"
+MOLMEDB_HGNC_ID = "hgcn_id"
+
+MAP_GENE_COL_NAMES = {
+    MOLMEDB_INHIBITOR_INCHIKEY: TARGET_COL,
+    MOLMEDB_HGNC_ID: MOLMEDB_HGNC_SYMBOL,
+}
+
+# MolMeDB - Compound input
+MOLMEDB_COMPOUND_PROTEIN_OUTPUT_DICT = {
+    # MOLMEDB_UNIPROT_TREMBL_ID: str,
+    MOLMEDB_HGNC_SYMBOL: str,
+    SOURCE_PMID: str,
+}
+
 
 # Open Targets - Disease
 OPENTARGETS_DISEASE_OUTPUT_DICT = {
@@ -231,12 +410,6 @@ OPENTARGETS_IGNORE_DISEASE_IDS = [
     "csp",
 ]
 
-# MINERVA
-MINERVA_PATHWAY_OUTPUT_DICT = {
-    "pathway_id": str,
-    "pathway_label": str,
-    "pathway_gene_count": int,
-}
 
 # WikiPathways
 WIKIPATHWAYS_PATHWAYS_OUTPUT_DICT = {
@@ -260,7 +433,7 @@ OPENTARGETS_REACTOME_OUTPUT_DICT = {
     "pathway_id": str,
     "pathway_label": str,
 }
-PATHWAY_ID = "MINERVA|WP|R-"  # ID Start with WP or R-
+# PATHWAY_ID = "MINERVA|WP|R-"  # ID Start with WP or R-
 
 # Open Targets - GO processes
 OPENTARGETS_GO_OUTPUT_DICT = {"go_id": str, "go_name": str, "go_type": str}
@@ -285,27 +458,6 @@ RELATION = "inhibits|activates"
 OPENTARGETS_COMPOUND_DISEASE_RELATION = "treats"
 
 
-# MolMeDB - Gene/Protein input
-MOLMEDB_PROTEIN_COMPOUND_OUTPUT_DICT = {
-    "compound_name": str,
-    "inchikey": str,
-    "smiles": str,
-    "compound_cid": str,
-    "molmedb_id": str,
-    "source_pmid": str,
-    "chebi_id": str,
-    "drugbank_id": str,
-    "uniprot_trembl_id": str,  # uniprot id of isoform
-}
-MOLMEDB_ID = "MM"
-DRUGBANK_ID = "DrugBank"
-
-# MolMeDB - Compound input
-MOLMEDB_COMPOUND_PROTEIN_OUTPUT_DICT = {
-    "uniprot_trembl_id": str,
-    "hgnc_symbol": str,
-    "source_pmid": str,
-}
 UNIPROT_TREMBL_ID = "P"
 
 # PubChem - Assays
@@ -330,119 +482,184 @@ STRING_OUTPUT_DICT = {
     "Uniprot-TrEMBL_link": str,
 }
 
+# AOPWIKI
+AOPWIKI_GENE_OUTPUT_DICT = {
+    "aop": str,
+    "aop_title": str,
+    "MIEtitle": str,
+    "MIE": str,
+    "KE_downstream": str,
+    "KE_downstream_title": str,
+    "KER": str,
+    "ao": str,
+    "ao_title": str,
+    "KE_upstream": str,
+    "KE_upstream_title": str,
+    "KE_upstream_organ": str,
+    "KE_downstream_organ": str,
+    "pubchem_compound": str,
+}
 
-""" Node and edge main lable and attributes for each data source """
-# Anatomical entity node
-# Bgee
-ANATOMICAL_NODE_LABELS = "Anatomical Entity"
-BGEE_ANATOMICAL_NODE_MAIN_LABEL = "anatomical_entity_id"
+AOPWIKI_COMPOUND_OUTPUT_DICT = {
+    "aop": str,
+    "aop_title": str,
+    "MIEtitle": str,
+    "MIE": str,
+    "KE_downstream": str,
+    "KE_downstream_title": str,
+    "KER": str,
+    "ao": str,
+    "ao_title": str,
+    "KE_upstream": str,
+    "KE_upstream_title": str,
+    "KE_upstream_organ": str,
+    "KE_downstream_organ": str,
+}
+
+
+"""
+Node and edge main lable and attributes
+"""
+# Common attributes
+DATASOURCE = "datasource"
+NAME = ENTITY_NAME
+ID = "id"
+LABEL = "label"
+EDGE_HASH = "edge_hash"
+
+# Node types
+GENE_NODE_LABEL = "Gene"
+DISEASE_NODE_LABEL = "Disease"
+COMPOUND_NODE_LABEL = "Compound"
+ANATOMICAL_NODE_LABEL = "Anatomical Entity"
+PATHWAY_NODE_LABEL = "Pathway"
+GO_BP_NODE_LABEL = "Biological Process"
+GO_MF_NODE_LABEL = "Molecular Function"
+GO_CC_NODE_LABEL = "Cellular Component"
+SIDE_EFFECT_NODE_LABEL = "Side Effect"
+HOMOLOG_NODE_LABEL = "Homolog"
+
+"""
+Anatomical entity nodes
+"""
+BGEE_ANATOMICAL_NODE_MAIN_LABEL = ANATOMICAL_ID
 BGEE_ANATOMICAL_NODE_ATTRS = {
-    "datasource": BGEE,
-    "name": None,
-    "id": None,
-    "labels": ANATOMICAL_NODE_LABELS,
+    DATASOURCE: BGEE,
+    NAME: None,
+    ID: None,
+    LABEL: ANATOMICAL_NODE_LABEL,
 }
 BGEE_GENE_ANATOMICAL_EDGE_LABEL = "expressed_by"
 BGEE_EDGE_ATTRS = {
-    "datasource": BGEE,
-    "expression_level": None,
-    "developmental_stage_name": None,
-    "developmental_stage_id": None,
-    "confidence_level_name": None,
-    "confidence_level_id": None,
-    "label": BGEE_GENE_ANATOMICAL_EDGE_LABEL,
+    DATASOURCE: BGEE,
+    EXPRESSION_LEVEL: None,
+    DEVELOPMENTAL_STAGE_NAME: None,
+    DEVELOPMENTAL_ID: None,
+    CONFIDENCE_LEVEL_NAME: None,
+    CONFIDENCE_ID: None,
+    LABEL: BGEE_GENE_ANATOMICAL_EDGE_LABEL,
 }
 
-# Disease node
-# DISGENET
-DISEASE_NODE_LABELS = "Disease"
-DISEASE_NODE_MAIN_LABEL = "UMLS"
+"""
+Disease nodes
+"""
+DISEASE_NODE_MAIN_LABEL = UMLS
 DISGENET_DISEASE_NODE_ATTRS = {
-    "datasource": DISGENET,
-    "name": None,
-    "id": None,
-    "HPO": None,
-    "NCI": None,
-    "OMIM": None,
-    "MONDO": None,
-    "ORDO": None,
-    "EFO": None,
-    "DO": None,
-    "MESH": None,
-    "UMLS": None,
-    "disease_type": None,
-    "labels": DISEASE_NODE_LABELS,
+    DATASOURCE: DISGENET,
+    NAME: None,
+    ID: None,
+    HPO: None,
+    NCI: None,
+    OMIM: None,
+    MONDO: None,
+    ORDO: None,
+    EFO: None,
+    DO: None,
+    MESH: None,
+    UMLS: None,
+    DISEASE_TYPE: None,
+    LABEL: DISEASE_NODE_LABEL,
 }
 GENE_DISEASE_EDGE_LABEL = "associated_with"
 DISGENET_EDGE_ATTRS = {
-    "datasource": DISGENET,
-    "score": None,
-    "ei": None,
-    "el": None,
-    "label": GENE_DISEASE_EDGE_LABEL,
+    DATASOURCE: DISGENET,
+    DISGENET_SCORE: None,
+    DISGENET_EI: None,
+    DISGENET_EL: None,
+    LABEL: GENE_DISEASE_EDGE_LABEL,
 }
 
-# Literature
-LITERATURE_NODE_MAIN_LABEL = "UMLS"
-LITERATURE_DISEASE_NODE_ATTRS = {
-    "datasource": None,
-    "name": None,
-    "id": None,
-    "MONDO": None,
-    "UMLS": None,
-    "labels": DISEASE_NODE_LABELS,
-}
-LITERATURE_DISEASE_EDGE_ATTRS = {
-    "datasource": None,
-    "label": GENE_DISEASE_EDGE_LABEL,
-}
-
-# TODO: The disease annotations are not curated and will be used again when the OpenTarget annotation improves.
-# Open Targets - Disease
-# OPENTARGETS_DISEASE_NODE_ATTRS = {
-#     "datasource": OPENTARGETS,
-#     "name": None,
-#     "id": None,
-#     "therapeutic_areas": None,
-#     "labels": DISEASE_NODE_LABELS,
-# }
-# OPENTARGETS_DISEASE_EDGE_ATTRS = {
-#     "datasource": OPENTARGETS,
-#     "label": GENE_DISEASE_EDGE_LABEL,
-# }
-
-
-# Pathway node
-# MINERVA, WikiPathways, Open Targets - Reactome
-PATHWAY_NODE_LABELS = "Pathway"
-PATHWAY_NODE_MAIN_LABEL = "pathway_id"
+"""
+Pathway nodes
+"""
+GENE_COUNTS = "gene_counts"
 PATHWAY_NODE_ATTRS = {
-    "datasource": None,
-    "name": None,
-    "id": None,
-    "gene_count": None,
-    "labels": PATHWAY_NODE_LABELS,
-}  # TODO: Yojana, would it be possible to add pathway size here (gene_count)
+    DATASOURCE: None,
+    NAME: None,
+    ID: None,
+    LABEL: PATHWAY_NODE_LABEL,
+    # GENE_COUNTS: None,
+}
+
 GENE_PATHWAY_EDGE_LABEL = "part_of"
-GENE_PATHWAY_EDGE_ATTRS = {"datasource": None, "label": GENE_PATHWAY_EDGE_LABEL}
+GENE_PATHWAY_EDGE_ATTRS = {
+    DATASOURCE: None,
+    LABEL: GENE_PATHWAY_EDGE_LABEL,
+}
+
+# IntAct interactions
+SPECIES = "species"
+INTACT_INTERACTION_TYPE = "interaction_type"
+INTACT_PPI_EDGE_MAIN_LABEL = "intact_link_to"
+INTACT_NODE_ATTRS = PATHWAY_NODE_ATTRS.copy()
+INTACT_NODE_ATTRS.update(
+    {
+        DATASOURCE: INTACT,
+        ID: None,
+        LABEL: None,
+    }
+)
+INTACT_PPI_EDGE_ATTRS = {
+    DATASOURCE: INTACT,
+    INTACT_DETECTION_METHOD: None,
+    INTACT_TYPE: None,
+    LABEL: INTACT_PPI_EDGE_MAIN_LABEL,
+}
+
+KEGG_PATHWAY_NODE_MAIN_LABEL = PATHWAY_ID
+KEGG_PATHWAY_NODE_ATTRS = PATHWAY_NODE_ATTRS.copy()
+KEGG_PATHWAY_NODE_ATTRS.update(
+    {
+        DATASOURCE: KEGG,
+        ID: None,
+        LABEL: PATHWAY_NODE_LABEL,
+        GENE_COUNTS: None,
+    }
+)
+
+MINERVA_PATHWAY_NODE_MAIN_LABEL = PATHWAY_ID
+MINERVA_PATHWAY_NODE_ATTRS = PATHWAY_NODE_ATTRS.copy()
+MINERVA_PATHWAY_NODE_ATTRS.update(
+    {
+        DATASOURCE: MINERVA,
+        ID: None,
+        LABEL: PATHWAY_NODE_LABEL,
+        GENE_COUNTS: None,
+    }
+)
 
 # molecular pathway node
-MOLECULAR_PATHWAY_NODE_LABELS = "Pathway"
 MOLECULAR_PATHWAY_NODE_MAIN_LABEL = "pathway_id"
 MOLECULAR_GENE_NODE_ATTRS = {"datasource": WIKIPATHWAYS, "label": ""}
 MOLECULAR_PATHWAY_NODE_ATTRS = {
     "pathway_id": "str",
     "pathway_label": "str",
     "id": "str",
-    "labels": MOLECULAR_PATHWAY_NODE_LABELS,
+    "labels": PATHWAY_NODE_LABEL,
 }
 MOLECULAR_GENE_PATHWAY_EDGE_LABEL = "part_of"
 MOLECULAR_INTERACTION_EDGE_ATTRS = {"interaction_type": "str", "rhea_id": str}
-# GO nodes
-# Open Targets - GO processes
-GO_BP_NODE_LABELS = "Biological Process"
-GO_MF_NODE_LABELS = "Molecular Function"
-GO_CC_NODE_LABELS = "Cellular Component"
+
 GO_NODE_MAIN_LABEL = "go_id"
 GO_NODE_ATTRS = {
     "datasource": OPENTARGETS,
@@ -453,10 +670,56 @@ GO_NODE_ATTRS = {
 GENE_GO_EDGE_LABEL = "part_of"
 GENE_GO_EDGE_ATTRS = {"datasource": OPENTARGETS, "label": GENE_GO_EDGE_LABEL}
 
-# Compound node
-# Open Targets - Compound
-COMPOUND_NODE_LABELS = "Compound"
+"""
+Compound nodes
+"""
 COMPOUND_NODE_MAIN_LABEL = "compound_cid"
+
+# IntAct compounds
+INTACT_COMPOUND_NODE_MAIN_LABEL = "compounds"
+MOLECULE = "molecule"
+INTACT_COMPOUND_NODE_ATTRS = {
+    DATASOURCE: INTACT,
+    ID: None,
+    NAME: None,
+    LABEL: COMPOUND_NODE_LABEL,
+}
+INTACT_COMPOUND_EDGE_ATTRS = {
+    DATASOURCE: INTACT,
+    LABEL: None,
+}
+
+# KEGG compounds
+KEGG_COMPOUND_NODE_MAIN_LABEL = "compounds"
+KEGG_COMPOUND_NODE_ATTRS = {
+    DATASOURCE: KEGG,
+    ID: None,
+    LABEL: COMPOUND_NODE_LABEL,
+}
+
+KEGG_COMPOUND_EDGE_LABEL = "contains"
+KEGG_COMPOUND_EDGE_ATTRS = {
+    DATASOURCE: KEGG,
+    LABEL: None,
+}
+
+# MolMeDB
+MOLMEDB_COMPOUND_NODE_ATTRS = {
+    DATASOURCE: MOLMEDB,
+    NAME: None,
+    ID: None,
+    MOLMEDB_INCHIKEY: None,
+    MOLMEDB_SMILES: None,
+    SOURCE_PMID: None,
+    LABEL: COMPOUND_NODE_LABEL,
+}
+MOLMEDB_PROTEIN_COMPOUND_EDGE_LABEL = "inhibits"
+MOLMEDB_PROTEIN_COMPOUND_EDGE_ATTRS = {
+    "datasource": MOLMEDB,
+    "label": MOLMEDB_PROTEIN_COMPOUND_EDGE_LABEL,
+}
+
+
 OPENTARGETS_COMPOUND_NODE_ATTRS = {
     "datasource": OPENTARGETS,
     "name": None,
@@ -467,18 +730,18 @@ OPENTARGETS_COMPOUND_NODE_ATTRS = {
     "clincal_trial_phase": None,
     "is_approved": None,
     "adverse_effect_count": None,
-    "labels": COMPOUND_NODE_LABELS,
+    "labels": COMPOUND_NODE_LABEL,
 }
 OPENTARGETS_GENE_COMPOUND_EDGE_ATTRS = {"datasource": OPENTARGETS, "label": None}
 # Side effect
 # Open Targets - Compound
-SIDE_EFFECT_NODE_LABELS = "Side Effect"
+
 SIDE_EFFECT_NODE_MAIN_LABEL = "adverse_effect"
 # TODO: add the side effect id (adverse_effect id)
 SIDE_EFFECT_NODE_ATTRS = {
     "datasource": OPENTARGETS,
     "name": None,
-    "labels": SIDE_EFFECT_NODE_LABELS,
+    "labels": SIDE_EFFECT_NODE_LABEL,
 }
 COMPOUND_SIDE_EFFECT_EDGE_LABEL = "has_side_effect"
 COMPOUND_SIDE_EFFECT_EDGE_ATTRS = {
@@ -486,25 +749,6 @@ COMPOUND_SIDE_EFFECT_EDGE_ATTRS = {
     "label": COMPOUND_SIDE_EFFECT_EDGE_LABEL,
 }
 
-# MolMeDB - Gene/Protein input
-MOLMEDB_COMPOUND_NODE_ATTRS = {
-    "datasource": MOLMEDB,
-    "name": None,
-    "id": None,
-    "molmedb_id": None,
-    "chebi_id": None,
-    "drugbank_id": None,
-    "compound_cid": None,
-    "inchikey": None,
-    "smiles": None,
-    "source_pmid": None,
-    "labels": COMPOUND_NODE_LABELS,
-}
-MOLMEDB_PROTEIN_COMPOUND_EDGE_LABEL = "inhibits"
-MOLMEDB_PROTEIN_COMPOUND_EDGE_ATTRS = {
-    "datasource": MOLMEDB,
-    "label": MOLMEDB_PROTEIN_COMPOUND_EDGE_LABEL,
-}
 
 # PubChem - Assays
 PUBCHEM_COMPOUND_NODE_ATTRS = {
@@ -513,7 +757,7 @@ PUBCHEM_COMPOUND_NODE_ATTRS = {
     "id": None,
     "inchi": None,
     "smiles": None,
-    "labels": COMPOUND_NODE_LABELS,
+    "labels": COMPOUND_NODE_LABEL,
 }
 PUBCHEM_GENE_COMPOUND_EDGE_ATTRS = {
     "datasource": PUBCHEM,
@@ -523,11 +767,11 @@ PUBCHEM_GENE_COMPOUND_EDGE_ATTRS = {
     "label": None,
 }
 
-# MolMeDB - Compound input
-# TODO: to be checked
+"""
+Gene node
+"""
 
-# Gene node
-GENE_NODE_LABELS = "Gene"
+
 # STRING
 STRING_PPI_EDGE_MAIN_LABEL = "stringdb_link_to"
 STRING_PPI_EDGE_LABEL = "interacts_with"
@@ -544,11 +788,10 @@ OPENTARGETS_DISEASE_COMPOUND_EDGE_ATTRS = {
 }
 
 # Ensembl Homologs
-HOMOLOG_NODE_LABELS = "Homolog"
 ENSEMBL_HOMOLOG_NODE_ATTRS = {
     "datasource": ENSEMBL,
     "id": None,
-    "labels": HOMOLOG_NODE_LABELS,
+    "labels": HOMOLOG_NODE_LABEL,
 }
 ENSEMBL_HOMOLOG_MAIN_LABEL = "homolog"
 ENSEMBL_HOMOLOG_EDGE_LABEL = "is_homolog_of"
@@ -557,37 +800,25 @@ ENSEMBL_HOMOLOG_EDGE_ATTRS = {
     "label": ENSEMBL_HOMOLOG_EDGE_LABEL,
 }
 
-# KEGG compounds
-KEGG_COMPOUND_NODE_ATTRS = {
-    "datasource": KEGG,
+
+# Literature
+LITERATURE_NODE_MAIN_LABEL = "UMLS"
+LITERATURE_DISEASE_NODE_ATTRS = {
+    "datasource": None,
+    "name": None,
     "id": None,
-    "labels": COMPOUND_NODE_LABELS,
+    "MONDO": None,
+    "UMLS": None,
+    "labels": DISEASE_NODE_LABEL,
 }
-KEGG_COMPOUND_NODE_MAIN_LABEL = "compounds"
-KEGG_COMPOUND_EDGE_LABEL = "contains"
-KEGG_COMPOUND_EDGE_ATTRS = {
-    "datasource": KEGG,
-    "label": None,
+LITERATURE_DISEASE_EDGE_ATTRS = {
+    "datasource": None,
+    "label": GENE_DISEASE_EDGE_LABEL,
 }
 
-# IntAct interactions
-INTACT_PPI_EDGE_MAIN_LABEL = "intact_link_to"
-INTACT_PPI_EDGE_ATTRS = {"source": INTACT, "type": "interaction"}
-
-# IntAct compounds
-INTACT_COMPOUND_NODE_ATTRS = {
-    "datasource": INTACT,
-    "id": None,
-    "labels": COMPOUND_NODE_LABELS,
-}
-INTACT_COMPOUND_NODE_MAIN_LABEL = "compounds"
-INTACT_COMPOUND_EDGE_ATTRS = {
-    "datasource": INTACT,
-    "label": None,
-}
-# Wikidata
-
-# TODO: to be checked
+"""
+RDF Specific constants
+"""
 
 # Mapper from namespace to BridgeDB datasource
 COMPOUND_NAMESPACE_MAPPER = {"pubchem.compound": "PubChem Compound", "CHEMBL": "ChEMBL compound"}
@@ -606,7 +837,7 @@ DATA_TYPES_SOURCES = {
     "gene_compounds": OPENTARGETS_GENE_COMPOUND_COL,
     "literature_disease": LITERATURE_DISEASE_COL,
     "transporter_inhibitor": MOLMEDB_PROTEIN_COMPOUND_COL,
-    "ppi": STRING_PPI_COL,
+    "ppi": STRING_INTERACT_COL,
     "disgenet": DISGENET_DISEASE_COL,
     "opentargets_disease": OPENTARGETS_DISEASE_COL,
 }
@@ -724,21 +955,6 @@ MOAS = {
     "INVERSE AGONIST": f"{NAMESPACE_BINDINGS['obo']}RO_0018028",
 }
 
-# Data sources
-DATA_SOURCES = {
-    DISGENET: "https://disgenet.com/",
-    WIKIPATHWAYS: "https://wikipathways.org",
-    MINERVA: "https://minerva.pages.uni.lu/doc/",
-    BRIDGEDB: "https://www.bridgedb.org/",
-    STRING: "https://string-db.org/",
-    OPENTARGETS: "https://www.opentargets.org/",
-    BGEE: "https://www.bgee.org/",
-    MOLMEDB: "https://molmedb.upol.cz",
-    PUBCHEM: "https://pubchem.ncbi.nlm.nih.gov/",
-    WIKIDATA: "https://wikidata.org",
-    OPENTARGETS_REACTOME: "https://www.opentargets.org/",
-    AOPWIKIRDF: "https://aopwiki.rdf.bigcat-bioinformatics.org",
-}
 
 DISEASE_IDENTIFIER_TYPES = [
     "HPO",
