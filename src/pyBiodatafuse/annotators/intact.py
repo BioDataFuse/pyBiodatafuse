@@ -8,12 +8,12 @@ import json
 import logging
 import urllib.parse
 import warnings
-from tqdm import tqdm
 from typing import Dict, List
 
 import numpy as np
 import pandas as pd
 import requests
+from tqdm import tqdm
 
 import pyBiodatafuse.constants as Cons
 from pyBiodatafuse.utils import get_identifier_of_interest
@@ -35,12 +35,12 @@ def check_version_intact() -> dict:
     :returns: a dictionary containing the version information
     """
     try:
-        version_call = requests.get(f"{INTACT_ENDPOINT}/version", timeout=10)
+        version_call = requests.get(f"{Cons.INTACT_ENDPOINT}/version", timeout=10)
         version_call.raise_for_status()
         version_json = version_call.json()
         return {"source_version": version_json.get("version", "unknown")}
     except (requests.exceptions.RequestException, json.JSONDecodeError) as e:
-        logging.error("Error getting IntAct version")
+        logging.error(f"Error getting IntAct version: {e}")
         return {"source_version": "unknown"}
 
 
@@ -102,21 +102,21 @@ def get_intact_interactions(gene_ids: list[str]) -> list:
 
         # cleanup the alternative ids
         for interaction in interactions:
-            ids_A = interaction[Cons.INTACT_ID_A]
-            ids_B = interaction[Cons.INTACT_ID_B]
+            ids_a = interaction[Cons.INTACT_ID_A]
+            ids_b = interaction[Cons.INTACT_ID_B]
 
-            if ":" in ids_A:
-                interaction[Cons.INTACT_ID_A] = ids_A.split(" ")[0]  # stays the same
+            if ":" in ids_a:
+                interaction[Cons.INTACT_ID_A] = ids_a.split(" ")[0]  # stays the same
             else:
-                idx = ids_A.split(" ")[0]
-                namespace = ids_A.split(" ")[1].replace("(", "").replace(")", "")
+                idx = ids_a.split(" ")[0]
+                namespace = ids_a.split(" ")[1].replace("(", "").replace(")", "")
                 interaction[Cons.INTACT_ID_A] = f"{namespace}:{idx}"
 
-            if ":" in ids_B:
-                interaction[Cons.INTACT_ID_B] = ids_B.split(" ")[0]  # stays the same
+            if ":" in ids_b:
+                interaction[Cons.INTACT_ID_B] = ids_b.split(" ")[0]  # stays the same
             else:
-                idx = ids_B.split(" ")[0]
-                namespace = ids_B.split(" ")[1].replace("(", "").replace(")", "")
+                idx = ids_b.split(" ")[0]
+                namespace = ids_b.split(" ")[1].replace("(", "").replace(")", "")
                 interaction[Cons.INTACT_ID_B] = f"{namespace}:{idx}"
 
         return interactions
@@ -340,8 +340,8 @@ def get_gene_interactions(bridgedb_df: pd.DataFrame, interaction_type: str = "bo
         )
 
     # Add the number of new nodes and edges to metadata
-    intact_metadata[Cons.QUERY][Cons.NUM_NODES] = num_new_nodes
-    intact_metadata[Cons.QUERY][Cons.NUM_EDGES] = num_new_edges
+    intact_metadata[Cons.QUERY][Cons.NUM_NODES] = num_new_nodes  # type: ignore
+    intact_metadata[Cons.QUERY][Cons.NUM_EDGES] = num_new_edges  # type: ignore
 
     return data_df, intact_metadata
 
@@ -419,7 +419,7 @@ def get_compound_interactions(bridgedb_df: pd.DataFrame, interaction_type: str =
     num_new_edges = sum(data_df[Cons.INTACT_COMPOUND_INTERACT_COL].apply(len))
 
     # Add the number of new nodes and edges to metadata
-    intact_metadata[Cons.QUERY][Cons.NUM_NODES] = num_new_nodes
-    intact_metadata[Cons.QUERY][Cons.NUM_EDGES] = num_new_edges
+    intact_metadata[Cons.QUERY][Cons.NUM_NODES] = num_new_nodes  # type: ignore
+    intact_metadata[Cons.QUERY][Cons.NUM_EDGES] = num_new_edges  # type: ignore
 
     return data_df, intact_metadata
