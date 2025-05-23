@@ -253,7 +253,6 @@ def get_compound_gene_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
         sparql.setQuery(sparql_query_template_sub)
 
         res = sparql.queryAndConvert()
-        print(res)
 
         df = pd.DataFrame(res["results"]["bindings"])
 
@@ -271,6 +270,9 @@ def get_compound_gene_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
             )[Cons.SOURCE_PMID]
             .apply(lambda x: ", ".join(x))
             .reset_index()
+        )
+        df2[Cons.MOLMEDB_UNIPROT_ID] = df2[Cons.MOLMEDB_UNIPROT_TREMBL_ID].apply(
+            lambda x: f"{Cons.UNIPROT_TREMBL}:{x}"
         )
 
         intermediate_df = pd.concat([intermediate_df, df2], ignore_index=True)  # adds to the time
@@ -310,7 +312,7 @@ def get_compound_gene_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
     check_columns_against_constants(
         data_df=intermediate_df,
         output_dict=Cons.MOLMEDB_COMPOUND_PROTEIN_OUTPUT_DICT,
-        check_values_in=[Cons.MOLMEDB_UNIPROT_TREMBL_ID],
+        check_values_in=[Cons.UNIPROT_TREMBL],
     )
 
     # Merge the two DataFrames on the target column
@@ -325,10 +327,10 @@ def get_compound_gene_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
 
     """Update metadata"""
     # Calculate the number of new nodes
-    num_new_nodes = intermediate_df[Cons.MOLMEDB_UNIPROT_TREMBL_ID].nunique()
+    num_new_nodes = intermediate_df[Cons.MOLMEDB_UNIPROT_ID].nunique()
     # Calculate the number of new edges
     num_new_edges = intermediate_df.drop_duplicates(
-        subset=[Cons.TARGET_COL, Cons.MOLMEDB_UNIPROT_TREMBL_ID]
+        subset=[Cons.TARGET_COL, Cons.MOLMEDB_UNIPROT_ID]
     ).shape[0]
 
     # Check the intermediate_df

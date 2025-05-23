@@ -169,12 +169,32 @@ class TestMolMeDb(unittest.TestCase):
 
         expected_data = pd.Series(
             [
-                [{"MolMeDB_hgnc_symbol": nan, "source_pmid": nan}],
                 [
-                    {"MolMeDB_hgnc_symbol": "SLC6A2", "source_pmid": "20223878"},
-                    {"MolMeDB_hgnc_symbol": "SLC6A4", "source_pmid": "20223878"},
+                    {
+                        "MolMeDB_uniprot_trembl_id": nan,
+                        "MolMeDB_hgnc_symbol": nan,
+                        "source_pmid": nan,
+                    }
                 ],
-                [{"MolMeDB_hgnc_symbol": nan, "source_pmid": nan}],
+                [
+                    {
+                        "MolMeDB_uniprot_trembl_id": "Uniprot-TrEMBL:P23975",
+                        "MolMeDB_hgnc_symbol": "SLC6A2",
+                        "source_pmid": "20223878",
+                    },
+                    {
+                        "MolMeDB_uniprot_trembl_id": "Uniprot-TrEMBL:P31645",
+                        "MolMeDB_hgnc_symbol": "SLC6A4",
+                        "source_pmid": "20223878",
+                    },
+                ],
+                [
+                    {
+                        "MolMeDB_uniprot_trembl_id": nan,
+                        "MolMeDB_hgnc_symbol": nan,
+                        "source_pmid": nan,
+                    }
+                ],
             ]
         )
         expected_data.name = MOLMEDB_COMPOUND_PROTEIN_COL
