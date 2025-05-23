@@ -31,16 +31,18 @@ Classes:
     - `shacl_prefixes`: Retrieves SHACL prefixes for the graph.
 """
 
+import logging
 from typing import Any, Dict, List, Optional, Union
 
 import pandas as pd
 from bioregistry import normalize_curie
-from rdflib import Graph, URIRef, Literal
-from rdflib.namespace import RDFS, RDF, XSD
+from rdflib import Graph, Literal, URIRef
+from rdflib.namespace import RDF, RDFS, XSD
 from tqdm import tqdm
 
 from pyBiodatafuse.constants import (
     AOPWIKIRDF,
+    BASE_URLS_DBS,
     BGEE_GENE_EXPRESSION_LEVELS_COL,
     DATA_SOURCES,
     DISGENET_DISEASE_COL,
@@ -50,6 +52,7 @@ from pyBiodatafuse.constants import (
     MOLMEDB_COMPOUND_PROTEIN_COL,
     MOLMEDB_PROTEIN_COMPOUND_COL,
     NAMESPACE_BINDINGS,
+    NODE_TYPES,
     OPENTARGETS_DISEASE_COL,
     OPENTARGETS_GENE_COMPOUND_COL,
     OPENTARGETS_GO_COL,
@@ -60,16 +63,14 @@ from pyBiodatafuse.constants import (
     TARGET_SOURCE_COL,
     URIS,
     WIKIPATHWAYS_MOLECULAR_COL,
-    NODE_TYPES,
-    BASE_URLS_DBS
 )
 from pyBiodatafuse.graph.rdf.metadata import add_metadata
 from pyBiodatafuse.graph.rdf.nodes.aop import add_aop_data
 from pyBiodatafuse.graph.rdf.nodes.compound import (
     add_associated_compound_node,
+    add_inhibitor_transporter_node,
     add_transporter_inhibitor_node,
     get_compound_node,
-    add_inhibitor_transporter_node,
 )
 from pyBiodatafuse.graph.rdf.nodes.gene import get_gene_node
 from pyBiodatafuse.graph.rdf.nodes.gene_disease import add_gene_disease_associations
@@ -84,7 +85,6 @@ from pyBiodatafuse.graph.rdf.utils import (
     replace_na_none,
 )
 from pyBiodatafuse.utils import read_datasource_file
-import logging
 
 # Set up logger
 logger = logging.getLogger(__name__)
@@ -95,11 +95,13 @@ console_handler = logging.StreamHandler()
 console_handler.setLevel(logging.INFO)
 
 # Create formatter and add it to the handler
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 console_handler.setFormatter(formatter)
 
 # Add the handler to the logger
 logger.addHandler(console_handler)
+
+
 class BDFGraph(Graph):
     """Main class for a BioDatafuse RDF Graph, superclass of rdflib.Graph."""
 
@@ -154,9 +156,7 @@ class BDFGraph(Graph):
             self.process_row(row, i, datasources)
         self._add_metadata(metadata)
 
-    def process_row(
-        self, row: pd.Series, i: int, datasources: pd.DataFrame
-    ) -> None:
+    def process_row(self, row: pd.Series, i: int, datasources: pd.DataFrame) -> None:
         """
         Process a single row of the DataFrame and update the RDF graph.
 
@@ -172,7 +172,11 @@ class BDFGraph(Graph):
         # Determine whether it's a gene or compound row
         gene, compound = False, False
 
-        if row["identifier.source"] in list(datasources[datasources["type"] == "gene"]["source"]) + ["Entrez Gene"]:  # TODO fix datasources
+        if row["identifier.source"] in list(
+            datasources[datasources["type"] == "gene"]["source"]
+        ) + [
+            "Entrez Gene"
+        ]:  # TODO fix datasources
             print(row["identifier.source"])
             gene_node = self.add_gene_node(row)
             gene = True
@@ -217,7 +221,7 @@ class BDFGraph(Graph):
             self.process_processes_data(processes_data, gene_node)
             self.process_compound_data(compound_data, gene_node)
             self.process_literature_data(
-            literature_data, gene_node, id_number, source_idx, self.new_uris, i
+                literature_data, gene_node, id_number, source_idx, self.new_uris, i
             )
             self.process_transporter_inhibitor_data(gene_node, transporter_inhibitor_data)
             if self.include_variants:
@@ -450,8 +454,12 @@ class BDFGraph(Graph):
                 for pathway_data in pathway_data_list:
                     if pathway_data.get("pathway_id"):
                         pathway_node = add_pathway_node(self, pathway_data, source)
-                        self.add((identifier_node, URIRef(PREDICATES["sio_is_part_of"]), pathway_node))
-                        self.add((pathway_node, URIRef(PREDICATES["sio_has_part"]), identifier_node))
+                        self.add(
+                            (identifier_node, URIRef(PREDICATES["sio_is_part_of"]), pathway_node)
+                        )
+                        self.add(
+                            (pathway_node, URIRef(PREDICATES["sio_has_part"]), identifier_node)
+                        )
                         if protein_nodes:
                             for protein_node in protein_nodes:
                                 self.add(
@@ -464,7 +472,9 @@ class BDFGraph(Graph):
                                 self.add(
                                     (pathway_node, URIRef(PREDICATES["sio_has_part"]), protein_node)
                                 )
-                        self.add((pathway_node, URIRef(PREDICATES["sio_has_part"]), identifier_node))
+                        self.add(
+                            (pathway_node, URIRef(PREDICATES["sio_has_part"]), identifier_node)
+                        )
                         self.add(
                             (
                                 pathway_node,
@@ -473,9 +483,7 @@ class BDFGraph(Graph):
                             )
                         )
 
-    def process_molecular_pathway(
-        self, molecular_data, identifier, id_number
-    ) -> None:
+    def process_molecular_pathway(self, molecular_data, identifier, id_number) -> None:
         """
         Process molecular pathway data and add to the RDF graph
 
@@ -505,14 +513,23 @@ class BDFGraph(Graph):
                 self.add((mim_node, RDFS.label, Literal(mimtype + id_number, datatype=XSD.string)))
                 self.add((identifier, URIRef(PREDICATES["sio_is_part_of"]), mim_node))
                 if pathway_id and pathway_label:
-                    pathway_node = URIRef("https://www.wikipathways.org/pathways/" + pathway_id.split(":")[1])
+                    pathway_node = URIRef(
+                        "https://www.wikipathways.org/pathways/" + pathway_id.split(":")[1]
+                    )
                     self.add((pathway_node, URIRef(PREDICATES["sio_has_part"]), URIRef(mimtype)))
                     self.add((identifier, URIRef(PREDICATES["sio_is_part_of"]), pathway_node))
                     self.add((pathway_node, URIRef(PREDICATES["sio_has_part"]), identifier))
                     self.add((pathway_node, URIRef(PREDICATES["sio_has_part"]), mim_node))
 
                 if targetGene:
-                    target_gene_node = get_gene_node(self, {"target.source": "Ensembl", "target":   targetGene, "identifier": targetGene})
+                    target_gene_node = get_gene_node(
+                        self,
+                        {
+                            "target.source": "Ensembl",
+                            "target": targetGene,
+                            "identifier": targetGene,
+                        },
+                    )
                     if target_gene_node:
                         self.add(
                             (
@@ -521,13 +538,25 @@ class BDFGraph(Graph):
                                 target_gene_node,
                             )
                         )
-                        self.add((target_gene_node, URIRef("http://vocabularies.wikipathways.org/wp#" + mimtype), identifier))  # TODO decide reification of interaction, keeping both for now
+                        self.add(
+                            (
+                                target_gene_node,
+                                URIRef("http://vocabularies.wikipathways.org/wp#" + mimtype),
+                                identifier,
+                            )
+                        )  # TODO decide reification of interaction, keeping both for now
                         self.add((target_gene_node, URIRef(PREDICATES["sio_is_part_of"]), mim_node))
 
                 if targetProtein:
                     target_protein_node = URIRef(BASE_URLS_DBS["uniprot"] + targetProtein)
                     self.add((target_protein_node, RDF.type, URIRef(NODE_TYPES["protein_node"])))
-                    self.add((identifier, URIRef("http://vocabularies.wikipathways.org/wp#" + mimtype), target_protein_node))
+                    self.add(
+                        (
+                            identifier,
+                            URIRef("http://vocabularies.wikipathways.org/wp#" + mimtype),
+                            target_protein_node,
+                        )
+                    )
                     self.add(
                         (
                             target_protein_node,
@@ -539,11 +568,27 @@ class BDFGraph(Graph):
 
                 if targetMetabolite:
                     target_metabolite_node = URIRef(NODE_TYPES["compound_node"] + targetMetabolite)
-                    self.add((target_metabolite_node, RDF.type, URIRef(NODE_TYPES["compound_node"])))
-                    self.add((identifier, URIRef("http://vocabularies.wikipathways.org/wp#" + mimtype), target_metabolite_node))
-                    self.add((target_metabolite_node, URIRef("http://vocabularies.wikipathways.org/wp#"     + mimtype), identifier))
+                    self.add(
+                        (target_metabolite_node, RDF.type, URIRef(NODE_TYPES["compound_node"]))
+                    )
+                    self.add(
+                        (
+                            identifier,
+                            URIRef("http://vocabularies.wikipathways.org/wp#" + mimtype),
+                            target_metabolite_node,
+                        )
+                    )
+                    self.add(
+                        (
+                            target_metabolite_node,
+                            URIRef("http://vocabularies.wikipathways.org/wp#" + mimtype),
+                            identifier,
+                        )
+                    )
                     self.add((identifier, URIRef(PREDICATES["sio_is_part_of"]), mim_node))
-                    self.add((target_metabolite_node, URIRef(PREDICATES["sio_is_part_of"]), mim_node))
+                    self.add(
+                        (target_metabolite_node, URIRef(PREDICATES["sio_is_part_of"]), mim_node)
+                    )
 
                 if rhea_id:
                     self.add((mim_node, URIRef(PREDICATES["sameAs"]), URIRef(rhea_id)))

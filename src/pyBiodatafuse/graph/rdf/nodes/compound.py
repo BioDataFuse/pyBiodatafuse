@@ -9,10 +9,10 @@ from rdflib.namespace import OWL, RDF, RDFS, XSD
 from pyBiodatafuse.constants import (
     CLINICAL_PHASES,
     MOAS,
+    NAMESPACE_BINDINGS,
     NODE_TYPES,
     PREDICATES,
     SOURCE_NAMESPACES,
-    NAMESPACE_BINDINGS,
 )
 
 
@@ -104,7 +104,9 @@ def add_associated_compound_node(g: Graph, compound: dict, gene_node: URIRef) ->
         return None
 
 
-def add_transporter_inhibitor_node(g: Graph, gene_node, inhibitor_data: dict, base_uri: str) -> None:
+def add_transporter_inhibitor_node(
+    g: Graph, gene_node, inhibitor_data: dict, base_uri: str
+) -> None:
     """Add a transporter inhibitor node to the RDF graph.
 
     :param g: RDF graph to which the transporter inhibitor node is added.
@@ -161,7 +163,9 @@ def add_transporter_inhibitor_node(g: Graph, gene_node, inhibitor_data: dict, ba
         g.add((inhibition_node, RDF.type, URIRef("https://purl.obolibrary.org/GO_0032410")))
 
 
-def add_inhibitor_transporter_node(g: Graph, compound_node: URIRef, inhibitor_data: dict, base_uri: str) -> None:
+def add_inhibitor_transporter_node(
+    g: Graph, compound_node: URIRef, inhibitor_data: dict, base_uri: str
+) -> None:
     """Add a inhibitor transporter inhibitor node to the RDF graph.
 
     :param g: RDF graph to which the transporter inhibitor node is added.
