@@ -654,6 +654,7 @@ URIS = {
     "anatomical_entity_base_node": "anatomical_entity",
     "life_cycle_base_node": "life_cycle",
     "gene_expression_value_base_node": "gene_expression_value",
+    "interaction": "interaction",
 }
 
 # NODE TYPES
@@ -681,10 +682,16 @@ NODE_TYPES = {
     "developmental_stage_node": f"{NAMESPACE_BINDINGS['obo']}NCIT_C43531",
     "el_node": "https://biodatafuse.org/onto/bdf#DisGeNET_Evidence_Level",
     "ei_node": "https://biodatafuse.org/onto/bdf#DisGeNET_Evidence_Index",
+    "ao": "http://aopkb.org/aop_ontology#AdverseOutcome",
+    "ke": "http://aopkb.org/aop_ontology#KeyEvent",
+    "mie": "http://aopkb.org/aop_ontology#MolecularInitiatingEvent",
+    "ker": "http://aopkb.org/aop_ontology#KeyEventRelationship",
+    "interaction": "https://vocabularies.wikipathways.org/wp#Interaction",
 }
 
 # PREDICATES
 PREDICATES = {
+    "sameAs": f"{NAMESPACE_BINDINGS['owl']}sameAs",
     "sio_refers_to": f"{NAMESPACE_BINDINGS['sio']}SIO_000628",
     "sio_has_measurement_value": f"{NAMESPACE_BINDINGS['sio']}SIO_000216",
     "sio_has_source": f"{NAMESPACE_BINDINGS['sio']}SIO_000253",
@@ -705,6 +712,9 @@ PREDICATES = {
     "translation_of": f"{NAMESPACE_BINDINGS['obo']}so#translation_of",
     "translates_to": f"{NAMESPACE_BINDINGS['obo']}so#translates_to",
     "variant_of": f"{NAMESPACE_BINDINGS['obo']}so#variant_of",
+    "has_upstreamkey_event": "http://aopkb.org/aop_ontology#has_upstream_key_event",
+    "has_downstreamkey_event": "http://aopkb.org/aop_ontology#has_downstream_key_event",
+    "occurs_in": f"{NAMESPACE_BINDINGS['obo']}BFO_0000066",
 }
 
 # Classes for clinical phases
@@ -717,6 +727,7 @@ CLINICAL_PHASES = {
 }
 
 # GO Types
+
 GO_TYPES = {
     "C": f"{NAMESPACE_BINDINGS['obo']}GO_0005575",
     "P": f"{NAMESPACE_BINDINGS['obo']}GO_0008150",
@@ -736,6 +747,7 @@ MOAS = {
 }
 
 # Data sources
+
 DATA_SOURCES = {
     DISGENET: "https://disgenet.com/",
     WIKIPATHWAYS: "https://wikipathways.org",
@@ -822,5 +834,5 @@ SOURCE_NAMESPACES = {
     "TTD Drug": "http://db.idrblab.net/ttd/data/drug/details/",
     "Wikidata": "https://www.wikidata.org/wiki/",
     "Wikipedia": "https://en.wikipedia.org/wiki/",
-    # TODO ADD ALL
+    "aopwiki": "https://identifiers.org/",
 }

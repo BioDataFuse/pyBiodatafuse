@@ -243,7 +243,14 @@ class GraphDBManager:
         response.raise_for_status()
 
     @staticmethod
-    def query_graphdb(base_url: str, repository_name: str, username: str, password: str, query: str, response_format: str = "json"):
+    def query_graphdb(
+        base_url: str,
+        repository_name: str,
+        username: str,
+        password: str,
+        query: str,
+        response_format: str = "json",
+    ):
         """
         Execute a SPARQL query on a GraphDB repository.
 

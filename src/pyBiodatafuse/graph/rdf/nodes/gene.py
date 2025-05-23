@@ -10,7 +10,7 @@ from rdflib.namespace import RDF, RDFS, XSD
 from pyBiodatafuse.constants import NODE_TYPES
 
 
-def add_gene_nodes(g: Graph, row) -> tuple:
+def get_gene_node(g: Graph, row) -> tuple:
     """Create and add a gene node and associated protein node to the RDF graph.
 
     :param g: (Graph): RDF graph to which the gene and protein nodes are added.

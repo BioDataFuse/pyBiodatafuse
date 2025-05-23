@@ -3,11 +3,21 @@
 """Python utils file for global functions."""
 
 import warnings
+from importlib import resources
 from typing import List, Optional
 
 import pandas as pd
 
-from pyBiodatafuse.id_mapper import read_resource_files
+
+def read_datasource_file() -> pd.DataFrame:
+    """Read the datasource file.
+
+    :returns: a DataFrame containing the data from the datasource file
+    """
+    with resources.path("pyBiodatafuse.resources", "datasources.csv") as df:
+        identifier_options = pd.read_csv(df)
+
+    return identifier_options
 
 
 def get_identifier_of_interest(
@@ -21,7 +31,7 @@ def get_identifier_of_interest(
     :returns: a DataFrame containing the identifiers of interest
     """
     # Load identifier options
-    identifier_options = read_resource_files()["source"].tolist()
+    identifier_options = read_datasource_file()["source"].tolist()
 
     # Check if source is in identifier options
     assert db_source in identifier_options, f"Source {db_source} is not in identifier options"
