@@ -3,23 +3,22 @@
 """Python file for queriying the MINERVA platform (https://minerva.pages.uni.lu/doc/)."""
 
 import datetime
+import logging
 import warnings
 from typing import Any, Dict, Optional, Tuple
 
 import pandas as pd
 import requests
+from tqdm import tqdm
 
-from pyBiodatafuse.constants import (
-    MINERVA,
-    MINERVA_ENDPOINT,
-    MINERVA_GENE_INPUT_ID,
-    MINERVA_PATHWAY_OUTPUT_DICT,
-)
+import pyBiodatafuse.constants as Cons
 from pyBiodatafuse.utils import (
     check_columns_against_constants,
     collapse_data_sources,
     get_identifier_of_interest,
 )
+
+logger = logging.getLogger(__name__)
 
 
 def check_endpoint_minerva() -> bool:
@@ -27,7 +26,7 @@ def check_endpoint_minerva() -> bool:
 
     :returns: True if the endpoint is available, False otherwise.
     """
-    response = requests.get(f"{MINERVA_ENDPOINT}/machines/")
+    response = requests.get(f"{Cons.MINERVA_ENDPOINT}/machines/")
 
     # Check if API is down
     if response.status_code == 200:
@@ -55,7 +54,7 @@ def list_projects() -> pd.DataFrame:
 
     :returns: a dataFrame containing url, names and IDs from the different projects in MINERVA plattform
     """
-    base_endpoint = f"{MINERVA_ENDPOINT}/machines/"
+    base_endpoint = f"{Cons.MINERVA_ENDPOINT}/machines/"
     projects = requests.get(base_endpoint).json()
     projects_ids = projects["pageContent"]
 
@@ -165,10 +164,9 @@ def get_minerva_components(
     return map_url, map_components
 
 
-def get_gene_minerva_pathways(
+def get_gene_pathways(
     bridgedb_df: pd.DataFrame,
     map_name: str,
-    input_type: Optional[str] = "Protein",
     get_elements: Optional[bool] = True,
     get_reactions: Optional[bool] = True,
 ) -> Tuple[pd.DataFrame, dict]:
@@ -177,7 +175,6 @@ def get_gene_minerva_pathways(
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
     :param map_name: name of the map you want to retrieve the information from. The extensive list
         can be found at https://minerva-net.lcsb.uni.lu/table.html.
-    :param input_type: type of input gene. Default is "Protein".
     :param get_elements: boolean to get elements of the chosen diagram.
     :param get_reactions: if get_reactions = boolean to get reactions of the chosen diagram.
     :returns: a tuple containing MINERVA outputs and dictionary of the MINERVA metadata.
@@ -186,27 +183,16 @@ def get_gene_minerva_pathways(
     api_available = check_endpoint_minerva()
     if not api_available:
         warnings.warn(
-            f"{MINERVA} API endpoint is not available. Unable to retrieve data.", stacklevel=2
+            f"{Cons.MINERVA} API endpoint is not available. Unable to retrieve data.", stacklevel=2
         )
         return pd.DataFrame(), {}
 
-    assert input_type in [
-        "Compartment",
-        "Complex",
-        "Drug",
-        "Gene",
-        "Ion",
-        "Phenotype",
-        "Protein",
-        "RNA",
-        "Simple molecule",
-    ], "Incorrect Input_type provided. Please provide a valid input_type."
-
-    data_df = get_identifier_of_interest(bridgedb_df, MINERVA_GENE_INPUT_ID)
+    data_df = get_identifier_of_interest(bridgedb_df, Cons.MINERVA_GENE_INPUT_ID)
 
     # Record the start time
     start_time = datetime.datetime.now()
 
+    logger.info("Getting minerva components")
     map_url, map_components = get_minerva_components(
         map_name=map_name, get_elements=get_elements, get_reactions=get_reactions
     )
@@ -217,14 +203,13 @@ def get_gene_minerva_pathways(
 
     names = []
     for value in models:
-        name = value["name"]
+        name = value[Cons.NAME]
         names.append(name)
 
     intermediate_df = pd.DataFrame()
 
-    for idx, pathway_name in enumerate(names):
+    for idx, pathway_name in tqdm(enumerate(names), total=len(names), desc="Processing pathways"):
         pathway_data = list(map_elements.values())[idx]
-        interested_info = ["type", "references", "symbol", "name", "ensembl"]
 
         # Initialize empty lists to store values for each common key
         entity_type = []
@@ -234,36 +219,39 @@ def get_gene_minerva_pathways(
 
         # Iterate through the list of dicts
         for data in pathway_data:
-            for col in interested_info:
+            for col in Cons.INTERESTED_INFO:
                 if col not in data:
                     continue
 
                 value = data[col]
 
-                if col == "type":
+                if col == Cons.ENTITY_TYPE:
                     entity_type.append(value)
-                elif col == "symbol":
+                elif col == Cons.ENTITY_SYMBOL:
                     symbol.append(value)
-                elif col == "references":
+                elif col == Cons.ENTITY_REFS:
                     refs.append(value)
 
+                if isinstance(value, list):
                     ensembl_id = None
                     for p in value:
-                        if p["type"] == "ENSEMBL":
+                        if p[Cons.ENTITY_TYPE].lower() == Cons.ENSEMBL.lower():
                             ensembl_id = p["resource"]
                     ensembl.append(ensembl_id)
 
-        data = pd.DataFrame()
-        data["symbol"] = symbol
-        data["pathway_label"] = pathway_name
-        data["pathway_gene_count"] = len(symbol) - symbol.count(None)
-        data["pathway_id"] = "MINERVA:" + str(models[idx]["idObject"])
-        data["refs"] = refs
-        data["ensembl"] = ensembl
-        data["type"] = entity_type
+        tmp_df = pd.DataFrame()
+        tmp_df[Cons.ENTITY_SYMBOL] = symbol
+        tmp_df[Cons.PATHWAY_LABEL] = pathway_name
+        tmp_df[Cons.PATHWAY_GENE_COUNTS] = len(symbol) - symbol.count(None)
+        tmp_df[Cons.PATHWAY_ID] = f"{Cons.MINERVA}:" + str(models[idx]["idObject"])
+        tmp_df[Cons.ENTITY_REFS] = refs
+        tmp_df[Cons.ENSEMBL] = ensembl
+        tmp_df[Cons.ENTITY_TYPE] = entity_type
+        pathway_subset = tmp_df[
+            tmp_df[Cons.ENTITY_TYPE] == "Protein"
+        ]  # to get gene linked information
 
-        intermediate_df = pd.concat([intermediate_df, data], ignore_index=True)
-        intermediate_df = intermediate_df[intermediate_df["type"] == input_type]
+        intermediate_df = pd.concat([intermediate_df, pathway_subset], ignore_index=True)
 
     # Record the end time
     end_time = datetime.datetime.now()
@@ -276,11 +264,11 @@ def get_gene_minerva_pathways(
 
     # Add the datasource, query, query time, and the date to metadata
     minerva_metadata: Dict[str, Any] = {
-        "datasource": MINERVA,
+        "datasource": Cons.MINERVA,
         "metadata": minerva_version,
         "query": {
-            "size": data_df["target"].nunique(),
-            "input_type": MINERVA_GENE_INPUT_ID,
+            "size": data_df[Cons.TARGET_COL].nunique(),
+            "input_type": Cons.MINERVA_GENE_INPUT_ID,
             "MINERVA project": map_name,
             "time": time_elapsed,
             "date": current_date,
@@ -289,17 +277,19 @@ def get_gene_minerva_pathways(
     }
 
     # Organize the annotation results as an array of dictionaries
-    intermediate_df.rename(columns={"ensembl": "target"}, inplace=True)
-    intermediate_df["target"] = intermediate_df["target"].values.astype(str)
+    intermediate_df.rename(columns={Cons.ENSEMBL: Cons.TARGET_COL}, inplace=True)
+    intermediate_df[Cons.TARGET_COL] = intermediate_df[Cons.TARGET_COL].values.astype(str)
 
     intermediate_df = intermediate_df.drop_duplicates(
-        subset=["target", "pathway_id", "pathway_label", "pathway_gene_count"]
+        subset=[Cons.TARGET_COL, Cons.PATHWAY_ID, Cons.PATHWAY_LABEL, Cons.PATHWAY_GENE_COUNTS]
     )
-    intermediate_df = intermediate_df[intermediate_df["target"].isin(data_df["target"])]
+    intermediate_df = intermediate_df[
+        intermediate_df[Cons.TARGET_COL].isin(data_df[Cons.TARGET_COL])
+    ]
 
     if intermediate_df.empty:
         warnings.warn(
-            f"There is no annotation for your input list in {MINERVA}, project {map_name}.",
+            f"There is no annotation for your input list in {Cons.MINERVA}, project {map_name}.",
             stacklevel=2,
         )
         return pd.DataFrame(), minerva_metadata
@@ -307,35 +297,37 @@ def get_gene_minerva_pathways(
     # Check if all keys in df match the keys in OUTPUT_DICT
     check_columns_against_constants(
         data_df=intermediate_df,
-        output_dict=MINERVA_PATHWAY_OUTPUT_DICT,
-        check_values_in=["pathway_id"],
+        output_dict=Cons.MINERVA_PATHWAY_OUTPUT_DICT,
+        check_values_in=[Cons.MINERVA_PATHWAY_DEFAULT_ID],
     )
 
     # Merge the two DataFrames on the target column
     merged_df = collapse_data_sources(
         data_df=data_df,
-        source_namespace=MINERVA_GENE_INPUT_ID,
+        source_namespace=Cons.MINERVA_GENE_INPUT_ID,
         target_df=intermediate_df,
-        common_cols=["target"],
-        target_specific_cols=list(MINERVA_PATHWAY_OUTPUT_DICT.keys()),
-        col_name=MINERVA,
+        common_cols=[Cons.TARGET_COL],
+        target_specific_cols=list(Cons.MINERVA_PATHWAY_OUTPUT_DICT.keys()),
+        col_name=Cons.MINERVA_PATHWAY_COL,
     )
 
     """Update metadata"""
     # Calculate the number of new nodes
-    num_new_nodes = intermediate_df["pathway_id"].nunique()
+    num_new_nodes = intermediate_df[Cons.PATHWAY_ID].nunique()
     # Calculate the number of new edges
-    num_new_edges = intermediate_df.drop_duplicates(subset=["target", "pathway_id"]).shape[0]
+    num_new_edges = intermediate_df.drop_duplicates(
+        subset=[Cons.TARGET_COL, Cons.PATHWAY_ID]
+    ).shape[0]
 
     # Check the intermediate_df
     if num_new_edges != len(intermediate_df):
         warnings.warn(
-            f"The intermediate_df in {MINERVA} annotatur should be checked, please create an issue on https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
+            f"The intermediate_df in {Cons.MINERVA} annotator should be checked, please create an issue on https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
             stacklevel=2,
         )
 
     # Add the number of new nodes and edges to metadata
-    minerva_metadata["query"]["number_of_added_nodes"] = num_new_nodes
-    minerva_metadata["query"]["number_of_added_edges"] = num_new_edges
+    minerva_metadata[Cons.QUERY][Cons.NUM_NODES] = num_new_nodes
+    minerva_metadata[Cons.QUERY][Cons.NUM_EDGES] = num_new_edges
 
     return merged_df, minerva_metadata

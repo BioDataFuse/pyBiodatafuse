@@ -3,13 +3,18 @@
 """Python module to construct a NetworkX graph from the annotated data frame."""
 
 import json
+import os
 import pickle
+from logging import Logger
+from typing import Any, Dict
 
 import networkx as nx
 import pandas as pd
 from tqdm import tqdm
 
 import pyBiodatafuse.constants as Cons
+
+logger = Logger(__name__)
 
 
 def load_dataframe_from_pickle(pickle_path: str) -> pd.DataFrame:
@@ -26,35 +31,32 @@ def load_dataframe_from_pickle(pickle_path: str) -> pd.DataFrame:
 
 
 def merge_node(g, node_label, node_attrs):
-    """Merge and/or adding nodes to the graph.
+    """Merge the attr_dict of a newly added node to the graph on duplication, otherwise, add the new node.
 
     :param g: the graph to which the node will be added.
     :param node_label: node label.
     :param node_attrs: dictionary of node attributes.
     """
-    # Ensure all node attributes are strings or set to None
-    node_attrs = {k: (v if isinstance(v, str) else "") for k, v in node_attrs.items()}
     if node_label not in g.nodes():
         g.add_node(node_label, attr_dict=node_attrs)
     else:
         if "attr_dict" in g.nodes[node_label]:
             for k, v in node_attrs.items():
-                node_attr_dict = g.nodes[node_label]["attr_dict"]
-                if k in node_attr_dict:
-                    if node_attr_dict[k] is not None:
+                if k in g.nodes[node_label]["attr_dict"]:
+                    if g.nodes[node_label]["attr_dict"][k] is not None:
                         if isinstance(v, str):
-                            v_list = node_attr_dict[k].split("|")
+                            v_list = g.nodes[node_label]["attr_dict"][k].split("|")
                             v_list.append(v)
-                            node_attr_dict[k] = "|".join(list(set(v_list)))
+                            g.nodes[node_label]["attr_dict"][k] = "|".join(list(set(v_list)))
                     else:
-                        node_attr_dict[k] = v
+                        g.nodes[node_label]["attr_dict"][k] = v
                 else:
-                    node_attr_dict[k] = v
+                    g.nodes[node_label]["attr_dict"][k] = v
         else:
             g.add_node(node_label, attr_dict=node_attrs)
 
 
-def add_gene_bgee_subgraph(g: nx.MultiDiGraph, gene_node_label: str, annot_list: list):
+def add_gene_bgee_subgraph(g, gene_node_label, annot_list):
     """Construct part of the graph by linking the gene to a list of anatomical entities.
 
     :param g: the input graph to extend with new nodes and edges.
@@ -76,7 +78,7 @@ def add_gene_bgee_subgraph(g: nx.MultiDiGraph, gene_node_label: str, annot_list:
             }
         )
 
-        g.add_node(annot_node_label, attr_dict=entity_attrs)
+        g.add_node(annot_node_label, attr_dict=annot_node_attrs)
 
         edge_attrs = Cons.BGEE_EDGE_ATTRS.copy()
         fields = {
@@ -92,14 +94,12 @@ def add_gene_bgee_subgraph(g: nx.MultiDiGraph, gene_node_label: str, annot_list:
                     edge_attrs[attr] = annot[attr]
 
         edge_hash = hash(frozenset(edge_attrs.items()))
-        edge_attrs["edge_hash"] = edge_hash  # type: ignore
+        edge_attrs["edge_hash"] = edge_hash
         edge_data = g.get_edge_data(gene_node_label, annot_node_label)
         edge_data = {} if edge_data is None else edge_data
-        edge_exists = any(
-            y.get("attr_dict", {}).get("edge_hash") == edge_hash for y in edge_data.values()
-        )
+        node_exists = [x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash]
 
-        if not edge_exists:
+        if len(node_exists) == 0:
             g.add_edge(
                 gene_node_label,
                 annot_node_label,
@@ -110,7 +110,7 @@ def add_gene_bgee_subgraph(g: nx.MultiDiGraph, gene_node_label: str, annot_list:
     return g
 
 
-def add_disgenet_gene_disease_subgraph(g: nx.MultiDiGraph, gene_node_label: str, annot_list: list):
+def add_disgenet_gene_disease_subgraph(g, gene_node_label, annot_list):
     """Construct part of the graph by linking the gene to diseases.
 
     :param g: the input graph to extend with new nodes and edges.
@@ -176,9 +176,189 @@ def add_disgenet_gene_disease_subgraph(g: nx.MultiDiGraph, gene_node_label: str,
     return g
 
 
-def add_literature_gene_disease_subgraph(
-    g: nx.MultiDiGraph, gene_node_label: str, annot_list: list
-):
+# TODO: cleanup this function
+def add_intact_interactions_subgraph(g, gene_node_label, annot_list):
+    """Construct part of the graph by linking the gene interactions via IntAct, including all interaction attributes.
+
+    :param g: the input graph to extend with new nodes and edges.
+    :param gene_node_label: the gene node to be linked to compounds or proteins.
+    :param annot_list: list of interactions from IntAct.
+    :returns: a NetworkX MultiDiGraph
+    """
+    if not hasattr(add_intact_interactions_subgraph, "seen_interaction_ids"):
+        add_intact_interactions_subgraph.seen_interaction_ids = set()
+
+    seen_interaction_ids = add_intact_interactions_subgraph.seen_interaction_ids
+    edges_seen = {}
+
+    for interaction in annot_list:
+        interaction_id = interaction.get("binary_interaction_id")
+        if not interaction_id or interaction_id in seen_interaction_ids:
+            continue
+
+        seen_interaction_ids.add(interaction_id)
+
+        try:
+            id_a = interaction["id_A"]
+            id_b = interaction["id_B"]
+        except KeyError:
+            continue
+
+        is_a_chebi = isinstance(id_a, str) and id_a.startswith("CHEBI:")
+        is_b_chebi = isinstance(id_b, str) and id_b.startswith("CHEBI:")
+
+        if is_a_chebi:
+            partner_node_label = id_a
+            partner_name = interaction.get("interactor_A_name", "")
+            partner_species = interaction.get("interactor_A_species", "")
+            molecule = interaction.get("molecule_A", "")
+            is_compound = True
+        elif is_b_chebi:
+            partner_node_label = id_b
+            partner_name = interaction.get("interactor_B_name", "")
+            partner_species = interaction.get("interactor_B_species", "")
+            molecule = interaction.get("molecule_B", "")
+            is_compound = True
+        else:
+            partner_node_label = interaction.get("intact_link_to")
+            is_compound = False
+
+        if not partner_node_label or pd.isna(partner_node_label):
+            continue
+
+        edge_key = (gene_node_label, partner_node_label)
+        if edge_key in edges_seen:
+            existing = edges_seen[edge_key]
+            method = interaction.get("detection_method")
+            if method:
+                if isinstance(existing["detection_method"], list):
+                    existing["detection_method"].append(method)
+                else:
+                    existing["detection_method"] = [existing["detection_method"], method]
+            continue
+
+        if is_compound:
+            annot_node_attrs = INTACT_COMPOUND_NODE_ATTRS.copy()
+            annot_node_attrs["id"] = partner_node_label
+            annot_node_attrs["label"] = partner_name
+            annot_node_attrs["species"] = partner_species
+            annot_node_attrs["molecule"] = molecule
+            merge_node(g, partner_node_label, annot_node_attrs)
+
+        edge_attrs = INTACT_PPI_EDGE_ATTRS.copy()
+
+        for key, value in interaction.items():
+            if value is None or (isinstance(value, str) and not value.strip()):
+                continue
+            edge_attrs[key] = ",".join(map(str, value)) if isinstance(value, list) else value
+
+        edge_attrs["detection_method"] = interaction.get("detection_method", "")
+        edge_attrs["interaction_type"] = interaction.get("type", "ppi")
+        edge_attrs["edge_hash"] = hash(frozenset(edge_attrs.items()))
+
+        edges_seen[edge_key] = edge_attrs
+
+    for (source, target), edge_attrs in edges_seen.items():
+        if isinstance(edge_attrs["detection_method"], list):
+            edge_attrs["detection_method"] = ",".join(set(edge_attrs["detection_method"]))
+
+        g.add_edge(
+            source,
+            target,
+            label=edge_attrs.get("interaction_type", "ppi"),
+            attr_dict=edge_attrs,
+        )
+
+    return g
+
+
+# TODO: cleanup this function
+def add_intact_compound_interactions_subgraph(g, compound_node_label, annot_list):
+    """Construct part of the graph by linking the compound interactions via IntAct, including all interaction attributes.
+
+    :param g: the input graph to extend with new nodes and edges.
+    :param compound_node_label: the compound node label (used as source node), expected as a ChEBI ID (e.g., '15361').
+    :param annot_list: list of interaction dicts from IntAct.
+    :returns: a NetworkX MultiDiGraph
+    """
+    if not hasattr(add_intact_compound_interactions_subgraph, "seen_interaction_ids"):
+        add_intact_compound_interactions_subgraph.seen_interaction_ids = set()
+
+    seen_interaction_ids = add_intact_compound_interactions_subgraph.seen_interaction_ids
+    edges_seen = {}
+
+    compound_full_id = f"CHEBI:{compound_node_label.strip()}"
+
+    for interaction in annot_list:
+        interaction_id = interaction.get("binary_interaction_id")
+        if not interaction_id or interaction_id in seen_interaction_ids:
+            continue
+        seen_interaction_ids.add(interaction_id)
+
+        id_a = interaction.get("id_A", "").strip()
+        id_b = interaction.get("id_B", "").strip()
+
+        if compound_full_id == id_a:
+            partner_id = id_b
+            partner_name = interaction.get("interactor_B_name", "")
+            partner_species = interaction.get("interactor_B_species", "")
+            partner_molecule = interaction.get("molecule_B", "")
+        elif compound_full_id == id_b:
+            partner_id = id_a
+            partner_name = interaction.get("interactor_A_name", "")
+            partner_species = interaction.get("interactor_A_species", "")
+            partner_molecule = interaction.get("molecule_A", "")
+        else:
+            continue
+
+        if not partner_id or pd.isna(partner_id):
+            continue
+
+        edge_key = (compound_node_label, partner_id)
+        if edge_key in edges_seen:
+            existing_methods = edges_seen[edge_key].get("detection_method", "")
+            new_method = interaction.get("detection_method", "")
+            if new_method and new_method not in existing_methods:
+                existing_methods += f",{new_method}"
+                edges_seen[edge_key]["detection_method"] = existing_methods
+            continue
+
+        node_label_type = (
+            Cons.COMPOUND_NODE_LABELS if partner_id.startswith("CHEBI:") else Cons.GENE_NODE_LABELS
+        )
+
+        partner_node_attrs = {
+            "id": partner_id,
+            "label": partner_name,
+            "species": partner_species,
+            "molecule": partner_molecule,
+            "labels": node_label_type,
+        }
+        merge_node(g, partner_id, partner_node_attrs)
+
+        edge_attrs = {
+            key: ",".join(map(str, value)) if isinstance(value, list) else value
+            for key, value in interaction.items()
+            if value is not None and not (isinstance(value, str) and not value.strip())
+        }
+        edge_attrs["detection_method"] = interaction.get("detection_method", "")
+        edge_attrs["interaction_type"] = interaction.get("type", "compound-ppi")
+        edge_attrs["edge_hash"] = hash(frozenset(edge_attrs.items()))
+
+        edges_seen[edge_key] = edge_attrs
+
+    for (source, target), edge_attrs in edges_seen.items():
+        g.add_edge(
+            source,
+            target,
+            label=edge_attrs.get("interaction_type", "compound-ppi"),
+            attr_dict=edge_attrs,
+        )
+
+    return g
+
+
+def add_literature_gene_disease_subgraph(g, gene_node_label, annot_list):
     """Construct part of the graph by linking the gene to diseases form literature.
 
     :param g: the input graph to extend with new nodes and edges.
@@ -210,7 +390,7 @@ def add_literature_gene_disease_subgraph(
         edge_attrs["datasource"] = annot["source"]
 
         edge_hash = hash(frozenset(edge_attrs.items()))
-        edge_attrs["edge_hash"] = edge_hash  # type: ignore
+        edge_attrs["edge_hash"] = edge_hash
         edge_data = g.get_edge_data(gene_node_label, annot_node_label)
         edge_data = {} if edge_data is None else edge_data
         node_exists = [x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash]
@@ -239,13 +419,9 @@ def add_literature_gene_disease_subgraph(
 #         if not pd.isna(annot["disease_name"]):
 #             annot_node_label = annot[DISEASE_NODE_MAIN_LABEL]
 #             annot_node_attrs = OPENTARGETS_DISEASE_NODE_ATTRS.copy()
-#             annot_node_attrs.update(
-#                 {
-#                     "name": annot["disease_name"],
-#                     "id": annot["disease_id"],
-#                     "therapeutic_areas": annot["therapeutic_areas"],
-#                 }
-#             )
+#             annot_node_attrs["name"] = annot["disease_name"]
+#             annot_node_attrs["id"] = annot["disease_id"]
+#             annot_node_attrs["therapeutic_areas"] = annot["therapeutic_areas"]
 
 #             # g.add_node(annot_node_label, attr_dict=annot_node_attrs)
 #             merge_node(g, annot_node_label, annot_node_attrs)
@@ -271,7 +447,7 @@ def add_literature_gene_disease_subgraph(
 #     return g
 
 
-def add_minerva_gene_pathway_subgraph(g: nx.MultiDiGraph, gene_node_label: str, annot_list: list):
+def add_minerva_gene_pathway_subgraph(g, gene_node_label, annot_list):
     """Construct part of the graph by linking the gene to MINERVA pathways.
 
     :param g: the input graph to extend with new nodes and edges.
@@ -300,7 +476,7 @@ def add_minerva_gene_pathway_subgraph(g: nx.MultiDiGraph, gene_node_label: str, 
         edge_attrs["datasource"] = Cons.MINERVA
 
         edge_hash = hash(frozenset(edge_attrs.items()))
-        edge_attrs["edge_hash"] = edge_hash  # type: ignore
+        edge_attrs["edge_hash"] = edge_hash
         edge_data = g.get_edge_data(gene_node_label, annot_node_label)
         edge_data = {} if edge_data is None else edge_data
         node_exists = [x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash]
@@ -316,9 +492,7 @@ def add_minerva_gene_pathway_subgraph(g: nx.MultiDiGraph, gene_node_label: str, 
     return g
 
 
-def add_wikipathways_gene_pathway_subgraph(
-    g: nx.MultiDiGraph, gene_node_label: str, annot_list: list
-):
+def add_wikipathways_gene_pathway_subgraph(g, gene_node_label, annot_list):
     """Construct part of the graph by linking the gene to pathways from WikiPathways.
 
     :param g: the input graph to extend with new nodes and edges.
@@ -347,7 +521,7 @@ def add_wikipathways_gene_pathway_subgraph(
         edge_attrs["datasource"] = Cons.WIKIPATHWAYS
 
         edge_hash = hash(frozenset(edge_attrs.items()))
-        edge_attrs["edge_hash"] = edge_hash  # type: ignore
+        edge_attrs["edge_hash"] = edge_hash
         edge_data = g.get_edge_data(gene_node_label, annot_node_label)
         edge_data = {} if edge_data is None else edge_data
         node_exists = [x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash]
@@ -363,7 +537,7 @@ def add_wikipathways_gene_pathway_subgraph(
     return g
 
 
-def add_kegg_gene_pathway_subgraph(g: nx.MultiDiGraph, gene_node_label: str, annot_list: list):
+def add_kegg_gene_pathway_subgraph(g, gene_node_label, annot_list):
     """Construct part of the graph by linking the gene to pathways from KEGG.
 
     :param g: the input graph to extend with new nodes and edges.
@@ -393,7 +567,7 @@ def add_kegg_gene_pathway_subgraph(g: nx.MultiDiGraph, gene_node_label: str, ann
         edge_attrs["datasource"] = Cons.KEGG
 
         edge_hash = hash(frozenset(edge_attrs.items()))
-        edge_attrs["edge_hash"] = edge_hash  # type: ignore
+        edge_attrs["edge_hash"] = edge_hash
         edge_data = g.get_edge_data(gene_node_label, annot_node_label)
         edge_data = {} if edge_data is None else edge_data
         node_exists = [x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash]
@@ -409,9 +583,7 @@ def add_kegg_gene_pathway_subgraph(g: nx.MultiDiGraph, gene_node_label: str, ann
     return g
 
 
-def add_kegg_compounds_subgraph(
-    g: nx.MultiDiGraph, pathway_node_label: str, compounds_list: list, combined_df: pd.DataFrame
-):
+def add_kegg_compounds_subgraph(g, pathway_node_label, compounds_list, combined_df):
     """Construct part of the graph by linking the KEGG compound to its respective pathway.
 
     :param g: the input graph to extend with new nodes and edges.
@@ -437,6 +609,25 @@ def add_kegg_compounds_subgraph(
 
         for _, path_row in combined_df.iterrows():
             pathways = path_row.get("KEGG_pathways", [])
+            if isinstance(pathways, list) and pathways:
+                for pathway in pathways:
+                    if pathway_node_label == pathway.get("pathway_id", ""):
+                        if "compounds" in pathway:
+                            pathway_compounds = [
+                                comp["KEGG_identifier"] for comp in pathway["compounds"]
+                            ]
+                            if compound["KEGG_identifier"] in pathway_compounds:
+                                edge_attrs = Cons.KEGG_COMPOUND_EDGE_ATTRS.copy()
+                                edge_hash = hash(frozenset(edge_attrs.items()))
+                                edge_attrs["edge_hash"] = edge_hash
+                                edge_data = g.get_edge_data(pathway_node_label, annot_node_label)
+                                edge_data = {} if edge_data is None else edge_data
+                                node_exists = [
+                                    x
+                                    for x, y in edge_data.items()
+                                    if "attr_dict" in y
+                                    and y["attr_dict"].get("edge_hash") == edge_hash
+                                ]
 
             for pathway in pathways:
                 if pathway_node_label != pathway.get("pathway_id"):
@@ -471,9 +662,7 @@ def add_kegg_compounds_subgraph(
     return g
 
 
-def process_kegg_pathway_compound(
-    g: nx.MultiDiGraph, kegg_pathway_compound: pd.DataFrame, combined_df: pd.DataFrame
-):
+def process_kegg_pathway_compound(g, kegg_pathway_compound, combined_df):
     """Process pathway-compound relationships from KEGG and add them to the graph.
 
     :param g: the input graph to extend with pathway-compound relationships.
@@ -496,20 +685,16 @@ def process_kegg_pathway_compound(
             for _, pathway_row in combined_df.iterrows():
                 pathway_data = pathway_row["KEGG_pathways"]
 
-                if not isinstance(pathway_data, list):
-                    continue
+                if isinstance(pathway_data, list):
+                    for pathway in pathway_data:
+                        pathway_id = pathway.get("pathway_id")
+                        pathway_compounds = pathway.get("compounds", [])
 
-                for pathway in pathway_data:
-                    pathway_id = pathway.get("pathway_id")
-                    pathway_compounds = pathway.get("compounds", [])
-
-                    if any(c.get("KEGG_identifier") == compound_id for c in pathway_compounds):
-                        add_kegg_compounds_subgraph(g, pathway_id, compounds_list, combined_df)
+                        if any(c.get("KEGG_identifier") == compound_id for c in pathway_compounds):
+                            add_kegg_compounds_subgraph(g, pathway_id, compounds_list, combined_df)
 
 
-def add_opentargets_gene_reactome_pathway_subgraph(
-    g: nx.MultiDiGraph, gene_node_label: str, annot_list: list
-):
+def add_opentargets_gene_reactome_pathway_subgraph(g, gene_node_label, annot_list):
     """Construct part of the graph by linking the gene to Reactome pathways.
 
     :param g: the input graph to extend with new nodes and edges.
@@ -537,7 +722,7 @@ def add_opentargets_gene_reactome_pathway_subgraph(
         edge_attrs["datasource"] = Cons.OPENTARGETS
 
         edge_hash = hash(frozenset(edge_attrs.items()))
-        edge_attrs["edge_hash"] = edge_hash  # type: ignore
+        edge_attrs["edge_hash"] = edge_hash
         edge_data = g.get_edge_data(gene_node_label, annot_node_label)
         edge_data = {} if edge_data is None else edge_data
         node_exists = [x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash]
@@ -560,7 +745,6 @@ def add_opentargets_gene_go_subgraph(g, gene_node_label, annot_list):
     :param gene_node_label: the gene node to be linked to gene ontologies.
     :param annot_list: list of gene ontologies from OpenTargets.
     :returns: a NetworkX MultiDiGraph
-    :raises ValueError: if the GO type is invalid.
     """
     for annot in annot_list:
         if pd.isna(annot["go_id"]):
@@ -590,7 +774,7 @@ def add_opentargets_gene_go_subgraph(g, gene_node_label, annot_list):
         edge_attrs = Cons.GENE_GO_EDGE_ATTRS.copy()
 
         edge_hash = hash(frozenset(edge_attrs.items()))
-        edge_attrs["edge_hash"] = edge_hash  # type: ignore
+        edge_attrs["edge_hash"] = edge_hash
         edge_data = g.get_edge_data(gene_node_label, annot_node_label)
         edge_data = {} if edge_data is None else edge_data
         node_exists = [x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash]
@@ -606,9 +790,7 @@ def add_opentargets_gene_go_subgraph(g, gene_node_label, annot_list):
     return g
 
 
-def add_opentargets_compound_side_effect_subgraph(
-    g: nx.MultiDiGraph, compound_node_label: str, side_effects_list: list
-):
+def add_opentargets_compound_side_effect_subgraph(g, compound_node_label, side_effects_list):
     """Construct part of the graph by linking the compound to side effects.
 
     :param g: the input graph to extend with new nodes and edges.
@@ -634,7 +816,7 @@ def add_opentargets_compound_side_effect_subgraph(
 
             edge_attrs = Cons.COMPOUND_SIDE_EFFECT_EDGE_ATTRS.copy()
             edge_hash = hash(frozenset(edge_attrs.items()))
-            edge_attrs["edge_hash"] = edge_hash  # type: ignore
+            edge_attrs["edge_hash"] = edge_hash
             edge_data = g.get_edge_data(compound_node_label, effect_node_label)
             edge_data = {} if edge_data is None else edge_data
             node_exists = [
@@ -685,25 +867,23 @@ def add_opentargets_gene_compound_subgraph(g, gene_node_label, annot_list):
         else:
             annot_node_attrs["id"] = annot["chembl_id"]
         annot_node_attrs["chembl_id"] = annot["chembl_id"]
+        if not pd.isna(annot["drugbank_id"]):
+            annot_node_attrs["drugbank_id"] = annot["drugbank_id"]
+        if not pd.isna(annot["compound_cid"]):
+            annot_node_attrs["compound_cid"] = annot["compound_cid"]
+        if not pd.isna(annot["clincal_trial_phase"]):
+            annot_node_attrs["clincal_trial_phase"] = annot["clincal_trial_phase"]
+        annot_node_attrs["is_approved"] = annot["is_approved"]
+        if not pd.isna(annot["adverse_effect_count"]):
+            annot_node_attrs["adverse_effect_count"] = annot["adverse_effect_count"]
 
-        other_info = {
-            "drugbank_id": annot["drugbank_id"],
-            "compound_cid": annot["compound_cid"],
-            "clincal_trial_phase": annot["clincal_trial_phase"],
-            "is_approved": annot["is_approved"],
-            "adverse_effect_count": annot["adverse_effect_count"],
-        }
-
-        for key, value in other_info.items():
-            if not pd.isna(value):
-                annot_node_attrs[key] = value
-
+        # g.add_node(annot_node_label, attr_dict=annot_node_attrs)
         merge_node(g, annot_node_label, annot_node_attrs)
 
         edge_attrs = Cons.OPENTARGETS_GENE_COMPOUND_EDGE_ATTRS.copy()
         edge_attrs["label"] = annot["relation"]
         edge_hash = hash(frozenset(edge_attrs.items()))
-        edge_attrs["edge_hash"] = edge_hash  # type: ignore
+        edge_attrs["edge_hash"] = edge_hash
         edge_data = g.get_edge_data(annot_node_label, gene_node_label)
         edge_data = {} if edge_data is None else edge_data
         node_exists = [x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash]
@@ -756,27 +936,30 @@ def add_molmedb_gene_inhibitor_subgraph(g, gene_node_label, annot_list):
         else:
             annot_node_attrs["id"] = annot["molmedb_id"]
 
-        other_info = {
-            "inchikey": annot["inchikey"],
-            "smiles": annot["smiles"],
-            "compound_cid": annot["compound_cid"],
-            "chebi_id": annot["chebi_id"],
-            "drugbank_id": annot["drugbank_id"],
-            "source_pmid": annot["source_pmid"],
-            "uniprot_trembl_id": annot["uniprot_trembl_id"],
-            # "pdb_ligand_id": annot["pdb_ligand_id"],
-        }
-
-        for key, value in other_info.items():
-            if not pd.isna(value):
-                annot_node_attrs[key] = value
+        annot_node_attrs["molmedb_id"] = annot["molmedb_id"]
+        if not pd.isna(annot["inchikey"]):
+            annot_node_attrs["inchikey"] = annot["inchikey"]
+        if not pd.isna(annot["smiles"]):
+            annot_node_attrs["smiles"] = annot["smiles"]
+        if not pd.isna(annot["compound_cid"]):
+            annot_node_attrs["compound_cid"] = annot["compound_cid"]
+        if not pd.isna(annot["chebi_id"]):
+            annot_node_attrs["chebi_id"] = annot["chebi_id"]
+        if not pd.isna(annot["drugbank_id"]):
+            annot_node_attrs["drugbank_id"] = annot["drugbank_id"]
+        # if not pd.isna(annot["pdb_ligand_id"]):
+        #     annot_node_attrs["pdb_ligand_id"] = annot["pdb_ligand_id"]
+        if not pd.isna(annot["source_pmid"]):
+            annot_node_attrs["source_pmid"] = annot["source_pmid"]
+        if not pd.isna(annot["uniprot_trembl_id"]):
+            annot_node_attrs["uniprot_trembl_id"] = annot["uniprot_trembl_id"]
 
         merge_node(g, annot_node_label, annot_node_attrs)
 
         edge_attrs = Cons.MOLMEDB_PROTEIN_COMPOUND_EDGE_ATTRS.copy()
 
         edge_hash = hash(frozenset(edge_attrs.items()))
-        edge_attrs["edge_hash"] = edge_hash  # type: ignore
+        edge_attrs["edge_hash"] = edge_hash
         edge_data = g.get_edge_data(gene_node_label, annot_node_label)
         edge_data = {} if edge_data is None else edge_data
         node_exists = [x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash]
@@ -884,6 +1067,7 @@ def add_pubchem_assay_subgraph(g, gene_node_label, annot_list):
         if not pd.isna(annot["smiles"]):
             annot_node_attrs["smiles"] = annot["smiles"]
 
+        # g.add_node(annot_node_label, attr_dict=annot_node_attrs)
         merge_node(g, annot_node_label, annot_node_attrs)
 
         edge_attrs = Cons.PUBCHEM_GENE_COMPOUND_EDGE_ATTRS.copy()
@@ -893,7 +1077,7 @@ def add_pubchem_assay_subgraph(g, gene_node_label, annot_list):
         edge_attrs["label"] = annot["outcome"]
 
         edge_hash = hash(frozenset(edge_attrs.items()))
-        edge_attrs["edge_hash"] = edge_hash  # type: ignore
+        edge_attrs["edge_hash"] = edge_hash
         edge_data = g.get_edge_data(gene_node_label, annot_node_label)
         edge_data = {} if edge_data is None else edge_data
         node_exists = [x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash]
@@ -944,9 +1128,7 @@ def add_stringdb_ppi_subgraph(g, gene_node_label, annot_list):
     return g
 
 
-def add_opentargets_disease_compound_subgraph(
-    g: nx.MultiDiGraph, disease_node_label: str, annot_list: list
-):
+def add_opentargets_disease_compound_subgraph(g, disease_node_label, annot_list):
     """Construct part of the graph by linking the disease to compounds.
 
     :param g: the input graph to extend with new nodes and edges.
@@ -990,7 +1172,7 @@ def add_opentargets_disease_compound_subgraph(
         edge_attrs = Cons.OPENTARGETS_DISEASE_COMPOUND_EDGE_ATTRS.copy()
         edge_attrs["label"] = annot["relation"]
         edge_hash = hash(frozenset(edge_attrs.items()))
-        edge_attrs["edge_hash"] = edge_hash  # type: ignore
+        edge_attrs["edge_hash"] = edge_hash
 
         edge_data = g.get_edge_data(annot_node_label, disease_node_label)
         edge_data = {} if edge_data is None else edge_data
@@ -1013,6 +1195,7 @@ def add_opentargets_disease_compound_subgraph(
     return g
 
 
+# TODO: clean the function
 def add_wikipathways_molecular_subgraph(g, gene_node_label, annot_list):
     """Construct part of the graph by linking molecular entities from WP with MIMs.
 
@@ -1092,6 +1275,7 @@ def add_ensembl_homolog_subgraph(g, gene_node_label, annot_list):
                 label=Cons.ENSEMBL_HOMOLOG_EDGE_LABEL,
                 attr_dict=edge_attrs,
             )
+
     return g
 
 
@@ -1119,6 +1303,26 @@ def add_gene_node(g, row, dea_columns):
     return gene_node_label
 
 
+def add_compound_node(g, row):
+    """Add compound node from each row of the combined_df to the graph.
+
+    :param g: the input graph to extend with compound nodes.
+    :param row: row in the combined DataFrame.
+    :returns: label for compound node
+    """
+    compound_node_label = row["identifier"]
+    compound_node_attrs = {
+        "datasource": BRIDGEDB,
+        "name": f"{row['identifier.source']}:{row['identifier']}",
+        "id": row["target"],
+        "labels": COMPOUND_NODE_LABELS,
+        row["target.source"]: row["target"],
+    }
+
+    g.add_node(compound_node_label, attr_dict=compound_node_attrs)
+    return compound_node_label
+
+
 def process_annotations(g, gene_node_label, row, func_dict):
     """Process the annotations for gene node from each row of the combined_df to the graph.
 
@@ -1140,7 +1344,7 @@ def process_disease_compound(g, disease_compound):
     """Process disease-compound relationships and add them to the graph.
 
     :param g: the input graph to extend with gene nodes.
-    :param disease_compound: the input DataFrame containing disease-compound relationships.
+    :param disease_compound: the input DataFrame containing disease_compound relationships.
     """
     for _i, row in disease_compound.iterrows():
         disease_node_label = row["identifier"].replace("_", ":")
@@ -1229,14 +1433,12 @@ def normalize_node_attributes(g):
     :param g: the input graph to extend with gene nodes.
     """
     for node in g.nodes():
-        if "attr_dict" not in g.nodes[node]:
-            continue
+        if "attr_dict" in g.nodes[node]:
+            for k, v in g.nodes[node]["attr_dict"].items():
+                if v is not None:
+                    g.nodes[node][k] = v
 
-        for k, v in g.nodes[node]["attr_dict"].items():
-            if v is not None:
-                g.nodes[node][k] = v
-
-        del g.nodes[node]["attr_dict"]
+            del g.nodes[node]["attr_dict"]
 
 
 def normalize_edge_attributes(g):
@@ -1245,14 +1447,12 @@ def normalize_edge_attributes(g):
     :param g: the input graph to extend with gene nodes.
     """
     for u, v, k in g.edges(keys=True):
-        if "attr_dict" not in g[u][v][k]:
-            continue
+        if "attr_dict" in g[u][v][k]:
+            for x, y in g[u][v][k]["attr_dict"].items():
+                if y is not None and x != "edge_hash":
+                    g[u][v][k][x] = y
 
-        for x, y in g[u][v][k]["attr_dict"].items():
-            if y is not None and x != "edge_hash":
-                g[u][v][k][x] = y
-
-        del g[u][v][k]["attr_dict"]
+            del g[u][v][k]["attr_dict"]
 
 
 def _built_gene_based_graph(
@@ -1266,6 +1466,8 @@ def _built_gene_based_graph(
     combined_df = combined_df[(combined_df["target.source"] == "Ensembl")]
 
     dea_columns = [c for c in combined_df.columns if c.endswith("_dea")]
+
+    compound_identifiers = ["PubChem Compound", "CHEBI", "InChIKey"]
 
     func_dict = {
         Cons.BGEE_GENE_EXPRESSION_LEVELS_COL: add_gene_bgee_subgraph,
@@ -1281,20 +1483,32 @@ def _built_gene_based_graph(
         Cons.PUBCHEM_COMPOUND_ASSAYS_COL: add_pubchem_assay_subgraph,
         Cons.WIKIPATHWAYS_MOLECULAR_COL: add_wikipathways_molecular_subgraph,
         Cons.ENSEMBL_HOMOLOG_COL: add_ensembl_homolog_subgraph,
+        Cons.INTACT_INTERACT_COL: add_intact_interactions_subgraph,
+        Cons.INTACT_COMPOUND_INTERACT_COL: add_intact_compound_interactions_subgraph,
     }
 
     if homolog_df_list is not None:
         process_homologs(g, combined_df, homolog_df_list, func_dict, dea_columns)
 
-    else:
+    if homolog_df_list is None:
+        is_compound_input = any(
+            combined_df["target.source"].astype(str).str.contains(ci, case=False, na=False).any()
+            or combined_df["identifier"].astype(str).str.contains(ci, case=False, na=False).any()
+            for ci in compound_identifiers
+        )
+
         for _i, row in tqdm(
             combined_df.iterrows(), total=combined_df.shape[0], desc="Building graph"
         ):
             if pd.isna(row["identifier"]) or pd.isna(row["target"]):
                 continue
-            gene_node_label = add_gene_node(g, row, dea_columns)
-            process_annotations(g, gene_node_label, row, func_dict)
-            process_ppi(g, gene_node_label, row)
+            if is_compound_input:
+                node_label = add_compound_node(g, row)
+            else:
+                node_label = add_gene_node(g, row, dea_columns)
+
+            process_annotations(g, node_label, row, func_dict)
+            process_ppi(g, node_label, row)
 
     if disease_compound is not None:
         process_disease_compound(g, disease_compound)
