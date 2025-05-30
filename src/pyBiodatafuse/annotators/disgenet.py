@@ -19,6 +19,7 @@ from pyBiodatafuse.utils import (
     check_columns_against_constants,
     collapse_data_sources,
     get_identifier_of_interest,
+    give_annotator_warning,
 )
 
 logger = logging.getLogger("disgenet")
@@ -314,10 +315,7 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
 
     # Check the intermediate_df
     if num_new_edges != len(intermediate_df):
-        warnings.warn(
-            f"The intermediate_df in {Cons.DISGENET} annotator should be checked, please create an issue on https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
-            stacklevel=2,
-        )
+        give_annotator_warning(Cons.DISGENET)
 
     # Add the number of new nodes and edges to metadata
     disgenet_metadata[Cons.QUERY][Cons.NUM_NODES] = num_new_nodes

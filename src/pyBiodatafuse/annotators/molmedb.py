@@ -18,6 +18,7 @@ from pyBiodatafuse.utils import (
     check_columns_against_constants,
     collapse_data_sources,
     get_identifier_of_interest,
+    give_annotator_warning,
 )
 
 pd.set_option("mode.chained_assignment", None)
@@ -335,10 +336,7 @@ def get_compound_gene_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
 
     # Check the intermediate_df
     if num_new_edges != len(intermediate_df):
-        warnings.warn(
-            f"The intermediate_df in {Cons.MOLMEDB} annotator should be checked, please create an issue on https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
-            stacklevel=2,
-        )
+        give_annotator_warning(Cons.MOLMEDB)
 
     # Add the number of new nodes and edges to metadata
     molmedb_metadata[Cons.QUERY][Cons.NUM_NODES] = num_new_nodes  #

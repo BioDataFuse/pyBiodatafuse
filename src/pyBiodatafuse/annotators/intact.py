@@ -16,7 +16,7 @@ import requests
 from tqdm import tqdm
 
 import pyBiodatafuse.constants as Cons
-from pyBiodatafuse.utils import get_identifier_of_interest
+from pyBiodatafuse.utils import get_identifier_of_interest, give_annotator_warning
 
 
 def check_endpoint_intact() -> bool:
@@ -334,10 +334,7 @@ def get_gene_interactions(bridgedb_df: pd.DataFrame, interaction_type: str = "bo
 
     # Check the intermediate_df
     if num_new_edges != len(data_df):
-        warnings.warn(
-            f"The intermediate_df in {Cons.INTACT} annotator should be checked, please create an issue on https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
-            stacklevel=2,
-        )
+        give_annotator_warning(Cons.INTACT)
 
     # Add the number of new nodes and edges to metadata
     intact_metadata[Cons.QUERY][Cons.NUM_NODES] = num_new_nodes  # type: ignore
@@ -417,6 +414,10 @@ def get_compound_interactions(bridgedb_df: pd.DataFrame, interaction_type: str =
 
     # Calculate the number of new edges
     num_new_edges = sum(data_df[Cons.INTACT_COMPOUND_INTERACT_COL].apply(len))
+
+    # Check the intermediate_df
+    if num_new_edges != len(data_df):
+        give_annotator_warning(Cons.INTACT)
 
     # Add the number of new nodes and edges to metadata
     intact_metadata[Cons.QUERY][Cons.NUM_NODES] = num_new_nodes  # type: ignore

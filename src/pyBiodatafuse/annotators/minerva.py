@@ -16,6 +16,7 @@ from pyBiodatafuse.utils import (
     check_columns_against_constants,
     collapse_data_sources,
     get_identifier_of_interest,
+    give_annotator_warning,
 )
 
 logger = logging.getLogger(__name__)
@@ -321,10 +322,7 @@ def get_gene_pathways(
 
     # Check the intermediate_df
     if num_new_edges != len(intermediate_df):
-        warnings.warn(
-            f"The intermediate_df in {Cons.MINERVA} annotator should be checked, please create an issue on https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
-            stacklevel=2,
-        )
+        give_annotator_warning(Cons.MINERVA)
 
     # Add the number of new nodes and edges to metadata
     minerva_metadata[Cons.QUERY][Cons.NUM_NODES] = num_new_nodes

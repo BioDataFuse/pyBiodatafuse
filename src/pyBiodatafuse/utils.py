@@ -292,3 +292,11 @@ def create_harmonized_input_file(
     harmonized_df = pd.DataFrame(harmonized_data)
 
     return harmonized_df.drop_duplicates()
+
+
+def give_annotator_warning(annotator_name: str) -> None:
+    """Get the warning message for an annotator."""
+    warnings.warn(
+        f"The intermediate_df in {annotator_name} annotator should be checked, please create an issue on https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
+        stacklevel=2,
+    )
