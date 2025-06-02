@@ -1,0 +1,16 @@
+PREFIX wd: <https://compoundcloud.wikibase.cloud/entity/>
+PREFIX wdt: <https://compoundcloud.wikibase.cloud/prop/direct/>
+PREFIX wikibase: <http://wikiba.se/ontology#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?compound ?compoundLabel ?propEntity ?propLabel ?val ?valLabel WHERE {
+  VALUES ?pubchem { ${compound_list} }
+  ?compound wdt:P13 ?pubchem .
+  ?compound ?prop ?val .
+  ?propEntity wikibase:directClaim ?prop .
+
+  OPTIONAL { ?compound rdfs:label ?compoundLabel . FILTER (lang(?compoundLabel) = "en") }
+  OPTIONAL { ?propEntity rdfs:label ?propLabel . FILTER (lang(?propLabel) = "en") }
+  OPTIONAL { ?val rdfs:label ?valLabel . FILTER (lang(?valLabel) = "en") }
+}
+ORDER BY ?compound ?propLabel
