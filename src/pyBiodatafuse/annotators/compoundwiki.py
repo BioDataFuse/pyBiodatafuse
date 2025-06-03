@@ -124,7 +124,16 @@ def get_compound_annotations(bridgedb_df: pd.DataFrame):
 
     annotations_df = (
         intermediate_df.groupby("target")
-        .apply(lambda df: [{row["property"]: row["value"] for _, row in df.iterrows()}])
+        .apply(
+            lambda df: [
+                {
+                    **{row["property"]: row["value"] for _, row in df.iterrows()},
+                    "compound label": (
+                        df["compoundLabel"].iloc[0] if "compoundLabel" in df.columns else None
+                    ),
+                }
+            ]
+        )
         .reset_index(name=COMPOUNDWIKI_COL)
     )
 
