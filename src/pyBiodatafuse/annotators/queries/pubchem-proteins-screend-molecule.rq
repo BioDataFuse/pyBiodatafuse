@@ -17,7 +17,7 @@ SELECT DISTINCT ?upProt ?assay ?assay_type ?outcome ?compound_cid ?ref_cit ?comp
 	VALUES ?type {bao:BAO_0000034 bao:BAO_0000186 bao:BAO_0000187 bao:BAO_0000188 bao:BAO_0000190 bao:BAO_0000192 bao:BAO_0002146}
 	VALUES ?upProt {$protein_list}
 	GRAPH pubchem:protein {
-		?prot skos:closeMatch ?upProt
+		?prot dcterms:identifier ?upProt
   	}
   	GRAPH pubchem:measuregroup{
     	?mg obo:RO_0000057 ?prot;
@@ -27,7 +27,7 @@ SELECT DISTINCT ?upProt ?assay ?assay_type ?outcome ?compound_cid ?ref_cit ?comp
   	?mg obo:OBI_0000299 ?ep ;
     	^bao:BAO_0000209 ?assay .
 	#only confirmatory assay
-	?assay bao:BAO_0000540 ?assay2 .
+	?assay bao:BAO_0000210 bao:BAO_0000030 .
 	
   
   	?ep rdf:type ?assay_type ;
