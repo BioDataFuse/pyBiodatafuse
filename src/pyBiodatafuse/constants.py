@@ -91,7 +91,7 @@ MINERVA_PATHWAY_COL = f"{MINERVA}_pathways"
 MOLMEDB_PROTEIN_COMPOUND_COL = f"{MOLMEDB}_transporter_inhibitor"
 MOLMEDB_COMPOUND_PROTEIN_COL = f"{MOLMEDB}_transporter_inhibited"
 PUBCHEM_COMPOUND_ASSAYS_COL = f"{PUBCHEM}_assays"
-STRING_INTERACT_COL = f"{STRING}_ppi"
+STRING_INTERACT_COL = f"{STRING}_interactions"
 WIKIDATA_CC_COL = f"{WIKIDATA}_cellular_components"
 WIKIPATHWAYS_MOLECULAR_COL = f"{WIKIPATHWAYS}_molecular"
 AOPWIKI_GENE_COL = "aop_gene"  # todo fix this
@@ -99,6 +99,7 @@ AOPWIKI_COMPOUND_COL = "pubchem_compound"  # todo fix this
 
 # Ontologies and vocabularies namespaces
 PUBCHEM_COMPOUND = "PubChem Compound"
+PUBCHEM_COMPOUND_CID = "CID"
 HPO = "HPO"
 NCI = "NCI"
 OMIM = "OMIM"
@@ -112,16 +113,17 @@ NCBI_GENE = "NCBI Gene"
 CHEBI = "ChEBI"
 UNIPROT_TREMBL = "Uniprot-TrEMBL"
 CHEMBL = "CHEMBL"
+CHEMBL_ID = "chembl_id"
 INCHIKEY = "InChIKey"
 SMILES = "SMILES"
 DRUGBANK = "DrugBank"
+DRUGBANK_ID = "drugbank_id"
 GO = "GO"
 REACTOME = "Reactome"
 WP = "WikiPathways"
-CHEMBL_ID = "chembl_id"
-DRUGBANK_ID = "drugbank_id"
-PUBCHEM_COMPOUND_CID = "CID"
 BIODATAFUSE = "Biodatafuse"
+UBERON = "UBERON"
+CIO = "CIO"
 
 
 # Input type for each data source
@@ -169,11 +171,9 @@ ENTITY_NAME = "name"
 BGEE variables
 """
 ANATOMICAL_ID = "anatomical_entity_id"
-ANATOMICAL_ENTITY_ID = "UBERON"
 ANATOMICAL_NAME = "anatomical_entity_name"
 EXPRESSION_LEVEL = "expression_level"
 CONFIDENCE_ID = "confidence_level_id"
-CONFIDENCE_LEVEL_ID = "CIO"
 CONFIDENCE_LEVEL_NAME = "confidence_level_name"
 DEVELOPMENTAL_ID = "developmental_stage_id"
 DEVELOPMENTAL_STAGE_ID = "HsapDv|UBERON"
@@ -188,6 +188,8 @@ BGEE_GENE_EXPRESSION_OUTPUT_DICT = {
     DEVELOPMENTAL_ID: str,
     DEVELOPMENTAL_STAGE_NAME: str,
 }
+
+BGEE_VALUE_CHECK_LIST = [UBERON, CIO, DEVELOPMENTAL_STAGE_ID]
 
 ANATOMICAL_ENTITIES_LIST = [
     "blood",
@@ -428,6 +430,33 @@ OPENTARGETS_COMPOUND_OUTPUT_DICT = {
 OPENTARGETS_COMPOUND_VALUE_CHECK_LIST = [CHEMBL, DRUGBANK, PUBCHEM_COMPOUND_CID]
 OPENTARGETS_COMPOUND_DISEASE_RELATION = "treats"
 
+"""
+PubChem variables
+"""
+
+
+"""
+StringDB variables
+"""
+STRING_PREFERRED_NAME_A = "preferredName_A"
+STRING_PREFERRED_NAME_B = "preferredName_B"
+STRING_PPI_LINK_TO = "stringdb_link_to"
+STRING_PPI_SCORE = "score"
+UNIPROT_TREMBL_A = "Uniprot-TrEMBL_A"
+UNIPROT_TREMBL_B = "Uniprot-TrEMBL_B"
+STRING_PPI_INTERACTS_WITH = "interacts_with"
+STRING_OUTPUT_DICT = {
+    STRING_PPI_LINK_TO: str,
+    STRING_GENE_INPUT_ID: str,
+    STRING_PPI_SCORE: float,
+    UNIPROT_TREMBL_A: str,
+    UNIPROT_TREMBL_B: str,
+}
+
+
+"""
+WikiPathways variables
+"""
 
 # WikiPathways
 WIKIPATHWAYS_PATHWAYS_OUTPUT_DICT = {
@@ -460,14 +489,6 @@ PUBCHEM_COMPOUND_OUTPUT_DICT = {
 OUTCOME = "active|inactive"
 INCHI = "InChI"
 
-# STRING
-STRING_OUTPUT_DICT = {
-    "stringdb_link_to": str,
-    STRING_GENE_INPUT_ID: str,
-    "score": float,
-    "Uniprot-TrEMBL": str,
-    "Uniprot-TrEMBL_link": str,
-}
 
 # AOPWIKI
 AOPWIKI_GENE_OUTPUT_DICT = {
@@ -503,7 +524,7 @@ AOPWIKI_COMPOUND_OUTPUT_DICT = {
     "KE_downstream_organ": str,
 }
 
-
+# TODO: Look into this
 ENSEMBL_HOMOLOGS = "Ensembl_homologs"
 
 """
@@ -536,6 +557,7 @@ BGEE_ANATOMICAL_NODE_ATTRS = {
     DATASOURCE: BGEE,
     NAME: None,
     ID: None,
+    UBERON: None,
     LABEL: ANATOMICAL_NODE_LABEL,
 }
 BGEE_GENE_ANATOMICAL_EDGE_LABEL = "expressed_by"
@@ -611,7 +633,6 @@ GENE_PATHWAY_EDGE_ATTRS = {
 # IntAct interactions
 SPECIES = "species"
 INTACT_INTERACTION_TYPE = "interaction_type"
-INTACT_PPI_EDGE_MAIN_LABEL = "intact_link_to"
 INTACT_NODE_ATTRS = PATHWAY_NODE_ATTRS.copy()
 INTACT_NODE_ATTRS.update(
     {
@@ -620,12 +641,6 @@ INTACT_NODE_ATTRS.update(
         LABEL: None,
     }
 )
-INTACT_PPI_EDGE_ATTRS = {
-    DATASOURCE: INTACT,
-    INTACT_DETECTION_METHOD: None,
-    INTACT_TYPE: None,
-    LABEL: INTACT_PPI_EDGE_MAIN_LABEL,
-}
 
 KEGG_PATHWAY_NODE_MAIN_LABEL = PATHWAY_ID
 KEGG_PATHWAY_NODE_ATTRS = PATHWAY_NODE_ATTRS.copy()
@@ -801,17 +816,22 @@ PUBCHEM_GENE_COMPOUND_EDGE_ATTRS = {
 }
 
 """
-Gene node
+PPI interactions
 """
-
+INTACT_PPI_EDGE_MAIN_LABEL = "intact_link_to"
+INTACT_PPI_EDGE_ATTRS = {
+    DATASOURCE: INTACT,
+    INTACT_DETECTION_METHOD: None,
+    INTACT_TYPE: None,
+    LABEL: INTACT_PPI_EDGE_MAIN_LABEL,
+}
 
 # STRING
-STRING_PPI_EDGE_MAIN_LABEL = "stringdb_link_to"
-STRING_PPI_EDGE_LABEL = "interacts_with"
+STRING_PPI_EDGE_MAIN_LABEL = "interacts_with"
 STRING_PPI_EDGE_ATTRS = {
-    "datasource": STRING,
-    "score": None,
-    "label": STRING_PPI_EDGE_LABEL,
+    DATASOURCE: STRING,
+    STRING_PPI_SCORE: None,
+    LABEL: STRING_PPI_EDGE_MAIN_LABEL,
 }
 
 # Ensembl Homologs

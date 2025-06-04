@@ -74,13 +74,14 @@ def add_gene_bgee_subgraph(g, gene_node_label, annot_list):
         if pd.isna(annot[Cons.ANATOMICAL_NAME]):
             continue
 
-        annot_node_label = annot[Cons.BGEE_ANATOMICAL_NODE_MAIN_LABEL]
+        annot_node_label = annot[Cons.BGEE_ANATOMICAL_NODE_MAIN_LABEL].replace(":", "_")
         entity_attrs = Cons.BGEE_ANATOMICAL_NODE_ATTRS.copy()
         entity_attrs.update(
             {
                 Cons.NAME: annot[Cons.ANATOMICAL_NAME],
                 Cons.ID: annot[Cons.ANATOMICAL_ID],
                 Cons.DATASOURCE: Cons.BGEE,
+                Cons.UBERON: annot[Cons.ANATOMICAL_ID].split(":")[1],
             }
         )
 
@@ -1098,25 +1099,28 @@ def add_stringdb_ppi_subgraph(g, gene_node_label, annot_list):
     logger.debug("Adding StringDb PPI nodes and edges")
     for ppi in annot_list:
         edge_attrs = Cons.STRING_PPI_EDGE_ATTRS.copy()
-        edge_attrs["score"] = ppi["score"]
+        edge_attrs[Cons.STRING_PPI_SCORE] = ppi[Cons.STRING_PPI_SCORE]
 
         edge_hash = hash(frozenset(edge_attrs.items()))
-        edge_attrs["edge_hash"] = edge_hash  # type: ignore
-        edge_data = g.get_edge_data(gene_node_label, ppi[Cons.STRING_PPI_EDGE_MAIN_LABEL])
+        edge_attrs[Cons.EDGE_HASH] = edge_hash  # type: ignore
+        edge_data = g.get_edge_data(gene_node_label, ppi[Cons.STRING_PPI_INTERACTS_WITH])
 
         edge_data = {} if edge_data is None else edge_data
-        node_exists = [x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash]
-        if len(node_exists) == 0 and not pd.isna(ppi[Cons.STRING_PPI_EDGE_MAIN_LABEL]):
+        node_exists = [
+            x for x, y in edge_data.items() if y["attr_dict"][Cons.EDGE_HASH] == edge_hash
+        ]
+        if len(node_exists) == 0 and not pd.isna(ppi[Cons.STRING_PPI_INTERACTS_WITH]):
             g.add_edge(
                 gene_node_label,
-                ppi[Cons.STRING_PPI_EDGE_MAIN_LABEL],
-                label=Cons.STRING_PPI_EDGE_LABEL,
+                ppi[Cons.STRING_PPI_INTERACTS_WITH],
+                label=Cons.STRING_PPI_EDGE_MAIN_LABEL,
                 attr_dict=edge_attrs,
             )
+
             g.add_edge(
-                ppi[Cons.STRING_PPI_EDGE_MAIN_LABEL],
+                ppi[Cons.STRING_PPI_INTERACTS_WITH],
                 gene_node_label,
-                label=Cons.STRING_PPI_EDGE_LABEL,
+                label=Cons.STRING_PPI_EDGE_MAIN_LABEL,
                 attr_dict=edge_attrs,
             )
 
@@ -1294,7 +1298,7 @@ def add_gene_node(g, row, dea_columns):
     gene_node_attrs = {
         Cons.DATASOURCE: Cons.BRIDGEDB,
         Cons.NAME: f"{row[Cons.IDENTIFIER_SOURCE_COL]}:{row[Cons.IDENTIFIER_COL]}",
-        Cons.ID: row[Cons.TARGET_COL],
+        Cons.ID: f"{row[Cons.TARGET_SOURCE_COL]}:{row[Cons.TARGET_COL]}",
         Cons.LABEL: Cons.GENE_NODE_LABEL,
         row[Cons.TARGET_SOURCE_COL]: row[Cons.TARGET_COL],
     }
@@ -1319,7 +1323,7 @@ def add_compound_node(g, row):
         Cons.NAME: f"{row[Cons.IDENTIFIER_SOURCE_COL]}:{row[Cons.IDENTIFIER_COL]}",
         Cons.ID: row[Cons.TARGET_COL],
         Cons.LABEL: Cons.COMPOUND_NODE_LABEL,
-        row[Cons.TARGET_SOURCE_COL]: row[Cons.TARGET_COL],
+        row[Cons.TARGET_SOURCE_COL]: f"{row[Cons.TARGET_SOURCE_COL]}:{row[Cons.TARGET_COL]}",
     }
 
     g.add_node(compound_node_label, attr_dict=compound_node_attrs)
@@ -1400,7 +1404,7 @@ def process_ppi(g, gene_node_label, row):
     :param gene_node_label: the gene node to be linked to annotation entities.
     :param row: row in the combined DataFrame.
     """
-    if Cons.STRING_INTERACT_COL in row and row[Cons.STRING_INTERACT_COL] is not None:
+    if row[Cons.STRING_INTERACT_COL] is not None:
         try:
             ppi_list = json.loads(json.dumps(row[Cons.STRING_INTERACT_COL]))
         except (ValueError, TypeError):
@@ -1522,6 +1526,7 @@ def _built_gene_based_graph(
         Cons.ENSEMBL_HOMOLOG_COL: add_ensembl_homolog_subgraph,
         Cons.INTACT_INTERACT_COL: add_intact_interactions_subgraph,
         Cons.INTACT_COMPOUND_INTERACT_COL: add_intact_compound_interactions_subgraph,
+        Cons.STRING_INTERACT_COL: add_stringdb_ppi_subgraph,
     }
 
     if homolog_df_list is not None:
@@ -1542,7 +1547,6 @@ def _built_gene_based_graph(
         node_label = add_gene_node(g, row, dea_columns)
 
         process_annotations(g, node_label, row, func_dict)
-        process_ppi(g, node_label, row)
 
     # Process disease-compound relationships
     dnodes = {

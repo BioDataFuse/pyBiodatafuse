@@ -184,11 +184,16 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
     intermediate_df[Cons.ANATOMICAL_ID] = intermediate_df[Cons.ANATOMICAL_ID].apply(
         lambda x: x.split("/")[-1]
     )
+    intermediate_df[Cons.ANATOMICAL_ID] = intermediate_df[Cons.ANATOMICAL_ID].str.replace("_", ":")
     intermediate_df[Cons.CONFIDENCE_ID] = intermediate_df[Cons.CONFIDENCE_ID].apply(
         lambda x: x.split("/")[-1]
     )
+    intermediate_df[Cons.CONFIDENCE_ID] = intermediate_df[Cons.CONFIDENCE_ID].str.replace("_", ":")
     intermediate_df[Cons.DEVELOPMENTAL_ID] = intermediate_df[Cons.DEVELOPMENTAL_ID].apply(
         lambda x: x.split("/")[-1]
+    )
+    intermediate_df[Cons.DEVELOPMENTAL_ID] = intermediate_df[Cons.DEVELOPMENTAL_ID].str.replace(
+        "_", ":"
     )
     intermediate_df[Cons.EXPRESSION_LEVEL] = pd.to_numeric(intermediate_df[Cons.EXPRESSION_LEVEL])
 
@@ -196,11 +201,7 @@ def get_gene_expression(bridgedb_df: pd.DataFrame):
     check_columns_against_constants(
         data_df=intermediate_df,
         output_dict=Cons.BGEE_GENE_EXPRESSION_OUTPUT_DICT,
-        check_values_in=[
-            Cons.ANATOMICAL_ID,
-            Cons.CONFIDENCE_ID,
-            Cons.DEVELOPMENTAL_ID,
-        ],
+        check_values_in=Cons.BGEE_VALUE_CHECK_LIST,
     )
 
     # Merge the two DataFrames on the target column
