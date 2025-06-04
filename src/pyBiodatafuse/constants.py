@@ -101,7 +101,6 @@ AOPWIKI_COMPOUND_COL = "pubchem_compound"  # todo fix this
 PUBCHEM_COMPOUND = "PubChem Compound"
 HPO = "HPO"
 NCI = "NCI"
-OMIM_IDS = "OMIM|MIM"
 OMIM = "OMIM"
 MONDO = "MONDO"
 ORDO = "ORDO"
@@ -112,10 +111,18 @@ UMLS = "UMLS"
 NCBI_GENE = "NCBI Gene"
 CHEBI = "ChEBI"
 UNIPROT_TREMBL = "Uniprot-TrEMBL"
-CHEMBL = "chembl_id"
+CHEMBL = "CHEMBL"
 INCHIKEY = "InChIKey"
 SMILES = "SMILES"
 DRUGBANK = "DrugBank"
+GO = "GO"
+REACTOME = "Reactome"
+WP = "WikiPathways"
+CHEMBL_ID = "chembl_id"
+DRUGBANK_ID = "drugbank_id"
+PUBCHEM_COMPOUND_CID = "CID"
+BIODATAFUSE = "Biodatafuse"
+
 
 # Input type for each data source
 BGEE_GENE_INPUT_ID = ENSEMBL
@@ -126,9 +133,8 @@ INTACT_COMPOUND_INPUT_ID = CHEBI
 KEGG_GENE_INPUT_ID = NCBI_GENE
 OPENTARGETS_GENE_INPUT_ID = ENSEMBL
 OPENTARGETS_COMPOUND_INPUT_ID = PUBCHEM_COMPOUND
-OPENTARGETS_COMPOUND_QUERY_INPUT_ID = CHEMBL
-OPENTARGETS_DISEASE_INPUT_ID_1 = EFO
-OPENTARGETS_DISEASE_INPUT_ID_2 = MONDO
+OPENTARGETS_COMPOUND_QUERY_INPUT_ID = CHEMBL_ID
+OPENTARGETS_DISEASE_INPUT_ID = EFO
 MINERVA_GENE_INPUT_ID = ENSEMBL
 MOLMEDB_PROTEIN_INPUT_ID = UNIPROT_TREMBL
 MOLMEDB_COMPOUND_INPUT_ID = INCHIKEY
@@ -146,6 +152,10 @@ PATHWAY_LABEL = "pathway_label"
 PATHWAY_GENE_COUNTS = "pathway_gene_counts"
 PATHWAY_COMPOUNDS = "pathway_compounds"
 PATHWAYS = "pathways"
+
+GO_ID = "go_id"
+GO_NAME = "go_name"
+GO_TYPE = "go_type"
 
 SOURCE_PMID = "source_pmid"
 
@@ -229,7 +239,7 @@ DISGENET_DISEASE_OUTPUT_DICT = {
 VALUE_CHECK_LIST = [
     HPO,
     NCI,
-    OMIM,
+    f"{OMIM}|MIM",
     MONDO,
     ORDO,
     EFO,
@@ -374,43 +384,49 @@ MOLMEDB_COMPOUND_PROTEIN_OUTPUT_DICT = {
 }
 MOLMEDB_UNIPROT_TREMBL_DEFAULT_ID = UNIPROT_TREMBL
 
+"""
+Open Targets variables
+"""
+OPENTARGETS_GO_ID = GO_ID
+OPENTARGETS_GO_NAME = GO_NAME
+OPENTARGETS_GO_TYPE = GO_TYPE
 
-# Open Targets - Disease
-OPENTARGETS_DISEASE_OUTPUT_DICT = {
-    "disease_name": str,
-    "therapeutic_areas": str,
-    "HPO": str,  # "HPO_HP:0100013"
-    "NCI": str,  # "NCI_C2910"
-    "OMIM": str,  # "OMIM_607906"
-    "MONDO": str,  # "MONDO_0021100"
-    "ORDO": str,  # "ORDO_137"
-    "EFO": str,  # "EFO_0003756"
-    "DO": str,  # "DO_0060041"
-    "MESH": str,  # "MESH_D000067877"
-    "UMLS": str,  # "UMLS_C1510586"
-}  # TODO: Tooba please check if you want to add compound annotations too here in the dict
-OPENTARGETS_IGNORE_DISEASE_IDS = [
-    "icd10cm",
-    "icd9",
-    "snomedct",
-    "sctid",
-    "meddra",
-    "icd10",
-    "wikipedia",
-    "snomedct_us",
-    "oncotree",
-    "nifstd",
-    "gard",
-    "nord",
-    "icdo",
-    "hgnc",
-    "cohd",
-    "kegg",
-    "decipher",
-    "http",
-    "omimps",
-    "csp",
+OPENTARGETS_GO_OUTPUT_DICT = {
+    OPENTARGETS_GO_ID: str,
+    OPENTARGETS_GO_NAME: str,
+    OPENTARGETS_GO_TYPE: str,
+}
+
+OPENTARGETS_POSSIBLE_PATHWAY_IDS = f"{REACTOME}|{WP}"
+OPENTARGETS_REACTOME_OUTPUT_DICT = {
+    PATHWAY_ID: str,
+    PATHWAY_LABEL: str,
+}
+
+OPENTARGETS_COMPOUND_RELATION = "relation"
+OPENTARGETS_ADVERSE_EFFECT_COUNT = "adverse_effect_count"
+OPENTARGETS_ADVERSE_EFFECT = "adverse_effect"
+OPENTARET_COMPOUND_COLS = [
+    "chembl_id",
+    "compound_name",
+    "is_approved",
+    "clincal_trial_phase",
+    "cross_references",
+    "adverse_events",
 ]
+OPENTARGETS_COMPOUND_OUTPUT_DICT = {
+    CHEMBL_ID: str,
+    DRUGBANK_ID: str,
+    "compound_cid": str,
+    "compound_name": str,
+    "clincal_trial_phase": int,
+    "is_approved": bool,
+    "relation": str,
+    OPENTARGETS_ADVERSE_EFFECT_COUNT: int,
+    OPENTARGETS_ADVERSE_EFFECT: list,
+}
+OPENTARGETS_COMPOUND_VALUE_CHECK_LIST = [CHEMBL, DRUGBANK, PUBCHEM_COMPOUND_CID]
+OPENTARGETS_COMPOUND_DISEASE_RELATION = "treats"
 
 
 # WikiPathways
@@ -430,34 +446,6 @@ WIKIPATHWAYS_MOLECULAR_GENE_OUTPUT_DICT = {
     "rhea_id": str,
 }
 
-# Open Targets - Reactome
-OPENTARGETS_REACTOME_OUTPUT_DICT = {
-    "pathway_id": str,
-    "pathway_label": str,
-}
-# PATHWAY_ID = "MINERVA|WP|R-"  # ID Start with WP or R-
-
-# Open Targets - GO processes
-OPENTARGETS_GO_OUTPUT_DICT = {"go_id": str, "go_name": str, "go_type": str}
-GO_ID = "GO"
-
-# Open Targets - Compound
-OPENTARGETS_COMPOUND_OUTPUT_DICT = {
-    "chembl_id": str,
-    "drugbank_id": str,
-    "compound_cid": str,
-    "compound_name": str,
-    "clincal_trial_phase": int,
-    "is_approved": bool,
-    "relation": str,
-    "adverse_effect_count": int,
-    "adverse_effect": list,
-    # "mechanisms_of_action": list,
-}
-CHEMBL_ID = "CHEMBL"
-DRUGBANK_ID = "DrugBank"
-RELATION = "inhibits|activates"
-OPENTARGETS_COMPOUND_DISEASE_RELATION = "treats"
 
 # PubChem - Assays
 PUBCHEM_COMPOUND_OUTPUT_DICT = {
@@ -515,6 +503,8 @@ AOPWIKI_COMPOUND_OUTPUT_DICT = {
     "KE_downstream_organ": str,
 }
 
+
+ENSEMBL_HOMOLOGS = "Ensembl_homologs"
 
 """
 Node and edge main lable and attributes
@@ -588,6 +578,18 @@ DISGENET_EDGE_ATTRS = {
     LABEL: GENE_DISEASE_EDGE_LABEL,
 }
 
+OPENTARGET_DISEASE_NODE_ATTRS = {
+    NAME: None,
+    ID: None,
+    DATASOURCE: OPENTARGETS,
+    LABEL: DISEASE_NODE_LABEL,
+}
+
+OPENTARGETS_DISEASE_COMPOUND_EDGE_ATTRS = {
+    DATASOURCE: OPENTARGETS,
+    LABEL: None,
+}
+
 """
 Pathway nodes
 """
@@ -647,6 +649,36 @@ MINERVA_PATHWAY_NODE_ATTRS.update(
     }
 )
 
+OPENTARGETS_GO_NODE_MAIN_LABEL = GO_ID
+OPENTARGETS_GO_NODE_ATTRS = PATHWAY_NODE_ATTRS.copy()
+OPENTARGETS_GO_NODE_ATTRS.update(
+    {
+        DATASOURCE: OPENTARGETS,
+        NAME: None,
+        ID: None,
+        LABEL: None,
+    }
+)
+OPENTARGETS_GENE_GO_EDGE_ATTRS = {
+    DATASOURCE: OPENTARGETS,
+    LABEL: GENE_PATHWAY_EDGE_LABEL,
+}
+
+OPENTARGETS_REACTOME_NODE_MAIN_LABEL = PATHWAY_ID
+OPENTARGETS_REACTOME_NODE_ATTRS = PATHWAY_NODE_ATTRS.copy()
+OPENTARGETS_REACTOME_NODE_ATTRS.update(
+    {
+        DATASOURCE: OPENTARGETS,
+        NAME: None,
+        ID: None,
+        LABEL: None,
+    }
+)
+OPENTARGETS_GENE_REACTOME_EDGE_ATTRS = {
+    DATASOURCE: OPENTARGETS,
+    LABEL: GENE_PATHWAY_EDGE_LABEL,
+}
+
 # molecular pathway node
 MOLECULAR_PATHWAY_NODE_MAIN_LABEL = "pathway_id"
 MOLECULAR_GENE_NODE_ATTRS = {"datasource": WIKIPATHWAYS, "label": ""}
@@ -659,15 +691,6 @@ MOLECULAR_PATHWAY_NODE_ATTRS = {
 MOLECULAR_GENE_PATHWAY_EDGE_LABEL = "part_of"
 MOLECULAR_INTERACTION_EDGE_ATTRS = {"interaction_type": "str", "rhea_id": str}
 
-GO_NODE_MAIN_LABEL = "go_id"
-GO_NODE_ATTRS = {
-    "datasource": OPENTARGETS,
-    "name": None,
-    "id": None,
-    "labels": None,
-}
-GENE_GO_EDGE_LABEL = "part_of"
-GENE_GO_EDGE_ATTRS = {"datasource": OPENTARGETS, "label": GENE_GO_EDGE_LABEL}
 
 """
 Compound nodes
@@ -714,38 +737,49 @@ MOLMEDB_COMPOUND_NODE_ATTRS = {
 }
 MOLMEDB_PROTEIN_COMPOUND_EDGE_LABEL = "inhibits"
 MOLMEDB_PROTEIN_COMPOUND_EDGE_ATTRS = {
-    "datasource": MOLMEDB,
-    "label": MOLMEDB_PROTEIN_COMPOUND_EDGE_LABEL,
+    DATASOURCE: MOLMEDB,
+    LABEL: MOLMEDB_PROTEIN_COMPOUND_EDGE_LABEL,
 }
 
+# Opentargets
+OPENTARGETS_COMPOUND_NODE_MAIN_LABEL = "compound_cid"
+OPENTARGETS_COMPOUND_CID = "compound_cid"
+OPENTARGETS_COMPOUND_CLINICAL_TRIAL_PHASE = "clincal_trial_phase"
+OPENTARGETS_COMPOUND_IS_APPROVED = "is_approved"
 
 OPENTARGETS_COMPOUND_NODE_ATTRS = {
-    "datasource": OPENTARGETS,
-    "name": None,
-    "id": None,
-    "chembl_id": None,
-    "drugbank_id": None,
-    "compound_cid": None,
-    "clincal_trial_phase": None,
-    "is_approved": None,
-    "adverse_effect_count": None,
-    "labels": COMPOUND_NODE_LABEL,
+    DATASOURCE: OPENTARGETS,
+    NAME: None,
+    ID: None,
+    DRUGBANK_ID: None,
+    OPENTARGETS_COMPOUND_CID: None,
+    OPENTARGETS_COMPOUND_CLINICAL_TRIAL_PHASE: None,
+    OPENTARGETS_COMPOUND_IS_APPROVED: None,
+    OPENTARGETS_ADVERSE_EFFECT_COUNT: None,
+    LABEL: COMPOUND_NODE_LABEL,
 }
-OPENTARGETS_GENE_COMPOUND_EDGE_ATTRS = {"datasource": OPENTARGETS, "label": None}
+OPENTARGETS_GENE_COMPOUND_EDGE_ATTRS = {DATASOURCE: OPENTARGETS, LABEL: None, ID: None}
 # Side effect
 # Open Targets - Compound
 
-SIDE_EFFECT_NODE_MAIN_LABEL = "adverse_effect"
-# TODO: add the side effect id (adverse_effect id)
-SIDE_EFFECT_NODE_ATTRS = {
-    "datasource": OPENTARGETS,
-    "name": None,
-    "labels": SIDE_EFFECT_NODE_LABEL,
+"""
+Side effect nodes
+"""
+# Opentarget
+COMPOUND_SIDE_EFFECT_NODE_MAIN_LABEL = "adverse_effect"
+COMPOUND_SIDE_EFFECT_NODE_LABEL = "name"
+COMPOUND_SIDE_EFFECT_NODE_ATTRS = {
+    DATASOURCE: OPENTARGETS,
+    NAME: None,
+    ID: None,
+    LABEL: SIDE_EFFECT_NODE_LABEL,
 }
+
+# Opentarget
 COMPOUND_SIDE_EFFECT_EDGE_LABEL = "has_side_effect"
 COMPOUND_SIDE_EFFECT_EDGE_ATTRS = {
-    "datasource": OPENTARGETS,
-    "label": COMPOUND_SIDE_EFFECT_EDGE_LABEL,
+    DATASOURCE: OPENTARGETS,
+    LABEL: COMPOUND_SIDE_EFFECT_EDGE_LABEL,
 }
 
 
@@ -778,12 +812,6 @@ STRING_PPI_EDGE_ATTRS = {
     "datasource": STRING,
     "score": None,
     "label": STRING_PPI_EDGE_LABEL,
-}
-
-# Disease - Compound edge
-OPENTARGETS_DISEASE_COMPOUND_EDGE_ATTRS = {
-    "datasource": OPENTARGETS,
-    "label": None,
 }
 
 # Ensembl Homologs
