@@ -9,7 +9,6 @@ from unittest.mock import Mock, patch
 import pandas as pd
 
 from pyBiodatafuse.annotators import kegg
-from pyBiodatafuse.annotators.kegg import check_version_kegg, get_pathways
 from pyBiodatafuse.constants import KEGG_PATHWAY_COL
 
 
@@ -21,6 +20,10 @@ class TestKEGG(unittest.TestCase):
         kegg.check_version_kegg = Mock(return_value={"source_version": "KEGG RDF 20240315"})
         kegg.check_endpoint_kegg = Mock(return_value=True)
 
+        kegg.batch_request = Mock(
+            return_value=open("tests/annotators/data/kegg_mock_data.txt").read()
+        )
+
         input_df = pd.DataFrame(
             {
                 "identifier": ["ENSMUSG00000067274"],
@@ -30,7 +33,7 @@ class TestKEGG(unittest.TestCase):
             }
         )
 
-        result_df, metadata = get_pathways(input_df)
+        result_df, metadata = kegg.get_pathways(input_df)
 
         expected_pathways = pd.Series(
             [
@@ -38,7 +41,7 @@ class TestKEGG(unittest.TestCase):
                     {
                         "pathway_id": "path:mmu03010",
                         "pathway_label": "Ribosome - Mus musculus (house mouse)",
-                        "pathway_gene_counts": 274,
+                        "pathway_gene_counts": 278,
                         "pathway_compounds": [{"KEGG_id": None}],
                     },
                     {

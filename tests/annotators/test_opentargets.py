@@ -1080,17 +1080,19 @@ class TestOpentarget(unittest.TestCase):
                         "adverse_effect": nan,
                     }
                 ],
-                {
-                    "chembl_id": nan,
-                    "drugbank_id": nan,
-                    "compound_cid": nan,
-                    "compound_name": nan,
-                    "clincal_trial_phase": nan,
-                    "is_approved": nan,
-                    "relation": nan,
-                    "adverse_effect_count": nan,
-                    "adverse_effect": nan,
-                },
+                [
+                    {
+                        "chembl_id": nan,
+                        "drugbank_id": nan,
+                        "compound_cid": nan,
+                        "compound_name": nan,
+                        "clincal_trial_phase": nan,
+                        "is_approved": nan,
+                        "relation": nan,
+                        "adverse_effect_count": nan,
+                        "adverse_effect": nan,
+                    }
+                ],
             ]
         )
         expected_data.name = OPENTARGETS_DISEASE_COMPOUND_COL

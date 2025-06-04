@@ -9,11 +9,6 @@ from unittest.mock import Mock
 import pandas as pd
 
 from pyBiodatafuse.annotators import intact
-from pyBiodatafuse.annotators.intact import (
-    check_endpoint_intact,
-    get_compound_interactions,
-    get_gene_interactions,
-)
 from pyBiodatafuse.constants import INTACT_COMPOUND_INTERACT_COL, INTACT_INTERACT_COL
 
 
@@ -33,7 +28,9 @@ class TestIntact(unittest.TestCase):
             }
         )
 
-        obtained_data, metadata = get_gene_interactions(bridgedb_dataframe, interaction_type="both")
+        obtained_data, metadata = intact.get_gene_interactions(
+            bridgedb_dataframe, interaction_type="both"
+        )
 
         expected_data = pd.Series(
             [
@@ -122,7 +119,7 @@ class TestIntact(unittest.TestCase):
             }
         )
 
-        obtained_data, metadata = get_compound_interactions(bridgedb_dataframe)
+        obtained_data, metadata = intact.get_compound_interactions(bridgedb_dataframe)
 
         expected_data = pd.Series(
             [
