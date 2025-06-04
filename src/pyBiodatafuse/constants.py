@@ -453,6 +453,17 @@ STRING_OUTPUT_DICT = {
     UNIPROT_TREMBL_B: str,
 }
 
+"""
+Wikidata variables
+"""
+WIKIDATA_ID_COL = "wikidata_id"
+WIKIDATA_LABEL_COL = "wikidata_label"
+WIKIDATA_GO_COL = "go_id"
+WIKIDATA_OUTPUT_DICT = {
+    WIKIDATA_ID_COL: str,
+    WIKIDATA_LABEL_COL: str,
+    WIKIDATA_GO_COL: str,
+}
 
 """
 WikiPathways variables
