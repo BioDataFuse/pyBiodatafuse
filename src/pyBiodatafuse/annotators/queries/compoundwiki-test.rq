@@ -1,0 +1,9 @@
+PREFIX wd: <https://compoundcloud.wikibase.cloud/entity/>
+PREFIX wdt: <https://compoundcloud.wikibase.cloud/prop/direct/>
+PREFIX wikibase: <http://wikiba.se/ontology#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?compound WHERE {
+  ?compound wdt:P13 ?pubchem .
+}
+LIMIT 1
