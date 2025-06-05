@@ -114,6 +114,7 @@ CHEBI = "ChEBI"
 UNIPROT_TREMBL = "Uniprot-TrEMBL"
 CHEMBL = "CHEMBL"
 CHEMBL_ID = "chembl_id"
+INCHI = "InChI"
 INCHIKEY = "InChIKey"
 SMILES = "SMILES"
 DRUGBANK = "DrugBank"
@@ -433,6 +434,33 @@ OPENTARGETS_COMPOUND_DISEASE_RELATION = "treats"
 """
 PubChem variables
 """
+ASSAY_ENDPOINT_TYPES = {
+    "http://www.bioassayontology.org/bao#BAO_0000034": "Kd",
+    "http://www.bioassayontology.org/bao#BAO_0000186": "AC50",
+    "http://www.bioassayontology.org/bao#BAO_0000187": "CC50",
+    "http://www.bioassayontology.org/bao#BAO_0000188": "EC50",
+    "http://www.bioassayontology.org/bao#BAO_0000190": "IC50",
+    "http://www.bioassayontology.org/bao#BAO_0000192": "Ki",
+    "http://www.bioassayontology.org/bao#BAO_0002146": "MIC",
+}
+PUBCHEM_ASSAY_ID = "pubchem_assay_id"
+PUBCHEM_SMILES = "smiles"
+PUBCHEM_INCHI = "inchi"
+PUBCHEM_UNIPROT_IRI = "http://purl.uniprot.org/uniprot/"
+PUBCHEM_BIOASSAY_IRI = "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/"
+PUBCHEM_OUTCOME_IRI = "http://rdf.ncbi.nlm.nih.gov/pubchem/vocabulary#"
+PUBCHEM_COMPOUND_IRI = "http://rdf.ncbi.nlm.nih.gov/pubchem/compound/"
+
+PUBCHEM_COMPOUND_OUTPUT_DICT = {
+    PUBCHEM_ASSAY_ID: str,
+    "assay_type": str,
+    "outcome": str,
+    "compound_cid": str,
+    "compound_name": str,
+    SMILES: str,
+    INCHI: str,
+}
+# OUTCOME = "active|inactive"
 
 
 """
@@ -485,20 +513,6 @@ WIKIPATHWAYS_MOLECULAR_GENE_OUTPUT_DICT = {
     "mimtype": str,
     "rhea_id": str,
 }
-
-
-# PubChem - Assays
-PUBCHEM_COMPOUND_OUTPUT_DICT = {
-    "pubchem_assay_id": str,
-    "assay_type": str,
-    "outcome": str,
-    "compound_cid": str,
-    "compound_name": str,
-    "smiles": str,
-    "inchi": str,
-}
-OUTCOME = "active|inactive"
-INCHI = "InChI"
 
 
 # AOPWIKI
