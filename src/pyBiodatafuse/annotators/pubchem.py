@@ -70,7 +70,7 @@ def get_protein_compound_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
     data_df = get_identifier_of_interest(bridgedb_df, PUBCHEM_COMPOUND_INPUT_ID)
     protein_list_str = data_df["target"].tolist()
     for i in range(len(protein_list_str)):
-        protein_list_str[i] = "<http://purl.uniprot.org/uniprot/" + protein_list_str[i] + ">"
+        protein_list_str[i] = '"' + protein_list_str[i] + '"'
 
     protein_list_str = list(set(protein_list_str))
 
