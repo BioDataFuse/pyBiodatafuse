@@ -1,0 +1,117 @@
+{
+    "head": {
+        "vars": [
+            "transporterID",
+            "label",
+            "InChIKey",
+            "SMILES",
+            "chembl_id",
+            "chebi_id",
+            "drugbank_id",
+            "pubchem_compound_id",
+            "molmedb_id",
+            "source_doi",
+            "source_pmid"
+        ]
+    },
+    "results": {
+        "bindings": [
+            {
+                "transporterID": {
+                    "type": "literal",
+                    "value": "P48544",
+                    "datatype": "http: //www.w3.org/2001/XMLSchema#string"
+                },
+                "label": {
+                    "type": "literal",
+                    "value": "Euphornin",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#string"
+                },
+                "InChIKey": {
+                    "type": "literal",
+                    "value": "BRVXVMOWTHQKHC-LVYIKVSWSA-N",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#string"
+                },
+                "SMILES": {
+                    "type": "literal",
+                    "value": "CC(=O)OC1CC(OC(C)=O)C(C)(C)/C=C\\C(C)C(OC(C)=O)C2(O)CC(C)C(OC(=O)c3ccccc3)C2/C=C\\1C",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#string"
+                },
+                "molmedb_id": {
+                    "type": "literal",
+                    "value": "MM470853",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#string"
+                },
+                "source_pmid": {
+                    "type": "literal",
+                    "value": "30411614",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#integer"
+                }
+            },
+            {
+                "transporterID": {
+                    "type": "literal",
+                    "value": "P48544",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#string"
+                },
+                "label": {
+                    "type": "literal",
+                    "value": "Euphorbiaproliferin C",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#string"
+                },
+                "InChIKey": {
+                    "type": "literal",
+                    "value": "MEMULCZBXUZFOZ-UHFFFAOYSA-N",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#string"
+                },
+                "SMILES": {
+                    "type": "literal",
+                    "value": "CC(=O)OC1C2(C)OCC3(C(=O)C=CC(C(C)(C)OC(C)=O)C23)C(OC(C)=O)C2C(OC(=O)C(C)C)C(C)CC21OC(C)=O",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#string"
+                },
+                "molmedb_id": {
+                    "type": "literal",
+                    "value": "MM470852",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#string"
+                },
+                "source_pmid": {
+                    "type": "literal",
+                    "value": "27441737",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#integer"
+                }
+            },
+            {
+                "transporterID": {
+                    "type": "literal",
+                    "value": "Q9BYT1",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#string"
+                },
+                "label": {
+                    "type": "literal",
+                    "value": "MM17483",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#string"
+                },
+                "InChIKey": {
+                    "type": "literal",
+                    "value": "ACSIXWWBWUQEHA-UHFFFAOYSA-N",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#string"
+                },
+                "SMILES": {
+                    "type": "literal",
+                    "value": "O=P(O)(O)C(Cl)(Cl)P(=O)(O)O",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#string"
+                },
+                "molmedb_id": {
+                    "type": "literal",
+                    "value": "MM17483",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#string"
+                },
+                "source_pmid": {
+                    "type": "literal",
+                    "value": "28720702",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#integer"
+                }
+            }
+        ]
+    }
+}

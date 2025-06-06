@@ -1,0 +1,866 @@
+ENTRY       mmu03010                    Pathway
+NAME        Ribosome - Mus musculus (house mouse)
+CLASS       Genetic Information Processing; Translation
+PATHWAY_MAP mmu03010  Ribosome
+ORGANISM    Mus musculus (house mouse) [GN:mmu]
+GENE        100038969  Rps12-ps18; ribosomal protein S12, pseudogene 18 [KO:K02951]
+            100039478  Gm11810; predicted gene 11810 [KO:K02917]
+            100039532  Gm10029; predicted gene 10029 [KO:K02917]
+            100040298  Gm15501; predicted pseudogene 15501 [KO:K02995]
+            100040416  Rpl13-ps6; ribosomal protein L13, pseudogene 6 [KO:K02873]
+            100042335  Rps15a-ps5; ribosomal protein S15A, pseudogene 5 [KO:K02957]
+            100043695  Gm15483; predicted gene 15483 [KO:K02953]
+            100043805  Gm10224; predicted pseudogene 10224 [KO:K02877]
+            100043813  Rps27rt; ribosomal protein S27, retrogene [KO:K02978]
+            100502825  Rpl37rt; ribosomal protein L37, retrotransposed [KO:K02922]
+            100503125  Gm10913; predicted pseudogene 10913 [KO:K02905]
+            100503670  Rpl5; ribosomal protein L5 [KO:K02932]
+            100861471  n-R5s100; nuclear encoded rRNA 5S 100 [KO:K01981]
+            100861472  n-R5s103; nuclear encoded rRNA 5S 103 [KO:K01981]
+            100861473  n-R5s104; nuclear encoded rRNA 5S 104 [KO:K01981]
+            100861474  n-R5s105; nuclear encoded rRNA 5S 105 [KO:K01981]
+            100861475  n-R5s108; nuclear encoded rRNA 5S 108 [KO:K01981]
+            100861477  n-R5s110; nuclear encoded rRNA 5S 110 [KO:K01981]
+            100861478  n-R5s111; nuclear encoded rRNA 5S 111 [KO:K01981]
+            100861479  n-R5s113; nuclear encoded rRNA 5S 113 [KO:K01981]
+            100861480  Gm25018; predicted gene, 25018 [KO:K01981]
+            100861481  n-R5s117; nuclear encoded rRNA 5S 117 [KO:K01981]
+            100861482  n-R5s121; nuclear encoded rRNA 5S 121 [KO:K01981]
+            100861483  n-R5s122; nuclear encoded rRNA 5S 122 [KO:K01981]
+            100861484  n-R5s123; nuclear encoded rRNA 5S 123 [KO:K01981]
+            100861486  n-R5s124; nuclear encoded rRNA 5S 124 [KO:K01981]
+            100861487  n-R5s128; nuclear encoded rRNA 5S 128 [KO:K01981]
+            100861488  Gm26391; predicted gene, 26391 [KO:K01981]
+            100861489  n-R5s133; nuclear encoded rRNA 5S 133 [KO:K01981]
+            100861490  n-R5s134; nuclear encoded rRNA 5S 134 [KO:K01981]
+            100861491  n-R5s136; nuclear encoded rRNA 5S 136 [KO:K01981]
+            100861492  n-R5s138; nuclear encoded rRNA 5S 138 [KO:K01981]
+            100861493  n-R5s139; nuclear encoded rRNA 5S 139 [KO:K01981]
+            100861494  Gm22109; predicted gene, 22109 [KO:K01981]
+            100861495  n-R5s141; nuclear encoded rRNA 5S 141 [KO:K01981]
+            100861496  n-R5s142; nuclear encoded rRNA 5S 142 [KO:K01981]
+            100861497  n-R5s143; nuclear encoded rRNA 5S 143 [KO:K01981]
+            100861498  n-R5s144; nuclear encoded rRNA 5S 144 [KO:K01981]
+            100861499  Gm25212; predicted gene, 25212 [KO:K01981]
+            100861500  n-R5s146; nuclear encoded rRNA 5S 146 [KO:K01981]
+            100861501  Gm22291; predicted gene, 22291 [KO:K01981]
+            100861502  Gm23284; predicted gene, 23284 [KO:K01981]
+            100861503  n-R5s149; nuclear encoded rRNA 5S 149 [KO:K01981]
+            100861531  Rn45s; 45S pre-ribosomal RNA [KO:K01982]
+            100862223  Gm21571; predicted gene, 21571 [KO:K02951]
+            101056169  Gm5116; predicted gene 5116 [KO:K02893]
+            102631940  Gm13149; predicted gene 13149 [KO:K02942]
+            102631952  Gm5928; predicted gene 5928 [KO:K02977]
+            102632224  Gm8062; predicted pseudogene 8062 [KO:K02880]
+            102632403  Rpl17-ps8; ribosomal protein L17, pseudogene 8 [KO:K02880]
+            102633076  Gm5329; predicted gene 5329 [KO:K02893]
+            102633800  Gm12770; predicted gene 12770 [KO:K02893]
+            102635284  Gm29627; predicted gene 29627 [KO:K02893]
+            102635960  Gm15067; predicted gene 15067 [KO:K02924]
+            102637838  Gm6003; predicted gene 6003 [KO:K02893]
+            102639811  Gm6686; predicted pseudogene 6686 [KO:K02970]
+            102640707  Gm15793; predicted gene 15793 [KO:K02870]
+            105243147  Gm39147; predicted gene, 39147 [KO:K02905]
+            107732  Mrpl10; mitochondrial ribosomal protein L10 [KO:K02864]
+            107734  Mrpl30; mitochondrial ribosomal protein L30 [KO:K02907]
+            108167548  Gm45855; predicted gene 45855 [KO:K02981]
+            108167553  Gm50601; predicted gene, 50601 [KO:K02981]
+            108167670  Gm17415; predicted gene, 17415 [KO:K02936]
+            108167695  Gm20620; predicted gene 20620 [KO:K02980]
+            108167705  Gm46142; predicted gene, 46142 [KO:K02889]
+            108167775  Gm8112; predicted gene 8112 [KO:K02893]
+            108167871  Gm11703; predicted gene 11703 [KO:K02889]
+            108167910  Gm12712; predicted gene 12712 [KO:K02936]
+            108168084  Gm46415; predicted gene, 46415 [KO:K02908]
+            108168114  Gm5451; predicted gene 5451 [KO:K02940]
+            108168140  Gm46442; predicted gene, 46442 [KO:K02893]
+            108168145  Gm5459; predicted gene 5459 [KO:K02936]
+            108168211  Gm46494; predicted gene, 46494 [KO:K02971]
+            108168218  Gm5218; predicted gene 5218 [KO:K02905]
+            108168279  Gm46546; predicted gene, 46546 [KO:K02971]
+            108168333  Gm15946; predicted gene 15946 [KO:K02963]
+            108168363  Gm17669; predicted gene, 17669 [KO:K02905]
+            108168462  Gm14577; predicted gene 14577 [KO:K02978]
+            108168770  Gm13653; predicted gene 13653 [KO:K02889]
+            108168799  Gm11686; predicted gene 11686 [KO:K02917]
+            108168809  Gm14279; predicted gene 14279 [KO:K02917]
+            108168824  Gm14439; predicted gene 14439 [KO:K02900]
+            108168832  Gm13981; predicted gene 13981 [KO:K02900]
+            108169000  Gm12643; predicted gene 12643 [KO:K02975]
+            108169053  Gm15682; predicted gene 15682 [KO:K02889]
+            108169063  Gm43247; predicted gene 43247 [KO:K02889]
+            108169072  Gm6139; predicted gene 6139 [KO:K02981]
+            108169117  Gm6272; predicted pseudogene 6272 [KO:K02980]
+            108169156  Gm44803; predicted gene 44803 [KO:K02980]
+            108169197  Gm10420; predicted gene 10420 [KO:K02981]
+            110954  Rpl10; ribosomal protein L10 [KO:K02866]
+            114641  Rpl31; ribosomal protein L31 [KO:K02910]
+            115486883  Gm8940; predicted gene 8940 [KO:K02905]
+            115487061  n-R5s106; nuclear encoded rRNA 5S 106 [KO:K01981]
+            115487062  n-R5s118; nuclear encoded rRNA 5S 118 [KO:K01981]
+            115487063  Gm24312; predicted gene, 24312 [KO:K01981]
+            115487064  n-R5s130; nuclear encoded rRNA 5S 130 [KO:K01981]
+            115487067  n-R5s112; nuclear encoded rRNA 5S 112 [KO:K01981]
+            115487068  n-R5s120; nuclear encoded rRNA 5S 120 [KO:K01981]
+            115487069  n-R5s125; nuclear encoded rRNA 5S 125 [KO:K01981]
+            115487073  n-R5s107; nuclear encoded rRNA 5S 107 [KO:K01981]
+            115487075  n-R5s115; nuclear encoded rRNA 5S 115 [KO:K01981]
+            115487076  n-R5s109; nuclear encoded rRNA 5S 109 [KO:K01981]
+            115488170  Rpl27a-ps4; ribosomal protein L27A, pseudogene 4 [KO:K02900]
+            115488675  n-R5s33; nuclear encoded rRNA 5S 33 [KO:K01981]
+            115488945  n-R5s25; nuclear encoded rRNA 5S 25 [KO:K01981]
+            115489156  n-R5s2; nuclear encoded rRNA 5S 2 [KO:K01981]
+            115489397  Gm53232; predicted gene, 53232 [KO:K02942]
+            115489434  Gm13194; predicted gene 13194 [KO:K02929]
+            115489751  n-R5s194; nuclear encoded rRNA 5S 194 [KO:K01981]
+            11837  Rplp0; ribosomal protein lateral stalk subunit P0 [KO:K02941]
+            118451  Mrps2; mitochondrial ribosomal protein S2 [KO:K02967]
+            118567485  [KO:K02893]
+            118567798  Gm53596; predicted gene, 53596 [KO:K02880]
+            118568219  Gm57817; predicted gene, 57817 [KO:K02917]
+            118568281  [KO:K02974]
+            118568354  [KO:K02880]
+            118568368  [KO:K02896]
+            118568567  [KO:K02873]
+            118568637  [KO:K02873]
+            121022  Mrps6; mitochondrial ribosomal protein S6 [KO:K02990]
+            14109  Fau; FAU ubiquitin like and ribosomal protein S30 fusion [KO:K02983]
+            16785  Rpsa; ribosomal protein SA [KO:K02998]
+            16898  Rps2; ribosomal protein S2 [KO:K02981]
+            19804  Rn5s; 5S RNA [KO:K01981]
+            19896  Rpl10a; ribosomal protein L10A [KO:K02865]
+            19899  Rpl18; ribosomal protein L18 [KO:K02883]
+            19921  Rpl19; ribosomal protein L19 [KO:K02885]
+            19933  Rpl21; ribosomal protein L21 [KO:K02889]
+            19934  Rpl22; ribosomal protein L22 [KO:K02891]
+            19935  Mrpl23; mitochondrial ribosomal protein L23 [KO:K02892]
+            19941  Rpl26; ribosomal protein L26 [KO:K02898]
+            19942  Rpl27; ribosomal protein L27 [KO:K02901]
+            19943  Rpl28; ribosomal protein L28 [KO:K02903]
+            19944  Rpl29; ribosomal protein L29 [KO:K02905]
+            19946  Rpl30; ribosomal protein L30 [KO:K02908]
+            19951  Rpl32; ribosomal protein L32 [KO:K02912]
+            19981  Rpl37a; ribosomal protein L37a [KO:K02921]
+            19982  Rpl36a; ribosomal protein L36A [KO:K02929]
+            19988  Rpl6; ribosomal protein L6 [KO:K02934]
+            19989  Rpl7; ribosomal protein L7 [KO:K02937]
+            20005  Rpl9; ribosomal protein L9 [KO:K02940]
+            20042  Rps12; ribosomal protein S12 [KO:K02951]
+            20044  Rps14; ribosomal protein S14 [KO:K02955]
+            20054  Rps15; ribosomal protein S15 [KO:K02958]
+            20055  Rps16; ribosomal protein S16 [KO:K02960]
+            20068  Rps17; ribosomal protein S17 [KO:K02962]
+            20084  Rps18; ribosomal protein S18 [KO:K02964]
+            20085  Rps19; ribosomal protein S19 [KO:K02966]
+            20088  Rps24; ribosomal protein S24 [KO:K02974]
+            20090  Rps29; ribosomal protein S29 [KO:K02980]
+            20091  Rps3a1; ribosomal protein S3A1 [KO:K02984]
+            20102  Rps4x; ribosomal protein S4, X-linked [KO:K02987]
+            20103  Rps5; ribosomal protein S5 [KO:K02989]
+            20104  Rps6; ribosomal protein S6 [KO:K02991]
+            20115  Rps7; ribosomal protein S7 [KO:K02993]
+            20116  Rps8; ribosomal protein S8 [KO:K02995]
+            216036  Gm4796; predicted gene 4796 [KO:K02991]
+            216767  Mrpl22; mitochondrial ribosomal protein L22 [KO:K02890]
+            22121  Rpl13a; ribosomal protein L13A [KO:K02872]
+            22186  Uba52; ubiquitin A-52 residue ribosomal protein fusion product 1 [KO:K02927]
+            225058  Gm4832; predicted gene 4832 [KO:K02974]
+            225215  Rsl24d1; ribosomal L24 domain containing 1 [KO:K02896]
+            236598  Rn28s1; 28S ribosomal RNA [KO:K01982]
+            237433  Gm4925; predicted gene 4925 [KO:K02951]
+            238217  Rpl10l; ribosomal protein L10-like [KO:K02866]
+            24030  Mrps12; mitochondrial ribosomal protein S12 [KO:K02950]
+            243302  Gm4963; predicted gene 4963 [KO:K02975]
+            26451  Rpl27a; ribosomal protein L27A [KO:K02900]
+            267019  Rps15a; ribosomal protein S15A [KO:K02957]
+            268449  Rpl23a; ribosomal protein L23A [KO:K02893]
+            269261  Rpl12; ribosomal protein L12 [KO:K02870]
+            26961  Rpl8; ribosomal protein L8 [KO:K02938]
+            270106  Rpl13; ribosomal protein L13 [KO:K02873]
+            270499  Gm5058; predicted gene 5058 [KO:K02893]
+            27050  Rps3; ribosomal protein S3 [KO:K02985]
+            27176  Rpl7a; ribosomal protein L7A [KO:K02936]
+            27207  Rps11; ribosomal protein S11 [KO:K02949]
+            27367  Rpl3; ribosomal protein L3 [KO:K02925]
+            27370  Rps26; ribosomal protein S26 [KO:K02976]
+            27395  Mrpl15; mitochondrial ribosomal protein L15 [KO:K02876]
+            27397  Mrpl17; mitochondrial ribosomal protein L17 [KO:K02879]
+            27398  Mrpl2; mitochondrial ribosomal protein L2 [KO:K02886]
+            319195  Rpl17; ribosomal protein L17 [KO:K02880]
+            353242  Mrpl21; mitochondrial ribosomal protein L21 [KO:K02888]
+            383032  Gm5215; predicted gene 5215 [KO:K02962]
+            432502  Rpl6l; ribosomal protein L6-like [KO:K02934]
+            432725  Gm5445; predicted gene 5445 [KO:K02889]
+            433319  Gm5528; predicted gene 5528 [KO:K02889]
+            433745  Gm12816; predicted gene 12816 [KO:K02925]
+            434843  Rps12-ps11; ribosomal protein S12, pseudogene 11 [KO:K02951]
+            50529  Mrps7; mitchondrial ribosomal protein S7 [KO:K02992]
+            54127  Rps28; ribosomal protein S28 [KO:K02979]
+            54217  Rpl36; ribosomal protein L36 [KO:K02920]
+            56040  Rplp1; ribosomal protein lateral stalk subunit P1 [KO:K02942]
+            56282  Mrpl12; mitochondrial ribosomal protein L12 [KO:K02935]
+            56284  Mrpl19; mitochondrial ribosomal protein L19 [KO:K02884]
+            57294  Rps27; ribosomal protein S27 [KO:K02978]
+            57808  Rpl35a; ribosomal protein L35A [KO:K02917]
+            619547  Rpl34-ps1; ribosomal protein L34, pseudogene 1 [KO:K02915]
+            619883  Gm6109; predicted gene 6109 [KO:K02908]
+            621697  Rpl32l; ribosomal protein L32-like [KO:K02912]
+            625281  Gm6570; predicted gene 6570 [KO:K02908]
+            626048  Rps12-ps16; ribosomal protein S12, pseudogene 16 [KO:K02951]
+            629595  Gm6988; predicted gene 6988 [KO:K02975]
+            64657  Mrps10; mitochondrial ribosomal protein S10 [KO:K02946]
+            64659  Mrps14; mitochondrial ribosomal protein S14 [KO:K02954]
+            65019  Rpl23; ribosomal protein L23 [KO:K02894]
+            66163  Mrpl4; mitochondrial ribosomal protein L4 [KO:K02926]
+            66211  Rpl3l; ribosomal protein L3-like [KO:K02925]
+            66223  Mrpl35; mitochondrial ribosomal protein L35 [KO:K02916]
+            66242  Mrps16; mitochondrial ribosomal protein S16 [KO:K02959]
+            66258  Mrps17; mitochondrial ribosomal protein S17 [KO:K02961]
+            66292  Mrps21; mitochondrial ribosomal protein S21 [KO:K02970]
+            66407  Mrps15; mitochondrial ribosomal protein S15 [KO:K02956]
+            66419  Mrpl11; mitochondrial ribosomal protein L11 [KO:K02867]
+            66448  Mrpl20; mitochondrial ribosomal protein L20 [KO:K02887]
+            66475  Rps23; ribosomal protein S23 [KO:K02973]
+            66480  Rpl15; ribosomal protein L15 [KO:K02877]
+            66481  Rps21; ribosomal protein S21 [KO:K02971]
+            66483  Rpl36al; ribosomal protein L36A-like [KO:K02929]
+            66489  Rpl35; ribosomal protein L35 [KO:K02918]
+            664969  Gm7429; predicted pseudogene 7429 [KO:K02908]
+            665463  Rps12-ps12; ribosomal protein S12, pseudogene 12 [KO:K02951]
+            665522  Rps12-ps15; ribosomal protein S12, pseudogene 15 [KO:K02951]
+            665562  Rpl31-ps12; ribosomal protein L31, pseudogene 1 2 [KO:K02910]
+            665579  Rps12-ps13; ribosomal protein S12, pseudogene 13 [KO:K02951]
+            665611  Rps12-ps14; ribosomal protein S12, pseudogene 14 [KO:K02951]
+            666501  Gm8137; predicted gene 8137 [KO:K02893]
+            666548  Gm8158; predicted gene 8158 [KO:K02893]
+            666574  Gm13144; predicted gene 13144 [KO:K02942]
+            666738  Gm8264; predicted gene 8264 [KO:K02893]
+            666790  Gm8290; predicted gene 8290 [KO:K02893]
+            667414  Gm8618; predicted gene 8618 [KO:K02973]
+            668411  Gm9156; predicted gene 9156 [KO:K02893]
+            66845  Mrpl33; mitochondrial ribosomal protein L33 [KO:K02913]
+            668809  Gm9372; predicted gene 9372 [KO:K02973]
+            670211  Gm12508; predicted gene 12508 [KO:K02905]
+            67025  Rpl11; ribosomal protein L11 [KO:K02868]
+            670832  Rps12-ps10; ribosomal protein S12, pseudogene 10 [KO:K02951]
+            67097  Rps10; ribosomal protein S10 [KO:K02947]
+            67115  Rpl14; ribosomal protein L14 [KO:K02875]
+            671641  Rps12-ps24; ribosomal protein S12, pseudogene 24 [KO:K02951]
+            67186  Rplp2; ribosomal protein lateral stalk subunit P2 [KO:K02943]
+            67248  Rpl39; ribosomal protein L39 [KO:K02924]
+            67281  Rpl37; ribosomal protein L37 [KO:K02922]
+            67427  Rps20; ribosomal protein S20 [KO:K02969]
+            67671  Rpl38; ribosomal protein L38 [KO:K02923]
+            67681  Mrpl18; mitochondrial ribosomal protein L18 [KO:K02881]
+            67707  Mrpl24; mitochondrial ribosomal protein L24 [KO:K02895]
+            67891  Rpl4; ribosomal protein L4 [KO:K02930]
+            67941  Rps27l; ribosomal protein S27-like [KO:K02978]
+            67945  Rpl41; ribosomal protein L41 [KO:K02928]
+            67994  Mrps11; mitochondrial ribosomal protein S11 [KO:K02948]
+            68028  Rpl22l1; ribosomal protein L22 like 1 [KO:K02891]
+            68052  Rps13; ribosomal protein S13 [KO:K02953]
+            68172  Rpl39l; ribosomal protein L39-like [KO:K02924]
+            68193  Rpl24; ribosomal protein L24 [KO:K02896]
+            68436  Rpl34; ribosomal protein L34 [KO:K02915]
+            68463  Mrpl14; mitochondrial ribosomal protein L14 [KO:K02874]
+            68537  Mrpl13; mitochondrial ribosomal protein L13 [KO:K02871]
+            68565  Mrps18a; mitochondrial ribosomal protein S18A [KO:K02963]
+            68611  Mrpl28; mitochondrial ribosomal protein L28 [KO:K02902]
+            68735  Mrps18c; mitochondrial ribosomal protein S18C [KO:K02963]
+            69527  Mrps9; mitochondrial ribosomal protein S9 [KO:K02996]
+            75398  Mrpl32; mitochondrial ribosomal protein L32 [KO:K02911]
+            75617  Rps25; ribosomal protein S25 [KO:K02975]
+            76808  Rpl18a; ribosomal protein L18A [KO:K02882]
+            76846  Rps9; ribosomal protein S9 [KO:K02997]
+            77721  Mrps5; mitochondrial ribosomal protein S5 [KO:K02988]
+            78294  Rps27a; ribosomal protein S27A [KO:K02977]
+            78523  Mrpl9; mitochondrial ribosomal protein L9 [KO:K02939]
+            790956  Rs5-8s1; 5.8S ribosomal RNA [KO:K01986]
+            94061  Mrpl1; mitochondrial ribosomal protein L1 [KO:K02863]
+            94062  Mrpl3; mitochondrial ribosomal protein L3 [KO:K02906]
+            94063  Mrpl16; mitochondrial ribosomal protein L16 [KO:K02878]
+            94064  Mrpl27; mitochondrial ribosomal protein L27 [KO:K02899]
+            94065  Mrpl34; mitochondrial ribosomal protein L34 [KO:K02914]
+            94066  Mrpl36; mitochondrial ribosomal protein L36 [KO:K02919]
+REFERENCE   PMID:10476961
+  AUTHORS   Ban N, Nissen P, Hansen J, Capel M, Moore PB, Steitz TA.
+  TITLE     Placement of protein and RNA structures into a 5 A-resolution map of the 50S ribosomal subunit.
+  JOURNAL   Nature 400:841-847 (1999)
+            DOI:10.1038/23641
+REFERENCE   PMID:10476960
+  AUTHORS   Clemons WM Jr, May JL, Wimberly BT, McCutcheon JP, Capel MS, Ramakrishnan V.
+  TITLE     Structure of a bacterial 30S ribosomal subunit at 5.5 A resolution.
+  JOURNAL   Nature 400:833-840 (1999)
+            DOI:10.1038/23631
+REFERENCE   PMID:10497122
+  AUTHORS   Cate JH, Yusupov MM, Yusupova GZ, Earnest TN, Noller HF.
+  TITLE     X-ray crystal structures of 70S ribosome functional complexes.
+  JOURNAL   Science 285:2095-2104 (1999)
+            DOI:10.1126/science.285.5436.2095
+REFERENCE   PMID:10937989
+  AUTHORS   Ban N, Nissen P, Hansen J, Moore PB, Steitz TA.
+  TITLE     The complete atomic structure of the large ribosomal subunit at 2.4 A resolution.
+  JOURNAL   Science 289:905-920 (2000)
+            DOI:10.1126/science.289.5481.905
+REFERENCE   PMID:10937990
+  AUTHORS   Nissen P, Hansen J, Ban N, Moore PB, Steitz TA.
+  TITLE     The structural basis of ribosome activity in peptide bond synthesis.
+  JOURNAL   Science 289:920-930 (2000)
+            DOI:10.1126/science.289.5481.920
+REFERENCE   PMID:11014182
+  AUTHORS   Wimberly BT, Brodersen DE, Clemons WM Jr, Morgan-Warren RJ, Carter AP, Vonrhein C, Hartsch T, Ramakrishnan V.
+  TITLE     Structure of the 30S ribosomal subunit.
+  JOURNAL   Nature 407:327-339 (2000)
+            DOI:10.1038/35030006
+REFERENCE   PMID:11014183
+  AUTHORS   Carter AP, Clemons WM, Brodersen DE, Morgan-Warren RJ, Wimberly BT, Ramakrishnan V.
+  TITLE     Functional insights from the structure of the 30S ribosomal subunit and its interactions with antibiotics.
+  JOURNAL   Nature 407:340-348 (2000)
+            DOI:10.1038/35030019
+KO_PATHWAY  ko03010
+///
+
+ENTRY       mmu05171                    Pathway
+NAME        Coronavirus disease - COVID-19 - Mus musculus (house mouse)
+DESCRIPTION Coronavirus disease of 2019 (COVID-19) is a highly contagious respiratory infection that is caused by the severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2). SARS-CoV-2 infects alveolar epithelial cells [mainly alveolar epithelial type 2 (AEC2) cells] through the angiotensin-converting enzyme 2 (ACE2) receptor. Upon the occupancy of ACE2 by SARS-CoV-2, the increased serum level of free Angiotensin II (Ang II) due to a reduction of ACE2-mediated degradation promotes activation of the NF-kappa B pathway via Ang II type 1 receptor (AT1R), followed by  interleukin-6 (IL-6) production. SARS-CoV-2 also activates the innate immune system; macrophage stimulation triggers the overproduction of pro-inflammatory cytokines, including IL-6, and the "cytokine storm", which results in systemic inflammatory response syndrome and multiple organ failure. The combined effects of complement activation, dysregulated neutrophilia, endothelial injury, and hypercoagulability appear to be intertwined to drive the severe features of COVID-19.
+CLASS       Human Diseases; Infectious disease: viral
+PATHWAY_MAP mmu05171  Coronavirus disease - COVID-19
+DISEASE     H02398  COVID-19
+ORGANISM    Mus musculus (house mouse) [GN:mmu]
+GENE        100038882  Isg15; ISG15 ubiquitin-like modifier [KO:K12159]
+            100038969  Rps12-ps18; ribosomal protein S12, pseudogene 18 [KO:K02951]
+            100039478  Gm11810; predicted gene 11810 [KO:K02917]
+            100039532  Gm10029; predicted gene 10029 [KO:K02917]
+            100040298  Gm15501; predicted pseudogene 15501 [KO:K02995]
+            100040416  Rpl13-ps6; ribosomal protein L13, pseudogene 6 [KO:K02873]
+            100042335  Rps15a-ps5; ribosomal protein S15A, pseudogene 5 [KO:K02957]
+            100043695  Gm15483; predicted gene 15483 [KO:K02953]
+            100043805  Gm10224; predicted pseudogene 10224 [KO:K02877]
+            100043813  Rps27rt; ribosomal protein S27, retrogene [KO:K02978]
+            100502825  Rpl37rt; ribosomal protein L37, retrotransposed [KO:K02922]
+            100503125  Gm10913; predicted pseudogene 10913 [KO:K02905]
+            100503670  Rpl5; ribosomal protein L5 [KO:K02932]
+            100862223  Gm21571; predicted gene, 21571 [KO:K02951]
+            101056169  Gm5116; predicted gene 5116 [KO:K02893]
+            102631940  Gm13149; predicted gene 13149 [KO:K02942]
+            102631952  Gm5928; predicted gene 5928 [KO:K02977]
+            102632224  Gm8062; predicted pseudogene 8062 [KO:K02880]
+            102632403  Rpl17-ps8; ribosomal protein L17, pseudogene 8 [KO:K02880]
+            102633076  Gm5329; predicted gene 5329 [KO:K02893]
+            102633800  Gm12770; predicted gene 12770 [KO:K02893]
+            102635284  Gm29627; predicted gene 29627 [KO:K02893]
+            102635960  Gm15067; predicted gene 15067 [KO:K02924]
+            102637838  Gm6003; predicted gene 6003 [KO:K02893]
+            102640707  Gm15793; predicted gene 15793 [KO:K02870]
+            105243147  Gm39147; predicted gene, 39147 [KO:K02905]
+            108167548  Gm45855; predicted gene 45855 [KO:K02981]
+            108167553  Gm50601; predicted gene, 50601 [KO:K02981]
+            108167670  Gm17415; predicted gene, 17415 [KO:K02936]
+            108167695  Gm20620; predicted gene 20620 [KO:K02980]
+            108167705  Gm46142; predicted gene, 46142 [KO:K02889]
+            108167775  Gm8112; predicted gene 8112 [KO:K02893]
+            108167871  Gm11703; predicted gene 11703 [KO:K02889]
+            108167910  Gm12712; predicted gene 12712 [KO:K02936]
+            108168084  Gm46415; predicted gene, 46415 [KO:K02908]
+            108168114  Gm5451; predicted gene 5451 [KO:K02940]
+            108168140  Gm46442; predicted gene, 46442 [KO:K02893]
+            108168145  Gm5459; predicted gene 5459 [KO:K02936]
+            108168211  Gm46494; predicted gene, 46494 [KO:K02971]
+            108168218  Gm5218; predicted gene 5218 [KO:K02905]
+            108168279  Gm46546; predicted gene, 46546 [KO:K02971]
+            108168363  Gm17669; predicted gene, 17669 [KO:K02905]
+            108168462  Gm14577; predicted gene 14577 [KO:K02978]
+            108168770  Gm13653; predicted gene 13653 [KO:K02889]
+            108168799  Gm11686; predicted gene 11686 [KO:K02917]
+            108168809  Gm14279; predicted gene 14279 [KO:K02917]
+            108168824  Gm14439; predicted gene 14439 [KO:K02900]
+            108168832  Gm13981; predicted gene 13981 [KO:K02900]
+            108169000  Gm12643; predicted gene 12643 [KO:K02975]
+            108169053  Gm15682; predicted gene 15682 [KO:K02889]
+            108169063  Gm43247; predicted gene 43247 [KO:K02889]
+            108169072  Gm6139; predicted gene 6139 [KO:K02981]
+            108169117  Gm6272; predicted pseudogene 6272 [KO:K02980]
+            108169156  Gm44803; predicted gene 44803 [KO:K02980]
+            108169197  Gm10420; predicted gene 10420 [KO:K02981]
+            109828  C7; complement component 7 [KO:K03996]
+            110135  Fgb; fibrinogen beta chain [KO:K03904]
+            110382  C8b; complement component 8, beta polypeptide [KO:K03998]
+            110954  Rpl10; ribosomal protein L10 [KO:K02866]
+            11421  Ace; angiotensin I converting enzyme [KO:K01283] [EC:3.4.15.1]
+            114641  Rpl31; ribosomal protein L31 [KO:K02910]
+            11491  Adam17; a disintegrin and metallopeptidase domain 17 [KO:K06059] [EC:3.4.24.86]
+            11537  Cfd; complement factor D [KO:K01334] [EC:3.4.21.46]
+            115486883  Gm8940; predicted gene 8940 [KO:K02905]
+            115488170  Rpl27a-ps4; ribosomal protein L27A, pseudogene 4 [KO:K02900]
+            115489397  Gm53232; predicted gene, 53232 [KO:K02942]
+            115489434  Gm13194; predicted gene 13194 [KO:K02929]
+            11607  Agtr1a; angiotensin II receptor, type 1a [KO:K04166]
+            11608  Agtr1b; angiotensin II receptor, type 1b [KO:K04166]
+            11837  Rplp0; ribosomal protein lateral stalk subunit P0 [KO:K02941]
+            118567485  [KO:K02893]
+            118567798  Gm53596; predicted gene, 53596 [KO:K02880]
+            118568219  Gm57817; predicted gene, 57817 [KO:K02917]
+            118568281  [KO:K02974]
+            118568354  [KO:K02880]
+            118568368  [KO:K02896]
+            118568567  [KO:K02873]
+            118568637  [KO:K02873]
+            12259  C1qa; complement component 1, q subcomponent, alpha polypeptide [KO:K03986]
+            12260  C1qb; complement component 1, q subcomponent, beta polypeptide [KO:K03987]
+            12262  C1qc; complement component 1, q subcomponent, C chain [KO:K03988]
+            12263  C2; complement C2 [KO:K01332] [EC:3.4.21.43]
+            12266  C3; complement component 3 [KO:K03990]
+            12267  C3ar1; complement component 3a receptor 1 [KO:K04009]
+            12268  C4b; complement C4B (Chido blood group) [KO:K03989]
+            12273  C5ar1; complement component 5a receptor 1 [KO:K04010]
+            12274  C6; complement component 6 [KO:K03995]
+            12279  C9; complement component 9 [KO:K04000]
+            12362  Casp1; caspase 1 [KO:K01370] [EC:3.4.22.36]
+            12675  Chuk; conserved helix-loop-helix ubiquitous kinase [KO:K04467] [EC:2.7.11.10]
+            12981  Csf2; colony stimulating factor 2 (granulocyte-macrophage) [KO:K05427]
+            12985  Csf3; colony stimulating factor 3 (granulocyte) [KO:K05423]
+            13058  Cybb; cytochrome b-245, beta polypeptide [KO:K21421] [EC:1.-.-.-]
+            13649  Egfr; epidermal growth factor receptor [KO:K04361] [EC:2.7.10.1]
+            14060  F13b; coagulation factor XIII, beta subunit [KO:K03906]
+            14061  F2; coagulation factor II [KO:K01313] [EC:3.4.21.5]
+            14109  Fau; FAU ubiquitin like and ribosomal protein S30 fusion [KO:K02983]
+            14131  Fcgr3; Fc receptor, IgG, low affinity III [KO:K06472]
+            14161  Fga; fibrinogen alpha chain [KO:K03903]
+            14281  Fos; FBJ osteosarcoma oncogene [KO:K04379]
+            142980  Tlr3; toll-like receptor 3 [KO:K05401]
+            14962  Cfb; complement factor B [KO:K01335] [EC:3.4.21.47]
+            15139  Hc; hemolytic complement [KO:K03994]
+            15200  Hbegf; heparin-binding EGF-like growth factor [KO:K08523]
+            15945  Cxcl10; C-X-C motif chemokine ligand 10 [KO:K12671]
+            15962  Ifna1; interferon alpha 1 [KO:K05414]
+            15964  Ifna11; interferon alpha 11 [KO:K05414]
+            15965  Ifna2; interferon alpha 2 [KO:K05414]
+            15967  Ifna4; interferon alpha 4 [KO:K05414]
+            15968  Ifna5; interferon alpha 5 [KO:K05414]
+            15969  Ifna6; interferon alpha 6 [KO:K05414]
+            15970  Ifna7; interferon alpha 7 [KO:K05414]
+            15972  Ifna9; interferon alpha 9 [KO:K05414]
+            15974  Ifnab; interferon alpha B [KO:K05414]
+            15975  Ifnar1; interferon (alpha and beta) receptor 1 [KO:K05130]
+            15976  Ifnar2; interferon (alpha and beta) receptor 2 [KO:K05131]
+            15977  Ifnb1; interferon beta 1, fibroblast [KO:K05415]
+            16150  Ikbkb; inhibitor of kappaB kinase beta [KO:K07209] [EC:2.7.11.10]
+            16151  Ikbkg; inhibitor of kappaB kinase gamma [KO:K07210]
+            16159  Il12a; interleukin 12a [KO:K05406]
+            16160  Il12b; interleukin 12b [KO:K05425]
+            16176  Il1b; interleukin 1 beta [KO:K04519]
+            16179  Irak1; interleukin-1 receptor-associated kinase 1 [KO:K04730] [EC:2.7.11.1]
+            16183  Il2; interleukin 2 [KO:K05429]
+            16193  Il6; interleukin 6 [KO:K05405]
+            16194  Il6ra; interleukin 6 receptor, alpha [KO:K05055]
+            16195  Il6st; interleukin 6 signal transducer [KO:K05060]
+            16391  Irf9; interferon regulatory factor 9 [KO:K04693]
+            16451  Jak1; Janus kinase 1 [KO:K11217] [EC:2.7.10.2]
+            16476  Jun; jun proto-oncogene [KO:K04448]
+            16785  Rpsa; ribosomal protein SA [KO:K02998]
+            16898  Rps2; ribosomal protein S2 [KO:K02981]
+            170743  Tlr7; toll-like receptor 7 [KO:K05404]
+            170744  Tlr8; toll-like receptor 8 [KO:K10170]
+            17171  Mas1; MAS1 oncogene [KO:K04303]
+            17174  Masp1; MBL associated serine protease 1 [KO:K03992] [EC:3.4.21.-]
+            17175  Masp2; MBL associated serine protease 2 [KO:K03993] [EC:3.4.21.104]
+            17194  Mbl1; mannose-binding lectin (protein A) 1 [KO:K03991]
+            17195  Mbl2; mannose-binding lectin (protein C) 2 [KO:K03991]
+            17392  Mmp3; matrix metallopeptidase 3 [KO:K01394] [EC:3.4.24.17]
+            17857  Mx1; MX dynamin-like GTPase 1 [KO:K14754]
+            17858  Mx2; MX dynamin-like GTPase 2 [KO:K14754]
+            17874  Myd88; myeloid differentiation primary response gene 88 [KO:K04729]
+            18033  Nfkb1; nuclear factor of kappa light polypeptide gene enhancer in B cells 1, p105 [KO:K02580]
+            18035  Nfkbia; nuclear factor of kappa light polypeptide gene enhancer in B cells inhibitor, alpha [KO:K04734]
+            18036  Nfkbib; nuclear factor of kappa light polypeptide gene enhancer in B cells inhibitor, beta [KO:K02581]
+            18186  Nrp1; neuropilin 1 [KO:K06724]
+            18706  Pik3ca; phosphatidylinositol-4,5-bisphosphate 3-kinase catalytic subunit alpha [KO:K00922] [EC:2.7.1.153]
+            18707  Pik3cd; phosphatidylinositol-4,5-bisphosphate 3-kinase catalytic subunit delta [KO:K00922] [EC:2.7.1.153]
+            18708  Pik3r1; phosphoinositide-3-kinase regulatory subunit 1 [KO:K02649]
+            18709  Pik3r2; phosphoinositide-3-kinase regulatory subunit 2 [KO:K02649]
+            18710  Pik3r3; phosphoinositide-3-kinase regulatory subunit 3 [KO:K02649]
+            18750  Prkca; protein kinase C, alpha [KO:K02677] [EC:2.7.11.13]
+            18751  Prkcb; protein kinase C, beta [KO:K19662] [EC:2.7.11.13]
+            18752  Prkcg; protein kinase C, gamma [KO:K19663] [EC:2.7.11.13]
+            18803  Plcg1; phospholipase C, gamma 1 [KO:K01116] [EC:3.1.4.11]
+            19094  Mapk11; mitogen-activated protein kinase 11 [KO:K04441] [EC:2.7.11.24]
+            19106  Eif2ak2; eukaryotic translation initiation factor 2-alpha kinase 2 [KO:K16195] [EC:2.7.11.1]
+            19697  Rela; v-rel reticuloendotheliosis viral oncogene homolog A (avian) [KO:K04735]
+            19896  Rpl10a; ribosomal protein L10A [KO:K02865]
+            19899  Rpl18; ribosomal protein L18 [KO:K02883]
+            19921  Rpl19; ribosomal protein L19 [KO:K02885]
+            19933  Rpl21; ribosomal protein L21 [KO:K02889]
+            19934  Rpl22; ribosomal protein L22 [KO:K02891]
+            19941  Rpl26; ribosomal protein L26 [KO:K02898]
+            19942  Rpl27; ribosomal protein L27 [KO:K02901]
+            19943  Rpl28; ribosomal protein L28 [KO:K02903]
+            19944  Rpl29; ribosomal protein L29 [KO:K02905]
+            19946  Rpl30; ribosomal protein L30 [KO:K02908]
+            19951  Rpl32; ribosomal protein L32 [KO:K02912]
+            19981  Rpl37a; ribosomal protein L37a [KO:K02921]
+            19982  Rpl36a; ribosomal protein L36A [KO:K02929]
+            19988  Rpl6; ribosomal protein L6 [KO:K02934]
+            19989  Rpl7; ribosomal protein L7 [KO:K02937]
+            20005  Rpl9; ribosomal protein L9 [KO:K02940]
+            20042  Rps12; ribosomal protein S12 [KO:K02951]
+            20044  Rps14; ribosomal protein S14 [KO:K02955]
+            20054  Rps15; ribosomal protein S15 [KO:K02958]
+            20055  Rps16; ribosomal protein S16 [KO:K02960]
+            20068  Rps17; ribosomal protein S17 [KO:K02962]
+            20084  Rps18; ribosomal protein S18 [KO:K02964]
+            20085  Rps19; ribosomal protein S19 [KO:K02966]
+            20088  Rps24; ribosomal protein S24 [KO:K02974]
+            20090  Rps29; ribosomal protein S29 [KO:K02980]
+            20091  Rps3a1; ribosomal protein S3A1 [KO:K02984]
+            20102  Rps4x; ribosomal protein S4, X-linked [KO:K02987]
+            20103  Rps5; ribosomal protein S5 [KO:K02989]
+            20104  Rps6; ribosomal protein S6 [KO:K02991]
+            20115  Rps7; ribosomal protein S7 [KO:K02993]
+            20116  Rps8; ribosomal protein S8 [KO:K02995]
+            20293  Ccl12; C-C motif chemokine ligand 12 [KO:K14624]
+            20296  Ccl2; C-C motif chemokine ligand 2 [KO:K14624]
+            20344  Selp; selectin, platelet [KO:K06496]
+            20846  Stat1; signal transducer and activator of transcription 1 [KO:K11220]
+            20847  Stat2; signal transducer and activator of transcription 2 [KO:K11221]
+            20848  Stat3; signal transducer and activator of transcription 3 [KO:K04692]
+            20963  Syk; spleen tyrosine kinase [KO:K05855] [EC:2.7.10.2]
+            214763  Cgas; cyclic GMP-AMP synthase [KO:K17834] [EC:2.7.7.86]
+            216036  Gm4796; predicted gene 4796 [KO:K02991]
+            216799  Nlrp3; NLR family, pyrin domain containing 3 [KO:K12800]
+            217246  Ace3; angiotensin I converting enzyme 3 [KO:K01283] [EC:3.4.15.1]
+            21898  Tlr4; toll-like receptor 4 [KO:K10160]
+            21926  Tnf; tumor necrosis factor [KO:K03156]
+            21937  Tnfrsf1a; tumor necrosis factor receptor superfamily, member 1a [KO:K03158]
+            22031  Traf3; TNF receptor-associated factor 3 [KO:K03174]
+            22034  Traf6; TNF receptor-associated factor 6 [KO:K03175] [EC:2.3.2.27]
+            22121  Rpl13a; ribosomal protein L13A [KO:K02872]
+            22186  Uba52; ubiquitin A-52 residue ribosomal protein fusion product 1 [KO:K02927]
+            22371  Vwf; Von Willebrand factor [KO:K03900]
+            225058  Gm4832; predicted gene 4832 [KO:K02974]
+            225215  Rsl24d1; ribosomal L24 domain containing 1 [KO:K02896]
+            228607  Mavs; mitochondrial antiviral signaling protein [KO:K12648]
+            230073  Rigi; RNA sensor RIG-I [KO:K12646] [EC:5.6.2.6]
+            230396  Ifna13; interferon alpha 13 [KO:K05414]
+            230398  Ifna16; interferon alpha 16 [KO:K05414]
+            230558  C8a; complement component 8, alpha polypeptide [KO:K03997]
+            234779  Plcg2; phospholipase C, gamma 2 [KO:K05859] [EC:3.1.4.11]
+            237433  Gm4925; predicted gene 4925 [KO:K02951]
+            238217  Rpl10l; ribosomal protein L10-like [KO:K02866]
+            23960  Oas1g; 2'-5' oligoadenylate synthetase 1G [KO:K14216] [EC:2.7.7.84]
+            23961  Oas1b; 2'-5' oligoadenylate synthetase 1B [KO:K14216] [EC:2.7.7.84]
+            24088  Tlr2; toll-like receptor 2 [KO:K10159]
+            242517  Ifna15; interferon alpha 15 [KO:K05414]
+            242519  Ifna12; interferon alpha 12 [KO:K05414]
+            243302  Gm4963; predicted gene 4963 [KO:K02975]
+            246727  Oas3; 2'-5' oligoadenylate synthetase 3 [KO:K14216] [EC:2.7.7.84]
+            246728  Oas2; 2'-5' oligoadenylate synthetase 2 [KO:K14216] [EC:2.7.7.84]
+            246730  Oas1a; 2'-5' oligoadenylate synthetase 1A [KO:K14216] [EC:2.7.7.84]
+            26409  Map3k7; mitogen-activated protein kinase kinase kinase 7 [KO:K04427] [EC:2.7.11.25]
+            26413  Mapk1; mitogen-activated protein kinase 1 [KO:K04371] [EC:2.7.11.24]
+            26414  Mapk10; mitogen-activated protein kinase 10 [KO:K04440] [EC:2.7.11.24]
+            26415  Mapk13; mitogen-activated protein kinase 13 [KO:K04441] [EC:2.7.11.24]
+            26416  Mapk14; mitogen-activated protein kinase 14 [KO:K04441] [EC:2.7.11.24]
+            26417  Mapk3; mitogen-activated protein kinase 3 [KO:K04371] [EC:2.7.11.24]
+            26419  Mapk8; mitogen-activated protein kinase 8 [KO:K04440] [EC:2.7.11.24]
+            26420  Mapk9; mitogen-activated protein kinase 9 [KO:K04440] [EC:2.7.11.24]
+            26451  Rpl27a; ribosomal protein L27A [KO:K02900]
+            266632  Irak4; interleukin-1 receptor-associated kinase 4 [KO:K04733] [EC:2.7.11.1]
+            267019  Rps15a; ribosomal protein S15A [KO:K02957]
+            268449  Rpl23a; ribosomal protein L23A [KO:K02893]
+            269261  Rpl12; ribosomal protein L12 [KO:K02870]
+            26961  Rpl8; ribosomal protein L8 [KO:K02938]
+            270106  Rpl13; ribosomal protein L13 [KO:K02873]
+            270499  Gm5058; predicted gene 5058 [KO:K02893]
+            27050  Rps3; ribosomal protein S3 [KO:K02985]
+            27176  Rpl7a; ribosomal protein L7A [KO:K02936]
+            27207  Rps11; ribosomal protein S11 [KO:K02949]
+            27367  Rpl3; ribosomal protein L3 [KO:K02925]
+            27370  Rps26; ribosomal protein S26 [KO:K02976]
+            29857  Mapk12; mitogen-activated protein kinase 12 [KO:K04441] [EC:2.7.11.24]
+            317677  C1s2; complement component 1, s subcomponent 2 [KO:K01331] [EC:3.4.21.42]
+            319195  Rpl17; ribosomal protein L17 [KO:K02880]
+            383032  Gm5215; predicted gene 5215 [KO:K02962]
+            404549  Ifna14; interferon alpha 14 [KO:K05414]
+            432502  Rpl6l; ribosomal protein L6-like [KO:K02934]
+            432725  Gm5445; predicted gene 5445 [KO:K02889]
+            433319  Gm5528; predicted gene 5528 [KO:K02889]
+            433745  Gm12816; predicted gene 12816 [KO:K02925]
+            434843  Rps12-ps11; ribosomal protein S12, pseudogene 11 [KO:K02951]
+            50528  Tmprss2; transmembrane protease, serine 2 [KO:K09633] [EC:3.4.21.122]
+            50908  C1s1; complement component 1, s subcomponent 1 [KO:K01331] [EC:3.4.21.42]
+            50909  C1ra; complement component 1, r subcomponent A [KO:K01330] [EC:3.4.21.41]
+            54127  Rps28; ribosomal protein S28 [KO:K02979]
+            54131  Irf3; interferon regulatory factor 3 [KO:K05411]
+            54217  Rpl36; ribosomal protein L36 [KO:K02920]
+            54721  Tyk2; tyrosine kinase 2 [KO:K11219] [EC:2.7.10.2]
+            56040  Rplp1; ribosomal protein lateral stalk subunit P1 [KO:K02942]
+            56417  Adar; adenosine deaminase, RNA-specific [KO:K12968] [EC:3.5.4.37]
+            56480  Tbk1; TANK-binding kinase 1 [KO:K05410] [EC:2.7.11.10]
+            56489  Ikbke; inhibitor of kappaB kinase epsilon [KO:K07211] [EC:2.7.11.10]
+            57294  Rps27; ribosomal protein S27 [KO:K02978]
+            57808  Rpl35a; ribosomal protein L35A [KO:K02917]
+            619547  Rpl34-ps1; ribosomal protein L34, pseudogene 1 [KO:K02915]
+            619883  Gm6109; predicted gene 6109 [KO:K02908]
+            621697  Rpl32l; ribosomal protein L32-like [KO:K02912]
+            625018  C4a; complement C4A (Rodgers blood group) [KO:K03989]
+            625281  Gm6570; predicted gene 6570 [KO:K02908]
+            626048  Rps12-ps16; ribosomal protein S12, pseudogene 16 [KO:K02951]
+            629595  Gm6988; predicted gene 6988 [KO:K02975]
+            65019  Rpl23; ribosomal protein L23 [KO:K02894]
+            66211  Rpl3l; ribosomal protein L3-like [KO:K02925]
+            66475  Rps23; ribosomal protein S23 [KO:K02973]
+            66480  Rpl15; ribosomal protein L15 [KO:K02877]
+            66481  Rps21; ribosomal protein S21 [KO:K02971]
+            66483  Rpl36al; ribosomal protein L36A-like [KO:K02929]
+            66489  Rpl35; ribosomal protein L35 [KO:K02918]
+            664969  Gm7429; predicted pseudogene 7429 [KO:K02908]
+            665463  Rps12-ps12; ribosomal protein S12, pseudogene 12 [KO:K02951]
+            665522  Rps12-ps15; ribosomal protein S12, pseudogene 15 [KO:K02951]
+            665562  Rpl31-ps12; ribosomal protein L31, pseudogene 1 2 [KO:K02910]
+            665579  Rps12-ps13; ribosomal protein S12, pseudogene 13 [KO:K02951]
+            665611  Rps12-ps14; ribosomal protein S12, pseudogene 14 [KO:K02951]
+            666501  Gm8137; predicted gene 8137 [KO:K02893]
+            666548  Gm8158; predicted gene 8158 [KO:K02893]
+            666574  Gm13144; predicted gene 13144 [KO:K02942]
+            666738  Gm8264; predicted gene 8264 [KO:K02893]
+            666790  Gm8290; predicted gene 8290 [KO:K02893]
+            667277  C1rb; complement component 1, r subcomponent B [KO:K01330] [EC:3.4.21.41]
+            667414  Gm8618; predicted gene 8618 [KO:K02973]
+            668411  Gm9156; predicted gene 9156 [KO:K02893]
+            668809  Gm9372; predicted gene 9372 [KO:K02973]
+            670211  Gm12508; predicted gene 12508 [KO:K02905]
+            67025  Rpl11; ribosomal protein L11 [KO:K02868]
+            670832  Rps12-ps10; ribosomal protein S12, pseudogene 10 [KO:K02951]
+            67097  Rps10; ribosomal protein S10 [KO:K02947]
+            67115  Rpl14; ribosomal protein L14 [KO:K02875]
+            671641  Rps12-ps24; ribosomal protein S12, pseudogene 24 [KO:K02951]
+            67186  Rplp2; ribosomal protein lateral stalk subunit P2 [KO:K02943]
+            67248  Rpl39; ribosomal protein L39 [KO:K02924]
+            67281  Rpl37; ribosomal protein L37 [KO:K02922]
+            67427  Rps20; ribosomal protein S20 [KO:K02969]
+            67671  Rpl38; ribosomal protein L38 [KO:K02923]
+            67891  Rpl4; ribosomal protein L4 [KO:K02930]
+            67941  Rps27l; ribosomal protein S27-like [KO:K02978]
+            67945  Rpl41; ribosomal protein L41 [KO:K02928]
+            68028  Rpl22l1; ribosomal protein L22 like 1 [KO:K02891]
+            68052  Rps13; ribosomal protein S13 [KO:K02953]
+            68172  Rpl39l; ribosomal protein L39-like [KO:K02924]
+            68193  Rpl24; ribosomal protein L24 [KO:K02896]
+            68436  Rpl34; ribosomal protein L34 [KO:K02915]
+            68652  Tab2; TGF-beta activated kinase 1/MAP3K7 binding protein 2 [KO:K04404]
+            69379  C8g; complement component 8, gamma polypeptide [KO:K03999]
+            70008  Ace2; angiotensin converting enzyme 2 [KO:K09708] [EC:3.4.17.23]
+            71586  Ifih1; interferon induced with helicase C domain 1 [KO:K12647] [EC:5.6.2.6]
+            72512  Sting1; stimulator of interferon response cGAMP interactor 1 [KO:K12654]
+            74145  F13a1; coagulation factor XIII, A1 subunit [KO:K03917] [EC:2.3.2.13]
+            74769  Pik3cb; phosphatidylinositol-4,5-bisphosphate 3-kinase catalytic subunit beta [KO:K00922] [EC:2.7.1.153]
+            75617  Rps25; ribosomal protein S25 [KO:K02975]
+            76808  Rpl18a; ribosomal protein L18A [KO:K02882]
+            76846  Rps9; ribosomal protein S9 [KO:K02997]
+            78294  Rps27a; ribosomal protein S27A [KO:K02977]
+            83995  Mmp1a; matrix metallopeptidase 1a (interstitial collagenase) [KO:K01388] [EC:3.4.24.7]
+            83996  Mmp1b; matrix metallopeptidase 1b (interstitial collagenase) [KO:K01388] [EC:3.4.24.7]
+            99571  Fgg; fibrinogen gamma chain [KO:K03905]
+COMPOUND    C00027  Hydrogen peroxide
+            C00046  RNA
+            C00165  Diacylglycerol
+            C00290  Fibrin
+            C00533  Nitric oxide
+            C00704  Superoxide
+            C00873  Angiotensin I
+            C02135  Angiotensin II
+            C15850  Angiotensin (1-7)
+            C20640  Cyclic GMP-AMP
+REFERENCE   PMID:33132005
+  AUTHORS   Harrison AG, Lin T, Wang P
+  TITLE     Mechanisms of SARS-CoV-2 Transmission and Pathogenesis.
+  JOURNAL   Trends Immunol S1471-4906(20)30233-7 (2020)
+            DOI:10.1016/j.it.2020.10.004
+REFERENCE   PMID:33077917
+  AUTHORS   Perico L, Benigni A, Casiraghi F, Ng LFP, Renia L, Remuzzi G
+  TITLE     Immunity, endothelial injury and complement-induced coagulopathy in COVID-19.
+  JOURNAL   Nat Rev Nephrol 10.1038/s41581-020-00357-4 (2020)
+            DOI:10.1038/s41581-020-00357-4
+REFERENCE   PMID:32820801
+  AUTHORS   Battagello DS, Dragunas G, Klein MO, Ayub ALP, Velloso FJ, Correa RG
+  TITLE     Unpuzzling COVID-19: tissue-related signaling pathways associated with SARS-CoV-2 infection and transmission.
+  JOURNAL   Clin Sci (Lond) 134:2137-2160 (2020)
+            DOI:10.1042/CS20200904
+REFERENCE   PMID:32353634
+  AUTHORS   Felsenstein S, Herbert JA, McNamara PS, Hedrich CM
+  TITLE     COVID-19: Immunology and treatment options.
+  JOURNAL   Clin Immunol 215:108448 (2020)
+            DOI:10.1016/j.clim.2020.108448
+REFERENCE   PMID:33014208
+  AUTHORS   Hojyo S, Uchida M, Tanaka K, Hasebe R, Tanaka Y, Murakami M, Hirano T
+  TITLE     How COVID-19 induces cytokine storm with high mortality.
+  JOURNAL   Inflamm Regen 40:37 (2020)
+            DOI:10.1186/s41232-020-00146-3
+REFERENCE   PMID:32544563
+  AUTHORS   Mahmudpour M, Roozbeh J, Keshavarz M, Farrokhi S, Nabipour I
+  TITLE     COVID-19 cytokine storm: The anger of inflammation.
+  JOURNAL   Cytokine 133:155151 (2020)
+            DOI:10.1016/j.cyto.2020.155151
+REFERENCE   PMID:32635353
+  AUTHORS   Farooqi F, Dhawan N, Morgan R, Dinh J, Nedd K, Yatzkan G
+  TITLE     Treatment of Severe COVID-19 with Tocilizumab Mitigates Cytokine Storm and Averts Mechanical Ventilation During Acute Respiratory Distress: A Case Report and Literature Review.
+  JOURNAL   Trop Med Infect Dis 5:E112 (2020)
+            DOI:10.3390/tropicalmed5030112
+REFERENCE   PMID:32376392
+  AUTHORS   Jamilloux Y, Henry T, Belot A, Viel S, Fauter M, El Jammal T, Walzer T, Francois B, Seve P
+  TITLE     Should we stimulate or suppress immune responses in COVID-19? Cytokine and anti-cytokine interventions.
+  JOURNAL   Autoimmun Rev 19:102567 (2020)
+            DOI:10.1016/j.autrev.2020.102567
+REFERENCE   PMID:32722596
+  AUTHORS   Kiselevskiy M, Shubina I, Chikileva I, Sitdikova S, Samoylenko I, Anisimova N, Kirgizov K, Suleimanova A, Gorbunova T, Varfolomeeva S
+  TITLE     Immune Pathogenesis of COVID-19 Intoxication: Storm or Silence?
+  JOURNAL   Pharmaceuticals (Basel) 13:E166 (2020)
+            DOI:10.3390/ph13080166
+REFERENCE   PMID:32922297
+  AUTHORS   Curran CS, Rivera DR, Kopp JB
+  TITLE     COVID-19 Usurps Host Regulatory Networks.
+  JOURNAL   Front Pharmacol 11:1278 (2020)
+            DOI:10.3389/fphar.2020.01278
+REFERENCE   PMID:33055229
+  AUTHORS   Quan C, Li C, Ma H, Li Y, Zhang H
+  TITLE     Immunopathogenesis of Coronavirus-Induced Acute Respiratory Distress Syndrome (ARDS): Potential Infection-Associated Hemophagocytic Lymphohistiocytosis.
+  JOURNAL   Clin Microbiol Rev 34:e00074-20 (2020)
+            DOI:10.1128/CMR.00074-20
+REFERENCE   PMID:32973803
+  AUTHORS   Ahmed-Hassan H, Sisson B, Shukla RK, Wijewantha Y, Funderburg NT, Li Z, Hayes D Jr, Demberg T, Liyanage NPM
+  TITLE     Innate Immune Responses to Highly Pathogenic Coronaviruses and Other Significant Respiratory Viral Infections.
+  JOURNAL   Front Immunol 11:1979 (2020)
+            DOI:10.3389/fimmu.2020.01979
+REFERENCE   PMID:32346093
+  AUTHORS   Tay MZ, Poh CM, Renia L, MacAry PA, Ng LFP
+  TITLE     The trinity of COVID-19: immunity, inflammation and intervention.
+  JOURNAL   Nat Rev Immunol 20:363-374 (2020)
+            DOI:10.1038/s41577-020-0311-8
+REFERENCE   PMID:32979938
+  AUTHORS   Xia H, Cao Z, Xie X, Zhang X, Chen JY, Wang H, Menachery VD, Rajsbaum R, Shi PY
+  TITLE     Evasion of Type I Interferon by SARS-CoV-2.
+  JOURNAL   Cell Rep 33:108234 (2020)
+            DOI:10.1016/j.celrep.2020.108234
+REFERENCE   PMID:32661197
+  AUTHORS   Hartenian E, Nandakumar D, Lari A, Ly M, Tucker JM, Glaunsinger BA
+  TITLE     The molecular virology of coronaviruses.
+  JOURNAL   J Biol Chem 295:12910-12934 (2020)
+            DOI:10.1074/jbc.REV120.013930
+REFERENCE   PMID:32978971
+  AUTHORS   Amor S, Fernandez Blanco L, Baker D
+  TITLE     Innate immunity during SARS-CoV-2: evasion strategies and activation trigger hypoxia and vascular damage.
+  JOURNAL   Clin Exp Immunol 202:193-209 (2020)
+            DOI:10.1111/cei.13523
+REFERENCE   PMID:32467561
+  AUTHORS   Catanzaro M, Fagiani F, Racchi M, Corsini E, Govoni S, Lanni C
+  TITLE     Immune response in COVID-19: addressing a pharmacological challenge by targeting pathways triggered by SARS-CoV-2.
+  JOURNAL   Signal Transduct Target Ther 5:84 (2020)
+            DOI:10.1038/s41392-020-0191-1
+REFERENCE   PMID:32687918
+  AUTHORS   Jafarzadeh A, Chauhan P, Saha B, Jafarzadeh S, Nemati M
+  TITLE     Contribution of monocytes and macrophages to the local tissue inflammation and cytokine storm in COVID-19: Lessons from SARS and MERS, and potential therapeutic interventions.
+  JOURNAL   Life Sci 257:118102 (2020)
+            DOI:10.1016/j.lfs.2020.118102
+REFERENCE   PMID:32376901
+  AUTHORS   Merad M, Martin JC
+  TITLE     Pathological inflammation in patients with COVID-19: a key role for monocytes and macrophages.
+  JOURNAL   Nat Rev Immunol 20:355-362 (2020)
+            DOI:10.1038/s41577-020-0331-4
+REFERENCE   PMID:32246101
+  AUTHORS   South AM, Tomlinson L, Edmonston D, Hiremath S, Sparks MA
+  TITLE     Controversies of renin-angiotensin system inhibition during the COVID-19 pandemic.
+  JOURNAL   Nat Rev Nephrol 16:305-307 (2020)
+            DOI:10.1038/s41581-020-0279-4
+REFERENCE   PMID:32433641
+  AUTHORS   Furuhashi M, Moniwa N, Takizawa H, Ura N, Shimamoto K
+  TITLE     Potential differential effects of renin-angiotensin system inhibitors on SARS-CoV-2 infection and lung injury in COVID-19.
+  JOURNAL   Hypertens Res 43:837-840 (2020)
+            DOI:10.1038/s41440-020-0478-1
+REFERENCE   PMID:32423094
+  AUTHORS   Gemmati D, Bramanti B, Serino ML, Secchiero P, Zauli G, Tisato V
+  TITLE     COVID-19 and Individual Genetic Susceptibility/Receptivity: Role of ACE1/ACE2 Genes, Immunity, Inflammation and Coagulation. Might the Double X-chromosome in Females Be Protective against SARS-CoV-2 Compared to the Single X-Chromosome in Males?
+  JOURNAL   Int J Mol Sci 21:E3474 (2020)
+            DOI:10.3390/ijms21103474
+REFERENCE   PMID:33184193
+  AUTHORS   Kielian M
+  TITLE     Enhancing host cell infection by SARS-CoV-2.
+  JOURNAL   Science 370:765-766 (2020)
+            DOI:10.1126/science.abf0732
+REFERENCE   PMID:32327719
+  AUTHORS   Risitano AM, Mastellos DC, Huber-Lang M, Yancopoulou D, Garlanda C, Ciceri F, Lambris JD
+  TITLE     Complement as a target in COVID-19?
+  JOURNAL   Nat Rev Immunol 20:343-344 (2020)
+            DOI:10.1038/s41577-020-0320-7
+REFERENCE   PMID:32461141
+  AUTHORS   Noris M, Benigni A, Remuzzi G
+  TITLE     The case of complement activation in COVID-19 multiorgan impact.
+  JOURNAL   Kidney Int 98:314-322 (2020)
+            DOI:10.1016/j.kint.2020.05.013
+REFERENCE   PMID:32559343
+  AUTHORS   Polycarpou A, Howard M, Farrar CA, Greenlaw R, Fanelli G, Wallis R, Klavinskis LS, Sacks S
+  TITLE     Rationale for targeting complement in COVID-19.
+  JOURNAL   EMBO Mol Med 12:e12642 (2020)
+            DOI:10.15252/emmm.202012642
+REFERENCE   PMID:32439870
+  AUTHORS   Teuwen LA, Geldhof V, Pasut A, Carmeliet P
+  TITLE     COVID-19: the vasculature unleashed.
+  JOURNAL   Nat Rev Immunol 20:389-391 (2020)
+            DOI:10.1038/s41577-020-0343-0
+REFERENCE   PMID:32643798
+  AUTHORS   Jodele S, Kohl J
+  TITLE     Tackling COVID-19 infection through complement-targeted immunotherapy.
+  JOURNAL   Br J Pharmacol 178:2832-2848 (2021)
+            DOI:10.1111/bph.15187
+REFERENCE   PMID:32608159
+  AUTHORS   Chauhan AJ, Wiffen LJ, Brown TP
+  TITLE     COVID-19: A collision of complement, coagulation and inflammatory pathways.
+  JOURNAL   J Thromb Haemost 18:2110-2117 (2020)
+            DOI:10.1111/jth.14981
+REFERENCE   PMID:32558620
+  AUTHORS   Colling ME, Kanthi Y
+  TITLE     COVID-19-associated coagulopathy: An exploration of mechanisms.
+  JOURNAL   Vasc Med 25:471-478 (2020)
+            DOI:10.1177/1358863X20932640
+REFERENCE   PMID:32586214
+  AUTHORS   McFadyen JD, Stevens H, Peter K
+  TITLE     The Emerging Threat of (Micro)Thrombosis in COVID-19 and Its Therapeutic Implications.
+  JOURNAL   Circ Res 127:571-587 (2020)
+            DOI:10.1161/CIRCRESAHA.120.317447
+REFERENCE   PMID:32995777
+  AUTHORS   Shi M, Wang L, Fontana P, Vora S, Zhang Y, Fu TM, Lieberman J, Wu H
+  TITLE     SARS-CoV-2 Nsp1 suppresses host but not viral translation through a bipartite mechanism.
+  JOURNAL   bioRxiv 2020.09.18.302901 (2020)
+            DOI:10.1101/2020.09.18.302901
+REFERENCE   PMID:32693241
+  AUTHORS   Paniri A, Akhavan-Niaki H
+  TITLE     Emerging role of IL-6 and NLRP3 inflammasome as potential therapeutic targets to combat COVID-19: Role of lncRNAs in cytokine storm modulation.
+  JOURNAL   Life Sci 257:118114 (2020)
+            DOI:10.1016/j.lfs.2020.118114
+REFERENCE   PMID:32405269
+  AUTHORS   Omarjee L, Janin A, Perrot F, Laviolle B, Meilhac O, Mahe G
+  TITLE     Targeting T-cell senescence and cytokine storm with rapamycin to prevent severe progression in COVID-19.
+  JOURNAL   Clin Immunol 216:108464 (2020)
+            DOI:10.1016/j.clim.2020.108464
+REFERENCE   PMID:32337664
+  AUTHORS   Zhang S, Li L, Shen A, Chen Y, Qi Z
+  TITLE     Rational Use of Tocilizumab in the Treatment of Novel Coronavirus Pneumonia.
+  JOURNAL   Clin Drug Investig 40:511-518 (2020)
+            DOI:10.1007/s40261-020-00917-3
+REL_PATHWAY mmu03015  mRNA surveillance pathway
+            mmu04144  Endocytosis
+            mmu04270  Vascular smooth muscle contraction
+            mmu04610  Complement and coagulation cascades
+            mmu04611  Platelet activation
+            mmu04613  Neutrophil extracellular trap formation
+            mmu04614  Renin-angiotensin system
+            mmu04620  Toll-like receptor signaling pathway
+            mmu04621  NOD-like receptor signaling pathway
+            mmu04622  RIG-I-like receptor signaling pathway
+            mmu04623  Cytosolic DNA-sensing pathway
+            mmu04630  JAK-STAT signaling pathway
+            mmu04650  Natural killer cell mediated cytotoxicity
+            mmu04666  Fc gamma R-mediated phagocytosis
+            mmu04668  TNF signaling pathway
+            mmu04670  Leukocyte transendothelial migration
+KO_PATHWAY  ko05171
+///

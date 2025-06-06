@@ -71,7 +71,7 @@ def add_metadata(
                 url_service = query.get("url", None)
             source = entry.get("source", None)
             if source == "Open Targets GraphQL & REST API Beta":
-                source_node = URIRef(DATA_SOURCES["OpenTargets_reactome"])
+                source_node = URIRef(DATA_SOURCES["OpenTargets"])
                 g.add(
                     (
                         source_node,

@@ -18,7 +18,7 @@ from pubchempy import BadRequestError, PubChemHTTPError, get_compounds, get_syno
 from rdkit.Chem import CanonSmiles
 from tqdm import tqdm
 
-from pyBiodatafuse.constants import BRIDGEDB_ENDPOINT
+from pyBiodatafuse.constants import BRIDGEDB_ENDPOINT, PUBCHEM_COMPOUND, PUBCHEM_COMPOUND_CID
 
 logger = logging.getLogger(__name__)
 
@@ -431,10 +431,14 @@ def pubchem_xref(
             {
                 "identifier": idx,
                 "identifier.source": identifier_type,
-                "target": f"pubchem.compound:{cid}" if cid is not None else None,
-                "target.source": "PubChem Compound",
+                "target": f"{PUBCHEM_COMPOUND_CID}:{cid}" if cid is not None else None,
+                "target.source": PUBCHEM_COMPOUND,
             }
         )
+
+    if cache_res:
+        with open("pubchem_cache_results.json", "w") as f:
+            json.dump(cache_results, f)
 
     # Record the end time
     end_time = datetime.datetime.now()

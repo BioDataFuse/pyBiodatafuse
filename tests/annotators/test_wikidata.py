@@ -47,17 +47,7 @@ class TestWikidata(unittest.TestCase):
         with open(os.path.join(data_file_folder, "wikidata_mock_data.json")) as f:
             mock_data = json.load(f)
 
-        mock_data_list = []
-        for json_response in mock_data:
-            mock_data_list.append(pd.DataFrame.from_dict(json_response))
-
-        mock_sparql_request.side_effect = mock_data_list
-
-        wikidata.get_version_wikidata = Mock(
-            return_value={
-                "metadata": {"data_version": {"dataVersion": {"year": "2021", "month": "09"}}}
-            }
-        )  # Mock the version call
+        mock_sparql_request.side_effect = [mock_data]
         wikidata.check_endpoint_wikidata = Mock(return_value=True)
 
         bridgedb_dataframe = pd.DataFrame(
@@ -75,120 +65,88 @@ class TestWikidata(unittest.TestCase):
             [
                 [
                     {
-                        "Wikidata_cellular_components": [
-                            {
-                                "wikidata_id": "Q29548",
-                                "wikidata_label": "plasma membrane",
-                                "go": "GO: 0005886",
-                            },
-                            {
-                                "wikidata_id": "Q32846",
-                                "wikidata_label": "basement membrane",
-                                "go": "GO: 0005604",
-                            },
-                            {
-                                "wikidata_id": "Q187181",
-                                "wikidata_label": "synapse",
-                                "go": "GO: 0045202",
-                            },
-                            {
-                                "wikidata_id": "Q220599",
-                                "wikidata_label": "cytosol",
-                                "go": "GO: 0005829",
-                            },
-                            {
-                                "wikidata_id": "Q903634",
-                                "wikidata_label": "extracellular exosome",
-                                "go": "GO: 0070062",
-                            },
-                            {
-                                "wikidata_id": "Q193825",
-                                "wikidata_label": "extracellular matrix",
-                                "go": "GO: 0031012",
-                            },
-                            {
-                                "wikidata_id": "Q189073",
-                                "wikidata_label": "cell junction",
-                                "go": "GO: 0030054",
-                            },
-                            {
-                                "wikidata_id": "Q14327652",
-                                "wikidata_label": "integral component of membrane",
-                                "go": "GO: 0016021",
-                            },
-                            {
-                                "wikidata_id": "Q14645596",
-                                "wikidata_label": "extracellular region",
-                                "go": "GO: 0005576",
-                            },
-                            {
-                                "wikidata_id": "Q14758889",
-                                "wikidata_label": "Golgi lumen",
-                                "go": "GO: 0005796",
-                            },
-                            {
-                                "wikidata_id": "Q14349455",
-                                "wikidata_label": "membrane",
-                                "go": "GO: 0016020",
-                            },
-                            {
-                                "wikidata_id": "Q14866090",
-                                "wikidata_label": "lysosomal lumen",
-                                "go": "GO: 0043202",
-                            },
-                            {
-                                "wikidata_id": "Q54810453",
-                                "wikidata_label": "collagen-containing extracellular matrix",
-                                "go": "GO: 0062023",
-                            },
-                        ]
-                    }
+                        "wikidata_id": "Q29548",
+                        "wikidata_label": "plasma membrane",
+                        "go_id": "GO:0005886",
+                    },
+                    {
+                        "wikidata_id": "Q32846",
+                        "wikidata_label": "basement membrane",
+                        "go_id": "GO:0005604",
+                    },
+                    {
+                        "wikidata_id": "Q189073",
+                        "wikidata_label": "cell junction",
+                        "go_id": "GO:0030054",
+                    },
+                    {"wikidata_id": "Q187181", "wikidata_label": "synapse", "go_id": "GO:0045202"},
+                    {
+                        "wikidata_id": "Q193825",
+                        "wikidata_label": "extracellular matrix",
+                        "go_id": "GO:0031012",
+                    },
+                    {"wikidata_id": "Q220599", "wikidata_label": "cytosol", "go_id": "GO:0005829"},
+                    {
+                        "wikidata_id": "Q903634",
+                        "wikidata_label": "extracellular exosome",
+                        "go_id": "GO:0070062",
+                    },
+                    {
+                        "wikidata_id": "Q54810453",
+                        "wikidata_label": "collagen-containing extracellular matrix",
+                        "go_id": "GO:0062023",
+                    },
+                    {
+                        "wikidata_id": "Q14758889",
+                        "wikidata_label": "Golgi lumen",
+                        "go_id": "GO:0005796",
+                    },
+                    {
+                        "wikidata_id": "Q14866090",
+                        "wikidata_label": "lysosomal lumen",
+                        "go_id": "GO:0043202",
+                    },
+                    {
+                        "wikidata_id": "Q14327652",
+                        "wikidata_label": "integral component of membrane",
+                        "go_id": "GO:0016021",
+                    },
+                    {
+                        "wikidata_id": "Q14645596",
+                        "wikidata_label": "extracellular region",
+                        "go_id": "GO:0005576",
+                    },
+                    {
+                        "wikidata_id": "Q14349455",
+                        "wikidata_label": "membrane",
+                        "go_id": "GO:0016020",
+                    },
                 ],
                 [
+                    {"wikidata_id": "Q30869", "wikidata_label": "nucleolus", "go_id": "GO:0005730"},
+                    {"wikidata_id": "Q40260", "wikidata_label": "nucleus", "go_id": "GO:0005634"},
+                    {"wikidata_id": "Q220599", "wikidata_label": "cytosol", "go_id": "GO:0005829"},
                     {
-                        "Wikidata_cellular_components": [
-                            {
-                                "wikidata_id": "Q40260",
-                                "wikidata_label": "nucleus",
-                                "go": "GO: 0005634",
-                            },
-                            {
-                                "wikidata_id": "Q30869",
-                                "wikidata_label": "nucleolus",
-                                "go": "GO: 0005730",
-                            },
-                            {
-                                "wikidata_id": "Q79899",
-                                "wikidata_label": "cytoplasm",
-                                "go": "GO: 0005737",
-                            },
-                            {
-                                "wikidata_id": "Q154626",
-                                "wikidata_label": "cytoskeleton",
-                                "go": "GO: 0005856",
-                            },
-                            {
-                                "wikidata_id": "Q220599",
-                                "wikidata_label": "cytosol",
-                                "go": "GO: 0005829",
-                            },
-                            {
-                                "wikidata_id": "Q906755",
-                                "wikidata_label": "nuclear matrix",
-                                "go": "GO: 0016363",
-                            },
-                            {
-                                "wikidata_id": "Q14817956",
-                                "wikidata_label": "nucleoplasm",
-                                "go": "GO: 0005654",
-                            },
-                            {
-                                "wikidata_id": "Q14888122",
-                                "wikidata_label": "microtubule cytoskeleton",
-                                "go": "GO: 0015630",
-                            },
-                        ]
-                    }
+                        "wikidata_id": "Q154626",
+                        "wikidata_label": "cytoskeleton",
+                        "go_id": "GO:0005856",
+                    },
+                    {"wikidata_id": "Q79899", "wikidata_label": "cytoplasm", "go_id": "GO:0005737"},
+                    {
+                        "wikidata_id": "Q14817956",
+                        "wikidata_label": "nucleoplasm",
+                        "go_id": "GO:0005654",
+                    },
+                    {
+                        "wikidata_id": "Q14888122",
+                        "wikidata_label": "microtubule cytoskeleton",
+                        "go_id": "GO:0015630",
+                    },
+                    {
+                        "wikidata_id": "Q906755",
+                        "wikidata_label": "nuclear matrix",
+                        "go_id": "GO:0016363",
+                    },
                 ],
             ]
         )

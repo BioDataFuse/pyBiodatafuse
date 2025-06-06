@@ -32,7 +32,8 @@ class BioGraph(nx.MultiDiGraph):
         elif graph_path:
             if graph_format == "pickle" and disease_df:
                 self.graph = build_networkx_graph(
-                    load_dataframe_from_pickle(graph_path), disease_df
+                    load_dataframe_from_pickle(graph_path),
+                    disease_df,
                 )
             elif graph_format == "pickle" and not disease_df:
                 warnings.warn(

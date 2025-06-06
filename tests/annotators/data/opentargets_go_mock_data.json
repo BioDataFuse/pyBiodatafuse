@@ -6,8 +6,22 @@
                 "geneOntology": [
                     {
                         "term": {
-                            "id": "GO:0031965",
-                            "name": "nuclear membrane"
+                            "id": "GO:0043541",
+                            "name": "UDP-N-acetylglucosamine transferase complex"
+                        },
+                        "aspect": "C"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0043495",
+                            "name": "protein-membrane adaptor activity"
+                        },
+                        "aspect": "F"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0098554",
+                            "name": "cytoplasmic side of endoplasmic reticulum membrane"
                         },
                         "aspect": "C"
                     },
@@ -17,6 +31,20 @@
                             "name": "endoplasmic reticulum membrane"
                         },
                         "aspect": "C"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0005515",
+                            "name": "protein binding"
+                        },
+                        "aspect": "F"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0006487",
+                            "name": "protein N-linked glycosylation"
+                        },
+                        "aspect": "P"
                     },
                     {
                         "term": {
@@ -34,10 +62,10 @@
                     },
                     {
                         "term": {
-                            "id": "GO:0004577",
-                            "name": "N-acetylglucosaminyldiphosphodolichol N-acetylglucosaminyltransferase activity"
+                            "id": "GO:0006488",
+                            "name": "dolichol-linked oligosaccharide biosynthetic process"
                         },
-                        "aspect": "F"
+                        "aspect": "P"
                     },
                     {
                         "term": {
@@ -53,15 +81,8 @@
                 "geneOntology": [
                     {
                         "term": {
-                            "id": "GO:0046982",
-                            "name": "protein heterodimerization activity"
-                        },
-                        "aspect": "F"
-                    },
-                    {
-                        "term": {
-                            "id": "GO:0016020",
-                            "name": "membrane"
+                            "id": "GO:0012505",
+                            "name": "endomembrane system"
                         },
                         "aspect": "C"
                     },
@@ -74,29 +95,8 @@
                     },
                     {
                         "term": {
-                            "id": "GO:0005515",
-                            "name": "protein binding"
-                        },
-                        "aspect": "F"
-                    },
-                    {
-                        "term": {
-                            "id": "GO:0006490",
-                            "name": "oligosaccharide-lipid intermediate biosynthetic process"
-                        },
-                        "aspect": "P"
-                    },
-                    {
-                        "term": {
-                            "id": "GO:0005634",
-                            "name": "nucleus"
-                        },
-                        "aspect": "C"
-                    },
-                    {
-                        "term": {
-                            "id": "GO:0048306",
-                            "name": "calcium-dependent protein binding"
+                            "id": "GO:0000033",
+                            "name": "alpha-1,3-mannosyltransferase activity"
                         },
                         "aspect": "F"
                     },
@@ -106,6 +106,13 @@
                             "name": "endoplasmic reticulum membrane"
                         },
                         "aspect": "C"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0000033",
+                            "name": "alpha-1,3-mannosyltransferase activity"
+                        },
+                        "aspect": "F"
                     },
                     {
                         "term": {
@@ -123,15 +130,22 @@
                     },
                     {
                         "term": {
-                            "id": "GO:0102704",
-                            "name": "GDP-Man:Man2GlcNAc2-PP-dolichol alpha-1,6-mannosyltransferase activity"
+                            "id": "GO:0000033",
+                            "name": "alpha-1,3-mannosyltransferase activity"
                         },
                         "aspect": "F"
                     },
                     {
                         "term": {
-                            "id": "GO:0048306",
-                            "name": "calcium-dependent protein binding"
+                            "id": "GO:0006488",
+                            "name": "dolichol-linked oligosaccharide biosynthetic process"
+                        },
+                        "aspect": "P"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0102704",
+                            "name": "GDP-Man:Man2GlcNAc2-PP-dolichol alpha-1,6-mannosyltransferase activity"
                         },
                         "aspect": "F"
                     },
@@ -144,132 +158,6 @@
                     },
                     {
                         "term": {
-                            "id": "GO:0005515",
-                            "name": "protein binding"
-                        },
-                        "aspect": "F"
-                    },
-                    {
-                        "term": {
-                            "id": "GO:0006488",
-                            "name": "dolichol-linked oligosaccharide biosynthetic process"
-                        },
-                        "aspect": "P"
-                    },
-                    {
-                        "term": {
-                            "id": "GO:0005737",
-                            "name": "cytoplasm"
-                        },
-                        "aspect": "C"
-                    },
-                    {
-                        "term": {
-                            "id": "GO:0005737",
-                            "name": "cytoplasm"
-                        },
-                        "aspect": "C"
-                    },
-                    {
-                        "term": {
-                            "id": "GO:0000033",
-                            "name": "alpha-1,3-mannosyltransferase activity"
-                        },
-                        "aspect": "F"
-                    },
-                    {
-                        "term": {
-                            "id": "GO:0102704",
-                            "name": "GDP-Man:Man2GlcNAc2-PP-dolichol alpha-1,6-mannosyltransferase activity"
-                        },
-                        "aspect": "F"
-                    },
-                    {
-                        "term": {
-                            "id": "GO:0051592",
-                            "name": "response to calcium ion"
-                        },
-                        "aspect": "P"
-                    },
-                    {
-                        "term": {
-                            "id": "GO:0005515",
-                            "name": "protein binding"
-                        },
-                        "aspect": "F"
-                    },
-                    {
-                        "term": {
-                            "id": "GO:0004378",
-                            "name": "GDP-Man:Man1GlcNAc2-PP-Dol alpha-1,3-mannosyltransferase activity"
-                        },
-                        "aspect": "F"
-                    },
-                    {
-                        "term": {
-                            "id": "GO:0048306",
-                            "name": "calcium-dependent protein binding"
-                        },
-                        "aspect": "F"
-                    },
-                    {
-                        "term": {
-                            "id": "GO:0005737",
-                            "name": "cytoplasm"
-                        },
-                        "aspect": "C"
-                    },
-                    {
-                        "term": {
-                            "id": "GO:0000033",
-                            "name": "alpha-1,3-mannosyltransferase activity"
-                        },
-                        "aspect": "F"
-                    },
-                    {
-                        "term": {
-                            "id": "GO:0102704",
-                            "name": "GDP-Man:Man2GlcNAc2-PP-dolichol alpha-1,6-mannosyltransferase activity"
-                        },
-                        "aspect": "F"
-                    },
-                    {
-                        "term": {
-                            "id": "GO:0005634",
-                            "name": "nucleus"
-                        },
-                        "aspect": "C"
-                    },
-                    {
-                        "term": {
-                            "id": "GO:0005737",
-                            "name": "cytoplasm"
-                        },
-                        "aspect": "C"
-                    },
-                    {
-                        "term": {
-                            "id": "GO:0000033",
-                            "name": "alpha-1,3-mannosyltransferase activity"
-                        },
-                        "aspect": "F"
-                    },
-                    {
-                        "term": {
-                            "id": "GO:0006488",
-                            "name": "dolichol-linked oligosaccharide biosynthetic process"
-                        },
-                        "aspect": "P"
-                    },
-                    {
-                        "term": {
-                            "id": "GO:0005737",
-                            "name": "cytoplasm"
-                        },
-                        "aspect": "C"
-                    },
-                    {
-                        "term": {
                             "id": "GO:0016020",
                             "name": "membrane"
                         },
@@ -277,20 +165,34 @@
                     },
                     {
                         "term": {
-                            "id": "GO:0004378",
-                            "name": "GDP-Man:Man1GlcNAc2-PP-Dol alpha-1,3-mannosyltransferase activity"
-                        },
-                        "aspect": "F"
-                    },
-                    {
-                        "term": {
-                            "id": "GO:0051592",
-                            "name": "response to calcium ion"
+                            "id": "GO:0006488",
+                            "name": "dolichol-linked oligosaccharide biosynthetic process"
                         },
                         "aspect": "P"
                     },
                     {
                         "term": {
+                            "id": "GO:0102704",
+                            "name": "GDP-Man:Man2GlcNAc2-PP-dolichol alpha-1,6-mannosyltransferase activity"
+                        },
+                        "aspect": "F"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0006488",
+                            "name": "dolichol-linked oligosaccharide biosynthetic process"
+                        },
+                        "aspect": "P"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0098554",
+                            "name": "cytoplasmic side of endoplasmic reticulum membrane"
+                        },
+                        "aspect": "C"
+                    },
+                    {
+                        "term": {
                             "id": "GO:0004378",
                             "name": "GDP-Man:Man1GlcNAc2-PP-Dol alpha-1,3-mannosyltransferase activity"
                         },
@@ -298,29 +200,22 @@
                     },
                     {
                         "term": {
-                            "id": "GO:0048471",
-                            "name": "perinuclear region of cytoplasm"
+                            "id": "GO:0006488",
+                            "name": "dolichol-linked oligosaccharide biosynthetic process"
                         },
-                        "aspect": "C"
+                        "aspect": "P"
                     },
                     {
                         "term": {
-                            "id": "GO:0048306",
-                            "name": "calcium-dependent protein binding"
+                            "id": "GO:0006487",
+                            "name": "protein N-linked glycosylation"
                         },
-                        "aspect": "F"
+                        "aspect": "P"
                     },
                     {
                         "term": {
-                            "id": "GO:0005634",
-                            "name": "nucleus"
-                        },
-                        "aspect": "C"
-                    },
-                    {
-                        "term": {
-                            "id": "GO:0102704",
-                            "name": "GDP-Man:Man2GlcNAc2-PP-dolichol alpha-1,6-mannosyltransferase activity"
+                            "id": "GO:0005515",
+                            "name": "protein binding"
                         },
                         "aspect": "F"
                     }
@@ -329,6 +224,13 @@
             {
                 "id": "ENSG00000138435",
                 "geneOntology": [
+                    {
+                        "term": {
+                            "id": "GO:0007274",
+                            "name": "neuromuscular synaptic transmission"
+                        },
+                        "aspect": "P"
+                    },
                     {
                         "term": {
                             "id": "GO:0050905",
@@ -359,8 +261,8 @@
                     },
                     {
                         "term": {
-                            "id": "GO:0034220",
-                            "name": "monoatomic ion transmembrane transport"
+                            "id": "GO:0048630",
+                            "name": "skeletal muscle tissue growth"
                         },
                         "aspect": "P"
                     },
@@ -368,13 +270,6 @@
                         "term": {
                             "id": "GO:0035094",
                             "name": "response to nicotine"
-                        },
-                        "aspect": "P"
-                    },
-                    {
-                        "term": {
-                            "id": "GO:0048630",
-                            "name": "skeletal muscle tissue growth"
                         },
                         "aspect": "P"
                     },
@@ -478,13 +373,6 @@
                     },
                     {
                         "term": {
-                            "id": "GO:0060079",
-                            "name": "excitatory postsynaptic potential"
-                        },
-                        "aspect": "P"
-                    },
-                    {
-                        "term": {
                             "id": "GO:1904315",
                             "name": "transmitter-gated monoatomic ion channel activity involved in regulation of postsynaptic membrane potential"
                         },
@@ -559,6 +447,13 @@
                             "name": "synapse"
                         },
                         "aspect": "C"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0060079",
+                            "name": "excitatory postsynaptic potential"
+                        },
+                        "aspect": "P"
                     },
                     {
                         "term": {
@@ -646,10 +541,10 @@
                     },
                     {
                         "term": {
-                            "id": "GO:0005886",
-                            "name": "plasma membrane"
+                            "id": "GO:0034220",
+                            "name": "monoatomic ion transmembrane transport"
                         },
-                        "aspect": "C"
+                        "aspect": "P"
                     },
                     {
                         "term": {
@@ -657,6 +552,13 @@
                             "name": "acetylcholine-gated monoatomic cation-selective channel activity"
                         },
                         "aspect": "F"
+                    },
+                    {
+                        "term": {
+                            "id": "GO:0005886",
+                            "name": "plasma membrane"
+                        },
+                        "aspect": "C"
                     },
                     {
                         "term": {

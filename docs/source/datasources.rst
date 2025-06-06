@@ -70,4 +70,4 @@ MINERVA
 `MINERVA <https://minerva.pages.uni.lu/doc/>` is a standalone webserver for visual exploration, analysis and management of molecular networks encoded in following systems biology formats.
 
 .. autofunction:: pyBiodatafuse.annotators.minerva.get_minerva_components
-.. autofunction:: pyBiodatafuse.annotators.minerva.get_gene_minerva_pathways
+.. autofunction:: pyBiodatafuse.annotators.minerva.get_gene_pathways
