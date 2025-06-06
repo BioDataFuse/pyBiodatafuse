@@ -103,6 +103,7 @@ def get_protein_compound_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
 
         sparql.setQuery(sparql_query_template_sub)
         res = sparql.queryAndConvert()
+        print(res)
 
         df = pd.DataFrame(res["results"]["bindings"])
         for col in df:
@@ -144,6 +145,7 @@ def get_protein_compound_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
             "assay": Cons.PUBCHEM_ASSAY_ID,
             "SMILES": Cons.PUBCHEM_SMILES,
             "InChI": Cons.PUBCHEM_INCHI,
+            "sample_compound_name": Cons.PUBCHEM_COMPOUND_NAME,
         },
         inplace=True,
     )
@@ -162,6 +164,9 @@ def get_protein_compound_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
     intermediate_df[Cons.PUBCHEM_ASSAY_ID] = intermediate_df[Cons.PUBCHEM_ASSAY_ID].map(
         lambda x: x.split(Cons.PUBCHEM_BIOASSAY_IRI)[-1]
     )
+    intermediate_df[Cons.PUBCHEM_ASSAY_ID] = intermediate_df[Cons.PUBCHEM_ASSAY_ID].apply(
+        lambda x: x.replace("AID", "AID:")
+    )
 
     intermediate_df["outcome"] = intermediate_df["outcome"].map(
         lambda x: x.split(Cons.PUBCHEM_OUTCOME_IRI)[1]
@@ -169,6 +174,10 @@ def get_protein_compound_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
     intermediate_df["compound_cid"] = intermediate_df["compound_cid"].map(
         lambda x: x.split(Cons.PUBCHEM_COMPOUND_IRI)[-1]
     )
+    intermediate_df["compound_cid"] = intermediate_df["compound_cid"].apply(
+        lambda x: x.replace("CID", "CID:")
+    )
+
     intermediate_df["assay_type"] = intermediate_df["assay_type"].map(Cons.ASSAY_ENDPOINT_TYPES)
 
     intermediate_df.drop_duplicates(
@@ -179,7 +188,7 @@ def get_protein_compound_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
     check_columns_against_constants(
         data_df=intermediate_df,
         output_dict=Cons.PUBCHEM_COMPOUND_OUTPUT_DICT,
-        check_values_in=["outcome", "inchi"],
+        check_values_in=[Cons.PUBCHEM_POSSIBLE_OUTCOMES, Cons.INCHI],
     )
 
     # Merge the two DataFrames on the target column

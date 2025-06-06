@@ -5,18 +5,7 @@
 import networkx as nx
 import py4cytoscape as p4c
 
-from pyBiodatafuse.constants import (
-    ANATOMICAL_NODE_LABELS,
-    COMPOUND_NODE_LABELS,
-    DISEASE_NODE_LABELS,
-    GENE_NODE_LABELS,
-    GO_BP_NODE_LABELS,
-    GO_CC_NODE_LABELS,
-    GO_MF_NODE_LABELS,
-    HOMOLOG_NODE_LABELS,
-    PATHWAY_NODE_LABELS,
-    SIDE_EFFECT_NODE_LABELS,
-)
+import pyBiodatafuse.constants as Cons
 
 
 def _replace_graph_attrs(g: nx.MultiDiGraph):
@@ -90,16 +79,16 @@ def load_graph(g: nx.MultiDiGraph, network_name: str):
     # Define node shape and color mapping
     column = "labels"
     values = [
-        GENE_NODE_LABELS,
-        ANATOMICAL_NODE_LABELS,
-        DISEASE_NODE_LABELS,
-        GO_BP_NODE_LABELS,
-        GO_MF_NODE_LABELS,
-        GO_CC_NODE_LABELS,
-        PATHWAY_NODE_LABELS,
-        COMPOUND_NODE_LABELS,
-        SIDE_EFFECT_NODE_LABELS,
-        HOMOLOG_NODE_LABELS,
+        Cons.GENE_NODE_LABEL,
+        Cons.ANATOMICAL_NODE_LABEL,
+        Cons.DISEASE_NODE_LABEL,
+        Cons.GO_BP_NODE_LABEL,
+        Cons.GO_MF_NODE_LABEL,
+        Cons.GO_CC_NODE_LABEL,
+        Cons.PATHWAY_NODE_LABEL,
+        Cons.COMPOUND_NODE_LABEL,
+        Cons.SIDE_EFFECT_NODE_LABEL,
+        Cons.HOMOLOG_NODE_LABEL,
     ]
     shapes = [
         "ELLIPSE",  # Genes

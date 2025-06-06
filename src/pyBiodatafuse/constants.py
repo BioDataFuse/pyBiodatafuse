@@ -435,15 +435,12 @@ OPENTARGETS_COMPOUND_DISEASE_RELATION = "treats"
 PubChem variables
 """
 ASSAY_ENDPOINT_TYPES = {
-    "http://www.bioassayontology.org/bao#BAO_0000034": "Kd",
-    "http://www.bioassayontology.org/bao#BAO_0000186": "AC50",
-    "http://www.bioassayontology.org/bao#BAO_0000187": "CC50",
     "http://www.bioassayontology.org/bao#BAO_0000188": "EC50",
     "http://www.bioassayontology.org/bao#BAO_0000190": "IC50",
-    "http://www.bioassayontology.org/bao#BAO_0000192": "Ki",
     "http://www.bioassayontology.org/bao#BAO_0002146": "MIC",
 }
 PUBCHEM_ASSAY_ID = "pubchem_assay_id"
+PUBCHEM_COMPOUND_NAME = "compound_name"
 PUBCHEM_SMILES = "smiles"
 PUBCHEM_INCHI = "inchi"
 PUBCHEM_UNIPROT_IRI = "http://purl.uniprot.org/uniprot/"
@@ -456,11 +453,11 @@ PUBCHEM_COMPOUND_OUTPUT_DICT = {
     "assay_type": str,
     "outcome": str,
     "compound_cid": str,
-    "compound_name": str,
-    SMILES: str,
-    INCHI: str,
+    PUBCHEM_COMPOUND_NAME: str,
+    PUBCHEM_SMILES: str,
+    PUBCHEM_INCHI: str,
 }
-# OUTCOME = "active|inactive"
+PUBCHEM_POSSIBLE_OUTCOMES = "active|inactive"
 
 
 """
