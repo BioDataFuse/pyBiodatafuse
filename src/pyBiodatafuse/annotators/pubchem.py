@@ -180,6 +180,7 @@ def get_protein_compound_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
 
     intermediate_df["assay_type"] = intermediate_df["assay_type"].map(Cons.ASSAY_ENDPOINT_TYPES)
 
+    intermediate_df.dropna(subset=["assay_type"], inplace=True)
     intermediate_df.drop_duplicates(
         subset=[Cons.TARGET_COL, Cons.PUBCHEM_ASSAY_ID, "compound_cid"], inplace=True
     )
@@ -201,8 +202,6 @@ def get_protein_compound_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
         col_name=Cons.PUBCHEM_COMPOUND_ASSAYS_COL,
     )
 
-    merged_df.reset_index(drop=True, inplace=True)
-
     """Update metadata"""
     # Calculate the number of new nodes
     num_new_nodes = intermediate_df["compound_cid"].nunique()
@@ -210,10 +209,6 @@ def get_protein_compound_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
     num_new_edges = intermediate_df.drop_duplicates(subset=[Cons.TARGET_COL, "compound_cid"]).shape[
         0
     ]
-
-    # Check the intermediate_df
-    if num_new_edges != len(intermediate_df):
-        give_annotator_warning(Cons.PUBCHEM_COMPOUND_ASSAYS_COL)
 
     # Add the number of new nodes and edges to metadata
     pubchem_metadata[Cons.QUERY][Cons.NUM_NODES] = num_new_nodes

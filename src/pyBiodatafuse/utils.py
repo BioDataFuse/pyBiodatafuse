@@ -160,7 +160,7 @@ def combine_with_homologs(df: pd.DataFrame, homolog_dfs: list) -> pd.DataFrame:
     )
 
     exploded_df = df.explode(Cons.ENSEMBL_HOMOLOGS)
-    exploded_df[Cons.HOMOLOG] = exploded_df[Cons.ENSEMBL_HOMOLOGS].apply(
+    exploded_df[Cons.ENSEMBL_HOMOLOGS] = exploded_df[Cons.ENSEMBL_HOMOLOGS].apply(
         lambda x: x["homolog"] if isinstance(x, dict) else None
     )
 
