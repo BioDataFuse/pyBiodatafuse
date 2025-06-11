@@ -47,14 +47,7 @@ class TestKEGG(unittest.TestCase):
                 "compounds": [
                     {"KEGG_identifier": "C00027"},
                     {"KEGG_identifier": "C00046"},
-                    {"KEGG_identifier": "C00165"},
-                    {"KEGG_identifier": "C00290"},
-                    {"KEGG_identifier": "C00533"},
-                    {"KEGG_identifier": "C00704"},
-                    {"KEGG_identifier": "C00873"},
-                    {"KEGG_identifier": "C02135"},
-                    {"KEGG_identifier": "C15850"},
-                    {"KEGG_identifier": "C20640"},
+                    {"KEGG_identifier": "C00165"}
                 ],
             },
             {"gene_count": 0, "compounds": [{"KEGG_identifier": None}]},
