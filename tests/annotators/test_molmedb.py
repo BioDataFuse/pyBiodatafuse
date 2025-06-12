@@ -3,6 +3,8 @@
 
 """Tests for the MolMeDB annotator."""
 
+import json
+import os
 import unittest
 from unittest.mock import Mock, patch
 
@@ -15,6 +17,8 @@ from pyBiodatafuse.annotators.molmedb import (
     get_gene_compound_inhibitor,
 )
 from pyBiodatafuse.constants import MOLMEDB_COMPOUND_PROTEIN_COL, MOLMEDB_PROTEIN_COMPOUND_COL
+
+data_file_folder = os.path.join(os.path.dirname(__file__), "data")
 
 
 class TestMolMeDb(unittest.TestCase):
@@ -52,145 +56,11 @@ class TestMolMeDb(unittest.TestCase):
             }
         )
 
-        mock_sparql_request.side_effect = [
-            {
-                "head": {
-                    "vars": [
-                        "transporterID",
-                        "label",
-                        "InChIKey",
-                        "SMILES",
-                        "chembl_id",
-                        "chebi_id",
-                        "drugbank_id",
-                        "pubchem_compound_id",
-                        "molmedb_id",
-                        "source_doi",
-                        "source_pmid",
-                    ]
-                },
-                "results": {
-                    "bindings": [
-                        {
-                            "transporterID": {
-                                "type": "literal",
-                                "value": "P48544",
-                                "datatype": "http://www.w3.org/2001/XMLSchema#string",
-                            },
-                            "label": {
-                                "type": "literal",
-                                "value": "Euphorbiaproliferin c",
-                                "datatype": "http://www.w3.org/2001/XMLSchema#string",
-                            },
-                            "inchikey": {
-                                "type": "literal",
-                                "value": "MEMULCZBXUZFOZ-UHFFFAOYSA-N",
-                                "datatype": "http://www.w3.org/2001/XMLSchema#string",
-                            },
-                            "smiles": {
-                                "type": "literal",
-                                "value": "CC(=O)OC1C2(C)OCC3(C(=O)C=CC(C(C)(C)OC(C)=O)C23)C(OC(C)=O)C2C(OC(=O)C(C)C)C(C)CC21OC(C)=O",
-                                "datatype": "http://www.w3.org/2001/XMLSchema#string",
-                            },
-                            "molmedb_id": {
-                                "type": "literal",
-                                "value": "MM470852",
-                                "datatype": "http://www.w3.org/2001/XMLSchema#string",
-                            },
-                            "source_pmid": {
-                                "type": "literal",
-                                "value": "27441737",
-                                "datatype": "http://www.w3.org/2001/XMLSchema#int",
-                            },
-                        },
-                        {
-                            "transporterID": {
-                                "type": "literal",
-                                "value": "P48544",
-                                "datatype": "http://www.w3.org/2001/XMLSchema#string",
-                            },
-                            "label": {
-                                "type": "literal",
-                                "value": "Euphornin",
-                                "datatype": "http://www.w3.org/2001/XMLSchema#string",
-                            },
-                            "inchikey": {
-                                "type": "literal",
-                                "value": "BRVXVMOWTHQKHC-LVYIKVSWSA-N",
-                                "datatype": "http://www.w3.org/2001/XMLSchema#string",
-                            },
-                            "smiles": {
-                                "type": "literal",
-                                "value": "CC(=O)OC1CC(OC(C)=O)C(C)(C)/C=C\\C(C)C(OC(C)=O)C2(O)CC(C)C(OC(=O)c3ccccc3)C2/C=C\\1C",
-                                "datatype": "http://www.w3.org/2001/XMLSchema#string",
-                            },
-                            "chebi_id": {
-                                "type": "literal",
-                                "value": "140105",
-                                "datatype": "http://www.w3.org/2001/XMLSchema#string",
-                            },
-                            "molmedb_id": {
-                                "type": "literal",
-                                "value": "MM470853",
-                                "datatype": "http://www.w3.org/2001/XMLSchema#string",
-                            },
-                            "source_pmid": {
-                                "type": "literal",
-                                "value": "30411614",
-                                "datatype": "http://www.w3.org/2001/XMLSchema#int",
-                            },
-                        },
-                        {
-                            "transporterID": {
-                                "type": "literal",
-                                "value": "Q9BYT1",
-                                "datatype": "http://www.w3.org/2001/XMLSchema#string",
-                            },
-                            "label": {
-                                "type": "literal",
-                                "value": "[dichloro(phosphono)methyl]phosphonic acid",
-                                "datatype": "http://www.w3.org/2001/XMLSchema#string",
-                            },
-                            "inchikey": {
-                                "type": "literal",
-                                "value": "ACSIXWWBWUQEHA-UHFFFAOYSA-N",
-                                "datatype": "http://www.w3.org/2001/XMLSchema#string",
-                            },
-                            "smiles": {
-                                "type": "literal",
-                                "value": "O=P(O)(O)C(Cl)(Cl)P(=O)(O)O",
-                                "datatype": "http://www.w3.org/2001/XMLSchema#string",
-                            },
-                            "chebi_id": {
-                                "type": "literal",
-                                "value": "110423",
-                                "datatype": "http://www.w3.org/2001/XMLSchema#string",
-                            },
-                            "drugbank_id": {
-                                "type": "literal",
-                                "value": "DB00720",
-                                "datatype": "http://www.w3.org/2001/XMLSchema#string",
-                            },
-                            "pubchem_compound_id": {
-                                "type": "literal",
-                                "value": "25419",
-                                "datatype": "http://www.w3.org/2001/XMLSchema#string",
-                            },
-                            "molmedb_id": {
-                                "type": "literal",
-                                "value": "MM17483",
-                                "datatype": "http://www.w3.org/2001/XMLSchema#string",
-                            },
-                            "source_pmid": {
-                                "type": "literal",
-                                "value": "28720702",
-                                "datatype": "http://www.w3.org/2001/XMLSchema#int",
-                            },
-                        },
-                    ]
-                },
-            }
-        ]
+        with open(os.path.join(data_file_folder, "molmedb_mock_data.json")) as f:
+            mock_data = json.load(f)
+
+        mock_sparql_request.side_effect = [mock_data]
+
         molmedb.check_endpoint_molmedb = Mock(return_value=True)
 
         obtained_data, metadata = get_gene_compound_inhibitor(bridgedb_dataframe_genes)
@@ -199,80 +69,70 @@ class TestMolMeDb(unittest.TestCase):
             [
                 [
                     {
-                        "compound_name": nan,
-                        "inchikey": nan,
-                        "smiles": nan,
-                        "compound_cid": nan,
-                        "molmedb_id": nan,
-                        "source_pmid": nan,
-                        "chebi_id": nan,
-                        "drugbank_id": nan,
-                        "uniprot_trembl_id": nan,
-                    }
-                ],
-                [
+                        "MolMeDB_compound_name": "Euphorbiaproliferin C",
+                        "MolMeDB_inchikey": "MEMULCZBXUZFOZ-UHFFFAOYSA-N",
+                        "MolMeDB_smiles": "CC(=O)OC1C2(C)OCC3(C(=O)C=CC(C(C)(C)OC(C)=O)C23)C(OC(C)=O)C2C(OC(=O)C(C)C)C(C)CC21OC(C)=O",
+                        "MolMeDB_id": "MM470852",
+                        "source_pmid": "27441737",
+                    },
                     {
-                        "compound_name": nan,
-                        "inchikey": nan,
-                        "smiles": nan,
-                        "compound_cid": nan,
-                        "molmedb_id": nan,
-                        "source_pmid": nan,
-                        "chebi_id": nan,
-                        "drugbank_id": nan,
-                        "uniprot_trembl_id": nan,
-                    }
-                ],
-                [
-                    {
-                        "compound_name": "[dichloro(phosphono)methyl]phosphonic acid",
-                        "inchikey": "ACSIXWWBWUQEHA-UHFFFAOYSA-N",
-                        "smiles": "O=P(O)(O)C(Cl)(Cl)P(=O)(O)O",
-                        "compound_cid": "25419",
-                        "molmedb_id": "MM17483",
-                        "source_pmid": "28720702",
-                        "chebi_id": "110423",
-                        "drugbank_id": "DrugBank:DB00720",
-                        "uniprot_trembl_id": "Q9BYT1",
+                        "MolMeDB_compound_name": "Euphornin",
+                        "MolMeDB_inchikey": "BRVXVMOWTHQKHC-LVYIKVSWSA-N",
+                        "MolMeDB_smiles": "CC(=O)OC1CC(OC(C)=O)C(C)(C)/C=C\\C(C)C(OC(C)=O)C2(O)CC(C)C(OC(=O)c3ccccc3)C2/C=C\\1C",
+                        "MolMeDB_id": "MM470853",
+                        "source_pmid": "30411614",
                     },
                 ],
                 [
                     {
-                        "compound_name": "[dichloro(phosphono)methyl]phosphonic acid",
-                        "inchikey": "ACSIXWWBWUQEHA-UHFFFAOYSA-N",
-                        "smiles": "O=P(O)(O)C(Cl)(Cl)P(=O)(O)O",
-                        "compound_cid": "25419",
-                        "molmedb_id": "MM17483",
-                        "source_pmid": "28720702",
-                        "chebi_id": "110423",
-                        "drugbank_id": "DrugBank:DB00720",
-                        "uniprot_trembl_id": "Q9BYT1",
+                        "MolMeDB_compound_name": "Euphorbiaproliferin C",
+                        "MolMeDB_inchikey": "MEMULCZBXUZFOZ-UHFFFAOYSA-N",
+                        "MolMeDB_smiles": "CC(=O)OC1C2(C)OCC3(C(=O)C=CC(C(C)(C)OC(C)=O)C23)C(OC(C)=O)C2C(OC(=O)C(C)C)C(C)CC21OC(C)=O",
+                        "MolMeDB_id": "MM470852",
+                        "source_pmid": "27441737",
+                    },
+                    {
+                        "MolMeDB_compound_name": "Euphornin",
+                        "MolMeDB_inchikey": "BRVXVMOWTHQKHC-LVYIKVSWSA-N",
+                        "MolMeDB_smiles": "CC(=O)OC1CC(OC(C)=O)C(C)(C)/C=C\\C(C)C(OC(C)=O)C2(O)CC(C)C(OC(=O)c3ccccc3)C2/C=C\\1C",
+                        "MolMeDB_id": "MM470853",
+                        "source_pmid": "30411614",
                     },
                 ],
                 [
                     {
-                        "compound_name": nan,
-                        "inchikey": nan,
-                        "smiles": nan,
-                        "compound_cid": nan,
-                        "molmedb_id": nan,
-                        "source_pmid": nan,
-                        "chebi_id": nan,
-                        "drugbank_id": nan,
-                        "uniprot_trembl_id": nan,
+                        "MolMeDB_compound_name": "MM17483",
+                        "MolMeDB_inchikey": "ACSIXWWBWUQEHA-UHFFFAOYSA-N",
+                        "MolMeDB_smiles": "O=P(O)(O)C(Cl)(Cl)P(=O)(O)O",
+                        "MolMeDB_id": "MM17483",
+                        "source_pmid": "28720702",
                     }
                 ],
                 [
                     {
-                        "compound_name": nan,
-                        "inchikey": nan,
-                        "smiles": nan,
-                        "compound_cid": nan,
-                        "molmedb_id": nan,
+                        "MolMeDB_compound_name": "MM17483",
+                        "MolMeDB_inchikey": "ACSIXWWBWUQEHA-UHFFFAOYSA-N",
+                        "MolMeDB_smiles": "O=P(O)(O)C(Cl)(Cl)P(=O)(O)O",
+                        "MolMeDB_id": "MM17483",
+                        "source_pmid": "28720702",
+                    }
+                ],
+                [
+                    {
+                        "MolMeDB_compound_name": nan,
+                        "MolMeDB_inchikey": nan,
+                        "MolMeDB_smiles": nan,
+                        "MolMeDB_id": nan,
                         "source_pmid": nan,
-                        "chebi_id": nan,
-                        "drugbank_id": nan,
-                        "uniprot_trembl_id": nan,
+                    }
+                ],
+                [
+                    {
+                        "MolMeDB_compound_name": nan,
+                        "MolMeDB_inchikey": nan,
+                        "MolMeDB_smiles": nan,
+                        "MolMeDB_id": nan,
+                        "source_pmid": nan,
                     }
                 ],
             ]
@@ -285,94 +145,17 @@ class TestMolMeDb(unittest.TestCase):
     @patch("pyBiodatafuse.annotators.molmedb.SPARQLWrapper.queryAndConvert")
     def test_get_compound_gene_inhibitor(self, mock_sparql_request):
         """Test the get_compound_gene_inhibitor."""
-        mock_sparql_request.side_effect = [
-            {
-                "head": {
-                    "vars": [
-                        "inhibitorInChIKey",
-                        "uniprot_trembl_id",
-                        "hgcn_id",
-                        "source_doi",
-                        "source_pmid",
-                    ]
-                },
-                "results": {
-                    "bindings": [
-                        {
-                            "inhibitorInChIKey": {
-                                "type": "literal",
-                                "value": "OVVBIIBBRZVPAL-UHFFFAOYSA-N",
-                                "datatype": "http://www.w3.org/2001/XMLSchema#string",
-                            },
-                            "uniprot_trembl_id": {
-                                "type": "literal",
-                                "value": "P23975",
-                                "datatype": "http://www.w3.org/2001/XMLSchema#string",
-                            },
-                            "hgcn_id": {
-                                "type": "literal",
-                                "value": "SLC6A2",
-                                "datatype": "http://www.w3.org/2001/XMLSchema#string",
-                            },
-                            "source_pmid": {
-                                "type": "literal",
-                                "value": "20223878",
-                                "datatype": "http://www.w3.org/2001/XMLSchema#int",
-                            },
-                        },
-                        {
-                            "inhibitorInChIKey": {
-                                "type": "literal",
-                                "value": "OVVBIIBBRZVPAL-UHFFFAOYSA-N",
-                                "datatype": "http://www.w3.org/2001/XMLSchema#string",
-                            },
-                            "uniprot_trembl_id": {
-                                "type": "literal",
-                                "value": "P31645",
-                                "datatype": "http://www.w3.org/2001/XMLSchema#string",
-                            },
-                            "hgcn_id": {
-                                "type": "literal",
-                                "value": "SLC6A4",
-                                "datatype": "http://www.w3.org/2001/XMLSchema#string",
-                            },
-                            "source_pmid": {
-                                "type": "literal",
-                                "value": "20223878",
-                                "datatype": "http://www.w3.org/2001/XMLSchema#int",
-                            },
-                        },
-                        {
-                            "inhibitorInChIKey": {
-                                "type": "literal",
-                                "value": "LEJRLSZVESQKJK-UHFFFAOYSA-N",
-                                "datatype": "http://www.w3.org/2001/XMLSchema#string",
-                            },
-                            "uniprot_trembl_id": {
-                                "type": "literal",
-                                "value": "Q01959",
-                                "datatype": "http://www.w3.org/2001/XMLSchema#string",
-                            },
-                            "hgcn_id": {
-                                "type": "literal",
-                                "value": "SLC6A3",
-                                "datatype": "http://www.w3.org/2001/XMLSchema#string",
-                            },
-                            "source_pmid": {
-                                "type": "literal",
-                                "value": "9703474",
-                                "datatype": "http://www.w3.org/2001/XMLSchema#int",
-                            },
-                        },
-                    ]
-                },
-            }
-        ]
+        with open(os.path.join(data_file_folder, "molmedb_compound_gene_mock.json")) as f:
+            mock_data = json.load(f)
+
+        mock_sparql_request.side_effect = [mock_data]
+
+        molmedb.check_endpoint_molmedb = Mock(return_value=True)
 
         bridgedb_dataframe_compounds = pd.DataFrame(
             {
                 "identifier": ["10041551", "10025195", "2153"],
-                "identifier.source": ["PubChem-compound", "PubChem-compound", "PubChem-compound"],
+                "identifier.source": ["PubChem Compound", "PubChem Compound", "PubChem Compound"],
                 "target": [
                     "OVVBIIBBRZVPAL-UHFFFAOYSA-N",
                     "LEJRLSZVESQKJK-UHFFFAOYSA-N",
@@ -388,24 +171,30 @@ class TestMolMeDb(unittest.TestCase):
             [
                 [
                     {
-                        "uniprot_trembl_id": "Q01959",
-                        "hgnc_symbol": "SLC6A3",
-                        "source_pmid": "9703474",
+                        "MolMeDB_uniprot_trembl_id": nan,
+                        "MolMeDB_hgnc_symbol": nan,
+                        "source_pmid": nan,
                     }
                 ],
                 [
                     {
-                        "uniprot_trembl_id": "P23975",
-                        "hgnc_symbol": "SLC6A2",
+                        "MolMeDB_uniprot_trembl_id": "Uniprot-TrEMBL:P23975",
+                        "MolMeDB_hgnc_symbol": "SLC6A2",
                         "source_pmid": "20223878",
                     },
                     {
-                        "uniprot_trembl_id": "P31645",
-                        "hgnc_symbol": "SLC6A4",
+                        "MolMeDB_uniprot_trembl_id": "Uniprot-TrEMBL:P31645",
+                        "MolMeDB_hgnc_symbol": "SLC6A4",
                         "source_pmid": "20223878",
                     },
                 ],
-                [{"uniprot_trembl_id": nan, "hgnc_symbol": nan, "source_pmid": nan}],
+                [
+                    {
+                        "MolMeDB_uniprot_trembl_id": nan,
+                        "MolMeDB_hgnc_symbol": nan,
+                        "source_pmid": nan,
+                    }
+                ],
             ]
         )
         expected_data.name = MOLMEDB_COMPOUND_PROTEIN_COL
