@@ -37,7 +37,7 @@ class TestKEGG(unittest.TestCase):
             {
                 "pathway_id": "path:mmu03010",
                 "pathway_label": "Ribosome - Mus musculus (house mouse)",
-                "gene_count": 274,
+                "gene_count": 294,
                 "compounds": [{"KEGG_identifier": None}],
             },
             {
@@ -47,7 +47,14 @@ class TestKEGG(unittest.TestCase):
                 "compounds": [
                     {"KEGG_identifier": "C00027"},
                     {"KEGG_identifier": "C00046"},
-                    {"KEGG_identifier": "C00165"}
+                    {"KEGG_identifier": "C00165"},
+                    {"KEGG_identifier": "C00290"},
+                    {"KEGG_identifier": "C00533"},
+                    {"KEGG_identifier": "C00704"},
+                    {"KEGG_identifier": "C00873"},
+                    {"KEGG_identifier": "C02135"},
+                    {"KEGG_identifier": "C15850"},
+                    {"KEGG_identifier": "C20640"},
                 ],
             },
             {"gene_count": 0, "compounds": [{"KEGG_identifier": None}]},
