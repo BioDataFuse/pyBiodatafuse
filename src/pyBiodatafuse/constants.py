@@ -60,7 +60,7 @@ MOLMEDB_COMPOUND_PROTEIN_COL = f"{MOLMEDB}_transporter_inhibited"
 PUBCHEM_COMPOUND_ASSAYS_COL = f"{PUBCHEM}_assays"
 STRING_PPI_COL = f"{STRING}_ppi"
 WIKIDATA_CC_COL = f"{WIKIDATA}_cellular_components"
-AOPWIKI_GENE_COL = "aop_gene"  # todo fix this
+AOPWIKIRDF = "aop_gene"  # todo fix this
 AOPWIKI_COMPOUND_COL = "pubchem_compound"  # todo fix this
 WIKIPATHWAYS_MOLECULAR_COL = f"{WIKIPATHWAYS}_molecular"
 
@@ -425,12 +425,13 @@ GENE_PATHWAY_EDGE_ATTRS = {"datasource": None, "label": GENE_PATHWAY_EDGE_LABEL}
 MOLECULAR_PATHWAY_NODE_LABELS = "Pathway"
 MOLECULAR_PATHWAY_NODE_MAIN_LABEL = "pathway_id"
 MOLECULAR_GENE_NODE_ATTRS = {"datasource": WIKIPATHWAYS, "label": ""}
-MOLECULAR_PATHWAY_NODE_ATTRS = {
+WIKIPATHWAYS_MOLECULAR_NODE_ATTRS = {
     "pathway_id": "str",
     "pathway_label": "str",
     "id": "str",
     "labels": MOLECULAR_PATHWAY_NODE_LABELS,
 }
+WIKIPATHWAYS_MOLECULAR_EDGE_ATTRS = {"interaction_type": "str", "rhea_id": str}
 MOLECULAR_GENE_PATHWAY_EDGE_LABEL = "part_of"
 MOLECULAR_INTERACTION_EDGE_ATTRS = {"interaction_type": "str", "rhea_id": str}
 # GO nodes
@@ -567,7 +568,37 @@ KEGG_COMPOUND_EDGE_ATTRS = {
 
 # Wikidata
 
-# TODO: to be checked
+
+# AOPWIKI
+
+KEY_EVENT_NODE_LABELS = "Key Event"
+MIE_NODE_LABELS = "Molecular Initiating Event"
+AOP_NODE_LABELS = "Adverse Outcome Pathway"
+AO_NODE_LABELS = "Adverse Outcome"
+
+# AOPWIKI Edge Labels
+AOP_GENE_EDGE_LABEL = "associated_with"  # Gene to AOP edge
+MIE_AOP_EDGE_LABEL = "upstream"  # MIE to AOP edge
+KE_UPSTREAM_MIE_EDGE_LABEL = "upstream"  # KE upstream to MIE edge
+KE_DOWNSTREAM_KE_EDGE_LABEL = "downstream"  # KE downstream to KE upstream edge
+KE_DOWNSTREAM_AO_EDGE_LABEL = "downstream"  # KE downstream to AO edge
+AOPWIKI_EDGE_ATTRS = {
+    "datasource": AOPWIKIRDF,
+    "relation": None,
+    "label": None,
+}
+AOP_NODE_LABELS = "Adverse Outcome Pathway"
+MIE_NODE_LABELS = "Molecular Initiating Event"
+KE_NODE_LABELS = "Key Event"
+AO_NODE_LABELS = "Adverse Outcome"
+
+AOPWIKI_NODE_ATTRS = {
+    "datasource": AOPWIKIRDF,
+    "title": None,
+    "type": None,
+    "organ": None,
+    "labels": None,
+}
 
 # Mapper from namespace to BridgeDB datasource
 COMPOUND_NAMESPACE_MAPPER = {"pubchem.compound": "PubChem Compound", "CHEMBL": "ChEMBL compound"}
@@ -623,6 +654,7 @@ URIS = {
     "anatomical_entity_base_node": "anatomical_entity",
     "life_cycle_base_node": "life_cycle",
     "gene_expression_value_base_node": "gene_expression_value",
+    "interaction": "interaction",
 }
 
 # NODE TYPES
@@ -650,10 +682,16 @@ NODE_TYPES = {
     "developmental_stage_node": f"{NAMESPACE_BINDINGS['obo']}NCIT_C43531",
     "el_node": "https://biodatafuse.org/onto/bdf#DisGeNET_Evidence_Level",
     "ei_node": "https://biodatafuse.org/onto/bdf#DisGeNET_Evidence_Index",
+    "ao": "http://aopkb.org/aop_ontology#AdverseOutcome",
+    "ke": "http://aopkb.org/aop_ontology#KeyEvent",
+    "mie": "http://aopkb.org/aop_ontology#MolecularInitiatingEvent",
+    "ker": "http://aopkb.org/aop_ontology#KeyEventRelationship",
+    "interaction": "https://vocabularies.wikipathways.org/wp#Interaction",
 }
 
 # PREDICATES
 PREDICATES = {
+    "sameAs": f"{NAMESPACE_BINDINGS['owl']}sameAs",
     "sio_refers_to": f"{NAMESPACE_BINDINGS['sio']}SIO_000628",
     "sio_has_measurement_value": f"{NAMESPACE_BINDINGS['sio']}SIO_000216",
     "sio_has_source": f"{NAMESPACE_BINDINGS['sio']}SIO_000253",
@@ -674,6 +712,9 @@ PREDICATES = {
     "translation_of": f"{NAMESPACE_BINDINGS['obo']}so#translation_of",
     "translates_to": f"{NAMESPACE_BINDINGS['obo']}so#translates_to",
     "variant_of": f"{NAMESPACE_BINDINGS['obo']}so#variant_of",
+    "has_upstreamkey_event": "http://aopkb.org/aop_ontology#has_upstream_key_event",
+    "has_downstreamkey_event": "http://aopkb.org/aop_ontology#has_downstream_key_event",
+    "occurs_in": f"{NAMESPACE_BINDINGS['obo']}BFO_0000066",
 }
 
 # Classes for clinical phases
@@ -686,6 +727,7 @@ CLINICAL_PHASES = {
 }
 
 # GO Types
+
 GO_TYPES = {
     "C": f"{NAMESPACE_BINDINGS['obo']}GO_0005575",
     "P": f"{NAMESPACE_BINDINGS['obo']}GO_0008150",
@@ -705,6 +747,7 @@ MOAS = {
 }
 
 # Data sources
+
 DATA_SOURCES = {
     DISGENET: "https://disgenet.com/",
     WIKIPATHWAYS: "https://wikipathways.org",
@@ -791,5 +834,5 @@ SOURCE_NAMESPACES = {
     "TTD Drug": "http://db.idrblab.net/ttd/data/drug/details/",
     "Wikidata": "https://www.wikidata.org/wiki/",
     "Wikipedia": "https://en.wikipedia.org/wiki/",
-    # TODO ADD ALL
+    "aopwiki": "https://identifiers.org/",
 }
