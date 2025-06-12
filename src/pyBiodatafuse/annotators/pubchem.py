@@ -103,7 +103,6 @@ def get_protein_compound_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
 
         sparql.setQuery(sparql_query_template_sub)
         res = sparql.queryAndConvert()
-        print(res)
 
         df = pd.DataFrame(res["results"]["bindings"])
         for col in df:

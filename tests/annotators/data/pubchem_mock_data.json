@@ -1543,7 +1543,7 @@
                 },
                 "sample_compound_name": {
                     "type": "literal",
-                    "value": "3-{3-[2-({4-(1,4'-bipiperidin-1-yl)-2-[(2-methylpropyl)oxy]phenyl}amino)-4-pyrimidinyl]imidazo[1,2-a]pyridin-2-yl}-N-(2,6-difluorophenyl)benzamide",
+                    "value": "3-{3-[2-({4-(1,4'bipiperidin-1'yl)-2-[(2-methylpropyl)oxy]phenyl}amino)-4-pyrimidinyl]imidazo[1,2-a]pyridin-2-yl}-N-(2,6-difluorophenyl)benzamide",
                     "datatype": "http://www.w3.org/2001/XMLSchema#string"
                 },
                 "smiles": {
@@ -6187,7 +6187,7 @@
                 },
                 "sample_compound_name": {
                     "type": "literal",
-                    "value": "3-[3-(2-{[4-(1,4'-bipiperidin-1'-yl)-2-(methyloxy)phenyl]amino}-4-pyrimidinyl)-7-(trifluoromethyl)imidazo[1,2-a]pyridin-2-yl]-N-(2,6-difluorophenyl)benzamide",
+                    "value": "3-[3-(2-{[4-(1,4'bipiperidin-1'yl)-2-(methyloxy)phenyl]amino}-4-pyrimidinyl)-7-(trifluoromethyl)imidazo[1,2-a]pyridin-2-yl]-N-(2,6-difluorophenyl)benzamide",
                     "datatype": "http://www.w3.org/2001/XMLSchema#string"
                 },
                 "smiles": {
@@ -7043,7 +7043,7 @@
                 },
                 "pubchem_assay_id": {
                     "type": "uri",
-                    "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID1914438"
+                    "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID1794410"
                 },
                 "sample_compound_name": {
                     "type": "literal",
@@ -7301,7 +7301,7 @@
                 },
                 "pubchem_assay_id": {
                     "type": "uri",
-                    "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID1341757"
+                    "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID1341758"
                 },
                 "sample_compound_name": {
                     "type": "literal",
@@ -7821,7 +7821,7 @@
                 },
                 "sample_compound_name": {
                     "type": "literal",
-                    "value": "5-[3-(2-{[4-(1,4'-bipiperidin-1'-yl)-2-(methyloxy)phenyl]amino}-4-pyrimidinyl)imidazo[1,2-a]pyridin-2-yl]-N-(2,6-difluorophenyl)-2-(methyloxy)benzamide",
+                    "value": "5-[3-(2-{[4-(1,4'bipiperidin-1'yl)-2-(methyloxy)phenyl]amino}-4-pyrimidinyl)imidazo[1,2-a]pyridin-2-yl]-N-(2,6-difluorophenyl)-2-(methyloxy)benzamide",
                     "datatype": "http://www.w3.org/2001/XMLSchema#string"
                 },
                 "smiles": {
@@ -8681,7 +8681,7 @@
                 },
                 "sample_compound_name": {
                     "type": "literal",
-                    "value": "3-[3-(2-{[4-(1,4'-bipiperidin-1'-yl)-2-methylphenyl]amino}-4-pyrimidinyl)-imidazo[1,2-a]pyridin-2-yl]-N-(2,6-difluorophenyl)benzamide",
+                    "value": "3-[3-(2-{[4-(1,4'bipiperidin-1'yl)-2-methylphenyl]amino}-4-pyrimidinyl)-imidazo[1,2-a]pyridin-2-yl]-N-(2,6-difluorophenyl)benzamide",
                     "datatype": "http://www.w3.org/2001/XMLSchema#string"
                 },
                 "smiles": {
@@ -8767,7 +8767,7 @@
                 },
                 "sample_compound_name": {
                     "type": "literal",
-                    "value": "5-[3-(2-{[4-(1,4'-bipiperidin-1'-yl)-2-(methyloxy)phenyl]amino}-4-pyrimidinyl)-7-fluoroimidazo[1,2-a]pyridin-2-yl]-N-(2,6-difluorophenyl)-2-(methyloxy)benzamide",
+                    "value": "5-[3-(2-{[4-(1,4'bipiperidin-1'yl)-2-(methyloxy)phenyl]amino}-4-pyrimidinyl)-7-fluoroimidazo[1,2-a]pyridin-2-yl]-N-(2,6-difluorophenyl)-2-(methyloxy)benzamide",
                     "datatype": "http://www.w3.org/2001/XMLSchema#string"
                 },
                 "smiles": {
@@ -13235,7 +13235,7 @@
                 },
                 "pubchem_assay_id": {
                     "type": "uri",
-                    "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID1341758"
+                    "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID1341757"
                 },
                 "sample_compound_name": {
                     "type": "literal",
@@ -13536,7 +13536,7 @@
                 },
                 "pubchem_assay_id": {
                     "type": "uri",
-                    "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID1341758"
+                    "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID1341757"
                 },
                 "sample_compound_name": {
                     "type": "literal",
@@ -15217,7 +15217,7 @@
                 },
                 "sample_compound_name": {
                     "type": "literal",
-                    "value": "2-[[4-(4-chloro-3-methylanilino)-6-methoxyquinazolin-7-yl]oxymethyl]-N-cyano-N'-methylmorpholine-4-carboximidamide",
+                    "value": "2-[[4-(4-chloro-3-methylanilino)-6-methoxyquinazolin-7-yl]oxymethyl]-N-cyano-N'methylmorpholine-4-carboximidamide",
                     "datatype": "http: //www.w3.org/2001/XMLSchema#string"
                 },
                 "smiles": {
@@ -16808,7 +16808,7 @@
                 },
                 "sample_compound_name": {
                     "type": "literal",
-                    "value": "3-[3-(2-{[4-(1,4'-bipiperidin-1'-yl)-2-(propyloxy)phenyl]amino}-4-pyrimidinyl)-imidazo[1,2-a]pyridin-2-yl]-N-(2,6-difluorophenyl)benzamide",
+                    "value": "3-[3-(2-{[4-(1,4'bipiperidin-1'yl)-2-(propyloxy)phenyl]amino}-4-pyrimidinyl)-imidazo[1,2-a]pyridin-2-yl]-N-(2,6-difluorophenyl)benzamide",
                     "datatype": "http://www.w3.org/2001/XMLSchema#string"
                 },
                 "smiles": {
@@ -18266,7 +18266,7 @@
                 },
                 "pubchem_assay_id": {
                     "type": "uri",
-                    "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID1341758"
+                    "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID1341757"
                 },
                 "sample_compound_name": {
                     "type": "literal",
@@ -18958,7 +18958,7 @@
                 },
                 "sample_compound_name": {
                     "type": "literal",
-                    "value": "3-[3-(2-{[4-(1,4'-bipiperidin-1'-yl)-2-(methyloxy)phenyl]amino}-4-pyrimidinyl)-8-fluoroimidazo[1,2-a]pyridin-2-yl]-N-(2,6-difluorophenyl)benzamide",
+                    "value": "3-[3-(2-{[4-(1,4'bipiperidin-1'yl)-2-(methyloxy)phenyl]amino}-4-pyrimidinyl)-8-fluoroimidazo[1,2-a]pyridin-2-yl]-N-(2,6-difluorophenyl)benzamide",
                     "datatype": "http://www.w3.org/2001/XMLSchema#string"
                 },
                 "smiles": {
@@ -19259,7 +19259,7 @@
                 },
                 "sample_compound_name": {
                     "type": "literal",
-                    "value": "3-[3-(2-{[4-(1,4'-bipiperidin-1'-yl)-2,5-bis(methyloxy)phenyl]amino}-4-pyrimidinyl)imidazo[1,2-a]pyridin-2-yl]-N-(2,6-difluorophenyl)benzamide",
+                    "value": "3-[3-(2-{[4-(1,4'bipiperidin-1'yl)-2,5-bis(methyloxy)phenyl]amino}-4-pyrimidinyl)imidazo[1,2-a]pyridin-2-yl]-N-(2,6-difluorophenyl)benzamide",
                     "datatype": "http://www.w3.org/2001/XMLSchema#string"
                 },
                 "smiles": {
@@ -19517,7 +19517,7 @@
                 },
                 "sample_compound_name": {
                     "type": "literal",
-                    "value": "3-[3-(2-{[4-(1,4'-bipiperidin-1'-yl)-2-(methyloxy)phenyl]amino}-4-pyrimidinyl)-7-fluoroimidazo[1,2-a]pyridin-2-yl]-N-(2,6-difluorophenyl)benzamide",
+                    "value": "3-[3-(2-{[4-(1,4'bipiperidin-1'yl)-2-(methyloxy)phenyl]amino}-4-pyrimidinyl)-7-fluoroimidazo[1,2-a]pyridin-2-yl]-N-(2,6-difluorophenyl)benzamide",
                     "datatype": "http://www.w3.org/2001/XMLSchema#string"
                 },
                 "smiles": {
@@ -19560,8 +19560,8 @@
                 },
                 "sample_compound_name": {
                     "type": "literal",
-                    "value": "N-cyano-2-[[4-(3,4-dichloroanilino)-6-methoxyquinazolin-7-yl]oxymethyl]-N'-ethylmorpholine-4-carboximidamide",
-                    "datatype": "http: //www.w3.org/2001/XMLSchema#string"
+                    "value": "N-cyano-2-[[4-(3,4-dichloroanilino)-6-methoxyquinazolin-7-yl]oxymethyl]-N'ethylmorpholine-4-carboximidamide",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#string"
                 },
                 "smiles": {
                     "type": "literal",
@@ -23430,8 +23430,8 @@
                 },
                 "sample_compound_name": {
                     "type": "literal",
-                    "value": "N-cyano-2-[[4-(3,4-dichloroanilino)-6-methoxyquinazolin-7-yl]oxymethyl]-N'-(2-methoxyethyl)morpholine-4-carboximidamide",
-                    "datatype": "http: //www.w3.org/2001/XMLSchema#string"
+                    "value": "N-cyano-2-[[4-(3,4-dichloroanilino)-6-methoxyquinazolin-7-yl]oxymethyl]-N'(2-methoxyethyl)morpholine-4-carboximidamide",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#string"
                 },
                 "smiles": {
                     "type": "literal",
@@ -24161,8 +24161,8 @@
                 },
                 "sample_compound_name": {
                     "type": "literal",
-                    "value": "2-[[4-(3-chloro-2-fluoroanilino)-6-methoxyquinazolin-7-yl]oxymethyl]-N'-cyano-1,4-oxazepane-4-carboximidamide",
-                    "datatype": "http: //www.w3.org/2001/XMLSchema#string"
+                    "value": "2-[[4-(3-chloro-2-fluoroanilino)-6-methoxyquinazolin-7-yl]oxymethyl]-N'cyano-1,4-oxazepane-4-carboximidamide",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#string"
                 },
                 "smiles": {
                     "type": "literal",
@@ -25279,8 +25279,8 @@
                 },
                 "sample_compound_name": {
                     "type": "literal",
-                    "value": "4-[[4-(4-bromo-2-fluoroanilino)-6-methoxyquinazolin-7-yl]oxymethyl]-N'-cyanopiperidine-1-carboximidamide",
-                    "datatype": "http: //www.w3.org/2001/XMLSchema#string"
+                    "value": "4-[[4-(4-bromo-2-fluoroanilino)-6-methoxyquinazolin-7-yl]oxymethyl]-N'cyanopiperidine-1-carboximidamide",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#string"
                 },
                 "smiles": {
                     "type": "literal",
@@ -27253,7 +27253,7 @@
                 },
                 "pubchem_assay_id": {
                     "type": "uri",
-                    "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID1913804"
+                    "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID1913805"
                 },
                 "sample_compound_name": {
                     "type": "literal",
@@ -27859,7 +27859,7 @@
                 },
                 "sample_compound_name": {
                     "type": "literal",
-                    "value": "7-[(3'aS,5'R,6'aR)-spiro[1,3-dioxolane-2,3'-3a,5,6,6a-tetrahydro-2H-furo[3,2-b]furan]-5'-yl]oxy-N-(4-bromo-3-chlorophenyl)-6-methoxyquinazolin-4-amine",
+                    "value": "7-[(3'aS,5'R,6'aR)-spiro[1,3-dioxolane-2,3'3a,5,6,6a-tetrahydro-2H-furo[3,2-b]furan]-5'yl]oxy-N-(4-bromo-3-chlorophenyl)-6-methoxyquinazolin-4-amine",
                     "datatype": "http: //www.w3.org/2001/XMLSchema#string"
                 },
                 "smiles": {
@@ -27984,7 +27984,7 @@
                 },
                 "pubchem_assay_id": {
                     "type": "uri",
-                    "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID2056390"
+                    "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID2056417"
                 },
                 "sample_compound_name": {
                     "type": "literal",
@@ -28027,7 +28027,7 @@
                 },
                 "pubchem_assay_id": {
                     "type": "uri",
-                    "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID2040093"
+                    "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID2040085"
                 },
                 "sample_compound_name": {
                     "type": "literal",
@@ -28242,7 +28242,7 @@
                 },
                 "pubchem_assay_id": {
                     "type": "uri",
-                    "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID1341758"
+                    "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID1341757"
                 },
                 "sample_compound_name": {
                     "type": "literal",
@@ -29317,7 +29317,7 @@
                 },
                 "pubchem_assay_id": {
                     "type": "uri",
-                    "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID1341622"
+                    "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID1341596"
                 },
                 "sample_compound_name": {
                     "type": "literal",
@@ -29962,7 +29962,7 @@
                 },
                 "pubchem_assay_id": {
                     "type": "uri",
-                    "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID2041295"
+                    "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID2040004"
                 },
                 "sample_compound_name": {
                     "type": "literal",
@@ -40497,7 +40497,7 @@
                 },
                 "pubchem_assay_id": {
                     "type": "uri",
-                    "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID1341758"
+                    "value": "http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/AID1341757"
                 },
                 "sample_compound_name": {
                     "type": "literal",

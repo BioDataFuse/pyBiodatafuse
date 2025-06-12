@@ -1036,6 +1036,7 @@ def add_molmedb_compound_gene_subgraph(g, compound_node_label, annot_list):
     return g
 
 
+# TODO: test this function
 def add_pubchem_assay_subgraph(g, gene_node_label, annot_list):
     """Construct part of the graph by linking the gene to a list of compounds tested on it.
 
@@ -1569,7 +1570,7 @@ def _built_gene_based_graph(
     return g
 
 
-# TODO: Built this function
+# TODO: Built this function for compounds
 def _built_compound_based_graph(
     g: nx.MultiDiGraph,
     combined_df: pd.DataFrame,
