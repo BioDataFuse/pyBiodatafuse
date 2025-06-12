@@ -186,10 +186,10 @@ def get_filtered_interactions(
             alt_ids_a = interaction.get(Cons.INTACT_INTERACTOR_ID_A)
             alt_ids_b = interaction.get(Cons.INTACT_INTERACTOR_ID_B)
 
-        has_uniprot_a = any("uniprotkb" in x.lower() for x in [id_a, alt_ids_a])
-        has_uniprot_b = any("uniprotkb" in x.lower() for x in [id_b, alt_ids_b])
-        has_chebi_a = any("chebi" in x.lower() for x in [id_a, alt_ids_a])
-        has_chebi_b = any("chebi" in x.lower() for x in [id_b, alt_ids_b])
+        has_uniprot_a = any("uniprotkb" in x.lower() for x in [id_a, alt_ids_a])  # type: ignore
+        has_uniprot_b = any("uniprotkb" in x.lower() for x in [id_b, alt_ids_b])  # type: ignore
+        has_chebi_a = any("chebi" in x.lower() for x in [id_a, alt_ids_a])  # type: ignore
+        has_chebi_b = any("chebi" in x.lower() for x in [id_b, alt_ids_b])  # type: ignore
 
         keep_interaction = False
 

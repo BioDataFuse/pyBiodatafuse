@@ -23,7 +23,7 @@ def add_ppi_data(
     :return: a ppi URIRef node
     """
     gene_link = entry.get(Cons.STRING_PPI_LINK_TO, None)
-    gene_link_node = URIRef(Cons.BASE_URLS_DBS["uniprot"] + gene_link)
+    gene_link_node = URIRef(Cons.BASE_URLS_DBS["uniprot"] + gene_link)  # type: ignore
     # ensembl = entry.get("Ensembl", None).split(":")[1]
     score = entry.get(Cons.STRING_PPI_SCORE, None)
     uniprot = entry.get(Cons.UNIPROT_TREMBL_A, None)
@@ -36,8 +36,8 @@ def add_ppi_data(
         if not uniprot:
             return None
 
-        protein_node = URIRef(Cons.BASE_URLS_DBS["uniprot"] + uniprot)
-        protein_link_node = URIRef(Cons.BASE_URLS_DBS["uniprot"] + uniprot_link)
+        protein_node = URIRef(Cons.BASE_URLS_DBS["uniprot"] + uniprot)  # type: ignore
+        protein_link_node = URIRef(Cons.BASE_URLS_DBS["uniprot"] + uniprot_link)  # type: ignore
         score_node = URIRef(f"{new_uris['score_base_node']}/{uniprot}_{uniprot_link}")
 
         # Edges
