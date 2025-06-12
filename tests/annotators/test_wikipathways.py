@@ -11,7 +11,7 @@ from numpy import nan
 
 from pyBiodatafuse.annotators import wikipathways
 from pyBiodatafuse.annotators.wikipathways import get_gene_wikipathways, get_version_wikipathways
-from pyBiodatafuse.constants import WIKIPATHWAYS
+from pyBiodatafuse.constants import WIKIPATHWAYS_PATHWAY_COL
 
 
 class TestWikipathway(unittest.TestCase):
@@ -120,7 +120,9 @@ class TestWikipathway(unittest.TestCase):
                 [{"pathway_id": nan, "pathway_label": nan, "pathway_gene_counts": nan}],
             ]
         )
-        expected_data.name = WIKIPATHWAYS
+        expected_data.name = WIKIPATHWAYS_PATHWAY_COL
 
-        pd.testing.assert_series_equal(obtained_data[WIKIPATHWAYS], expected_data)
+        pd.testing.assert_series_equal(obtained_data[WIKIPATHWAYS_PATHWAY_COL], expected_data)
         self.assertIsInstance(metadata, dict)
+
+    # test for molecular pathways missing

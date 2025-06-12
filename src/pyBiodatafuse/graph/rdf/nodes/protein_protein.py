@@ -3,9 +3,9 @@
 """Populate a BDF RDF graph with PPI nodes."""
 
 from rdflib import Graph, Literal, URIRef
-from rdflib.namespace import OWL, RDF, RDFS, XSD
+from rdflib.namespace import RDF, XSD
 
-from pyBiodatafuse.constants import BASE_URLS_DBS, NODE_TYPES, PREDICATES
+import pyBiodatafuse.constants as Cons
 
 
 def add_ppi_data(g: Graph, gene_node: URIRef, entry: dict, base_uri: str, new_uris: dict) -> URIRef:
@@ -18,38 +18,45 @@ def add_ppi_data(g: Graph, gene_node: URIRef, entry: dict, base_uri: str, new_ur
     :param new_uris: dictionary with project node URIs
     :return: a ppi URIRef node
     """
-    gene_link = entry.get("stringdb_link_to", None)
-    gene_link_node = URIRef(BASE_URLS_DBS["uniprot"] + gene_link)
+    gene_link = entry.get(Cons.STRING_PPI_LINK_TO, None)
+    gene_link_node = URIRef(Cons.BASE_URLS_DBS["uniprot"] + gene_link)
     # ensembl = entry.get("Ensembl", None).split(":")[1]
-    score = entry.get("score", None)
-    uniprot = entry.get("Uniprot-TrEMBL", None)
-    uniprot_link = entry.get("Uniprot-TrEMBL_link", None)
+    score = entry.get(Cons.STRING_PPI_SCORE, None)
+    uniprot = entry.get(Cons.UNIPROT_TREMBL_A, None)
+    uniprot_link = entry.get(Cons.UNIPROT_TREMBL_B, None)
     if score:
         score = float(score)
         # Nodes
         ppi_node = URIRef(base_uri + f"ppi/{uniprot}_{gene_link_node}")
         # ensembl_node = URIRef(BASE_URLS_DBS["ensembl"] + f"{ensembl}")
-        if uniprot:
-            protein_node = URIRef(BASE_URLS_DBS["uniprot"] + uniprot)
-            protein_link_node = URIRef(BASE_URLS_DBS["uniprot"] + uniprot_link)
-            g.add((ppi_node, URIRef(PREDICATES["sio_has_part"]), protein_node))
-            g.add((ppi_node, URIRef(PREDICATES["sio_has_part"]), protein_link_node))
-            g.add((gene_node, URIRef(PREDICATES["translates_to"]), protein_node))
-            g.add((protein_node, URIRef(PREDICATES["translation_of"]), gene_node))
-            g.add((gene_link_node, URIRef(PREDICATES["translates_to"]), protein_link_node))
-            g.add((protein_link_node, URIRef(PREDICATES["translation_of"]), gene_link_node))
-            g.add((ppi_node, RDF.type, URIRef(NODE_TYPES["ppi_node"])))
-            g.add((protein_link_node, RDF.type, URIRef(NODE_TYPES["protein_node"])))
-            g.add((protein_node, RDF.type, URIRef(NODE_TYPES["protein_node"])))
-            score_node = URIRef(f"{new_uris['score_base_node']}/{uniprot}_{uniprot_link}")
-            g.add((score_node, RDF.type, URIRef(NODE_TYPES["score_node"])))
-            g.add(
-                (
-                    score_node,
-                    URIRef(PREDICATES["sio_has_value"]),
-                    Literal(score, datatype=XSD.double),
-                )
-            )
-            g.add((ppi_node, URIRef(PREDICATES["sio_has_measurement_value"]), score_node))
+        if not uniprot:
+            return None
 
-            return ppi_node
+        protein_node = URIRef(Cons.BASE_URLS_DBS["uniprot"] + uniprot)
+        protein_link_node = URIRef(Cons.BASE_URLS_DBS["uniprot"] + uniprot_link)
+        score_node = URIRef(f"{new_uris['score_base_node']}/{uniprot}_{uniprot_link}")
+
+        # Edges
+        new_edges_to_add = [
+            (ppi_node, URIRef(Cons.PREDICATES["sio_has_part"]), protein_node),
+            (ppi_node, URIRef(Cons.PREDICATES["sio_has_part"]), protein_link_node),
+            (gene_node, URIRef(Cons.PREDICATES["translates_to"]), protein_node),
+            (gene_link_node, Cons.PREDICATES["translates_to"], protein_link_node),
+            (protein_node, URIRef(Cons.PREDICATES["translation_of"]), gene_node),
+            (protein_link_node, Cons.PREDICATES["translation_of"], gene_link_node),
+            (ppi_node, RDF.type, Cons.NODE_TYPES["ppi_node"]),
+            (protein_link_node, RDF.type, URIRef(Cons.NODE_TYPES["protein_node"])),
+            (protein_node, RDF.type, URIRef(Cons.NODE_TYPES["protein_node"])),
+            (score_node, RDF.type, URIRef(Cons.NODE_TYPES["score_node"])),
+            (
+                score_node,
+                URIRef(Cons.PREDICATES["sio_has_value"]),
+                Literal(score, datatype=XSD.double),
+            ),
+            (ppi_node, URIRef(Cons.PREDICATES["sio_has_measurement_value"]), score_node),
+        ]
+
+        for edge in new_edges_to_add:
+            g.add(edge[0], edge[1], edge[2])
+
+        return ppi_node

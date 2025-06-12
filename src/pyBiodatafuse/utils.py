@@ -63,7 +63,11 @@ def create_or_append_to_metadata(data: dict, prev_entry: List[dict]) -> List[dic
     :returns: a metadata dictionary
     """
     # Create a metadata file if it doesn't exist
-    prev_sources = [data[Cons.DATASOURCE] for data in prev_entry if Cons.DATASOURCE in data.keys()]
+    prev_sources = [
+        data[Cons.DATASOURCE]
+        for data in prev_entry
+        if (Cons.DATASOURCE in data.keys() and len(data) > 1)
+    ]
 
     assert isinstance(data, dict), "Unsupported data type. Only dict is supported."
 

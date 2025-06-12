@@ -7,7 +7,7 @@
 from rdflib import Graph, Literal, URIRef
 from rdflib.namespace import RDF, RDFS, XSD
 
-from pyBiodatafuse.constants import NODE_TYPES
+import pyBiodatafuse.constants as Cons
 
 
 def add_gene_nodes(g: Graph, row) -> tuple:
@@ -18,11 +18,11 @@ def add_gene_nodes(g: Graph, row) -> tuple:
 
     :return: URIRef for the gene node.
     """
-    target = row.get("target", None)
-    source = row.get("target.source", None)
-    if source and source == "Ensembl":
+    target = row.get(Cons.TARGET_COL, None)
+    source = row.get(Cons.TARGET_SOURCE_COL, None)
+    if source and source == Cons.ENSEMBL:
         if target:
-            gene_node = URIRef(f"http://identifiers.org/ensembl#{target}")
-            g.add((gene_node, RDF.type, URIRef(NODE_TYPES["gene_node"])))
-            g.add((gene_node, RDFS.label, Literal(row["identifier"], datatype=XSD.string)))
+            gene_node = URIRef(Cons.NODE_URI_PREFIXES[Cons.ENSEMBL] + target)
+            g.add((gene_node, RDF.type, URIRef(Cons.NODE_TYPES["gene_node"])))
+            g.add((gene_node, RDFS.label, Literal(row[Cons.IDENTIFIER_COL], datatype=XSD.string)))
     return gene_node

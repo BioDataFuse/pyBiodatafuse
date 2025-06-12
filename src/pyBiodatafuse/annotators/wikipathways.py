@@ -108,7 +108,7 @@ def get_gene_wikipathways(
     else:
         file = os.path.join("queries", "wikipathways-genes-pathways.rq")
         output_dict = Cons.WIKIPATHWAYS_PATHWAYS_OUTPUT_DICT
-        col_name = Cons.WIKIPATHWAYS
+        col_name = Cons.WIKIPATHWAYS_PATHWAY_COL
 
     with open(os.path.join(os.path.dirname(__file__), file), "r", encoding="utf-8") as fin:
         sparql_query = fin.read()
@@ -203,11 +203,12 @@ def get_gene_wikipathways(
         )
 
     # Add namespaces
-    for col in Cons.WIKIPATHWAY_NAMESPACE_DICT:
+    for col, namespace in Cons.WIKIPATHWAY_NAMESPACE_DICT.items():
         if col not in intermediate_df.columns:
             continue
-        namespace = Cons.WIKIPATHWAY_NAMESPACE_DICT[col]
-        intermediate_df[col] = intermediate_df[col].apply(lambda x: f"{namespace}:{x}" if x else x)
+        intermediate_df[col] = intermediate_df[col].apply(
+            lambda x, ns=namespace: f"{ns}:{x}" if x else x
+        )
 
     if query_interactions:
         intermediate_df[Cons.PATHWAY_ID] = (

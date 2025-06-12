@@ -51,8 +51,8 @@ class TestOpentarget(unittest.TestCase):
         expected_version = {
             "datasource": "Open Targets GraphQL & REST API Beta",
             "metadata": {
-                "source_version": {"apiVersion": {"x": "24", "y": "0", "z": "3"}},
-                "data_version": {"dataVersion": {"year": "24", "month": "03"}},
+                "source_version": {"apiVersion": "24.0.3"},
+                "data_version": "24-03",
             },
         }
 

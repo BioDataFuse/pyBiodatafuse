@@ -67,6 +67,7 @@ Annotator statistics constants
 QUERY = "query"
 NUM_NODES = "number_of_added_nodes"
 NUM_EDGES = "number_of_added_edges"
+METADATA = "metadata"
 
 # DataFrame Columns
 
@@ -94,6 +95,7 @@ PUBCHEM_COMPOUND_ASSAYS_COL = f"{PUBCHEM}_assays"
 STRING_INTERACT_COL = f"{STRING}_interactions"
 WIKIDATA_CC_COL = f"{WIKIDATA}_cellular_components"
 WIKIPATHWAYS_MOLECULAR_COL = f"{WIKIPATHWAYS}_molecular"
+WIKIPATHWAYS_PATHWAY_COL = f"{WIKIPATHWAYS}_pathway"
 AOPWIKI_GENE_COL = "aop_gene"  # todo fix this
 AOPWIKI_COMPOUND_COL = "pubchem_compound"  # todo fix this
 
@@ -924,8 +926,6 @@ RDF Specific constants
 # Mapper from namespace to BridgeDB datasource
 COMPOUND_NAMESPACE_MAPPER = {"pubchem.compound": "PubChem Compound", "CHEMBL": "ChEMBL compound"}
 
-# RDF (rdflib constants and namespaces)
-
 
 DATA_TYPES_SOURCES = {
     "identifier": IDENTIFIER_COL,
@@ -941,6 +941,19 @@ DATA_TYPES_SOURCES = {
     "ppi": STRING_INTERACT_COL,
     "disgenet": DISGENET_DISEASE_COL,
     "opentargets_disease": OPENTARGETS_DISEASE_COL,
+}
+
+NODE_URI_PREFIXES = {
+    ENSEMBL: "https://identifiers.org/ensembl#",
+    "medgen": "https://www.ncbi.nlm.nih.gov/medgen/",
+    "pubchem_assay": "https://pubchem.ncbi.nlm.nih.gov/bioassay/",
+    PUBCHEM: "https://pubchem.ncbi.nlm.nih.gov/compound/",
+    MOLMEDB: "https://molmedb.upol.cz/mol/",
+    "uniprot": "https://www.uniprot.org/uniprotkb/",
+    "pubmed": "https://pubmed.ncbi.nlm.nih.gov/",
+    WIKIPATHWAYS: "https://www.wikipathways.org/pathways/",
+    REACTOME: "https://reactome.org/content/detail/",
+    MINERVA: "https://minerva-net.lcsb.uni.lu/api/",
 }
 
 # Dictionary to store namespace strings
@@ -1128,5 +1141,8 @@ SOURCE_NAMESPACES = {
     "TTD Drug": "http://db.idrblab.net/ttd/data/drug/details/",
     "Wikidata": "https://www.wikidata.org/wiki/",
     "Wikipedia": "https://en.wikipedia.org/wiki/",
+    "WikiPathways": "https://www.wikipathways.org/",
+    "Reactome": "https://reactome.org/",
+    "Minerva": "https://minerva-net.lcsb.uni.lu/",
     # TODO ADD ALL
 }

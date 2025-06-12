@@ -7,7 +7,7 @@
 from rdflib import Graph, Literal, URIRef
 from rdflib.namespace import RDF, RDFS, XSD
 
-from pyBiodatafuse.constants import NODE_TYPES, PREDICATES
+import pyBiodatafuse.constants as Cons
 
 
 def add_pathway_node(g: Graph, data: dict, source: str):
@@ -18,30 +18,31 @@ def add_pathway_node(g: Graph, data: dict, source: str):
     :param source: Source of the pathway information (e.g., WikiPathways, Reactome).
     :return: URIRef for the created pathway node.
     """
-    pathway_label = data.get("pathway_label", None)
-    pathway_id = data.get("pathway_id", None)
+    pathway_label = data.get(Cons.PATHWAY_LABEL, None)
+    pathway_id = data.get(Cons.PATHWAY_ID, None)
 
     if pathway_id:
         pathway_iri = ""
         iri_source = None
-        if source == "WikiPathways":
-            pathway_iri = "https://www.wikipathways.org/pathways/" + str(pathway_id.split(":")[1])
-            iri_source = "https://www.wikipathways.org/"
+        if source == Cons.WIKIPATHWAYS_PATHWAY_COL:
+            pathway_iri = Cons.NODE_URI_PREFIXES[Cons.WIKIPATHWAYS] + str(pathway_id.split(":")[1])
+            iri_source = Cons.SOURCE_NAMESPACES[Cons.WIKIPATHWAYS]
 
-        if source == "OpenTargets_reactome":
+        if source == Cons.OPENTARGETS_REACTOME_COL:
             pathway_id = pathway_id.split(":")[1]
-            pathway_iri = "https://reactome.org/content/detail/" + str(pathway_id)
-            iri_source = "https://reactome.org/"
-            source = "Reactome"
-        if source == "MINERVA":
-            pathway_iri = "https://minerva-net.lcsb.uni.lu/api/" + str(pathway_id)
-            iri_source = "https://minerva-net.lcsb.uni.lu/"
+            pathway_iri = Cons.NODE_URI_PREFIXES[Cons.REACTOME] + str(pathway_id)
+            iri_source = Cons.SOURCE_NAMESPACES[Cons.REACTOME]
+            source = Cons.REACTOME
+        if source == Cons.MINERVA_PATHWAY_COL:
+            pathway_iri = Cons.NODE_URI_PREFIXES[Cons.MINERVA] + str(pathway_id)
+            iri_source = Cons.SOURCE_NAMESPACES["Minerva"]
+
         pathway_node = URIRef(pathway_iri)
-        g.add((pathway_node, RDF.type, URIRef(NODE_TYPES["pathway_node"])))
+        g.add((pathway_node, RDF.type, URIRef(Cons.NODE_TYPES["pathway_node"])))
         g.add((pathway_node, RDFS.label, Literal(pathway_label, datatype=XSD.string)))
         if iri_source:
-            g.add((pathway_node, URIRef(PREDICATES["sio_has_source"]), URIRef(iri_source)))
+            g.add((pathway_node, URIRef(Cons.PREDICATES["sio_has_source"]), URIRef(iri_source)))
             g.add((URIRef(iri_source), RDFS.label, Literal(source, datatype=XSD.string)))
             # data_source_node = add_data_source_node(g, source)
-            g.add((URIRef(iri_source), RDF.type, URIRef(NODE_TYPES["data_source_node"])))
+            g.add((URIRef(iri_source), RDF.type, URIRef(Cons.NODE_TYPES["data_source_node"])))
         return pathway_node

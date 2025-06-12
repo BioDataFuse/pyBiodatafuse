@@ -71,22 +71,19 @@ def get_version_opentargets() -> dict:
         }"""
     r = requests.post(Cons.OPENTARGETS_ENDPOINT, json={"query": query}).json()
 
+    year = r["data"]["meta"]["dataVersion"]["year"]
+    month = r["data"]["meta"]["dataVersion"]["month"]
+    api_version_x = r["data"]["meta"]["apiVersion"]["x"]
+    api_version_y = r["data"]["meta"]["apiVersion"]["y"]
+    api_version_z = r["data"]["meta"]["apiVersion"]["z"]
+
     metadata = {
-        "datasource": r["data"]["meta"]["name"],
-        "metadata": {
+        Cons.DATASOURCE: r["data"]["meta"]["name"],
+        Cons.METADATA: {
             "source_version": {
-                "apiVersion": {
-                    "x": r["data"]["meta"]["apiVersion"]["x"],
-                    "y": r["data"]["meta"]["apiVersion"]["y"],
-                    "z": r["data"]["meta"]["apiVersion"]["z"],
-                }
+                "apiVersion": f"{api_version_x}.{api_version_y}.{api_version_z}",
             },
-            "data_version": {
-                "dataVersion": {
-                    "year": r["data"]["meta"]["dataVersion"]["year"],
-                    "month": r["data"]["meta"]["dataVersion"]["month"],
-                }
-            },
+            "data_version": f"{year}-{month}",
         },
     }
 

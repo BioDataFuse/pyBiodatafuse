@@ -94,12 +94,14 @@ class BDFGraph(Graph):
         """
         df = df.applymap(replace_na_none)
         if not self.include_variants:
-            df = df[df["target.source"] == "Ensembl"]
+            df = df[df[Cons.TARGET_SOURCE_COL] == Cons.ENSEMBL]
+
         for i, row in tqdm(df.iterrows(), total=df.shape[0], desc="Building RDF graph"):
             self.process_row(row, i, open_only)
+
         self._add_metadata(metadata)
 
-    def process_row(self, row, i, open_only):
+    def process_row(self, row, i, open_only: bool = True):
         """
         Process a single row of the DataFrame and update the RDF graph.
 
@@ -111,19 +113,25 @@ class BDFGraph(Graph):
         source_namespace = row.get(Cons.IDENTIFIER_SOURCE_COL)
         target_idx = row.get(Cons.TARGET_COL)
         target_namespace = row.get(Cons.TARGET_SOURCE_COL)
+
         if not self.valid_indices(source_idx, source_namespace, target_idx, target_namespace):
             return
+
         source_curie = normalize_curie(f"{source_namespace}:{source_idx}")
         target_curie = normalize_curie(f"{target_namespace}:{target_idx}")
+
         if not source_curie or not target_curie:
             return
+
         id_number = f"{i:06d}"
         gene_node = self.get_gene_node(row)
         if not gene_node:
             return
+
         disease_data = self.collect_disease_data(row)
         # New methods (e.g., new node types) can be called here
         # self.process_nodetype_data(row.get(datatype_col))
+
         self.process_ppi_data(row.get(Cons.STRING_INTERACT_COL), gene_node)
         protein_nodes = list(self.objects(gene_node, URIRef(Cons.PREDICATES["translation_of"])))
         self.process_disease_data(disease_data, id_number, source_idx, gene_node)
@@ -232,40 +240,43 @@ class BDFGraph(Graph):
         :param gene_node: An RDF node representing the gene.
         :param protein_nodes: A list of RDF nodes representing proteins associated with the gene.
         """
-        for source in ["WikiPathways", "MINERVA", "OpenTargets_reactome"]:
+        for source in [
+            Cons.WIKIPATHWAYS_PATHWAY_COL,
+            Cons.MINERVA_PATHWAY_COL,
+            Cons.OPENTARGETS_REACTOME_COL,
+        ]:
             pathway_data_list = row.get(source)
-            if pathway_data_list:
-                for pathway_data in pathway_data_list:
-                    if pathway_data.get("pathway_id"):
-                        pathway_node = self._add_pathway_node(pathway_data, source)
-                        self.add(
-                            (gene_node, URIRef(Cons.PREDICATES["sio_is_part_of"]), pathway_node)
-                        )
-                        self.add((pathway_node, URIRef(Cons.PREDICATES["sio_has_part"]), gene_node))
-                        if protein_nodes:
-                            for protein_node in protein_nodes:
-                                self.add(
-                                    (
-                                        protein_node,
-                                        URIRef(Cons.PREDICATES["sio_is_part_of"]),
-                                        pathway_node,
-                                    )
+            if not pathway_data_list:
+                continue
+            for pathway_data in pathway_data_list:
+                if pathway_data.get(Cons.PATHWAY_ID):
+                    pathway_node = self._add_pathway_node(pathway_data, source)
+                    self.add((gene_node, URIRef(Cons.PREDICATES["sio_is_part_of"]), pathway_node))
+                    self.add((pathway_node, URIRef(Cons.PREDICATES["sio_has_part"]), gene_node))
+                    if protein_nodes:
+                        for protein_node in protein_nodes:
+                            self.add(
+                                (
+                                    protein_node,
+                                    URIRef(Cons.PREDICATES["sio_is_part_of"]),
+                                    pathway_node,
                                 )
-                                self.add(
-                                    (
-                                        pathway_node,
-                                        URIRef(Cons.PREDICATES["sio_has_part"]),
-                                        protein_node,
-                                    )
-                                )
-                        self.add((pathway_node, URIRef(Cons.PREDICATES["sio_has_part"]), gene_node))
-                        self.add(
-                            (
-                                pathway_node,
-                                URIRef(Cons.PREDICATES["sio_has_source"]),
-                                URIRef(Cons.DATA_SOURCES[source]),
                             )
+                            self.add(
+                                (
+                                    pathway_node,
+                                    URIRef(Cons.PREDICATES["sio_has_part"]),
+                                    protein_node,
+                                )
+                            )
+                    self.add((pathway_node, URIRef(Cons.PREDICATES["sio_has_part"]), gene_node))
+                    self.add(
+                        (
+                            pathway_node,
+                            URIRef(Cons.PREDICATES["sio_has_source"]),
+                            URIRef(Cons.DATA_SOURCES[source]),
                         )
+                    )
 
     def process_processes_data(self, processes_data, gene_node):
         """
@@ -312,8 +323,8 @@ class BDFGraph(Graph):
                 else [literature_based_data]
             )
             for entry in entries:
-                if entry.get("UMLS", None):
-                    umls_parts = entry["UMLS"].split(":")
+                if entry.get(Cons.UMLS, None):
+                    umls_parts = entry[Cons.UMLS].split(":")
                     umlscui = umls_parts[1] if len(umls_parts) > 1 else None
                     if not umlscui:
                         continue
@@ -366,7 +377,7 @@ class BDFGraph(Graph):
         """
         if stringdb_data:
             for entry in stringdb_data:
-                if entry.get("Ensembl"):
+                if entry.get(Cons.ENSEMBL):
                     self._add_ppi_data(gene_node=gene_node, entry=entry)
 
     def _add_gene_nodes(self, row):
