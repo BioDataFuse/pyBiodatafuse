@@ -206,9 +206,8 @@ def get_gene_wikipathways(
     for col in Cons.WIKIPATHWAY_NAMESPACE_DICT:
         if col not in intermediate_df.columns:
             continue
-        intermediate_df[col] = intermediate_df[col].apply(
-            lambda x: f"{Cons.WIKIPATHWAY_NAMESPACE_DICT[col]}:{x}" if x else x
-        )
+        namespace = Cons.WIKIPATHWAY_NAMESPACE_DICT[col]
+        intermediate_df[col] = intermediate_df[col].apply(lambda x: f"{namespace}:{x}" if x else x)
 
     if query_interactions:
         intermediate_df[Cons.PATHWAY_ID] = (
