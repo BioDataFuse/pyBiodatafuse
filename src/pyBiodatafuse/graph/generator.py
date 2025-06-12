@@ -438,6 +438,9 @@ def add_kegg_compounds_subgraph(
         for _, path_row in combined_df.iterrows():
             pathways = path_row.get("KEGG_pathways", [])
 
+            if not isinstance(pathways, list):
+                continue
+
             for pathway in pathways:
                 if pathway_node_label != pathway.get("pathway_id"):
                     continue
