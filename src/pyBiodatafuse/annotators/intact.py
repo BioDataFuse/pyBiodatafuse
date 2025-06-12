@@ -53,7 +53,7 @@ def clean_id(identifier: str) -> str:
     return identifier.split(" ")[0] if identifier else identifier
 
 
-def get_intact_interactions(gene_ids: list[str]) -> list:
+def get_intact_interactions(gene_ids: List[str]) -> List[dict]:
     """Retrieve protein interactions for a list of genes from IntAct.
 
     :param gene_ids: List of gene identifiers.
@@ -126,7 +126,7 @@ def get_intact_interactions(gene_ids: list[str]) -> list:
         return []
 
 
-def get_protein_intact_acs(id_of_interest: str) -> list:
+def get_protein_intact_acs(id_of_interest: str) -> List[str]:
     """Get all IntAct ACs for protein interactors from a given Ensembl ID.
 
     :param id_of_interest: input gene Ensembl identifier.
@@ -156,12 +156,12 @@ def get_protein_intact_acs(id_of_interest: str) -> list:
 
 
 def get_filtered_interactions(
-    batch_ids: list,
+    batch_ids: List[str],
     valid_intact_acs: set,
     intact_ac_to_entity: dict,
     entity_to_input_id: dict,
     interaction_type: str = "gene_gene",
-) -> dict:
+) -> Dict[str, List[dict]]:
     """Filter interactions based on data type.
 
     :param batch_ids: List of input IDs.

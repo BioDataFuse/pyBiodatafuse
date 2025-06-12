@@ -38,10 +38,16 @@ def add_gene_expression_data(
         gene_expression_value_node = URIRef(
             f"{new_uris['gene_expression_value_base_node']}/{id_number}/{source_idx}"
         )
-        developmental_stage_node = URIRef(get_iri(data[Cons.DEVELOPMENTAL_ID].replace("_", ":")))
+        developmental_stage_iri = get_iri(data[Cons.DEVELOPMENTAL_ID].replace("_", ":"))
+        if not developmental_stage_iri:
+            continue
+        developmental_stage_node = URIRef(developmental_stage_iri)
 
         anatomical_entity = data[Cons.ANATOMICAL_ID]
-        anatomical_entity_node = URIRef(get_iri(anatomical_entity.replace("_", ":")))
+        anatomical_entity_iri = get_iri(anatomical_entity.replace("_", ":"))
+        if not anatomical_entity_iri:
+            continue
+        anatomical_entity_node = URIRef(anatomical_entity_iri)
         exp_uri = new_uris["gene_expression_value_base_node"]
 
         gene_expression_value_node = URIRef(

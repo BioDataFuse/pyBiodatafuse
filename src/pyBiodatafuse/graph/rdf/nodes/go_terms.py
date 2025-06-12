@@ -3,6 +3,8 @@
 """Populate a BDF RDF graph with gene ontology terms related to genes."""
 
 
+from typing import Optional
+
 from bioregistry import get_iri
 from rdflib import Graph, Literal, URIRef
 from rdflib.namespace import RDFS, XSD
@@ -11,7 +13,7 @@ import pyBiodatafuse.constants as Cons
 from pyBiodatafuse.graph.rdf.utils import add_data_source_node
 
 
-def add_go_cpf(g: Graph, process_data: dict) -> URIRef:
+def add_go_cpf(g: Graph, process_data: dict) -> Optional[URIRef]:
     """Create and add a Gene Ontology (GO) node to the RDF graph.
 
     :param g: RDF graph to which the GO node will be added.
@@ -21,6 +23,8 @@ def add_go_cpf(g: Graph, process_data: dict) -> URIRef:
     curie = process_data[Cons.GO_ID]
     if curie:
         iri = get_iri(curie)
+        if not iri:
+            return None
         label = process_data[Cons.GO_NAME]
         go_type = (
             URIRef(Cons.GO_TYPES[process_data[Cons.GO_TYPE]])

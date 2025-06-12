@@ -1,5 +1,7 @@
 """Populate a BDF RDF graph with gene-disease relationship data."""
 
+from typing import Optional
+
 from bioregistry import get_iri
 from rdflib import Graph, Literal, URIRef
 from rdflib.namespace import OWL, RDF, RDFS, XSD
@@ -15,7 +17,7 @@ def add_gene_disease_associations(
     disease_data: dict,
     new_uris: dict,
     i: int,
-) -> URIRef:
+) -> Optional[URIRef]:
     """Process and add gene-disease association data to the RDF graph.
 
     :param g: RDF graph to which the associations will be added.
@@ -30,7 +32,7 @@ def add_gene_disease_associations(
     gene_id = g.value(subject=gene_node, predicate=RDFS.label)
     disease_node = add_disease_node(g, disease_data)
     if not disease_node:
-        return
+        return None
     umlscui = disease_data.get(Cons.UMLS, "")
     assoc_node = URIRef(f"{new_uris['gene_disease_association']}/{gene_id}{umlscui}")
     g.add((assoc_node, RDF.type, URIRef(Cons.NODE_TYPES["gene_disease_association"])))
@@ -46,7 +48,7 @@ def add_gene_disease_associations(
             score,
             new_uris,
             i,
-            gene_id,
+            str(gene_id),
         )
         g.add((assoc_node, URIRef(Cons.PREDICATES["sio_has_measurement_value"]), score_node))
 
@@ -54,20 +56,22 @@ def add_gene_disease_associations(
         ei_node = add_evidence_node(
             g, id_number, source_idx, Cons.DISGENET_EI, disease_data, new_uris, i
         )
-        g.add((assoc_node, URIRef(Cons.PREDICATES["sio_has_measurement_value"]), ei_node))
+        if ei_node:
+            g.add((assoc_node, URIRef(Cons.PREDICATES["sio_has_measurement_value"]), ei_node))
 
     if disease_data.get(Cons.DISGENET_EL):
         el_node = add_evidence_node(
             g, id_number, source_idx, Cons.DISGENET_EL, disease_data, new_uris, i
         )
-        g.add((assoc_node, URIRef(Cons.PREDICATES["sio_has_measurement_value"]), el_node))
+        if el_node:
+            g.add((assoc_node, URIRef(Cons.PREDICATES["sio_has_measurement_value"]), el_node))
 
     # data_source_node = add_data_source_node(g, "DISGENET")
     # g.add((assoc_node, URIRef(PREDICATES["sio_has_source"]), data_source_node))
     return disease_node
 
 
-def add_disease_node(g: Graph, disease_data: dict) -> URIRef:
+def add_disease_node(g: Graph, disease_data: dict) -> Optional[URIRef]:
     """Create and add a disease node to the RDF graph.
 
     :param g: RDF graph to which the disease node will be added.
@@ -140,7 +144,7 @@ def add_evidence_node(
     disease_data: dict,
     new_uris: dict,
     i: int,
-) -> URIRef:
+) -> Optional[URIRef]:
     """Create and add an evidence node (EI or EL) to the RDF graph.
 
     :param g: RDF graph to which the evidence node will be added.

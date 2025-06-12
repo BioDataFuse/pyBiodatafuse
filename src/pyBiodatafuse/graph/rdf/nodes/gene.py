@@ -4,13 +4,15 @@
 """Populate a BDF RDF graph with gene and protein nodes."""
 
 
+from typing import Optional
+
 from rdflib import Graph, Literal, URIRef
 from rdflib.namespace import RDF, RDFS, XSD
 
 import pyBiodatafuse.constants as Cons
 
 
-def add_gene_nodes(g: Graph, row) -> tuple:
+def add_gene_nodes(g: Graph, row) -> Optional[URIRef]:
     """Create and add a gene node and associated protein node to the RDF graph.
 
     :param g: (Graph): RDF graph to which the gene and protein nodes are added.
@@ -25,4 +27,5 @@ def add_gene_nodes(g: Graph, row) -> tuple:
             gene_node = URIRef(Cons.NODE_URI_PREFIXES[Cons.ENSEMBL] + target)
             g.add((gene_node, RDF.type, URIRef(Cons.NODE_TYPES["gene_node"])))
             g.add((gene_node, RDFS.label, Literal(row[Cons.IDENTIFIER_COL], datatype=XSD.string)))
-    return gene_node
+            return gene_node
+    return None

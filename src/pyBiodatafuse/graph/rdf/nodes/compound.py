@@ -3,13 +3,15 @@
 """Populate a BDF RDF graph with compound data."""
 
 
+from typing import Optional
+
 from rdflib import Graph, Literal, URIRef
 from rdflib.namespace import OWL, RDF, RDFS, XSD
 
 import pyBiodatafuse.constants as Cons
 
 
-def add_compound_node(g: Graph, compound: dict, gene_node: URIRef) -> URIRef:
+def add_compound_node(g: Graph, compound: dict, gene_node: URIRef) -> Optional[URIRef]:
     """Create and add a compound node to the RDF graph.
 
     :param g: RDF graph to which the compound node will be added.

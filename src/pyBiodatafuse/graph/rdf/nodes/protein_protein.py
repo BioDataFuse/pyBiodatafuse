@@ -2,13 +2,17 @@
 
 """Populate a BDF RDF graph with PPI nodes."""
 
+from typing import Optional
+
 from rdflib import Graph, Literal, URIRef
 from rdflib.namespace import RDF, XSD
 
 import pyBiodatafuse.constants as Cons
 
 
-def add_ppi_data(g: Graph, gene_node: URIRef, entry: dict, base_uri: str, new_uris: dict) -> URIRef:
+def add_ppi_data(
+    g: Graph, gene_node: URIRef, entry: dict, base_uri: str, new_uris: dict
+) -> Optional[URIRef]:
     """Add a protein protein interaction node.
 
     :param g: RDFLib graph
@@ -41,10 +45,10 @@ def add_ppi_data(g: Graph, gene_node: URIRef, entry: dict, base_uri: str, new_ur
             (ppi_node, URIRef(Cons.PREDICATES["sio_has_part"]), protein_node),
             (ppi_node, URIRef(Cons.PREDICATES["sio_has_part"]), protein_link_node),
             (gene_node, URIRef(Cons.PREDICATES["translates_to"]), protein_node),
-            (gene_link_node, Cons.PREDICATES["translates_to"], protein_link_node),
+            (gene_link_node, URIRef(Cons.PREDICATES["translates_to"]), protein_link_node),
             (protein_node, URIRef(Cons.PREDICATES["translation_of"]), gene_node),
-            (protein_link_node, Cons.PREDICATES["translation_of"], gene_link_node),
-            (ppi_node, RDF.type, Cons.NODE_TYPES["ppi_node"]),
+            (protein_link_node, URIRef(Cons.PREDICATES["translation_of"]), gene_link_node),
+            (ppi_node, RDF.type, URIRef(Cons.NODE_TYPES["ppi_node"])),
             (protein_link_node, RDF.type, URIRef(Cons.NODE_TYPES["protein_node"])),
             (protein_node, RDF.type, URIRef(Cons.NODE_TYPES["protein_node"])),
             (score_node, RDF.type, URIRef(Cons.NODE_TYPES["score_node"])),
@@ -57,6 +61,8 @@ def add_ppi_data(g: Graph, gene_node: URIRef, entry: dict, base_uri: str, new_ur
         ]
 
         for edge in new_edges_to_add:
-            g.add(edge[0], edge[1], edge[2])
+            g.add(edge)
 
         return ppi_node
+
+    return None
