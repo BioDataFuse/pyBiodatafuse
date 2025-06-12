@@ -107,17 +107,17 @@ class TestWikipathway(unittest.TestCase):
                     {
                         "pathway_id": "WP:WP5153",
                         "pathway_label": "N-glycan biosynthesis",
-                        "pathway_gene_count": 57.0,
+                        "pathway_gene_counts": 57.0,
                     }
                 ],
                 [
                     {
                         "pathway_id": "WP:WP5153",
                         "pathway_label": "N-glycan biosynthesis",
-                        "pathway_gene_count": 57.0,
+                        "pathway_gene_counts": 57.0,
                     }
                 ],
-                [{"pathway_id": nan, "pathway_label": nan, "pathway_gene_count": nan}],
+                [{"pathway_id": nan, "pathway_label": nan, "pathway_gene_counts": nan}],
             ]
         )
         expected_data.name = WIKIPATHWAYS

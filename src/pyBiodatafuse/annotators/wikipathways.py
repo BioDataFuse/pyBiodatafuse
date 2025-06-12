@@ -5,29 +5,21 @@
 
 import datetime
 import os
-import re
-import time
 import warnings
 from string import Template
-from typing import Any, Dict, Mapping, Type
+from typing import Any, Dict
 
 import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
 from SPARQLWrapper.SPARQLExceptions import SPARQLWrapperException
 from tqdm import tqdm
 
-from pyBiodatafuse.constants import (
-    WIKIPATHWAYS,
-    WIKIPATHWAYS_ENDPOINT,
-    WIKIPATHWAYS_GENE_INPUT_ID,
-    WIKIPATHWAYS_MOLECULAR_COL,
-    WIKIPATHWAYS_MOLECULAR_GENE_OUTPUT_DICT,
-    WIKIPATHWAYS_PATHWAYS_OUTPUT_DICT,
-)
+import pyBiodatafuse.constants as Cons
 from pyBiodatafuse.utils import (
     check_columns_against_constants,
     collapse_data_sources,
     get_identifier_of_interest,
+    give_annotator_warning,
 )
 
 
@@ -39,7 +31,7 @@ def check_endpoint_wikipathways() -> bool:
     with open(os.path.dirname(__file__) + "/queries/wikipathways-metadata.rq", "r") as fin:
         sparql_query = fin.read()
 
-    sparql = SPARQLWrapper(WIKIPATHWAYS_ENDPOINT)
+    sparql = SPARQLWrapper(Cons.WIKIPATHWAYS_ENDPOINT)
     sparql.setReturnFormat(JSON)
 
     sparql.setQuery(sparql_query)
@@ -59,7 +51,7 @@ def get_version_wikipathways() -> dict:
     with open(os.path.dirname(__file__) + "/queries/wikipathways-metadata.rq", "r") as fin:
         sparql_query = fin.read()
 
-    sparql = SPARQLWrapper(WIKIPATHWAYS_ENDPOINT)
+    sparql = SPARQLWrapper(Cons.WIKIPATHWAYS_ENDPOINT)
     sparql.setReturnFormat(JSON)
 
     sparql.setQuery(sparql_query)
@@ -71,12 +63,13 @@ def get_version_wikipathways() -> dict:
 
 
 def get_gene_wikipathways(
-    bridgedb_df: pd.DataFrame, query_interactions: bool = False
+    bridgedb_df: pd.DataFrame, query_interactions: bool = False, organism: str = "Homo sapiens"
 ) -> pd.DataFrame:
     """Query WikiPathways for pathways associated with genes.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
     :param query_interactions: Set whether to retrieve gene part_of pathways relationships (False) or all molecular interactions (True).
+    :param organism: The organism to query. Default is "Homo sapiens".
     :returns: a DataFrame containing the WikiPathways output and dictionary of the WikiPathways metadata.
     """
     # Check if the endpoint is available
@@ -84,15 +77,15 @@ def get_gene_wikipathways(
 
     if not api_available:
         warnings.warn(
-            f"{WIKIPATHWAYS} SPARQL endpoint is not available. Unable to retrieve data.",
+            f"{Cons.WIKIPATHWAYS} SPARQL endpoint is not available. Unable to retrieve data.",
             stacklevel=2,
         )
         return pd.DataFrame(), {}
 
-    data_df = get_identifier_of_interest(bridgedb_df, WIKIPATHWAYS_GENE_INPUT_ID)
+    data_df = get_identifier_of_interest(bridgedb_df, Cons.WIKIPATHWAYS_GENE_INPUT_ID)
 
     wikipathways_version = get_version_wikipathways()
-    gene_list = data_df["target"].tolist()
+    gene_list = data_df[Cons.TARGET_COL].tolist()
     gene_list = list(set(gene_list))
 
     query_gene_lists = []
@@ -107,21 +100,23 @@ def get_gene_wikipathways(
             gene_list = [f"<https://identifiers.org/ncbigene/{g}>" for g in gene_list]
         query_gene_lists.append(" ".join(g for g in gene_list))
     col_name = ""
+
     if query_interactions:
         file = os.path.join("queries", "wikipathways-mims.rq")
-        output_dict = WIKIPATHWAYS_MOLECULAR_GENE_OUTPUT_DICT
-        col_name = WIKIPATHWAYS_MOLECULAR_COL
+        output_dict = Cons.WIKIPATHWAYS_MOLECULAR_GENE_OUTPUT_DICT
+        col_name = Cons.WIKIPATHWAYS_MOLECULAR_COL
     else:
         file = os.path.join("queries", "wikipathways-genes-pathways.rq")
-        output_dict = WIKIPATHWAYS_PATHWAYS_OUTPUT_DICT
-        col_name = WIKIPATHWAYS
+        output_dict = Cons.WIKIPATHWAYS_PATHWAYS_OUTPUT_DICT
+        col_name = Cons.WIKIPATHWAYS
+
     with open(os.path.join(os.path.dirname(__file__), file), "r", encoding="utf-8") as fin:
         sparql_query = fin.read()
 
     # Record the start time
     start_time = datetime.datetime.now()
 
-    sparql = SPARQLWrapper(WIKIPATHWAYS_ENDPOINT)
+    sparql = SPARQLWrapper(Cons.WIKIPATHWAYS_ENDPOINT)
     sparql.setReturnFormat(JSON)
 
     intermediate_df = pd.DataFrame()
@@ -130,11 +125,11 @@ def get_gene_wikipathways(
         sparql_query_template = Template(sparql_query)
         substit_dict = dict()
         if query_interactions:
-            substit_dict = dict(
-                gene_list=gene_list_str, organism_name='"Homo sapiens"'
-            )  # TODO allow setting organism
+            substit_dict = dict(gene_list=gene_list_str, organism_name=f'"{organism}"')
+
         if not query_interactions:
             substit_dict = dict(gene_list=gene_list_str)
+
         sparql_query_template_sub = sparql_query_template.substitute(substit_dict)
         sparql.setQuery(sparql_query_template_sub)
 
@@ -166,100 +161,99 @@ def get_gene_wikipathways(
 
     # Add the datasource, query, query time, and the date to metadata
     wikipathways_metadata: Dict[str, Any] = {
-        "datasource": WIKIPATHWAYS,
+        "datasource": Cons.WIKIPATHWAYS,
         "metadata": wikipathways_version,
         "query": {
             "size": len(gene_list),
-            "input_type": WIKIPATHWAYS_GENE_INPUT_ID,
+            "input_type": Cons.WIKIPATHWAYS_GENE_INPUT_ID,
             "time": time_elapsed,
             "date": current_date,
-            "url": WIKIPATHWAYS_ENDPOINT,
+            "url": Cons.WIKIPATHWAYS_ENDPOINT,
         },
     }
-    if "gene_id" not in intermediate_df.columns:
+
+    if Cons.WIKIPATHWAYS_GENE_ID not in intermediate_df.columns:
         warnings.warn(
-            f"There is no annotation for your input list in {WIKIPATHWAYS}.",
+            f"There is no annotation for your input list in {Cons.WIKIPATHWAYS}.",
             stacklevel=2,
         )
         return pd.DataFrame(), wikipathways_metadata
+
     # Fix identifiers
-    intermediate_df["gene_id"] = (
-        intermediate_df["gene_id"].str.removeprefix("https://identifiers.org/ncbigene/").fillna("")
-    )
-    if query_interactions:
-        intermediate_df["targetGene"] = (
-            intermediate_df["targetGene"]
-            .str.removeprefix("https://identifiers.org/ncbigene/")
-            .fillna("")
+    for col in Cons.WIKIPATHWAY_ID_CLEANER_DICT:
+        if col not in intermediate_df.columns:
+            continue
+
+        intermediate_df[col] = (
+            intermediate_df[col].str.removeprefix(Cons.WIKIPATHWAY_ID_CLEANER_DICT[col]).fillna("")
         )
-        intermediate_df["targetMetabolite"] = (
-            intermediate_df["targetMetabolite"]
-            .str.removeprefix("http://rdf.ncbi.nlm.nih.gov/pubchem/compound/")
-            .fillna("")
-        )
-        intermediate_df["targetProtein"] = (
-            intermediate_df["targetProtein"]
-            .str.removeprefix("https://identifiers.org/uniprot/")
-            .fillna("")
-        )
-        intermediate_df["mimtype"] = (
-            intermediate_df["mimtype"]
-            .str.removeprefix("http://vocabularies.wikipathways.org/wp#")
-            .fillna("")
-        )
-    else:
-        intermediate_df["pathway_gene_count"] = pd.to_numeric(
-            intermediate_df["pathway_gene_count"], errors="coerce"
-        )
+
     # Organize the annotation results as an array of dictionaries
-    intermediate_df.rename(columns={"gene_id": "target"}, inplace=True)
-    if not query_interactions:
-        intermediate_df["pathway_gene_count"] = pd.to_numeric(intermediate_df["pathway_gene_count"])
+    intermediate_df.rename(
+        columns={
+            Cons.WIKIPATHWAYS_GENE_ID: Cons.TARGET_COL,
+            "pathway_gene_count": Cons.PATHWAY_GENE_COUNTS,
+        },
+        inplace=True,
+    )
+
+    if Cons.PATHWAY_GENE_COUNTS in intermediate_df.columns:
+        intermediate_df[Cons.PATHWAY_GENE_COUNTS] = pd.to_numeric(
+            intermediate_df[Cons.PATHWAY_GENE_COUNTS], errors="coerce"
+        )
+
+    # Add namespaces
+    for col in Cons.WIKIPATHWAY_NAMESPACE_DICT:
+        if col not in intermediate_df.columns:
+            continue
+        intermediate_df[col] = intermediate_df[col].apply(
+            lambda x: f"{Cons.WIKIPATHWAY_NAMESPACE_DICT[col]}:{x}" if x else x
+        )
+
     if query_interactions:
-        intermediate_df["pathway_id"] = (
-            intermediate_df["pathway_id"]
+        intermediate_df[Cons.PATHWAY_ID] = (
+            intermediate_df[Cons.PATHWAY_ID]
             .str.removeprefix("https://identifiers.org/wikipathways/")
             .str.replace(r"(WP\d+)_.*", r"\1", regex=True)
-            .str.replace("WP", "WP:", regex=False)
+            .str.replace("WP", f"{Cons.WIKIPATHWAY}:", regex=False)
             .str.strip()
         )
     else:
-        intermediate_df["pathway_id"] = intermediate_df["pathway_id"].apply(
-            lambda x: x.replace("WP", "WP:WP") if "WP" in x else x
+        intermediate_df[Cons.PATHWAY_ID] = intermediate_df[Cons.PATHWAY_ID].apply(
+            lambda x: x.replace("WP", f"{Cons.WIKIPATHWAY}:WP") if "WP" in x else x
         )
 
     # Check if all keys in df match the keys in OUTPUT_DICT
     check_columns_against_constants(
         data_df=intermediate_df,
         output_dict=output_dict,
-        check_values_in=["pathway_id"],
+        check_values_in=[Cons.WIKIPATHWAY],
     )
 
     # Merge the two DataFrames on the target column
     merged_df = collapse_data_sources(
         data_df=data_df,
-        source_namespace=WIKIPATHWAYS_GENE_INPUT_ID,
+        source_namespace=Cons.WIKIPATHWAYS_GENE_INPUT_ID,
         target_df=intermediate_df,
-        common_cols=["target"],
+        common_cols=[Cons.TARGET_COL],
         target_specific_cols=list(output_dict.keys()),
         col_name=col_name,
     )
 
     """Update metadata"""
     # Calculate the number of new nodes
-    num_new_nodes = intermediate_df["pathway_id"].nunique()
+    num_new_nodes = intermediate_df[Cons.PATHWAY_ID].nunique()
     # Calculate the number of new edges
-    num_new_edges = intermediate_df.drop_duplicates(subset=["target", "pathway_id"]).shape[0]
+    num_new_edges = intermediate_df.drop_duplicates(
+        subset=[Cons.TARGET_COL, Cons.PATHWAY_ID]
+    ).shape[0]
     if not query_interactions:
         # Check the intermediate_df
         if num_new_edges != len(intermediate_df):
-            warnings.warn(
-                f"The intermediate_df in {WIKIPATHWAYS} annotator should be checked, please create an issue on https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
-                stacklevel=2,
-            )
+            give_annotator_warning(Cons.WIKIPATHWAYS)
 
     # Add the number of new nodes and edges to metadata
-    wikipathways_metadata["query"]["number_of_added_nodes"] = num_new_nodes
-    wikipathways_metadata["query"]["number_of_added_edges"] = num_new_edges
+    wikipathways_metadata[Cons.QUERY][Cons.NUM_NODES] = num_new_nodes
+    wikipathways_metadata[Cons.QUERY][Cons.NUM_EDGES] = num_new_edges
 
     return merged_df, wikipathways_metadata

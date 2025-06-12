@@ -476,30 +476,32 @@ def add_wikipathways_gene_pathway_subgraph(g, gene_node_label, annot_list):
     """
     logger.debug("Adding WikiPathways pathway nodes and edges")
     for annot in annot_list:
-        if pd.isna(annot["pathway_label"]):
+        if pd.isna(annot[Cons.WIKIPATHWAYS_NODE_MAIN_LABEL]):
             continue
 
-        annot_node_label = annot[Cons.PATHWAY_NODE_MAIN_LABEL]
-        annot_node_attrs = Cons.PATHWAY_NODE_ATTRS.copy()
+        annot_node_label = annot[Cons.WIKIPATHWAYS_NODE_MAIN_LABEL]
+        annot_node_attrs = Cons.WIKIPATHWAYS_NODE_ATTRS.copy()
         annot_node_attrs.update(
             {
-                "datasource": Cons.WIKIPATHWAYS,
-                "name": annot["pathway_label"],
-                "id": annot["pathway_id"],
-                "gene_count": annot["pathway_gene_count"],
+                Cons.DATASOURCE: Cons.WIKIPATHWAYS,
+                Cons.NAME: annot[Cons.PATHWAY_LABEL],
+                Cons.ID: annot[Cons.PATHWAY_ID],
+                Cons.GENE_COUNTS: annot[Cons.PATHWAY_GENE_COUNTS],
             }
         )
 
         g.add_node(annot_node_label, attr_dict=annot_node_attrs)
 
         edge_attrs = Cons.GENE_PATHWAY_EDGE_ATTRS.copy()
-        edge_attrs["datasource"] = Cons.WIKIPATHWAYS
+        edge_attrs[Cons.DATASOURCE] = Cons.WIKIPATHWAYS
 
         edge_hash = hash(frozenset(edge_attrs.items()))
-        edge_attrs["edge_hash"] = edge_hash
+        edge_attrs[Cons.EDGE_HASH] = edge_hash
         edge_data = g.get_edge_data(gene_node_label, annot_node_label)
         edge_data = {} if edge_data is None else edge_data
-        node_exists = [x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash]
+        node_exists = [
+            x for x, y in edge_data.items() if y["attr_dict"][Cons.EDGE_HASH] == edge_hash
+        ]
 
         if len(node_exists) == 0:
             g.add_edge(
@@ -777,7 +779,7 @@ def add_opentargets_gene_go_subgraph(g, gene_node_label, annot_list):
             g.add_edge(
                 gene_node_label,
                 annot_node_label,
-                label=Cons.OPENTARGETS_GENE_GO_EDGE_LABEL,
+                label=Cons.GENE_PATHWAY_EDGE_LABEL,
                 attr_dict=edge_attrs,
             )
 
@@ -1198,7 +1200,6 @@ def add_opentargets_disease_compound_subgraph(g, disease_node, annot_list):
     return g
 
 
-# TODO: clean the function
 def add_wikipathways_molecular_subgraph(g, gene_node_label, annot_list):
     """Construct part of the graph by linking molecular entities from WP with MIMs.
 
@@ -1209,49 +1210,53 @@ def add_wikipathways_molecular_subgraph(g, gene_node_label, annot_list):
     """
     logger.debug("Adding WikiPathways molecular nodes and edges")
     for annot in annot_list:
-        for target_key in ["targetGene", "targetMetabolite"]:
+        for target_key in [Cons.WIKIPATHWAYS_TARGET_GENE, Cons.WIKIPATHWAYS_TARGET_METABOLITE]:
             target = annot.get(target_key)
             target_node_label = None
+
             if target and target != gene_node_label:  # No interactions with self
                 target_node_label = str(target)
 
-            if target_node_label is not None:
-                interaction_type = annot.get("mimtype", "Interaction")
-                edge_attrs = Cons.MOLECULAR_INTERACTION_EDGE_ATTRS.copy()
-                edge_attrs["interaction_type"] = interaction_type
-                edge_attrs["rhea_id"] = annot.get("rhea_id", "")
-                edge_attrs["pathway_id"] = annot.get("pathway_id", "")
-                edge_attrs["edge_hash"] = hash(frozenset(edge_attrs.items()))  # type: ignore
+            if target_node_label is None:
+                continue
 
-                if not g.has_node(target_node_label):
-                    node_attrs = Cons.MOLECULAR_PATHWAY_NODE_ATTRS.copy()
-                    node_attrs.update(
-                        {
-                            "pathway_id": annot.get("pathway_id", ""),
-                            "pathway_label": annot.get("pathway_label", ""),
-                            "id": target_node_label,
-                        }
-                    )
-                    g.add_node(target_node_label, attr_dict=node_attrs)
+            interaction_type = annot.get(Cons.WIKIPATHWAYS_MIM_TYPE, "Interaction")
+            edge_attrs = Cons.MOLECULAR_INTERACTION_EDGE_ATTRS.copy()
+            edge_attrs[Cons.WIKIPATHWAYS_INTERACTION_TYPE] = interaction_type
+            edge_attrs[Cons.WIKIPATHWAYS_RHEA_ID] = annot.get(Cons.WIKIPATHWAYS_RHEA_ID, "")
+            edge_attrs[Cons.PATHWAY_ID] = annot.get(Cons.PATHWAY_ID, "")
+            edge_attrs[Cons.EDGE_HASH] = hash(frozenset(edge_attrs.items()))  # type: ignore
 
-                edge_exists = False
-                if g.has_edge(gene_node_label, target_node_label):
-                    edge_data = g.get_edge_data(gene_node_label, target_node_label)
-                    for edge_key in edge_data:
-                        if (
-                            edge_data[edge_key].get("attr_dict", {}).get("edge_hash")
-                            == edge_attrs["edge_hash"]
-                        ):
-                            edge_exists = True
-                            break
+            if not g.has_node(target_node_label):
+                node_attrs = Cons.MOLECULAR_PATHWAY_NODE_ATTRS.copy()
+                node_attrs.update(
+                    {
+                        Cons.PATHWAY_ID: annot.get(Cons.PATHWAY_ID, ""),
+                        Cons.PATHWAY_LABEL: annot.get(Cons.PATHWAY_LABEL, ""),
+                        Cons.ID: target_node_label,
+                        Cons.DATASOURCE: Cons.WIKIPATHWAYS,
+                    }
+                )
+                g.add_node(target_node_label, attr_dict=node_attrs)
 
-                if not edge_exists:
-                    g.add_edge(
-                        gene_node_label,
-                        target_node_label,
-                        label=interaction_type.upper(),
-                        attr_dict=edge_attrs,
-                    )
+            edge_exists = False
+            if g.has_edge(gene_node_label, target_node_label):
+                edge_data = g.get_edge_data(gene_node_label, target_node_label)
+                for edge_key in edge_data:
+                    if (
+                        edge_data[edge_key].get("attr_dict", {}).get(Cons.EDGE_HASH)
+                        == edge_attrs[Cons.EDGE_HASH]
+                    ):
+                        edge_exists = True
+                        break
+
+            if not edge_exists:
+                g.add_edge(
+                    gene_node_label,
+                    target_node_label,
+                    label=interaction_type.capitalize(),
+                    attr_dict=edge_attrs,
+                )
     return g
 
 
@@ -1523,6 +1528,7 @@ def _built_gene_based_graph(
         Cons.OPENTARGETS_GENE_COMPOUND_COL: add_opentargets_gene_compound_subgraph,
         Cons.MOLMEDB_PROTEIN_COMPOUND_COL: add_molmedb_gene_inhibitor_subgraph,
         Cons.PUBCHEM_COMPOUND_ASSAYS_COL: add_pubchem_assay_subgraph,
+        Cons.WIKIPATHWAYS: add_wikipathways_gene_pathway_subgraph,
         Cons.WIKIPATHWAYS_MOLECULAR_COL: add_wikipathways_molecular_subgraph,
         Cons.ENSEMBL_HOMOLOG_COL: add_ensembl_homolog_subgraph,
         Cons.INTACT_INTERACT_COL: add_intact_interactions_subgraph,

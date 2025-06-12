@@ -277,7 +277,7 @@ def get_ppi(
 
     if "stringId_A" not in network_df.columns:
         warnings.warn(
-            f"There is no interaction between your input list based on {Cons.STRING} version{string_version}.",
+            f"There is no interaction between your input list based on {Cons.STRING}.",
             stacklevel=2,
         )
         return pd.DataFrame(), stringdb_metadata
@@ -307,6 +307,13 @@ def get_ppi(
 
     # Drop rows with no interactions
     data_df = data_df[data_df[Cons.STRING_INTERACT_COL].apply(bool)].reset_index(drop=True)
+
+    if data_df.empty:
+        warnings.warn(
+            f"There is no interaction between your input list based on {Cons.STRING}.",
+            stacklevel=2,
+        )
+        return pd.DataFrame(), stringdb_metadata
 
     # Check if the number of new edges is equal to the number of edges in the network_df
     if num_new_edges != len(network_df):

@@ -110,6 +110,7 @@ DO = "DO"
 MESH = "MESH"
 UMLS = "UMLS"
 NCBI_GENE = "NCBI Gene"
+NCBI_GENE_ID = "NCBIGene"
 CHEBI = "ChEBI"
 UNIPROT_TREMBL = "Uniprot-TrEMBL"
 CHEMBL = "CHEMBL"
@@ -125,6 +126,7 @@ WP = "WikiPathways"
 BIODATAFUSE = "Biodatafuse"
 UBERON = "UBERON"
 CIO = "CIO"
+WIKIPATHWAY = "WP"
 
 
 # Input type for each data source
@@ -459,7 +461,6 @@ PUBCHEM_COMPOUND_OUTPUT_DICT = {
 }
 PUBCHEM_POSSIBLE_OUTCOMES = "active|inactive"
 
-
 """
 StringDB variables
 """
@@ -493,22 +494,43 @@ WIKIDATA_OUTPUT_DICT = {
 """
 WikiPathways variables
 """
+WIKIPATHWAYS_GENE_ID = "gene_id"
 
-# WikiPathways
 WIKIPATHWAYS_PATHWAYS_OUTPUT_DICT = {
-    "pathway_id": str,
-    "pathway_label": str,
-    "pathway_gene_count": int,
+    PATHWAY_ID: str,
+    PATHWAY_LABEL: str,
+    PATHWAY_GENE_COUNTS: int,
 }
 
+WIKIPATHWAYS_TARGET_GENE = "targetGene"
+WIKIPATHWAYS_TARGET_PROTEIN = "targetProtein"
+WIKIPATHWAYS_TARGET_METABOLITE = "targetMetabolite"
+WIKIPATHWAYS_MIM_TYPE = "mimtype"
+WIKIPATHWAYS_RHEA_ID = "rhea_id"
+
 WIKIPATHWAYS_MOLECULAR_GENE_OUTPUT_DICT = {
-    "pathway_id": str,
-    "pathway_label": str,
-    "targetGene": str,
-    "targetProtein": str,
-    "targetMetabolite": str,
-    "mimtype": str,
-    "rhea_id": str,
+    PATHWAY_ID: str,
+    PATHWAY_LABEL: str,
+    WIKIPATHWAYS_TARGET_GENE: str,
+    WIKIPATHWAYS_TARGET_PROTEIN: str,
+    WIKIPATHWAYS_TARGET_METABOLITE: str,
+    WIKIPATHWAYS_MIM_TYPE: str,
+    WIKIPATHWAYS_RHEA_ID: str,
+}
+
+WIKIPATHWAY_ID_CLEANER_DICT = {
+    WIKIPATHWAYS_GENE_ID: "https://identifiers.org/ncbigene/",
+    WIKIPATHWAYS_TARGET_GENE: "https://identifiers.org/ncbigene/",
+    WIKIPATHWAYS_TARGET_PROTEIN: "https://identifiers.org/uniprot/",
+    WIKIPATHWAYS_TARGET_METABOLITE: "http://rdf.ncbi.nlm.nih.gov/pubchem/compound/",
+    WIKIPATHWAYS_MIM_TYPE: "http://vocabularies.wikipathways.org/wp#",
+}
+
+WIKIPATHWAY_NAMESPACE_DICT = {
+    WIKIPATHWAYS_GENE_ID: NCBI_GENE_ID,
+    WIKIPATHWAYS_TARGET_GENE: NCBI_GENE_ID,
+    WIKIPATHWAYS_TARGET_PROTEIN: UNIPROT_TREMBL,
+    WIKIPATHWAYS_TARGET_METABOLITE: PUBCHEM_COMPOUND_CID,
 }
 
 
@@ -696,10 +718,9 @@ OPENTARGETS_GO_NODE_ATTRS.update(
         LABEL: None,
     }
 )
-OPENTARGETS_GENE_GO_EDGE_ATTRS = {
-    DATASOURCE: OPENTARGETS,
-    LABEL: GENE_PATHWAY_EDGE_LABEL,
-}
+
+OPENTARGETS_GENE_GO_EDGE_ATTRS = GENE_PATHWAY_EDGE_ATTRS.copy()
+OPENTARGETS_GENE_GO_EDGE_ATTRS.update({DATASOURCE: OPENTARGETS})
 
 OPENTARGETS_REACTOME_NODE_MAIN_LABEL = PATHWAY_ID
 OPENTARGETS_REACTOME_NODE_ATTRS = PATHWAY_NODE_ATTRS.copy()
@@ -711,22 +732,32 @@ OPENTARGETS_REACTOME_NODE_ATTRS.update(
         LABEL: None,
     }
 )
-OPENTARGETS_GENE_REACTOME_EDGE_ATTRS = {
-    DATASOURCE: OPENTARGETS,
-    LABEL: GENE_PATHWAY_EDGE_LABEL,
+OPENTARGETS_GENE_REACTOME_EDGE_ATTRS = GENE_PATHWAY_EDGE_ATTRS.copy()
+OPENTARGETS_GENE_REACTOME_EDGE_ATTRS.update({DATASOURCE: OPENTARGETS})
+
+WIKIPATHWAYS_NODE_MAIN_LABEL = PATHWAY_ID
+WIKIPATHWAYS_NODE_ATTRS = PATHWAY_NODE_ATTRS.copy()
+WIKIPATHWAYS_NODE_ATTRS.update({DATASOURCE: WIKIPATHWAYS, ID: None, LABEL: None, GENE_COUNTS: None})
+
+
+MOLECULAR_PATHWAY_NODE_MAIN_LABEL = PATHWAY_ID
+MOLECULAR_GENE_NODE_ATTRS = PATHWAY_NODE_ATTRS.copy()
+MOLECULAR_PATHWAY_NODE_ATTRS = {
+    PATHWAY_ID: "str",
+    PATHWAY_LABEL: "str",
+    ID: "str",
+    LABEL: PATHWAY_NODE_LABEL,
 }
 
-# molecular pathway node
-MOLECULAR_PATHWAY_NODE_MAIN_LABEL = "pathway_id"
-MOLECULAR_GENE_NODE_ATTRS = {"datasource": WIKIPATHWAYS, "label": ""}
-MOLECULAR_PATHWAY_NODE_ATTRS = {
-    "pathway_id": "str",
-    "pathway_label": "str",
-    "id": "str",
-    "labels": PATHWAY_NODE_LABEL,
-}
-MOLECULAR_GENE_PATHWAY_EDGE_LABEL = "part_of"
-MOLECULAR_INTERACTION_EDGE_ATTRS = {"interaction_type": "str", "rhea_id": str}
+WIKIPATHWAYS_INTERACTION_TYPE = "interaction_type"
+MOLECULAR_INTERACTION_EDGE_ATTRS = GENE_PATHWAY_EDGE_ATTRS.copy()
+MOLECULAR_INTERACTION_EDGE_ATTRS.update(
+    {
+        WIKIPATHWAYS_INTERACTION_TYPE: "str",
+        WIKIPATHWAYS_RHEA_ID: str,
+        DATASOURCE: WIKIPATHWAYS,
+    }
+)
 
 
 """
@@ -796,8 +827,6 @@ OPENTARGETS_COMPOUND_NODE_ATTRS = {
     LABEL: COMPOUND_NODE_LABEL,
 }
 OPENTARGETS_GENE_COMPOUND_EDGE_ATTRS = {DATASOURCE: OPENTARGETS, LABEL: None, ID: None}
-# Side effect
-# Open Targets - Compound
 
 """
 Side effect nodes
@@ -819,22 +848,26 @@ COMPOUND_SIDE_EFFECT_EDGE_ATTRS = {
     LABEL: COMPOUND_SIDE_EFFECT_EDGE_LABEL,
 }
 
-
-# PubChem - Assays
+# PubChem - Assays (TODO: check this)
 PUBCHEM_COMPOUND_NODE_ATTRS = {
-    "datasource": PUBCHEM,
-    "name": None,
-    "id": None,
-    "inchi": None,
-    "smiles": None,
-    "labels": COMPOUND_NODE_LABEL,
+    DATASOURCE: PUBCHEM,
+    NAME: None,
+    ID: None,
+    INCHI: None,
+    SMILES: None,
+    LABEL: COMPOUND_NODE_LABEL,
 }
+
+PUBCHEM_ASSAY_TYPE = "assay_type"
+PUBCHEM_ASSAY_ID = "pubchem_assay_id"
+PUBCHEM_OUTCOME = "outcome"
+
 PUBCHEM_GENE_COMPOUND_EDGE_ATTRS = {
-    "datasource": PUBCHEM,
-    "assay_type": None,
-    "pubchem_assay_id": None,
-    "outcome": None,
-    "label": None,
+    DATASOURCE: PUBCHEM,
+    PUBCHEM_ASSAY_TYPE: None,
+    PUBCHEM_ASSAY_ID: None,
+    PUBCHEM_OUTCOME: None,
+    LABEL: None,
 }
 
 """
@@ -871,18 +904,18 @@ ENSEMBL_HOMOLOG_EDGE_ATTRS = {
 
 
 # Literature
-LITERATURE_NODE_MAIN_LABEL = "UMLS"
+LITERATURE_NODE_MAIN_LABEL = UMLS
 LITERATURE_DISEASE_NODE_ATTRS = {
-    "datasource": None,
-    "name": None,
-    "id": None,
-    "MONDO": None,
-    "UMLS": None,
-    "labels": DISEASE_NODE_LABEL,
+    DATASOURCE: None,
+    NAME: None,
+    ID: None,
+    MONDO: None,
+    UMLS: None,
+    LABEL: DISEASE_NODE_LABEL,
 }
 LITERATURE_DISEASE_EDGE_ATTRS = {
-    "datasource": None,
-    "label": GENE_DISEASE_EDGE_LABEL,
+    DATASOURCE: None,
+    LABEL: GENE_DISEASE_EDGE_LABEL,
 }
 
 """
