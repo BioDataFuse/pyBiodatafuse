@@ -95,7 +95,10 @@ class BDFGraph(Graph):
         df = df.applymap(replace_na_none)
         if not self.include_variants:
             df = df[df[Cons.TARGET_SOURCE_COL] == Cons.ENSEMBL]
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
         for i, row in tqdm(df.iterrows(), total=df.shape[0], desc="Building RDF graph"):
             self.process_row(row, i, open_only)
 
@@ -113,7 +116,10 @@ class BDFGraph(Graph):
         source_namespace = row.get(Cons.IDENTIFIER_SOURCE_COL)
         target_idx = row.get(Cons.TARGET_COL)
         target_namespace = row.get(Cons.TARGET_SOURCE_COL)
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
         if not self.valid_indices(source_idx, source_namespace, target_idx, target_namespace):
             return
 
@@ -131,7 +137,10 @@ class BDFGraph(Graph):
         disease_data = self.collect_disease_data(row)
         # New methods (e.g., new node types) can be called here
         # self.process_nodetype_data(row.get(datatype_col))
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
         self.process_ppi_data(row.get(Cons.STRING_INTERACT_COL), gene_node)
         protein_nodes = list(self.objects(gene_node, URIRef(Cons.PREDICATES["translation_of"])))
         self.process_disease_data(disease_data, id_number, source_idx, gene_node)
@@ -192,7 +201,7 @@ class BDFGraph(Graph):
                     It must include the key "target.source".
         :return: A URIRef for the gene, else None.
         """
-        if row["target.source"] == "Ensembl":
+        if row[Cons.TARGET_SOURCE_COL] == Cons.ENSEMBL:
             return self._add_gene_nodes(row)
         return None
 
@@ -246,6 +255,7 @@ class BDFGraph(Graph):
             Cons.OPENTARGETS_REACTOME_COL,
         ]:
             pathway_data_list = row.get(source)
+<<<<<<< Updated upstream
             if not pathway_data_list:
                 continue
             for pathway_data in pathway_data_list:
@@ -261,6 +271,38 @@ class BDFGraph(Graph):
                                     URIRef(Cons.PREDICATES["sio_is_part_of"]),
                                     pathway_node,
                                 )
+=======
+            if pathway_data_list:
+                for pathway_data in pathway_data_list:
+                    if pathway_data.get("pathway_id"):
+                        pathway_node = self._add_pathway_node(pathway_data, source)
+                        self.add(
+                            (gene_node, URIRef(Cons.PREDICATES["sio_is_part_of"]), pathway_node)
+                        )
+                        self.add((pathway_node, URIRef(Cons.PREDICATES["sio_has_part"]), gene_node))
+                        if protein_nodes:
+                            for protein_node in protein_nodes:
+                                self.add(
+                                    (
+                                        protein_node,
+                                        URIRef(Cons.PREDICATES["sio_is_part_of"]),
+                                        pathway_node,
+                                    )
+                                )
+                                self.add(
+                                    (
+                                        pathway_node,
+                                        URIRef(Cons.PREDICATES["sio_has_part"]),
+                                        protein_node,
+                                    )
+                                )
+                        self.add((pathway_node, URIRef(Cons.PREDICATES["sio_has_part"]), gene_node))
+                        self.add(
+                            (
+                                pathway_node,
+                                URIRef(Cons.PREDICATES["sio_has_source"]),
+                                URIRef(Cons.DATA_SOURCES[source]),
+>>>>>>> Stashed changes
                             )
                             self.add(
                                 (
@@ -567,6 +609,3 @@ class BDFGraph(Graph):
             path=output_path,
             new_uris=self.new_uris,
         )
-
-
-# Define new methods here

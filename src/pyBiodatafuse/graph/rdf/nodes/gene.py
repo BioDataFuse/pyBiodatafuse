@@ -24,8 +24,15 @@ def add_gene_nodes(g: Graph, row) -> Optional[URIRef]:
     source = row.get(Cons.TARGET_SOURCE_COL, None)
     if source and source == Cons.ENSEMBL:
         if target:
+<<<<<<< Updated upstream
             gene_node = URIRef(Cons.NODE_URI_PREFIXES[Cons.ENSEMBL] + target)
             g.add((gene_node, RDF.type, URIRef(Cons.NODE_TYPES["gene_node"])))
             g.add((gene_node, RDFS.label, Literal(row[Cons.IDENTIFIER_COL], datatype=XSD.string)))
             return gene_node
     return None
+=======
+            gene_node = URIRef(f"http://identifiers.org/ensembl#{target}")
+            g.add((gene_node, RDF.type, URIRef(Cons.NODE_TYPES["gene_node"])))
+            g.add((gene_node, RDFS.label, Literal(row[Cons.IDENTIFIER_COL], datatype=XSD.string)))
+    return gene_node
+>>>>>>> Stashed changes

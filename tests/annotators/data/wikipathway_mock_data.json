@@ -1,0 +1,57 @@
+{
+    "head": {
+        "link": [],
+        "vars": [
+            "gene_id",
+            "pathway_id",
+            "pathway_label",
+            "pathway_gene_count"
+        ]
+    },
+    "results": {
+        "distinct": false,
+        "ordered": true,
+        "bindings": [
+            {
+                "gene_id": {
+                    "type": "literal",
+                    "value": "85365"
+                },
+                "pathway_id": {
+                    "type": "literal",
+                    "value": "WP5153"
+                },
+                "pathway_label": {
+                    "type": "literal",
+                    "xml:lang": "en",
+                    "value": "N-glycan biosynthesis"
+                },
+                "pathway_gene_count": {
+                    "type": "typed-literal",
+                    "datatype": "http: //www.w3.org/2001/XMLSchema#integer",
+                    "value": "57"
+                }
+            },
+            {
+                "gene_id": {
+                    "type": "literal",
+                    "value": "199857"
+                },
+                "pathway_id": {
+                    "type": "literal",
+                    "value": "WP5153"
+                },
+                "pathway_label": {
+                    "type": "literal",
+                    "xml:lang": "en",
+                    "value": "N-glycan biosynthesis"
+                },
+                "pathway_gene_count": {
+                    "type": "typed-literal",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+                    "value": "57"
+                }
+            }
+        ]
+    }
+}

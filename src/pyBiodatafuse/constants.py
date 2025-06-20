@@ -570,35 +570,240 @@ AOPWIKI_COMPOUND_OUTPUT_DICT = {
     "KE_downstream_organ": str,
 }
 
-# TODO: Look into this
-ENSEMBL_HOMOLOGS = "Ensembl_homologs"
+HPO = "HPO"
+NCI = "NCI"
+OMIM = "OMIM|MIM"
+MONDO = "MONDO"
+ORDO = "ORDO"
+EFO = "EFO"
+DO = "DO"
+MESH = "MESH"
+UMLS = "UMLS"
+LITERATURE_DISEASE_OUTPUT_DICT = {
+    "disease_name": str,
+    "UMLS": str,
+    "MONDO": str,
+    "source": str,
+}
+
+# Open Targets - Disease
+OPENTARGETS_DISEASE_OUTPUT_DICT = {
+    "disease_name": str,
+    "therapeutic_areas": str,
+    "HPO": str,  # "HPO_HP:0100013"
+    "NCI": str,  # "NCI_C2910"
+    "OMIM": str,  # "OMIM_607906"
+    "MONDO": str,  # "MONDO_0021100"
+    "ORDO": str,  # "ORDO_137"
+    "EFO": str,  # "EFO_0003756"
+    "DO": str,  # "DO_0060041"
+    "MESH": str,  # "MESH_D000067877"
+    "UMLS": str,  # "UMLS_C1510586"
+}  # TODO: Tooba please check if you want to add compound annotations too here in the dict
+OPENTARGETS_IGNORE_DISEASE_IDS = [
+    "icd10cm",
+    "icd9",
+    "snomedct",
+    "sctid",
+    "meddra",
+    "icd10",
+    "wikipedia",
+    "snomedct_us",
+    "oncotree",
+    "nifstd",
+    "gard",
+    "nord",
+    "icdo",
+    "hgnc",
+    "cohd",
+    "kegg",
+    "decipher",
+    "http",
+    "omimps",
+    "csp",
+]
+
+# MINERVA
+MINERVA_PATHWAY_OUTPUT_DICT = {
+    "pathway_id": str,
+    "pathway_label": str,
+    "pathway_gene_count": int,
+}
+
+# WikiPathways
+WIKIPATHWAYS_PATHWAYS_OUTPUT_DICT = {
+    "pathway_id": str,
+    "pathway_label": str,
+    "pathway_gene_count": int,
+}
+
+WIKIPATHWAYS_MOLECULAR_GENE_OUTPUT_DICT = {
+    "pathway_id": str,
+    "pathway_label": str,
+    "targetGene": str,
+    "targetProtein": str,
+    "targetMetabolite": str,
+    "mimtype": str,
+    "rhea_id": str,
+}
+
+# Open Targets - Reactome
+OPENTARGETS_REACTOME_OUTPUT_DICT = {
+    "pathway_id": str,
+    "pathway_label": str,
+}
+PATHWAY_ID = "MINERVA|WP|R-"  # ID Start with WP or R-
+
+# Open Targets - GO processes
+OPENTARGETS_GO_OUTPUT_DICT = {"go_id": str, "go_name": str, "go_type": str}
+GO_ID = "GO"
+
+# Open Targets - Compound
+OPENTARGETS_COMPOUND_OUTPUT_DICT = {
+    "chembl_id": str,
+    "drugbank_id": str,
+    "compound_cid": str,
+    "compound_name": str,
+    "clincal_trial_phase": int,
+    "is_approved": bool,
+    "relation": str,
+    "adverse_effect_count": int,
+    "adverse_effect": list,
+    # "mechanisms_of_action": list,
+}
+CHEMBL_ID = "CHEMBL"
+DRUGBANK_ID = "DrugBank"
+RELATION = "inhibits|activates"
+OPENTARGETS_COMPOUND_DISEASE_RELATION = "treats"
 
 """
-Node and edge main lable and attributes
+PubChem variables
 """
-# Common attributes
-DATASOURCE = "datasource"
-NAME = ENTITY_NAME
-ID = "id"
-LABEL = "label"
-EDGE_HASH = "edge_hash"
-
-# Node types
-GENE_NODE_LABEL = "Gene"
-DISEASE_NODE_LABEL = "Disease"
-COMPOUND_NODE_LABEL = "Compound"
-ANATOMICAL_NODE_LABEL = "Anatomical Entity"
-PATHWAY_NODE_LABEL = "Pathway"
-GO_BP_NODE_LABEL = "Biological Process"
-GO_MF_NODE_LABEL = "Molecular Function"
-GO_CC_NODE_LABEL = "Cellular Component"
-SIDE_EFFECT_NODE_LABEL = "Side Effect"
-HOMOLOG_NODE_LABEL = "Homolog"
+PUBCHEM_COMPOUND_OUTPUT_DICT = {
+    "pubchem_assay_id": str,
+    "assay_type": str,
+    "outcome": str,
+    "compound_cid": str,
+    "compound_name": str,
+    "smiles": str,
+    "inchi": str,
+}
+OUTCOME = "active|inactive"
+INCHI = "InChI"
 
 """
-Anatomical entity nodes
+StringDB variables
 """
-BGEE_ANATOMICAL_NODE_MAIN_LABEL = ANATOMICAL_ID
+STRING_PREFERRED_NAME_A = "preferredName_A"
+STRING_PREFERRED_NAME_B = "preferredName_B"
+STRING_PPI_LINK_TO = "stringdb_link_to"
+STRING_PPI_SCORE = "score"
+UNIPROT_TREMBL_A = "Uniprot-TrEMBL_A"
+UNIPROT_TREMBL_B = "Uniprot-TrEMBL_B"
+STRING_PPI_INTERACTS_WITH = "interacts_with"
+STRING_OUTPUT_DICT = {
+    STRING_PPI_LINK_TO: str,
+    STRING_GENE_INPUT_ID: str,
+    STRING_PPI_SCORE: float,
+    UNIPROT_TREMBL_A: str,
+    UNIPROT_TREMBL_B: str,
+}
+
+"""
+Wikidata variables
+"""
+WIKIDATA_ID_COL = "wikidata_id"
+WIKIDATA_LABEL_COL = "wikidata_label"
+WIKIDATA_GO_COL = "go_id"
+WIKIDATA_OUTPUT_DICT = {
+    WIKIDATA_ID_COL: str,
+    WIKIDATA_LABEL_COL: str,
+    WIKIDATA_GO_COL: str,
+}
+
+"""
+WikiPathways variables
+"""
+WIKIPATHWAY_ID = "pathway_id"
+WIKIPATHWAY_LABEL = "pathway_label"
+WIKIPATHWAY_GENE_COUNT = "pathway_gene_count"
+WIKIPATHWAY_TARGET_GENE = "targetGene"
+WIKIPATHWAY_TARGET_PROTEIN = "targetProtein"
+WIKIPATHWAY_TARGET_METABOLITE = "targetMetabolite"
+WIKIPATHWAY_MIMTYPE = "mimtype"
+WIKIPATHWAY_RHEA_ID = "rhea_id"
+
+WIKIPATHWAY_NCBIGENE_PREFIX = "https://identifiers.org/ncbigene/"
+WIKIPATHWAY_UNIPROT_PREFIX = "https://identifiers.org/uniprot/"
+WIKIPATHWAY_PUBCHEM_PREFIX = "http://rdf.ncbi.nlm.nih.gov/pubchem/compound/"
+WIKIPATHWAY_WP_PREFIX = "https://identifiers.org/wikipathways/"
+WIKIPATHWAY_MIMTYPE_PREFIX = "http://vocabularies.wikipathways.org/wp#"
+
+WIKIPATHWAYS_PATHWAYS_OUTPUT_DICT = {
+    WIKIPATHWAY_ID: str,
+    WIKIPATHWAY_LABEL: str,
+    WIKIPATHWAY_GENE_COUNT: int,
+}
+
+WIKIPATHWAYS_MOLECULAR_GENE_OUTPUT_DICT = {
+    WIKIPATHWAY_ID: str,
+    WIKIPATHWAY_LABEL: str,
+    WIKIPATHWAY_TARGET_GENE: str,
+    WIKIPATHWAY_TARGET_PROTEIN: str,
+    WIKIPATHWAY_TARGET_METABOLITE: str,
+    WIKIPATHWAY_MIMTYPE: str,
+    WIKIPATHWAY_RHEA_ID: str,
+}
+
+# MolMeDB - Gene/Protein input
+MOLMEDB_PROTEIN_COMPOUND_OUTPUT_DICT = {
+    "compound_name": str,
+    "inchikey": str,
+    "smiles": str,
+    "compound_cid": str,
+    "molmedb_id": str,
+    "source_pmid": str,
+    "chebi_id": str,
+    "drugbank_id": str,
+    "uniprot_trembl_id": str,  # uniprot id of isoform
+}
+MOLMEDB_ID = "MM"
+DRUGBANK_ID = "DrugBank"
+
+# MolMeDB - Compound input
+MOLMEDB_COMPOUND_PROTEIN_OUTPUT_DICT = {
+    "uniprot_trembl_id": str,
+    "hgnc_symbol": str,
+    "source_pmid": str,
+}
+UNIPROT_TREMBL_ID = "P"
+
+# PubChem - Assays
+PUBCHEM_COMPOUND_OUTPUT_DICT = {
+    "pubchem_assay_id": str,
+    "assay_type": str,
+    "outcome": str,
+    "compound_cid": str,
+    "compound_name": str,
+    "smiles": str,
+    "inchi": str,
+}
+WIKIPATHWAY_VALUE_CHECK_LIST = [WP]
+# STRING
+STRING_OUTPUT_DICT = {
+    "stringdb_link_to": str,
+    STRING_GENE_INPUT_ID: str,
+    "score": float,
+    "Uniprot-TrEMBL": str,
+    "Uniprot-TrEMBL_link": str,
+}
+
+
+""" Node and edge main lable and attributes for each data source """
+# Anatomical entity node
+# Bgee
+ANATOMICAL_NODE_LABELS = "Anatomical Entity"
+BGEE_ANATOMICAL_NODE_MAIN_LABEL = "anatomical_entity_id"
 BGEE_ANATOMICAL_NODE_ATTRS = {
     DATASOURCE: BGEE,
     NAME: None,
@@ -646,104 +851,54 @@ DISGENET_EDGE_ATTRS = {
     LABEL: GENE_DISEASE_EDGE_LABEL,
 }
 
-OPENTARGET_DISEASE_NODE_ATTRS = {
-    NAME: None,
-    ID: None,
-    DATASOURCE: OPENTARGETS,
-    LABEL: DISEASE_NODE_LABEL,
+# Literature
+LITERATURE_NODE_MAIN_LABEL = "UMLS"
+LITERATURE_DISEASE_NODE_ATTRS = {
+    "datasource": None,
+    "name": None,
+    "id": None,
+    "MONDO": None,
+    "UMLS": None,
+    "labels": DISEASE_NODE_LABELS,
+}
+LITERATURE_DISEASE_EDGE_ATTRS = {
+    "datasource": None,
+    "label": GENE_DISEASE_EDGE_LABEL,
 }
 
-OPENTARGETS_DISEASE_COMPOUND_EDGE_ATTRS = {
-    DATASOURCE: OPENTARGETS,
-    LABEL: None,
-}
+# TODO: The disease annotations are not curated and will be used again when the OpenTarget annotation improves.
+# Open Targets - Disease
+# OPENTARGETS_DISEASE_NODE_ATTRS = {
+#     "datasource": OPENTARGETS,
+#     "name": None,
+#     "id": None,
+#     "therapeutic_areas": None,
+#     "labels": DISEASE_NODE_LABELS,
+# }
+# OPENTARGETS_DISEASE_EDGE_ATTRS = {
+#     "datasource": OPENTARGETS,
+#     "label": GENE_DISEASE_EDGE_LABEL,
+# }
 
-"""
-Pathway nodes
-"""
-GENE_COUNTS = "gene_counts"
+
+# Pathway node
+# MINERVA, WikiPathways, Open Targets - Reactome
+PATHWAY_NODE_LABELS = "Pathway"
+PATHWAY_NODE_MAIN_LABEL = "pathway_id"
 PATHWAY_NODE_ATTRS = {
-    DATASOURCE: None,
-    NAME: None,
-    ID: None,
-    LABEL: PATHWAY_NODE_LABEL,
-    # GENE_COUNTS: None,
-}
-
+    "datasource": None,
+    "name": None,
+    "id": None,
+    "gene_count": None,
+    "labels": PATHWAY_NODE_LABELS,
+}  # TODO: Yojana, would it be possible to add pathway size here (gene_count)
 GENE_PATHWAY_EDGE_LABEL = "part_of"
-GENE_PATHWAY_EDGE_ATTRS = {
-    DATASOURCE: None,
-    LABEL: GENE_PATHWAY_EDGE_LABEL,
-}
+GENE_PATHWAY_EDGE_ATTRS = {"datasource": None, "label": GENE_PATHWAY_EDGE_LABEL}
 
-# IntAct interactions
-SPECIES = "species"
-INTACT_INTERACTION_TYPE = "interaction_type"
-INTACT_NODE_ATTRS = PATHWAY_NODE_ATTRS.copy()
-INTACT_NODE_ATTRS.update(
-    {
-        DATASOURCE: INTACT,
-        ID: None,
-        LABEL: None,
-    }
-)
-
-KEGG_PATHWAY_NODE_MAIN_LABEL = PATHWAY_ID
-KEGG_PATHWAY_NODE_ATTRS = PATHWAY_NODE_ATTRS.copy()
-KEGG_PATHWAY_NODE_ATTRS.update(
-    {
-        DATASOURCE: KEGG,
-        ID: None,
-        LABEL: PATHWAY_NODE_LABEL,
-        GENE_COUNTS: None,
-    }
-)
-
-MINERVA_PATHWAY_NODE_MAIN_LABEL = PATHWAY_ID
-MINERVA_PATHWAY_NODE_ATTRS = PATHWAY_NODE_ATTRS.copy()
-MINERVA_PATHWAY_NODE_ATTRS.update(
-    {
-        DATASOURCE: MINERVA,
-        ID: None,
-        LABEL: PATHWAY_NODE_LABEL,
-        GENE_COUNTS: None,
-    }
-)
-
-OPENTARGETS_GO_NODE_MAIN_LABEL = GO_ID
-OPENTARGETS_GO_NODE_ATTRS = PATHWAY_NODE_ATTRS.copy()
-OPENTARGETS_GO_NODE_ATTRS.update(
-    {
-        DATASOURCE: OPENTARGETS,
-        NAME: None,
-        ID: None,
-        LABEL: None,
-    }
-)
-
-OPENTARGETS_GENE_GO_EDGE_ATTRS = GENE_PATHWAY_EDGE_ATTRS.copy()
-OPENTARGETS_GENE_GO_EDGE_ATTRS.update({DATASOURCE: OPENTARGETS})
-
-OPENTARGETS_REACTOME_NODE_MAIN_LABEL = PATHWAY_ID
-OPENTARGETS_REACTOME_NODE_ATTRS = PATHWAY_NODE_ATTRS.copy()
-OPENTARGETS_REACTOME_NODE_ATTRS.update(
-    {
-        DATASOURCE: OPENTARGETS,
-        NAME: None,
-        ID: None,
-        LABEL: None,
-    }
-)
-OPENTARGETS_GENE_REACTOME_EDGE_ATTRS = GENE_PATHWAY_EDGE_ATTRS.copy()
-OPENTARGETS_GENE_REACTOME_EDGE_ATTRS.update({DATASOURCE: OPENTARGETS})
-
-WIKIPATHWAYS_NODE_MAIN_LABEL = PATHWAY_ID
-WIKIPATHWAYS_NODE_ATTRS = PATHWAY_NODE_ATTRS.copy()
-WIKIPATHWAYS_NODE_ATTRS.update({DATASOURCE: WIKIPATHWAYS, ID: None, LABEL: None, GENE_COUNTS: None})
-
-
-MOLECULAR_PATHWAY_NODE_MAIN_LABEL = PATHWAY_ID
-MOLECULAR_GENE_NODE_ATTRS = PATHWAY_NODE_ATTRS.copy()
+# molecular pathway node
+MOLECULAR_PATHWAY_NODE_LABELS = "Pathway"
+MOLECULAR_PATHWAY_NODE_MAIN_LABEL = "pathway_id"
+MOLECULAR_GENE_NODE_ATTRS = {"datasource": WIKIPATHWAYS, "label": ""}
 MOLECULAR_PATHWAY_NODE_ATTRS = {
     PATHWAY_ID: "str",
     PATHWAY_LABEL: "str",

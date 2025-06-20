@@ -3,6 +3,8 @@
 
 """Tests for the WikiPathways annotator."""
 
+import os
+import json
 import unittest
 from unittest.mock import Mock, patch
 
@@ -12,6 +14,8 @@ from numpy import nan
 from pyBiodatafuse.annotators import wikipathways
 from pyBiodatafuse.annotators.wikipathways import get_gene_wikipathways, get_version_wikipathways
 from pyBiodatafuse.constants import WIKIPATHWAYS_PATHWAY_COL
+
+data_file_folder = os.path.join(os.path.dirname(__file__), "data")
 
 
 class TestWikipathway(unittest.TestCase):
@@ -42,48 +46,12 @@ class TestWikipathway(unittest.TestCase):
     @patch("pyBiodatafuse.annotators.wikipathways.SPARQLWrapper.queryAndConvert")
     def test_get_gene_wikipathways(self, mock_sparql_request):
         """Test the get_gene_wikipathways."""
-        mock_sparql_request.side_effect = [
-            {
-                "head": {
-                    "link": [],
-                    "vars": ["gene_id", "pathway_id", "pathway_label", "pathway_gene_count"],
-                },
-                "results": {
-                    "distinct": False,
-                    "ordered": True,
-                    "bindings": [
-                        {
-                            "gene_id": {"type": "literal", "value": "85365"},
-                            "pathway_id": {"type": "literal", "value": "WP5153"},
-                            "pathway_label": {
-                                "type": "literal",
-                                "xml:lang": "en",
-                                "value": "N-glycan biosynthesis",
-                            },
-                            "pathway_gene_count": {
-                                "type": "typed-literal",
-                                "datatype": "http: //www.w3.org/2001/XMLSchema#integer",
-                                "value": "57",
-                            },
-                        },
-                        {
-                            "gene_id": {"type": "literal", "value": "199857"},
-                            "pathway_id": {"type": "literal", "value": "WP5153"},
-                            "pathway_label": {
-                                "type": "literal",
-                                "xml:lang": "en",
-                                "value": "N-glycan biosynthesis",
-                            },
-                            "pathway_gene_count": {
-                                "type": "typed-literal",
-                                "datatype": "http://www.w3.org/2001/XMLSchema#integer",
-                                "value": "57",
-                            },
-                        },
-                    ],
-                },
-            }
-        ]
+        mock_sparql_request.side_effect = []
+
+        with open(os.path.join(data_file_folder, "wikipathway_mock_data.json")) as f:
+            mock_data = json.load(f)
+
+        mock_sparql_request.side_effect = [mock_data]
 
         wikipathways.get_version_wikipathways = Mock(
             return_value={"source_version": "WikiPathways RDF 20240310"}
@@ -105,14 +73,14 @@ class TestWikipathway(unittest.TestCase):
             [
                 [
                     {
-                        "pathway_id": "WP:WP5153",
+                        "pathway_id": "WikiPathways:5153",
                         "pathway_label": "N-glycan biosynthesis",
                         "pathway_gene_counts": 57.0,
                     }
                 ],
                 [
                     {
-                        "pathway_id": "WP:WP5153",
+                        "pathway_id": "WikiPathways:5153",
                         "pathway_label": "N-glycan biosynthesis",
                         "pathway_gene_counts": 57.0,
                     }

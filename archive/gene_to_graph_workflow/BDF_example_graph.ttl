@@ -1,0 +1,2365 @@
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix obo: <http://purl.obolibrary.org/obo/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix schema: <https://schema.org/> .
+@prefix sio: <http://semanticscience.org/resource/> .
+@prefix so: <http://purl.obolibrary.org/obo/so#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<https://api.platform.opentargets.org/api/v4/graphql> a schema:WebAPI .
+
+<https://biodatafuse.org/example/ppi/P42263_https://www.uniprot.org/uniprotkb/Q12879> a obo:NCIT_C18469 ;
+    sio:SIO_000028 <https://www.uniprot.org/uniprotkb/P42263>,
+        <https://www.uniprot.org/uniprotkb/Q12879> ;
+    sio:SIO_000216 <https://biodatafuse.org/example/score/P42263_Q12879> .
+
+<https://biodatafuse.org/example/ppi/Q12879_https://www.uniprot.org/uniprotkb/P42263> a obo:NCIT_C18469 ;
+    sio:SIO_000028 <https://www.uniprot.org/uniprotkb/P42263>,
+        <https://www.uniprot.org/uniprotkb/Q12879> ;
+    sio:SIO_000216 <https://biodatafuse.org/example/score/Q12879_P42263> .
+
+<https://covid19map.elixir-luxembourg.org/minerva/> a schema:WebAPI .
+
+<https://sparql.wikipathways.org/sparql> a schema:WebAPI .
+
+<https://string-db.org/api> a schema:WebAPI .
+
+<https://webservice.bridgedb.org/Human/xrefsBatch> a schema:WebAPI .
+
+obo:GO_0000045 rdfs:label "autophagosome assembly"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0000082 rdfs:label "G1/S transition of mitotic cell cycle"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0000407 rdfs:label "phagophore assembly site"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0005575 .
+
+obo:GO_0000421 rdfs:label "autophagosome membrane"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0005575 .
+
+obo:GO_0000422 rdfs:label "autophagy of mitochondrion"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0000785 rdfs:label "chromatin"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000099381> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0005575 .
+
+obo:GO_0001889 rdfs:label "liver development"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0001964 rdfs:label "startle response"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0001975 rdfs:label "response to amphetamine"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0003723 rdfs:label "RNA binding"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000099381> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0003674 .
+
+obo:GO_0004970 rdfs:label "glutamate-gated receptor activity"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000125675> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0003674 .
+
+obo:GO_0004971 rdfs:label "AMPA glutamate receptor activity"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000125675> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0003674 .
+
+obo:GO_0004972 rdfs:label "NMDA glutamate receptor activity"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0003674 .
+
+obo:GO_0005049 rdfs:label "nuclear export signal receptor activity"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000130227> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0003674 .
+
+obo:GO_0005643 rdfs:label "nuclear pore"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000130227> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0005575 .
+
+obo:GO_0005764 rdfs:label "lysosome"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0005575 .
+
+obo:GO_0006338 rdfs:label "chromatin remodeling"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000099381> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0006513 rdfs:label "protein monoubiquitination"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0006611 rdfs:label "protein export from nucleus"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000130227> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0006914 rdfs:label "autophagy"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0006974 rdfs:label "DNA damage response"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000099381> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0007268 rdfs:label "chemical synaptic transmission"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0007507 rdfs:label "heart development"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0007611 rdfs:label "learning or memory"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0007613 rdfs:label "memory"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0008013 rdfs:label "beta-catenin binding"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000099381> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0003674 .
+
+obo:GO_0008021 rdfs:label "synaptic vesicle"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0005575 .
+
+obo:GO_0008270 rdfs:label "zinc ion binding"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0003674 .
+
+obo:GO_0008283 rdfs:label "cell population proliferation"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0008285 rdfs:label "negative regulation of cell population proliferation"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0008542 rdfs:label "visual learning"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0009410 rdfs:label "response to xenobiotic stimulus"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0009611 rdfs:label "response to wounding"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0009887 rdfs:label "animal organ morphogenesis"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0009986 rdfs:label "cell surface"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0005575 .
+
+obo:GO_0010508 rdfs:label "positive regulation of autophagy"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0014069 rdfs:label "postsynaptic density"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0005575 .
+
+obo:GO_0016567 rdfs:label "protein ubiquitination"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0016607 rdfs:label "nuclear speck"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000099381> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0005575 .
+
+obo:GO_0017146 rdfs:label "NMDA selective glutamate receptor complex"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0005575 .
+
+obo:GO_0019005 rdfs:label "SCF ubiquitin ligase complex"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0005575 .
+
+obo:GO_0019233 rdfs:label "sensory perception of pain"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0019901 rdfs:label "protein kinase binding"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0003674 .
+
+obo:GO_0022008 rdfs:label "neurogenesis"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0030163 rdfs:label "protein catabolic process"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0030431 rdfs:label "sleep"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0030659 rdfs:label "cytoplasmic vesicle membrane"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0005575 .
+
+obo:GO_0030666 rdfs:label "endocytic vesicle membrane"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000125675> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0005575 .
+
+obo:GO_0030674 rdfs:label "protein-macromolecule adaptor activity"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0003674 .
+
+obo:GO_0031146 rdfs:label "SCF-dependent proteasomal ubiquitin-dependent protein catabolic process"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0031267 rdfs:label "small GTPase binding"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000130227> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0003674 .
+
+obo:GO_0031461 rdfs:label "cullin-RING ubiquitin ligase complex"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0005575 .
+
+obo:GO_0031625 rdfs:label "ubiquitin protein ligase binding"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0003674 .
+
+obo:GO_0031965 rdfs:label "nuclear membrane"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0005575 .
+
+obo:GO_0032259 rdfs:label "methylation"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000099381> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0032281 rdfs:label "AMPA glutamate receptor complex"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000125675> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0005575 .
+
+obo:GO_0033058 rdfs:label "directional locomotion"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0034045 rdfs:label "phagophore assembly site membrane"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0005575 .
+
+obo:GO_0034220 rdfs:label "monoatomic ion transmembrane transport"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000125675> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0034517 rdfs:label "ribophagy"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0034727 rdfs:label "piecemeal microautophagy of the nucleus"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0035097 rdfs:label "histone methyltransferase complex"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000099381> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0005575 .
+
+obo:GO_0035725 rdfs:label "sodium ion transmembrane transport"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0042177 rdfs:label "negative regulation of protein catabolic process"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0042417 rdfs:label "dopamine metabolic process"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0042428 rdfs:label "serotonin metabolic process"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0042734 rdfs:label "presynaptic membrane"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0005575 .
+
+obo:GO_0042800 rdfs:label "histone H3K4 methyltransferase activity"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000099381> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0003674 .
+
+obo:GO_0043065 rdfs:label "positive regulation of apoptotic process"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0043123 rdfs:label "positive regulation of canonical NF-kappaB signal transduction"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0043161 rdfs:label "proteasome-mediated ubiquitin-dependent protein catabolic process"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0045087 rdfs:label "innate immune response"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0045471 rdfs:label "response to ethanol"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0045793 rdfs:label "positive regulation of cell size"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0046330 rdfs:label "positive regulation of JNK cascade"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0048167 rdfs:label "regulation of synaptic plasticity"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0048168 rdfs:label "regulation of neuronal synaptic plasticity"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0048188 rdfs:label "Set1C/COMPASS complex"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000099381> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0005575 .
+
+obo:GO_0050804 rdfs:label "modulation of chemical synaptic transmission"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000125675> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0051289 rdfs:label "protein homotetramerization"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000125675> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0051290 rdfs:label "protein heterotetramerization"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000125675> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0051607 rdfs:label "defense response to virus"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0051968 rdfs:label "positive regulation of synaptic transmission, glutamatergic"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0060078 rdfs:label "regulation of postsynaptic membrane potential"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000125675> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0060079 rdfs:label "excitatory postsynaptic potential"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0060090 rdfs:label "molecular adaptor activity"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0003674 .
+
+obo:GO_0061629 rdfs:label "RNA polymerase II-specific DNA-binding transcription factor binding"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000099381> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0003674 .
+
+obo:GO_0061709 rdfs:label "reticulophagy"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0061723 rdfs:label "glycophagy"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0070588 rdfs:label "calcium ion transmembrane transport"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0070936 rdfs:label "protein K48-linked ubiquitination"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0097060 rdfs:label "synaptic membrane"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0005575 .
+
+obo:GO_0097191 rdfs:label "extrinsic apoptotic signaling pathway"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0097193 rdfs:label "intrinsic apoptotic signaling pathway"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0097553 rdfs:label "calcium ion transmembrane import into cytosol"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0098655 rdfs:label "monoatomic cation transmembrane transport"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0098688 rdfs:label "parallel fiber to Purkinje cell synapse"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000125675> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0005575 .
+
+obo:GO_0098976 rdfs:label "excitatory chemical synaptic transmission"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0098978 rdfs:label "glutamatergic synapse"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0005575 .
+
+obo:GO_0099505 rdfs:label "regulation of presynaptic membrane potential"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000125675> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0099507 rdfs:label "ligand-gated monoatomic ion channel activity involved in regulation of presynaptic membrane potential"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000125675> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0003674 .
+
+obo:GO_0140945 rdfs:label "histone H3K4 monomethyltransferase activity"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000099381> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0003674 .
+
+obo:GO_0140999 rdfs:label "histone H3K4 trimethyltransferase activity"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000099381> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0003674 .
+
+obo:GO_0160072 rdfs:label "ubiquitin ligase complex scaffold activity"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0003674 .
+
+obo:GO_1902036 rdfs:label "regulation of hematopoietic stem cell differentiation"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000099381> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_1902275 rdfs:label "regulation of chromatin organization"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000099381> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_1903059 rdfs:label "regulation of protein lipidation"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_1903539 rdfs:label "protein localization to postsynaptic membrane"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_1904062 rdfs:label "regulation of monoatomic cation transmembrane transport"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_1904646 rdfs:label "cellular response to amyloid-beta"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_1990316 rdfs:label "Atg1/ULK1 kinase complex"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0005575 .
+
+obo:GO_1990452 rdfs:label "Parkin-FBXW7-Cul1 ubiquitin ligase complex"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0005575 .
+
+obo:GO_2000463 rdfs:label "positive regulation of excitatory postsynaptic potential"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_2001237 rdfs:label "negative regulation of extrinsic apoptotic signaling pathway"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+<https://biodatafuse.org/example/gene_expression_value/000000/SETD1A_UBERON_0000178> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000099381> ;
+    sio:SIO_000300 7.593575e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0000178 .
+
+<https://biodatafuse.org/example/gene_expression_value/000000/SETD1A_UBERON_0000310> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000099381> ;
+    sio:SIO_000300 6.876892e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0000310 .
+
+<https://biodatafuse.org/example/gene_expression_value/000000/SETD1A_UBERON_0000948> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000099381> ;
+    sio:SIO_000300 7.798996e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0000948 .
+
+<https://biodatafuse.org/example/gene_expression_value/000000/SETD1A_UBERON_0000955> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000099381> ;
+    sio:SIO_000300 7.652065e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0000955 .
+
+<https://biodatafuse.org/example/gene_expression_value/000000/SETD1A_UBERON_0000990> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000099381> ;
+    sio:SIO_000300 7.881776e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0000990 .
+
+<https://biodatafuse.org/example/gene_expression_value/000000/SETD1A_UBERON_0001004> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000099381> ;
+    sio:SIO_000300 7.060708e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0001004 .
+
+<https://biodatafuse.org/example/gene_expression_value/000000/SETD1A_UBERON_0001007> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000099381> ;
+    sio:SIO_000300 7.866833e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0001007 .
+
+<https://biodatafuse.org/example/gene_expression_value/000000/SETD1A_UBERON_0001016> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000099381> ;
+    sio:SIO_000300 7.681538e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0001016 .
+
+<https://biodatafuse.org/example/gene_expression_value/000000/SETD1A_UBERON_0001264> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000099381> ;
+    sio:SIO_000300 7.80984e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0001264 .
+
+<https://biodatafuse.org/example/gene_expression_value/000000/SETD1A_UBERON_0001434> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000099381> ;
+    sio:SIO_000300 7.289156e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0001434 .
+
+<https://biodatafuse.org/example/gene_expression_value/000000/SETD1A_UBERON_0001987> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000099381> ;
+    sio:SIO_000300 7.052311e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0001987 .
+
+<https://biodatafuse.org/example/gene_expression_value/000000/SETD1A_UBERON_0002048> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000099381> ;
+    sio:SIO_000300 7.322237e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0002048 .
+
+<https://biodatafuse.org/example/gene_expression_value/000000/SETD1A_UBERON_0002107> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000099381> ;
+    sio:SIO_000300 7.490576e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0002107 .
+
+<https://biodatafuse.org/example/gene_expression_value/000000/SETD1A_UBERON_0002113> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000099381> ;
+    sio:SIO_000300 7.304998e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0002113 .
+
+<https://biodatafuse.org/example/gene_expression_value/000000/SETD1A_UBERON_0002371> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000099381> ;
+    sio:SIO_000300 7.608574e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0002371 .
+
+<https://biodatafuse.org/example/gene_expression_value/000000/SETD1A_UBERON_0004535> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000099381> ;
+    sio:SIO_000300 7.979228e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0004535 .
+
+<https://biodatafuse.org/example/gene_expression_value/000000/SETD1A_UBERON_0005057> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000099381> ;
+    sio:SIO_000300 8.01394e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0005057 .
+
+<https://biodatafuse.org/example/gene_expression_value/000001/CUL1_UBERON_0000178> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000300 8.560193e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0000178 .
+
+<https://biodatafuse.org/example/gene_expression_value/000001/CUL1_UBERON_0000310> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000300 8.547734e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0000310 .
+
+<https://biodatafuse.org/example/gene_expression_value/000001/CUL1_UBERON_0000948> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000300 9.125438e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0000948 .
+
+<https://biodatafuse.org/example/gene_expression_value/000001/CUL1_UBERON_0000955> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000300 8.966665e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0000955 .
+
+<https://biodatafuse.org/example/gene_expression_value/000001/CUL1_UBERON_0000990> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000300 9.143407e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0000990 .
+
+<https://biodatafuse.org/example/gene_expression_value/000001/CUL1_UBERON_0001004> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000300 8.760414e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0001004 .
+
+<https://biodatafuse.org/example/gene_expression_value/000001/CUL1_UBERON_0001007> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000300 9.046785e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0001007 .
+
+<https://biodatafuse.org/example/gene_expression_value/000001/CUL1_UBERON_0001016> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000300 8.963748e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0001016 .
+
+<https://biodatafuse.org/example/gene_expression_value/000001/CUL1_UBERON_0001264> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000300 8.909405e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0001264 .
+
+<https://biodatafuse.org/example/gene_expression_value/000001/CUL1_UBERON_0001434> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000300 8.820455e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0001434 .
+
+<https://biodatafuse.org/example/gene_expression_value/000001/CUL1_UBERON_0001987> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000300 9.083066e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0001987 .
+
+<https://biodatafuse.org/example/gene_expression_value/000001/CUL1_UBERON_0002048> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000300 8.815405e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0002048 .
+
+<https://biodatafuse.org/example/gene_expression_value/000001/CUL1_UBERON_0002107> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000300 8.788821e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0002107 .
+
+<https://biodatafuse.org/example/gene_expression_value/000001/CUL1_UBERON_0002113> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000300 8.288946e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0002113 .
+
+<https://biodatafuse.org/example/gene_expression_value/000001/CUL1_UBERON_0002371> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000300 8.71196e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0002371 .
+
+<https://biodatafuse.org/example/gene_expression_value/000001/CUL1_UBERON_0004535> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000300 9.211498e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0004535 .
+
+<https://biodatafuse.org/example/gene_expression_value/000001/CUL1_UBERON_0005057> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000300 8.973903e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0005057 .
+
+<https://biodatafuse.org/example/gene_expression_value/000002/XPO7_UBERON_0000178> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000130227> ;
+    sio:SIO_000300 8.81979e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0000178 .
+
+<https://biodatafuse.org/example/gene_expression_value/000002/XPO7_UBERON_0000310> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000130227> ;
+    sio:SIO_000300 8.34868e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0000310 .
+
+<https://biodatafuse.org/example/gene_expression_value/000002/XPO7_UBERON_0000948> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000130227> ;
+    sio:SIO_000300 8.766912e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0000948 .
+
+<https://biodatafuse.org/example/gene_expression_value/000002/XPO7_UBERON_0000955> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000130227> ;
+    sio:SIO_000300 8.873105e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0000955 .
+
+<https://biodatafuse.org/example/gene_expression_value/000002/XPO7_UBERON_0000990> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000130227> ;
+    sio:SIO_000300 8.84733e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0000990 .
+
+<https://biodatafuse.org/example/gene_expression_value/000002/XPO7_UBERON_0001004> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000130227> ;
+    sio:SIO_000300 8.443051e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0001004 .
+
+<https://biodatafuse.org/example/gene_expression_value/000002/XPO7_UBERON_0001007> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000130227> ;
+    sio:SIO_000300 8.750209e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0001007 .
+
+<https://biodatafuse.org/example/gene_expression_value/000002/XPO7_UBERON_0001016> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000130227> ;
+    sio:SIO_000300 8.883568e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0001016 .
+
+<https://biodatafuse.org/example/gene_expression_value/000002/XPO7_UBERON_0001264> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000130227> ;
+    sio:SIO_000300 8.982819e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0001264 .
+
+<https://biodatafuse.org/example/gene_expression_value/000002/XPO7_UBERON_0001434> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000130227> ;
+    sio:SIO_000300 9.263394e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0001434 .
+
+<https://biodatafuse.org/example/gene_expression_value/000002/XPO7_UBERON_0001987> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000130227> ;
+    sio:SIO_000300 8.617046e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0001987 .
+
+<https://biodatafuse.org/example/gene_expression_value/000002/XPO7_UBERON_0002048> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000130227> ;
+    sio:SIO_000300 8.662259e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0002048 .
+
+<https://biodatafuse.org/example/gene_expression_value/000002/XPO7_UBERON_0002107> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000130227> ;
+    sio:SIO_000300 8.411649e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0002107 .
+
+<https://biodatafuse.org/example/gene_expression_value/000002/XPO7_UBERON_0002113> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000130227> ;
+    sio:SIO_000300 8.526434e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0002113 .
+
+<https://biodatafuse.org/example/gene_expression_value/000002/XPO7_UBERON_0002371> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000130227> ;
+    sio:SIO_000300 9.487886e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0002371 .
+
+<https://biodatafuse.org/example/gene_expression_value/000002/XPO7_UBERON_0004535> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000130227> ;
+    sio:SIO_000300 8.877029e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0004535 .
+
+<https://biodatafuse.org/example/gene_expression_value/000002/XPO7_UBERON_0005057> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000130227> ;
+    sio:SIO_000300 8.818983e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0005057 .
+
+<https://biodatafuse.org/example/gene_expression_value/000003/GRIA3_UBERON_0000178> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000125675> ;
+    sio:SIO_000300 4.439434e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0000178 .
+
+<https://biodatafuse.org/example/gene_expression_value/000003/GRIA3_UBERON_0000310> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000125675> ;
+    sio:SIO_000300 5.210797e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0000310 .
+
+<https://biodatafuse.org/example/gene_expression_value/000003/GRIA3_UBERON_0000948> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000125675> ;
+    sio:SIO_000300 6.004795e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0000948 .
+
+<https://biodatafuse.org/example/gene_expression_value/000003/GRIA3_UBERON_0000955> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000125675> ;
+    sio:SIO_000300 8.63637e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0000955 .
+
+<https://biodatafuse.org/example/gene_expression_value/000003/GRIA3_UBERON_0000990> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000125675> ;
+    sio:SIO_000300 5.645264e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0000990 .
+
+<https://biodatafuse.org/example/gene_expression_value/000003/GRIA3_UBERON_0001004> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000125675> ;
+    sio:SIO_000300 4.838325e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0001004 .
+
+<https://biodatafuse.org/example/gene_expression_value/000003/GRIA3_UBERON_0001007> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000125675> ;
+    sio:SIO_000300 5.472067e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0001007 .
+
+<https://biodatafuse.org/example/gene_expression_value/000003/GRIA3_UBERON_0001016> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000125675> ;
+    sio:SIO_000300 8.376156e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0001016 .
+
+<https://biodatafuse.org/example/gene_expression_value/000003/GRIA3_UBERON_0001264> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000125675> ;
+    sio:SIO_000300 7.012305e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0001264 .
+
+<https://biodatafuse.org/example/gene_expression_value/000003/GRIA3_UBERON_0001434> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000125675> ;
+    sio:SIO_000300 5.164181e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0001434 .
+
+<https://biodatafuse.org/example/gene_expression_value/000003/GRIA3_UBERON_0001987> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000125675> ;
+    sio:SIO_000300 5.064717e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0001987 .
+
+<https://biodatafuse.org/example/gene_expression_value/000003/GRIA3_UBERON_0002048> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000125675> ;
+    sio:SIO_000300 4.802171e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0002048 .
+
+<https://biodatafuse.org/example/gene_expression_value/000003/GRIA3_UBERON_0002107> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000125675> ;
+    sio:SIO_000300 6.781527e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0002107 .
+
+<https://biodatafuse.org/example/gene_expression_value/000003/GRIA3_UBERON_0002113> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000125675> ;
+    sio:SIO_000300 5.657732e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0002113 .
+
+<https://biodatafuse.org/example/gene_expression_value/000003/GRIA3_UBERON_0004535> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000125675> ;
+    sio:SIO_000300 6.648354e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0004535 .
+
+<https://biodatafuse.org/example/gene_expression_value/000003/GRIA3_UBERON_0005057> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000125675> ;
+    sio:SIO_000300 4.53873e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0005057 .
+
+<https://biodatafuse.org/example/gene_expression_value/000004/GRIN2A_UBERON_0000178> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000300 4.188045e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0000178 .
+
+<https://biodatafuse.org/example/gene_expression_value/000004/GRIN2A_UBERON_0000310> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000300 4.839245e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0000310 .
+
+<https://biodatafuse.org/example/gene_expression_value/000004/GRIN2A_UBERON_0000948> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000300 5.825181e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0000948 .
+
+<https://biodatafuse.org/example/gene_expression_value/000004/GRIN2A_UBERON_0000955> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000300 7.542531e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0000955 .
+
+<https://biodatafuse.org/example/gene_expression_value/000004/GRIN2A_UBERON_0000990> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000300 5.053854e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0000990 .
+
+<https://biodatafuse.org/example/gene_expression_value/000004/GRIN2A_UBERON_0001004> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000300 4.57687e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0001004 .
+
+<https://biodatafuse.org/example/gene_expression_value/000004/GRIN2A_UBERON_0001007> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000300 4.489164e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0001007 .
+
+<https://biodatafuse.org/example/gene_expression_value/000004/GRIN2A_UBERON_0001016> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000300 7.075394e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0001016 .
+
+<https://biodatafuse.org/example/gene_expression_value/000004/GRIN2A_UBERON_0001264> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000300 5.09285e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0001264 .
+
+<https://biodatafuse.org/example/gene_expression_value/000004/GRIN2A_UBERON_0001987> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000300 4.461349e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0001987 .
+
+<https://biodatafuse.org/example/gene_expression_value/000004/GRIN2A_UBERON_0002048> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000300 4.383703e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0002048 .
+
+<https://biodatafuse.org/example/gene_expression_value/000004/GRIN2A_UBERON_0002107> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000300 4.690951e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0002107 .
+
+<https://biodatafuse.org/example/gene_expression_value/000004/GRIN2A_UBERON_0002113> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000300 5.095085e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0002113 .
+
+<https://biodatafuse.org/example/gene_expression_value/000004/GRIN2A_UBERON_0004535> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000300 5.157499e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0004535 .
+
+<https://biodatafuse.org/example/gene_expression_value/000004/GRIN2A_UBERON_0005057> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000300 3.474075e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0005057 .
+
+<https://biodatafuse.org/example/gene_expression_value/000005/RB1CC1_UBERON_0000178> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000300 8.671599e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0000178 .
+
+<https://biodatafuse.org/example/gene_expression_value/000005/RB1CC1_UBERON_0000310> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000300 9.194319e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0000310 .
+
+<https://biodatafuse.org/example/gene_expression_value/000005/RB1CC1_UBERON_0000948> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000300 8.747455e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0000948 .
+
+<https://biodatafuse.org/example/gene_expression_value/000005/RB1CC1_UBERON_0000955> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000300 9.049834e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0000955 .
+
+<https://biodatafuse.org/example/gene_expression_value/000005/RB1CC1_UBERON_0000990> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000300 8.777007e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0000990 .
+
+<https://biodatafuse.org/example/gene_expression_value/000005/RB1CC1_UBERON_0001004> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000300 8.995469e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0001004 .
+
+<https://biodatafuse.org/example/gene_expression_value/000005/RB1CC1_UBERON_0001007> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000300 8.569031e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0001007 .
+
+<https://biodatafuse.org/example/gene_expression_value/000005/RB1CC1_UBERON_0001016> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000300 8.972346e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0001016 .
+
+<https://biodatafuse.org/example/gene_expression_value/000005/RB1CC1_UBERON_0001264> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000300 8.806826e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0001264 .
+
+<https://biodatafuse.org/example/gene_expression_value/000005/RB1CC1_UBERON_0001434> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000300 9.440159e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0001434 .
+
+<https://biodatafuse.org/example/gene_expression_value/000005/RB1CC1_UBERON_0001987> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000300 8.955516e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0001987 .
+
+<https://biodatafuse.org/example/gene_expression_value/000005/RB1CC1_UBERON_0002048> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000300 8.781982e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0002048 .
+
+<https://biodatafuse.org/example/gene_expression_value/000005/RB1CC1_UBERON_0002107> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000300 8.748798e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0002107 .
+
+<https://biodatafuse.org/example/gene_expression_value/000005/RB1CC1_UBERON_0002113> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000300 8.621324e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0002113 .
+
+<https://biodatafuse.org/example/gene_expression_value/000005/RB1CC1_UBERON_0002371> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000300 9.322652e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0002371 .
+
+<https://biodatafuse.org/example/gene_expression_value/000005/RB1CC1_UBERON_0004535> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000300 8.700802e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0004535 .
+
+<https://biodatafuse.org/example/gene_expression_value/000005/RB1CC1_UBERON_0005057> a sio:SIO_001077 ;
+    sio:SIO_000230 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000300 8.178108e+01 ;
+    sio:SIO_001403 obo:UBERON_0000104,
+        obo:UBERON_0005057 .
+
+<https://biodatafuse.org/example/score/P42263_Q12879> a obo:NCIT_C25338 ;
+    sio:SIO_000300 8.86e-01 .
+
+<https://biodatafuse.org/example/score/Q12879_P42263> a obo:NCIT_C25338 ;
+    sio:SIO_000300 8.86e-01 .
+
+<https://biodatafuse.org/example/test.owl> dcterms:created "2025-01-13T16:27:26.011799+00:00"^^xsd:dateTime ;
+    dcterms:creator <https://orcid.org/0000-0002-4166-7093> ;
+    dcterms:identifier <https://biodatafuse.org/example/test.owl> .
+
+<https://orcid.org/0000-0002-4166-7093> owl:sameAs "Javier Millan Acosta"^^xsd:string .
+
+<https://pubchem.ncbi.nlm.nih.gov/compound/181458> a sio:SIO_010038 ;
+    owl:sameAs <https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1699> .
+
+<https://pubchem.ncbi.nlm.nih.gov/compound/182137> a sio:SIO_010038 ;
+    owl:sameAs <https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL395091> .
+
+<https://pubchem.ncbi.nlm.nih.gov/compound/3821> a sio:SIO_010038 ;
+    owl:sameAs <https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL742> .
+
+<https://pubchem.ncbi.nlm.nih.gov/compound/4054> a sio:SIO_010038 ;
+    owl:sameAs <https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL807> .
+
+<https://pubchem.ncbi.nlm.nih.gov/compound/4601> a sio:SIO_010038 ;
+    owl:sameAs <https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL900> .
+
+<https://pubchem.ncbi.nlm.nih.gov/compound/5284627> a sio:SIO_010038 ;
+    owl:sameAs <https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL220492> .
+
+<https://pubchem.ncbi.nlm.nih.gov/compound/5360696> a sio:SIO_010038 ;
+    owl:sameAs <https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL52440> .
+
+<https://pubchem.ncbi.nlm.nih.gov/compound/5462351> a sio:SIO_010038 ;
+    owl:sameAs <https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1256818> .
+
+<https://pubchem.ncbi.nlm.nih.gov/compound/64150> a sio:SIO_010038 ;
+    owl:sameAs <https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1569> .
+
+<https://pubchem.ncbi.nlm.nih.gov/compound/71158> a sio:SIO_010038 ;
+    owl:sameAs <https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1201293> .
+
+<https://pubchem.ncbi.nlm.nih.gov/compound/9568> a sio:SIO_010038 ;
+    owl:sameAs <https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1201023> .
+
+<https://pubchem.ncbi.nlm.nih.gov/compound/9924495> a sio:SIO_010038 ;
+    owl:sameAs <https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1214124> .
+
+<https://reactome.org/content/detail/R-HSA-1169091> a obo:PW_0000001 ;
+    rdfs:label "Activation of NF-kappaB in B cells"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://reactome.org/>,
+        <https://www.opentargets.org/> .
+
+<https://reactome.org/content/detail/R-HSA-1170546> a obo:PW_0000001 ;
+    rdfs:label "Prolactin receptor signaling"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://reactome.org/>,
+        <https://www.opentargets.org/> .
+
+<https://reactome.org/content/detail/R-HSA-1632852> a obo:PW_0000001 ;
+    rdfs:label "Macroautophagy"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000253 <https://reactome.org/>,
+        <https://www.opentargets.org/> .
+
+<https://reactome.org/content/detail/R-HSA-174113> a obo:PW_0000001 ;
+    rdfs:label "SCF-beta-TrCP mediated degradation of Emi1"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://reactome.org/>,
+        <https://www.opentargets.org/> .
+
+<https://reactome.org/content/detail/R-HSA-187577> a obo:PW_0000001 ;
+    rdfs:label "SCF(Skp2)-mediated degradation of p27/p21"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://reactome.org/>,
+        <https://www.opentargets.org/> .
+
+<https://reactome.org/content/detail/R-HSA-195253> a obo:PW_0000001 ;
+    rdfs:label "Degradation of beta-catenin by the destruction complex"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://reactome.org/>,
+        <https://www.opentargets.org/> .
+
+<https://reactome.org/content/detail/R-HSA-202424> a obo:PW_0000001 ;
+    rdfs:label "Downstream TCR signaling"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://reactome.org/>,
+        <https://www.opentargets.org/> .
+
+<https://reactome.org/content/detail/R-HSA-2122947> a obo:PW_0000001 ;
+    rdfs:label "NOTCH1 Intracellular Domain Regulates Transcription"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://reactome.org/>,
+        <https://www.opentargets.org/> .
+
+<https://reactome.org/content/detail/R-HSA-2565942> a obo:PW_0000001 ;
+    rdfs:label "Regulation of PLK1 Activity at G2/M Transition"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://reactome.org/>,
+        <https://www.opentargets.org/> .
+
+<https://reactome.org/content/detail/R-HSA-2644606> a obo:PW_0000001 ;
+    rdfs:label "Constitutive Signaling by NOTCH1 PEST Domain Mutants"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://reactome.org/>,
+        <https://www.opentargets.org/> .
+
+<https://reactome.org/content/detail/R-HSA-2644607> a obo:PW_0000001 ;
+    rdfs:label "Loss of Function of FBXW7 in Cancer and NOTCH1 Signaling"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://reactome.org/>,
+        <https://www.opentargets.org/> .
+
+<https://reactome.org/content/detail/R-HSA-2871837> a obo:PW_0000001 ;
+    rdfs:label "FCERI mediated NF-kB activation"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://reactome.org/>,
+        <https://www.opentargets.org/> .
+
+<https://reactome.org/content/detail/R-HSA-2894862> a obo:PW_0000001 ;
+    rdfs:label "Constitutive Signaling by NOTCH1 HD+PEST Domain Mutants"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://reactome.org/>,
+        <https://www.opentargets.org/> .
+
+<https://reactome.org/content/detail/R-HSA-3214841> a obo:PW_0000001 ;
+    rdfs:label "PKMTs methylate histone lysines"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000099381> ;
+    sio:SIO_000253 <https://reactome.org/>,
+        <https://www.opentargets.org/> .
+
+<https://reactome.org/content/detail/R-HSA-399710> a obo:PW_0000001 ;
+    rdfs:label "Activation of AMPA receptors"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000125675> ;
+    sio:SIO_000253 <https://reactome.org/>,
+        <https://www.opentargets.org/> .
+
+<https://reactome.org/content/detail/R-HSA-399719> a obo:PW_0000001 ;
+    rdfs:label "Trafficking of AMPA receptors"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000125675> ;
+    sio:SIO_000253 <https://reactome.org/>,
+        <https://www.opentargets.org/> .
+
+<https://reactome.org/content/detail/R-HSA-400253> a obo:PW_0000001 ;
+    rdfs:label "Circadian Clock"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://reactome.org/>,
+        <https://www.opentargets.org/> .
+
+<https://reactome.org/content/detail/R-HSA-416993> a obo:PW_0000001 ;
+    rdfs:label "Trafficking of GluR2-containing AMPA receptors"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000125675> ;
+    sio:SIO_000253 <https://reactome.org/>,
+        <https://www.opentargets.org/> .
+
+<https://reactome.org/content/detail/R-HSA-5607761> a obo:PW_0000001 ;
+    rdfs:label "Dectin-1 mediated noncanonical NF-kB signaling"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://reactome.org/>,
+        <https://www.opentargets.org/> .
+
+<https://reactome.org/content/detail/R-HSA-5607764> a obo:PW_0000001 ;
+    rdfs:label "CLEC7A (Dectin-1) signaling"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://reactome.org/>,
+        <https://www.opentargets.org/> .
+
+<https://reactome.org/content/detail/R-HSA-5610780> a obo:PW_0000001 ;
+    rdfs:label "Degradation of GLI1 by the proteasome"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://reactome.org/>,
+        <https://www.opentargets.org/> .
+
+<https://reactome.org/content/detail/R-HSA-5610783> a obo:PW_0000001 ;
+    rdfs:label "Degradation of GLI2 by the proteasome"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://reactome.org/>,
+        <https://www.opentargets.org/> .
+
+<https://reactome.org/content/detail/R-HSA-5610785> a obo:PW_0000001 ;
+    rdfs:label "GLI3 is processed to GLI3R by the proteasome"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://reactome.org/>,
+        <https://www.opentargets.org/> .
+
+<https://reactome.org/content/detail/R-HSA-5676590> a obo:PW_0000001 ;
+    rdfs:label "NIK-->noncanonical NF-kB signaling"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://reactome.org/>,
+        <https://www.opentargets.org/> .
+
+<https://reactome.org/content/detail/R-HSA-5684264> a obo:PW_0000001 ;
+    rdfs:label "MAP3K8 (TPL2)-dependent MAPK1/3 activation"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://reactome.org/>,
+        <https://www.opentargets.org/> .
+
+<https://reactome.org/content/detail/R-HSA-6794361> a obo:PW_0000001 ;
+    rdfs:label "Neurexins and neuroligins"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://reactome.org/>,
+        <https://www.opentargets.org/> .
+
+<https://reactome.org/content/detail/R-HSA-68949> a obo:PW_0000001 ;
+    rdfs:label "Orc1 removal from chromatin"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://reactome.org/>,
+        <https://www.opentargets.org/> .
+
+<https://reactome.org/content/detail/R-HSA-69231> a obo:PW_0000001 ;
+    rdfs:label "Cyclin D associated events in G1"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://reactome.org/>,
+        <https://www.opentargets.org/> .
+
+<https://reactome.org/content/detail/R-HSA-8854050> a obo:PW_0000001 ;
+    rdfs:label "FBXL7 down-regulates AURKA during mitotic entry and in early mitosis"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://reactome.org/>,
+        <https://www.opentargets.org/> .
+
+<https://reactome.org/content/detail/R-HSA-8936459> a obo:PW_0000001 ;
+    rdfs:label "RUNX1 regulates genes involved in megakaryocyte differentiation and platelet function"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000099381> ;
+    sio:SIO_000253 <https://reactome.org/>,
+        <https://www.opentargets.org/> .
+
+<https://reactome.org/content/detail/R-HSA-8939902> a obo:PW_0000001 ;
+    rdfs:label "Regulation of RUNX2 expression and activity"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://reactome.org/>,
+        <https://www.opentargets.org/> .
+
+<https://reactome.org/content/detail/R-HSA-8951664> a obo:PW_0000001 ;
+    rdfs:label "Neddylation"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://reactome.org/>,
+        <https://www.opentargets.org/> .
+
+<https://reactome.org/content/detail/R-HSA-9020702> a obo:PW_0000001 ;
+    rdfs:label "Interleukin-1 signaling"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://reactome.org/>,
+        <https://www.opentargets.org/> .
+
+<https://reactome.org/content/detail/R-HSA-9022699> a obo:PW_0000001 ;
+    rdfs:label "MECP2 regulates neuronal receptors and channels"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://reactome.org/>,
+        <https://www.opentargets.org/> .
+
+<https://reactome.org/content/detail/R-HSA-917937> a obo:PW_0000001 ;
+    rdfs:label "Iron uptake and transport"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://reactome.org/>,
+        <https://www.opentargets.org/> .
+
+<https://reactome.org/content/detail/R-HSA-9604323> a obo:PW_0000001 ;
+    rdfs:label "Negative regulation of NOTCH4 signaling"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://reactome.org/>,
+        <https://www.opentargets.org/> .
+
+<https://reactome.org/content/detail/R-HSA-9609736> a obo:PW_0000001 ;
+    rdfs:label "Assembly and cell surface presentation of NMDA receptors"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://reactome.org/>,
+        <https://www.opentargets.org/> .
+
+<https://reactome.org/content/detail/R-HSA-9617324> a obo:PW_0000001 ;
+    rdfs:label "Negative regulation of NMDA receptor-mediated neuronal transmission"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://reactome.org/>,
+        <https://www.opentargets.org/> .
+
+<https://reactome.org/content/detail/R-HSA-9620244> a obo:PW_0000001 ;
+    rdfs:label "Long-term potentiation"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://reactome.org/>,
+        <https://www.opentargets.org/> .
+
+<https://reactome.org/content/detail/R-HSA-9708530> a obo:PW_0000001 ;
+    rdfs:label "Regulation of BACH1 activity"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://reactome.org/>,
+        <https://www.opentargets.org/> .
+
+<https://reactome.org/content/detail/R-HSA-9725371> a obo:PW_0000001 ;
+    rdfs:label "Nuclear events stimulated by ALK signaling in cancer"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://reactome.org/>,
+        <https://www.opentargets.org/> .
+
+<https://reactome.org/content/detail/R-HSA-9762114> a obo:PW_0000001 ;
+    rdfs:label "GSK3B and BTRC:CUL1-mediated-degradation of NFE2L2"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://reactome.org/>,
+        <https://www.opentargets.org/> .
+
+<https://reactome.org/content/detail/R-HSA-9772755> a obo:PW_0000001 ;
+    rdfs:label "Formation of WDR5-containing histone-modifying complexes"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000099381> ;
+    sio:SIO_000253 <https://reactome.org/>,
+        <https://www.opentargets.org/> .
+
+<https://reactome.org/content/detail/R-HSA-983168> a obo:PW_0000001 ;
+    rdfs:label "Antigen processing: Ubiquitination & Proteasome degradation"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://reactome.org/>,
+        <https://www.opentargets.org/> .
+
+<https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1201023> a obo:NCIT_C172573 ;
+    rdfs:label "ORPHENADRINE HYDROCHLORIDE"^^xsd:string ;
+    owl:sameAs <https://pubchem.ncbi.nlm.nih.gov/compound/9568> .
+
+<https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1201293> a obo:NCIT_C172573 ;
+    rdfs:label "ACAMPROSATE"^^xsd:string ;
+    owl:sameAs <https://pubchem.ncbi.nlm.nih.gov/compound/71158> .
+
+<https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1214124> a obo:NCIT_C172573 ;
+    rdfs:label "PERAMPANEL"^^xsd:string ;
+    owl:sameAs <https://pubchem.ncbi.nlm.nih.gov/compound/9924495> .
+
+<https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1256818> a obo:NCIT_C172573 ;
+    rdfs:label "DEXTROMETHORPHAN HYDROBROMIDE"^^xsd:string ;
+    owl:sameAs <https://pubchem.ncbi.nlm.nih.gov/compound/5462351> .
+
+<https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1569> a obo:NCIT_C172573 ;
+    rdfs:label "AMANTADINE HYDROCHLORIDE"^^xsd:string ;
+    owl:sameAs <https://pubchem.ncbi.nlm.nih.gov/compound/64150> .
+
+<https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1699> a obo:NCIT_C172573 ;
+    rdfs:label "MEMANTINE HYDROCHLORIDE"^^xsd:string ;
+    owl:sameAs <https://pubchem.ncbi.nlm.nih.gov/compound/181458> .
+
+<https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL220492> a obo:NCIT_C172573 ;
+    rdfs:label "TOPIRAMATE"^^xsd:string ;
+    owl:sameAs <https://pubchem.ncbi.nlm.nih.gov/compound/5284627> .
+
+<https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL395091> a obo:NCIT_C172573 ;
+    rdfs:label "ESKETAMINE"^^xsd:string ;
+    owl:sameAs <https://pubchem.ncbi.nlm.nih.gov/compound/182137> .
+
+<https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL52440> a obo:NCIT_C172573 ;
+    rdfs:label "DEXTROMETHORPHAN"^^xsd:string ;
+    owl:sameAs <https://pubchem.ncbi.nlm.nih.gov/compound/5360696> .
+
+<https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL742> a obo:NCIT_C172573 ;
+    rdfs:label "KETAMINE"^^xsd:string ;
+    owl:sameAs <https://pubchem.ncbi.nlm.nih.gov/compound/3821> .
+
+<https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL807> a obo:NCIT_C172573 ;
+    rdfs:label "MEMANTINE"^^xsd:string ;
+    owl:sameAs <https://pubchem.ncbi.nlm.nih.gov/compound/4054> .
+
+<https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL900> a obo:NCIT_C172573 ;
+    rdfs:label "ORPHENADRINE"^^xsd:string ;
+    owl:sameAs <https://pubchem.ncbi.nlm.nih.gov/compound/4601> .
+
+<https://www.wikipathways.org/pathways/WP179> a obo:PW_0000001 ;
+    rdfs:label "Cell cycle"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://wikipathways.org>,
+        <https://www.wikipathways.org/> .
+
+<https://www.wikipathways.org/pathways/WP231> a obo:PW_0000001 ;
+    rdfs:label "TNF-alpha signaling"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://wikipathways.org>,
+        <https://www.wikipathways.org/> .
+
+<https://www.wikipathways.org/pathways/WP2359> a obo:PW_0000001 ;
+    rdfs:label "Parkin-ubiquitin proteasomal system pathway"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://wikipathways.org>,
+        <https://www.wikipathways.org/> .
+
+<https://www.wikipathways.org/pathways/WP2369> a obo:PW_0000001 ;
+    rdfs:label "Histone modifications"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000099381> ;
+    sio:SIO_000253 <https://wikipathways.org>,
+        <https://www.wikipathways.org/> .
+
+<https://www.wikipathways.org/pathways/WP2380> a obo:PW_0000001 ;
+    rdfs:label "Brain-derived neurotrophic factor (BDNF) signaling"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000125675> ;
+    sio:SIO_000253 <https://wikipathways.org>,
+        <https://www.wikipathways.org/> .
+
+<https://www.wikipathways.org/pathways/WP2864> a obo:PW_0000001 ;
+    rdfs:label "Apoptosis-related network due to altered Notch3 in ovarian cancer"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://wikipathways.org>,
+        <https://www.wikipathways.org/> .
+
+<https://www.wikipathways.org/pathways/WP2880> a obo:PW_0000001 ;
+    rdfs:label "Glucocorticoid receptor pathway"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://wikipathways.org>,
+        <https://www.wikipathways.org/> .
+
+<https://www.wikipathways.org/pathways/WP2882> a obo:PW_0000001 ;
+    rdfs:label "Nuclear receptors meta-pathway"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://wikipathways.org>,
+        <https://www.wikipathways.org/> .
+
+<https://www.wikipathways.org/pathways/WP3584> a obo:PW_0000001 ;
+    rdfs:label "MECP2 and associated Rett syndrome"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000125675> ;
+    sio:SIO_000253 <https://wikipathways.org>,
+        <https://www.wikipathways.org/> .
+
+<https://www.wikipathways.org/pathways/WP3591> a obo:PW_0000001 ;
+    rdfs:label "Sleep regulation"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://wikipathways.org>,
+        <https://www.wikipathways.org/> .
+
+<https://www.wikipathways.org/pathways/WP3594> a obo:PW_0000001 ;
+    rdfs:label "Circadian rhythm genes"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://wikipathways.org>,
+        <https://www.wikipathways.org/> .
+
+<https://www.wikipathways.org/pathways/WP366> a obo:PW_0000001 ;
+    rdfs:label "TGF-beta signaling pathway"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://wikipathways.org>,
+        <https://www.wikipathways.org/> .
+
+<https://www.wikipathways.org/pathways/WP3844> a obo:PW_0000001 ;
+    rdfs:label "PI3K-AKT-mTOR signaling and therapeutic opportunities in prostate cancer"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000253 <https://wikipathways.org>,
+        <https://www.wikipathways.org/> .
+
+<https://www.wikipathways.org/pathways/WP4008> a obo:PW_0000001 ;
+    rdfs:label "NO/cGMP/PKG mediated neuroprotection"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://wikipathways.org>,
+        <https://www.wikipathways.org/> .
+
+<https://www.wikipathways.org/pathways/WP4222> a obo:PW_0000001 ;
+    rdfs:label "Phosphodiesterases in neuronal function"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://wikipathways.org>,
+        <https://www.wikipathways.org/> .
+
+<https://www.wikipathways.org/pathways/WP4223> a obo:PW_0000001 ;
+    rdfs:label "Ras signaling"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://wikipathways.org>,
+        <https://www.wikipathways.org/> .
+
+<https://www.wikipathways.org/pathways/WP4312> a obo:PW_0000001 ;
+    rdfs:label "Rett syndrome"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://wikipathways.org>,
+        <https://www.wikipathways.org/> .
+
+<https://www.wikipathways.org/pathways/WP4539> a obo:PW_0000001 ;
+    rdfs:label "Synaptic signaling associated with autism spectrum disorder"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://wikipathways.org>,
+        <https://www.wikipathways.org/> .
+
+<https://www.wikipathways.org/pathways/WP4549> a obo:PW_0000001 ;
+    rdfs:label "Fragile X syndrome"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://wikipathways.org>,
+        <https://www.wikipathways.org/> .
+
+<https://www.wikipathways.org/pathways/WP4577> a obo:PW_0000001 ;
+    rdfs:label "Neurodegeneration with brain iron accumulation (NBIA) subtypes pathway"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000253 <https://wikipathways.org>,
+        <https://www.wikipathways.org/> .
+
+<https://www.wikipathways.org/pathways/WP4685> a obo:PW_0000001 ;
+    rdfs:label "Melanoma"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://wikipathways.org>,
+        <https://www.wikipathways.org/> .
+
+<https://www.wikipathways.org/pathways/WP4698> a obo:PW_0000001 ;
+    rdfs:label "Vitamin D-sensitive calcium signaling in depression"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://wikipathways.org>,
+        <https://www.wikipathways.org/> .
+
+<https://www.wikipathways.org/pathways/WP4760> a obo:PW_0000001 ;
+    rdfs:label "PKC-gamma calcium signaling in ataxia"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000125675> ;
+    sio:SIO_000253 <https://wikipathways.org>,
+        <https://www.wikipathways.org/> .
+
+<https://www.wikipathways.org/pathways/WP4875> a obo:PW_0000001 ;
+    rdfs:label "Disruption of postsynaptic signaling by CNV"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://wikipathways.org>,
+        <https://www.wikipathways.org/> .
+
+<https://www.wikipathways.org/pathways/WP4923> a obo:PW_0000001 ;
+    rdfs:label "Autophagy"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000253 <https://wikipathways.org>,
+        <https://www.wikipathways.org/> .
+
+<https://www.wikipathways.org/pathways/WP4936> a obo:PW_0000001 ;
+    rdfs:label "Perturbations to host-cell autophagy, induced by SARS-CoV-2 proteins"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000253 <https://wikipathways.org>,
+        <https://www.wikipathways.org/> .
+
+<https://www.wikipathways.org/pathways/WP5094> a obo:PW_0000001 ;
+    rdfs:label "Orexin receptor pathway"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://wikipathways.org>,
+        <https://www.wikipathways.org/> .
+
+<https://www.wikipathways.org/pathways/WP5205> a obo:PW_0000001 ;
+    rdfs:label "Clock-controlled autophagy in bone metabolism"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000253 <https://wikipathways.org>,
+        <https://www.wikipathways.org/> .
+
+<https://www.wikipathways.org/pathways/WP5412> a obo:PW_0000001 ;
+    rdfs:label "8q11.23 (RB1CC1) copy number variation"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000023287> ;
+    sio:SIO_000253 <https://wikipathways.org>,
+        <https://www.wikipathways.org/> .
+
+<https://www.wikipathways.org/pathways/WP5434> a obo:PW_0000001 ;
+    rdfs:label "Cancer pathways"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://wikipathways.org>,
+        <https://www.wikipathways.org/> .
+
+<https://www.wikipathways.org/pathways/WP61> a obo:PW_0000001 ;
+    rdfs:label "Notch signaling"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://wikipathways.org>,
+        <https://www.wikipathways.org/> .
+
+obo:GO_0001540 rdfs:label "amyloid-beta binding"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000125675>,
+        <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0003674 .
+
+obo:GO_0005654 rdfs:label "nucleoplasm"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130>,
+        <http://identifiers.org/ensembl#ENSG00000099381> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0005575 .
+
+obo:GO_0005789 rdfs:label "endoplasmic reticulum membrane"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000023287>,
+        <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0005575 .
+
+obo:GO_0005829 rdfs:label "cytosol"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000023287>,
+        <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0005575 .
+
+obo:GO_0007215 rdfs:label "glutamate receptor signaling pathway"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000125675>,
+        <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0007420 rdfs:label "brain development"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000099381>,
+        <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0019722 rdfs:label "calcium-mediated signaling"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000125675>,
+        <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0022849 rdfs:label "glutamate-gated calcium ion channel activity"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000125675>,
+        <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0003674 .
+
+obo:GO_0035235 rdfs:label "ionotropic glutamate receptor signaling pathway"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000125675>,
+        <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0035249 rdfs:label "synaptic transmission, glutamatergic"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000125675>,
+        <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0043197 rdfs:label "dendritic spine"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000125675>,
+        <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0005575 .
+
+obo:GO_0045211 rdfs:label "postsynaptic membrane"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000125675>,
+        <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0005575 .
+
+obo:GO_0060291 rdfs:label "long-term synaptic potentiation"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000125675>,
+        <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0008150 .
+
+obo:GO_0098839 rdfs:label "postsynaptic density membrane"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000125675>,
+        <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0005575 .
+
+obo:GO_1904315 rdfs:label "transmitter-gated monoatomic ion channel activity involved in regulation of postsynaptic membrane potential"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000125675>,
+        <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0003674 .
+
+<https://reactome.org/content/detail/R-HSA-438066> a obo:PW_0000001 ;
+    rdfs:label "Unblocking of NMDA receptors, glutamate binding and activation"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000125675>,
+        <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://reactome.org/>,
+        <https://www.opentargets.org/> .
+
+<https://reactome.org/content/detail/R-HSA-8849932> a obo:PW_0000001 ;
+    rdfs:label "Synaptic adhesion-like molecules"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000125675>,
+        <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://reactome.org/>,
+        <https://www.opentargets.org/> .
+
+<https://www.wikipathways.org/pathways/WP2059> a obo:PW_0000001 ;
+    rdfs:label "Alzheimer's disease and miRNA effects"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000023287>,
+        <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://wikipathways.org>,
+        <https://www.wikipathways.org/> .
+
+<https://www.wikipathways.org/pathways/WP2636> a obo:PW_0000001 ;
+    rdfs:label "Common pathways underlying drug addiction"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000125675>,
+        <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://wikipathways.org>,
+        <https://www.wikipathways.org/> .
+
+<https://www.wikipathways.org/pathways/WP5083> a obo:PW_0000001 ;
+    rdfs:label "Neuroinflammation and glutamatergic signaling"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000125675>,
+        <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://wikipathways.org>,
+        <https://www.wikipathways.org/> .
+
+<https://www.wikipathways.org/pathways/WP5087> a obo:PW_0000001 ;
+    rdfs:label "Pleural mesothelioma"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000023287>,
+        <http://identifiers.org/ensembl#ENSG00000055130> ;
+    sio:SIO_000253 <https://wikipathways.org>,
+        <https://www.wikipathways.org/> .
+
+<https://www.wikipathways.org/pathways/WP5124> a obo:PW_0000001 ;
+    rdfs:label "Alzheimer's disease"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000023287>,
+        <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://wikipathways.org>,
+        <https://www.wikipathways.org/> .
+
+<https://www.wikipathways.org/pathways/WP5398> a obo:PW_0000001 ;
+    rdfs:label "NRXN1 deletion syndrome"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000125675>,
+        <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://wikipathways.org>,
+        <https://www.wikipathways.org/> .
+
+<https://www.wikipathways.org/pathways/WP5420> a obo:PW_0000001 ;
+    rdfs:label "ADHD and autism (ASD) pathways"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000023287>,
+        <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://wikipathways.org>,
+        <https://www.wikipathways.org/> .
+
+obo:GO_0005634 rdfs:label "nucleus"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130>,
+        <http://identifiers.org/ensembl#ENSG00000099381>,
+        <http://identifiers.org/ensembl#ENSG00000130227> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0005575 .
+
+obo:GO_0005737 rdfs:label "cytoplasm"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130>,
+        <http://identifiers.org/ensembl#ENSG00000099381>,
+        <http://identifiers.org/ensembl#ENSG00000130227> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0005575 .
+
+obo:GO_0005886 rdfs:label "plasma membrane"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000055130>,
+        <http://identifiers.org/ensembl#ENSG00000125675>,
+        <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0005575 .
+
+obo:UBERON_0002371 a sio:SIO_001262 ;
+    rdfs:label "bone marrow"^^xsd:string .
+
+obo:GO_0005515 rdfs:label "protein binding"^^xsd:string ;
+    sio:SIO_000028 <http://identifiers.org/ensembl#ENSG00000023287>,
+        <http://identifiers.org/ensembl#ENSG00000055130>,
+        <http://identifiers.org/ensembl#ENSG00000099381>,
+        <http://identifiers.org/ensembl#ENSG00000130227>,
+        <http://identifiers.org/ensembl#ENSG00000183454> ;
+    sio:SIO_000253 <https://www.opentargets.org/> ;
+    rdfs:subClassOf obo:GO_0003674 .
+
+obo:UBERON_0001434 a sio:SIO_001262 ;
+    rdfs:label "skeletal system"^^xsd:string .
+
+<https://www.uniprot.org/uniprotkb/P42263> a obo:NCIT_C17021 ;
+    so:translates_to <https://www.uniprot.org/uniprotkb/P42263> ;
+    so:translation_of <http://identifiers.org/ensembl#ENSG00000183454>,
+        <https://www.uniprot.org/uniprotkb/P42263> .
+
+<https://www.uniprot.org/uniprotkb/Q12879> a obo:NCIT_C17021 ;
+    so:translates_to <https://www.uniprot.org/uniprotkb/Q12879> ;
+    so:translation_of <http://identifiers.org/ensembl#ENSG00000125675>,
+        <https://www.uniprot.org/uniprotkb/Q12879> .
+
+obo:UBERON_0000178 a sio:SIO_001262 ;
+    rdfs:label "blood"^^xsd:string .
+
+obo:UBERON_0000310 a sio:SIO_001262 ;
+    rdfs:label "breast"^^xsd:string .
+
+obo:UBERON_0000948 a sio:SIO_001262 ;
+    rdfs:label "heart"^^xsd:string .
+
+obo:UBERON_0000955 a sio:SIO_001262 ;
+    rdfs:label "brain"^^xsd:string .
+
+obo:UBERON_0000990 a sio:SIO_001262 ;
+    rdfs:label "reproductive system"^^xsd:string .
+
+obo:UBERON_0001004 a sio:SIO_001262 ;
+    rdfs:label "respiratory system"^^xsd:string .
+
+obo:UBERON_0001007 a sio:SIO_001262 ;
+    rdfs:label "digestive system"^^xsd:string .
+
+obo:UBERON_0001016 a sio:SIO_001262 ;
+    rdfs:label "nervous system"^^xsd:string .
+
+obo:UBERON_0001264 a sio:SIO_001262 ;
+    rdfs:label "pancreas"^^xsd:string .
+
+obo:UBERON_0001987 a sio:SIO_001262 ;
+    rdfs:label "placenta"^^xsd:string .
+
+obo:UBERON_0002048 a sio:SIO_001262 ;
+    rdfs:label "lung"^^xsd:string .
+
+obo:UBERON_0002107 a sio:SIO_001262 ;
+    rdfs:label "liver"^^xsd:string .
+
+obo:UBERON_0002113 a sio:SIO_001262 ;
+    rdfs:label "kidney"^^xsd:string .
+
+obo:UBERON_0004535 a sio:SIO_001262 ;
+    rdfs:label "cardiovascular system"^^xsd:string .
+
+obo:UBERON_0005057 a sio:SIO_001262 ;
+    rdfs:label "immune organ"^^xsd:string .
+
+<http://identifiers.org/ensembl#ENSG00000130227> a obo:NCIT_C16612 ;
+    rdfs:label "XPO7"^^xsd:string ;
+    sio:SIO_000068 obo:GO_0005049,
+        obo:GO_0005515,
+        obo:GO_0005634,
+        obo:GO_0005643,
+        obo:GO_0005737,
+        obo:GO_0006611,
+        obo:GO_0031267 ;
+    sio:SIO_000216 <https://biodatafuse.org/example/gene_expression_value/000002/XPO7_UBERON_0000178>,
+        <https://biodatafuse.org/example/gene_expression_value/000002/XPO7_UBERON_0000310>,
+        <https://biodatafuse.org/example/gene_expression_value/000002/XPO7_UBERON_0000948>,
+        <https://biodatafuse.org/example/gene_expression_value/000002/XPO7_UBERON_0000955>,
+        <https://biodatafuse.org/example/gene_expression_value/000002/XPO7_UBERON_0000990>,
+        <https://biodatafuse.org/example/gene_expression_value/000002/XPO7_UBERON_0001004>,
+        <https://biodatafuse.org/example/gene_expression_value/000002/XPO7_UBERON_0001007>,
+        <https://biodatafuse.org/example/gene_expression_value/000002/XPO7_UBERON_0001016>,
+        <https://biodatafuse.org/example/gene_expression_value/000002/XPO7_UBERON_0001264>,
+        <https://biodatafuse.org/example/gene_expression_value/000002/XPO7_UBERON_0001434>,
+        <https://biodatafuse.org/example/gene_expression_value/000002/XPO7_UBERON_0001987>,
+        <https://biodatafuse.org/example/gene_expression_value/000002/XPO7_UBERON_0002048>,
+        <https://biodatafuse.org/example/gene_expression_value/000002/XPO7_UBERON_0002107>,
+        <https://biodatafuse.org/example/gene_expression_value/000002/XPO7_UBERON_0002113>,
+        <https://biodatafuse.org/example/gene_expression_value/000002/XPO7_UBERON_0002371>,
+        <https://biodatafuse.org/example/gene_expression_value/000002/XPO7_UBERON_0004535>,
+        <https://biodatafuse.org/example/gene_expression_value/000002/XPO7_UBERON_0005057> .
+
+<https://www.wikipathways.org/> a sio:SIO_000750 ;
+    rdfs:label "WikiPathways"^^xsd:string .
+
+<http://identifiers.org/ensembl#ENSG00000099381> a obo:NCIT_C16612 ;
+    rdfs:label "SETD1A"^^xsd:string ;
+    sio:SIO_000068 obo:GO_0000785,
+        obo:GO_0003723,
+        obo:GO_0005515,
+        obo:GO_0005634,
+        obo:GO_0005654,
+        obo:GO_0005737,
+        obo:GO_0006338,
+        obo:GO_0006974,
+        obo:GO_0007420,
+        obo:GO_0008013,
+        obo:GO_0016607,
+        obo:GO_0032259,
+        obo:GO_0035097,
+        obo:GO_0042800,
+        obo:GO_0048188,
+        obo:GO_0061629,
+        obo:GO_0140945,
+        obo:GO_0140999,
+        obo:GO_1902036,
+        obo:GO_1902275,
+        <https://reactome.org/content/detail/R-HSA-3214841>,
+        <https://reactome.org/content/detail/R-HSA-8936459>,
+        <https://reactome.org/content/detail/R-HSA-9772755>,
+        <https://www.wikipathways.org/pathways/WP2369> ;
+    sio:SIO_000216 <https://biodatafuse.org/example/gene_expression_value/000000/SETD1A_UBERON_0000178>,
+        <https://biodatafuse.org/example/gene_expression_value/000000/SETD1A_UBERON_0000310>,
+        <https://biodatafuse.org/example/gene_expression_value/000000/SETD1A_UBERON_0000948>,
+        <https://biodatafuse.org/example/gene_expression_value/000000/SETD1A_UBERON_0000955>,
+        <https://biodatafuse.org/example/gene_expression_value/000000/SETD1A_UBERON_0000990>,
+        <https://biodatafuse.org/example/gene_expression_value/000000/SETD1A_UBERON_0001004>,
+        <https://biodatafuse.org/example/gene_expression_value/000000/SETD1A_UBERON_0001007>,
+        <https://biodatafuse.org/example/gene_expression_value/000000/SETD1A_UBERON_0001016>,
+        <https://biodatafuse.org/example/gene_expression_value/000000/SETD1A_UBERON_0001264>,
+        <https://biodatafuse.org/example/gene_expression_value/000000/SETD1A_UBERON_0001434>,
+        <https://biodatafuse.org/example/gene_expression_value/000000/SETD1A_UBERON_0001987>,
+        <https://biodatafuse.org/example/gene_expression_value/000000/SETD1A_UBERON_0002048>,
+        <https://biodatafuse.org/example/gene_expression_value/000000/SETD1A_UBERON_0002107>,
+        <https://biodatafuse.org/example/gene_expression_value/000000/SETD1A_UBERON_0002113>,
+        <https://biodatafuse.org/example/gene_expression_value/000000/SETD1A_UBERON_0002371>,
+        <https://biodatafuse.org/example/gene_expression_value/000000/SETD1A_UBERON_0004535>,
+        <https://biodatafuse.org/example/gene_expression_value/000000/SETD1A_UBERON_0005057> .
+
+<https://reactome.org/> a sio:SIO_000750 ;
+    rdfs:label "Reactome"^^xsd:string .
+
+<http://identifiers.org/ensembl#ENSG00000125675> a obo:NCIT_C16612 ;
+    rdfs:label "GRIA3"^^xsd:string ;
+    so:translates_to <https://www.uniprot.org/uniprotkb/Q12879> ;
+    sio:SIO_000068 obo:GO_0001540,
+        obo:GO_0004970,
+        obo:GO_0004971,
+        obo:GO_0005886,
+        obo:GO_0007215,
+        obo:GO_0019722,
+        obo:GO_0022849,
+        obo:GO_0030666,
+        obo:GO_0032281,
+        obo:GO_0034220,
+        obo:GO_0035235,
+        obo:GO_0035249,
+        obo:GO_0043197,
+        obo:GO_0045211,
+        obo:GO_0050804,
+        obo:GO_0051289,
+        obo:GO_0051290,
+        obo:GO_0060078,
+        obo:GO_0060291,
+        obo:GO_0098688,
+        obo:GO_0098839,
+        obo:GO_0099505,
+        obo:GO_0099507,
+        obo:GO_1904315,
+        <https://reactome.org/content/detail/R-HSA-399710>,
+        <https://reactome.org/content/detail/R-HSA-399719>,
+        <https://reactome.org/content/detail/R-HSA-416993>,
+        <https://reactome.org/content/detail/R-HSA-438066>,
+        <https://reactome.org/content/detail/R-HSA-8849932>,
+        <https://www.wikipathways.org/pathways/WP2380>,
+        <https://www.wikipathways.org/pathways/WP2636>,
+        <https://www.wikipathways.org/pathways/WP3584>,
+        <https://www.wikipathways.org/pathways/WP4760>,
+        <https://www.wikipathways.org/pathways/WP5083>,
+        <https://www.wikipathways.org/pathways/WP5398> ;
+    sio:SIO_000216 <https://biodatafuse.org/example/gene_expression_value/000003/GRIA3_UBERON_0000178>,
+        <https://biodatafuse.org/example/gene_expression_value/000003/GRIA3_UBERON_0000310>,
+        <https://biodatafuse.org/example/gene_expression_value/000003/GRIA3_UBERON_0000948>,
+        <https://biodatafuse.org/example/gene_expression_value/000003/GRIA3_UBERON_0000955>,
+        <https://biodatafuse.org/example/gene_expression_value/000003/GRIA3_UBERON_0000990>,
+        <https://biodatafuse.org/example/gene_expression_value/000003/GRIA3_UBERON_0001004>,
+        <https://biodatafuse.org/example/gene_expression_value/000003/GRIA3_UBERON_0001007>,
+        <https://biodatafuse.org/example/gene_expression_value/000003/GRIA3_UBERON_0001016>,
+        <https://biodatafuse.org/example/gene_expression_value/000003/GRIA3_UBERON_0001264>,
+        <https://biodatafuse.org/example/gene_expression_value/000003/GRIA3_UBERON_0001434>,
+        <https://biodatafuse.org/example/gene_expression_value/000003/GRIA3_UBERON_0001987>,
+        <https://biodatafuse.org/example/gene_expression_value/000003/GRIA3_UBERON_0002048>,
+        <https://biodatafuse.org/example/gene_expression_value/000003/GRIA3_UBERON_0002107>,
+        <https://biodatafuse.org/example/gene_expression_value/000003/GRIA3_UBERON_0002113>,
+        <https://biodatafuse.org/example/gene_expression_value/000003/GRIA3_UBERON_0004535>,
+        <https://biodatafuse.org/example/gene_expression_value/000003/GRIA3_UBERON_0005057> .
+
+<http://identifiers.org/ensembl#ENSG00000023287> a obo:NCIT_C16612 ;
+    rdfs:label "RB1CC1"^^xsd:string ;
+    sio:SIO_000068 obo:GO_0000045,
+        obo:GO_0000407,
+        obo:GO_0000421,
+        obo:GO_0000422,
+        obo:GO_0001889,
+        obo:GO_0005515,
+        obo:GO_0005764,
+        obo:GO_0005789,
+        obo:GO_0005829,
+        obo:GO_0006914,
+        obo:GO_0007507,
+        obo:GO_0008285,
+        obo:GO_0010508,
+        obo:GO_0019901,
+        obo:GO_0031965,
+        obo:GO_0034045,
+        obo:GO_0034517,
+        obo:GO_0034727,
+        obo:GO_0045087,
+        obo:GO_0045793,
+        obo:GO_0046330,
+        obo:GO_0051607,
+        obo:GO_0060090,
+        obo:GO_0061709,
+        obo:GO_0061723,
+        obo:GO_0097191,
+        obo:GO_1903059,
+        obo:GO_1990316,
+        obo:GO_2001237,
+        <https://reactome.org/content/detail/R-HSA-1632852>,
+        <https://www.wikipathways.org/pathways/WP2059>,
+        <https://www.wikipathways.org/pathways/WP3844>,
+        <https://www.wikipathways.org/pathways/WP4577>,
+        <https://www.wikipathways.org/pathways/WP4923>,
+        <https://www.wikipathways.org/pathways/WP4936>,
+        <https://www.wikipathways.org/pathways/WP5087>,
+        <https://www.wikipathways.org/pathways/WP5124>,
+        <https://www.wikipathways.org/pathways/WP5205>,
+        <https://www.wikipathways.org/pathways/WP5412>,
+        <https://www.wikipathways.org/pathways/WP5420> ;
+    sio:SIO_000216 <https://biodatafuse.org/example/gene_expression_value/000005/RB1CC1_UBERON_0000178>,
+        <https://biodatafuse.org/example/gene_expression_value/000005/RB1CC1_UBERON_0000310>,
+        <https://biodatafuse.org/example/gene_expression_value/000005/RB1CC1_UBERON_0000948>,
+        <https://biodatafuse.org/example/gene_expression_value/000005/RB1CC1_UBERON_0000955>,
+        <https://biodatafuse.org/example/gene_expression_value/000005/RB1CC1_UBERON_0000990>,
+        <https://biodatafuse.org/example/gene_expression_value/000005/RB1CC1_UBERON_0001004>,
+        <https://biodatafuse.org/example/gene_expression_value/000005/RB1CC1_UBERON_0001007>,
+        <https://biodatafuse.org/example/gene_expression_value/000005/RB1CC1_UBERON_0001016>,
+        <https://biodatafuse.org/example/gene_expression_value/000005/RB1CC1_UBERON_0001264>,
+        <https://biodatafuse.org/example/gene_expression_value/000005/RB1CC1_UBERON_0001434>,
+        <https://biodatafuse.org/example/gene_expression_value/000005/RB1CC1_UBERON_0001987>,
+        <https://biodatafuse.org/example/gene_expression_value/000005/RB1CC1_UBERON_0002048>,
+        <https://biodatafuse.org/example/gene_expression_value/000005/RB1CC1_UBERON_0002107>,
+        <https://biodatafuse.org/example/gene_expression_value/000005/RB1CC1_UBERON_0002113>,
+        <https://biodatafuse.org/example/gene_expression_value/000005/RB1CC1_UBERON_0002371>,
+        <https://biodatafuse.org/example/gene_expression_value/000005/RB1CC1_UBERON_0004535>,
+        <https://biodatafuse.org/example/gene_expression_value/000005/RB1CC1_UBERON_0005057> .
+
+<http://identifiers.org/ensembl#ENSG00000055130> a obo:NCIT_C16612 ;
+    rdfs:label "CUL1"^^xsd:string ;
+    sio:SIO_000068 obo:GO_0000082,
+        obo:GO_0005515,
+        obo:GO_0005634,
+        obo:GO_0005654,
+        obo:GO_0005737,
+        obo:GO_0005829,
+        obo:GO_0005886,
+        obo:GO_0006513,
+        obo:GO_0008283,
+        obo:GO_0009887,
+        obo:GO_0016567,
+        obo:GO_0019005,
+        obo:GO_0030674,
+        obo:GO_0031146,
+        obo:GO_0031461,
+        obo:GO_0031625,
+        obo:GO_0043123,
+        obo:GO_0043161,
+        obo:GO_0070936,
+        obo:GO_0097193,
+        obo:GO_0160072,
+        obo:GO_1990452,
+        <https://reactome.org/content/detail/R-HSA-1169091>,
+        <https://reactome.org/content/detail/R-HSA-1170546>,
+        <https://reactome.org/content/detail/R-HSA-174113>,
+        <https://reactome.org/content/detail/R-HSA-187577>,
+        <https://reactome.org/content/detail/R-HSA-195253>,
+        <https://reactome.org/content/detail/R-HSA-202424>,
+        <https://reactome.org/content/detail/R-HSA-2122947>,
+        <https://reactome.org/content/detail/R-HSA-2565942>,
+        <https://reactome.org/content/detail/R-HSA-2644606>,
+        <https://reactome.org/content/detail/R-HSA-2644607>,
+        <https://reactome.org/content/detail/R-HSA-2871837>,
+        <https://reactome.org/content/detail/R-HSA-2894862>,
+        <https://reactome.org/content/detail/R-HSA-400253>,
+        <https://reactome.org/content/detail/R-HSA-5607761>,
+        <https://reactome.org/content/detail/R-HSA-5607764>,
+        <https://reactome.org/content/detail/R-HSA-5610780>,
+        <https://reactome.org/content/detail/R-HSA-5610783>,
+        <https://reactome.org/content/detail/R-HSA-5610785>,
+        <https://reactome.org/content/detail/R-HSA-5676590>,
+        <https://reactome.org/content/detail/R-HSA-5684264>,
+        <https://reactome.org/content/detail/R-HSA-68949>,
+        <https://reactome.org/content/detail/R-HSA-69231>,
+        <https://reactome.org/content/detail/R-HSA-8854050>,
+        <https://reactome.org/content/detail/R-HSA-8939902>,
+        <https://reactome.org/content/detail/R-HSA-8951664>,
+        <https://reactome.org/content/detail/R-HSA-9020702>,
+        <https://reactome.org/content/detail/R-HSA-917937>,
+        <https://reactome.org/content/detail/R-HSA-9604323>,
+        <https://reactome.org/content/detail/R-HSA-9708530>,
+        <https://reactome.org/content/detail/R-HSA-9725371>,
+        <https://reactome.org/content/detail/R-HSA-9762114>,
+        <https://reactome.org/content/detail/R-HSA-983168>,
+        <https://www.wikipathways.org/pathways/WP179>,
+        <https://www.wikipathways.org/pathways/WP231>,
+        <https://www.wikipathways.org/pathways/WP2359>,
+        <https://www.wikipathways.org/pathways/WP2864>,
+        <https://www.wikipathways.org/pathways/WP2880>,
+        <https://www.wikipathways.org/pathways/WP2882>,
+        <https://www.wikipathways.org/pathways/WP3594>,
+        <https://www.wikipathways.org/pathways/WP366>,
+        <https://www.wikipathways.org/pathways/WP5087>,
+        <https://www.wikipathways.org/pathways/WP5434>,
+        <https://www.wikipathways.org/pathways/WP61> ;
+    sio:SIO_000216 <https://biodatafuse.org/example/gene_expression_value/000001/CUL1_UBERON_0000178>,
+        <https://biodatafuse.org/example/gene_expression_value/000001/CUL1_UBERON_0000310>,
+        <https://biodatafuse.org/example/gene_expression_value/000001/CUL1_UBERON_0000948>,
+        <https://biodatafuse.org/example/gene_expression_value/000001/CUL1_UBERON_0000955>,
+        <https://biodatafuse.org/example/gene_expression_value/000001/CUL1_UBERON_0000990>,
+        <https://biodatafuse.org/example/gene_expression_value/000001/CUL1_UBERON_0001004>,
+        <https://biodatafuse.org/example/gene_expression_value/000001/CUL1_UBERON_0001007>,
+        <https://biodatafuse.org/example/gene_expression_value/000001/CUL1_UBERON_0001016>,
+        <https://biodatafuse.org/example/gene_expression_value/000001/CUL1_UBERON_0001264>,
+        <https://biodatafuse.org/example/gene_expression_value/000001/CUL1_UBERON_0001434>,
+        <https://biodatafuse.org/example/gene_expression_value/000001/CUL1_UBERON_0001987>,
+        <https://biodatafuse.org/example/gene_expression_value/000001/CUL1_UBERON_0002048>,
+        <https://biodatafuse.org/example/gene_expression_value/000001/CUL1_UBERON_0002107>,
+        <https://biodatafuse.org/example/gene_expression_value/000001/CUL1_UBERON_0002113>,
+        <https://biodatafuse.org/example/gene_expression_value/000001/CUL1_UBERON_0002371>,
+        <https://biodatafuse.org/example/gene_expression_value/000001/CUL1_UBERON_0004535>,
+        <https://biodatafuse.org/example/gene_expression_value/000001/CUL1_UBERON_0005057> .
+
+<http://identifiers.org/ensembl#ENSG00000183454> a obo:NCIT_C16612 ;
+    rdfs:label "GRIN2A"^^xsd:string ;
+    so:translates_to <https://www.uniprot.org/uniprotkb/P42263> ;
+    sio:SIO_000068 obo:GO_0001540,
+        obo:GO_0001964,
+        obo:GO_0001975,
+        obo:GO_0004972,
+        obo:GO_0005515,
+        obo:GO_0005789,
+        obo:GO_0005886,
+        obo:GO_0007215,
+        obo:GO_0007268,
+        obo:GO_0007420,
+        obo:GO_0007611,
+        obo:GO_0007613,
+        obo:GO_0008021,
+        obo:GO_0008270,
+        obo:GO_0008542,
+        obo:GO_0009410,
+        obo:GO_0009611,
+        obo:GO_0009986,
+        obo:GO_0014069,
+        obo:GO_0017146,
+        obo:GO_0019233,
+        obo:GO_0019722,
+        obo:GO_0022008,
+        obo:GO_0022849,
+        obo:GO_0030163,
+        obo:GO_0030431,
+        obo:GO_0030659,
+        obo:GO_0033058,
+        obo:GO_0035235,
+        obo:GO_0035249,
+        obo:GO_0035725,
+        obo:GO_0042177,
+        obo:GO_0042417,
+        obo:GO_0042428,
+        obo:GO_0042734,
+        obo:GO_0043065,
+        obo:GO_0043197,
+        obo:GO_0045211,
+        obo:GO_0045471,
+        obo:GO_0048167,
+        obo:GO_0048168,
+        obo:GO_0051968,
+        obo:GO_0060079,
+        obo:GO_0060291,
+        obo:GO_0070588,
+        obo:GO_0097060,
+        obo:GO_0097553,
+        obo:GO_0098655,
+        obo:GO_0098839,
+        obo:GO_0098976,
+        obo:GO_0098978,
+        obo:GO_1903539,
+        obo:GO_1904062,
+        obo:GO_1904315,
+        obo:GO_1904646,
+        obo:GO_2000463,
+        <https://reactome.org/content/detail/R-HSA-438066>,
+        <https://reactome.org/content/detail/R-HSA-6794361>,
+        <https://reactome.org/content/detail/R-HSA-8849932>,
+        <https://reactome.org/content/detail/R-HSA-9022699>,
+        <https://reactome.org/content/detail/R-HSA-9609736>,
+        <https://reactome.org/content/detail/R-HSA-9617324>,
+        <https://reactome.org/content/detail/R-HSA-9620244>,
+        <https://www.wikipathways.org/pathways/WP2059>,
+        <https://www.wikipathways.org/pathways/WP2636>,
+        <https://www.wikipathways.org/pathways/WP3591>,
+        <https://www.wikipathways.org/pathways/WP4008>,
+        <https://www.wikipathways.org/pathways/WP4222>,
+        <https://www.wikipathways.org/pathways/WP4223>,
+        <https://www.wikipathways.org/pathways/WP4312>,
+        <https://www.wikipathways.org/pathways/WP4539>,
+        <https://www.wikipathways.org/pathways/WP4549>,
+        <https://www.wikipathways.org/pathways/WP4685>,
+        <https://www.wikipathways.org/pathways/WP4698>,
+        <https://www.wikipathways.org/pathways/WP4875>,
+        <https://www.wikipathways.org/pathways/WP5083>,
+        <https://www.wikipathways.org/pathways/WP5094>,
+        <https://www.wikipathways.org/pathways/WP5124>,
+        <https://www.wikipathways.org/pathways/WP5398>,
+        <https://www.wikipathways.org/pathways/WP5420> ;
+    sio:SIO_000216 <https://biodatafuse.org/example/gene_expression_value/000004/GRIN2A_UBERON_0000178>,
+        <https://biodatafuse.org/example/gene_expression_value/000004/GRIN2A_UBERON_0000310>,
+        <https://biodatafuse.org/example/gene_expression_value/000004/GRIN2A_UBERON_0000948>,
+        <https://biodatafuse.org/example/gene_expression_value/000004/GRIN2A_UBERON_0000955>,
+        <https://biodatafuse.org/example/gene_expression_value/000004/GRIN2A_UBERON_0000990>,
+        <https://biodatafuse.org/example/gene_expression_value/000004/GRIN2A_UBERON_0001004>,
+        <https://biodatafuse.org/example/gene_expression_value/000004/GRIN2A_UBERON_0001007>,
+        <https://biodatafuse.org/example/gene_expression_value/000004/GRIN2A_UBERON_0001016>,
+        <https://biodatafuse.org/example/gene_expression_value/000004/GRIN2A_UBERON_0001264>,
+        <https://biodatafuse.org/example/gene_expression_value/000004/GRIN2A_UBERON_0001987>,
+        <https://biodatafuse.org/example/gene_expression_value/000004/GRIN2A_UBERON_0002048>,
+        <https://biodatafuse.org/example/gene_expression_value/000004/GRIN2A_UBERON_0002107>,
+        <https://biodatafuse.org/example/gene_expression_value/000004/GRIN2A_UBERON_0002113>,
+        <https://biodatafuse.org/example/gene_expression_value/000004/GRIN2A_UBERON_0004535>,
+        <https://biodatafuse.org/example/gene_expression_value/000004/GRIN2A_UBERON_0005057> .
+
+obo:UBERON_0000104 a obo:NCIT_C43531 ;
+    rdfs:label "life cycle"^^xsd:string .
+
+<https://www.opentargets.org/> a sio:SIO_000750 ;
+    rdfs:label "OpenTargets_reactome"^^xsd:string .
+
