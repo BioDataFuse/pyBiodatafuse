@@ -1499,8 +1499,6 @@ def _built_gene_based_graph(
 
     dea_columns = [c for c in combined_df.columns if c.endswith("_dea")]
 
-    compound_identifiers = ["PubChem Compound", "CHEBI", "InChIKey"]
-
     func_dict = {
         Cons.BGEE_GENE_EXPRESSION_LEVELS_COL: add_gene_bgee_subgraph,
         Cons.DISGENET_DISEASE_COL: add_disgenet_gene_disease_subgraph,
@@ -1517,7 +1515,6 @@ def _built_gene_based_graph(
         Cons.WIKIPATHWAYS_MOLECULAR_COL: add_wikipathways_molecular_subgraph,
         Cons.ENSEMBL_HOMOLOG_COL: add_ensembl_homolog_subgraph,
         Cons.INTACT_INTERACT_COL: add_intact_interactions_subgraph,
-        Cons.INTACT_COMPOUND_INTERACT_COL: add_intact_compound_interactions_subgraph,
         Cons.STRING_INTERACT_COL: add_stringdb_ppi_subgraph,
         # Cons.WIKIDATA_CC_COL: add_wikidata_gene_cc_subgraph,  # TODO: add this
     }
@@ -1525,17 +1522,9 @@ def _built_gene_based_graph(
     if homolog_df_list is not None:
         process_homologs(g, combined_df, homolog_df_list, func_dict, dea_columns)
 
-    is_compound_input = any(
-        combined_df[Cons.TARGET_SOURCE_COL].astype(str).str.contains(ci, case=False, na=False).any()
-        or combined_df[Cons.IDENTIFIER_COL].astype(str).str.contains(ci, case=False, na=False).any()
-        for ci in compound_identifiers
-    )
-
     for _i, row in tqdm(combined_df.iterrows(), total=combined_df.shape[0], desc="Building graph"):
         if pd.isna(row[Cons.IDENTIFIER_COL]) or pd.isna(row[Cons.TARGET_COL]):
             continue
-        if is_compound_input:
-            node_label = add_compound_node(g, row)
 
         node_label = add_gene_node(g, row, dea_columns)
 
@@ -1569,10 +1558,15 @@ def _built_compound_based_graph(
     pathway_compound=None,
 ):
     """Build a compound-based graph."""
-    combined_df = combined_df[(combined_df[Cons.TARGET_SOURCE_COL] == Cons.PUBCHEM_COMPOUND)]
+    compound_identifiers = [Cons.PUBCHEM_COMPOUND, Cons.CHEBI, Cons.INCHIKEY]
+
+    combined_df = combined_df[
+        combined_df[Cons.TARGET_SOURCE_COL].isin(compound_identifiers)
+    ]  # type: ignore
 
     func_dict = {
         Cons.MOLMEDB_COMPOUND_PROTEIN_COL: add_molmedb_compound_gene_subgraph,
+        Cons.INTACT_COMPOUND_INTERACT_COL: add_intact_compound_interactions_subgraph,
     }  # type: ignore
 
     for _i, row in tqdm(combined_df.iterrows(), total=combined_df.shape[0], desc="Building graph"):
