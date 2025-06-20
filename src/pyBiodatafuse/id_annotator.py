@@ -57,7 +57,6 @@ def run_gene_selected_sources(
         "disgenet.gene_disease": _get_gene_disease_disgenet_wrapper(api_key),
         "minerva.gene_minerva_pathways": _get_gene_minerva_pathway_wrapper(
             map_name=map_name or "COVID19 Disease Map",
-            input_type="Protein",
             get_elements=True,
             get_reactions=True,
         ),
@@ -107,7 +106,6 @@ def _get_gene_disease_disgenet_wrapper(
 
 def _get_gene_minerva_pathway_wrapper(
     map_name: str,
-    input_type: Optional[str] = "Protein",
     get_elements: Optional[bool] = True,
     get_reactions: Optional[bool] = True,
 ) -> Callable[[pd.DataFrame], Tuple[pd.DataFrame, dict]]:
@@ -115,7 +113,6 @@ def _get_gene_minerva_pathway_wrapper(
 
     :param map_name: name of the map you want to retrieve the information from. The extensive list
         can be found at https://minerva-net.lcsb.uni.lu/table.html.
-    :param input_type: type of input gene. Default is "Protein".
     :param get_elements: boolean to get elements of the chosen diagram.
     :param get_reactions: if get_reactions = boolean to get reactions of the chosen diagram.
     :returns: A function that takes a DataFrame and returns a tuple containing the annotated DataFrame and metadata dictionary.
@@ -127,10 +124,9 @@ def _get_gene_minerva_pathway_wrapper(
         :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
         :returns: a tuple containing MINERVA outputs and dictionary of the MINERVA metadata.
         """
-        return minerva.get_gene_minerva_pathways(
+        return minerva.get_gene_pathways(
             bridgedb_df,
             map_name=map_name,
-            input_type=input_type,
             get_elements=get_elements,
             get_reactions=get_reactions,
         )

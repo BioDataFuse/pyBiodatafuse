@@ -13,17 +13,12 @@ import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
 from tqdm import tqdm
 
-from pyBiodatafuse.constants import (
-    PUBCHEM,
-    PUBCHEM_COMPOUND_ASSAYS_COL,
-    PUBCHEM_COMPOUND_INPUT_ID,
-    PUBCHEM_COMPOUND_OUTPUT_DICT,
-    PUBCHEM_ENDPOINT,
-)
+import pyBiodatafuse.constants as Cons
 from pyBiodatafuse.utils import (
     check_columns_against_constants,
     collapse_data_sources,
     get_identifier_of_interest,
+    give_annotator_warning,
 )
 
 
@@ -37,7 +32,7 @@ def check_endpoint_pubchem() -> bool:
         }
         LIMIT 1
         """
-    sparql = SPARQLWrapper(PUBCHEM_ENDPOINT)
+    sparql = SPARQLWrapper(Cons.PUBCHEM_ENDPOINT)
     sparql.setOnlyConneg(True)
     sparql.setQuery(query_string)
     try:
@@ -48,6 +43,9 @@ def check_endpoint_pubchem() -> bool:
 
 
 # TODO - Add metadata function. Currently, no metadata is returned from IDSM servers
+def check_version_pubchem():
+    """Check the current version of the PubChem database."""
+    pass
 
 
 def get_protein_compound_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
@@ -60,17 +58,17 @@ def get_protein_compound_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
     api_available = check_endpoint_pubchem()
     if not api_available:
         warnings.warn(
-            f"{PUBCHEM} endpoint is not available. Unable to retrieve data.", stacklevel=2
+            f"{Cons.PUBCHEM} endpoint is not available. Unable to retrieve data.", stacklevel=2
         )
         return pd.DataFrame(), {}
 
     # Record the start time
     start_time = datetime.datetime.now()
 
-    data_df = get_identifier_of_interest(bridgedb_df, PUBCHEM_COMPOUND_INPUT_ID)
-    protein_list_str = data_df["target"].tolist()
+    data_df = get_identifier_of_interest(bridgedb_df, Cons.PUBCHEM_COMPOUND_INPUT_ID)
+    protein_list_str = data_df[Cons.TARGET_COL].tolist()
     for i in range(len(protein_list_str)):
-        protein_list_str[i] = "<http://purl.uniprot.org/uniprot/" + protein_list_str[i] + ">"
+        protein_list_str[i] = '"' + protein_list_str[i] + '"'
 
     protein_list_str = list(set(protein_list_str))
 
@@ -88,7 +86,7 @@ def get_protein_compound_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
     ) as fin:
         sparql_query = fin.read()
 
-    sparql = SPARQLWrapper(PUBCHEM_ENDPOINT)
+    sparql = SPARQLWrapper(Cons.PUBCHEM_ENDPOINT)
     sparql.setReturnFormat(JSON)
     sparql.setOnlyConneg(True)
 
@@ -123,41 +121,30 @@ def get_protein_compound_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
 
     # Add the datasource, query, query time, and the date to metadata
     pubchem_metadata: Dict[str, Any] = {
-        "datasource": PUBCHEM,
+        "datasource": Cons.PUBCHEM,
         "query": {
             "size": len(protein_list_str),
-            "input_type": PUBCHEM_COMPOUND_INPUT_ID,
+            "input_type": Cons.PUBCHEM_COMPOUND_INPUT_ID,
             "time": time_elapsed,
             "date": current_date,
-            "url": PUBCHEM_ENDPOINT,
+            "url": Cons.PUBCHEM_ENDPOINT,
         },
     }
 
     if intermediate_df.empty:
         warnings.warn(
-            f"There is no annotation for your input list in {PUBCHEM}.",
+            f"There is no annotation for your input list in {Cons.PUBCHEM}.",
             stacklevel=2,
         )
         return pd.DataFrame(), pubchem_metadata
 
-    # Organize the annotation results as an array of dictionaries
-    assay_endpoint_types = {
-        "http://www.bioassayontology.org/bao#BAO_0000034": "Kd",
-        "http://www.bioassayontology.org/bao#BAO_0000186": "AC50",
-        "http://www.bioassayontology.org/bao#BAO_0000187": "CC50",
-        "http://www.bioassayontology.org/bao#BAO_0000188": "EC50",
-        "http://www.bioassayontology.org/bao#BAO_0000190": "IC50",
-        "http://www.bioassayontology.org/bao#BAO_0000192": "Ki",
-        "http://www.bioassayontology.org/bao#BAO_0002146": "MIC",
-    }
-
-    # drop multitarget assays
     intermediate_df.rename(
         columns={
-            "upProt": "target",
-            "assay": "pubchem_assay_id",
-            "SMILES": "smiles",
-            "InChI": "inchi",
+            "upProt": Cons.TARGET_COL,
+            "assay": Cons.PUBCHEM_ASSAY_ID,
+            "SMILES": Cons.PUBCHEM_SMILES,
+            "InChI": Cons.PUBCHEM_INCHI,
+            "sample_compound_name": Cons.PUBCHEM_COMPOUND_NAME,
         },
         inplace=True,
     )
@@ -170,60 +157,61 @@ def get_protein_compound_screened(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFra
     intermediate_df.drop(columns=["target_count"], inplace=True)
 
     # Get identifiers from the URL
-    intermediate_df["target"] = intermediate_df["target"].map(
-        lambda x: x.split("http://purl.uniprot.org/uniprot/")[-1]
+    intermediate_df[Cons.TARGET_COL] = intermediate_df[Cons.TARGET_COL].map(
+        lambda x: x.split(Cons.PUBCHEM_UNIPROT_IRI)[-1]
     )
-    intermediate_df["pubchem_assay_id"] = intermediate_df["pubchem_assay_id"].map(
-        lambda x: x.split("http://rdf.ncbi.nlm.nih.gov/pubchem/bioassay/")[-1]
+    intermediate_df[Cons.PUBCHEM_ASSAY_ID] = intermediate_df[Cons.PUBCHEM_ASSAY_ID].map(
+        lambda x: x.split(Cons.PUBCHEM_BIOASSAY_IRI)[-1]
+    )
+    intermediate_df[Cons.PUBCHEM_ASSAY_ID] = intermediate_df[Cons.PUBCHEM_ASSAY_ID].apply(
+        lambda x: x.replace("AID", "AID:")
     )
 
     intermediate_df["outcome"] = intermediate_df["outcome"].map(
-        lambda x: x.split("http://rdf.ncbi.nlm.nih.gov/pubchem/vocabulary#")[1]
+        lambda x: x.split(Cons.PUBCHEM_OUTCOME_IRI)[1]
     )
     intermediate_df["compound_cid"] = intermediate_df["compound_cid"].map(
-        lambda x: x.split("http://rdf.ncbi.nlm.nih.gov/pubchem/compound/")[-1]
+        lambda x: x.split(Cons.PUBCHEM_COMPOUND_IRI)[-1]
     )
-    intermediate_df["assay_type"] = intermediate_df["assay_type"].map(assay_endpoint_types)
+    intermediate_df["compound_cid"] = intermediate_df["compound_cid"].apply(
+        lambda x: x.replace("CID", "CID:")
+    )
 
+    intermediate_df["assay_type"] = intermediate_df["assay_type"].map(Cons.ASSAY_ENDPOINT_TYPES)
+
+    intermediate_df.dropna(subset=["assay_type"], inplace=True)
     intermediate_df.drop_duplicates(
-        subset=["target", "pubchem_assay_id", "compound_cid"], inplace=True
+        subset=[Cons.TARGET_COL, Cons.PUBCHEM_ASSAY_ID, "compound_cid"], inplace=True
     )
 
     # Check if all keys in df match the keys in OUTPUT_DICT
     check_columns_against_constants(
         data_df=intermediate_df,
-        output_dict=PUBCHEM_COMPOUND_OUTPUT_DICT,
-        check_values_in=["outcome", "inchi"],
+        output_dict=Cons.PUBCHEM_COMPOUND_OUTPUT_DICT,
+        check_values_in=[Cons.PUBCHEM_POSSIBLE_OUTCOMES, Cons.INCHI],
     )
 
     # Merge the two DataFrames on the target column
     merged_df = collapse_data_sources(
         data_df=data_df,
-        source_namespace=PUBCHEM_COMPOUND_INPUT_ID,
+        source_namespace=Cons.PUBCHEM_COMPOUND_INPUT_ID,
         target_df=intermediate_df,
-        common_cols=["target"],
-        target_specific_cols=list(PUBCHEM_COMPOUND_OUTPUT_DICT.keys()),
-        col_name=PUBCHEM_COMPOUND_ASSAYS_COL,
+        common_cols=[Cons.TARGET_COL],
+        target_specific_cols=list(Cons.PUBCHEM_COMPOUND_OUTPUT_DICT.keys()),
+        col_name=Cons.PUBCHEM_COMPOUND_ASSAYS_COL,
     )
-
-    merged_df.reset_index(drop=True, inplace=True)
 
     """Update metadata"""
     # Calculate the number of new nodes
     num_new_nodes = intermediate_df["compound_cid"].nunique()
     # Calculate the number of new edges
-    num_new_edges = intermediate_df.drop_duplicates(subset=["target", "compound_cid"]).shape[0]
-
-    # Check the intermediate_df
-    if num_new_edges != len(intermediate_df):
-        warnings.warn(
-            f"The intermediate_df in {PUBCHEM} annotatur should be checked, please create an issue on https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
-            stacklevel=2,
-        )
+    num_new_edges = intermediate_df.drop_duplicates(subset=[Cons.TARGET_COL, "compound_cid"]).shape[
+        0
+    ]
 
     # Add the number of new nodes and edges to metadata
-    pubchem_metadata["query"]["number_of_added_nodes"] = num_new_nodes
-    pubchem_metadata["query"]["number_of_added_edges"] = num_new_edges
+    pubchem_metadata[Cons.QUERY][Cons.NUM_NODES] = num_new_nodes
+    pubchem_metadata[Cons.QUERY][Cons.NUM_EDGES] = num_new_edges
 
     return merged_df, pubchem_metadata
 
