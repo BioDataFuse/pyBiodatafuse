@@ -2,12 +2,16 @@
 
 """Python utils file for global functions."""
 
+import logging
 import warnings
 from typing import List, Optional
 
 import pandas as pd
 
+import pyBiodatafuse.constants as Cons
 from pyBiodatafuse.id_mapper import read_resource_files
+
+logger = logging.getLogger(__name__)
 
 
 def get_identifier_of_interest(
@@ -29,8 +33,9 @@ def get_identifier_of_interest(
     if keep is None:
         keep = []
     keep.append(db_source)
+
     # Filter rows where "target.source" is specific datasource for eg. "NCBI Gene"
-    subset_df = bridgedb_df[bridgedb_df["target.source"].isin(keep)]
+    subset_df = bridgedb_df[bridgedb_df[Cons.TARGET_SOURCE_COL].isin(keep)]
     return subset_df.reset_index(drop=True)
 
 
@@ -58,11 +63,15 @@ def create_or_append_to_metadata(data: dict, prev_entry: List[dict]) -> List[dic
     :returns: a metadata dictionary
     """
     # Create a metadata file if it doesn't exist
-    prev_sources = [data["datasource"] for data in prev_entry if "datasource" in data.keys()]
+    prev_sources = [
+        data[Cons.DATASOURCE]
+        for data in prev_entry
+        if (Cons.DATASOURCE in data.keys() and len(data) > 1)
+    ]
 
     assert isinstance(data, dict), "Unsupported data type. Only dict is supported."
 
-    if data["datasource"] not in prev_sources:
+    if data[Cons.DATASOURCE] not in prev_sources:
         prev_entry.append(data)
 
     return prev_entry
@@ -86,7 +95,7 @@ def collapse_data_sources(
     :param col_name: name of the new column to be created
     :returns: a DataFrame containing the new data columns for a new resource
     """
-    data_df = data_df[data_df["target.source"] == source_namespace]
+    data_df = data_df[data_df[Cons.TARGET_SOURCE_COL] == source_namespace]
 
     if target_df.empty:
         # If the target_df is empty, then return the data_df as is
@@ -116,29 +125,33 @@ def combine_sources(bridgedb_df: pd.DataFrame, df_list: List[pd.DataFrame]) -> p
     :returns: a single dataframe containing from a list of dataframes
     """
     m = bridgedb_df[
-        (bridgedb_df["target.source"] == "Ensembl")
-        | (bridgedb_df["target.source"] == "PubChem Compound")
+        (bridgedb_df[Cons.TARGET_SOURCE_COL] == Cons.ENSEMBL)
+        | (bridgedb_df[Cons.TARGET_SOURCE_COL] == Cons.PUBCHEM_COMPOUND)
     ]
+
+    if m.empty:  # Failed databases: KEGG
+        logger.warning(
+            f"Target source column does not contain any of the following: {Cons.ENSEMBL} or {Cons.PUBCHEM_COMPOUND}"
+        )
+        m = bridgedb_df
+
     for df in df_list:
-        if not df.empty:
-            m = pd.merge(
-                m,
-                df.drop(
-                    columns=["target.source", "identifier.source", "target"]
-                            + [col for col in df.columns if col.endswith("_dea")],
-                    errors="ignore"),
-                on="identifier",
-                how="outer",
-            )
+        if df.empty:
+            continue
+
+        m = pd.merge(
+            m,
+            df.drop(
+                columns=[Cons.TARGET_SOURCE_COL, Cons.IDENTIFIER_SOURCE_COL, Cons.TARGET_COL]
+                + [col for col in df.columns if col.endswith("_dea")],
+                errors="ignore",
+            ),
+            on=Cons.IDENTIFIER_COL,
+            how="outer",
+        )
 
     m = m.loc[:, ~m.columns.duplicated()]  # remove duplicate columns
 
-    # Ensure "Uniprot-TrEMBL" column is present
-    # if bridgedb_df["target.source"].eq("Uniprot-TrEMBL").any():
-    #    uniprot_trembl_df = bridgedb_df[bridgedb_df["target.source"] == "Uniprot-TrEMBL"]
-    #    uniprot_trembl_df = uniprot_trembl_df.groupby("identifier")["target"].apply(list).reset_index()
-    #    uniprot_trembl_df.rename(columns={"target": "Uniprot-TrEMBL"}, inplace=True)
-    #    m = pd.merge(m, uniprot_trembl_df, on="identifier", how="left")
     return m
 
 
@@ -149,12 +162,12 @@ def combine_with_homologs(df: pd.DataFrame, homolog_dfs: list) -> pd.DataFrame:
     :param homolog_dfs: List of homolog dataframes to be combined.
     :returns: Merged DataFrame with only the required columns.
     """
-    df["Ensembl_homologs"] = df["Ensembl_homologs"].apply(
+    df[Cons.ENSEMBL_HOMOLOGS] = df[Cons.ENSEMBL_HOMOLOGS].apply(
         lambda x: [{"homolog": x["homolog"]}] if isinstance(x, dict) else x
     )
 
-    exploded_df = df.explode("Ensembl_homologs")
-    exploded_df["homolog"] = exploded_df["Ensembl_homologs"].apply(
+    exploded_df = df.explode(Cons.ENSEMBL_HOMOLOGS)
+    exploded_df[Cons.ENSEMBL_HOMOLOGS] = exploded_df[Cons.ENSEMBL_HOMOLOGS].apply(
         lambda x: x["homolog"] if isinstance(x, dict) else None
     )
 
@@ -182,7 +195,7 @@ def combine_with_homologs(df: pd.DataFrame, homolog_dfs: list) -> pd.DataFrame:
         merged_df = merged_df.loc[:, ~merged_df.columns.duplicated()]
 
     # Ensure that homolog column contains a nested dictionary
-    merged_df["Ensembl_homologs"] = merged_df["Ensembl_homologs"].apply(
+    merged_df[Cons.ENSEMBL_HOMOLOGS] = merged_df[Cons.ENSEMBL_HOMOLOGS].apply(
         lambda x: [{"homolog": x["homolog"]}] if isinstance(x, dict) else x
     )
 
@@ -248,8 +261,8 @@ def create_harmonized_input_file(
     for _i, row in annotated_df.iterrows():
         # Extract the identifier
         if identifier_source is None:
-            id = row["identifier"]
-            id_source = row["identifier.source"]
+            id = row[Cons.IDENTIFIER_COL]
+            id_source = row[Cons.IDENTIFIER_SOURCE_COL]
 
         # Extract the the target column
         target_data = row[target_col]
@@ -276,13 +289,21 @@ def create_harmonized_input_file(
                 # Add a new row to the harmonized data list
                 harmonized_data.append(
                     {
-                        "identifier": id,
-                        "identifier.source": id_source,
-                        "target": target.replace(":", "_"),
-                        "target.source": target_source,
+                        Cons.IDENTIFIER_COL: id,
+                        Cons.IDENTIFIER_SOURCE_COL: id_source,
+                        Cons.TARGET_COL: target.replace(":", "_"),
+                        Cons.TARGET_SOURCE_COL: target_source,
                     }
                 )
 
     harmonized_df = pd.DataFrame(harmonized_data)
 
     return harmonized_df.drop_duplicates()
+
+
+def give_annotator_warning(annotator_name: str) -> None:
+    """Get the warning message for an annotator."""
+    warnings.warn(
+        f"The intermediate_df in {annotator_name} annotator should be checked, please create an issue on https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
+        stacklevel=2,
+    )

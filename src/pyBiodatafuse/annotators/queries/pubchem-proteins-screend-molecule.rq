@@ -10,14 +10,14 @@ PREFIX obo: <http://purl.obolibrary.org/obo/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX pubchem: <http://rdf.ncbi.nlm.nih.gov/pubchem/>
 
-SELECT DISTINCT ?upProt ?assay ?assay_type ?outcome ?compound_cid ?ref_cit ?compound_name ?SMILES ?InChI (COUNT(DISTINCT ?target) AS ?target_count) WHERE {
+SELECT DISTINCT ?upProt ?assay_type ?outcome ?compound_cid (SAMPLE(?assay) AS ?pubchem_assay_id) (SAMPLE(?compound_name) AS ?sample_compound_name) (SAMPLE(?SMILES) AS ?smiles) (SAMPLE(?InChI) AS ?inchi) (COUNT(DISTINCT ?target) AS ?target_count) WHERE {
   	#consider only endpoints with = value or implicitly equal
 	VALUES ?bannedQualifier {obo:GENEPIO_0001002 obo:GENEPIO_0001003 obo:GENEPIO_0001005 obo:GENEPIO_0001006 }
     VALUES ?outcome {vocab:active vocab:inactive}
-	VALUES ?type {bao:BAO_0000034 bao:BAO_0000186 bao:BAO_0000187 bao:BAO_0000188 bao:BAO_0000190 bao:BAO_0000192 bao:BAO_0002146}
+	VALUES ?type {bao:BAO_0000188 bao:BAO_0000190 bao:BAO_0002146}
 	VALUES ?upProt {$protein_list}
 	GRAPH pubchem:protein {
-		?prot skos:closeMatch ?upProt
+		?prot dcterms:identifier ?upProt
   	}
   	GRAPH pubchem:measuregroup{
     	?mg obo:RO_0000057 ?prot;
@@ -27,7 +27,7 @@ SELECT DISTINCT ?upProt ?assay ?assay_type ?outcome ?compound_cid ?ref_cit ?comp
   	?mg obo:OBI_0000299 ?ep ;
     	^bao:BAO_0000209 ?assay .
 	#only confirmatory assay
-	?assay bao:BAO_0000540 ?assay2 .
+	?assay bao:BAO_0000210 bao:BAO_0000030 .
 	
   
   	?ep rdf:type ?assay_type ;
@@ -35,6 +35,7 @@ SELECT DISTINCT ?upProt ?assay ?assay_type ?outcome ?compound_cid ?ref_cit ?comp
   		obo:IAO_0000136 [cheminf:CHEMINF_000477 ?compound_cid] ;
                      
 	FILTER NOT EXISTS {?ep vocab:hasQualifier ?bannedQualifier}
+	FILTER(?assay_type != vocab:Endpoint)
   
 	OPTIONAL {
     	#identifiers badly defined by PubChem, consider citation only
@@ -52,4 +53,4 @@ SELECT DISTINCT ?upProt ?assay ?assay_type ?outcome ?compound_cid ?ref_cit ?comp
                            sio:SIO_000300 ?InChI]
   	}
   	#other Compound mappings badly defined ind PubChem
-} GROUP BY ?upProt ?assay_type ?outcome ?compound_cid ?ref_cit ?compound_name ?SMILES ?InChI ?assay
+} GROUP BY ?upProt ?assay_type ?outcome ?compound_cid
