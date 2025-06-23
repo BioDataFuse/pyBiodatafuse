@@ -180,7 +180,7 @@ def combine_with_homologs(df: pd.DataFrame, homolog_dfs: list) -> pd.DataFrame:
             merged_df,
             temp_df,
             how="left",
-            left_on="homolog",
+            left_on=Cons.ENSEMBL_HOMOLOGS,
             right_on="identifier",
             suffixes=("", "_temp"),
         )
@@ -191,7 +191,6 @@ def combine_with_homologs(df: pd.DataFrame, homolog_dfs: list) -> pd.DataFrame:
     if "identifier" in merged_df.columns:
         merged_df = merged_df.loc[:, ~merged_df.columns.duplicated()]
 
-    # Ensure that homolog column contains a nested dictionary
     merged_df[Cons.ENSEMBL_HOMOLOGS] = merged_df[Cons.ENSEMBL_HOMOLOGS].apply(
         lambda x: [{"homolog": x["homolog"]}] if isinstance(x, dict) else x
     )
