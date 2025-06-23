@@ -7,6 +7,7 @@ as well as upload RDF data and execute SPARQL queries.
 """
 
 import tempfile
+from typing import Optional
 
 import pandas as pd
 import requests
@@ -20,8 +21,8 @@ class GraphDBManager:
     def create_repository(
         base_url: str,
         repository_name: str = "default",
-        username: str | None = None,
-        password: str | None = None,
+        username: Optional[str] = None,
+        password: Optional[str] = None,
     ):
         """
         Create a new repository in GraphDB.
@@ -91,19 +92,22 @@ class GraphDBManager:
             temp_file_path = temp_file.name
 
         # Pass the temporary file path to the config argument
-        files = {"config": (temp_file_path, open(temp_file_path, "rb"), "text/turtle")}
+        with open(temp_file_path, "rb") as config_file:
+            files = {"config": (temp_file_path, config_file, "text/turtle")}
 
-        # Send the POST request with the configuration file
-        response = requests.post(
-            url,
-            files=files,
-            auth=auth,
-            timeout=10,
-        )
+            # Send the POST request with the configuration file
+            response = requests.post(
+                url,
+                files=files,
+                auth=auth,
+                timeout=10,
+            )
         response.raise_for_status()
 
     @staticmethod
-    def list_repositories(base_url: str, username: str | None = None, password: str | None = None):
+    def list_repositories(
+        base_url: str, username: Optional[str] = None, password: Optional[str] = None
+    ):
         """
         List all repositories in the GraphDB instance.
 
@@ -120,7 +124,10 @@ class GraphDBManager:
 
     @staticmethod
     def get_repository_info(
-        base_url: str, repository_id: str, username: str | None = None, password: str | None = None
+        base_url: str,
+        repository_id: str,
+        username: Optional[str] = None,
+        password: Optional[str] = None,
     ):
         """
         Retrieve detailed information about a specific repository.
@@ -145,7 +152,10 @@ class GraphDBManager:
 
     @staticmethod
     def count_triples(
-        base_url: str, repository_id: str, username: str | None = None, password: str | None = None
+        base_url: str,
+        repository_id: str,
+        username: Optional[str] = None,
+        password: Optional[str] = None,
     ):
         """
         Count the number of triples in a repository.
@@ -164,7 +174,10 @@ class GraphDBManager:
 
     @staticmethod
     def restart_repository(
-        base_url: str, repository_id: str, username: str | None = None, password: str | None = None
+        base_url: str,
+        repository_id: str,
+        username: Optional[str] = None,
+        password: Optional[str] = None,
     ):
         """
         Restart a specific repository.
@@ -181,7 +194,10 @@ class GraphDBManager:
 
     @staticmethod
     def delete_repository(
-        base_url: str, repository_id: str, username: str | None = None, password: str | None = None
+        base_url: str,
+        repository_id: str,
+        username: Optional[str] = None,
+        password: Optional[str] = None,
     ):
         """
         Delete a specific repository.
