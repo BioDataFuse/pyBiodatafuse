@@ -179,7 +179,7 @@ class BDFGraph(Graph):
         disease_data = self.collect_disease_data(row)
 
         # Extract relevant columns before processing
-        string_ppI_data = row.get(Cons.STRING_INTERACT_COL, None)
+        string_ppi_data = row.get(Cons.STRING_INTERACT_COL, None)
         disease_data = self.collect_disease_data(row)
         expression_data = row.get(Cons.BGEE_GENE_EXPRESSION_LEVELS_COL, None)
         pathways_data = row.get(Cons.WIKIPATHWAYS_MOLECULAR_COL, None)
@@ -191,7 +191,7 @@ class BDFGraph(Graph):
         aop_data = row.get(Cons.AOPWIKIRDF, None)
 
         if gene:
-            self.process_ppi_data(string_ppI_data, gene_node)
+            self.process_ppi_data(string_ppi_data, gene_node)
             protein_nodes = list(self.objects(gene_node, URIRef(Cons.PREDICATES["translation_of"])))
             self.process_disease_data(disease_data, id_number, source_idx, gene_node)
             self.process_expression_data(expression_data, id_number, source_idx, gene_node)
@@ -394,6 +394,7 @@ class BDFGraph(Graph):
         """
         Process transporter inhibitor data and add to the RDF graph.
 
+        :param gene_node: An RDF node representing the gene.
         :param transporter_inhibitor_data: A list of transporter inhibitor data entries to be processed.
         """
         if transporter_inhibitor_data:
@@ -406,6 +407,7 @@ class BDFGraph(Graph):
         """
         Process inhibitor transporter data and add to the RDF graph.
 
+        :param compound_node: An RDF node representing the compound.
         :param inhibitor_transporter_data: A list of inhibitor transporter data entries to be processed.
         """
         if inhibitor_transporter_data:
@@ -423,8 +425,8 @@ class BDFGraph(Graph):
         between gene nodes, protein nodes, and pathway nodes.
 
         :param row: A dictionary containing pathway data from different sources.
-        :param gene_node: An RDF node representing the gene.
-        :param protein_nodes: A list of RDF nodes representing proteins associated with the gene.
+        :param identifier_node: An RDF node representing the identifier.
+        :param protein_nodes: A list of RDF nodes representing proteins associated with the identifier.
         """
         for source in ["WikiPathways", "MINERVA", "OpenTargets_reactome"]:
             pathway_data_list = row.get(source)
@@ -471,19 +473,18 @@ class BDFGraph(Graph):
 
     def process_molecular_pathway(self, molecular_data, identifier, id_number) -> None:
         """
-        Process molecular pathway data and add to the RDF graph
+        Process molecular pathway data and add to the RDF graph.
 
         :param molecular_data: A dictionary containing pathway data from different sources.
-        :param identifier_node: An RDF node representing the gene or compound in the row.
-        :param protein_nodes: A list of RDF nodes representing proteins associated with the gene.
+        :param identifier: An RDF node representing the gene or compound in the row.
         :param id_number: The identifier number for the row.
         """
         for el in molecular_data:
             pathway_id = el.get("pathway_id", None)
             pathway_label = el.get("pathway_label", None)
-            targetGene = el.get("targetGene", None)
-            targetProtein = el.get("targetProtein", None)
-            targetMetabolite = el.get("targetMetabolite", None)
+            target_gene = el.get("targetGene", None)
+            target_protein = el.get("targetProtein", None)
+            target_metabolite = el.get("targetMetabolite", None)
             mimtype = el.get("mimtype", None)
             rhea_id = el.get("rhea_id", None)
             if mimtype:
@@ -509,13 +510,13 @@ class BDFGraph(Graph):
                     self.add((pathway_node, URIRef(Cons.PREDICATES["sio_has_part"]), identifier))
                     self.add((pathway_node, URIRef(Cons.PREDICATES["sio_has_part"]), mim_node))
 
-                if targetGene:
+                if target_gene:
                     target_gene_node = get_gene_node(
                         self,
                         {
                             "target.source": "Ensembl",
-                            "target": targetGene,
-                            "identifier": targetGene,
+                            "target": target_gene,
+                            "identifier": target_gene,
                         },
                     )
                     if target_gene_node:
@@ -537,8 +538,8 @@ class BDFGraph(Graph):
                             (target_gene_node, URIRef(Cons.PREDICATES["sio_is_part_of"]), mim_node)
                         )
 
-                if targetProtein:
-                    target_protein_node = URIRef(Cons.BASE_URLS_DBS["uniprot"] + targetProtein)
+                if target_protein:
+                    target_protein_node = URIRef(Cons.BASE_URLS_DBS["uniprot"] + target_protein)
                     self.add(
                         (target_protein_node, RDF.type, URIRef(Cons.NODE_TYPES["protein_node"]))
                     )
@@ -560,9 +561,9 @@ class BDFGraph(Graph):
                         (target_protein_node, URIRef(Cons.PREDICATES["sio_is_part_of"]), mim_node)
                     )
 
-                if targetMetabolite:
+                if target_metabolite:
                     target_metabolite_node = URIRef(
-                        Cons.NODE_TYPES["compound_node"] + targetMetabolite
+                        Cons.NODE_TYPES["compound_node"] + target_metabolite
                     )
                     self.add(
                         (target_metabolite_node, RDF.type, URIRef(Cons.NODE_TYPES["compound_node"]))

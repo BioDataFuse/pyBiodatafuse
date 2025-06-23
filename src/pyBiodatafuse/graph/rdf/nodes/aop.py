@@ -12,7 +12,7 @@ from pyBiodatafuse.graph.rdf.nodes.compound import add_associated_compound_node
 
 def add_aop_data(g, entry, compound_node=None, gene_node=None):
     """
-    Adds Adverse Outcome Pathway (AOP) data to the RDF graph.
+    Add Adverse Outcome Pathway (AOP) data to the RDF graph.
 
     This function integrates AOP data into the provided RDF graph by linking
     compound and gene nodes with the specified entry data. It also handles the creation
@@ -23,7 +23,6 @@ def add_aop_data(g, entry, compound_node=None, gene_node=None):
     :param gene_node: The RDF node representing the gene, defaults to None.
     :param entry: The data entry containing information about the AOP.
     """
-
     # Create AOP node
     aop_node = (
         URIRef(SOURCE_NAMESPACES["aopwiki"] + "aop/" + entry["aop"]) if entry.get("aop") else None

@@ -102,6 +102,7 @@ def add_transporter_inhibitor_node(
     """Add a transporter inhibitor node to the RDF graph.
 
     :param g: RDF graph to which the transporter inhibitor node is added.
+    :param gene_node: URIRef of the gene node associated with the transporter inhibitor.
     :param inhibitor_data: Dictionary containing transporter inhibitor data (e.g., "compound_cid", "inchikey").
     :param base_uri: The base URI for constructing nodes in the graph.
     """
@@ -159,8 +160,10 @@ def add_inhibitor_transporter_node(
     """Add a inhibitor transporter inhibitor node to the RDF graph.
 
     :param g: RDF graph to which the transporter inhibitor node is added.
+    :param compound_node: URIRef of the compound node associated with the transporter inhibitor.
     :param inhibitor_data: Dictionary containing transporter inhibitor data (e.g., "compound_cid", "inchikey").
     :param base_uri: The base URI for constructing nodes in the graph.
+    :raises ValueError: If the "hgnc_symbol" key in `inhibitor_data` is None.
     """
     uniprot_id = inhibitor_data.get("uniprot_trembl_id")
     hgnc = inhibitor_data.get("hgnc_symbol")
