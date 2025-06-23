@@ -40,30 +40,7 @@ from rdflib import Graph, Literal, URIRef
 from rdflib.namespace import RDF, RDFS, XSD
 from tqdm import tqdm
 
-from pyBiodatafuse.constants import (
-    AOPWIKIRDF,
-    BASE_URLS_DBS,
-    BGEE_GENE_EXPRESSION_LEVELS_COL,
-    DATA_SOURCES,
-    DISGENET_DISEASE_COL,
-    IDENTIFIER_COL,
-    IDENTIFIER_SOURCE_COL,
-    LITERATURE_DISEASE_COL,
-    MOLMEDB_COMPOUND_PROTEIN_COL,
-    MOLMEDB_PROTEIN_COMPOUND_COL,
-    NAMESPACE_BINDINGS,
-    NODE_TYPES,
-    OPENTARGETS_DISEASE_COL,
-    OPENTARGETS_GENE_COMPOUND_COL,
-    OPENTARGETS_GO_COL,
-    PREDICATES,
-    PUBCHEM_COMPOUND_ASSAYS_COL,
-    STRING_PPI_COL,
-    TARGET_COL,
-    TARGET_SOURCE_COL,
-    URIS,
-    WIKIPATHWAYS_MOLECULAR_COL,
-)
+import pyBiodatafuse.constants as Cons
 from pyBiodatafuse.graph.rdf.metadata import add_metadata
 from pyBiodatafuse.graph.rdf.nodes.aop import add_aop_data
 from pyBiodatafuse.graph.rdf.nodes.compound import (
@@ -84,7 +61,7 @@ from pyBiodatafuse.graph.rdf.utils import (
     get_shapes,
     replace_na_none,
 )
-from pyBiodatafuse.utils import read_datasource_file
+from pyBiodatafuse.id_mapper import read_datasource_file
 
 # Set up logger
 logger = logging.getLogger(__name__)
@@ -124,7 +101,7 @@ class BDFGraph(Graph):
         self.orcid = orcid
 
         # Create and bind custom URIs and namespaces
-        self.new_uris = {key: self.base_uri + value for key, value in URIS.items()}
+        self.new_uris = {key: self.base_uri + value for key, value in Cons.URIS.items()}
         self._shex_path = None
         self._shacl_path = None
         self._prefixes_path = None
@@ -134,7 +111,7 @@ class BDFGraph(Graph):
         # Bind prefixes
         for key, new_value in self.new_uris.items():
             self.bind(key, new_value)
-        for key, value in NAMESPACE_BINDINGS.items():
+        for key, value in Cons.NAMESPACE_BINDINGS.items():
             self.bind(key, value)
 
     def generate_rdf(
@@ -151,7 +128,8 @@ class BDFGraph(Graph):
         df = df.applymap(replace_na_none)
         datasources = read_datasource_file()
         if not self.include_variants:
-            df = df[df["target.source"] == "Ensembl"]
+            df = df[df[Cons.TARGET_SOURCE_COL] == Cons.ENSEMBL]
+
         for i, row in tqdm(df.iterrows(), total=df.shape[0], desc="Building RDF graph"):
             self.process_row(row, i, datasources)
         self._add_metadata(metadata)
@@ -183,10 +161,10 @@ class BDFGraph(Graph):
         elif row["identifier.source"] in datasources[datasources["type"] == "metabolite"]["source"]:
             compound_node = self.add_compound_node(row)
             compound = True
-        source_idx = row.get(IDENTIFIER_COL)
-        source_namespace = row.get(IDENTIFIER_SOURCE_COL)
-        target_idx = row.get(TARGET_COL)
-        target_namespace = row.get(TARGET_SOURCE_COL)
+        source_idx = row.get(Cons.IDENTIFIER_COL)
+        source_namespace = row.get(Cons.IDENTIFIER_SOURCE_COL)
+        target_idx = row.get(Cons.TARGET_COL)
+        target_namespace = row.get(Cons.TARGET_SOURCE_COL)
 
         if not self.valid_indices(source_idx, source_namespace, target_idx, target_namespace):
             return
@@ -201,20 +179,20 @@ class BDFGraph(Graph):
         disease_data = self.collect_disease_data(row)
 
         # Extract relevant columns before processing
-        string_ppi_data = row.get(STRING_PPI_COL, None)
+        string_ppI_data = row.get(Cons.STRING_INTERACT_COL, None)
         disease_data = self.collect_disease_data(row)
-        expression_data = row.get(BGEE_GENE_EXPRESSION_LEVELS_COL, None)
-        pathways_data = row.get(WIKIPATHWAYS_MOLECULAR_COL, None)
-        processes_data = row.get(OPENTARGETS_GO_COL, None)
-        compound_data = row.get(OPENTARGETS_GENE_COMPOUND_COL, None)
-        literature_data = row.get(LITERATURE_DISEASE_COL, None)
-        transporter_inhibitor_data = row.get(MOLMEDB_PROTEIN_COMPOUND_COL, None)
-        inhibitor_transporter_data = row.get(MOLMEDB_COMPOUND_PROTEIN_COL, None)
-        aop_data = row.get(AOPWIKIRDF, None)
+        expression_data = row.get(Cons.BGEE_GENE_EXPRESSION_LEVELS_COL, None)
+        pathways_data = row.get(Cons.WIKIPATHWAYS_MOLECULAR_COL, None)
+        processes_data = row.get(Cons.OPENTARGETS_GO_COL, None)
+        compound_data = row.get(Cons.OPENTARGETS_GENE_COMPOUND_COL, None)
+        literature_data = row.get(Cons.LITERATURE_DISEASE_COL, None)
+        transporter_inhibitor_data = row.get(Cons.MOLMEDB_PROTEIN_COMPOUND_COL, None)
+        inhibitor_transporter_data = row.get(Cons.MOLMEDB_COMPOUND_PROTEIN_COL, None)
+        aop_data = row.get(Cons.AOPWIKIRDF, None)
 
         if gene:
-            self.process_ppi_data(string_ppi_data, gene_node)
-            protein_nodes = list(self.objects(gene_node, URIRef(PREDICATES["translation_of"])))
+            self.process_ppi_data(string_ppI_data, gene_node)
+            protein_nodes = list(self.objects(gene_node, URIRef(Cons.PREDICATES["translation_of"])))
             self.process_disease_data(disease_data, id_number, source_idx, gene_node)
             self.process_expression_data(expression_data, id_number, source_idx, gene_node)
             self.process_pathways(row, gene_node, protein_nodes)
@@ -229,7 +207,7 @@ class BDFGraph(Graph):
             self.process_aop_data(aop_data, gene_node, None)
             self.process_molecular_pathway(pathways_data, gene_node, id_number)
         if compound:
-            self.process_pathways(row, compound_node, protein_nodes=None)
+            self.process_pathways(row, compound_node, protein_nodes=[])
             self.process_inhibitor_transporter_data(compound_node, inhibitor_transporter_data)
             self.process_aop_data(aop_data, None, compound_node)
             self.process_molecular_pathway(pathways_data, compound_node, id_number)
@@ -248,7 +226,7 @@ class BDFGraph(Graph):
         :return: A list of collected disease data.
         """
         disease_data = []
-        for source_col in [DISGENET_DISEASE_COL, OPENTARGETS_DISEASE_COL]:
+        for source_col in [Cons.DISGENET_DISEASE_COL, Cons.OPENTARGETS_DISEASE_COL]:
             # if open_only and source_col == DISGENET_DISEASE_COL:
             #     continue  # TODO fix open data only feature
             source_data = row.get(source_col, None)
@@ -352,8 +330,8 @@ class BDFGraph(Graph):
             for process_data in processes_data:
                 go_cpf = add_go_cpf(self, process_data)
                 if go_cpf:
-                    self.add((gene_node, URIRef(PREDICATES["sio_is_part_of"]), go_cpf))
-                    self.add((go_cpf, URIRef(PREDICATES["sio_has_part"]), gene_node))
+                    self.add((gene_node, URIRef(Cons.PREDICATES["sio_is_part_of"]), go_cpf))
+                    self.add((go_cpf, URIRef(Cons.PREDICATES["sio_has_part"]), gene_node))
 
     def process_compound_data(
         self, compound_data: Optional[List[Dict[str, Any]]], gene_node: URIRef
@@ -394,17 +372,17 @@ class BDFGraph(Graph):
                 else [literature_based_data]
             )
             for entry in entries:
-                if entry.get("UMLS", None):
-                    umls_parts = entry["UMLS"].split(":")
+                if entry.get(Cons.UMLS, None):
+                    umls_parts = entry[Cons.UMLS].split(":")
                     umlscui = umls_parts[1] if len(umls_parts) > 1 else None
                     if not umlscui:
                         continue
                     disease_data_lit = {
-                        "UMLS": umlscui,
-                        "score": None,
-                        "ei": None,
-                        "el": None,
-                        "disease_name": entry["disease_name"],
+                        Cons.UMLS: umlscui,
+                        Cons.DISGENET_SCORE: None,
+                        Cons.DISGENET_EI: None,
+                        Cons.DISGENET_EL: None,
+                        Cons.DISEASE_NAME: entry[Cons.DISEASE_NAME],
                     }
                     add_literature_based_data(
                         self, entry, gene_node, id_number, disease_data_lit, source_idx, new_uris, i
@@ -455,31 +433,39 @@ class BDFGraph(Graph):
                     if pathway_data.get("pathway_id"):
                         pathway_node = add_pathway_node(self, pathway_data, source)
                         self.add(
-                            (identifier_node, URIRef(PREDICATES["sio_is_part_of"]), pathway_node)
+                            (
+                                identifier_node,
+                                URIRef(Cons.PREDICATES["sio_is_part_of"]),
+                                pathway_node,
+                            )
                         )
                         self.add(
-                            (pathway_node, URIRef(PREDICATES["sio_has_part"]), identifier_node)
+                            (pathway_node, URIRef(Cons.PREDICATES["sio_has_part"]), identifier_node)
                         )
                         if protein_nodes:
                             for protein_node in protein_nodes:
                                 self.add(
                                     (
                                         protein_node,
-                                        URIRef(PREDICATES["sio_is_part_of"]),
+                                        URIRef(Cons.PREDICATES["sio_is_part_of"]),
                                         pathway_node,
                                     )
                                 )
                                 self.add(
-                                    (pathway_node, URIRef(PREDICATES["sio_has_part"]), protein_node)
+                                    (
+                                        pathway_node,
+                                        URIRef(Cons.PREDICATES["sio_has_part"]),
+                                        protein_node,
+                                    )
                                 )
                         self.add(
-                            (pathway_node, URIRef(PREDICATES["sio_has_part"]), identifier_node)
+                            (pathway_node, URIRef(Cons.PREDICATES["sio_has_part"]), identifier_node)
                         )
                         self.add(
                             (
                                 pathway_node,
-                                URIRef(PREDICATES["sio_has_source"]),
-                                URIRef(DATA_SOURCES[source]),
+                                URIRef(Cons.PREDICATES["sio_has_source"]),
+                                URIRef(Cons.DATA_SOURCES[source]),
                             )
                         )
 
@@ -505,21 +491,23 @@ class BDFGraph(Graph):
                     (
                         URIRef("http://vocabularies.wikipathways.org/wp#" + mimtype),
                         RDF.type,
-                        URIRef(NODE_TYPES["interaction"]),
+                        URIRef(Cons.NODE_TYPES["interaction"]),
                     )
                 )
                 mim_node = URIRef(self.new_uris["interaction"] + mimtype + id_number)
-                self.add((mim_node, RDF.type, URIRef(NODE_TYPES["interaction"])))
+                self.add((mim_node, RDF.type, URIRef(Cons.NODE_TYPES["interaction"])))
                 self.add((mim_node, RDFS.label, Literal(mimtype + id_number, datatype=XSD.string)))
-                self.add((identifier, URIRef(PREDICATES["sio_is_part_of"]), mim_node))
+                self.add((identifier, URIRef(Cons.PREDICATES["sio_is_part_of"]), mim_node))
                 if pathway_id and pathway_label:
                     pathway_node = URIRef(
                         "https://www.wikipathways.org/pathways/" + pathway_id.split(":")[1]
                     )
-                    self.add((pathway_node, URIRef(PREDICATES["sio_has_part"]), URIRef(mimtype)))
-                    self.add((identifier, URIRef(PREDICATES["sio_is_part_of"]), pathway_node))
-                    self.add((pathway_node, URIRef(PREDICATES["sio_has_part"]), identifier))
-                    self.add((pathway_node, URIRef(PREDICATES["sio_has_part"]), mim_node))
+                    self.add(
+                        (pathway_node, URIRef(Cons.PREDICATES["sio_has_part"]), URIRef(mimtype))
+                    )
+                    self.add((identifier, URIRef(Cons.PREDICATES["sio_is_part_of"]), pathway_node))
+                    self.add((pathway_node, URIRef(Cons.PREDICATES["sio_has_part"]), identifier))
+                    self.add((pathway_node, URIRef(Cons.PREDICATES["sio_has_part"]), mim_node))
 
                 if targetGene:
                     target_gene_node = get_gene_node(
@@ -545,11 +533,15 @@ class BDFGraph(Graph):
                                 identifier,
                             )
                         )  # TODO decide reification of interaction, keeping both for now
-                        self.add((target_gene_node, URIRef(PREDICATES["sio_is_part_of"]), mim_node))
+                        self.add(
+                            (target_gene_node, URIRef(Cons.PREDICATES["sio_is_part_of"]), mim_node)
+                        )
 
                 if targetProtein:
-                    target_protein_node = URIRef(BASE_URLS_DBS["uniprot"] + targetProtein)
-                    self.add((target_protein_node, RDF.type, URIRef(NODE_TYPES["protein_node"])))
+                    target_protein_node = URIRef(Cons.BASE_URLS_DBS["uniprot"] + targetProtein)
+                    self.add(
+                        (target_protein_node, RDF.type, URIRef(Cons.NODE_TYPES["protein_node"]))
+                    )
                     self.add(
                         (
                             identifier,
@@ -564,12 +556,16 @@ class BDFGraph(Graph):
                             identifier,
                         )
                     )  # TODO decide reification of interaction, keeping both for now
-                    self.add((target_protein_node, URIRef(PREDICATES["sio_is_part_of"]), mim_node))
+                    self.add(
+                        (target_protein_node, URIRef(Cons.PREDICATES["sio_is_part_of"]), mim_node)
+                    )
 
                 if targetMetabolite:
-                    target_metabolite_node = URIRef(NODE_TYPES["compound_node"] + targetMetabolite)
+                    target_metabolite_node = URIRef(
+                        Cons.NODE_TYPES["compound_node"] + targetMetabolite
+                    )
                     self.add(
-                        (target_metabolite_node, RDF.type, URIRef(NODE_TYPES["compound_node"]))
+                        (target_metabolite_node, RDF.type, URIRef(Cons.NODE_TYPES["compound_node"]))
                     )
                     self.add(
                         (
@@ -585,13 +581,17 @@ class BDFGraph(Graph):
                             identifier,
                         )
                     )
-                    self.add((identifier, URIRef(PREDICATES["sio_is_part_of"]), mim_node))
+                    self.add((identifier, URIRef(Cons.PREDICATES["sio_is_part_of"]), mim_node))
                     self.add(
-                        (target_metabolite_node, URIRef(PREDICATES["sio_is_part_of"]), mim_node)
+                        (
+                            target_metabolite_node,
+                            URIRef(Cons.PREDICATES["sio_is_part_of"]),
+                            mim_node,
+                        )
                     )
 
                 if rhea_id:
-                    self.add((mim_node, URIRef(PREDICATES["sameAs"]), URIRef(rhea_id)))
+                    self.add((mim_node, URIRef(Cons.PREDICATES["sameAs"]), URIRef(rhea_id)))
 
     def process_ppi_data(
         self, stringdb_data: Optional[List[Dict[str, Any]]], gene_node: URIRef
@@ -634,8 +634,6 @@ class BDFGraph(Graph):
                         gene_node=gene_node,
                         compound_node=None,
                         entry=entry,
-                        base_uri=self.base_uri,
-                        new_uris=self.new_uris,
                     )
         if aop_data and compound_node:
             for entry in aop_data:
@@ -645,8 +643,6 @@ class BDFGraph(Graph):
                         gene_node=None,
                         compound_node=compound_node,
                         entry=entry,
-                        base_uri=self.base_uri,
-                        new_uris=self.new_uris,
                     )
 
     # Other methods not related to adding nodes begin here
@@ -731,7 +727,8 @@ class BDFGraph(Graph):
         """
         output_path = path if path is not None else self._prefixes_path
         current_namespaces = self._namespaces
-        if namespaces is not None:
+        if namespaces:
+            current_namespaces = current_namespaces or {}
             current_namespaces.update(namespaces)
         return get_shacl_prefixes(
             namespaces=current_namespaces,

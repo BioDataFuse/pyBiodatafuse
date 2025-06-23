@@ -20,8 +20,8 @@ class GraphDBManager:
     def create_repository(
         base_url: str,
         repository_name: str = "default",
-        username: str = None,
-        password: str = None,
+        username: str = "",
+        password: str = "",
     ):
         """
         Create a new repository in GraphDB.
@@ -103,7 +103,7 @@ class GraphDBManager:
         response.raise_for_status()
 
     @staticmethod
-    def list_repositories(base_url: str, username: str = None, password: str = None):
+    def list_repositories(base_url: str, username: str = "", password: str = ""):
         """
         List all repositories in the GraphDB instance.
 
@@ -113,14 +113,14 @@ class GraphDBManager:
         :return: List of repositories as JSON.
         """
         url = f"{base_url.rstrip('/')}/rest/repositories"
-        auth = (username, password) if username and password else None
+        auth = (username, password) if username != "" and password != "" else None
         response = requests.get(url, auth=auth, headers={"Accept": "application/json"}, timeout=10)
         response.raise_for_status()
         return response.json()
 
     @staticmethod
     def get_repository_info(
-        base_url: str, repository_id: str, username: str = None, password: str = None
+        base_url: str, repository_id: str, username: str = "", password: str = ""
     ):
         """
         Retrieve detailed information about a specific repository.
@@ -144,9 +144,7 @@ class GraphDBManager:
         return response.json()
 
     @staticmethod
-    def count_triples(
-        base_url: str, repository_id: str, username: str = None, password: str = None
-    ):
+    def count_triples(base_url: str, repository_id: str, username: str = "", password: str = ""):
         """
         Count the number of triples in a repository.
 
@@ -164,7 +162,7 @@ class GraphDBManager:
 
     @staticmethod
     def restart_repository(
-        base_url: str, repository_id: str, username: str = None, password: str = None
+        base_url: str, repository_id: str, username: str = "", password: str = ""
     ):
         """
         Restart a specific repository.
@@ -181,7 +179,7 @@ class GraphDBManager:
 
     @staticmethod
     def delete_repository(
-        base_url: str, repository_id: str, username: str = None, password: str = None
+        base_url: str, repository_id: str, username: str = "", password: str = ""
     ):
         """
         Delete a specific repository.
