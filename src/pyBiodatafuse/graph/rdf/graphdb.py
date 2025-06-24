@@ -236,6 +236,8 @@ class GraphDBManager:
 
         # Serialize the BDFGraph to the specified format
         rdf_data = bdf_graph.serialize(format=file_format)
+        if isinstance(rdf_data, bytes):
+            rdf_data = rdf_data.decode("utf-8")
 
         # Map format to Content-Type
         content_type_map = {
@@ -254,9 +256,16 @@ class GraphDBManager:
             data=rdf_data,
             headers=headers,
             auth=auth,
-            timeout=10,
+            timeout=300,
         )
-        response.raise_for_status()
+        if not response.ok:
+            # Print error details for debugging
+            print("GraphDB upload error:", response.status_code, response.reason)
+            print("Response content:", response.text)
+            print("RDF data preview:", rdf_data[:500])
+            raise HTTPError(
+                f"GraphDB upload failed: {response.status_code} {response.reason}\n{response.text}"
+            )
 
     @staticmethod
     def query_graphdb(

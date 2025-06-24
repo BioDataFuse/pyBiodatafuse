@@ -41,6 +41,9 @@ def merge_node(g, node_label, node_attrs):
     :param node_attrs: dictionary of node attributes.
     """
     if node_label not in g.nodes():
+        # Ensure 'labels' is set
+        if Cons.LABEL not in node_attrs:
+            node_attrs[Cons.LABEL] = node_attrs.get("label", "Unknown")
         g.add_node(node_label, attr_dict=node_attrs)
     else:
         if "attr_dict" in g.nodes[node_label]:
@@ -56,6 +59,8 @@ def merge_node(g, node_label, node_attrs):
                 else:
                     g.nodes[node_label]["attr_dict"][k] = v
         else:
+            if Cons.LABEL not in node_attrs:
+                node_attrs[Cons.LABEL] = node_attrs.get("label", "Unknown")
             g.add_node(node_label, attr_dict=node_attrs)
 
 
@@ -344,7 +349,7 @@ def add_intact_compound_interactions_subgraph(g, compound_node_label, annot_list
             "label": partner_name,
             "species": partner_species,
             "molecule": partner_molecule,
-            "labels": node_label_type,
+            Cons.LABEL: node_label_type,
         }
         merge_node(g, partner_id, partner_node_attrs)
 
@@ -1220,7 +1225,7 @@ def add_wikipathways_molecular_subgraph(g, gene_node_label, annot_list):
 
             if target_node_label is None:
                 continue
-
+            target_node_label = target_node_label.replace(f"{Cons.WIKIPATHWAYS_TARGET_GENE}:", "")
             interaction_type = annot.get(Cons.WIKIPATHWAYS_MIM_TYPE, "Interaction")
             edge_attrs = Cons.MOLECULAR_INTERACTION_EDGE_ATTRS.copy()
             edge_attrs[Cons.WIKIPATHWAYS_INTERACTION_TYPE] = interaction_type
@@ -1236,6 +1241,7 @@ def add_wikipathways_molecular_subgraph(g, gene_node_label, annot_list):
                         Cons.PATHWAY_LABEL: annot.get(Cons.PATHWAY_LABEL, ""),
                         Cons.ID: target_node_label,
                         Cons.DATASOURCE: Cons.WIKIPATHWAYS,
+                        Cons.LABEL: Cons.MOLECULAR_PATHWAY_NODE_LABEL,
                     }
                 )
                 g.add_node(target_node_label, attr_dict=node_attrs)
@@ -1274,9 +1280,9 @@ def add_aopwiki_gene_subgraph(g, gene_node_label, annot_list):
         aop_node_label = "AOP:" + annot.get("aop", "")
         if aop_node_label:
             aop_node_attrs = Cons.AOPWIKI_NODE_ATTRS.copy()
-            aop_node_attrs["type"] = Cons.AOP_NODE_LABELS
+            aop_node_attrs["type"] = Cons.AOP_NODE_LABEL
             aop_node_attrs["title"] = annot.get("aop_title", "")
-            aop_node_attrs["labels"] = Cons.AOP_NODE_LABELS
+            aop_node_attrs[Cons.LABEL] = Cons.AOP_NODE_LABEL
             g.add_node(aop_node_label, attr_dict=aop_node_attrs)
 
             # Connect gene to AOP node
@@ -1296,7 +1302,7 @@ def add_aopwiki_gene_subgraph(g, gene_node_label, annot_list):
             mie_node_attrs = Cons.AOPWIKI_NODE_ATTRS.copy()
             mie_node_attrs["type"] = Cons.MIE_NODE_LABELS
             mie_node_attrs["title"] = annot.get("MIE_title", "")
-            mie_node_attrs["labels"] = Cons.MIE_NODE_LABELS
+            mie_node_attrs[Cons.LABEL] = Cons.MIE_NODE_LABELS
             g.add_node(mie_node_label, attr_dict=mie_node_attrs)
 
             # Connect MIE to AOP node
@@ -1318,7 +1324,7 @@ def add_aopwiki_gene_subgraph(g, gene_node_label, annot_list):
             ke_upstream_node_attrs["title"] = annot.get("KE_upstream_title", "")
             ke_upstream_node_attrs["organ"] = annot.get("KE_upstream_organ", "")
             ke_upstream_node_attrs["type"] = Cons.KEY_EVENT_NODE_LABELS
-            ke_upstream_node_attrs["labels"] = Cons.KEY_EVENT_NODE_LABELS
+            ke_upstream_node_attrs[Cons.LABEL] = Cons.KEY_EVENT_NODE_LABELS
             g.add_node(ke_upstream_node_label, attr_dict=ke_upstream_node_attrs)
 
             # Connect KE upstream to MIE node
@@ -1343,7 +1349,7 @@ def add_aopwiki_gene_subgraph(g, gene_node_label, annot_list):
             ke_downstream_node_attrs["title"] = annot.get("KE_downstream_title", "")
             ke_downstream_node_attrs["organ"] = annot.get("KE_downstream_organ", "")
             ke_downstream_node_attrs["type"] = Cons.KEY_EVENT_NODE_LABELS
-            ke_downstream_node_attrs["labels"] = Cons.KEY_EVENT_NODE_LABELS
+            ke_downstream_node_attrs[Cons.LABEL] = Cons.KEY_EVENT_NODE_LABELS
             g.add_node(ke_downstream_node_label, attr_dict=ke_downstream_node_attrs)
 
             # Connect KE downstream to KE upstream node
@@ -1366,8 +1372,8 @@ def add_aopwiki_gene_subgraph(g, gene_node_label, annot_list):
         if ao_node_label:
             ao_node_attrs = Cons.AOPWIKI_NODE_ATTRS.copy()
             ao_node_attrs["title"] = annot.get("ao_title", "")
-            ao_node_attrs["type"] = Cons.AO_NODE_LABELS
-            ao_node_attrs["labels"] = Cons.AO_NODE_LABELS
+            ao_node_attrs["type"] = Cons.AO_NODE_LABEL
+            ao_node_attrs[Cons.LABEL] = Cons.AO_NODE_LABEL
             g.add_node(ao_node_label, attr_dict=ao_node_attrs)
 
             # Connect AO directly to KE downstream node
@@ -1468,6 +1474,7 @@ def add_gene_node(g, row, dea_columns):
         Cons.NAME: f"{row[Cons.IDENTIFIER_SOURCE_COL]}:{row[Cons.IDENTIFIER_COL]}",
         Cons.ID: f"{row[Cons.TARGET_SOURCE_COL]}:{row[Cons.TARGET_COL]}",
         Cons.LABEL: Cons.GENE_NODE_LABEL,
+        Cons.LABEL: Cons.GENE_NODE_LABEL,  # Ensure label
         row[Cons.TARGET_SOURCE_COL]: row[Cons.TARGET_COL],
     }
 
@@ -1491,6 +1498,7 @@ def add_compound_node(g, row):
         Cons.NAME: f"{row[Cons.IDENTIFIER_SOURCE_COL]}:{row[Cons.IDENTIFIER_COL]}",
         Cons.ID: row[Cons.TARGET_COL],
         Cons.LABEL: Cons.COMPOUND_NODE_LABEL,
+        Cons.LABEL: Cons.COMPOUND_NODE_LABEL,  # Ensure label
         row[Cons.TARGET_SOURCE_COL]: f"{row[Cons.TARGET_SOURCE_COL]}:{row[Cons.TARGET_COL]}",
     }
 
@@ -1572,7 +1580,7 @@ def process_ppi(g, gene_node_label, row):
     :param gene_node_label: the gene node to be linked to annotation entities.
     :param row: row in the combined DataFrame.
     """
-    if row[Cons.STRING_INTERACT_COL] is not None:
+    if Cons.STRING_INTERACT_COL in row and row[Cons.STRING_INTERACT_COL] is not None:
         try:
             ppi_list = json.loads(json.dumps(row[Cons.STRING_INTERACT_COL]))
         except (ValueError, TypeError):
@@ -1630,7 +1638,7 @@ def process_homologs(g, combined_df, homolog_df_list, func_dict, dea_columns):
                 if homolog_node_label:
                     annot_node_attrs = Cons.ENSEMBL_HOMOLOG_NODE_ATTRS.copy()
                     annot_node_attrs["id"] = homolog_node_label
-                    annot_node_attrs["labels"] = Cons.HOMOLOG_NODE_LABELS
+                    annot_node_attrs[Cons.LABEL] = Cons.HOMOLOG_NODE_LABELS
                     g.add_node(homolog_node_label, attr_dict=annot_node_attrs)
 
                     process_annotations(g, homolog_node_label, row, func_dict_hl)
@@ -1648,6 +1656,9 @@ def normalize_node_attributes(g):
                     g.nodes[node][k] = v
 
             del g.nodes[node]["attr_dict"]
+        # Ensure 'labels' is present after flattening
+        if Cons.LABEL not in g.nodes[node]:
+            g.nodes[node][Cons.LABEL] = g.nodes[node].get("label", "Unknown")
 
 
 def normalize_edge_attributes(g):
@@ -1696,6 +1707,7 @@ def _built_gene_based_graph(
         Cons.INTACT_INTERACT_COL: add_intact_interactions_subgraph,
         Cons.INTACT_COMPOUND_INTERACT_COL: add_intact_compound_interactions_subgraph,
         Cons.STRING_INTERACT_COL: add_stringdb_ppi_subgraph,
+        Cons.AOPWIKI_GENE_COL: add_aopwiki_gene_subgraph,
         # Cons.WIKIDATA_CC_COL: add_wikidata_gene_cc_subgraph,  # TODO: add this
     }
 

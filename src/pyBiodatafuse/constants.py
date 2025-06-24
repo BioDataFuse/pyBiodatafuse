@@ -582,7 +582,7 @@ Node and edge main lable and attributes
 DATASOURCE = "datasource"
 NAME = ENTITY_NAME
 ID = "id"
-LABEL = "label"
+LABEL = "labels"
 EDGE_HASH = "edge_hash"
 
 # Node types
@@ -772,13 +772,12 @@ WIKIPATHWAYS_NODE_ATTRS.update({DATASOURCE: WIKIPATHWAYS, ID: None, LABEL: None,
 
 MOLECULAR_PATHWAY_NODE_MAIN_LABEL = PATHWAY_ID
 MOLECULAR_GENE_NODE_ATTRS = PATHWAY_NODE_ATTRS.copy()
-# MOLECULAR_PATHWAY_NODE_ATTRS = {
-#    PATHWAY_ID: "str",
-#    PATHWAY_LABEL: "str",
-#    ID: "str",
-#    LABEL: PATHWAY_NODE_LABEL,
-# }
-
+MOLECULAR_PATHWAY_NODE_ATTRS = {
+    PATHWAY_ID: "str",
+    PATHWAY_LABEL: "str",
+    ID: "str",
+    LABEL: PATHWAY_NODE_LABEL,
+}
 WIKIPATHWAYS_INTERACTION_TYPE = "interaction_type"
 # MOLECULAR_INTERACTION_EDGE_ATTRS = GENE_PATHWAY_EDGE_ATTRS.copy()
 MOLECULAR_INTERACTION_EDGE_ATTRS.update(
@@ -968,7 +967,6 @@ AOPWIKI_EDGE_ATTRS = {
     "relation": None,
     "label": None,
 }
-AOP_NODE_LABEL = "Adverse Outcome Pathway"
 MIE_NODE_LABEL = "Molecular Initiating Event"
 KE_NODE_LABEL = "Key Event"
 AO_NODE_LABEL = "Adverse Outcome"
@@ -999,6 +997,7 @@ DATA_TYPES_SOURCES = {
     "ppi": STRING_INTERACT_COL,
     "disgenet": DISGENET_DISEASE_COL,
     "opentargets_disease": OPENTARGETS_DISEASE_COL,
+    "Opentargets_reactome": OPENTARGETS_REACTOME_COL,
 }
 
 NODE_URI_PREFIXES = {

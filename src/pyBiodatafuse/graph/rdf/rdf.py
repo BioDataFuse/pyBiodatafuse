@@ -428,7 +428,7 @@ class BDFGraph(Graph):
         :param identifier_node: An RDF node representing the identifier.
         :param protein_nodes: A list of RDF nodes representing proteins associated with the identifier.
         """
-        for source in ["WikiPathways", "MINERVA", "OpenTargets_reactome"]:
+        for source in ["WikiPathways", "MINERVA", "OpenTargets"]:
             pathway_data_list = row.get(source)
             if pathway_data_list:
                 for pathway_data in pathway_data_list:
@@ -488,24 +488,20 @@ class BDFGraph(Graph):
             mimtype = el.get("mimtype", None)
             rhea_id = el.get("rhea_id", None)
             if mimtype:
-                self.add(
-                    (
-                        URIRef("http://vocabularies.wikipathways.org/wp#" + mimtype),
-                        RDF.type,
-                        URIRef(Cons.NODE_TYPES["interaction"]),
-                    )
-                )
-                mim_node = URIRef(self.new_uris["interaction"] + mimtype + id_number)
+                mimtype_node = URIRef("http://vocabularies.wikipathways.org/wp#" + mimtype)
+                self.add((mimtype_node, RDF.type, URIRef(Cons.NODE_TYPES["interaction"])))
+                self.add((mimtype_node, RDFS.label, Literal(mimtype, datatype=XSD.string)))
+                mim_node = URIRef(self.new_uris["interaction"] + mimtype + "_" + id_number)
                 self.add((mim_node, RDF.type, URIRef(Cons.NODE_TYPES["interaction"])))
-                self.add((mim_node, RDFS.label, Literal(mimtype + id_number, datatype=XSD.string)))
+                self.add(
+                    (mim_node, RDFS.label, Literal(mimtype + "_" + id_number, datatype=XSD.string))
+                )
                 self.add((identifier, URIRef(Cons.PREDICATES["sio_is_part_of"]), mim_node))
                 if pathway_id and pathway_label:
                     pathway_node = URIRef(
                         "https://www.wikipathways.org/pathways/" + pathway_id.split(":")[1]
                     )
-                    self.add(
-                        (pathway_node, URIRef(Cons.PREDICATES["sio_has_part"]), URIRef(mimtype))
-                    )
+                    self.add((pathway_node, URIRef(Cons.PREDICATES["sio_has_part"]), mimtype_node))
                     self.add((identifier, URIRef(Cons.PREDICATES["sio_is_part_of"]), pathway_node))
                     self.add((pathway_node, URIRef(Cons.PREDICATES["sio_has_part"]), identifier))
                     self.add((pathway_node, URIRef(Cons.PREDICATES["sio_has_part"]), mim_node))
