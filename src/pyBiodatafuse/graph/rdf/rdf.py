@@ -23,8 +23,8 @@ Classes:
     - `process_literature_data`: Processes literature-based data, adds it to RDF graph.
     - `process_transporter_inhibitor_data`: Processes transporter-inhibitor data, adds it to RDF graph.
     - `process_protein_variants`: Processes protein variants and adds them to the RDF graph.
-    - `process_ppi_data`: Processes Protein-Protein Interaction (PPI) data, adds it to RDF graph.
-    - `process_aop_data`: Processes Protein-Protein Interaction (PPI) data, adds it to RDF graph.
+    - `process_ppi_data`: Processes Protein-Protein Interaction (ppi) data, adds it to RDF graph.
+    - `process_aop_data`: Processes Protein-Protein Interaction (ppi) data, adds it to RDF graph.
     - `_add_metadata`: Attaches metadata to the RDF graph.
     - `shex`: Runs shexer on the RDF graph to obtain its ShEx shapes.
     - `shacl`: Runs shexer on the RDF graph to obtain its SHACL shapes.
@@ -54,7 +54,7 @@ from pyBiodatafuse.graph.rdf.nodes.gene_disease import add_gene_disease_associat
 from pyBiodatafuse.graph.rdf.nodes.gene_expression import add_gene_expression_data
 from pyBiodatafuse.graph.rdf.nodes.go_terms import add_go_cpf
 from pyBiodatafuse.graph.rdf.nodes.literature import add_literature_based_data
-from pyBiodatafuse.graph.rdf.nodes.pathway import add_pathway_node
+from pyBiodatafuse.graph.rdf.nodes.pathway import add_molecular_pathway_node, add_pathway_node
 from pyBiodatafuse.graph.rdf.nodes.protein_protein import add_ppi_data
 from pyBiodatafuse.graph.rdf.utils import (
     get_shacl_prefixes,
@@ -155,7 +155,6 @@ class BDFGraph(Graph):
         ) + [
             "Entrez Gene"
         ]:  # TODO fix datasources
-            print(row["identifier.source"])
             gene_node = self.add_gene_node(row)
             gene = True
         elif row["identifier.source"] in datasources[datasources["type"] == "metabolite"]["source"]:
@@ -475,128 +474,22 @@ class BDFGraph(Graph):
         """
         Process molecular pathway data and add to the RDF graph.
 
-        :param molecular_data: A dictionary containing pathway data from different sources.
+        :param molecular_data: A list of dicts containing pathway data.
         :param identifier: An RDF node representing the gene or compound in the row.
         :param id_number: The identifier number for the row.
         """
+        if not molecular_data:
+            return
         for el in molecular_data:
-            pathway_id = el.get("pathway_id", None)
-            pathway_label = el.get("pathway_label", None)
-            target_gene = el.get("targetGene", None)
-            target_protein = el.get("targetProtein", None)
-            target_metabolite = el.get("targetMetabolite", None)
-            mimtype = el.get("mimtype", None)
-            rhea_id = el.get("rhea_id", None)
-            if mimtype:
-                mimtype_node = URIRef("http://vocabularies.wikipathways.org/wp#" + mimtype)
-                self.add((mimtype_node, RDF.type, URIRef(Cons.NODE_TYPES["interaction"])))
-                self.add((mimtype_node, RDFS.label, Literal(mimtype, datatype=XSD.string)))
-                mim_node = URIRef(self.new_uris["interaction"] + mimtype + "_" + id_number)
-                self.add((mim_node, RDF.type, URIRef(Cons.NODE_TYPES["interaction"])))
-                self.add(
-                    (mim_node, RDFS.label, Literal(mimtype + "_" + id_number, datatype=XSD.string))
-                )
-                self.add((identifier, URIRef(Cons.PREDICATES["sio_is_part_of"]), mim_node))
-                if pathway_id and pathway_label:
-                    pathway_node = URIRef(
-                        "https://www.wikipathways.org/pathways/" + pathway_id.split(":")[1]
-                    )
-                    self.add((pathway_node, URIRef(Cons.PREDICATES["sio_has_part"]), mimtype_node))
-                    self.add((identifier, URIRef(Cons.PREDICATES["sio_is_part_of"]), pathway_node))
-                    self.add((pathway_node, URIRef(Cons.PREDICATES["sio_has_part"]), identifier))
-                    self.add((pathway_node, URIRef(Cons.PREDICATES["sio_has_part"]), mim_node))
-
-                if target_gene:
-                    target_gene_node = get_gene_node(
-                        self,
-                        {
-                            "target.source": "Ensembl",
-                            "target": target_gene,
-                            "identifier": target_gene,
-                        },
-                    )
-                    if target_gene_node:
-                        self.add(
-                            (
-                                identifier,
-                                URIRef(self.new_uris["interaction"] + mimtype),
-                                target_gene_node,
-                            )
-                        )
-                        self.add(
-                            (
-                                target_gene_node,
-                                URIRef("http://vocabularies.wikipathways.org/wp#" + mimtype),
-                                identifier,
-                            )
-                        )  # TODO decide reification of interaction, keeping both for now
-                        self.add(
-                            (target_gene_node, URIRef(Cons.PREDICATES["sio_is_part_of"]), mim_node)
-                        )
-
-                if target_protein:
-                    target_protein_node = URIRef(Cons.BASE_URLS_DBS["uniprot"] + target_protein)
-                    self.add(
-                        (target_protein_node, RDF.type, URIRef(Cons.NODE_TYPES["protein_node"]))
-                    )
-                    self.add(
-                        (
-                            identifier,
-                            URIRef("http://vocabularies.wikipathways.org/wp#" + mimtype),
-                            target_protein_node,
-                        )
-                    )
-                    self.add(
-                        (
-                            target_protein_node,
-                            URIRef("http://vocabularies.wikipathways.org/wp#" + mimtype),
-                            identifier,
-                        )
-                    )  # TODO decide reification of interaction, keeping both for now
-                    self.add(
-                        (target_protein_node, URIRef(Cons.PREDICATES["sio_is_part_of"]), mim_node)
-                    )
-
-                if target_metabolite:
-                    target_metabolite_node = URIRef(
-                        Cons.NODE_TYPES["compound_node"] + target_metabolite
-                    )
-                    self.add(
-                        (target_metabolite_node, RDF.type, URIRef(Cons.NODE_TYPES["compound_node"]))
-                    )
-                    self.add(
-                        (
-                            identifier,
-                            URIRef("http://vocabularies.wikipathways.org/wp#" + mimtype),
-                            target_metabolite_node,
-                        )
-                    )
-                    self.add(
-                        (
-                            target_metabolite_node,
-                            URIRef("http://vocabularies.wikipathways.org/wp#" + mimtype),
-                            identifier,
-                        )
-                    )
-                    self.add((identifier, URIRef(Cons.PREDICATES["sio_is_part_of"]), mim_node))
-                    self.add(
-                        (
-                            target_metabolite_node,
-                            URIRef(Cons.PREDICATES["sio_is_part_of"]),
-                            mim_node,
-                        )
-                    )
-
-                if rhea_id:
-                    self.add((mim_node, URIRef(Cons.PREDICATES["sameAs"]), URIRef(rhea_id)))
+            add_molecular_pathway_node(self, el, identifier, id_number)
 
     def process_ppi_data(
         self, stringdb_data: Optional[List[Dict[str, Any]]], gene_node: URIRef
     ) -> None:
         """
-        Process Protein-Protein Interaction (PPI) data and add to the RDF graph.
+        Process Protein-Protein Interaction (ppi) data and add to the RDF graph.
 
-        :param stringdb_data: List of dictionaries containing PPI data from STRING database.
+        :param stringdb_data: List of dictionaries containing ppi data from STRING database.
         :param gene_node: The gene URIRef.
         """
         if stringdb_data:
