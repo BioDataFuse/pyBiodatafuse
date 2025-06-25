@@ -230,6 +230,7 @@ class GraphDBManager:
         :param password: The password for authentication.
         :param bdf_graph: The RDF graph to upload.
         :param file_format: The format of the RDF graph (default is "turtle").
+        :raises HTTPError: If the request to execute the query fails.
         """
         url = f"{base_url.rstrip('/')}/repositories/{repository_id}/statements"
         auth = (username, password)
