@@ -11,8 +11,8 @@ from unittest.mock import Mock, patch
 import pandas as pd
 
 from pyBiodatafuse.annotators import minerva
-from pyBiodatafuse.annotators.minerva import get_gene_minerva_pathways, get_version_minerva
-from pyBiodatafuse.constants import MINERVA
+from pyBiodatafuse.annotators.minerva import get_gene_pathways, get_version_minerva
+from pyBiodatafuse.constants import MINERVA_PATHWAY_COL
 
 data_file_folder = os.path.join(os.path.dirname(__file__), "data")
 
@@ -37,8 +37,8 @@ class TestMinerva(unittest.TestCase):
         expected_version = {"source_version": "16.4.1"}
         assert obtained_version == expected_version
 
-    def test_get_gene_minerva_pathways(self):
-        """Test the get_gene_minerva_pathways function."""
+    def test_get_gene_pathways(self):
+        """Test the get_gene_pathways function."""
         with open(os.path.join(data_file_folder, "minerva_components.json")) as f:
             mock_data = json.load(f)
 
@@ -59,7 +59,7 @@ class TestMinerva(unittest.TestCase):
             }
         )
 
-        obtained_df, metadata = get_gene_minerva_pathways(bridgedb_dataframe, "COVID19 Disease Map")
+        obtained_df, metadata = get_gene_pathways(bridgedb_dataframe, "COVID19 Disease Map")
 
         # Define the expected DataFrame
         expected_df = pd.Series(
@@ -68,26 +68,26 @@ class TestMinerva(unittest.TestCase):
                     {
                         "pathway_id": "MINERVA:952",
                         "pathway_label": "HMOX1 pathway",
-                        "pathway_gene_count": 113,
+                        "pathway_gene_counts": 113,
                     }
                 ],
                 [
                     {
                         "pathway_id": "MINERVA:953",
                         "pathway_label": "Kynurenine synthesis pathway",
-                        "pathway_gene_count": 45,
+                        "pathway_gene_counts": 45,
                     }
                 ],
                 [
                     {
                         "pathway_id": "MINERVA:942",
                         "pathway_label": "Nsp14 and metabolism",
-                        "pathway_gene_count": 96,
+                        "pathway_gene_counts": 96,
                     }
                 ],
             ]
         )
-        expected_df.name = MINERVA
+        expected_df.name = MINERVA_PATHWAY_COL
 
-        pd.testing.assert_series_equal(obtained_df[MINERVA], expected_df)
+        pd.testing.assert_series_equal(obtained_df[MINERVA_PATHWAY_COL], expected_df)
         self.assertIsInstance(metadata, dict)

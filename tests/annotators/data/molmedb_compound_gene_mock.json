@@ -1,0 +1,59 @@
+{
+    "head": {
+        "vars": [
+            "inhibitorInChIKey",
+            "uniprot_trembl_id",
+            "hgcn_id",
+            "source_doi",
+            "source_pmid"
+        ]
+    },
+    "results": {
+        "bindings": [
+            {
+                "inhibitorInChIKey": {
+                    "type": "literal",
+                    "value": "OVVBIIBBRZVPAL-UHFFFAOYSA-N",
+                    "datatype": "http: //www.w3.org/2001/XMLSchema#string"
+                },
+                "uniprot_trembl_id": {
+                    "type": "literal",
+                    "value": "P31645",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#string"
+                },
+                "hgcn_id": {
+                    "type": "literal",
+                    "value": "SLC6A4",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#string"
+                },
+                "source_pmid": {
+                    "type": "literal",
+                    "value": "20223878",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#integer"
+                }
+            },
+            {
+                "inhibitorInChIKey": {
+                    "type": "literal",
+                    "value": "OVVBIIBBRZVPAL-UHFFFAOYSA-N",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#string"
+                },
+                "uniprot_trembl_id": {
+                    "type": "literal",
+                    "value": "P23975",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#string"
+                },
+                "hgcn_id": {
+                    "type": "literal",
+                    "value": "SLC6A2",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#string"
+                },
+                "source_pmid": {
+                    "type": "literal",
+                    "value": "20223878",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#integer"
+                }
+            }
+        ]
+    }
+}
