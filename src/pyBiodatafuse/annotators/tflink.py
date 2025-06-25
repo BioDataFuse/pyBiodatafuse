@@ -106,8 +106,6 @@ def add_target_and_tf_interaction(
             if padj_colname is not None:
                 if row[f"{padj_colname}_dea"] <= padj_filter:
                     tf = tflink_df[tflink_df["NCBI.GeneID.Target"] == row["target"]]
-                else:
-                    tf = tflink_df[tflink_df["NCBI.GeneID.Target"] == row["target"]]
                 if not tf.empty:
                     tf_info_list = tf[
                         [
@@ -125,9 +123,6 @@ def add_target_and_tf_interaction(
                     ].to_dict(orient="records")
                     ncbi_df.at[index, "its_tf"] = tf_info_list
                 else:
-                    # if row["padj_dea"] <= 0.01:
-                    #     ncbi_df.at[index, "its_tf"] = None
-                    # else:
                     ncbi_df.at[index, "its_tf"] = []
 
     return ncbi_df
