@@ -94,10 +94,11 @@ MOLMEDB_COMPOUND_PROTEIN_COL = f"{MOLMEDB}_transporter_inhibited"
 PUBCHEM_COMPOUND_ASSAYS_COL = f"{PUBCHEM}_assays"
 STRING_INTERACT_COL = f"{STRING}_interactions"
 WIKIDATA_CC_COL = f"{WIKIDATA}_cellular_components"
+AOPWIKIRDF = "aop_gene"  # todo fix this
+AOPWIKI_COMPOUND_COL = "pubchem_compound"  # todo fix this
 WIKIPATHWAYS_MOLECULAR_COL = f"{WIKIPATHWAYS}_molecular"
 WIKIPATHWAYS_PATHWAY_COL = f"{WIKIPATHWAYS}_pathway"
-AOPWIKI_GENE_COL = "aop_gene"  # todo fix this
-AOPWIKI_COMPOUND_COL = "pubchem_compound"  # todo fix this
+AOPWIKI_GENE_COL = "aop_gene"  #
 
 # Ontologies and vocabularies namespaces
 PUBCHEM_COMPOUND = "PubChem Compound"
@@ -225,6 +226,7 @@ DISEASE_UMLSCUI = "disease_umlscui"
 DISGENET_SCORE = "score"
 DISGENET_EI = "ei"
 DISGENET_EL = "el"
+DISGENET_SCORE = "score"
 
 DISGENET_DISEASE_OUTPUT_DICT = {
     DISEASE_NAME: str,
@@ -580,7 +582,7 @@ Node and edge main lable and attributes
 DATASOURCE = "datasource"
 NAME = ENTITY_NAME
 ID = "id"
-LABEL = "label"
+LABEL = "labels"
 EDGE_HASH = "edge_hash"
 
 # Node types
@@ -676,6 +678,32 @@ GENE_PATHWAY_EDGE_ATTRS = {
     LABEL: GENE_PATHWAY_EDGE_LABEL,
 }
 
+# molecular pathway node
+MOLECULAR_PATHWAY_NODE_LABEL = "Pathway"
+MOLECULAR_PATHWAY_NODE_MAIN_LABEL = "pathway_id"
+WIKIPATHWAYS_MOLECULAR_NODE_ATTRS = {
+    "pathway_id": "str",
+    "pathway_label": "str",
+    "id": "str",
+    "labels": MOLECULAR_PATHWAY_NODE_LABEL,
+}
+WIKIPATHWAYS_MOLECULAR_EDGE_ATTRS = {"interaction_type": "str", "rhea_id": str}
+MOLECULAR_GENE_PATHWAY_EDGE_LABEL = "part_of"
+MOLECULAR_INTERACTION_EDGE_ATTRS = {"interaction_type": "str", "rhea_id": str}
+# GO nodes
+# Open Targets - GO processes
+GO_BP_NODE_LABEL = "Biological Process"
+GO_MF_NODE_LABEL = "Molecular Function"
+GO_CC_NODE_LABEL = "Cellular Component"
+GO_NODE_MAIN_LABEL = "go_id"
+GO_NODE_ATTRS = {
+    "datasource": OPENTARGETS,
+    "name": None,
+    "id": None,
+    "labels": None,
+}
+GENE_GO_EDGE_LABEL = "part_of"
+GENE_GO_EDGE_ATTRS = {"datasource": OPENTARGETS, "label": GENE_GO_EDGE_LABEL}
 # IntAct interactions
 SPECIES = "species"
 INTACT_INTERACTION_TYPE = "interaction_type"
@@ -750,9 +778,8 @@ MOLECULAR_PATHWAY_NODE_ATTRS = {
     ID: "str",
     LABEL: PATHWAY_NODE_LABEL,
 }
-
 WIKIPATHWAYS_INTERACTION_TYPE = "interaction_type"
-MOLECULAR_INTERACTION_EDGE_ATTRS = GENE_PATHWAY_EDGE_ATTRS.copy()
+# MOLECULAR_INTERACTION_EDGE_ATTRS = GENE_PATHWAY_EDGE_ATTRS.copy()
 MOLECULAR_INTERACTION_EDGE_ATTRS.update(
     {
         WIKIPATHWAYS_INTERACTION_TYPE: None,
@@ -919,9 +946,38 @@ LITERATURE_DISEASE_EDGE_ATTRS = {
     LABEL: GENE_DISEASE_EDGE_LABEL,
 }
 
-"""
-RDF Specific constants
-"""
+# Wikidata
+
+
+# AOPWIKI
+
+KEY_EVENT_NODE_LABEL = "Key Event"
+MIE_NODE_LABEL = "Molecular Initiating Event"
+AOP_NODE_LABEL = "Adverse Outcome Pathway"
+AO_NODE_LABEL = "Adverse Outcome"
+
+# AOPWIKI Edge Labels
+AOP_GENE_EDGE_LABEL = "associated_with"  # Gene to AOP edge
+MIE_AOP_EDGE_LABEL = "upstream"  # MIE to AOP edge
+KE_UPSTREAM_MIE_EDGE_LABEL = "upstream"  # KE upstream to MIE edge
+KE_DOWNSTREAM_KE_EDGE_LABEL = "downstream"  # KE downstream to KE upstream edge
+KE_DOWNSTREAM_AO_EDGE_LABEL = "downstream"  # KE downstream to AO edge
+AOPWIKI_EDGE_ATTRS = {
+    "datasource": AOPWIKIRDF,
+    "relation": None,
+    "label": None,
+}
+MIE_NODE_LABEL = "Molecular Initiating Event"
+KE_NODE_LABEL = "Key Event"
+AO_NODE_LABEL = "Adverse Outcome"
+
+AOPWIKI_NODE_ATTRS = {
+    "datasource": AOPWIKIRDF,
+    "title": None,
+    "type": None,
+    "organ": None,
+    "labels": None,
+}
 
 # Mapper from namespace to BridgeDB datasource
 COMPOUND_NAMESPACE_MAPPER = {"pubchem.compound": "PubChem Compound", "CHEMBL": "ChEMBL compound"}
@@ -941,6 +997,7 @@ DATA_TYPES_SOURCES = {
     "ppi": STRING_INTERACT_COL,
     "disgenet": DISGENET_DISEASE_COL,
     "opentargets_disease": OPENTARGETS_DISEASE_COL,
+    "Opentargets_reactome": OPENTARGETS_REACTOME_COL,
 }
 
 NODE_URI_PREFIXES = {
@@ -988,6 +1045,7 @@ URIS = {
     "anatomical_entity_base_node": "anatomical_entity",
     "life_cycle_base_node": "life_cycle",
     "gene_expression_value_base_node": "gene_expression_value",
+    "interaction": "interaction",
 }
 
 # NODE TYPES
@@ -1015,10 +1073,16 @@ NODE_TYPES = {
     "developmental_stage_node": f"{NAMESPACE_BINDINGS['obo']}NCIT_C43531",
     "el_node": "https://biodatafuse.org/onto/bdf#DisGeNET_Evidence_Level",
     "ei_node": "https://biodatafuse.org/onto/bdf#DisGeNET_Evidence_Index",
+    "ao": "http://aopkb.org/aop_ontology#AdverseOutcome",
+    "ke": "http://aopkb.org/aop_ontology#KeyEvent",
+    "mie": "http://aopkb.org/aop_ontology#MolecularInitiatingEvent",
+    "ker": "http://aopkb.org/aop_ontology#KeyEventRelationship",
+    "interaction": "https://vocabularies.wikipathways.org/wp#Interaction",
 }
 
 # PREDICATES
 PREDICATES = {
+    "sameAs": f"{NAMESPACE_BINDINGS['owl']}sameAs",
     "sio_refers_to": f"{NAMESPACE_BINDINGS['sio']}SIO_000628",
     "sio_has_measurement_value": f"{NAMESPACE_BINDINGS['sio']}SIO_000216",
     "sio_has_source": f"{NAMESPACE_BINDINGS['sio']}SIO_000253",
@@ -1039,6 +1103,9 @@ PREDICATES = {
     "translation_of": f"{NAMESPACE_BINDINGS['obo']}so#translation_of",
     "translates_to": f"{NAMESPACE_BINDINGS['obo']}so#translates_to",
     "variant_of": f"{NAMESPACE_BINDINGS['obo']}so#variant_of",
+    "has_upstreamkey_event": "http://aopkb.org/aop_ontology#has_upstream_key_event",
+    "has_downstreamkey_event": "http://aopkb.org/aop_ontology#has_downstream_key_event",
+    "occurs_in": f"{NAMESPACE_BINDINGS['obo']}BFO_0000066",
 }
 
 # Classes for clinical phases
@@ -1051,6 +1118,7 @@ CLINICAL_PHASES = {
 }
 
 # GO Types
+
 GO_TYPES = {
     "C": f"{NAMESPACE_BINDINGS['obo']}GO_0005575",
     "P": f"{NAMESPACE_BINDINGS['obo']}GO_0008150",
@@ -1069,6 +1137,22 @@ MOAS = {
     "INVERSE AGONIST": f"{NAMESPACE_BINDINGS['obo']}RO_0018028",
 }
 
+# Data sources
+
+DATA_SOURCES = {
+    DISGENET: "https://disgenet.com/",
+    WIKIPATHWAYS: "https://wikipathways.org",
+    MINERVA: "https://minerva.pages.uni.lu/doc/",
+    BRIDGEDB: "https://www.bridgedb.org/",
+    STRING: "https://string-db.org/",
+    OPENTARGETS: "https://www.opentargets.org/",
+    BGEE: "https://www.bgee.org/",
+    MOLMEDB: "https://molmedb.upol.cz",
+    PUBCHEM: "https://pubchem.ncbi.nlm.nih.gov/",
+    WIKIDATA: "https://wikidata.org",
+    OPENTARGETS: "https://www.opentargets.org/",
+    AOPWIKIRDF: "https://aopwiki.rdf.bigcat-bioinformatics.org",
+}
 
 DISEASE_IDENTIFIER_TYPES = [
     "HPO",
@@ -1141,6 +1225,7 @@ SOURCE_NAMESPACES = {
     "TTD Drug": "http://db.idrblab.net/ttd/data/drug/details/",
     "Wikidata": "https://www.wikidata.org/wiki/",
     "Wikipedia": "https://en.wikipedia.org/wiki/",
+    "aopwiki": "https://identifiers.org/",
     "WikiPathways": "https://www.wikipathways.org/",
     "Reactome": "https://reactome.org/",
     "Minerva": "https://minerva-net.lcsb.uni.lu/",
