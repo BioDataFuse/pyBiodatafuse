@@ -1450,7 +1450,6 @@ def process_homologs(g, combined_df, homolog_df_list, func_dict, dea_columns):
         gene_node_label = add_gene_node(g, row, dea_columns)
         func_dict_non_hl = {key: func for key, func in func_dict.items() if key not in func_dict_hl}
         process_annotations(g, gene_node_label, row, func_dict_non_hl)
-        process_ppi(g, gene_node_label, row)
 
     for _i, row in tqdm(combined_df.iterrows(), total=combined_df.shape[0]):
         if pd.isna(row["identifier"]) or pd.isna(row["Ensembl_homologs"]):
