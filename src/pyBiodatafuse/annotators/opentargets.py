@@ -537,6 +537,207 @@ def get_gene_compound_interactions(
     # Calculate the number of new nodes
     num_new_nodes = intermediate_df[Cons.CHEMBL_ID].nunique()
     # Calculate the number of new edges
+    num_new_edges = intermediate_df.drop_duplicates(subset=["target", "chembl_id"]).shape[0]
+
+    # Check the intermediate_df
+    if num_new_edges != len(intermediate_df):
+        warnings.warn(
+            f"The intermediate_df in {OPENTARGETS_GENE_COMPOUND_COL} annotatur should be checked, please create an issue on https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
+            stacklevel=2,
+        )
+
+    # Add the number of new nodes and edges to metadata
+    opentargets_version["query"]["number_of_added_nodes"] = num_new_nodes
+    opentargets_version["query"]["number_of_added_edges"] = num_new_edges
+    return merged_df, opentargets_version
+
+
+# TODO: The disease annotations are not curated and will be used again when the OpenTarget annotation improves.
+def _process_disease_xref(row) -> Dict[str, str]:
+    tmp = {}
+    for val in row:
+        try:
+            namespace, idx = val.split(":")
+        except ValueError:  # there are times with multiple colons
+            continue
+
+        if namespace.lower() in OPENTARGETS_IGNORE_DISEASE_IDS:  # skipping non essential ones
+            continue
+        if namespace.lower() in ["mesh", "msh"]:
+            tmp["MESH"] = f"MESH_{idx}"
+        elif namespace.lower() in ["ncit"]:
+            tmp["NCI"] = f"NCI_{idx}"
+        elif namespace.lower() in ["omim"]:
+            tmp["OMIM"] = f"OMIM_{idx}"
+        elif namespace.lower() in ["mondo"]:
+            tmp["MONDO"] = f"MONDO_{idx}"
+        elif namespace.lower() in ["efo"]:
+            tmp["EFO"] = f"EFO_{idx}"
+        elif namespace.lower() in ["doid"]:
+            tmp["DO"] = f"DO_{idx}"
+        elif namespace.lower() in ["umls"]:
+            tmp["UMLS"] = f"UMLS_{idx}"
+        elif namespace.lower() in ["hp"]:
+            tmp["HPO"] = f"HPO_HP:{idx}"
+        elif namespace.lower() in ["orphanet", "ordo"]:
+            tmp["ORDO"] = f"ORDO_{idx}"
+    return tmp
+
+
+# TODO: The disease annotations are not curated and will be used again when the OpenTarget annotation improves.
+def get_compound_disease_interactions(
+    bridgedb_df: pd.DataFrame,
+) -> Tuple[pd.DataFrame, dict]:
+    """Get information about drugs associated with diseases of interest.
+
+    :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
+    :returns: a DataFrame containing the OpenTargets output and dictionary of the query metadata.
+    """
+    # Check if the API is available
+    api_available = check_endpoint_opentargets()
+    if not api_available:
+        warnings.warn(
+            f"{OPENTARGETS} GraphQL endpoint is not available. Unable to retrieve data.",
+            stacklevel=2,
+        )
+        return pd.DataFrame(), {}
+
+    if (
+        OPENTARGETS_COMPOUND_QUERY_INPUT_ID in bridgedb_df["target.source"].values
+    ):  # for chembl_id in col
+        data_df = bridgedb_df[bridgedb_df["target.source"] == OPENTARGETS_COMPOUND_QUERY_INPUT_ID]
+        chembl_gene_map = data_df.set_index("target")[
+            "identifier"
+        ].to_dict()  # Dict of chembl_id:gene_id
+        chembl_cid_map = None
+        chembl_ids = set(data_df["target"].tolist())
+    else:
+        data_df = get_identifier_of_interest(bridgedb_df, OPENTARGETS_COMPOUND_INPUT_ID)
+        pubchem_ids = data_df["target"].tolist()
+        chembl_gene_map = None
+        chembl_cid_map = id_mapper.cid2chembl(pubchem_ids)  # Dict of chembl_id:pubchem_id
+        chembl_ids = set(list(chembl_cid_map.keys()))
+
+    # remove nan entries
+    chembl_ids = [x for x in chembl_ids if str(x) != "nan"]  # type: ignore
+
+    # Record the start time
+    opentargets_version = get_version_opentargets()
+    start_time = datetime.datetime.now()
+    query_string = """
+query KnownDrugsQuery {
+  drugs(chemblIds: $chemblIds) {
+    id
+    name
+    maximumClinicalTrialPhase
+    hasBeenWithdrawn
+    adverseEvents {
+      count
+      rows {
+        name
+      }
+    }
+    linkedDiseases {
+      rows {
+        id
+        name
+        dbXRefs
+        therapeuticAreas {
+          id
+          name
+        }
+      }
+    }
+  }
+}
+"""
+    query_string = query_string.replace("$chemblIds", str(chembl_ids).replace("'", '"'))
+    r = requests.post(OPENTARGETS_ENDPOINT, json={"query": query_string}).json()
+
+    # Record the end time
+    end_time = datetime.datetime.now()
+
+    """Metadata details"""
+    # Get the current date and time
+    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    # Calculate the time elapsed
+    time_elapsed = str(end_time - start_time)
+
+    # Add version, datasource, query, query time, and the date to metadata
+    opentargets_version["query"] = {
+        "size": len(chembl_ids),
+        "time": time_elapsed,
+        "date": current_date,
+        "url": OPENTARGETS_ENDPOINT,
+    }
+
+    # Generate the OpenTargets DataFrame
+    intermediate_df = pd.DataFrame()
+
+    if r["data"]["drugs"] is None:
+        warnings.warn(
+            f"There is no annotation for your input list in {OPENTARGETS_DISEASE_COL}.",
+            stacklevel=2,
+        )
+        return pd.DataFrame(), opentargets_version
+
+    for drug in r["data"]["drugs"]:
+        if not drug["linkedDiseases"]:
+            continue
+
+        # Based on clinical trial data
+        disease_info = drug["linkedDiseases"]["rows"]
+        disease_df = pd.DataFrame(disease_info)
+
+        if disease_df.empty:
+            continue
+
+        disease_df["therapeutic_areas"] = disease_df["therapeuticAreas"].apply(
+            lambda x: ", ".join([f"{i['id']}:{i['name']}" for i in x])
+        )  # Multiple values separated by comma
+
+        disease_df.rename(
+            columns={"id": "opentarget_disease_id", "name": "disease_name"}, inplace=True
+        )
+
+        # Splitting the xrefs into multiple columns
+        xrefs = []  # type: ignore
+
+        for row in disease_df["dbXRefs"]:
+            if len(row) == 0:
+                xrefs.append({})
+                continue
+            tmp = _process_disease_xref(row)
+            xrefs.append(tmp)
+
+        disease_xref_df = pd.DataFrame(xrefs)
+        disease_xref_df.fillna("", inplace=True)
+        disease_df = pd.concat([disease_df, disease_xref_df], axis=1)
+
+        if chembl_cid_map:
+            disease_df["target"] = chembl_cid_map.get(drug["id"], None)
+        else:
+            disease_df["identifier"] = chembl_gene_map[drug["id"]]
+
+        disease_df["drug_name"] = drug["name"]
+        disease_df["max_clinical_trial_phase"] = drug["maximumClinicalTrialPhase"]
+        disease_df["is_withdrawn"] = drug["hasBeenWithdrawn"]
+
+        disease_df.drop(columns=["therapeuticAreas", "dbXRefs"], inplace=True)
+
+        intermediate_df = pd.concat([intermediate_df, disease_df], ignore_index=True)
+
+    if intermediate_df.empty:
+        warnings.warn(
+            f"There is no annotation for your input list in {OPENTARGETS_DISEASE_COL}.",
+            stacklevel=2,
+        )
+        return pd.DataFrame(), opentargets_version
+
+    intermediate_df.fillna("", inplace=True)
+
+    missing_cols = [
+        col for col in OPENTARGETS_DISEASE_OUTPUT_DICT.keys() if col not in intermediate_df.columns
     num_new_edges = intermediate_df.drop_duplicates(subset=[Cons.TARGET_COL, Cons.CHEMBL_ID]).shape[
         0
     ]
