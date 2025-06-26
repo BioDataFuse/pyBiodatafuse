@@ -6,7 +6,7 @@
 from rdflib import Graph, Literal, URIRef
 from rdflib.namespace import DC, RDF, RDFS, XSD
 
-from pyBiodatafuse.constants import NODE_TYPES, PREDICATES
+import pyBiodatafuse.constants as Cons
 from pyBiodatafuse.graph.rdf.nodes.compound import (  # pylint: disable=no-name-in-module
     add_tested_compound_node,
 )
@@ -23,20 +23,24 @@ def add_experimental_process_node(
     :param data: List of dictionaries containing experimental process information.
     :return: URIRef for the created experimental process node.
     """
-    pubchem_assay_id = data.get("pubchem_assay_id", None)  # TODO refactor from constants
+    pubchem_assay_id = data.get(Cons.PUBCHEM_ASSAY_ID, None)
     if pubchem_assay_id:
-        pubchem_assay_iri = "https://pubchem.ncbi.nlm.nih.gov/bioassay/" + str(
-            pubchem_assay_id
-        ).strip("AID")
+        pubchem_assay_iri = Cons.NODE_URI_PREFIXES["pubchem_assay"] + str(pubchem_assay_id).strip(
+            "AID"
+        )
         assay_type = data["assay_type"]
-        inchi = data["inchi"]
+        inchi = data[Cons.PUBCHEM_INCHI]
         outcome = data["outcome"]
         compound_cid = data["compound_cid"]
-        compound_name = data["compound_name"]
-        smiles = data["smiles"]
+        compound_name = data[Cons.PUBCHEM_COMPOUND_NAME]
+        smiles = data[Cons.PUBCHEM_SMILES]
         experimental_process_node = URIRef(pubchem_assay_iri)
         g.add(
-            (experimental_process_node, RDF.type, URIRef(NODE_TYPES["experimental_process_node"]))
+            (
+                experimental_process_node,
+                RDF.type,
+                URIRef(Cons.NODE_TYPES["experimental_process_node"]),
+            )
         )
         g.add((experimental_process_node, RDFS.label, Literal(assay_type, datatype=XSD.string)))
         g.add(
@@ -51,10 +55,18 @@ def add_experimental_process_node(
             g=g, inchi=inchi, smiles=smiles, compound_id=compound_cid, compound_name=compound_name
         )
         g.add(
-            (experimental_process_node, URIRef(PREDICATES["sio_has_input"]), tested_compound_node)
+            (
+                experimental_process_node,
+                URIRef(Cons.PREDICATES["sio_has_input"]),
+                tested_compound_node,
+            )
         )
         # has outcome
-        g.add((experimental_process_node, URIRef(PREDICATES["sio_has_output"]), Literal(outcome)))
-        data_source_node = add_data_source_node(g, "PubChem")
-        g.add((experimental_process_node, URIRef(PREDICATES["sio_has_source"]), data_source_node))
+        g.add(
+            (experimental_process_node, URIRef(Cons.PREDICATES["sio_has_output"]), Literal(outcome))
+        )
+        data_source_node = add_data_source_node(g, Cons.PUBCHEM)
+        g.add(
+            (experimental_process_node, URIRef(Cons.PREDICATES["sio_has_source"]), data_source_node)
+        )
         return experimental_process_node
