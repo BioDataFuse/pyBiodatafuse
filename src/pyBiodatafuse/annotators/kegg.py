@@ -159,7 +159,7 @@ def get_compounds(kegg_df: pd.DataFrame):
                     Cons.IDENTIFIER_SOURCE_COL: row[Cons.IDENTIFIER_SOURCE_COL],
                     Cons.TARGET_COL: kegg_id,
                     Cons.TARGET_SOURCE_COL: row[Cons.TARGET_SOURCE_COL],
-                    Cons.KEGG_COMPOUND_OUTPUT_DICT: queried_identifiers.get(
+                    Cons.KEGG_COMPOUND_OUTPUT_DICT_KEY: queried_identifiers.get(
                         kegg_id, {Cons.KEGG_IDENTIFIER: kegg_id, Cons.KEGG_COMPOUND_NAME: None}
                     ),
                 }
