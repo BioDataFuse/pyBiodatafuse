@@ -653,7 +653,6 @@ def add_kegg_compounds_subgraph(g, pathway_node_label, compounds_list, combined_
     return g
 
 
-# TODO: Fix this function - Delano
 def process_kegg_pathway_compound(g, kegg_pathway_compound, combined_df):
     """Process pathway-compound relationships from KEGG and add them to the graph.
 
@@ -673,7 +672,6 @@ def process_kegg_pathway_compound(g, kegg_pathway_compound, combined_df):
             compounds_list = []
 
         for compound in compounds_list:
-            print(compound)
             compound_id = compound[Cons.KEGG_IDENTIFIER]
 
             for _, pathway_row in combined_df.iterrows():
@@ -1608,17 +1606,19 @@ def process_homologs(g, combined_df, homolog_df_list, func_dict, dea_columns):
     """
     func_dict_hl = {}
 
+    homolog_cols = set()
     for homolog_df in homolog_df_list:
-        last_col = homolog_df.columns[-1]
-        for key, func in func_dict.items():
-            if last_col == key and last_col in combined_df.columns:
-                func_dict_hl[last_col] = func
+        if homolog_df is not None and not homolog_df.empty:
+            homolog_cols.update(homolog_df.columns)
+
+    func_dict_hl = {key: func for key, func in func_dict.items() if key in homolog_cols and key in combined_df.columns}
 
     for _i, row in tqdm(combined_df.iterrows(), total=combined_df.shape[0], desc="Building graph"):
         if pd.isna(row["identifier"]) or pd.isna(row["target"]):
             continue
         gene_node_label = add_gene_node(g, row, dea_columns)
-        func_dict_non_hl = {key: func for key, func in func_dict.items() if key not in func_dict_hl}
+        homolog_keys = set(func_dict_hl.keys())
+        func_dict_non_hl = {key: func for key, func in func_dict.items() if key not in homolog_keys}
         process_annotations(g, gene_node_label, row, func_dict_non_hl)
 
     for _i, row in tqdm(combined_df.iterrows(), total=combined_df.shape[0]):
@@ -1637,10 +1637,15 @@ def process_homologs(g, combined_df, homolog_df_list, func_dict, dea_columns):
                 if homolog_node_label:
                     annot_node_attrs = Cons.ENSEMBL_HOMOLOG_NODE_ATTRS.copy()
                     annot_node_attrs["id"] = homolog_node_label
-                    annot_node_attrs[Cons.LABEL] = Cons.HOMOLOG_NODE_LABELS
+                    annot_node_attrs[Cons.LABEL] = Cons.HOMOLOG_NODE_LABEL
                     g.add_node(homolog_node_label, attr_dict=annot_node_attrs)
 
-                    process_annotations(g, homolog_node_label, row, func_dict_hl)
+                    homolog_row = pd.Series({
+                        "identifier": homolog_node_label,
+                        **{key: row.get(key) for key in func_dict_hl}
+                    })
+
+                    process_annotations(g, homolog_node_label, homolog_row, func_dict_hl)
 
 
 def normalize_node_attributes(g):
@@ -1694,13 +1699,13 @@ def _built_gene_based_graph(
         Cons.LITERATURE_DISEASE_COL: add_literature_gene_disease_subgraph,
         Cons.MINERVA_PATHWAY_COL: add_minerva_gene_pathway_subgraph,
         Cons.WIKIPATHWAYS: add_wikipathways_gene_pathway_subgraph,
-        # Cons.KEGG_PATHWAY_COL: add_kegg_gene_pathway_subgraph,  # Needs more work
+        Cons.KEGG_PATHWAY_COL: add_kegg_gene_pathway_subgraph, 
         Cons.OPENTARGETS_REACTOME_COL: add_opentargets_gene_reactome_pathway_subgraph,
         Cons.OPENTARGETS_GO_COL: add_opentargets_gene_go_subgraph,
         Cons.OPENTARGETS_GENE_COMPOUND_COL: add_opentargets_gene_compound_subgraph,
         Cons.MOLMEDB_PROTEIN_COMPOUND_COL: add_molmedb_gene_inhibitor_subgraph,
         Cons.PUBCHEM_COMPOUND_ASSAYS_COL: add_pubchem_assay_subgraph,
-        Cons.WIKIPATHWAYS: add_wikipathways_gene_pathway_subgraph,
+        Cons.WIKIPATHWAYS_PATHWAY_COL: add_wikipathways_gene_pathway_subgraph,
         Cons.WIKIPATHWAYS_MOLECULAR_COL: add_wikipathways_molecular_subgraph,
         Cons.ENSEMBL_HOMOLOG_COL: add_ensembl_homolog_subgraph,
         Cons.INTACT_INTERACT_COL: add_intact_interactions_subgraph,
@@ -1714,38 +1719,19 @@ def _built_gene_based_graph(
         if pd.isna(row["identifier"]) or pd.isna(row["target"]):
             continue
         gene_node_label = add_gene_node(g, row, dea_columns)
-        process_annotations(g, gene_node_label, row, func_dict)
+        if homolog_df_list is None:
+            process_annotations(g, gene_node_label, row, func_dict)
         process_ppi(g, gene_node_label, row)
 
     if homolog_df_list is not None:
         process_homologs(g, combined_df, homolog_df_list, func_dict, dea_columns)
 
-    is_compound_input = any(
-        combined_df[Cons.TARGET_SOURCE_COL].astype(str).str.contains(ci, case=False, na=False).any()
-        or combined_df[Cons.IDENTIFIER_COL].astype(str).str.contains(ci, case=False, na=False).any()
-        for ci in compound_identifiers
-    )
-
     for _i, row in tqdm(combined_df.iterrows(), total=combined_df.shape[0], desc="Building graph"):
         if pd.isna(row[Cons.IDENTIFIER_COL]) or pd.isna(row[Cons.TARGET_COL]):
             continue
-        if is_compound_input:
-            node_label = add_compound_node(g, row)
-
         node_label = add_gene_node(g, row, dea_columns)
-
-        process_annotations(g, node_label, row, func_dict)
-
-    # Process disease-compound relationships
-    dnodes = {
-        d["attr_dict"][Cons.EFO]: n
-        for n, d in g.nodes(data=True)
-        if d["attr_dict"][Cons.LABEL] == Cons.DISEASE_NODE_LABEL
-        and d["attr_dict"][Cons.EFO] is not None
-    }
-
-    if disease_compound is not None:
-        process_disease_compound(g, disease_compound, disease_nodes=dnodes)
+        if homolog_df_list is None:
+            process_annotations(g, node_label, row, func_dict)
 
     if pathway_compound is not None:
         process_kegg_pathway_compound(g, pathway_compound, combined_df)

@@ -206,7 +206,7 @@ def combine_with_homologs(df: pd.DataFrame, homolog_dfs: list) -> pd.DataFrame:
     exploded_df = exploded_df.rename(columns={"original_identifier": "identifier"})
 
     exploded_df[Cons.ENSEMBL_HOMOLOGS] = exploded_df[Cons.ENSEMBL_HOMOLOGS].apply(
-        lambda x: [{"homolog": x}] if pd.notnull(x) else []
+        lambda x: [x] if isinstance(x, dict) and "homolog" in x else ([{"homolog": x}] if isinstance(x, str) and pd.notnull(x) else [])
     )
 
     exploded_df = exploded_df[~exploded_df["identifier.source"].isna()]

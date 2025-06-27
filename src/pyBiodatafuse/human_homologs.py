@@ -61,6 +61,8 @@ def get_human_homologs(row):
                 homolog = homology["target"]["id"]
                 return [{Cons.ENSEMBL_HOMOLOG_MAIN_LABEL: homolog}]
 
+    return [{Cons.ENSEMBL_HOMOLOG_MAIN_LABEL: np.nan}]
+
 
 def get_homologs(bridgedb_df):
     """Retrieve homologs for input DataFrame.
