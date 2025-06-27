@@ -1,6 +1,8 @@
 # coding: utf-8
 
-"""Python file for MitoCarta ETL process:
+"""
+Python file for MitoCarta ETL process.
+
 You can download the MitoCarta dataset from **MitoCarta**. Please visit the following page for the download:
 
 [MitoCarta Download Page](https://personal.broadinstitute.org/scalvo/MitoCarta3.0/)
@@ -24,20 +26,23 @@ from typing import Tuple
 import pandas as pd
 import requests
 
-from pyBiodatafuse.constants import MITOCARTA, MITOCARTA_DOWNLOAD_URL, MITOCARTA_GENE_INPUT_ID
+import pyBiodatafuse.constants as Cons
 from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interest
 
 
-def download_mitocarta_dataset(mitocarta_file: str, filename: str, sheet_name:str = "A Human MitoCarta3.0") -> Tuple[pd.DataFrame, dict]:
-    """Downloads, saves and reads a MitoCarta dataset.
+def download_mitocarta_dataset(
+    mitocarta_file: str, filename: str, sheet_name: str = "A Human MitoCarta3.0"
+) -> Tuple[pd.DataFrame, dict]:
+    """Download, save, and read a MitoCarta dataset.
 
     :param mitocarta_file: The MitoCarta dataset to download. Human "Human.MitoCarta3.0.xls".
     :param sheet_name: The name of the sheet in the Excel file to read. Default is "A Human MitoCarta3.0".
     :param filename: The local file path to save the downloaded dataset.
     :returns: A MitoCarta DataFrame and dictionary of the MitoCarta metadata.
+    :raises ValueError: If the file cannot be downloaded.
     """
     # Dowonload the TF-Target dataset
-    url = f"{MITOCARTA_DOWNLOAD_URL}/{mitocarta_file}"
+    url = f"{Cons.MITOCARTA_DOWNLOAD_URL}/{mitocarta_file}"
     if not os.path.exists(filename):
         response = requests.get(url)
         try:
@@ -47,81 +52,57 @@ def download_mitocarta_dataset(mitocarta_file: str, filename: str, sheet_name:st
         else:
             with open(filename, "wb") as file:
                 file.write(response.content)
-    
+
     with gzip.open(filename, "rt") as f:
-        mitocarta_df = pd.read_excel(url, sheet_name=sheet_name)
+        mitocarta_df = pd.read_excel(f, sheet_name=sheet_name)
 
     if mitocarta_df is not None:
         # Add version
         mitocarta_metadata = {
-            "datasource": MITOCARTA,
+            "datasource": Cons.MITOCARTA,
             "metadata": {
                 "download date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                "download link": f"{MITOCARTA_DOWNLOAD_URL}/{mitocarta_file}",
+                "download link": f"{Cons.MITOCARTA_DOWNLOAD_URL}/{mitocarta_file}",
             },
         }
 
         return mitocarta_df, mitocarta_metadata
 
+    # Return empty DataFrame and metadata if mitocarta_df is None
+    empty_metadata = {
+        "datasource": Cons.MITOCARTA,
+        "metadata": {
+            "download date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "download link": f"{Cons.MITOCARTA_DOWNLOAD_URL}/{mitocarta_file}",
+            "note": "No data found in the downloaded file",
+        },
+    }
+    return pd.DataFrame(), empty_metadata
+
 
 def process_mitocarta(mitocarta_df: pd.DataFrame, species: str = "hsapiens") -> pd.DataFrame:
     """Add targets and TFs to each row (gene).
 
-    :param ncbi_df: BridgeDb output with ncbi id as target source.
     :param mitocarta_df: The mitocarta dataset.
-    :returns: ncbi_df with targets and TFs in each row.
+    :param species: The species to process the data for; defaults to "hsapiens".
+    :returns: mitocarta_df with targets and TFs in each row.
+    :raises ValueError: If species is not supported.
     """
     # Select relevant columns for inclusion in the graph
     if species == "hsapiens":
-        selected_columns = [
-            "EnsemblGeneID_mapping_version_20200130",
-            "Description",
-            "MitoCarta3.0_Evidence",
-            "MitoCarta3.0_SubMitoLocalization",
-            "MitoCarta3.0_MitoPathways",
-            "HPA_Main_Location_2020 (Reliability)",
-            "Tissues",
-        ]
+        selected_columns = Cons.MITO_SELECTED_COLUMNS["human"]
         mitocarta_subset = mitocarta_df[selected_columns]
-        # Rename columns for clarity
-        mitocarta_subset.rename(
-            columns={
-                "EnsemblGeneID_mapping_version_20200130": "ensembl_id",
-                "Description": "gene_description",
-                "MitoCarta3.0_Evidence": "evidence",
-                "MitoCarta3.0_SubMitoLocalization": "sub_mito_localization",
-                "MitoCarta3.0_MitoPathways": "mito_pathways",
-                "HPA_Main_Location_2020 (Reliability)": "hpa_location",
-                "Tissues": "tissue_expression",
-            },
-            inplace=True,
-        )
     elif species == "mmusculus":
-        selected_columns = [
-            "EnsemblGeneID",
-            "Description",
-            "MitoCarta3.0_Evidence",
-            "MitoCarta3.0_SubMitoLocalization",
-            "MitoCarta3.0_MitoPathways",
-            "HPA_Main_Location_2020 (Reliability)",
-            "Tissues",
-        ]
+        selected_columns = Cons.MITO_SELECTED_COLUMNS["mouse"]
         mitocarta_subset = mitocarta_df[selected_columns]
-        mitocarta_subset.rename(
-            columns={
-                "EnsemblGeneID": "ensembl_id",
-                "Description": "gene_description",
-                "MitoCarta3.0_Evidence": "evidence",
-                "MitoCarta3.0_SubMitoLocalization": "sub_mito_localization",
-                "MitoCarta3.0_MitoPathways": "mito_pathways",
-                "HPA_Main_Location_2020 (Reliability)": "hpa_location",
-                "Tissues": "tissue_expression",
-            },
-            inplace=True,
-        )
-    # 
-    mitocarta_subset["mito_pathways"] = (
-        mitocarta_subset["mito_pathways"]
+    else:
+        raise ValueError(f"Species {species} not supported.")
+
+    # rename columns
+    mitocarta_subset.rename(columns=Cons.MITOCART_COL_MAPPER, inplace=True, errors="ignore")
+
+    mitocarta_subset[Cons.MITO_PATHWAYS] = (
+        mitocarta_subset[Cons.MITO_PATHWAYS]
         .str.split(">")
         .str[-1]
         .str.split("|")
@@ -129,9 +110,11 @@ def process_mitocarta(mitocarta_df: pd.DataFrame, species: str = "hsapiens") -> 
         .str.strip()
     )
     mitocarta_melted = mitocarta_subset.apply(
-        lambda row: [row["ensembl_id"], [row.drop("ensembl_id").to_dict()]], axis=1
-        )
-    intermediate_df = pd.DataFrame(mitocarta_melted.tolist(), columns=["target", MITOCARTA])
+        lambda row: [row[Cons.MITO_ENSEMBL_ID], [row.drop(Cons.MITO_ENSEMBL_ID).to_dict()]], axis=1
+    )
+    intermediate_df = pd.DataFrame(
+        mitocarta_melted.tolist(), columns=[Cons.TARGET_COL, Cons.MITOCART_PATHWAY_COL]
+    )
 
     return intermediate_df
 
@@ -141,10 +124,9 @@ def get_gene_mito_pathways(
     mitocarta_file: str,
     filename: str,
     species: str = "hsapiens",
-    sheet_name: str = "A Human MitoCarta3.0"
+    sheet_name: str = "A Human MitoCarta3.0",
 ) -> Tuple[pd.DataFrame, dict]:
-    
-    """get gene and mitochondia pathways from MitoCarta.
+    """Get gene and mitochondia pathways from MitoCarta.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query.
     :param mitocarta_file: Name of the remote MitoCarta file to download.
@@ -155,31 +137,22 @@ def get_gene_mito_pathways(
     """
     # Download dataset and get metadata
     mitocarta_df, mitocarta_metadata = download_mitocarta_dataset(
-        mitocarta_file=mitocarta_file,
-        filename=filename,
-        sheet_name=sheet_name
+        mitocarta_file=mitocarta_file, filename=filename, sheet_name=sheet_name
     )
-    # Process the dataset according to species
-    intermediate_df = process_mitocarta(
-        mitocarta_df=mitocarta_df,
-        species=species
-    )
-    
+
+    # Subset the dataset according to species
+    subset_df = process_mitocarta(mitocarta_df=mitocarta_df, species=species)
+
     # Merge the processed DataFrame with the original bridgedb_df
-    data_df = bridgedb_df[bridgedb_df["target.source"] == MITOCARTA_GENE_INPUT_ID]
-    # merged_df = collapse_data_sources(
-    #     data_df=bridgedb_df,
-    #     source_namespace=MITOCARTA_GENE_INPUT_ID,
-    #     target_df=intermediate_df,
-    #     common_cols=["target"],
-    #     target_specific_cols=list([]),
-    #     col_name=MITOCARTA,
-    # )
-    merged_df = pd.merge(  # TODO: check why the output is not correct  when using collapse_data_sources function
-        data_df,
-        intermediate_df,
-        on="target",
-        how="left",
+    data_df = get_identifier_of_interest(bridgedb_df, Cons.MITOCARTA_GENE_INPUT_ID)
+
+    merged_df = collapse_data_sources(
+        data_df=data_df,
+        source_namespace=Cons.MITOCARTA_GENE_INPUT_ID,
+        target_df=subset_df,
+        common_cols=[Cons.TARGET_COL],
+        target_specific_cols=list([]),
+        col_name=Cons.MITOCART_PATHWAY_COL,
     )
 
     return merged_df, mitocarta_metadata

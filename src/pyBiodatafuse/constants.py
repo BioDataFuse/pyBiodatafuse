@@ -82,6 +82,7 @@ TARGET_COL = "target"
 TARGET_SOURCE_COL = "target.source"
 IDENTIFIER_COL = "identifier"
 IDENTIFIER_SOURCE_COL = "identifier.source"
+SOURCE_COL = "source"
 
 BGEE_GENE_EXPRESSION_LEVELS_COL = f"{BGEE}_gene_expression_levels"
 DISGENET_DISEASE_COL = f"{DISGENET}_diseases"
@@ -105,6 +106,7 @@ WIKIPATHWAYS_MOLECULAR_COL = f"{WIKIPATHWAYS}_molecular"
 WIKIPATHWAYS_PATHWAY_COL = f"{WIKIPATHWAYS}_pathway"
 AOPWIKI_GENE_COL = "aop_gene"  # todo fix this
 AOPWIKI_COMPOUND_COL = "pubchem_compound"  # todo fix this
+MITOCART_PATHWAY_COL = f"{MITOCARTA}_pathways"
 
 # Ontologies and vocabularies namespaces
 PUBCHEM_COMPOUND = "PubChem Compound"
@@ -253,61 +255,6 @@ DISGENET_DISEASE_OUTPUT_DICT = {
     DISGENET_EL: str,
 }
 
-"""
-Wikidata variables
-"""
-WIKIDATA_ID_COL = "wikidata_id"
-WIKIDATA_LABEL_COL = "wikidata_label"
-WIKIDATA_GO_COL = "go_id"
-WIKIDATA_OUTPUT_DICT = {
-    WIKIDATA_ID_COL: str,
-    WIKIDATA_LABEL_COL: str,
-    WIKIDATA_GO_COL: str,
-}
-
-"""
-WikiPathways variables
-"""
-WIKIPATHWAYS_GENE_ID = "gene_id"
-
-WIKIPATHWAYS_PATHWAYS_OUTPUT_DICT = {
-    PATHWAY_ID: str,
-    PATHWAY_LABEL: str,
-    PATHWAY_GENE_COUNTS: int,
-}
-
-WIKIPATHWAYS_TARGET_GENE = "targetGene"
-WIKIPATHWAYS_TARGET_PROTEIN = "targetProtein"
-WIKIPATHWAYS_TARGET_METABOLITE = "targetMetabolite"
-WIKIPATHWAYS_MIM_TYPE = "mimtype"
-WIKIPATHWAYS_RHEA_ID = "rhea_id"
-
-WIKIPATHWAYS_MOLECULAR_GENE_OUTPUT_DICT = {
-    PATHWAY_ID: str,
-    PATHWAY_LABEL: str,
-    WIKIPATHWAYS_TARGET_GENE: str,
-    WIKIPATHWAYS_TARGET_PROTEIN: str,
-    WIKIPATHWAYS_TARGET_METABOLITE: str,
-    WIKIPATHWAYS_MIM_TYPE: str,
-    WIKIPATHWAYS_RHEA_ID: str,
-}
-
-WIKIPATHWAY_ID_CLEANER_DICT = {
-    WIKIPATHWAYS_GENE_ID: "https://identifiers.org/ncbigene/",
-    WIKIPATHWAYS_TARGET_GENE: "https://identifiers.org/ncbigene/",
-    WIKIPATHWAYS_TARGET_PROTEIN: "https://identifiers.org/uniprot/",
-    WIKIPATHWAYS_TARGET_METABOLITE: "http://rdf.ncbi.nlm.nih.gov/pubchem/compound/",
-    WIKIPATHWAYS_MIM_TYPE: "http://vocabularies.wikipathways.org/wp#",
-}
-
-WIKIPATHWAY_NAMESPACE_DICT = {
-    WIKIPATHWAYS_GENE_ID: NCBI_GENE_ID,
-    WIKIPATHWAYS_TARGET_GENE: NCBI_GENE_ID,
-    WIKIPATHWAYS_TARGET_PROTEIN: UNIPROT_TREMBL,
-    WIKIPATHWAYS_TARGET_METABOLITE: PUBCHEM_COMPOUND_CID,
-}
-
-
 VALUE_CHECK_LIST = [
     HPO,
     NCI,
@@ -319,6 +266,16 @@ VALUE_CHECK_LIST = [
     MESH,
     UMLS,
 ]
+
+"""
+GProfiler variables
+"""
+ORGANISM = "organism"
+GPROFILER_ID = "id"
+GPROFILER_NAME = "name"
+GPROFILER_INTERSECTIONS = "intersections"
+GPROFILER_RESULT_COL = "gprofiler"
+GPROFILER_COLS_TO_KEEP = ["source", GPROFILER_ID, GPROFILER_INTERSECTIONS, GPROFILER_RESULT_COL]
 
 """
 INTACT variables
@@ -410,6 +367,45 @@ MINERVA_PATHWAY_OUTPUT_DICT = {
 }
 
 MINERVA_PATHWAY_DEFAULT_ID = MINERVA
+
+"""
+Mitocart variables
+"""
+MITO_SELECTED_COLUMNS = {
+    "human": [
+        "EnsemblGeneID_mapping_version_20200130",
+        "Description",
+        "MitoCarta3.0_Evidence",
+        "MitoCarta3.0_SubMitoLocalization",
+        "MitoCarta3.0_MitoPathways",
+        "HPA_Main_Location_2020 (Reliability)",
+        "Tissues",
+    ],
+    "mouse": [
+        "EnsemblGeneID",
+        "Description",
+        "MitoCarta3.0_Evidence",
+        "MitoCarta3.0_SubMitoLocalization",
+        "MitoCarta3.0_MitoPathways",
+        "HPA_Main_Location_2020 (Reliability)",
+        "Tissues",
+    ],
+}
+
+MITO_PATHWAYS = "mito_pathways"
+MITO_ENSEMBL_ID = "ensembl_id"
+
+MITOCART_COL_MAPPER = {
+    "EnsemblGeneID_mapping_version_20200130": MITO_ENSEMBL_ID,
+    "EnsemblGeneID": MITO_ENSEMBL_ID,
+    "Description": "gene_description",
+    "MitoCarta3.0_Evidence": "evidence",
+    "MitoCarta3.0_SubMitoLocalization": "sub_mito_localization",
+    "MitoCarta3.0_MitoPathways": MITO_PATHWAYS,
+    "HPA_Main_Location_2020 (Reliability)": "hpa_location",
+    "Tissues": "tissue_expression",
+}
+
 
 """
 MolMeDB variables
@@ -547,6 +543,45 @@ STRING_OUTPUT_DICT = {
 }
 
 """
+TFLink variables
+"""
+ITS_TARGET_COL = "its_target"
+ITS_TF_COL = "its_tf"
+IS_TF_COL = "is_tf"
+IS_TARGET_COL = "is_target"
+
+TFLINK_GENE_ID_TF = "NCBI.GeneID.TF"
+TFLINK_GENE_ID_TARGET = "NCBI.GeneID.Target"
+ENSEMBL_GENE_ID_TF = "Ensembl.GeneID.TF"
+ENSEMBL_GENE_ID_TARGET = "Ensembl.GeneID.Target"
+
+TF_COLS_TO_KEEP = [
+    TFLINK_GENE_ID_TARGET,
+    "Ensembl.GeneID.Target",
+    "Name.Target",
+    "UniprotID.Target",
+    "Target.TFLink.ortho",
+    "Target.nonTFLink.ortho",
+    "Detection.method",
+    "PubmedID",
+    "Source.database",
+    "Small-scale.evidence",
+]
+
+TARGET_COLS_TO_KEEP = [
+    "NCBI.GeneID.TF",
+    "Ensembl.GeneID.TF",
+    "Name.TF",
+    "UniprotID.TF",
+    "TF.TFLink.ortho",
+    "TF.nonTFLink.ortho",
+    "Detection.method",
+    "PubmedID",
+    "Source.database",
+    "Small-scale.evidence",
+]
+
+"""
 Wikidata variables
 """
 WIKIDATA_ID_COL = "wikidata_id"
@@ -659,9 +694,13 @@ GO_MF_NODE_LABEL = "Molecular Function"
 GO_CC_NODE_LABEL = "Cellular Component"
 SIDE_EFFECT_NODE_LABEL = "Side Effect"
 HOMOLOG_NODE_LABEL = "Homolog"
+PHENOTYPE_NODE_LABEL = "Phenotype"
+MIRNA_NODE_LABEL = "miRNA"
+TRANS_FACTOR_NODE_LABEL = "Transcription Factor"
+MITOCHONDRIAL_PATHWAY_NODE_LABEL = "Mitochondrial Pathway"
 
 """
-Anatomical entity nodes
+Anatomical entity nodes and edges
 """
 BGEE_ANATOMICAL_NODE_MAIN_LABEL = ANATOMICAL_ID
 BGEE_ANATOMICAL_NODE_ATTRS = {
@@ -683,7 +722,7 @@ BGEE_EDGE_ATTRS = {
 }
 
 """
-Disease nodes
+Disease nodes and edges
 """
 DISEASE_NODE_MAIN_LABEL = UMLS
 DISGENET_DISEASE_NODE_ATTRS = {
@@ -724,7 +763,7 @@ OPENTARGETS_DISEASE_COMPOUND_EDGE_ATTRS = {
 }
 
 """
-Pathway nodes
+Pathway nodes and edges
 """
 GENE_COUNTS = "gene_counts"
 PATHWAY_NODE_ATTRS = {
@@ -732,7 +771,7 @@ PATHWAY_NODE_ATTRS = {
     NAME: None,
     ID: None,
     LABEL: PATHWAY_NODE_LABEL,
-    # GENE_COUNTS: None,
+    GENE_COUNTS: None,
 }
 
 GENE_PATHWAY_EDGE_LABEL = "part_of"
@@ -743,15 +782,15 @@ GENE_PATHWAY_EDGE_ATTRS = {
 
 # IntAct interactions
 SPECIES = "species"
-INTACT_INTERACTION_TYPE = "interaction_type"
-INTACT_NODE_ATTRS = PATHWAY_NODE_ATTRS.copy()
-INTACT_NODE_ATTRS.update(
-    {
-        DATASOURCE: INTACT,
-        ID: None,
-        LABEL: None,
-    }
-)
+# INTACT_INTERACTION_TYPE = "interaction_type"
+# INTACT_NODE_ATTRS = PATHWAY_NODE_ATTRS.copy()
+# INTACT_NODE_ATTRS.update(
+#     {
+#         DATASOURCE: INTACT,
+#         ID: None,
+#         LABEL: None,
+#     }
+# )
 
 KEGG_PATHWAY_NODE_MAIN_LABEL = PATHWAY_ID
 KEGG_PATHWAY_NODE_ATTRS = PATHWAY_NODE_ATTRS.copy()
@@ -759,7 +798,6 @@ KEGG_PATHWAY_NODE_ATTRS.update(
     {
         DATASOURCE: KEGG,
         ID: None,
-        LABEL: PATHWAY_NODE_LABEL,
         GENE_COUNTS: None,
     }
 )
@@ -770,7 +808,6 @@ MINERVA_PATHWAY_NODE_ATTRS.update(
     {
         DATASOURCE: MINERVA,
         ID: None,
-        LABEL: PATHWAY_NODE_LABEL,
         GENE_COUNTS: None,
     }
 )
@@ -782,7 +819,6 @@ OPENTARGETS_GO_NODE_ATTRS.update(
         DATASOURCE: OPENTARGETS,
         NAME: None,
         ID: None,
-        LABEL: None,
     }
 )
 
@@ -796,7 +832,6 @@ OPENTARGETS_REACTOME_NODE_ATTRS.update(
         DATASOURCE: OPENTARGETS,
         NAME: None,
         ID: None,
-        LABEL: None,
     }
 )
 OPENTARGETS_GENE_REACTOME_EDGE_ATTRS = GENE_PATHWAY_EDGE_ATTRS.copy()
@@ -804,16 +839,13 @@ OPENTARGETS_GENE_REACTOME_EDGE_ATTRS.update({DATASOURCE: OPENTARGETS})
 
 WIKIPATHWAYS_NODE_MAIN_LABEL = PATHWAY_ID
 WIKIPATHWAYS_NODE_ATTRS = PATHWAY_NODE_ATTRS.copy()
-WIKIPATHWAYS_NODE_ATTRS.update({DATASOURCE: WIKIPATHWAYS, ID: None, LABEL: None, GENE_COUNTS: None})
-
+WIKIPATHWAYS_NODE_ATTRS.update({DATASOURCE: WIKIPATHWAYS, ID: None, GENE_COUNTS: None})
 
 MOLECULAR_PATHWAY_NODE_MAIN_LABEL = PATHWAY_ID
 MOLECULAR_GENE_NODE_ATTRS = PATHWAY_NODE_ATTRS.copy()
 MOLECULAR_PATHWAY_NODE_ATTRS = {
-    PATHWAY_ID: "str",
-    PATHWAY_LABEL: "str",
-    ID: "str",
-    LABEL: PATHWAY_NODE_LABEL,
+    PATHWAY_ID: None,
+    PATHWAY_LABEL: None,
 }
 
 WIKIPATHWAYS_INTERACTION_TYPE = "interaction_type"
@@ -826,8 +858,55 @@ MOLECULAR_INTERACTION_EDGE_ATTRS.update(
     }
 )
 
+# GProfiler
+GPROFILER_GENE_NODE_MAIN_LABEL = "name"
+GPROFILER_TERM_SIZE = "term_size"
+P_VALUE = "p_value"
+SIGNIFICANT = "significant"
+GPROFILER_GENE_NODE_ATTRS = {
+    NAME: None,
+    ID: None,
+    GENE_COUNTS: None,
+    P_VALUE: None,
+    SIGNIFICANT: None,
+    LABEL: None,
+    DATASOURCE: GPROFILER,
+}
+
+GPROFILER_EDGE_ATTRS = {
+    DATASOURCE: GPROFILER,
+    LABEL: None,
+}
+
+GPROFILER_PATHWAY_TYPE = "pathway_type"
+GPROFILE_GENE_HP_EDGE_LABEL = "linked_to"
+GPROFILE_GENE_HPA_EDGE_LABEL = "expressed_in"
+GPROFILER_GENE_MIRNA_EDGE_LABEL = "regulates"
+GPROFILER_GENE_TF_EDGE_LABEL = "regulated_by"
+
+# Mitocart
+MITOCART_NODE_MAIN_LABEL = "mito_pathways"
+MITOCART_HPA_LOCATION = "hpa_location"
+MITOCART_SUB_MITO_LOCALIZATION = "sub_mito_localization"
+EVIDENCE = "evidence"
+
+MITOCART_PATHWAY_LABEL = "Mitochondrial_Pathway"
+MITOCART_EDGE_LABEL = "encodes_mitochondrial_protein"
+
+MITOCART_NODE_ATTRS = {
+    DATASOURCE: MITOCARTA,
+    NAME: None,
+    ID: None,
+    LABEL: MITOCHONDRIAL_PATHWAY_NODE_LABEL,
+    MITOCART_HPA_LOCATION: None,
+    MITOCART_SUB_MITO_LOCALIZATION: None,
+    EVIDENCE: None,
+}
+
+MITOCART_GENE_PATHWAY_EDGE_LABEL = "encodes_mitochondrial_protein"
+
 """
-Compound nodes
+Compound nodes and edges
 """
 COMPOUND_NODE_MAIN_LABEL = "compound_cid"
 
@@ -895,7 +974,7 @@ OPENTARGETS_COMPOUND_NODE_ATTRS = {
 OPENTARGETS_GENE_COMPOUND_EDGE_ATTRS = {DATASOURCE: OPENTARGETS, LABEL: None, ID: None}
 
 """
-Side effect nodes
+Side effect nodes and edges
 """
 # Opentarget
 COMPOUND_SIDE_EFFECT_NODE_MAIN_LABEL = "adverse_effect"
@@ -955,7 +1034,11 @@ STRING_PPI_EDGE_ATTRS = {
     LABEL: STRING_PPI_EDGE_MAIN_LABEL,
 }
 
-# Ensembl Homologs
+"""
+Other nodes and edges
+"""
+
+# Ensembl Homologs TODO: check this
 ENSEMBL_HOMOLOG_NODE_ATTRS = {
     "datasource": ENSEMBL,
     "id": None,
@@ -966,6 +1049,26 @@ ENSEMBL_HOMOLOG_EDGE_LABEL = "is_homolog_of"
 ENSEMBL_HOMOLOG_EDGE_ATTRS = {
     "datasource": ENSEMBL,
     "label": ENSEMBL_HOMOLOG_EDGE_LABEL,
+}
+
+# TFLink
+NAME_TARGET = "name_target"
+UNIPROTID_TARGET = "uniprotid_target"
+DETECTION_METHOD = "detection_method"
+PUBMEDID = "pubmedid"
+SOURCE_DATABASE = "source_database"
+SMALL_SCALE_EVIDENCE = "small_scale_evidence"
+
+TFLINK_EDGE_LABEL = "tf_regulates"
+TFLINK_GENE_TF_EDGE_ATTRS = {
+    DATASOURCE: TFLINK,
+    LABEL: TFLINK_EDGE_LABEL,
+    NAME_TARGET: None,
+    UNIPROTID_TARGET: None,
+    DETECTION_METHOD: None,
+    PUBMEDID: None,
+    SOURCE_DATABASE: None,
+    SMALL_SCALE_EVIDENCE: None,
 }
 
 

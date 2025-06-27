@@ -9,7 +9,7 @@ import pandas as pd
 import requests
 from gprofiler.gprofiler import GProfiler
 
-from pyBiodatafuse.constants import GPROFILER, GPROFILER_GENE_INPUT_ID, GPROFILER_VERSION_ENDPOINT
+import pyBiodatafuse.constants as Cons
 from pyBiodatafuse.utils import get_identifier_of_interest
 
 
@@ -19,9 +19,9 @@ def get_data_versions(species: str = "hsapiens") -> dict:
     :param species: The species to retrieve the version information for.
     :returns: a dictionary containing the version information
     """
-    params = {"organism": species}
+    params = {Cons.ORGANISM: species}
     try:
-        response = requests.get(GPROFILER_VERSION_ENDPOINT, params=params)
+        response = requests.get(Cons.GPROFILER_VERSION_ENDPOINT, params=params)
 
         if response.status_code == 200:
             gprofiler_version = response.json()
@@ -51,9 +51,11 @@ def gene_enrichment_gprofiler(
     :raises RuntimeError: If the g:Profiler query fails.
     """
     # Extract the "target" values in bridgedb_df
-    data_df = get_identifier_of_interest(bridgedb_df, GPROFILER_GENE_INPUT_ID)
-    query_genes = data_df[data_df[f"{padj_colname}_dea"] <= padj_filter]["target"].unique().tolist()
-    background_genes = data_df["target"].unique().tolist()
+    data_df = get_identifier_of_interest(bridgedb_df, Cons.GPROFILER_GENE_INPUT_ID)
+    query_genes = (
+        data_df[data_df[f"{padj_colname}_dea"] <= padj_filter][Cons.TARGET_COL].unique().tolist()
+    )
+    background_genes = data_df[Cons.TARGET_COL].unique().tolist()
 
     # Record the start time
     start_time = datetime.datetime.now()
@@ -85,7 +87,7 @@ def gene_enrichment_gprofiler(
     # Retrieve g:Profiler version information for the specified species
     gprofiler_version = get_data_versions(species)
     gprofiler_metadata: Dict[str, Any] = {
-        "datasource": GPROFILER,
+        "datasource": Cons.GPROFILER,
         "metadata": gprofiler_version,
         "query": {
             "size": len(query_genes),
@@ -94,8 +96,8 @@ def gene_enrichment_gprofiler(
         },
     }
 
-    gprofiler_df.rename(columns={"native": "id"}, inplace=True)
-    gprofiler_df["datasource"] = "g:Profiler"
+    gprofiler_df.rename(columns={"native": Cons.GPROFILER_ID}, inplace=True)
+    gprofiler_df[Cons.DATASOURCE] = Cons.GPROFILER
 
     gprofiler_df = gprofiler_df[
         ~gprofiler_df["parents"].apply(lambda x: x == [])
@@ -104,43 +106,56 @@ def gene_enrichment_gprofiler(
     return gprofiler_df, gprofiler_metadata
 
 
+def _create_path_info(row, gprofiler_df: pd.DataFrame):
+    """Inner helper function to create a dictionary of path info for each row.
+
+    :param row: Row of the DataFrame.
+    :param gprofiler_df: DataFrame containing raw g:Profiler analysis results.
+    :returns: Dictionary of path info for each row.
+    """
+    path_info = {
+        col: row[col]
+        for col in gprofiler_df.columns
+        if col not in [Cons.GPROFILER_INTERSECTIONS, Cons.SOURCE_COL]
+    }
+    return path_info
+
+
 def process_gprofiler_data(gprofiler_df: pd.DataFrame) -> pd.DataFrame:
     """Process raw g:Profiler results.
 
     :param gprofiler_df: DataFrame containing raw g:Profiler analysis results.
     :returns: Processed DataFrame structured by intersections and sources.
     """
-    # Inner helper function to create a dictionary of path info for each row
-    def create_path_info(row):
-        path_info = {
-            col: row[col] for col in gprofiler_df.columns if col not in ["intersections", "source"]
-        }
-        return path_info
-
     # Create a 'gprofiler' column using the helper function
-    gprofiler_df["gprofiler"] = gprofiler_df.apply(create_path_info, axis=1)
+    gprofiler_df[Cons.GPROFILER_RESULT_COL] = gprofiler_df.apply(_create_path_info, axis=1)
 
     # Drop all columns except for "source", "id", "intersections", and "gprofiler"
-    cols_to_keep = {"source", "id", "intersections", "gprofiler"}
-    cols_to_drop = [col for col in gprofiler_df.columns if col not in cols_to_keep]
+    cols_to_drop = [col for col in gprofiler_df.columns if col not in Cons.GPROFILER_COLS_TO_KEEP]
     gprofiler_df = gprofiler_df.drop(columns=cols_to_drop)
 
     # Explode the 'intersections' column so that each intersection gets its own row
-    gprofiler_df = gprofiler_df.explode("intersections").reset_index(drop=True)
+    gprofiler_df = gprofiler_df.explode(Cons.GPROFILER_INTERSECTIONS).reset_index(drop=True)
 
     # Prepare a final DataFrame with unique intersections
-    unique_sources = sorted(gprofiler_df["source"].unique())
+    unique_sources = sorted(gprofiler_df[Cons.SOURCE_COL].unique())
     intermediate_df = pd.DataFrame()
-    intermediate_df["intersections"] = gprofiler_df["intersections"].unique()
+    intermediate_df[Cons.GPROFILER_INTERSECTIONS] = gprofiler_df[
+        Cons.GPROFILER_INTERSECTIONS
+    ].unique()
 
     # For each unique source, group data by intersections and map to the final DataFrame
     for source in unique_sources:
-        source_subset = gprofiler_df[gprofiler_df["source"] == source]
+        source_subset = gprofiler_df[gprofiler_df[Cons.SOURCE_COL] == source]
         source_dictionaries = (
-            source_subset.groupby("intersections")["gprofiler"].apply(list).to_dict()
+            source_subset.groupby(Cons.GPROFILER_INTERSECTIONS)[Cons.GPROFILER_RESULT_COL]
+            .apply(list)
+            .to_dict()
         )
-        column_name = f"{GPROFILER}_{source.lower()}"
-        intermediate_df[column_name] = intermediate_df["intersections"].map(source_dictionaries)
+        column_name = f"{Cons.GPROFILER}_{source.lower()}"
+        intermediate_df[column_name] = intermediate_df[Cons.GPROFILER_INTERSECTIONS].map(
+            source_dictionaries
+        )
 
     return intermediate_df
 
@@ -171,16 +186,16 @@ def get_gene_enrichment(
 
     # Process the raw g:Profiler results
     intermediate_df = process_gprofiler_data(gprofiler_df)
-    intermediate_df = intermediate_df.rename(columns={"intersections": "target"})
+    intermediate_df = intermediate_df.rename(columns={"intersections": Cons.TARGET_COL})
 
     # Merge the processed DataFrame with the original bridgedb_df
-    data_df = bridgedb_df[bridgedb_df["target.source"] == GPROFILER_GENE_INPUT_ID]
+    data_df = bridgedb_df[bridgedb_df[Cons.TARGET_SOURCE_COL] == Cons.GPROFILER_GENE_INPUT_ID]
 
     merged_df = (
         pd.merge(  # TODO: check if we can modify collapse_data_sources to handle multiple columns
             data_df,
             intermediate_df,
-            on="target",
+            on=Cons.TARGET_COL,
             how="left",
         )
     )
