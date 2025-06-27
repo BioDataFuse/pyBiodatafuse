@@ -214,7 +214,6 @@ def combine_with_homologs(df: pd.DataFrame, homolog_dfs: list) -> pd.DataFrame:
     return exploded_df
 
 
-
 def check_columns_against_constants(
     data_df: pd.DataFrame, output_dict: dict, check_values_in: list
 ):

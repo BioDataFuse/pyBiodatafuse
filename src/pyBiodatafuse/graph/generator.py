@@ -1691,15 +1691,13 @@ def _built_gene_based_graph(
 
     dea_columns = [c for c in combined_df.columns if c.endswith("_dea")]
 
-    compound_identifiers = ["PubChem Compound", "CHEBI", "InChIKey"]
-
     func_dict = {
         Cons.BGEE_GENE_EXPRESSION_LEVELS_COL: add_gene_bgee_subgraph,
         Cons.DISGENET_DISEASE_COL: add_disgenet_gene_disease_subgraph,
         Cons.LITERATURE_DISEASE_COL: add_literature_gene_disease_subgraph,
         Cons.MINERVA_PATHWAY_COL: add_minerva_gene_pathway_subgraph,
         Cons.WIKIPATHWAYS: add_wikipathways_gene_pathway_subgraph,
-        Cons.KEGG_PATHWAY_COL: add_kegg_gene_pathway_subgraph, 
+        Cons.KEGG_PATHWAY_COL: add_kegg_gene_pathway_subgraph,
         Cons.OPENTARGETS_REACTOME_COL: add_opentargets_gene_reactome_pathway_subgraph,
         Cons.OPENTARGETS_GO_COL: add_opentargets_gene_go_subgraph,
         Cons.OPENTARGETS_GENE_COMPOUND_COL: add_opentargets_gene_compound_subgraph,
