@@ -4,6 +4,7 @@
 
 import json
 import logging
+import os
 import pickle
 from collections import defaultdict
 from logging import Logger
@@ -40,6 +41,9 @@ def merge_node(g, node_label, node_attrs):
     :param node_attrs: dictionary of node attributes.
     """
     if node_label not in g.nodes():
+        # Ensure 'labels' is set
+        if Cons.LABEL not in node_attrs:
+            node_attrs[Cons.LABEL] = node_attrs.get("label", "Unknown")
         g.add_node(node_label, attr_dict=node_attrs)
     else:
         if "attr_dict" in g.nodes[node_label]:
@@ -55,6 +59,8 @@ def merge_node(g, node_label, node_attrs):
                 else:
                     g.nodes[node_label]["attr_dict"][k] = v
         else:
+            if Cons.LABEL not in node_attrs:
+                node_attrs[Cons.LABEL] = node_attrs.get("label", "Unknown")
             g.add_node(node_label, attr_dict=node_attrs)
 
 
@@ -343,7 +349,7 @@ def add_intact_compound_interactions_subgraph(g, compound_node_label, annot_list
             "label": partner_name,
             "species": partner_species,
             "molecule": partner_molecule,
-            "labels": node_label_type,
+            Cons.LABEL: node_label_type,
         }
         merge_node(g, partner_id, partner_node_attrs)
 
@@ -1219,7 +1225,7 @@ def add_wikipathways_molecular_subgraph(g, gene_node_label, annot_list):
 
             if target_node_label is None:
                 continue
-
+            target_node_label = target_node_label.replace(f"{Cons.WIKIPATHWAYS_TARGET_GENE}:", "")
             interaction_type = annot.get(Cons.WIKIPATHWAYS_MIM_TYPE, "Interaction")
             edge_attrs = Cons.MOLECULAR_INTERACTION_EDGE_ATTRS.copy()
             edge_attrs[Cons.WIKIPATHWAYS_INTERACTION_TYPE] = interaction_type
@@ -1235,6 +1241,7 @@ def add_wikipathways_molecular_subgraph(g, gene_node_label, annot_list):
                         Cons.PATHWAY_LABEL: annot.get(Cons.PATHWAY_LABEL, ""),
                         Cons.ID: target_node_label,
                         Cons.DATASOURCE: Cons.WIKIPATHWAYS,
+                        Cons.LABEL: Cons.MOLECULAR_PATHWAY_NODE_LABEL,
                     }
                 )
                 g.add_node(target_node_label, attr_dict=node_attrs)
@@ -1260,7 +1267,168 @@ def add_wikipathways_molecular_subgraph(g, gene_node_label, annot_list):
     return g
 
 
-"""Adding node types"""
+def add_aopwiki_gene_subgraph(g, gene_node_label, annot_list):
+    """Construct part of the graph by linking the gene to AOP entities.
+
+    :param g: the input graph to extend with new nodes and edges.
+    :param gene_node_label: the gene node to be linked to AOP entities.
+    :param annot_list: list of AOPWIKI Key Events.
+    :returns: a NetworkX MultiDiGraph
+    """
+    for annot in annot_list:
+        # Add AOP node
+        aop_node_label = "AOP:" + annot.get("aop", "")
+        if aop_node_label:
+            aop_node_attrs = Cons.AOPWIKI_NODE_ATTRS.copy()
+            aop_node_attrs["type"] = Cons.AOP_NODE_LABEL
+            aop_node_attrs["title"] = annot.get("aop_title", "")
+            aop_node_attrs[Cons.LABEL] = Cons.AOP_NODE_LABEL
+            g.add_node(aop_node_label, attr_dict=aop_node_attrs)
+
+            # Connect gene to AOP node
+            edge_attrs = {**Cons.AOPWIKI_EDGE_ATTRS, "relation": Cons.AOP_GENE_EDGE_LABEL}
+            edge_attrs["edge_hash"] = hash(frozenset(edge_attrs.items()))
+            if not edge_exists(g, gene_node_label, aop_node_label, edge_attrs):
+                g.add_edge(
+                    gene_node_label,
+                    aop_node_label,
+                    label=Cons.AOP_GENE_EDGE_LABEL,
+                    attr_dict=edge_attrs,
+                )
+
+        # Add MIE node
+        mie_node_label = "MIE:" + annot.get("MIE", "")
+        if mie_node_label:
+            mie_node_attrs = Cons.AOPWIKI_NODE_ATTRS.copy()
+            mie_node_attrs["type"] = Cons.MIE_NODE_LABELS
+            mie_node_attrs["title"] = annot.get("MIE_title", "")
+            mie_node_attrs[Cons.LABEL] = Cons.MIE_NODE_LABELS
+            g.add_node(mie_node_label, attr_dict=mie_node_attrs)
+
+            # Connect MIE to AOP node
+            if aop_node_label:
+                edge_attrs = {**Cons.AOPWIKI_EDGE_ATTRS, "relation": Cons.MIE_AOP_EDGE_LABEL}
+                edge_attrs["edge_hash"] = hash(frozenset(edge_attrs.items()))
+                if not edge_exists(g, mie_node_label, aop_node_label, edge_attrs):
+                    g.add_edge(
+                        mie_node_label,
+                        aop_node_label,
+                        label=Cons.MIE_AOP_EDGE_LABEL,
+                        attr_dict=edge_attrs,
+                    )
+
+        # Add KE upstream node
+        ke_upstream_node_label = "KE:" + annot.get("KE_upstream", "")
+        if ke_upstream_node_label:
+            ke_upstream_node_attrs = Cons.AOPWIKI_NODE_ATTRS.copy()
+            ke_upstream_node_attrs["title"] = annot.get("KE_upstream_title", "")
+            ke_upstream_node_attrs["organ"] = annot.get("KE_upstream_organ", "")
+            ke_upstream_node_attrs["type"] = Cons.KEY_EVENT_NODE_LABELS
+            ke_upstream_node_attrs[Cons.LABEL] = Cons.KEY_EVENT_NODE_LABELS
+            g.add_node(ke_upstream_node_label, attr_dict=ke_upstream_node_attrs)
+
+            # Connect KE upstream to MIE node
+            if mie_node_label:
+                edge_attrs = {
+                    **Cons.AOPWIKI_EDGE_ATTRS,
+                    "relation": Cons.KE_UPSTREAM_MIE_EDGE_LABEL,
+                }
+                edge_attrs["edge_hash"] = hash(frozenset(edge_attrs.items()))
+                if not edge_exists(g, ke_upstream_node_label, mie_node_label, edge_attrs):
+                    g.add_edge(
+                        ke_upstream_node_label,
+                        mie_node_label,
+                        label=Cons.KE_UPSTREAM_MIE_EDGE_LABEL,
+                        attr_dict=edge_attrs,
+                    )
+
+        # Add KE downstream node
+        ke_downstream_node_label = "KE:" + annot.get("KE_downstream", "")
+        if ke_downstream_node_label:
+            ke_downstream_node_attrs = Cons.AOPWIKI_NODE_ATTRS.copy()
+            ke_downstream_node_attrs["title"] = annot.get("KE_downstream_title", "")
+            ke_downstream_node_attrs["organ"] = annot.get("KE_downstream_organ", "")
+            ke_downstream_node_attrs["type"] = Cons.KEY_EVENT_NODE_LABELS
+            ke_downstream_node_attrs[Cons.LABEL] = Cons.KEY_EVENT_NODE_LABELS
+            g.add_node(ke_downstream_node_label, attr_dict=ke_downstream_node_attrs)
+
+            # Connect KE downstream to KE upstream node
+            if ke_upstream_node_label:
+                edge_attrs = {
+                    **Cons.AOPWIKI_EDGE_ATTRS,
+                    "relation": Cons.KE_DOWNSTREAM_KE_EDGE_LABEL,
+                }
+                edge_attrs["edge_hash"] = hash(frozenset(edge_attrs.items()))
+                if not edge_exists(g, ke_upstream_node_label, ke_downstream_node_label, edge_attrs):
+                    g.add_edge(
+                        ke_upstream_node_label,
+                        ke_downstream_node_label,
+                        label=Cons.KE_DOWNSTREAM_KE_EDGE_LABEL,
+                        attr_dict=edge_attrs,
+                    )
+
+        # Add AO node
+        ao_node_label = "KE:" + annot.get("ao", "")
+        if ao_node_label:
+            ao_node_attrs = Cons.AOPWIKI_NODE_ATTRS.copy()
+            ao_node_attrs["title"] = annot.get("ao_title", "")
+            ao_node_attrs["type"] = Cons.AO_NODE_LABEL
+            ao_node_attrs[Cons.LABEL] = Cons.AO_NODE_LABEL
+            g.add_node(ao_node_label, attr_dict=ao_node_attrs)
+
+            # Connect AO directly to KE downstream node
+            if ke_downstream_node_label:
+                edge_attrs = {**Cons.AOPWIKI_EDGE_ATTRS, "relation": "associated_with"}
+                edge_attrs["edge_hash"] = hash(frozenset(edge_attrs.items()))
+                if not edge_exists(g, ke_downstream_node_label, ao_node_label, edge_attrs):
+                    g.add_edge(
+                        ke_downstream_node_label,
+                        ao_node_label,
+                        label="associated_with",
+                        attr_dict=edge_attrs,
+                    )
+
+    return g
+
+
+def edge_exists(g, source, target, edge_attrs):
+    """Check if an edge with the same attributes already exists in the graph.
+
+    :param g: the input graph.
+    :param source: the source node of the edge.
+    :param target: the target node of the edge.
+    :param edge_attrs: the attributes of the edge to check.
+    :returns: True if the edge exists, False otherwise.
+    """
+    if g.has_edge(source, target):
+        edge_data = g.get_edge_data(source, target)
+        for edge_key in edge_data:
+            if edge_data[edge_key].get("attr_dict", {}).get("edge_hash") == edge_attrs["edge_hash"]:
+                return True
+    return False
+
+
+def save_graph_to_tsv(g, output_dir="output"):
+    """Save the graph to TSV files for nodes and edges.
+
+    :param g: the input graph to save.
+    :param output_dir: the directory to save the TSV files.
+    """
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Save nodes
+    nodes_path = os.path.join(output_dir, "nodes.tsv")
+    with open(nodes_path, "w") as f:
+        f.write("node_id\tattributes\n")
+        for node, attrs in g.nodes(data=True):
+            f.write(f"{node}\t{json.dumps(attrs)}\n")
+
+    # Save edges
+    edges_path = os.path.join(output_dir, "edges.tsv")
+    with open(edges_path, "w") as f:
+        f.write("source\ttarget\tkey\tattributes\n")
+        for u, v, k, attrs in g.edges(keys=True, data=True):
+            f.write(f"{u}\t{v}\t{k}\t{json.dumps(attrs)}\n")
 
 
 def add_ensembl_homolog_subgraph(g, gene_node_label, annot_list):
@@ -1306,6 +1474,7 @@ def add_gene_node(g, row, dea_columns):
         Cons.NAME: f"{row[Cons.IDENTIFIER_SOURCE_COL]}:{row[Cons.IDENTIFIER_COL]}",
         Cons.ID: f"{row[Cons.TARGET_SOURCE_COL]}:{row[Cons.TARGET_COL]}",
         Cons.LABEL: Cons.GENE_NODE_LABEL,
+        Cons.LABEL: Cons.GENE_NODE_LABEL,  # Ensure label
         row[Cons.TARGET_SOURCE_COL]: row[Cons.TARGET_COL],
     }
 
@@ -1329,6 +1498,7 @@ def add_compound_node(g, row):
         Cons.NAME: f"{row[Cons.IDENTIFIER_SOURCE_COL]}:{row[Cons.IDENTIFIER_COL]}",
         Cons.ID: row[Cons.TARGET_COL],
         Cons.LABEL: Cons.COMPOUND_NODE_LABEL,
+        Cons.LABEL: Cons.COMPOUND_NODE_LABEL,  # Ensure label
         row[Cons.TARGET_SOURCE_COL]: f"{row[Cons.TARGET_SOURCE_COL]}:{row[Cons.TARGET_COL]}",
     }
 
@@ -1410,7 +1580,7 @@ def process_ppi(g, gene_node_label, row):
     :param gene_node_label: the gene node to be linked to annotation entities.
     :param row: row in the combined DataFrame.
     """
-    if row[Cons.STRING_INTERACT_COL] is not None:
+    if Cons.STRING_INTERACT_COL in row and row[Cons.STRING_INTERACT_COL] is not None:
         try:
             ppi_list = json.loads(json.dumps(row[Cons.STRING_INTERACT_COL]))
         except (ValueError, TypeError):
@@ -1467,7 +1637,7 @@ def process_homologs(g, combined_df, homolog_df_list, func_dict, dea_columns):
                 if homolog_node_label:
                     annot_node_attrs = Cons.ENSEMBL_HOMOLOG_NODE_ATTRS.copy()
                     annot_node_attrs["id"] = homolog_node_label
-                    annot_node_attrs["labels"] = Cons.HOMOLOG_NODE_LABELS
+                    annot_node_attrs[Cons.LABEL] = Cons.HOMOLOG_NODE_LABELS
                     g.add_node(homolog_node_label, attr_dict=annot_node_attrs)
 
                     process_annotations(g, homolog_node_label, row, func_dict_hl)
@@ -1485,6 +1655,9 @@ def normalize_node_attributes(g):
                     g.nodes[node][k] = v
 
             del g.nodes[node]["attr_dict"]
+        # Ensure 'labels' is present after flattening
+        if Cons.LABEL not in g.nodes[node]:
+            g.nodes[node][Cons.LABEL] = g.nodes[node].get("label", "Unknown")
 
 
 def normalize_edge_attributes(g):
@@ -1533,8 +1706,16 @@ def _built_gene_based_graph(
         Cons.INTACT_INTERACT_COL: add_intact_interactions_subgraph,
         Cons.INTACT_COMPOUND_INTERACT_COL: add_intact_compound_interactions_subgraph,
         Cons.STRING_INTERACT_COL: add_stringdb_ppi_subgraph,
+        Cons.AOPWIKI_GENE_COL: add_aopwiki_gene_subgraph,
         # Cons.WIKIDATA_CC_COL: add_wikidata_gene_cc_subgraph,  # TODO: add this
     }
+
+    for _i, row in tqdm(combined_df.iterrows(), total=combined_df.shape[0], desc="Building graph"):
+        if pd.isna(row["identifier"]) or pd.isna(row["target"]):
+            continue
+        gene_node_label = add_gene_node(g, row, dea_columns)
+        process_annotations(g, gene_node_label, row, func_dict)
+        process_ppi(g, gene_node_label, row)
 
     if homolog_df_list is not None:
         process_homologs(g, combined_df, homolog_df_list, func_dict, dea_columns)
@@ -1575,7 +1756,48 @@ def _built_gene_based_graph(
     return g
 
 
-# TODO: Built this function for compounds
+def save_graph(
+    combined_df: pd.DataFrame,
+    combined_metadata: Dict[Any, Any],
+    disease_compound: pd.DataFrame = None,
+    graph_name: str = "combined",
+    graph_dir: str = "examples/usecases/",
+):
+    """Save the graph to a file.
+
+    :param combined_df: the input DataFrame to be converted into a graph.
+    :param combined_metadata: the metadata of the graph.
+    :param disease_compound: the input DataFrame containing disease-compound relationships.
+    :param graph_name: the name of the graph.
+    :param graph_dir: the directory to save the graph.
+    :returns: a NetworkX MultiDiGraph
+
+    """
+    graph_path = f"{graph_dir}/{graph_name}"
+    os.makedirs(graph_path, exist_ok=True)
+
+    df_path = f"{graph_path}/{graph_name}_df.pkl"
+    metadata_path = f"{graph_path}/{graph_name}_metadata.pkl"
+    graph_path_pickle = f"{graph_path}/{graph_name}_graph.pkl"
+    graph_path_gml = f"{graph_path}/{graph_name}_graph.gml"
+
+    # Save the combined DataFrame
+    combined_df.to_pickle(df_path)
+
+    # Save the metadata
+    with open(metadata_path, "wb") as file:
+        pickle.dump(combined_metadata, file)
+
+    # Save the graph
+    g = build_networkx_graph(combined_df, disease_compound)
+
+    with open(graph_path_pickle, "wb") as f:
+        pickle.dump(g, f)
+    nx.write_gml(g, graph_path_gml)
+
+    return g
+
+
 def _built_compound_based_graph(
     g: nx.MultiDiGraph,
     combined_df: pd.DataFrame,

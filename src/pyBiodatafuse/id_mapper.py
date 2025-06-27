@@ -23,6 +23,17 @@ from pyBiodatafuse.constants import BRIDGEDB_ENDPOINT, PUBCHEM_COMPOUND, PUBCHEM
 logger = logging.getLogger(__name__)
 
 
+def read_datasource_file() -> pd.DataFrame:
+    """Read the datasource file.
+
+    :returns: a DataFrame containing the data from the datasource file
+    """
+    with resources.path("pyBiodatafuse.resources", "datasources.csv") as df:
+        identifier_options = pd.read_csv(df)
+
+    return identifier_options
+
+
 def match_input_datasource(identifiers) -> str:
     """Check if the input identifiers match the datasource.
 
@@ -69,17 +80,6 @@ def match_input_datasource(identifiers) -> str:
         )
 
     return matched_sources.pop()
-
-
-def read_resource_files() -> pd.DataFrame:
-    """Read the datasource file.
-
-    :returns: a DataFrame containing the data from the datasource file
-    """
-    with resources.path("pyBiodatafuse.resources", "datasources.csv") as df:
-        identifier_options = pd.read_csv(df)
-
-    return identifier_options
 
 
 def get_version_webservice_bridgedb() -> dict:
@@ -207,12 +207,12 @@ def bridgedb_xref(
             "MGI",
         ]
 
-        data_sources = read_resource_files()
+        data_sources = read_datasource_file()
         output_datasource = list(data_sources["source"])
     else:
         assert isinstance(output_datasource, list), "output_datasource must be a list"
 
-    data_sources = read_resource_files()
+    data_sources = read_datasource_file()
     input_source = data_sources.loc[data_sources["source"] == input_datasource, "systemCode"].iloc[
         0
     ]

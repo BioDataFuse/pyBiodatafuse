@@ -89,6 +89,10 @@ def load_graph(g: nx.MultiDiGraph, network_name: str):
         Cons.COMPOUND_NODE_LABEL,
         Cons.SIDE_EFFECT_NODE_LABEL,
         Cons.HOMOLOG_NODE_LABEL,
+        Cons.KEY_EVENT_NODE_LABEL,
+        Cons.MIE_NODE_LABEL,
+        Cons.AOP_NODE_LABEL,
+        Cons.AO_NODE_LABEL,
     ]
     shapes = [
         "ELLIPSE",  # Genes
@@ -101,6 +105,10 @@ def load_graph(g: nx.MultiDiGraph, network_name: str):
         "DIAMOND",  # Compounds
         "TRIANGLE",  # Side Effects
         "Ellipse",  # Homologs
+        "TRIANGLE",  # Key Events
+        "TRIANGLE",  # MIE
+        "VEE",  # AOP
+        "OCTAGON",  # AO
     ]
     colors = [
         "#42d4f4",  # Cyan for Genes
@@ -113,6 +121,10 @@ def load_graph(g: nx.MultiDiGraph, network_name: str):
         "#ffd700",  # Gold for Compounds
         "#aaffc3",  # Mint for Side Effects
         "#9b59b6",  # Purple for Homologs
+        "#aaffc3",  # Mint for Key Events
+        "#3cb44b",  # Green for MIE
+        "#000075",  # Navy for AOP
+        "#e6194B",  # Red for AO
     ]
 
     # Apply node shape and color mappings
