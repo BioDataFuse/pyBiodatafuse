@@ -18,7 +18,6 @@ The datasets you need can be downloaded from the following links:
 These files contain the MitoCarta data in a simple format for each species.
 """
 
-import gzip
 import os
 from datetime import datetime
 from typing import Tuple
@@ -53,8 +52,7 @@ def download_mitocarta_dataset(
             with open(filename, "wb") as file:
                 file.write(response.content)
 
-    with gzip.open(filename, "rt") as f:
-        mitocarta_df = pd.read_excel(f, sheet_name=sheet_name)
+    mitocarta_df = pd.read_excel(filename, sheet_name=sheet_name)
 
     if mitocarta_df is not None:
         # Add version
@@ -91,14 +89,14 @@ def process_mitocarta(mitocarta_df: pd.DataFrame, species: str = "hsapiens") -> 
     # Select relevant columns for inclusion in the graph
     if species == "hsapiens":
         selected_columns = Cons.MITO_SELECTED_COLUMNS["human"]
-        mitocarta_subset = mitocarta_df[selected_columns]
     elif species == "mmusculus":
         selected_columns = Cons.MITO_SELECTED_COLUMNS["mouse"]
-        mitocarta_subset = mitocarta_df[selected_columns]
+
     else:
         raise ValueError(f"Species {species} not supported.")
 
     # rename columns
+    mitocarta_subset = mitocarta_df[selected_columns]
     mitocarta_subset.rename(columns=Cons.MITOCART_COL_MAPPER, inplace=True, errors="ignore")
 
     mitocarta_subset[Cons.MITO_PATHWAYS] = (
@@ -109,14 +107,8 @@ def process_mitocarta(mitocarta_df: pd.DataFrame, species: str = "hsapiens") -> 
         .str[0]
         .str.strip()
     )
-    mitocarta_melted = mitocarta_subset.apply(
-        lambda row: [row[Cons.MITO_ENSEMBL_ID], [row.drop(Cons.MITO_ENSEMBL_ID).to_dict()]], axis=1
-    )
-    intermediate_df = pd.DataFrame(
-        mitocarta_melted.tolist(), columns=[Cons.TARGET_COL, Cons.MITOCART_PATHWAY_COL]
-    )
 
-    return intermediate_df
+    return mitocarta_subset
 
 
 def get_gene_mito_pathways(
@@ -151,7 +143,7 @@ def get_gene_mito_pathways(
         source_namespace=Cons.MITOCARTA_GENE_INPUT_ID,
         target_df=subset_df,
         common_cols=[Cons.TARGET_COL],
-        target_specific_cols=list([]),
+        target_specific_cols=Cons.MITOCART_OUTPUT,
         col_name=Cons.MITOCART_PATHWAY_COL,
     )
 

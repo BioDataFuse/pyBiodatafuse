@@ -7,6 +7,7 @@ import logging
 import os
 import pickle
 from logging import Logger
+from typing import Dict, Any
 
 import networkx as nx
 import numpy as np
@@ -1871,29 +1872,6 @@ def edge_exists(g, source, target, edge_attrs):
     return False
 
 
-def save_graph_to_tsv(g, output_dir="output"):
-    """Save the graph to TSV files for nodes and edges.
-
-    :param g: the input graph to save.
-    :param output_dir: the directory to save the TSV files.
-    """
-    os.makedirs(output_dir, exist_ok=True)
-
-    # Save nodes
-    nodes_path = os.path.join(output_dir, "nodes.tsv")
-    with open(nodes_path, "w") as f:
-        f.write("node_id\tattributes\n")
-        for node, attrs in g.nodes(data=True):
-            f.write(f"{node}\t{json.dumps(attrs)}\n")
-
-    # Save edges
-    edges_path = os.path.join(output_dir, "edges.tsv")
-    with open(edges_path, "w") as f:
-        f.write("source\ttarget\tkey\tattributes\n")
-        for u, v, k, attrs in g.edges(keys=True, data=True):
-            f.write(f"{u}\t{v}\t{k}\t{json.dumps(attrs)}\n")
-
-
 def add_ensembl_homolog_subgraph(g, gene_node_label, annot_list):
     """Construct part of the graph by linking the gene to genes.
 
@@ -1931,8 +1909,8 @@ def add_tflink_gene_tf_subgraph(g, gene_node_label, annot_list):
     :param annot_list: list of protein-protein interactions from StringDb.
     :returns: a NetworkX MultiDiGraph
     """
+    logger.debug("Adding TFLink gene-TF nodes and edges")
     for tf in annot_list:
-
         edge_attrs = Cons.TFLINK_GENE_TF_EDGE_ATTRS.copy()
         edge_attrs.update(
             {
@@ -2032,7 +2010,6 @@ def process_annotations(g, gene_node_label, row, func_dict):
         if isinstance(annot_list, np.ndarray):
             annot_list = annot_list.tolist()
         elif not isinstance(annot_list, list):
-            logger.warning(f"annot_list of type {type(annot_list)} and not list. Skipping...")
             annot_list = []
 
         func_dict[annot_key](g, gene_node_label, annot_list)
@@ -2113,12 +2090,10 @@ def process_tf_target(g, gene_node_label, row):
     :param gene_node_label: the gene node to be linked to annotation entities.
     :param row: row in the combined DataFrame.
     """
-    if Cons.ITS_TARGET_COL in row:
+    if Cons.ITS_TARGET_COL in row and row[Cons.ITS_TARGET_COL] is not None:
         its_target_list = json.loads(json.dumps(row[Cons.ITS_TARGET_COL]))
-        if not isinstance(its_target_list, float) and its_target_list is not None:
-            for item in its_target_list:
-                if pd.isna(item["Name.Target"]):
-                    its_target_list = []
+
+        if isinstance(its_target_list, list) and len(its_target_list) > 0:
             add_tflink_gene_tf_subgraph(g, gene_node_label, its_target_list)
 
 
@@ -2212,8 +2187,6 @@ def _built_gene_based_graph(
 
     dea_columns = [c for c in combined_df.columns if c.endswith("_dea")]
 
-    compound_identifiers = ["PubChem Compound", "CHEBI", "InChIKey"]
-
     func_dict = {
         Cons.BGEE_GENE_EXPRESSION_LEVELS_COL: add_gene_bgee_subgraph,
         Cons.DISGENET_DISEASE_COL: add_disgenet_gene_disease_subgraph,
@@ -2244,34 +2217,19 @@ def _built_gene_based_graph(
         f"{Cons.GPROFILER}_go:cc": add_gprofiler_gene_gocc_subgraph,
         f"{Cons.GPROFILER}_go:mf": add_gprofiler_gene_gomf_subgraph,
         Cons.MITOCART_PATHWAY_COL: add_mitocarta_gene_mito_subgraph,
-        # Cons.TFLINK_GENE_TF_COL: add_tflink_gene_tf_subgraph,  # TODO: add this
+        Cons.ITS_TARGET_COL: process_tf_target,
     }
 
     for _i, row in tqdm(combined_df.iterrows(), total=combined_df.shape[0], desc="Building graph"):
-        if pd.isna(row["identifier"]) or pd.isna(row["target"]):
+        if pd.isna(row[Cons.IDENTIFIER_COL]) or pd.isna(row[Cons.TARGET_COL]):
             continue
+
         gene_node_label = add_gene_node(g, row, dea_columns)
         process_annotations(g, gene_node_label, row, func_dict)
         process_ppi(g, gene_node_label, row)
 
     if homolog_df_list is not None:
         process_homologs(g, combined_df, homolog_df_list, func_dict, dea_columns)
-
-    is_compound_input = any(
-        combined_df[Cons.TARGET_SOURCE_COL].astype(str).str.contains(ci, case=False, na=False).any()
-        or combined_df[Cons.IDENTIFIER_COL].astype(str).str.contains(ci, case=False, na=False).any()
-        for ci in compound_identifiers
-    )
-
-    for _i, row in tqdm(combined_df.iterrows(), total=combined_df.shape[0], desc="Building graph"):
-        if pd.isna(row[Cons.IDENTIFIER_COL]) or pd.isna(row[Cons.TARGET_COL]):
-            continue
-        if is_compound_input:
-            node_label = add_compound_node(g, row)
-
-        node_label = add_gene_node(g, row, dea_columns)
-
-        process_annotations(g, node_label, row, func_dict)
 
     # Process disease-compound relationships
     dnodes = {
@@ -2289,48 +2247,6 @@ def _built_gene_based_graph(
 
     normalize_node_attributes(g)
     normalize_edge_attributes(g)
-
-    return g
-
-
-def save_graph(
-    combined_df: pd.DataFrame,
-    combined_metadata: Dict[Any, Any],
-    disease_compound: pd.DataFrame = None,
-    graph_name: str = "combined",
-    graph_dir: str = "examples/usecases/",
-):
-    """Save the graph to a file.
-
-    :param combined_df: the input DataFrame to be converted into a graph.
-    :param combined_metadata: the metadata of the graph.
-    :param disease_compound: the input DataFrame containing disease-compound relationships.
-    :param graph_name: the name of the graph.
-    :param graph_dir: the directory to save the graph.
-    :returns: a NetworkX MultiDiGraph
-
-    """
-    graph_path = f"{graph_dir}/{graph_name}"
-    os.makedirs(graph_path, exist_ok=True)
-
-    df_path = f"{graph_path}/{graph_name}_df.pkl"
-    metadata_path = f"{graph_path}/{graph_name}_metadata.pkl"
-    graph_path_pickle = f"{graph_path}/{graph_name}_graph.pkl"
-    graph_path_gml = f"{graph_path}/{graph_name}_graph.gml"
-
-    # Save the combined DataFrame
-    combined_df.to_pickle(df_path)
-
-    # Save the metadata
-    with open(metadata_path, "wb") as file:
-        pickle.dump(combined_metadata, file)
-
-    # Save the graph
-    g = build_networkx_graph(combined_df, disease_compound)
-
-    with open(graph_path_pickle, "wb") as f:
-        pickle.dump(g, f)
-    nx.write_gml(g, graph_path_gml)
 
     return g
 

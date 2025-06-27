@@ -248,13 +248,10 @@ def bridgedb_xref(
             "HGNC",
             "MGI",
         ]
-
-        data_sources = read_resource_files()
-        output_datasource = list(data_sources[Cons.SOURCE_COL])
     else:
         assert isinstance(output_datasource, list), "output_datasource must be a list"
 
-    data_sources = read_resource_files()
+    data_sources = read_datasource_file()
     input_source = data_sources.loc[
         data_sources[Cons.SOURCE_COL] == input_datasource, "systemCode"
     ].iloc[0]

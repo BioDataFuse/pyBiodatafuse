@@ -28,27 +28,14 @@ import pyBiodatafuse.constants as Cons
 from pyBiodatafuse.utils import get_identifier_of_interest
 
 
-def download_tflink_dataset(tf_file: str, filename: str) -> Tuple[pd.DataFrame, dict]:
-    """Download, save, and read a TFLink dataset.
+def load_tflink_dataset(tf_file: str) -> Tuple[pd.DataFrame, dict]:
+    """Load a TFLink dataset.
 
-    :param tf_file: The TF-Target dataset to download. Human "TFLink_Homo_sapiens_interactions_All_simpleFormat_v1.0.tsv.gz"
-    :param filename: The local file path to save the downloaded dataset.
+    :param tf_file: Path of the TF-Target dataset. See the links in the docstring for downloading.
     :returns: A TFLink DataFrame and dictionary of the TFLink metadata.
     :raises ValueError: If the file download fails due to an HTTP error.
     """
-    # Dowonload the TF-Target dataset
-    if not os.path.exists(filename):
-        url = f"{Cons.TFLINK_DOWNLOAD_URL}/{tf_file}"
-        response = requests.get(url)
-        try:
-            response.raise_for_status()
-        except requests.HTTPError as e:
-            raise ValueError(f"Failed to download file. HTTP Error: {e}")
-        else:
-            with open(filename, "wb") as file:
-                file.write(response.content)
-
-    with gzip.open(filename, "rt") as f:
+    with gzip.open(tf_file, "rt") as f:
         tflink_df = pd.read_csv(f, sep="\t")
 
     # Add version
@@ -105,7 +92,6 @@ def add_target_and_tf_interaction(
 
 def get_tf_target(
     tf_file: str,
-    filename: str,
     bridgedb_df: pd.DataFrame,
     filter_deg: bool,
     padj_filter: Optional[float] = 0.01,
@@ -113,8 +99,7 @@ def get_tf_target(
 ) -> Tuple[pd.DataFrame, dict]:
     """Add tfs and targets from tflink.
 
-    :param tf_file: The TF-Target dataset to download. Human "TFLink_Homo_sapiens_interactions_All_simpleFormat_v1.0.tsv.gz"
-    :param filename: The local file path to save the downloaded dataset.
+    :param tf_file: Path of the TF-Target dataset. See the links in the docstring for downloading.
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query.
     :param filter_deg: Filter the data based on DEA output, if true, makes sure the column to filter and threshold should be checked.
     :param padj_filter: The adjusted p-value threshold for filtering DEGs (default is 0.01).
@@ -123,7 +108,7 @@ def get_tf_target(
     :raises ValueError: If the specified column for filtering DEGs is not found in the DataFrame.
     """
     # Dowanload TFLink dataset and metadata
-    tflink_df, tflink_metadata = download_tflink_dataset(tf_file, filename)
+    tflink_df, tflink_metadata = load_tflink_dataset(tf_file)
 
     # Extract the "target" values in bridgedb_df
     data_df = get_identifier_of_interest(bridgedb_df, Cons.TFLINK_GENE_INPUT_ID)

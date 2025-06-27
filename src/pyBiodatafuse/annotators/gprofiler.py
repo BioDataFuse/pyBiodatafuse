@@ -7,7 +7,7 @@ from typing import Any, Dict
 
 import pandas as pd
 import requests
-from gprofiler.gprofiler import GProfiler
+from gprofiler import GProfiler
 
 import pyBiodatafuse.constants as Cons
 from pyBiodatafuse.utils import get_identifier_of_interest
@@ -128,7 +128,9 @@ def process_gprofiler_data(gprofiler_df: pd.DataFrame) -> pd.DataFrame:
     :returns: Processed DataFrame structured by intersections and sources.
     """
     # Create a 'gprofiler' column using the helper function
-    gprofiler_df[Cons.GPROFILER_RESULT_COL] = gprofiler_df.apply(_create_path_info, axis=1)
+    gprofiler_df[Cons.GPROFILER_RESULT_COL] = gprofiler_df.apply(
+        _create_path_info, axis=1, args=(gprofiler_df,)
+    )
 
     # Drop all columns except for "source", "id", "intersections", and "gprofiler"
     cols_to_drop = [col for col in gprofiler_df.columns if col not in Cons.GPROFILER_COLS_TO_KEEP]

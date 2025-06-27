@@ -398,8 +398,8 @@ MITO_PATHWAYS = "mito_pathways"
 MITO_ENSEMBL_ID = "ensembl_id"
 
 MITOCART_COL_MAPPER = {
-    "EnsemblGeneID_mapping_version_20200130": MITO_ENSEMBL_ID,
-    "EnsemblGeneID": MITO_ENSEMBL_ID,
+    "EnsemblGeneID_mapping_version_20200130": TARGET_COL,
+    "EnsemblGeneID": TARGET_COL,
     "Description": "gene_description",
     "MitoCarta3.0_Evidence": "evidence",
     "MitoCarta3.0_SubMitoLocalization": "sub_mito_localization",
@@ -407,6 +407,14 @@ MITOCART_COL_MAPPER = {
     "HPA_Main_Location_2020 (Reliability)": "hpa_location",
     "Tissues": "tissue_expression",
 }
+MITOCART_OUTPUT = [
+    "gene_description",
+    "evidence",
+    "sub_mito_localization",
+    "hpa_location",
+    "tissue_expression",
+    "mito_pathways",
+]
 
 
 """
@@ -698,6 +706,7 @@ SIDE_EFFECT_NODE_LABEL = "Side Effect"
 HOMOLOG_NODE_LABEL = "Homolog"
 PHENOTYPE_NODE_LABEL = "Phenotype"
 MIRNA_NODE_LABEL = "miRNA"
+TRANS_FACTOR_NODE_LABEL = "Transcription Factor"
 MITOCHONDRIAL_PATHWAY_NODE_LABEL = "Mitochondrial Pathway"
 
 """
