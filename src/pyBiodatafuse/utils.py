@@ -4,12 +4,12 @@
 
 import logging
 import warnings
+from importlib import resources
 from typing import List, Optional
 
 import pandas as pd
 
 import pyBiodatafuse.constants as Cons
-from pyBiodatafuse.id_mapper import read_resource_files
 
 logger = logging.getLogger(__name__)
 
@@ -25,7 +25,8 @@ def get_identifier_of_interest(
     :returns: a DataFrame containing the identifiers of interest
     """
     # Load identifier options
-    identifier_options = read_resource_files()["source"].tolist()
+    with resources.path("pyBiodatafuse.resources", "datasources.csv") as df:
+        identifier_options = pd.read_csv(df)["source"].tolist()
 
     # Check if source is in identifier options
     assert db_source in identifier_options, f"Source {db_source} is not in identifier options"

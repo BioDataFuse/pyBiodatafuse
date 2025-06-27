@@ -1,0 +1,73 @@
+name: "Request Support for Custom Analysis"
+description: "Suggest a specific analysis, algorithm, or graph-based method you'd like supported or implemented."
+title: "[Custom Analysis] "
+labels: ["enhancement", "analysis-support"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        👋 Thank you for using **BioDataFuse**!
+
+        Please complete the form below to request support for a specific type of **graph-based analysis** or **custom algorithm** you'd like to apply to your knowledge graph.
+
+  - type: input
+    id: analysis-name
+    attributes:
+      label: What is the name or type of the analysis/algorithm?
+      placeholder: e.g., Random Walk with Restart, PageRank, Graph Clustering
+    validations:
+      required: true
+
+  - type: textarea
+    id: analysis-description
+    attributes:
+      label: Describe the analysis or algorithm
+      placeholder: |
+        Explain what the analysis does and why you'd like to apply it to your KG.
+        Include any formulas, references, or academic papers if applicable.
+    validations:
+      required: true
+
+  - type: input
+    id: target-data
+    attributes:
+      label: Which data or node/edge types is this analysis meant for?
+      placeholder: e.g., Drug-Disease interactions, Protein networks, All node types
+    validations:
+      required: false
+
+  - type: textarea
+    id: expected-outcome
+    attributes:
+      label: What output or result do you expect?
+      placeholder: e.g., A ranked list of key nodes, visualization of clusters, etc.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: support-needs
+    attributes:
+      label: Do you need help with any of the following?
+      options:
+        - label: Implementing the algorithm
+        - label: Connecting the algorithm to the existing KG structure
+        - label: Visualizing the output
+        - label: Running the analysis in the UI
+        - label: I only need guidance (no coding needed)
+
+  - type: textarea
+    id: additional-info
+    attributes:
+      label: Additional context or links (optional)
+      placeholder: Provide links to resources, GitHub repos, notebooks, papers, etc.
+
+  - type: dropdown
+    id: urgency
+    attributes:
+      label: How soon do you need this?
+      options:
+        - No rush
+        - Within a month
+      default: 0
