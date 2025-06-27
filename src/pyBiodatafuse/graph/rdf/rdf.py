@@ -125,9 +125,10 @@ class BDFGraph(Graph):
         datasources = read_datasource_file()
         if not self.include_variants:
             df = df[df[Cons.TARGET_SOURCE_COL] == Cons.ENSEMBL]
-
-        for i, row in tqdm(df.iterrows(), total=df.shape[0], desc="Building RDF graph"):
-            self.process_row(row, i, datasources)
+        for j, (_, row) in enumerate(
+            tqdm(df.iterrows(), total=df.shape[0], desc="Building RDF graph")
+        ):
+            self.process_row(row, j, datasources)
         self._add_metadata(metadata)
 
     def process_row(self, row: pd.Series, i: int, datasources: pd.DataFrame) -> None:
