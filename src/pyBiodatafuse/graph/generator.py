@@ -2070,6 +2070,7 @@ def _built_gene_based_graph(
         f"{Cons.GPROFILER}_go:cc": add_gprofiler_gene_gocc_subgraph,
         f"{Cons.GPROFILER}_go:mf": add_gprofiler_gene_gomf_subgraph,
         Cons.MITOCART_PATHWAY_COL: add_mitocarta_gene_mito_subgraph,
+        # Cons.TFLINK_GENE_TF_COL: add_tflink_gene_tf_subgraph,  # TODO: add this
     }
 
     if homolog_df_list is not None:

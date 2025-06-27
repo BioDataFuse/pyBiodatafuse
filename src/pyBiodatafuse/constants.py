@@ -696,7 +696,6 @@ SIDE_EFFECT_NODE_LABEL = "Side Effect"
 HOMOLOG_NODE_LABEL = "Homolog"
 PHENOTYPE_NODE_LABEL = "Phenotype"
 MIRNA_NODE_LABEL = "miRNA"
-TRANS_FACTOR_NODE_LABEL = "Transcription Factor"
 MITOCHONDRIAL_PATHWAY_NODE_LABEL = "Mitochondrial Pathway"
 
 """
