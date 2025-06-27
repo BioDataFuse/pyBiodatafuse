@@ -1,0 +1,59 @@
+name: 📡 New Data Source Request
+description: Request support for a new biological or biomedical data source
+title: "[DataSource] "
+labels: [datasource, enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        🧬 Thanks for suggesting a new data source!
+
+        Please fill out the form below to help us assess and prioritize your request.
+
+  - type: input
+    id: datasource_name
+    attributes:
+      label: 🔖 Data Source Name
+      placeholder: e.g., DrugBank, KEGG, BioGRID
+    validations:
+      required: true
+
+  - type: input
+    id: datasource_link
+    attributes:
+      label: 🌐 Data Source Link
+      placeholder: https://example.org
+    validations:
+      required: true
+
+  - type: textarea
+    id: data_type
+    attributes:
+      label: 📦 Type of Data / Interactions
+      description: |
+        Describe the type of data you would like to extract (e.g., drug-target interactions, gene-disease associations, metabolic pathways, etc.)
+      placeholder: e.g., Extract compound–gene interactions or pathway gene sets.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: open_access
+    attributes:
+      label: 🧾 Is the data source open access?
+      description: |
+        Is the data freely accessible (via API, downloadable files, or public license)?
+      options:
+        - Yes – completely open access
+        - Partially – requires registration or free API key
+        - No – requires payment or restricted access
+        - Not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: 💬 Additional Comments or Context
+      placeholder: Licensing terms, known API endpoints, publication links, etc.
+    validations:
+      required: false
