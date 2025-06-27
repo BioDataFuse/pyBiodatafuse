@@ -18,7 +18,7 @@ from pubchempy import BadRequestError, PubChemHTTPError, get_compounds, get_syno
 from rdkit.Chem import CanonSmiles
 from tqdm import tqdm
 
-from pyBiodatafuse.constants import BRIDGEDB_ENDPOINT, PUBCHEM_COMPOUND, PUBCHEM_COMPOUND_CID
+import pyBiodatafuse.constants as Cons
 
 logger = logging.getLogger(__name__)
 
@@ -89,8 +89,7 @@ def get_version_webservice_bridgedb() -> dict:
     :raises ValueError: if failed to retrieve data
     """
     # Set the BridgeDb API
-    url = "https://webservice.bridgedb.org"
-    version_response = requests.get(url=f"{url}/config")
+    version_response = requests.get(url=f"{Cons.BRIDGEDB_ENDPOINT}/config")
 
     # Check if the request was successful (status code 200)
     if version_response.status_code == 200:
@@ -120,11 +119,9 @@ def get_version_datasource_bridgedb(input_species: Optional[str] = None) -> List
     """
     if input_species is None:
         input_species = "Human"
-    # Set the BridgeDb API
-    url = "https://webservice.bridgedb.org"
 
     # Add datasource version to metadata file
-    datasource_response = requests.get(url=f"{url}/{input_species}/properties")
+    datasource_response = requests.get(url=f"{Cons.BRIDGEDB_ENDPOINT}/{input_species}/properties")
 
     # Check if the request was successful (status code 200)
     if datasource_response.status_code == 200:
@@ -251,16 +248,13 @@ def bridgedb_xref(
             "HGNC",
             "MGI",
         ]
-
-        data_sources = read_datasource_file()
-        output_datasource = list(data_sources["source"])
     else:
         assert isinstance(output_datasource, list), "output_datasource must be a list"
 
     data_sources = read_datasource_file()
-    input_source = data_sources.loc[data_sources["source"] == input_datasource, "systemCode"].iloc[
-        0
-    ]
+    input_source = data_sources.loc[
+        data_sources[Cons.SOURCE_COL] == input_datasource, "systemCode"
+    ].iloc[0]
 
     if len(identifiers) < 1:
         raise ValueError("Please provide at least one identifier datasource, e.g. HGNC")
@@ -271,7 +265,7 @@ def bridgedb_xref(
     )
 
     # Setting up the query url
-    query_link = f"{BRIDGEDB_ENDPOINT}/{input_species}/xrefsBatch"
+    query_link = f"{Cons.BRIDGEDB_ENDPOINT}/{input_species}/xrefsBatch"
 
     # Record the start time
     start_time = datetime.datetime.now()
@@ -310,25 +304,30 @@ def bridgedb_xref(
     # Create a DataFrame
     bridgedb = pd.DataFrame(
         parsed_results,
-        columns=["identifier", "identifier.source", "target", "target.source"],
+        columns=[
+            Cons.IDENTIFIER_COL,
+            Cons.IDENTIFIER_SOURCE_COL,
+            Cons.TARGET_COL,
+            Cons.TARGET_SOURCE_COL,
+        ],
     )
 
     # Replace 'target.source' values with complete source names from 'data_sources'
-    bridgedb["target.source"] = bridgedb["target.source"].map(
-        data_sources.set_index("systemCode")["source"]
+    bridgedb[Cons.TARGET_SOURCE_COL] = bridgedb[Cons.TARGET_SOURCE_COL].map(
+        data_sources.set_index("systemCode")[Cons.SOURCE_COL]
     )
 
     # Drop not mapped ids
-    bridgedb = bridgedb.dropna(subset=["target.source"])
+    bridgedb = bridgedb.dropna(subset=[Cons.TARGET_SOURCE_COL])
 
     # Subset based on the output_datasource
-    bridgedb_subset = bridgedb[bridgedb["target.source"].isin(output_datasource)]
+    bridgedb_subset = bridgedb[bridgedb[Cons.TARGET_SOURCE_COL].isin(output_datasource)]
 
     bridgedb_subset = bridgedb_subset.drop_duplicates()
     identifiers.columns = [
         "{}{}".format(c, "" if c in "identifier" else "_dea") for c in identifiers.columns
     ]
-    bridgedb_subset = bridgedb_subset.merge(identifiers, on="identifier")
+    bridgedb_subset = bridgedb_subset.merge(identifiers, on=Cons.IDENTIFIER_COL)
 
     """Metadata details"""
     # Get the current date and time
@@ -341,7 +340,7 @@ def bridgedb_xref(
 
     # Add the datasource, query, query time, and the date to metadata
     bridgedb_metadata = {
-        "datasource": "BridgeDb",
+        "datasource": Cons.BRIDGEDB,
         "metadata": {
             "source_version": bridgedb_version,
             "data_version": datasource_version,
@@ -382,7 +381,7 @@ def get_cid_from_data(idx: Optional[str], idx_type: str) -> Optional[str]:
     :param idx_type: type of identifier to query. Potential curies include : smiles, inchikey, inchi, name
     :returns: PubChem ID
     """
-    if idx_type.lower() == "smiles":
+    if idx_type.lower() == Cons.SMILES.lower():
         idx = check_smiles(idx)
 
     if not idx:
@@ -406,7 +405,7 @@ def get_cid_from_pugrest(idx: Optional[str], idx_type: str) -> Optional[str]:
     :param idx_type: type of identifier to query. Potential curies include : smiles, inchikey, inchi, name
     :returns: PubChem ID
     """
-    if idx_type.lower() == "smiles":
+    if idx_type.lower() == Cons.SMILES.lower():
         idx = check_smiles(idx)
 
     if not idx:
@@ -474,10 +473,10 @@ def pubchem_xref(
 
         cid_data.append(
             {
-                "identifier": idx,
-                "identifier.source": identifier_type,
-                "target": f"{PUBCHEM_COMPOUND_CID}:{cid}" if cid is not None else None,
-                "target.source": PUBCHEM_COMPOUND,
+                Cons.IDENTIFIER_COL: idx,
+                Cons.IDENTIFIER_SOURCE_COL: identifier_type,
+                Cons.TARGET_COL: f"{Cons.PUBCHEM_COMPOUND_CID}:{cid}" if cid is not None else None,
+                Cons.TARGET_SOURCE_COL: Cons.PUBCHEM_COMPOUND,
             }
         )
 
@@ -501,7 +500,7 @@ def pubchem_xref(
 
     # Add the datasource, query, query time, and the date to metadata
     pubchem_metadata = {
-        "datasource": "Pubchem python client",
+        "datasource": Cons.PUBCHEM,
         "metadata": {
             "package": "PubChemPy",
             "data_version": stable_package_version,
@@ -545,7 +544,7 @@ def cid2chembl(cids: list) -> dict:
         other_idenfitiers = other_idenfitiers[0]
 
         for idx in other_idenfitiers["Synonym"]:
-            if idx.startswith("CHEMBL"):
+            if idx.startswith(Cons.CHEMBL):
                 chembl_data[idx] = pubchem_idx
                 break
 

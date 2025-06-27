@@ -137,16 +137,19 @@ def combine_sources(bridgedb_df: pd.DataFrame, df_list: List[pd.DataFrame]) -> p
         m = bridgedb_df
 
     for df in df_list:
-        if not df.empty:
-            m = pd.merge(
-                m,
-                df.drop(
-                    columns=[Cons.TARGET_SOURCE_COL, Cons.IDENTIFIER_SOURCE_COL, Cons.TARGET_COL],
-                    errors="ignore",
-                ),
-                on="identifier",
-                how="outer",
-            )
+        if df.empty:
+            continue
+
+        m = pd.merge(
+            m,
+            df.drop(
+                columns=[Cons.TARGET_SOURCE_COL, Cons.IDENTIFIER_SOURCE_COL, Cons.TARGET_COL]
+                + [col for col in df.columns if col.endswith("_dea")],
+                errors="ignore",
+            ),
+            on=Cons.IDENTIFIER_COL,
+            how="outer",
+        )
 
     m = m.loc[:, ~m.columns.duplicated()]  # remove duplicate columns
 
