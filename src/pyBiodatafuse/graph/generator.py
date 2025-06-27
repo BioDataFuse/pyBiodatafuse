@@ -7,7 +7,7 @@ import logging
 import os
 import pickle
 from logging import Logger
-from typing import Dict, Any
+from typing import Any, Dict
 
 import networkx as nx
 import numpy as np

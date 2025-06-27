@@ -33,7 +33,6 @@ def load_tflink_dataset(tf_file: str) -> Tuple[pd.DataFrame, dict]:
 
     :param tf_file: Path of the TF-Target dataset. See the links in the docstring for downloading.
     :returns: A TFLink DataFrame and dictionary of the TFLink metadata.
-    :raises ValueError: If the file download fails due to an HTTP error.
     """
     with gzip.open(tf_file, "rt") as f:
         tflink_df = pd.read_csv(f, sep="\t")

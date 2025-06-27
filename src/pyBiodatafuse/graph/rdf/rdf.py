@@ -56,11 +56,7 @@ from pyBiodatafuse.graph.rdf.nodes.go_terms import add_go_cpf
 from pyBiodatafuse.graph.rdf.nodes.literature import add_literature_based_data
 from pyBiodatafuse.graph.rdf.nodes.pathway import add_molecular_pathway_node, add_pathway_node
 from pyBiodatafuse.graph.rdf.nodes.protein_protein import add_ppi_data
-from pyBiodatafuse.graph.rdf.utils import (
-    get_shacl_prefixes,
-    get_shapes,
-    replace_na_none,
-)
+from pyBiodatafuse.graph.rdf.utils import get_shacl_prefixes, get_shapes, replace_na_none
 from pyBiodatafuse.id_mapper import read_datasource_file
 
 # Set up logger
