@@ -185,14 +185,59 @@ def bridgedb_xref(
         "Wikipedia",
     ] = "HGNC",
 ) -> Tuple[pd.DataFrame, dict]:
-    """Map input list using BridgeDb.
+    """
+    Map input identifiers using BridgeDb.
 
-    :param identifiers: a dataframe with one column called identifier (the output of data_loader.py)
-    :param input_species: specify the species, for now only human would be supported
-    :param input_datasource: type of input identifier. More details at https://www.bridgedb.org/pages/system-codes.html
-    :param output_datasource: specify which type of identifiers you want to map your input identifiers.
-    :returns: a DataFrame containing the mapped identifiers and dictionary of the data resource metadata.
-    :raises ValueError: if the input_datasource is not provided or if the request fails
+    :param identifiers: A pandas DataFrame with one column named 'identifier'.
+    :param input_species: Optional species name. Only 'Homo sapiens' is currently supported.
+    :param input_datasource: The type of identifier in the input DataFrame. Expected formats by datasource:
+        - "HGNC": e.g. "TP53"
+        - "HGNC Accession Number": e.g. "HGNC:11998"
+        - "Ensembl": e.g. "ENSG00000141510"
+        - "NCBI Gene": e.g. "7157"
+        - "MGI": e.g. "MGI:104874"
+        - "miRBase mature sequence": e.g. "hsa-miR-21-5p"
+        - "miRBase Sequence": e.g. "MI0000077"
+        - "OMIM": e.g. "191170"
+        - "RefSeq": e.g. "NM_000546"
+        - "Rfam": e.g. "RF00001"
+        - "RGD": e.g. "RGD:620474"
+        - "SGD": e.g. "YAL001C"
+        - "UCSC Genome Browser": e.g. "uc001aaa.3"
+        - "NCBI Protein": e.g. "NP_000537"
+        - "PDB": e.g. "1TUP"
+        - "Pfam": e.g. "PF00069"
+        - "Uniprot-SwissProt": e.g. "P04637"
+        - "Uniprot-TrEMBL": e.g. "Q9H0H5"
+        - "Affy": e.g. "202763_at"
+        - "Agilent": e.g. "A_23_P61180"
+        - "Illumina": e.g. "ILMN_1803030"
+        - "Gene Ontology": e.g. "GO:0006915"
+        - "CAS": e.g. "50-00-0"
+        - "ChEBI": e.g. "CHEBI:15377"
+        - "ChemSpider": e.g. "5798"
+        - "ChEMBL compound": e.g. "CHEMBL25"
+        - "DrugBank": e.g. "DB01050"
+        - "HMDB": e.g. "HMDB0000122"
+        - "Guide to Pharmacology Ligand ID": e.g. "1234"
+        - "InChIKey": e.g. "BSYNRYMUTXBXSQ-UHFFFAOYSA-N"
+        - "KEGG Compound": e.g. "C00031"
+        - "KEGG Drug": e.g. "D00001"
+        - "KEGG Glycan": e.g. "G00001"
+        - "LIPID MAPS": e.g. "LMFA01010001"
+        - "LipidBank": e.g. "LBID0001"
+        - "PharmGKB Drug": e.g. "PA449053"
+        - "PubChem Compound": e.g. "2244"
+        - "PubChem Substance": e.g. "12345678"
+        - "SwissLipids": e.g. "SLM:000000001"
+        - "TTD Drug": e.g. "D000001"
+        - "Wikidata": e.g. "Q18216"
+        - "Wikipedia": e.g. "Aspirin"
+    :param output_datasource: Optional list of identifier types to map to.
+    :returns: Tuple of:
+        - DataFrame with mapped identifiers.
+        - Dictionary of data resource metadata.
+    :raises ValueError: If required inputs are missing or the mapping fails.
     """
     if input_species is None:
         input_species = "Human"
