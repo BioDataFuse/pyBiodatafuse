@@ -129,7 +129,7 @@ class BDFGraph(Graph):
         datasources = read_datasource_file()
         if not self.include_variants:
             df = df[df[Cons.TARGET_SOURCE_COL] == Cons.ENSEMBL]
-        for j, (i, row) in enumerate(
+        for j, (_, row) in enumerate(
             tqdm(df.iterrows(), total=df.shape[0], desc="Building RDF graph")
         ):
             self.process_row(row, j, datasources)
