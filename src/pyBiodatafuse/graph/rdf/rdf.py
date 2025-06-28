@@ -187,26 +187,90 @@ class BDFGraph(Graph):
         aop_data = row.get(Cons.AOPWIKIRDF, None)
 
         if gene:
-            self.process_ppi_data(string_ppi_data, gene_node)
-            protein_nodes = list(self.objects(gene_node, URIRef(Cons.PREDICATES["translation_of"])))
-            self.process_disease_data(disease_data, id_number, source_idx, gene_node)
-            self.process_expression_data(expression_data, id_number, source_idx, gene_node)
-            self.process_pathways(row, gene_node, protein_nodes)
-            self.process_processes_data(processes_data, gene_node)
-            self.process_compound_data(compound_data, gene_node)
-            self.process_literature_data(
-                literature_data, gene_node, id_number, source_idx, self.new_uris, i
-            )
-            self.process_transporter_inhibitor_data(gene_node, transporter_inhibitor_data)
+            try:
+                self.process_ppi_data(string_ppi_data, gene_node)
+            except Exception as e:
+                logger.warning("Failed to process PPI data for gene node: %s", e)
+
+            try:
+                protein_nodes = list(self.objects(gene_node, URIRef(Cons.PREDICATES["translation_of"])))
+            except Exception as e:
+                logger.warning("Failed to retrieve protein nodes for gene node: %s", e)
+                protein_nodes = []
+
+            try:
+                self.process_disease_data(disease_data, id_number, source_idx, gene_node)
+            except Exception as e:
+                logger.warning("Failed to process disease data for gene node: %s", e)
+
+            try:
+                self.process_expression_data(expression_data, id_number, source_idx, gene_node)
+            except Exception as e:
+                logger.warning("Failed to process expression data for gene node: %s", e)
+
+            try:
+                self.process_pathways(row, gene_node, protein_nodes)
+            except Exception as e:
+                logger.warning("Failed to process pathways for gene node: %s", e)
+
+            try:
+                self.process_processes_data(processes_data, gene_node)
+            except Exception as e:
+                logger.warning("Failed to process processes data for gene node: %s", e)
+
+            try:
+                self.process_compound_data(compound_data, gene_node)
+            except Exception as e:
+                logger.warning("Failed to process compound data for gene node: %s", e)
+
+            try:
+                self.process_literature_data(
+                    literature_data, gene_node, id_number, source_idx, self.new_uris, i
+                )
+            except Exception as e:
+                logger.warning("Failed to process literature data for gene node: %s", e)
+
+            try:
+                self.process_transporter_inhibitor_data(gene_node, transporter_inhibitor_data)
+            except Exception as e:
+                logger.warning("Failed to process transporter inhibitor data for gene node: %s", e)
+
             if self.include_variants:
-                self.process_protein_variants(protein_nodes)
-            self.process_aop_data(aop_data, gene_node, None)
-            self.process_molecular_pathway(pathways_data, gene_node, id_number)
+                try:
+                    self.process_protein_variants(protein_nodes)
+                except Exception as e:
+                    logger.warning("Failed to process protein variants for gene node: %s", e)
+
+            try:
+                self.process_aop_data(aop_data, gene_node, None)
+            except Exception as e:
+                logger.warning("Failed to process AOP data for gene node: %s", e)
+
+            try:
+                self.process_molecular_pathway(pathways_data, gene_node, id_number)
+            except Exception as e:
+                logger.warning("Failed to process molecular pathway data for gene node: %s", e)
+
         if compound:
-            self.process_pathways(row, compound_node, protein_nodes=[])
-            self.process_inhibitor_transporter_data(compound_node, inhibitor_transporter_data)
-            self.process_aop_data(aop_data, None, compound_node)
-            self.process_molecular_pathway(pathways_data, compound_node, id_number)
+            try:
+                self.process_pathways(row, compound_node, protein_nodes=[])
+            except Exception as e:
+                logger.warning("Failed to process pathways for compound node: %s", e)
+
+            try:
+                self.process_inhibitor_transporter_data(compound_node, inhibitor_transporter_data)
+            except Exception as e:
+                logger.warning("Failed to process inhibitor transporter data for compound node: %s", e)
+
+            try:
+                self.process_aop_data(aop_data, None, compound_node)
+            except Exception as e:
+                logger.warning("Failed to process AOP data for compound node: %s", e)
+
+            try:
+                self.process_molecular_pathway(pathways_data, compound_node, id_number)
+            except Exception as e:
+                logger.warning("Failed to process molecular pathway data for compound node: %s", e)
 
     # Class methods about specific nodes begin here
     # If you add a new method, try to import most of the code from another script
