@@ -17,6 +17,7 @@ import unittest
 
 import pandas as pd
 
+import pyBiodatafuse.constants as Cons
 from pyBiodatafuse.graph.rdf.rdf import BDFGraph
 
 DATA = pd.read_json(os.path.join("tests", "graph", "data", "combined_df_mock_data.json"))
