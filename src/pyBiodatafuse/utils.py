@@ -4,12 +4,12 @@
 
 import logging
 import warnings
+from importlib import resources
 from typing import List, Optional
 
 import pandas as pd
 
 import pyBiodatafuse.constants as Cons
-from pyBiodatafuse.id_mapper import read_resource_files
 
 logger = logging.getLogger(__name__)
 
@@ -25,7 +25,8 @@ def get_identifier_of_interest(
     :returns: a DataFrame containing the identifiers of interest
     """
     # Load identifier options
-    identifier_options = read_resource_files()["source"].tolist()
+    with resources.path("pyBiodatafuse.resources", "datasources.csv") as df:
+        identifier_options = pd.read_csv(df)["source"].tolist()
 
     # Check if source is in identifier options
     assert db_source in identifier_options, f"Source {db_source} is not in identifier options"
@@ -136,16 +137,19 @@ def combine_sources(bridgedb_df: pd.DataFrame, df_list: List[pd.DataFrame]) -> p
         m = bridgedb_df
 
     for df in df_list:
-        if not df.empty:
-            m = pd.merge(
-                m,
-                df.drop(
-                    columns=[Cons.TARGET_SOURCE_COL, Cons.IDENTIFIER_SOURCE_COL, Cons.TARGET_COL],
-                    errors="ignore",
-                ),
-                on="identifier",
-                how="outer",
-            )
+        if df.empty:
+            continue
+
+        m = pd.merge(
+            m,
+            df.drop(
+                columns=[Cons.TARGET_SOURCE_COL, Cons.IDENTIFIER_SOURCE_COL, Cons.TARGET_COL]
+                + [col for col in df.columns if col.endswith("_dea")],
+                errors="ignore",
+            ),
+            on=Cons.IDENTIFIER_COL,
+            how="outer",
+        )
 
     m = m.loc[:, ~m.columns.duplicated()]  # remove duplicate columns
 
