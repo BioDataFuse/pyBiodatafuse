@@ -1,32 +1,20 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""Python file for querying the AOP Wiki RDF SPARQL endpoint.
-
-This module provides functionality to query the AOP Wiki RDF SPARQL endpoint for
-Adverse Outcome Pathways (AOPs) associated with genes and compounds.
-
-Functions:
-    get_aops_gene: Query AOPs associated with genes
-    get_aops_compound: Query AOPs associated with compounds
-    get_aops: Query AOPs (auto-detects input type from bridgedb data)
-"""
+"""Python file for queriying the AOP Wiki RDF SPARQL endpoint ()."""
 
 import datetime
-import logging
 import os
 import warnings
 from string import Template
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, List, Tuple, Union
 
 import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
-from SPARQLWrapper.SPARQLExceptions import SPARQLWrapperException
 from tqdm import tqdm
 
 import pyBiodatafuse.constants as Cons
 from pyBiodatafuse.utils import (
-    check_columns_against_constants,
     collapse_data_sources,
     get_identifier_of_interest,
     give_annotator_warning,
@@ -97,6 +85,7 @@ def get_aops_gene(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
     # Step 3: Run SPARQL queries
     sparql = SPARQLWrapper(Cons.AOPWIKI_ENDPOINT)
     sparql.setReturnFormat(JSON)
+    sparql.setOnlyConneg(True)
 
     intermediate_df = pd.DataFrame()
 
@@ -120,17 +109,28 @@ def get_aops_gene(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
             query = Template(f.read()).substitute(substit_dict)
 
         # Execute the query and process results
-        sparql.setQuery(query)
+        sparql.setQuery(sparql_query_template_sub)
         res = sparql.queryAndConvert()
+
+        # Type check for SPARQL response
+        if not isinstance(res, dict) or "results" not in res or "bindings" not in res["results"]:
+            continue
+
         res_df = pd.DataFrame(
             [
-                {k: (v["value"] if "value" in v else "") for k, v in item.items()}
+                {
+                    k: (v["value"] if isinstance(v, dict) and "value" in v else "")
+                    for k, v in item.items()
+                }
                 for item in res["results"]["bindings"]
             ]
         )
 
         # Retrieve the expected columns from the SPARQL query results' "vars"
-        expected_columns = res["head"]["vars"]
+        if "head" in res and "vars" in res["head"]:
+            expected_columns = res["head"]["vars"]
+        else:
+            expected_columns = []
 
         # Ensure all expected columns are present in intermediate_df
         for col in expected_columns:

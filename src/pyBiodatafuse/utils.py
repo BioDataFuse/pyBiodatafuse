@@ -276,30 +276,27 @@ def create_harmonized_input_file(
     harmonized_data = []
 
     for _i, row in annotated_df.iterrows():
-        # Extract the identifier
-        if identifier_source is None:
-            id = row[Cons.IDENTIFIER_COL]
-            id_source = row[Cons.IDENTIFIER_SOURCE_COL]
-
         # Extract the the target column
         target_data = row[target_col]
 
         # Loop through each dictionary in the target data
         for entry in target_data:
-            source_idx = entry.get(identifier_source)
             target_idx = entry.get(target_source)
 
-            if source_idx is None or target_idx in [None, ""]:
+            if target_idx in [None, ""] or pd.isna(target_idx) or target_idx.split(":")[1] == "":
                 continue
 
-            if pd.isna(target_idx) or pd.isna(source_idx):
-                continue
+            if identifier_source is None:
+                id = row[Cons.IDENTIFIER_COL]
+                id_source = row[Cons.IDENTIFIER_SOURCE_COL]
+            else:
+                source_idx = entry.get(identifier_source, None)
 
-            if source_idx.split(":")[1] == "" or target_idx.split(":")[1] == "":
-                continue
+                if source_idx is None or source_idx.split(":")[1] == "":
+                    continue
 
-            id = source_idx.replace(":", "_")
-            id_source = identifier_source
+                id = source_idx.replace(":", "_")
+                id_source = identifier_source
 
             # Extract the specific target identifiers based on the target_source
             for target in target_idx.split(", "):
