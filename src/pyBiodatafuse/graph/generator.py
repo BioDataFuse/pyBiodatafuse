@@ -441,8 +441,8 @@ def add_minerva_gene_pathway_subgraph(g, gene_node_label, annot_list):
         annot_node_attrs.update(
             {
                 Cons.DATASOURCE: Cons.MINERVA,
-                Cons.NAME: annot[Cons.PATHWAY_LABEL],
-                Cons.ID: annot[Cons.PATHWAY_ID],
+                Cons.PATHWAY_LABEL: annot[Cons.PATHWAY_LABEL],
+                Cons.PATHWAY_ID: annot[Cons.PATHWAY_ID],
                 Cons.GENE_COUNTS: annot[Cons.PATHWAY_GENE_COUNTS],
             }
         )
@@ -489,8 +489,8 @@ def add_wikipathways_gene_pathway_subgraph(g, gene_node_label, annot_list):
         annot_node_attrs.update(
             {
                 Cons.DATASOURCE: Cons.WIKIPATHWAYS,
-                Cons.NAME: annot[Cons.PATHWAY_LABEL],
-                Cons.ID: annot[Cons.PATHWAY_ID],
+                Cons.PATHWAY_LABEL: annot[Cons.PATHWAY_LABEL],
+                Cons.PATHWAY_ID: annot[Cons.PATHWAY_ID],
                 Cons.GENE_COUNTS: annot[Cons.PATHWAY_GENE_COUNTS],
             }
         )
@@ -537,8 +537,8 @@ def add_kegg_gene_pathway_subgraph(g, gene_node_label, annot_list):
         annot_node_attrs.update(
             {
                 Cons.DATASOURCE: Cons.KEGG,
-                Cons.NAME: annot[Cons.PATHWAY_LABEL],
-                Cons.ID: annot[Cons.PATHWAY_ID],
+                Cons.PATHWAY_LABEL: annot[Cons.PATHWAY_LABEL],
+                Cons.PATHWAY_ID: annot[Cons.PATHWAY_ID],
                 Cons.GENE_COUNTS: annot[Cons.PATHWAY_GENE_COUNTS],
             }
         )
@@ -1173,8 +1173,8 @@ def add_opentargets_gene_reactome_pathway_subgraph(g, gene_node_label, annot_lis
         annot_node_attrs.update(
             {
                 Cons.DATASOURCE: Cons.OPENTARGETS,
-                Cons.NAME: annot[Cons.PATHWAY_LABEL],
-                Cons.ID: annot[Cons.PATHWAY_ID],
+                Cons.PATHWAY_LABEL: annot[Cons.PATHWAY_LABEL],
+                Cons.PATHWAY_ID: annot[Cons.PATHWAY_ID],
             }
         )
 
@@ -1219,8 +1219,8 @@ def add_opentargets_gene_go_subgraph(g, gene_node_label, annot_list):
         annot_node_attrs = Cons.OPENTARGETS_GO_NODE_ATTRS.copy()
         annot_node_attrs.update(
             {
-                Cons.NAME: annot[Cons.OPENTARGETS_GO_NAME],
-                Cons.ID: annot[Cons.OPENTARGETS_GO_ID],
+                Cons.PATHWAY_LABEL: annot[Cons.OPENTARGETS_GO_NAME],
+                Cons.PATHWAY_ID: annot[Cons.OPENTARGETS_GO_ID],
                 Cons.DATASOURCE: Cons.OPENTARGETS,
             }
         )
@@ -1509,7 +1509,6 @@ def add_molmedb_compound_gene_subgraph(g, compound_node_label, annot_list):
     return g
 
 
-# TODO: test this function
 def add_pubchem_assay_subgraph(g, gene_node_label, annot_list):
     """Construct part of the graph by linking the gene to a list of compounds tested on it.
 
@@ -1520,42 +1519,45 @@ def add_pubchem_assay_subgraph(g, gene_node_label, annot_list):
     """
     logger.debug("Adding PubChem assay nodes and edges")
     for annot in annot_list:
-        if pd.isna(annot["pubchem_assay_id"]):
+        if pd.isna(annot[Cons.PUBCHEM_ASSAY_ID]):
             continue
 
         annot_node_label = annot[Cons.COMPOUND_NODE_MAIN_LABEL]
         annot_node_attrs = Cons.PUBCHEM_COMPOUND_NODE_ATTRS.copy()
         annot_node_attrs.update(
             {
-                "name": annot["compound_name"],
-                "id": annot["compound_cid"],
-                "inchi": annot["inchi"],
-                "datasource": Cons.PUBCHEM,
+                Cons.NAME: annot["compound_name"],
+                Cons.ID: annot["compound_cid"],
+                Cons.INCHI: annot["inchi"],
             }
         )
         if not pd.isna(annot["smiles"]):
-            annot_node_attrs["smiles"] = annot["smiles"]
+            annot_node_attrs[Cons.SMILES] = annot["smiles"]
 
         # g.add_node(annot_node_label, attr_dict=annot_node_attrs)
         merge_node(g, annot_node_label, annot_node_attrs)
 
         edge_attrs = Cons.PUBCHEM_GENE_COMPOUND_EDGE_ATTRS.copy()
-        edge_attrs["assay_type"] = annot["assay_type"]
-        edge_attrs["pubchem_assay_id"] = annot["pubchem_assay_id"]
-        edge_attrs["outcome"] = annot["outcome"]
-        edge_attrs["label"] = annot["outcome"]
+        edge_attrs.update(
+            {
+                Cons.PUBCHEM_ASSAY_TYPE: annot[Cons.PUBCHEM_ASSAY_TYPE],
+                Cons.PUBCHEM_ASSAY_ID: annot[Cons.PUBCHEM_ASSAY_ID],
+            }
+        )
 
         edge_hash = hash(frozenset(edge_attrs.items()))
-        edge_attrs["edge_hash"] = edge_hash
+        edge_attrs[Cons.EDGE_HASH] = edge_hash
         edge_data = g.get_edge_data(gene_node_label, annot_node_label)
         edge_data = {} if edge_data is None else edge_data
-        node_exists = [x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash]
+        node_exists = [
+            x for x, y in edge_data.items() if y["attr_dict"][Cons.EDGE_HASH] == edge_hash
+        ]
 
         if len(node_exists) == 0:
             g.add_edge(
                 annot_node_label,
                 gene_node_label,
-                label=annot["outcome"],
+                label=Cons.PUBCHEM_EDGE_LABEL_MAPPER[annot["outcome"]],
                 attr_dict=edge_attrs,
             )
 
@@ -1690,12 +1692,17 @@ def add_wikipathways_molecular_subgraph(g, gene_node_label, annot_list):
 
             if target_node_label is None:
                 continue
+
             target_node_label = target_node_label.replace(f"{Cons.WIKIPATHWAYS_TARGET_GENE}:", "")
+
             interaction_type = annot.get(Cons.WIKIPATHWAYS_MIM_TYPE, "Interaction")
             edge_attrs = Cons.MOLECULAR_INTERACTION_EDGE_ATTRS.copy()
-            edge_attrs[Cons.WIKIPATHWAYS_INTERACTION_TYPE] = interaction_type
-            edge_attrs[Cons.WIKIPATHWAYS_RHEA_ID] = annot.get(Cons.WIKIPATHWAYS_RHEA_ID, "")
-            edge_attrs[Cons.PATHWAY_ID] = annot.get(Cons.PATHWAY_ID, "")
+            edge_attrs.update(
+                {
+                    Cons.WIKIPATHWAYS_INTERACTION_TYPE: interaction_type,
+                    Cons.WIKIPATHWAYS_RHEA_ID: annot.get(Cons.WIKIPATHWAYS_RHEA_ID, ""),
+                }
+            )
             edge_attrs[Cons.EDGE_HASH] = hash(frozenset(edge_attrs.items()))  # type: ignore
 
             if not g.has_node(target_node_label):
@@ -1705,8 +1712,6 @@ def add_wikipathways_molecular_subgraph(g, gene_node_label, annot_list):
                         Cons.PATHWAY_ID: annot.get(Cons.PATHWAY_ID, ""),
                         Cons.PATHWAY_LABEL: annot.get(Cons.PATHWAY_LABEL, ""),
                         Cons.ID: target_node_label,
-                        Cons.DATASOURCE: Cons.WIKIPATHWAYS,
-                        Cons.LABEL: Cons.MOLECULAR_PATHWAY_NODE_LABEL,
                     }
                 )
                 g.add_node(target_node_label, attr_dict=node_attrs)
@@ -1726,7 +1731,7 @@ def add_wikipathways_molecular_subgraph(g, gene_node_label, annot_list):
                 g.add_edge(
                     gene_node_label,
                     target_node_label,
-                    label=interaction_type.capitalize(),
+                    label=Cons.GENE_PATHWAY_EDGE_LABEL,
                     attr_dict=edge_attrs,
                 )
     return g
@@ -1849,7 +1854,7 @@ def add_aopwiki_gene_subgraph(g, gene_node_label, annot_list):
 
         # Add AO node
         if annot[Cons.AO_NODE_MAIN_LABEL]:
-            ao_node_label = f"{Cons.KEY_EVENT}:{annot.get(Cons.AO_NODE_MAIN_LABEL)}"
+            ao_node_label = f"{Cons.ADVERSE_OUTCOME}:{annot.get(Cons.AO_NODE_MAIN_LABEL)}"
             ao_node_attrs = Cons.AOPWIKI_NODE_ATTRS.copy()
             ao_node_attrs.update(
                 {
