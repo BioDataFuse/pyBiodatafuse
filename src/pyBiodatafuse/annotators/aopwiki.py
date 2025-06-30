@@ -361,8 +361,8 @@ def get_aops(
     """Query for AOPs associated with genes or compounds.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene/compound ids to query
-    :returns: a DataFrame containing the AOP Wiki RDF output and dictionary of the AOP Wiki RDF metadata
     :raises: ValueError: if the input identifiers are not recognized or if they are not admitted gene or compound identifiers
+    :returns: a DataFrame containing the AOP Wiki RDF output and dictionary of the AOP Wiki RDF metadata
     """
     # Route to appropriate function based on input type
     input_identifier = ""
