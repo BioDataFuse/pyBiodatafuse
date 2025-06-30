@@ -77,7 +77,7 @@ def load_graph(g: nx.MultiDiGraph, network_name: str):
     p4c.styles.create_visual_style(default)
 
     # Define node shape and color mapping
-    column = "labels"
+    column = Cons.LABEL
     values = [
         Cons.GENE_NODE_LABEL,
         Cons.ANATOMICAL_NODE_LABEL,
