@@ -11,7 +11,7 @@ import pandas as pd
 
 from pyBiodatafuse.annotators import aopwiki
 from pyBiodatafuse.annotators.aopwiki import get_aops
-from pyBiodatafuse.constants import AOPWIKIRDF
+from pyBiodatafuse.constants import AOPWIKI_COL
 
 
 class TestAOPAnnotator(unittest.TestCase):
@@ -40,7 +40,7 @@ class TestAOPAnnotator(unittest.TestCase):
         )
 
         # Validate the structure of the returned DataFrame
-        self.assertIn(AOPWIKIRDF, obtained_data.columns)
+        self.assertIn(AOPWIKI_COL, obtained_data.columns)
         self.assertEqual(len(obtained_data), len(bridgedb_dataframe))
 
         # Validate the metadata
@@ -53,12 +53,8 @@ class TestAOPAnnotator(unittest.TestCase):
 
         # Validate the content of the DataFrame
         with open("tests/annotators/data/aop_mock_res.json", "r", encoding="utf-8") as file:
-            expected_data = pd.Series(json.load(file)[AOPWIKIRDF])
-        expected_data.name = AOPWIKIRDF
+            expected_data = pd.Series(json.load(file)[AOPWIKI_COL])
+        expected_data.name = AOPWIKI_COL
         expected_data.index = obtained_data.index
 
-        pd.testing.assert_series_equal(obtained_data[AOPWIKIRDF], expected_data)
-
-
-if __name__ == "__main__":
-    unittest.main()
+        pd.testing.assert_series_equal(obtained_data[AOPWIKI_COL], expected_data)
