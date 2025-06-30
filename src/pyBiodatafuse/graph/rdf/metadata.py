@@ -69,9 +69,9 @@ def add_metadata(
             query = entry.get("query", None)
             if query:
                 url_service = query.get("url", None)
-            source = entry.get("source", None)
+            source = entry.get("source", None)  # type: ignore
             if source == "Open Targets GraphQL & REST API Beta":
-                source_node = URIRef(DATA_SOURCES["OpenTargets_reactome"])
+                source_node = URIRef(DATA_SOURCES["OpenTargets"])
                 g.add(
                     (
                         source_node,
@@ -157,13 +157,15 @@ def add_metadata(
                 )
 
             # Add api node for source
+            api_node = None
             if url_service:
                 api_node = URIRef(url_service)
                 g.add((api_node, RDF.type, URIRef("https://schema.org/WebAPI")))
             if source_node:
-                g.add((api_node, URIRef("https://schema.org/provider"), source_node))
+                if api_node:
+                    g.add((api_node, URIRef("https://schema.org/provider"), source_node))
                 g.add((source_node, RDF.type, URIRef(NODE_TYPES["data_source_node"])))
-                if api_version:
+                if api_version and api_node:
                     g.add(
                         (
                             api_node,
@@ -171,7 +173,7 @@ def add_metadata(
                             Literal(api_version),
                         )
                     )
-            if version:
+            if version and source_node:
                 g.add(
                     (
                         source_node,
