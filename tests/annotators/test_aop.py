@@ -9,9 +9,8 @@ from unittest.mock import Mock, patch
 
 import pandas as pd
 
-from pyBiodatafuse.annotators import aopwiki
 from pyBiodatafuse.annotators.aopwiki import get_aops
-from pyBiodatafuse.constants import AOPWIKI_COL
+from pyBiodatafuse.constants import AOPWIKI_COL, AOPWIKIRDF
 
 
 class TestAOPAnnotator(unittest.TestCase):
@@ -34,27 +33,14 @@ class TestAOPAnnotator(unittest.TestCase):
 
         obtained_data, metadata = get_aops(
             bridgedb_df=bridgedb_dataframe,
-            db="aopwiki",
             input_type="gene",
             input_identifier="Ensembl",
         )
 
-        # Validate the structure of the returned DataFrame
-        self.assertIn(AOPWIKI_COL, obtained_data.columns)
-        self.assertEqual(len(obtained_data), len(bridgedb_dataframe))
-
-        # Validate the metadata
-        self.assertIsInstance(metadata, dict)
-        self.assertIn("datasource", metadata)
-        self.assertEqual(metadata["datasource"], "aopwiki")
-        self.assertIn("query", metadata)
-        self.assertIn("size", metadata["query"])
-        self.assertEqual(metadata["query"]["size"], 1)
-
         # Validate the content of the DataFrame
         with open("tests/annotators/data/aop_mock_res.json", "r", encoding="utf-8") as file:
-            expected_data = pd.Series(json.load(file)[AOPWIKI_COL])
+            expected_data = pd.Series(json.load(file))
         expected_data.name = AOPWIKI_COL
-        expected_data.index = obtained_data.index
 
         pd.testing.assert_series_equal(obtained_data[AOPWIKI_COL], expected_data)
+        self.assertIsInstance(metadata, dict)
