@@ -7,7 +7,7 @@ import datetime
 import os
 import warnings
 from string import Template
-from typing import Tuple
+from typing import Any, Dict, List, Tuple, Union
 
 import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
@@ -36,7 +36,6 @@ def read_sparql_file(file_path: str) -> str:
 def check_endpoint() -> bool:
     """Check the availability of the a SPARQL endpoint.
 
-    :param db: the database to query
     :returns: True if the endpoint is available, False otherwise.
     """
     #    sparql_query = read_sparql_file(VERSION_QUERY_FILE)
@@ -51,10 +50,9 @@ def check_endpoint() -> bool:
     return True
 
 
-def get_version() -> dict:
+def get_version() -> Dict[str, str]:
     """Get version of RDF graph.
 
-    :param db: the database to query
     :returns: a dictionary containing the version information
     """
     # VERSION_QUERY_FILE = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-metadata.rq")
@@ -70,7 +68,7 @@ def get_version() -> dict:
 
 def get_aops(
     bridgedb_df: pd.DataFrame, input_type: str, input_identifier: str
-) -> Tuple[pd.DataFrame, dict]:
+) -> Tuple[pd.DataFrame, Dict[str, Any]]:
     """Query for AOPs associated with genes or compounds.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene/compound ids to query
@@ -81,7 +79,7 @@ def get_aops(
     :type input_identifier: str
     :returns: a DataFrame containing the AOP Wiki RDF output and a dictionary of the AOP Wiki RDF metadata
     :rtype: Tuple[pd.DataFrame, dict]
-    :raises ValueError: If the database (`db`) is not valid or the input type (`input_type`) is not valid
+    :raises ValueError: If the input type (`input_type`) is not valid
     """
     # Validate inputs
     if input_type not in Cons.AOPWIKI_INPUT_OPTIONS:
@@ -114,49 +112,61 @@ def get_aops(
     intermediate_df = pd.DataFrame()
     start_time = datetime.datetime.now()
 
-    for batch in tqdm(query_batches, desc=f"Querying {Cons.AOPWIKIRDF} for {input_type}"):
-        # Prepare the substitution dictionary
-        if input_type == "gene":
-            data_params = Cons.AOPWIKI_GENE_PARAMS
-        elif input_type == "compound":
-            data_params = Cons.AOPWIKI_COMPOUND_PARAMS
+    # Prepare the substitution dictionary
+    if input_type == "gene":
+        data_params: Dict[str, Any] = Cons.AOPWIKI_GENE_PARAMS
+    else:
+        data_params = Cons.AOPWIKI_COMPOUND_PARAMS
 
-        col = data_params["column"]
+    for batch in tqdm(query_batches, desc=f"Querying {Cons.AOPWIKIRDF} for {input_type}"):
         uri = data_params["uri"]
         entity_type = data_params["type_of_input"]
 
-        query_file = os.path.join(
-            os.path.dirname(__file__), "queries", data_params["query_file_name"]
-        )
+        query_file = f"{os.path.dirname(__file__)}/queries/{data_params['query_file_name']}"
         with open(query_file, "r") as fin:
             sparql_query = fin.read()
 
         sparql_query_template = Template(sparql_query)
-        substit_dict = {
-            entity_type: str([uri + target.replace('"', "") + ">" for target in batch.split(" ")])
+        substit_dict: Dict[str, str] = {
+            entity_type: uri + target.replace('"', "") + ">" for target in batch.split(" ")
+        }
+        substit_dict[entity_type] = (
+            str(substit_dict[entity_type])
             .replace("[", "")
             .replace("]", "")
             .replace("'", "")
             .replace(",", "")
-        }
+        )
         sparql_query_template_sub = sparql_query_template.substitute(substit_dict)
 
         # Execute the query and process results
         sparql.setQuery(sparql_query_template_sub)
         res = sparql.queryAndConvert()
+
+        # Type check for SPARQL response
+        if not isinstance(res, dict) or "results" not in res or "bindings" not in res["results"]:
+            continue
+
         res_df = pd.DataFrame(
             [
-                {k: (v["value"] if "value" in v else "") for k, v in item.items()}
+                {
+                    k: (v["value"] if isinstance(v, dict) and "value" in v else "")
+                    for k, v in item.items()
+                }
                 for item in res["results"]["bindings"]
             ]
-        )  #
+        )
+
         # Retrieve the expected columns from the SPARQL query results' "vars"
-        expected_columns = res["head"]["vars"]
+        if "head" in res and "vars" in res["head"]:
+            expected_columns = res["head"]["vars"]
+        else:
+            expected_columns = []
 
         # Ensure all expected columns are present in intermediate_df
-        for col in expected_columns:
-            if col not in intermediate_df.columns:
-                intermediate_df[col] = None  # Add missing columns with default value None
+        for expected_col in expected_columns:
+            if expected_col not in intermediate_df.columns:
+                intermediate_df[expected_col] = None  # Add missing columns with default value None
 
         # Concatenate the new results into the intermediate DataFrame
         intermediate_df = pd.concat([intermediate_df, res_df], ignore_index=True)
@@ -170,7 +180,10 @@ def get_aops(
         )
         return pd.DataFrame(), {}
 
-    if Cons.AOPWIKI_GENE_INPUT_ID or Cons.AOPWIKI_COMPOUND_INPUT_ID not in intermediate_df.columns:
+    if (
+        Cons.AOPWIKI_GENE_INPUT_ID not in intermediate_df.columns
+        and Cons.AOPWIKI_COMPOUND_INPUT_ID not in intermediate_df.columns
+    ):
         give_annotator_warning(Cons.AOPWIKIRDF)
 
     # Step 5: Clean and process the results

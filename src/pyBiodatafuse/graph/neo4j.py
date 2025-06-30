@@ -20,8 +20,8 @@ from neomodel import (
 )
 from tqdm import tqdm
 
-from pyBiodatafuse.graph.saver import save_graph_to_graphml
 import pyBiodatafuse.constants as Cons
+from pyBiodatafuse.graph.saver import save_graph_to_graphml
 
 
 # Predifinding relationship classes
