@@ -103,12 +103,12 @@ MOLMEDB_COMPOUND_PROTEIN_COL = f"{MOLMEDB}_transporter_inhibited"
 PUBCHEM_COMPOUND_ASSAYS_COL = f"{PUBCHEM}_assays"
 STRING_INTERACT_COL = f"{STRING}_interactions"
 WIKIDATA_CC_COL = f"{WIKIDATA}_cellular_components"
-AOPWIKIRDF = "aop_gene"  # todo fix this
-AOPWIKI_COMPOUND_COL = "pubchem_compound"  # todo fix this
 WIKIPATHWAYS_MOLECULAR_COL = f"{WIKIPATHWAYS}_molecular"
 WIKIPATHWAYS_PATHWAY_COL = f"{WIKIPATHWAYS}_pathway"
 MITOCART_PATHWAY_COL = f"{MITOCARTA}_pathways"
-AOPWIKI_GENE_COL = "aop_gene"  #
+AOPWIKI_COL = f"{AOPWIKIRDF}_results"
+AOPWIKI_GENE_COL = f"{AOPWIKIRDF}_gene"  # TODO: fix this
+AOPWIKI_COMPOUND_COL = f"{AOPWIKIRDF}_compound"  # TODO: fix this
 
 # Ontologies and vocabularies namespaces
 PUBCHEM_COMPOUND = "PubChem Compound"
@@ -140,7 +140,9 @@ BIODATAFUSE = "Biodatafuse"
 UBERON = "UBERON"
 CIO = "CIO"
 WIKIPATHWAY = "WP"
-
+AOP_PATHWAY = "AOP"
+MOL_INITIATING_EVENT = "MIE"
+KEY_EVENT = "KE"
 
 # Input type for each data source
 BGEE_GENE_INPUT_ID = ENSEMBL
@@ -646,8 +648,15 @@ WIKIPATHWAY_NAMESPACE_DICT = {
     WIKIPATHWAYS_TARGET_METABOLITE: PUBCHEM_COMPOUND_CID,
 }
 
+"""
+AOPWIKI variables
+"""
+AOPWIKI_INPUT_OPTIONS = [
+    "gene",
+    "compound",
+]  # "biological_process"]
 
-# AOPWIKI
+
 AOPWIKI_GENE_OUTPUT_DICT = {
     "aop": str,
     "aop_title": str,
@@ -681,6 +690,28 @@ AOPWIKI_COMPOUND_OUTPUT_DICT = {
     "KE_downstream_organ": str,
 }
 
+
+# QUERY_PROCESS = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-get-by-biological-process.rq.rq")
+
+AOPWIKI_GENE_PARAMS = {
+    "type_of_input": "genes",
+    "uri": "<https://identifiers.org/ensembl/",
+    "column": AOPWIKI_GENE_INPUT_ID,
+    "input_col": AOPWIKI_GENE_INPUT_ID,
+    "output_dict": AOPWIKI_GENE_OUTPUT_DICT,
+    "query_file_name": "aopwiki-gene.rq",
+    "output_col": AOPWIKI_GENE_COL,
+}
+AOPWIKI_COMPOUND_PARAMS = {
+    "type_of_input": "compounds",
+    "uri": "<https://identifiers.org/pubchem.compound/",
+    "column": AOPWIKI_COMPOUND_INPUT_ID,
+    "input_col": "pubchem_compound",
+    "output_dict": AOPWIKI_COMPOUND_OUTPUT_DICT,
+    "query_file_name": "aopwiki-compound.rq",
+    "output_col": AOPWIKI_COMPOUND_COL,
+}
+
 # TODO: Look into this
 ENSEMBL_HOMOLOGS = "Ensembl_homologs"
 
@@ -709,6 +740,22 @@ PHENOTYPE_NODE_LABEL = "Phenotype"
 MIRNA_NODE_LABEL = "miRNA"
 TRANS_FACTOR_NODE_LABEL = "Transcription Factor"
 MITOCHONDRIAL_PATHWAY_NODE_LABEL = "Mitochondrial Pathway"
+KEY_EVENT_NODE_LABEL = "Key Event"
+MIE_NODE_LABEL = "Molecular Initiating Event"
+AOP_NODE_LABEL = "Adverse Outcome Pathway"
+AO_NODE_LABEL = "Adverse Outcome"
+
+# Edge types (Neo4j)
+INTERACTS_WITH = "INTERACTS_WITH"
+PART_OF = "PART_OF"
+ASSOCIATED_WITH = "ASSOCIATED_WITH"
+ACTIVATES = "ACTIVATES"
+HAS_SIDE_EFFECT = "HAS_SIDE_EFFECT"
+TREATS = "TREATS"
+INHIBITS = "INHIBITS"
+EXPRESSED_BY = "EXPRESSED_BY"
+UPSTREAM_OF = "UPSTREAM_OF"
+DOWNSTREAM_OF = "DOWNSTREAM_OF"
 
 """
 Anatomical entity nodes and edges
@@ -1127,33 +1174,28 @@ LITERATURE_DISEASE_EDGE_ATTRS = {
 
 
 # AOPWIKI
-
-KEY_EVENT_NODE_LABEL = "Key Event"
-MIE_NODE_LABEL = "Molecular Initiating Event"
-AOP_NODE_LABEL = "Adverse Outcome Pathway"
-AO_NODE_LABEL = "Adverse Outcome"
-
-# AOPWIKI Edge Labels
+AOP_NODE_MAIN_LABEL = "aop"
 AOP_GENE_EDGE_LABEL = "associated_with"  # Gene to AOP edge
-MIE_AOP_EDGE_LABEL = "upstream"  # MIE to AOP edge
-KE_UPSTREAM_MIE_EDGE_LABEL = "upstream"  # KE upstream to MIE edge
-KE_DOWNSTREAM_KE_EDGE_LABEL = "downstream"  # KE downstream to KE upstream edge
-KE_DOWNSTREAM_AO_EDGE_LABEL = "downstream"  # KE downstream to AO edge
+MIE_NODE_MAIN_LABEL = "MIE"
+MIE_AOP_EDGE_LABEL = "upstream_of"  # MIE to AOP edge
+KEY_EVENT_UPSTREAM_NODE_MAIN_LABEL = "KE_upstream"
+KE_UPSTREAM_MIE_EDGE_LABEL = "upstream_of"  # KE upstream to MIE edge
+KEY_EVENT_DOWNSTREAM_NODE_MAIN_LABEL = "KE_downstream"
+KE_DOWNSTREAM_KE_EDGE_LABEL = "downstream_of"  # KE downstream to KE upstream edge
+AO_NODE_MAIN_LABEL = "ao"
+AO_KE_EDGE_LABEL = "associated_with"  # KE downstream to AO edge
+
 AOPWIKI_EDGE_ATTRS = {
-    "datasource": AOPWIKIRDF,
-    "relation": None,
-    "label": None,
+    DATASOURCE: AOPWIKIRDF,
+    LABEL: None,
 }
-MIE_NODE_LABEL = "Molecular Initiating Event"
-KE_NODE_LABEL = "Key Event"
-AO_NODE_LABEL = "Adverse Outcome"
 
 AOPWIKI_NODE_ATTRS = {
-    "datasource": AOPWIKIRDF,
-    "title": None,
-    "type": None,
+    DATASOURCE: AOPWIKIRDF,
+    NAME: None,
+    ID: None,
+    LABEL: None,
     "organ": None,
-    "labels": None,
 }
 
 # Mapper from namespace to BridgeDB datasource
