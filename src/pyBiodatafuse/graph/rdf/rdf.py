@@ -184,7 +184,7 @@ class BDFGraph(Graph):
         literature_data = row.get(Cons.LITERATURE_DISEASE_COL, None)
         transporter_inhibitor_data = row.get(Cons.MOLMEDB_PROTEIN_COMPOUND_COL, None)
         inhibitor_transporter_data = row.get(Cons.MOLMEDB_COMPOUND_PROTEIN_COL, None)
-        aop_data = row.get(Cons.AOPWIKIRDF, None)
+        aop_data = row.get(Cons.AOPWIKI_COL, None)
 
         if gene:
             try:
