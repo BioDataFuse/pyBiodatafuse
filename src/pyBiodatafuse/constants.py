@@ -650,6 +650,22 @@ WIKIPATHWAY_NAMESPACE_DICT = {
 
 
 # AOPWIKI
+
+OP = "aop"
+AOP_TITLE = "aop_title"
+MIE_TITLE = "MIE_title"
+MIE = "MIE"
+KE_DOWNSTREAM = "KE_downstream"
+KE_DOWNSTREAM_TITLE = "KE_downstream_title"
+KER = "KER"
+AO = "ao"
+AO_TITLE = "ao_title"
+KE_UPSTREAM = "KE_upstream"
+KE_UPSTREAM_TITLE = "KE_upstream_title"
+KE_UPSTREAM_ORGAN = "KE_upstream_organ"
+KE_DOWNSTREAM_ORGAN = "KE_downstream_organ"
+PUBCHEM_COMPOUND_AOPWIKI = "pubchem_compound"
+
 AOPWIKI_GENE_OUTPUT_DICT = {
     AOP: str,
     AOP_TITLE: str,
