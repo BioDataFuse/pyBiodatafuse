@@ -4,6 +4,7 @@
 """Python file for queriying the AOP Wiki RDF SPARQL endpoint ()."""
 
 import datetime
+import logging
 import os
 import warnings
 from string import Template
@@ -51,7 +52,8 @@ def check_endpoint_aopwiki() -> bool:
         sparql.setQuery("SELECT * WHERE { ?s ?p ?o } LIMIT 1")
         sparql.queryAndConvert()
         return True
-    except SPARQLWrapperException:
+    except sparql.Exception as e:
+        logger.error(f"SPARQL endpoint {Cons.AOPWIKI_ENDPOINT} is not available: {e}")
         return False
 
 
@@ -329,11 +331,11 @@ def get_aops_compound(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
     }
 
     # Check if all keys in df match the keys in OUTPUT_DICT
-    #check_columns_against_constants(
+    # check_columns_against_constants(
     #    data_df=intermediate_df,
     #    output_dict=output_dict,
     #    check_values_in=list(output_dict.keys()),
-    #)
+    # )
 
     # Step 7: Integrate into main dataframe
     merged_df = collapse_data_sources(
@@ -370,19 +372,23 @@ def get_aops(
     """
     # Route to appropriate function based on input type
     input_identifier = ""
-    
+
     # Find the matching type based on which input_identifier we find
-    if Cons.AOPWIKI_GENE_INPUT_ID in bridgedb_df["identifier.source"].values or \
-       Cons.AOPWIKI_GENE_INPUT_ID in bridgedb_df["target.source"].values:
+    if (
+        Cons.AOPWIKI_GENE_INPUT_ID in bridgedb_df["identifier.source"].values
+        or Cons.AOPWIKI_GENE_INPUT_ID in bridgedb_df["target.source"].values
+    ):
         input_identifier = Cons.AOPWIKI_GENE_INPUT_ID
-    elif Cons.AOPWIKI_COMPOUND_INPUT_ID in bridgedb_df["identifier.source"].values or \
-         Cons.AOPWIKI_COMPOUND_INPUT_ID in bridgedb_df["target.source"].values:
+    elif (
+        Cons.AOPWIKI_COMPOUND_INPUT_ID in bridgedb_df["identifier.source"].values
+        or Cons.AOPWIKI_COMPOUND_INPUT_ID in bridgedb_df["target.source"].values
+    ):
         input_identifier = Cons.AOPWIKI_COMPOUND_INPUT_ID
     else:
         raise ValueError(
             f"Input identifiers must be either '{Cons.AOPWIKI_GENE_INPUT_ID}' or '{Cons.AOPWIKI_COMPOUND_INPUT_ID}'"
         )
-    
+
     if input_identifier == Cons.AOPWIKI_GENE_INPUT_ID:
         return get_aops_gene(bridgedb_df)
     elif input_identifier == Cons.AOPWIKI_COMPOUND_INPUT_ID:

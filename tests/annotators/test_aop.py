@@ -9,8 +9,8 @@ from unittest.mock import Mock, patch
 
 import pandas as pd
 
-from pyBiodatafuse.annotators.aopwiki import get_aops
 import pyBiodatafuse.constants as Cons
+from pyBiodatafuse.annotators.aopwiki import get_aops
 
 
 class TestAOPAnnotator(unittest.TestCase):

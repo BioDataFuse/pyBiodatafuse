@@ -651,7 +651,7 @@ WIKIPATHWAY_NAMESPACE_DICT = {
 
 # AOPWIKI
 
-OP = "aop"
+AOP = "aop"
 AOP_TITLE = "aop_title"
 MIE_TITLE = "MIE_title"
 MIE = "MIE"
