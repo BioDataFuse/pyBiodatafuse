@@ -193,7 +193,9 @@ class BDFGraph(Graph):
                 logger.warning("Failed to process PPI data for gene node: %s", e)
 
             try:
-                protein_nodes = list(self.objects(gene_node, URIRef(Cons.PREDICATES["translation_of"])))
+                protein_nodes = list(
+                    self.objects(gene_node, URIRef(Cons.PREDICATES["translation_of"]))
+                )
             except Exception as e:
                 logger.warning("Failed to retrieve protein nodes for gene node: %s", e)
                 protein_nodes = []
@@ -260,7 +262,9 @@ class BDFGraph(Graph):
             try:
                 self.process_inhibitor_transporter_data(compound_node, inhibitor_transporter_data)
             except Exception as e:
-                logger.warning("Failed to process inhibitor transporter data for compound node: %s", e)
+                logger.warning(
+                    "Failed to process inhibitor transporter data for compound node: %s", e
+                )
 
             try:
                 self.process_aop_data(aop_data, None, compound_node)

@@ -617,6 +617,9 @@ def add_kegg_compounds_subgraph(g, pathway_node_label, compounds_list, combined_
                                 and y["attr_dict"].get(Cons.EDGE_HASH) == edge_hash
                             ]
 
+            if not isinstance(pathways, list):
+                continue
+
             for pathway in pathways:
                 if pathway_node_label != pathway.get(Cons.PATHWAYS):
                     continue
