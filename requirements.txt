@@ -22,3 +22,4 @@ scikit-learn==1.1.3
 shexer==2.5.9
 py4cytoscape==1.12.0
 neomodel>=5.4.0
+gprofiler-official==1.0.0

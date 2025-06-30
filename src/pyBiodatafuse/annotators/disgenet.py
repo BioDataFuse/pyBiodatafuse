@@ -1,6 +1,6 @@
 # coding: utf-8
 
-"""Python file for queriying DisGeNet database (https://www.disgenet.org/home/)."""
+"""Python file for querying DisGeNet database (https://www.disgenet.org/home/)."""
 
 import datetime
 import json
