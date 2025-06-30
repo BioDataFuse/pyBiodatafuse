@@ -723,7 +723,7 @@ Node and edge main lable and attributes
 DATASOURCE = "datasource"
 NAME = ENTITY_NAME
 ID = "id"
-LABEL = "label"
+LABEL = "labels"
 EDGE_HASH = "edge_hash"
 
 # Node types
