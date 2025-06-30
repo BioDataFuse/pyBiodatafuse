@@ -46,7 +46,7 @@ OPENTARGETS_REACTOME = "OpenTargets_reactome"
 TFLINK = "TFLink"
 GPROFILER = "g:Profiler"
 MITOCARTA = "MitoCarta"
-AOPWIKIRDF = "AOP Wiki RDF"
+AOPWIKIRDF = "AOP_Wiki_RDF"
 
 """
 All weblinks for the datasources
@@ -103,12 +103,11 @@ MOLMEDB_COMPOUND_PROTEIN_COL = f"{MOLMEDB}_transporter_inhibited"
 PUBCHEM_COMPOUND_ASSAYS_COL = f"{PUBCHEM}_assays"
 STRING_INTERACT_COL = f"{STRING}_interactions"
 WIKIDATA_CC_COL = f"{WIKIDATA}_cellular_components"
-AOPWIKIRDF = "aop_gene"  # todo fix this
-AOPWIKI_COMPOUND_COL = "pubchem_compound"  # todo fix this
 WIKIPATHWAYS_MOLECULAR_COL = f"{WIKIPATHWAYS}_molecular"
 WIKIPATHWAYS_PATHWAY_COL = f"{WIKIPATHWAYS}_pathway"
 MITOCART_PATHWAY_COL = f"{MITOCARTA}_pathways"
-AOPWIKI_GENE_COL = "aop_gene"  #
+AOPWIKI_GENE_COL = f"{AOPWIKIRDF}_genes"
+AOPWIKI_COMPOUND_COL = f"{AOPWIKIRDF}_compounds"
 
 # Ontologies and vocabularies namespaces
 PUBCHEM_COMPOUND = "PubChem Compound"
@@ -648,37 +647,52 @@ WIKIPATHWAY_NAMESPACE_DICT = {
 
 
 # AOPWIKI
+AOP = "aop"
+AOP_TITLE = "aop_title"
+MIE_TITLE = "MIE_title"
+MIE = "MIE"
+KE_DOWNSTREAM = "KE_downstream"
+KE_DOWNSTREAM_TITLE = "KE_downstream_title"
+KER = "KER"
+AO = "ao"
+AO_TITLE = "ao_title"
+KE_UPSTREAM = "KE_upstream"
+KE_UPSTREAM_TITLE = "KE_upstream_title"
+KE_UPSTREAM_ORGAN = "KE_upstream_organ"
+KE_DOWNSTREAM_ORGAN = "KE_downstream_organ"
+PUBCHEM_COMPOUND_AOPWIKI = "pubchem_compound"
+
 AOPWIKI_GENE_OUTPUT_DICT = {
-    "aop": str,
-    "aop_title": str,
-    "MIEtitle": str,
-    "MIE": str,
-    "KE_downstream": str,
-    "KE_downstream_title": str,
-    "KER": str,
-    "ao": str,
-    "ao_title": str,
-    "KE_upstream": str,
-    "KE_upstream_title": str,
-    "KE_upstream_organ": str,
-    "KE_downstream_organ": str,
-    "pubchem_compound": str,
+    AOP: str,
+    AOP_TITLE: str,
+    MIE_TITLE: str,
+    MIE: str,
+    KE_DOWNSTREAM: str,
+    KE_DOWNSTREAM_TITLE: str,
+    KER: str,
+    AO: str,
+    AO_TITLE: str,
+    KE_UPSTREAM: str,
+    KE_UPSTREAM_TITLE: str,
+    KE_UPSTREAM_ORGAN: str,
+    KE_DOWNSTREAM_ORGAN: str,
+    PUBCHEM_COMPOUND_AOPWIKI: str,
 }
 
 AOPWIKI_COMPOUND_OUTPUT_DICT = {
-    "aop": str,
-    "aop_title": str,
-    "MIEtitle": str,
-    "MIE": str,
-    "KE_downstream": str,
-    "KE_downstream_title": str,
-    "KER": str,
-    "ao": str,
-    "ao_title": str,
-    "KE_upstream": str,
-    "KE_upstream_title": str,
-    "KE_upstream_organ": str,
-    "KE_downstream_organ": str,
+    AOP: str,
+    AOP_TITLE: str,
+    MIE_TITLE: str,
+    MIE: str,
+    KE_DOWNSTREAM: str,
+    KE_DOWNSTREAM_TITLE: str,
+    KER: str,
+    AO: str,
+    AO_TITLE: str,
+    KE_UPSTREAM: str,
+    KE_UPSTREAM_TITLE: str,
+    KE_UPSTREAM_ORGAN: str,
+    KE_DOWNSTREAM_ORGAN: str,
 }
 
 # TODO: Look into this
