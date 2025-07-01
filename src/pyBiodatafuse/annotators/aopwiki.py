@@ -374,7 +374,7 @@ def get_aops(
         Cons.AOPWIKI_COMPOUND_INPUT_ID in bridgedb_df["identifier.source"].values
         or Cons.AOPWIKI_COMPOUND_INPUT_ID in bridgedb_df["target.source"].values
     ):
-        get_aops_compound(bridgedb_df)
+        return get_aops_compound(bridgedb_df)
     else:
         raise ValueError(
             f"Input identifiers must be either '{Cons.AOPWIKI_GENE_INPUT_ID}' or '{Cons.AOPWIKI_COMPOUND_INPUT_ID}'"
