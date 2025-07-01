@@ -364,26 +364,18 @@ def get_aops(
     :raises ValueError: if the input identifiers are not recognized or if they are not admitted gene or compound identifiers
     :returns: a DataFrame containing the AOP Wiki RDF output and dictionary of the AOP Wiki RDF metadata
     """
-    # Route to appropriate function based on input type
-    input_identifier = ""
-
     # Find the matching type based on which input_identifier we find
     if (
         Cons.AOPWIKI_GENE_INPUT_ID in bridgedb_df["identifier.source"].values
         or Cons.AOPWIKI_GENE_INPUT_ID in bridgedb_df["target.source"].values
     ):
-        input_identifier = Cons.AOPWIKI_GENE_INPUT_ID
+        return get_aops_gene(bridgedb_df)
     elif (
         Cons.AOPWIKI_COMPOUND_INPUT_ID in bridgedb_df["identifier.source"].values
         or Cons.AOPWIKI_COMPOUND_INPUT_ID in bridgedb_df["target.source"].values
     ):
-        input_identifier = Cons.AOPWIKI_COMPOUND_INPUT_ID
+        get_aops_compound(bridgedb_df)
     else:
         raise ValueError(
             f"Input identifiers must be either '{Cons.AOPWIKI_GENE_INPUT_ID}' or '{Cons.AOPWIKI_COMPOUND_INPUT_ID}'"
         )
-
-    if input_identifier == Cons.AOPWIKI_GENE_INPUT_ID:
-        return get_aops_gene(bridgedb_df)
-    elif input_identifier == Cons.AOPWIKI_COMPOUND_INPUT_ID:
-        return get_aops_compound(bridgedb_df)
