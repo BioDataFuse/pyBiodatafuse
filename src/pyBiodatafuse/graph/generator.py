@@ -1737,11 +1737,11 @@ def add_wikipathways_molecular_subgraph(g, gene_node_label, annot_list):
     return g
 
 
-def add_aopwiki_gene_subgraph(g, gene_node_label, annot_list):
+def add_aopwiki_subgraph(g, entity_node_label, annot_list):
     """Construct part of the graph by linking the gene to AOP entities.
 
     :param g: the input graph to extend with new nodes and edges.
-    :param gene_node_label: the gene node to be linked to AOP entities.
+    :param entity_node_label: the gene node to be linked to AOP entities.
     :param annot_list: list of AOPWIKI Key Events.
     :returns: a NetworkX MultiDiGraph
     """
@@ -1762,11 +1762,11 @@ def add_aopwiki_gene_subgraph(g, gene_node_label, annot_list):
             # Connect gene to AOP node
             edge_attrs = Cons.AOPWIKI_EDGE_ATTRS.copy()
             edge_attrs[Cons.EDGE_HASH] = hash(frozenset(edge_attrs.items()))
-            if not edge_exists(g, gene_node_label, aop_node_label, edge_attrs):
+            if not edge_exists(g, entity_node_label, aop_node_label, edge_attrs):
                 g.add_edge(
-                    gene_node_label,
+                    entity_node_label,
                     aop_node_label,
-                    label=Cons.AOP_GENE_EDGE_LABEL,
+                    label=Cons.AOP_EDGE_LABEL,
                     attr_dict=edge_attrs,
                 )
 
@@ -1865,13 +1865,13 @@ def add_aopwiki_gene_subgraph(g, gene_node_label, annot_list):
             )
             g.add_node(ao_node_label, attr_dict=ao_node_attrs)
 
-            # Connect AO directly to KE downstream node
-            if ke_downstream_node_label:
+            # Connect AO directly to KE upstream node
+            if ke_upstream_node_label:
                 edge_attrs = Cons.AOPWIKI_EDGE_ATTRS.copy()
                 edge_attrs[Cons.EDGE_HASH] = hash(frozenset(edge_attrs.items()))
                 if not edge_exists(g, ke_downstream_node_label, ao_node_label, edge_attrs):
                     g.add_edge(
-                        ke_downstream_node_label,
+                        ke_upstream_node_label,
                         ao_node_label,
                         label=Cons.AO_KE_EDGE_LABEL,
                         attr_dict=edge_attrs,
@@ -2242,7 +2242,7 @@ def _built_gene_based_graph(
         Cons.INTACT_INTERACT_COL: add_intact_interactions_subgraph,
         Cons.INTACT_COMPOUND_INTERACT_COL: add_intact_compound_interactions_subgraph,
         Cons.STRING_INTERACT_COL: add_stringdb_ppi_subgraph,
-        Cons.AOPWIKI_COL: add_aopwiki_gene_subgraph,
+        Cons.AOPWIKI_GENE_COL: add_aopwiki_subgraph,
         # Cons.WIKIDATA_CC_COL: add_wikidata_gene_cc_subgraph,  # TODO: add this
         f"{Cons.GPROFILER}_wp": add_gprofiler_gene_wikipathway_subgraph,
         f"{Cons.GPROFILER}_hp": add_gprofiler_gene_phenotype_subgraph,

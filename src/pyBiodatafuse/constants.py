@@ -1174,7 +1174,7 @@ LITERATURE_DISEASE_EDGE_ATTRS = {
 
 # AOPWIKI
 AOP_NODE_MAIN_LABEL = "aop"
-AOP_GENE_EDGE_LABEL = "associated_with"  # Gene to AOP edge
+AOP_EDGE_LABEL = "associated_with"  # Gene to AOP edge
 MIE_NODE_MAIN_LABEL = "MIE"
 MIE_AOP_EDGE_LABEL = "upstream_of"  # MIE to AOP edge
 KEY_EVENT_UPSTREAM_NODE_MAIN_LABEL = "KE_upstream"
