@@ -1,4 +1,4 @@
-SELECT DISTINCT ?aop ?aop_title ?MIEtitle ?MIE ?KE_downstream ?KE_downstream_title ?KER ?ao ?ao_title ?KE_upstream ?KE_upstream_title ?KE_upstream_organ ?KE_downstream_organ ?pubchem_compound (REPLACE(STR(?Ensembl), "https://identifiers.org/ensembl/", "") AS ?Ensembl)
+SELECT DISTINCT ?aop ?aop_title ?MIE_title ?MIE ?KE_downstream ?KE_downstream_title ?KER ?ao ?ao_title ?KE_upstream ?KE_upstream_title ?KE_upstream_organ ?KE_downstream_organ ?pubchem_compound (REPLACE(STR(?Ensembl), "https://identifiers.org/ensembl/", "") AS ?Ensembl)
 WHERE {
   VALUES ?Ensembl { $genes }
   ?chemical skos:exactMatch ?pubchem_compound .
@@ -17,7 +17,7 @@ WHERE {
   ?stressor aopo:has_chemical_entity ?chemical .
     ?chemical cheminf:000446 ?cas_id ;
               dc:title ?compound_name .
-  ?MIE dc:title ?MIEtitle .
+  ?MIE dc:title ?MIE_title .
   ?aop aopo:has_key_event_relationship ?KER .
   ?KER a aopo:KeyEventRelationship ;
        aopo:has_upstream_key_event ?KE_upstream ;
