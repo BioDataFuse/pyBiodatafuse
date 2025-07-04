@@ -23,7 +23,31 @@ def _replace_graph_attrs(g: nx.MultiDiGraph):
                 nx.set_node_attributes(g, {node: {"datasource": v}})
                 del g.nodes[node]["source"]
 
+            if k == "UBERON" and "id" in g.nodes[node]:
+                current_id = g.nodes[node]["id"]
+                if isinstance(current_id, str) and current_id.startswith("UBERON_"):
+                    corrected_id = current_id.replace("UBERON_", "UBERON:")
+                    nx.set_node_attributes(g, {node: {"id": corrected_id}})
+            
+            if k == "UBERON": 
+                if "value" in g.nodes[node]:
+                    current_value = g.nodes[node]["value"]
+                    if isinstance(current_value, str) and current_value.startswith("UBERON_"):
+                        g.nodes[node]["value"] = current_value.replace("UBERON_", "UBERON:")
+                if "name" in g.nodes[node]:
+                    current_name = g.nodes[node]["name"]
+                    if isinstance(current_name, str) and current_name.startswith("UBERON_"):
+                        g.nodes[node]["name"] = current_name.replace("UBERON_", "UBERON:")
+            
     for u, v, k in list(g.edges(keys=True)):
+        source_node_id = g.nodes[u].get("id")
+        target_node_id = g.nodes[v].get("id")
+
+        if g.nodes[u].get("datasource") == "Bgee" and g[u][v][k]["source"] == source_node_id.replace(":", "_"):
+            g[u][v][k]["source"] = source_node_id
+        if g.nodes[v].get("datasource") == "Bgee" and g[u][v][k]["target"] == target_node_id.replace(":", "_"):
+            g[u][v][k]["target"] = target_node_id
+        
         for x, y in list(g[u][v][k].items()):
             if x == "label":
                 g[u][v][k]["interaction"] = y
