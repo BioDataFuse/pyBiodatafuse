@@ -184,7 +184,8 @@ class BDFGraph(Graph):
         literature_data = row.get(Cons.LITERATURE_DISEASE_COL, None)
         transporter_inhibitor_data = row.get(Cons.MOLMEDB_PROTEIN_COMPOUND_COL, None)
         inhibitor_transporter_data = row.get(Cons.MOLMEDB_COMPOUND_PROTEIN_COL, None)
-        aop_data = row.get(Cons.AOPWIKIRDF, None)
+        aop_data_gene = row.get(Cons.AOPWIKI_GENE_COL, None)
+        aop_data_compound = row.get(Cons.AOPWIKI_COMPOUND_COL, None)
 
         if gene:
             try:
@@ -244,7 +245,7 @@ class BDFGraph(Graph):
                     logger.warning("Failed to process protein variants for gene node: %s", e)
 
             try:
-                self.process_aop_data(aop_data, gene_node, None)
+                self.process_aop_data(aop_data_gene, gene_node, None)
             except Exception as e:
                 logger.warning("Failed to process AOP data for gene node: %s", e)
 
@@ -267,7 +268,7 @@ class BDFGraph(Graph):
                 )
 
             try:
-                self.process_aop_data(aop_data, None, compound_node)
+                self.process_aop_data(aop_data_compound, None, compound_node)
             except Exception as e:
                 logger.warning("Failed to process AOP data for compound node: %s", e)
 

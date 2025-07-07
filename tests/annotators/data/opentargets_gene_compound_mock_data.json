@@ -27,13 +27,13 @@
                                 "crossReferences": [
                                     {
                                         "source": "DailyMed",
-                                        "reference": [
+                                        "ids": [
                                             "cisatracurium%20besylate"
                                         ]
                                     },
                                     {
                                         "source": "chEBI",
-                                        "reference": [
+                                        "ids": [
                                             "3721"
                                         ]
                                     }
@@ -138,13 +138,13 @@
                                 "crossReferences": [
                                     {
                                         "source": "drugbank",
-                                        "reference": [
+                                        "ids": [
                                             "DB00728"
                                         ]
                                     },
                                     {
                                         "source": "chEBI",
-                                        "reference": [
+                                        "ids": [
                                             "8884"
                                         ]
                                     }
@@ -249,13 +249,13 @@
                                 "crossReferences": [
                                     {
                                         "source": "drugbank",
-                                        "reference": [
+                                        "ids": [
                                             "DB00728"
                                         ]
                                     },
                                     {
                                         "source": "chEBI",
-                                        "reference": [
+                                        "ids": [
                                             "8884"
                                         ]
                                     }
@@ -360,13 +360,13 @@
                                 "crossReferences": [
                                     {
                                         "source": "drugbank",
-                                        "reference": [
+                                        "ids": [
                                             "DB00728"
                                         ]
                                     },
                                     {
                                         "source": "chEBI",
-                                        "reference": [
+                                        "ids": [
                                             "8884"
                                         ]
                                     }
@@ -471,13 +471,13 @@
                                 "crossReferences": [
                                     {
                                         "source": "DailyMed",
-                                        "reference": [
+                                        "ids": [
                                             "rocuronium%20bromide"
                                         ]
                                     },
                                     {
                                         "source": "chEBI",
-                                        "reference": [
+                                        "ids": [
                                             "8885"
                                         ]
                                     }
@@ -582,7 +582,7 @@
                                 "crossReferences": [
                                     {
                                         "source": "drugbank",
-                                        "reference": [
+                                        "ids": [
                                             "DB00565"
                                         ]
                                     }
@@ -687,13 +687,13 @@
                                 "crossReferences": [
                                     {
                                         "source": "drugbank",
-                                        "reference": [
+                                        "ids": [
                                             "DB00202"
                                         ]
                                     },
                                     {
                                         "source": "chEBI",
-                                        "reference": [
+                                        "ids": [
                                             "45652"
                                         ]
                                     }
@@ -798,13 +798,13 @@
                                 "crossReferences": [
                                     {
                                         "source": "drugbank",
-                                        "reference": [
+                                        "ids": [
                                             "DB00202"
                                         ]
                                     },
                                     {
                                         "source": "chEBI",
-                                        "reference": [
+                                        "ids": [
                                             "45652"
                                         ]
                                     }
@@ -909,13 +909,13 @@
                                 "crossReferences": [
                                     {
                                         "source": "drugbank",
-                                        "reference": [
+                                        "ids": [
                                             "DB00728"
                                         ]
                                     },
                                     {
                                         "source": "chEBI",
-                                        "reference": [
+                                        "ids": [
                                             "8884"
                                         ]
                                     }
@@ -1020,13 +1020,13 @@
                                 "crossReferences": [
                                     {
                                         "source": "drugbank",
-                                        "reference": [
+                                        "ids": [
                                             "DB00728"
                                         ]
                                     },
                                     {
                                         "source": "chEBI",
-                                        "reference": [
+                                        "ids": [
                                             "8884"
                                         ]
                                     }
@@ -1131,13 +1131,13 @@
                                 "crossReferences": [
                                     {
                                         "source": "drugbank",
-                                        "reference": [
+                                        "ids": [
                                             "DB00728"
                                         ]
                                     },
                                     {
                                         "source": "chEBI",
-                                        "reference": [
+                                        "ids": [
                                             "8884"
                                         ]
                                     }
@@ -1242,13 +1242,13 @@
                                 "crossReferences": [
                                     {
                                         "source": "drugbank",
-                                        "reference": [
+                                        "ids": [
                                             "DB00202"
                                         ]
                                     },
                                     {
                                         "source": "chEBI",
-                                        "reference": [
+                                        "ids": [
                                             "45652"
                                         ]
                                     }
@@ -1353,13 +1353,13 @@
                                 "crossReferences": [
                                     {
                                         "source": "DailyMed",
-                                        "reference": [
+                                        "ids": [
                                             "rocuronium%20bromide"
                                         ]
                                     },
                                     {
                                         "source": "chEBI",
-                                        "reference": [
+                                        "ids": [
                                             "8885"
                                         ]
                                     }
@@ -1464,13 +1464,13 @@
                                 "crossReferences": [
                                     {
                                         "source": "drugbank",
-                                        "reference": [
+                                        "ids": [
                                             "DB01226"
                                         ]
                                     },
                                     {
                                         "source": "chEBI",
-                                        "reference": [
+                                        "ids": [
                                             "6958"
                                         ]
                                     }
@@ -1539,13 +1539,13 @@
                                 "crossReferences": [
                                     {
                                         "source": "drugbank",
-                                        "reference": [
+                                        "ids": [
                                             "DB00728"
                                         ]
                                     },
                                     {
                                         "source": "chEBI",
-                                        "reference": [
+                                        "ids": [
                                             "8884"
                                         ]
                                     }
@@ -1650,13 +1650,13 @@
                                 "crossReferences": [
                                     {
                                         "source": "drugbank",
-                                        "reference": [
+                                        "ids": [
                                             "DB00728"
                                         ]
                                     },
                                     {
                                         "source": "chEBI",
-                                        "reference": [
+                                        "ids": [
                                             "8884"
                                         ]
                                     }
@@ -1820,13 +1820,13 @@
                                 "crossReferences": [
                                     {
                                         "source": "drugbank",
-                                        "reference": [
+                                        "ids": [
                                             "DB00728"
                                         ]
                                     },
                                     {
                                         "source": "chEBI",
-                                        "reference": [
+                                        "ids": [
                                             "8884"
                                         ]
                                     }
@@ -1931,13 +1931,13 @@
                                 "crossReferences": [
                                     {
                                         "source": "DailyMed",
-                                        "reference": [
+                                        "ids": [
                                             "rocuronium%20bromide"
                                         ]
                                     },
                                     {
                                         "source": "chEBI",
-                                        "reference": [
+                                        "ids": [
                                             "8885"
                                         ]
                                     }
@@ -2042,13 +2042,13 @@
                                 "crossReferences": [
                                     {
                                         "source": "drugbank",
-                                        "reference": [
+                                        "ids": [
                                             "DB00728"
                                         ]
                                     },
                                     {
                                         "source": "chEBI",
-                                        "reference": [
+                                        "ids": [
                                             "8884"
                                         ]
                                     }
@@ -2153,13 +2153,13 @@
                                 "crossReferences": [
                                     {
                                         "source": "drugbank",
-                                        "reference": [
+                                        "ids": [
                                             "DB00728"
                                         ]
                                     },
                                     {
                                         "source": "chEBI",
-                                        "reference": [
+                                        "ids": [
                                             "8884"
                                         ]
                                     }
