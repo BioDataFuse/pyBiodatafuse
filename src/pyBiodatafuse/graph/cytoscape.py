@@ -11,7 +11,6 @@ import pyBiodatafuse.constants as Cons
 def _replace_graph_attrs(g: nx.MultiDiGraph):
     """Adapt the node and edge attributes keys to the cytoscape json structure.
 
-
     :param g: input NetworkX graph object.
     :returns: output NetworkX graph object.
     """
