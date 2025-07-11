@@ -178,7 +178,7 @@ def get_aops_gene(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
     check_columns_against_constants(
         data_df=intermediate_df,
         output_dict=output_dict,
-        check_values_in=list(output_dict.keys()),
+        check_values_in=[],  # no prefix for AOP Wiki RDF
     )
 
     # Step 7: Integrate into main dataframe
@@ -324,11 +324,11 @@ def get_aops_compound(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
     }
 
     # Check if all keys in df match the keys in OUTPUT_DICT
-    # check_columns_against_constants(
-    #    data_df=intermediate_df,
-    #    output_dict=output_dict,
-    #    check_values_in=list(output_dict.keys()),
-    # )
+    check_columns_against_constants(
+        data_df=intermediate_df,
+        output_dict=output_dict,
+        check_values_in=[],  # no prefix for AOP Wiki RDF,
+    )
 
     # Step 7: Integrate into main dataframe
     merged_df = collapse_data_sources(
