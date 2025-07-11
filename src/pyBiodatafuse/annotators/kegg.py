@@ -257,11 +257,19 @@ def get_pathways(bridgedb_df: pd.DataFrame):
     start_time = datetime.datetime.now()
 
     data_df = get_identifier_of_interest(bridgedb_df, Cons.KEGG_GENE_INPUT_ID)
+
+    if data_df.empty:
+        data_df = get_identifier_of_interest(bridgedb_df, Cons.KEGG_COMPOUND_INPUT_ID)
+        is_compound = True
     data_df = data_df.reset_index(drop=True)
-    gene_list = list(set(data_df[Cons.TARGET_COL].tolist()))
+    ids_list = list(set(data_df[Cons.TARGET_COL].tolist()))
 
     # Get the KEGG identifiers
-    kegg_ids = get_kegg_ids_batch(gene_list)
+    if not is_compound:
+        kegg_ids = get_kegg_ids_batch(ids_list)
+    else:
+        kegg_ids = {cid: cid for cid in ids_list}
+
     data_df[Cons.KEGG_PATHWAY_COL] = data_df[Cons.TARGET_COL].apply(
         lambda x: {Cons.KEGG_IDENTIFIER: kegg_ids.get(x, np.nan)}
     )
@@ -289,7 +297,7 @@ def get_pathways(bridgedb_df: pd.DataFrame):
         "datasource": Cons.KEGG,
         "metadata": {"source_version": kegg_version},
         "query": {
-            "size": len(gene_list),
+            "size": len(ids_list),
             "input_type": Cons.KEGG_GENE_INPUT_ID,
             "number_of_added_edges": num_new_edges,
             "time": time_elapsed,
