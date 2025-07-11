@@ -261,6 +261,8 @@ def get_pathways(bridgedb_df: pd.DataFrame):
     if data_df.empty:
         data_df = get_identifier_of_interest(bridgedb_df, Cons.KEGG_COMPOUND_INPUT_ID)
         is_compound = True
+    else:
+        is_compound = False
     data_df = data_df.reset_index(drop=True)
     ids_list = list(set(data_df[Cons.TARGET_COL].tolist()))
 
