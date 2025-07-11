@@ -291,7 +291,9 @@ def bridgedb_xref(
             target_source = target_parts[0]
             target_id = ":".join(target_parts[1:])
 
-            parsed_results.append([identifier, identifier_source, target_id, target_source])    # Create a DataFrame
+            parsed_results.append(
+                [identifier, identifier_source, target_id, target_source]
+            )  # Create a DataFrame
     bridgedb = pd.DataFrame(
         parsed_results,
         columns=[
