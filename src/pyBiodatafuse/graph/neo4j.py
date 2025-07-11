@@ -101,6 +101,7 @@ class Gene(StructuredNode):
     name = StringProperty(required=True)
     datasource = StringProperty(required=True)
     Ensembl = StringProperty()
+    node_type = Cons.GENE_NODE_LABEL
 
     # outgoing relations
     interacts_with = RelationshipTo(
@@ -153,6 +154,7 @@ class Disease(StructuredNode):
     MESH = StringProperty()
     UMLS = StringProperty()
     disease_type = StringProperty()
+    node_type = Cons.DISEASE_NODE_LABEL
 
     # incoming relations (Gene -> Disease)
     associated_with = RelationshipFrom(Gene, Cons.ASSOCIATED_WITH, model=AssociatedWith)
@@ -164,6 +166,7 @@ class Pathway(StructuredNode):
     idx = StringProperty(required=True, unique_index=True, unique=True)
     name = StringProperty(required=True)
     datasource = StringProperty(required=True)
+    node_type = Cons.PATHWAY_NODE_LABEL
 
     # incoming relations (Gene -> Pathway)
     part_of = RelationshipFrom(Gene, Cons.PART_OF, model=PartOf)
@@ -175,6 +178,7 @@ class BiologicalProcess(StructuredNode):
     idx = StringProperty(required=True, unique_index=True, unique=True)
     name = StringProperty(required=True)
     datasource = StringProperty(required=True)
+    node_type = Cons.GO_BP_NODE_LABEL
 
     # incoming relations (Gene -> BiologicalProcess)
     part_of = RelationshipFrom(Gene, Cons.PART_OF, model=PartOf)
@@ -186,6 +190,7 @@ class MolecularFunction(StructuredNode):
     idx = StringProperty(required=True, unique_index=True, unique=True)
     name = StringProperty(required=True)
     datasource = StringProperty(required=True)
+    node_type = Cons.GO_MF_NODE_LABEL
 
     # incoming relations (Gene -> MolecularFunction)
     part_of = RelationshipFrom(Gene, Cons.PART_OF, model=PartOf)
@@ -197,6 +202,7 @@ class CellularComponent(StructuredNode):
     idx = StringProperty(required=True, unique_index=True, unique=True)
     name = StringProperty(required=True)
     datasource = StringProperty(required=True)
+    node_type = Cons.GO_CC_NODE_LABEL
 
     # incoming relations (Gene -> CellularComponent)
     part_of = RelationshipFrom(Gene, Cons.PART_OF, model=PartOf)
@@ -207,6 +213,7 @@ class SideEffect(StructuredNode):
 
     name = StringProperty(required=True, unique_index=True, unique=True)
     datasource = StringProperty(required=True)
+    node_type = Cons.SIDE_EFFECT_NODE_LABEL
 
 
 class Compound(StructuredNode):
@@ -221,6 +228,7 @@ class Compound(StructuredNode):
     clinical_trial_phase = StringProperty()
     is_approved = BooleanProperty()
     adverse_effect_count = FloatProperty()
+    node_type = Cons.COMPOUND_NODE_LABEL
 
     # outgoing relations (Compound -> Gene, SideEffect, Disease)
     activates = RelationshipTo(Gene, Cons.ACTIVATES, model=Activates)
@@ -238,6 +246,7 @@ class AnatomicalEntity(StructuredNode):
     idx = StringProperty(required=True, unique_index=True, unique=True)
     name = StringProperty(required=True)
     datasource = StringProperty(required=True)
+    node_type = Cons.ANATOMICAL_NODE_LABEL
 
     # incoming relations (Gene -> AnatomicalEntity)
     part_of = RelationshipFrom(Gene, Cons.EXPRESSED_BY, model=ExpressedBy)
@@ -249,6 +258,7 @@ class AdverseOutcomePathway(StructuredNode):
     idx = StringProperty(required=True, unique_index=True, unique=True)
     name = StringProperty(required=True)
     datasource = StringProperty(required=True)
+    node_type = Cons.AOP_NODE_LABEL
 
     # incoming relations (AO -> KeyEvent)
     associated_with = RelationshipTo(Gene, Cons.ASSOCIATED_WITH, model=AssociatedWith)
@@ -260,6 +270,7 @@ class MolecularInitiatingEvent(StructuredNode):
     idx = StringProperty(required=True, unique_index=True, unique=True)
     name = StringProperty(required=True)
     datasource = StringProperty(required=True)
+    node_type = Cons.MIE_NODE_LABEL
 
     # outgoing relations (MolecularInitiatingEvent -> AOP)
     upstream_of = RelationshipTo(AdverseOutcomePathway, Cons.UPSTREAM_OF, model=UpstreamOf)
@@ -277,9 +288,13 @@ class KeyEvent(StructuredNode):
     name = StringProperty(required=True)
     datasource = StringProperty(required=True)
     organ = StringProperty()
+    node_type = Cons.KEY_EVENT_NODE_LABEL
 
     # outgoing relations (KeyEvent -> MIE)
     upstream_of = RelationshipTo(MolecularInitiatingEvent, Cons.UPSTREAM_OF, model=UpstreamOf)
+    associated_with = RelationshipFrom(
+        Cons.AO_NODE_LABEL.replace(" ", ""), Cons.ASSOCIATED_WITH, model=AssociatedWith
+    )
 
     # outgoing relations (KeyEvent -> KeyEvent)
     downstream_of = RelationshipTo(
@@ -293,6 +308,7 @@ class AdverseOutcome(StructuredNode):
     idx = StringProperty(required=True, unique_index=True, unique=True)
     name = StringProperty()
     datasource = StringProperty(required=True)
+    node_type = Cons.AO_NODE_LABEL
 
     # outgoing relations (AO -> KeyEvent)
     downstream_of = RelationshipTo(KeyEvent, Cons.ASSOCIATED_WITH, model=AssociatedWith)
@@ -403,7 +419,6 @@ def load_graph(g: nx.MultiDiGraph, uri: str, username: str, password: str):
     source_nodes = defaultdict(dict)
     for node, node_data in tqdm(g.nodes(data=True), desc="Loading nodes"):
         node_type = node_data[Cons.LABEL].lower()
-        # print(node_data)
         if node_type == Cons.GENE_NODE_LABEL.lower():
             n = Gene(
                 idx=node_data[Cons.ID],
@@ -496,6 +511,7 @@ def load_graph(g: nx.MultiDiGraph, uri: str, username: str, password: str):
 
         source_nodes[node] = n
 
+    edges = []
     # add edges
     for snode, tnode, data in tqdm(g.edges(data=True), desc="Loading edges"):
         source_node = source_nodes[snode]
@@ -504,31 +520,50 @@ def load_graph(g: nx.MultiDiGraph, uri: str, username: str, password: str):
 
         try:
             if edge_type == Cons.ASSOCIATED_WITH:
-                if target_node.labels == Cons.DISEASE_NODE_LABEL:
+                if target_node.node_type == Cons.DISEASE_NODE_LABEL:
                     source_node.associated_with_disease.connect(
                         target_node, {"datasource": data[Cons.DATASOURCE]}
                     )
-                elif target_node.labels == Cons.AOP_NODE_LABEL:
+                    edges.append([source_node, target_node, edge_type])
+                elif target_node.node_type == Cons.AOP_NODE_LABEL:
                     source_node.associated_with_aop.connect(
                         target_node, {"datasource": data[Cons.DATASOURCE]}
                     )
+                    edges.append([source_node, target_node, edge_type])
+                elif source_node.node_type == Cons.KEY_EVENT_NODE_LABEL:
+                    source_node.associated_with.connect(
+                        target_node, {"datasource": data[Cons.DATASOURCE]}
+                    )
+                    edges.append([source_node, target_node, edge_type])
+                else:
+                    raise ValueError(
+                        f"Edge type {edge_type} not found in Neo4j template - {source_node.node_type} -> {target_node.node_type}"
+                    )
 
             elif edge_type == Cons.PART_OF:
-                if source_node.labels == Cons.PATHWAY_NODE_LABEL:
+                if target_node.node_type == Cons.PATHWAY_NODE_LABEL:
                     source_node.part_of_pathway.connect(
                         target_node, {"datasource": data[Cons.DATASOURCE]}
                     )
-                elif source_node.labels == Cons.GO_BP_NODE_LABEL:
+                    edges.append([source_node, target_node, edge_type])
+                elif target_node.node_type == Cons.GO_BP_NODE_LABEL:
                     source_node.part_of_biological_process.connect(
                         target_node, {"datasource": data[Cons.DATASOURCE]}
                     )
-                elif source_node.labels == Cons.GO_MF_NODE_LABEL:
+                    edges.append([source_node, target_node, edge_type])
+                elif target_node.node_type == Cons.GO_MF_NODE_LABEL:
                     source_node.part_of_molecular_function.connect(
                         target_node, {"datasource": data[Cons.DATASOURCE]}
                     )
-                elif source_node.labels == Cons.GO_CC_NODE_LABEL:
+                    edges.append([source_node, target_node, edge_type])
+                elif target_node.node_type == Cons.GO_CC_NODE_LABEL:
                     source_node.part_of_cellular_component.connect(
                         target_node, {"datasource": data[Cons.DATASOURCE]}
+                    )
+                    edges.append([source_node, target_node, edge_type])
+                else:
+                    raise ValueError(
+                        f"Edge type {edge_type} not found in Neo4j template - {source_node.node_type} -> {target_node.node_type}"
                     )
 
             elif edge_type == Cons.INTERACTS_WITH:
@@ -536,20 +571,25 @@ def load_graph(g: nx.MultiDiGraph, uri: str, username: str, password: str):
                     target_node,
                     {"datasource": data[Cons.DATASOURCE], "score": data.get(Cons.SCORE, None)},
                 )
+                edges.append([source_node, target_node, edge_type])
 
             elif edge_type == Cons.ACTIVATES:
                 source_node.activates.connect(target_node, {"datasource": data[Cons.DATASOURCE]})
+                edges.append([source_node, target_node, edge_type])
 
             elif edge_type == Cons.HAS_SIDE_EFFECT:
                 source_node.has_side_effect.connect(
                     target_node, {"datasource": data[Cons.DATASOURCE]}
                 )
+                edges.append([source_node, target_node, edge_type])
 
             elif edge_type == Cons.TREATS:
                 source_node.treats.connect(target_node, {"datasource": data[Cons.DATASOURCE]})
+                edges.append([source_node, target_node, edge_type])
 
             elif edge_type == Cons.INHIBITS:
                 source_node.inhibits.connect(target_node, {"datasource": data[Cons.DATASOURCE]})
+                edges.append([source_node, target_node, edge_type])
 
             elif edge_type == Cons.EXPRESSED_BY:
                 source_node.expressed_by.connect(
@@ -563,15 +603,17 @@ def load_graph(g: nx.MultiDiGraph, uri: str, username: str, password: str):
                         "confidence_level_id": data.get(Cons.CONFIDENCE_ID, None),
                     },
                 )
+                edges.append([source_node, target_node, edge_type])
 
             elif edge_type == Cons.UPSTREAM_OF:
                 source_node.upstream_of.connect(target_node, {"datasource": data[Cons.DATASOURCE]})
+                edges.append([source_node, target_node, edge_type])
 
             elif edge_type == Cons.DOWNSTREAM_OF:
                 source_node.downstream_of.connect(
                     target_node, {"datasource": data[Cons.DATASOURCE]}
                 )
-
+                edges.append([source_node, target_node, edge_type])
             else:
                 raise ValueError(f"Edge type {edge_type} not found in Neo4j template")
 
@@ -580,3 +622,7 @@ def load_graph(g: nx.MultiDiGraph, uri: str, username: str, password: str):
             print(
                 f"AttributeError: {edge_type} not found in Neo4j template - {source_node} -> {target_node}"
             )
+
+    # Check to ensure that all edges and nodes are loaded
+    assert len(source_nodes) == len(g.nodes)
+    assert len(edges) == len(g.edges)
