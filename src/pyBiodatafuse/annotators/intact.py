@@ -242,19 +242,22 @@ def get_filtered_interactions(
         for idx in batch_ids:
             if id_a in valid_intact_acs and intact_ac_to_entity.get(id_a) == idx:
                 partner_id = intact_ac_to_entity.get(id_b)
+                partner_display_id = entity_to_input_id.get(partner_id, partner_id or alt_ids_b) 
             elif id_b in valid_intact_acs and intact_ac_to_entity.get(id_b) == idx:
                 partner_id = intact_ac_to_entity.get(id_a)
+                partner_display_id = entity_to_input_id.get(partner_id, partner_id or alt_ids_a)
             else:
                 continue
 
-            partner_display_id = entity_to_input_id.get(partner_id, partner_id)
             interaction_copy = dict(interaction)
             interaction_copy["intact_link_to"] = partner_display_id
             results[idx].append(interaction_copy)
 
     for gene_id in batch_ids:
         if not results[gene_id]:
-            results[gene_id] = [{key: np.nan for key in Cons.INTACT_OUTPUT_DICT}]
+            empty_entry = {key: np.nan for key in Cons.INTACT_OUTPUT_DICT}
+            empty_entry["intact_link_to"] = np.nan
+            results[gene_id] = [empty_entry]
 
     return results
 

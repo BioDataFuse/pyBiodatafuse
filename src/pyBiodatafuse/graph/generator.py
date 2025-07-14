@@ -203,22 +203,39 @@ def add_intact_interactions_subgraph(g, gene_node_label, annot_list):
     """
     logger.debug("Adding IntAct nodes and edges")
     if not hasattr(add_intact_interactions_subgraph, "seen_interaction_ids"):
-        add_intact_interactions_subgraph.seen_interaction_ids = set()
+        add_intact_interactions_subgraph.seen_interaction_ids = {}
 
-    seen_interaction_ids = add_intact_interactions_subgraph.seen_interaction_ids
+    if gene_node_label not in add_intact_interactions_subgraph.seen_interaction_ids:
+        add_intact_interactions_subgraph.seen_interaction_ids[gene_node_label] = set()
+
+    seen_interaction_ids = set()
     edges_seen = {}
 
     for interaction in annot_list:
-        interaction_id = interaction[Cons.INTACT_INTERACTION_ID]
-        if not interaction_id or interaction_id in seen_interaction_ids:
-            continue
+        # Compute a signature that excludes 'intact_link_to'
+        interaction_signature = frozenset(
+            sorted((k, tuple(v) if isinstance(v, list) else v)
+                for k, v in interaction.items()
+                if k not in ('intact_link_to', 'interaction_id') and v is not None)
+        )
 
-        seen_interaction_ids.add(interaction_id)
+        print(f"\n---\nProcessing interaction:")
+        print(json.dumps(interaction, indent=2))  # Pretty print the interaction
+        print(f"Signature (excluding 'intact_link_to'):\n{interaction_signature}")
+
+        if interaction_signature in seen_interaction_ids:
+            print("Duplicate detected. Skipping this interaction.")
+            continue
+        else:
+            print("Unique interaction. Adding to graph.")
+
+        seen_interaction_ids.add(interaction_signature)
 
         try:
             id_a = interaction[Cons.INTACT_ID_A]
             id_b = interaction[Cons.INTACT_ID_B]
         except KeyError:
+            print("Missing interactor IDs. Skipping.")
             continue
 
         is_a_chebi = isinstance(id_a, str) and id_a.startswith("CHEBI:")
@@ -243,7 +260,8 @@ def add_intact_interactions_subgraph(g, gene_node_label, annot_list):
         if not partner_node_label or pd.isna(partner_node_label):
             continue
 
-        edge_key = (gene_node_label, partner_node_label)
+        edge_key = tuple(sorted([gene_node_label, partner_node_label]))
+        print(edge_key)
         if edge_key in edges_seen:
             existing = edges_seen[edge_key]
             method = interaction[Cons.INTACT_DETECTION_METHOD]
@@ -257,12 +275,22 @@ def add_intact_interactions_subgraph(g, gene_node_label, annot_list):
                     ]
             continue
 
+        
+    for interaction in interactions:
+        interaction_id = interaction["interaction_id"]
+        
+        if interaction_id in seen_interaction_ids:
+            continue 
+        
+        seen_interaction_ids.add(interaction_id)
+
         if is_compound:
             annot_node_attrs = Cons.INTACT_COMPOUND_NODE_ATTRS.copy()
             annot_node_attrs[Cons.ID] = partner_node_label
             annot_node_attrs[Cons.NAME] = partner_name
             annot_node_attrs[Cons.SPECIES] = partner_species
             annot_node_attrs[Cons.MOLECULE] = molecule
+            annot_node_attrs[Cons.LABEL] = Cons.COMPOUND_NODE_LABEL
             merge_node(g, partner_node_label, annot_node_attrs)
 
         edge_attrs = Cons.INTACT_PPI_EDGE_ATTRS.copy()
@@ -272,7 +300,7 @@ def add_intact_interactions_subgraph(g, gene_node_label, annot_list):
                 continue
             edge_attrs[key] = ",".join(map(str, value)) if isinstance(value, list) else value
 
-        edge_attrs[Cons.EDGE_HASH] = hash(frozenset(edge_attrs.items()))
+        edge_attrs[Cons.EDGE_HASH] = hash(interaction_signature)
 
         edges_seen[edge_key] = edge_attrs
 
@@ -283,7 +311,7 @@ def add_intact_interactions_subgraph(g, gene_node_label, annot_list):
             label=edge_attrs[Cons.LABEL],
             attr_dict=edge_attrs,
         )
-
+    print(f"\nSeen interaction signatures so far: {len(seen_interaction_ids)}")
     return g
 
 
@@ -2240,7 +2268,6 @@ def _built_gene_based_graph(
         Cons.WIKIPATHWAYS_MOLECULAR_COL: add_wikipathways_molecular_subgraph,
         Cons.ENSEMBL_HOMOLOG_COL: add_ensembl_homolog_subgraph,
         Cons.INTACT_INTERACT_COL: add_intact_interactions_subgraph,
-        Cons.INTACT_COMPOUND_INTERACT_COL: add_intact_compound_interactions_subgraph,
         Cons.STRING_INTERACT_COL: add_stringdb_ppi_subgraph,
         Cons.AOPWIKI_GENE_COL: add_aopwiki_subgraph,
         # Cons.WIKIDATA_CC_COL: add_wikidata_gene_cc_subgraph,  # TODO: add this
@@ -2304,6 +2331,7 @@ def _built_compound_based_graph(
 
     func_dict = {
         Cons.MOLMEDB_COMPOUND_PROTEIN_COL: add_molmedb_compound_gene_subgraph,
+        Cons.INTACT_COMPOUND_INTERACT_COL: add_intact_compound_interactions_subgraph,
     }  # type: ignore
 
     if homolog_df_list is not None:
