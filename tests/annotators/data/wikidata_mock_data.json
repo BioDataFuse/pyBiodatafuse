@@ -1,500 +1,498 @@
-[
-    {
-        "head": {
-            "vars": [
-                "gene",
-                "geneId",
-                "cellularComp",
-                "cellularCompLabel",
-                "go"
-            ]
-        },
-        "results": {
-            "bindings": [
-                {
-                    "geneId": {
-                        "type": "literal",
-                        "value": "375790"
-                    },
-                    "go": {
-                        "type": "literal",
-                        "value": "GO: 0005886"
-                    },
-                    "cellularCompLabel": {
-                        "xml:lang": "en",
-                        "type": "literal",
-                        "value": "plasma membrane"
-                    },
-                    "gene": {
-                        "type": "literal",
-                        "value": "Q14897890"
-                    },
-                    "cellularComp": {
-                        "type": "literal",
-                        "value": "Q29548"
-                    }
+{
+    "head": {
+        "vars": [
+            "gene",
+            "geneId",
+            "cellularComp",
+            "cellularCompLabel",
+            "go"
+        ]
+    },
+    "results": {
+        "bindings": [
+            {
+                "geneId": {
+                    "type": "literal",
+                    "value": "6314"
                 },
-                {
-                    "geneId": {
-                        "type": "literal",
-                        "value": "6314"
-                    },
-                    "go": {
-                        "type": "literal",
-                        "value": "GO: 0005634"
-                    },
-                    "cellularCompLabel": {
-                        "xml:lang": "en",
-                        "type": "literal",
-                        "value": "nucleus"
-                    },
-                    "gene": {
-                        "type": "literal",
-                        "value": "Q18031384"
-                    },
-                    "cellularComp": {
-                        "type": "literal",
-                        "value": "Q40260"
-                    }
+                "go": {
+                    "type": "literal",
+                    "value": "GO:0005730"
                 },
-                {
-                    "geneId": {
-                        "type": "literal",
-                        "value": "6314"
-                    },
-                    "go": {
-                        "type": "literal",
-                        "value": "GO: 0005730"
-                    },
-                    "cellularCompLabel": {
-                        "xml:lang": "en",
-                        "type": "literal",
-                        "value": "nucleolus"
-                    },
-                    "gene": {
-                        "type": "literal",
-                        "value": "Q18031384"
-                    },
-                    "cellularComp": {
-                        "type": "literal",
-                        "value": "Q30869"
-                    }
+                "cellularCompLabel": {
+                    "xml:lang": "en",
+                    "type": "literal",
+                    "value": "nucleolus"
                 },
-                {
-                    "geneId": {
-                        "type": "literal",
-                        "value": "375790"
-                    },
-                    "go": {
-                        "type": "literal",
-                        "value": "GO: 0005604"
-                    },
-                    "cellularCompLabel": {
-                        "xml:lang": "en",
-                        "type": "literal",
-                        "value": "basement membrane"
-                    },
-                    "gene": {
-                        "type": "literal",
-                        "value": "Q14897890"
-                    },
-                    "cellularComp": {
-                        "type": "literal",
-                        "value": "Q32846"
-                    }
+                "gene": {
+                    "type": "literal",
+                    "value": "Q18031384"
                 },
-                {
-                    "geneId": {
-                        "type": "literal",
-                        "value": "375790"
-                    },
-                    "go": {
-                        "type": "literal",
-                        "value": "GO: 0045202"
-                    },
-                    "cellularCompLabel": {
-                        "xml:lang": "en",
-                        "type": "literal",
-                        "value": "synapse"
-                    },
-                    "gene": {
-                        "type": "literal",
-                        "value": "Q14897890"
-                    },
-                    "cellularComp": {
-                        "type": "literal",
-                        "value": "Q187181"
-                    }
-                },
-                {
-                    "geneId": {
-                        "type": "literal",
-                        "value": "6314"
-                    },
-                    "go": {
-                        "type": "literal",
-                        "value": "GO: 0005737"
-                    },
-                    "cellularCompLabel": {
-                        "xml:lang": "en",
-                        "type": "literal",
-                        "value": "cytoplasm"
-                    },
-                    "gene": {
-                        "type": "literal",
-                        "value": "Q18031384"
-                    },
-                    "cellularComp": {
-                        "type": "literal",
-                        "value": "Q79899"
-                    }
-                },
-                {
-                    "geneId": {
-                        "type": "literal",
-                        "value": "6314"
-                    },
-                    "go": {
-                        "type": "literal",
-                        "value": "GO: 0005856"
-                    },
-                    "cellularCompLabel": {
-                        "xml:lang": "en",
-                        "type": "literal",
-                        "value": "cytoskeleton"
-                    },
-                    "gene": {
-                        "type": "literal",
-                        "value": "Q18031384"
-                    },
-                    "cellularComp": {
-                        "type": "literal",
-                        "value": "Q154626"
-                    }
-                },
-                {
-                    "geneId": {
-                        "type": "literal",
-                        "value": "375790"
-                    },
-                    "go": {
-                        "type": "literal",
-                        "value": "GO: 0005829"
-                    },
-                    "cellularCompLabel": {
-                        "xml:lang": "en",
-                        "type": "literal",
-                        "value": "cytosol"
-                    },
-                    "gene": {
-                        "type": "literal",
-                        "value": "Q14897890"
-                    },
-                    "cellularComp": {
-                        "type": "literal",
-                        "value": "Q220599"
-                    }
-                },
-                {
-                    "geneId": {
-                        "type": "literal",
-                        "value": "6314"
-                    },
-                    "go": {
-                        "type": "literal",
-                        "value": "GO: 0005829"
-                    },
-                    "cellularCompLabel": {
-                        "xml:lang": "en",
-                        "type": "literal",
-                        "value": "cytosol"
-                    },
-                    "gene": {
-                        "type": "literal",
-                        "value": "Q18031384"
-                    },
-                    "cellularComp": {
-                        "type": "literal",
-                        "value": "Q220599"
-                    }
-                },
-                {
-                    "geneId": {
-                        "type": "literal",
-                        "value": "375790"
-                    },
-                    "go": {
-                        "type": "literal",
-                        "value": "GO: 0070062"
-                    },
-                    "cellularCompLabel": {
-                        "xml:lang": "en",
-                        "type": "literal",
-                        "value": "extracellular exosome"
-                    },
-                    "gene": {
-                        "type": "literal",
-                        "value": "Q14897890"
-                    },
-                    "cellularComp": {
-                        "type": "literal",
-                        "value": "Q903634"
-                    }
-                },
-                {
-                    "geneId": {
-                        "type": "literal",
-                        "value": "375790"
-                    },
-                    "go": {
-                        "type": "literal",
-                        "value": "GO: 0031012"
-                    },
-                    "cellularCompLabel": {
-                        "xml:lang": "en",
-                        "type": "literal",
-                        "value": "extracellular matrix"
-                    },
-                    "gene": {
-                        "type": "literal",
-                        "value": "Q14897890"
-                    },
-                    "cellularComp": {
-                        "type": "literal",
-                        "value": "Q193825"
-                    }
-                },
-                {
-                    "geneId": {
-                        "type": "literal",
-                        "value": "375790"
-                    },
-                    "go": {
-                        "type": "literal",
-                        "value": "GO: 0030054"
-                    },
-                    "cellularCompLabel": {
-                        "xml:lang": "en",
-                        "type": "literal",
-                        "value": "cell junction"
-                    },
-                    "gene": {
-                        "type": "literal",
-                        "value": "Q14897890"
-                    },
-                    "cellularComp": {
-                        "type": "literal",
-                        "value": "Q189073"
-                    }
-                },
-                {
-                    "geneId": {
-                        "type": "literal",
-                        "value": "375790"
-                    },
-                    "go": {
-                        "type": "literal",
-                        "value": "GO: 0016021"
-                    },
-                    "cellularCompLabel": {
-                        "xml:lang": "en",
-                        "type": "literal",
-                        "value": "integral component of membrane"
-                    },
-                    "gene": {
-                        "type": "literal",
-                        "value": "Q14897890"
-                    },
-                    "cellularComp": {
-                        "type": "literal",
-                        "value": "Q14327652"
-                    }
-                },
-                {
-                    "geneId": {
-                        "type": "literal",
-                        "value": "375790"
-                    },
-                    "go": {
-                        "type": "literal",
-                        "value": "GO: 0005576"
-                    },
-                    "cellularCompLabel": {
-                        "xml:lang": "en",
-                        "type": "literal",
-                        "value": "extracellular region"
-                    },
-                    "gene": {
-                        "type": "literal",
-                        "value": "Q14897890"
-                    },
-                    "cellularComp": {
-                        "type": "literal",
-                        "value": "Q14645596"
-                    }
-                },
-                {
-                    "geneId": {
-                        "type": "literal",
-                        "value": "6314"
-                    },
-                    "go": {
-                        "type": "literal",
-                        "value": "GO: 0016363"
-                    },
-                    "cellularCompLabel": {
-                        "xml:lang": "en",
-                        "type": "literal",
-                        "value": "nuclear matrix"
-                    },
-                    "gene": {
-                        "type": "literal",
-                        "value": "Q18031384"
-                    },
-                    "cellularComp": {
-                        "type": "literal",
-                        "value": "Q906755"
-                    }
-                },
-                {
-                    "geneId": {
-                        "type": "literal",
-                        "value": "375790"
-                    },
-                    "go": {
-                        "type": "literal",
-                        "value": "GO: 0005796"
-                    },
-                    "cellularCompLabel": {
-                        "xml:lang": "en",
-                        "type": "literal",
-                        "value": "Golgi lumen"
-                    },
-                    "gene": {
-                        "type": "literal",
-                        "value": "Q14897890"
-                    },
-                    "cellularComp": {
-                        "type": "literal",
-                        "value": "Q14758889"
-                    }
-                },
-                {
-                    "geneId": {
-                        "type": "literal",
-                        "value": "375790"
-                    },
-                    "go": {
-                        "type": "literal",
-                        "value": "GO: 0016020"
-                    },
-                    "cellularCompLabel": {
-                        "xml:lang": "en",
-                        "type": "literal",
-                        "value": "membrane"
-                    },
-                    "gene": {
-                        "type": "literal",
-                        "value": "Q14897890"
-                    },
-                    "cellularComp": {
-                        "type": "literal",
-                        "value": "Q14349455"
-                    }
-                },
-                {
-                    "geneId": {
-                        "type": "literal",
-                        "value": "6314"
-                    },
-                    "go": {
-                        "type": "literal",
-                        "value": "GO: 0005654"
-                    },
-                    "cellularCompLabel": {
-                        "xml:lang": "en",
-                        "type": "literal",
-                        "value": "nucleoplasm"
-                    },
-                    "gene": {
-                        "type": "literal",
-                        "value": "Q18031384"
-                    },
-                    "cellularComp": {
-                        "type": "literal",
-                        "value": "Q14817956"
-                    }
-                },
-                {
-                    "geneId": {
-                        "type": "literal",
-                        "value": "6314"
-                    },
-                    "go": {
-                        "type": "literal",
-                        "value": "GO: 0015630"
-                    },
-                    "cellularCompLabel": {
-                        "xml:lang": "en",
-                        "type": "literal",
-                        "value": "microtubule cytoskeleton"
-                    },
-                    "gene": {
-                        "type": "literal",
-                        "value": "Q18031384"
-                    },
-                    "cellularComp": {
-                        "type": "literal",
-                        "value": "Q14888122"
-                    }
-                },
-                {
-                    "geneId": {
-                        "type": "literal",
-                        "value": "375790"
-                    },
-                    "go": {
-                        "type": "literal",
-                        "value": "GO: 0043202"
-                    },
-                    "cellularCompLabel": {
-                        "xml:lang": "en",
-                        "type": "literal",
-                        "value": "lysosomal lumen"
-                    },
-                    "gene": {
-                        "type": "literal",
-                        "value": "Q14897890"
-                    },
-                    "cellularComp": {
-                        "type": "literal",
-                        "value": "Q14866090"
-                    }
-                },
-                {
-                    "geneId": {
-                        "type": "literal",
-                        "value": "375790"
-                    },
-                    "go": {
-                        "type": "literal",
-                        "value": "GO: 0062023"
-                    },
-                    "cellularCompLabel": {
-                        "xml:lang": "en",
-                        "type": "literal",
-                        "value": "collagen-containing extracellular matrix"
-                    },
-                    "gene": {
-                        "type": "literal",
-                        "value": "Q14897890"
-                    },
-                    "cellularComp": {
-                        "type": "literal",
-                        "value": "Q54810453"
-                    }
+                "cellularComp": {
+                    "type": "literal",
+                    "value": "Q30869"
                 }
-            ]
-        }
+            },
+            {
+                "geneId": {
+                    "type": "literal",
+                    "value": "375790"
+                },
+                "go": {
+                    "type": "literal",
+                    "value": "GO:0005886"
+                },
+                "cellularCompLabel": {
+                    "xml:lang": "en",
+                    "type": "literal",
+                    "value": "plasma membrane"
+                },
+                "gene": {
+                    "type": "literal",
+                    "value": "Q14897890"
+                },
+                "cellularComp": {
+                    "type": "literal",
+                    "value": "Q29548"
+                }
+            },
+            {
+                "geneId": {
+                    "type": "literal",
+                    "value": "6314"
+                },
+                "go": {
+                    "type": "literal",
+                    "value": "GO:0005634"
+                },
+                "cellularCompLabel": {
+                    "xml:lang": "en",
+                    "type": "literal",
+                    "value": "nucleus"
+                },
+                "gene": {
+                    "type": "literal",
+                    "value": "Q18031384"
+                },
+                "cellularComp": {
+                    "type": "literal",
+                    "value": "Q40260"
+                }
+            },
+            {
+                "geneId": {
+                    "type": "literal",
+                    "value": "375790"
+                },
+                "go": {
+                    "type": "literal",
+                    "value": "GO:0005604"
+                },
+                "cellularCompLabel": {
+                    "xml:lang": "en",
+                    "type": "literal",
+                    "value": "basement membrane"
+                },
+                "gene": {
+                    "type": "literal",
+                    "value": "Q14897890"
+                },
+                "cellularComp": {
+                    "type": "literal",
+                    "value": "Q32846"
+                }
+            },
+            {
+                "geneId": {
+                    "type": "literal",
+                    "value": "375790"
+                },
+                "go": {
+                    "type": "literal",
+                    "value": "GO:0030054"
+                },
+                "cellularCompLabel": {
+                    "xml:lang": "en",
+                    "type": "literal",
+                    "value": "cell junction"
+                },
+                "gene": {
+                    "type": "literal",
+                    "value": "Q14897890"
+                },
+                "cellularComp": {
+                    "type": "literal",
+                    "value": "Q189073"
+                }
+            },
+            {
+                "geneId": {
+                    "type": "literal",
+                    "value": "375790"
+                },
+                "go": {
+                    "type": "literal",
+                    "value": "GO:0045202"
+                },
+                "cellularCompLabel": {
+                    "xml:lang": "en",
+                    "type": "literal",
+                    "value": "synapse"
+                },
+                "gene": {
+                    "type": "literal",
+                    "value": "Q14897890"
+                },
+                "cellularComp": {
+                    "type": "literal",
+                    "value": "Q187181"
+                }
+            },
+            {
+                "geneId": {
+                    "type": "literal",
+                    "value": "375790"
+                },
+                "go": {
+                    "type": "literal",
+                    "value": "GO:0031012"
+                },
+                "cellularCompLabel": {
+                    "xml:lang": "en",
+                    "type": "literal",
+                    "value": "extracellular matrix"
+                },
+                "gene": {
+                    "type": "literal",
+                    "value": "Q14897890"
+                },
+                "cellularComp": {
+                    "type": "literal",
+                    "value": "Q193825"
+                }
+            },
+            {
+                "geneId": {
+                    "type": "literal",
+                    "value": "375790"
+                },
+                "go": {
+                    "type": "literal",
+                    "value": "GO:0005829"
+                },
+                "cellularCompLabel": {
+                    "xml:lang": "en",
+                    "type": "literal",
+                    "value": "cytosol"
+                },
+                "gene": {
+                    "type": "literal",
+                    "value": "Q14897890"
+                },
+                "cellularComp": {
+                    "type": "literal",
+                    "value": "Q220599"
+                }
+            },
+            {
+                "geneId": {
+                    "type": "literal",
+                    "value": "6314"
+                },
+                "go": {
+                    "type": "literal",
+                    "value": "GO:0005829"
+                },
+                "cellularCompLabel": {
+                    "xml:lang": "en",
+                    "type": "literal",
+                    "value": "cytosol"
+                },
+                "gene": {
+                    "type": "literal",
+                    "value": "Q18031384"
+                },
+                "cellularComp": {
+                    "type": "literal",
+                    "value": "Q220599"
+                }
+            },
+            {
+                "geneId": {
+                    "type": "literal",
+                    "value": "375790"
+                },
+                "go": {
+                    "type": "literal",
+                    "value": "GO:0070062"
+                },
+                "cellularCompLabel": {
+                    "xml:lang": "en",
+                    "type": "literal",
+                    "value": "extracellular exosome"
+                },
+                "gene": {
+                    "type": "literal",
+                    "value": "Q14897890"
+                },
+                "cellularComp": {
+                    "type": "literal",
+                    "value": "Q903634"
+                }
+            },
+            {
+                "geneId": {
+                    "type": "literal",
+                    "value": "6314"
+                },
+                "go": {
+                    "type": "literal",
+                    "value": "GO:0005856"
+                },
+                "cellularCompLabel": {
+                    "xml:lang": "en",
+                    "type": "literal",
+                    "value": "cytoskeleton"
+                },
+                "gene": {
+                    "type": "literal",
+                    "value": "Q18031384"
+                },
+                "cellularComp": {
+                    "type": "literal",
+                    "value": "Q154626"
+                }
+            },
+            {
+                "geneId": {
+                    "type": "literal",
+                    "value": "6314"
+                },
+                "go": {
+                    "type": "literal",
+                    "value": "GO:0005737"
+                },
+                "cellularCompLabel": {
+                    "xml:lang": "en",
+                    "type": "literal",
+                    "value": "cytoplasm"
+                },
+                "gene": {
+                    "type": "literal",
+                    "value": "Q18031384"
+                },
+                "cellularComp": {
+                    "type": "literal",
+                    "value": "Q79899"
+                }
+            },
+            {
+                "geneId": {
+                    "type": "literal",
+                    "value": "375790"
+                },
+                "go": {
+                    "type": "literal",
+                    "value": "GO:0062023"
+                },
+                "cellularCompLabel": {
+                    "xml:lang": "en",
+                    "type": "literal",
+                    "value": "collagen-containing extracellular matrix"
+                },
+                "gene": {
+                    "type": "literal",
+                    "value": "Q14897890"
+                },
+                "cellularComp": {
+                    "type": "literal",
+                    "value": "Q54810453"
+                }
+            },
+            {
+                "geneId": {
+                    "type": "literal",
+                    "value": "375790"
+                },
+                "go": {
+                    "type": "literal",
+                    "value": "GO:0005796"
+                },
+                "cellularCompLabel": {
+                    "xml:lang": "en",
+                    "type": "literal",
+                    "value": "Golgi lumen"
+                },
+                "gene": {
+                    "type": "literal",
+                    "value": "Q14897890"
+                },
+                "cellularComp": {
+                    "type": "literal",
+                    "value": "Q14758889"
+                }
+            },
+            {
+                "geneId": {
+                    "type": "literal",
+                    "value": "375790"
+                },
+                "go": {
+                    "type": "literal",
+                    "value": "GO:0043202"
+                },
+                "cellularCompLabel": {
+                    "xml:lang": "en",
+                    "type": "literal",
+                    "value": "lysosomal lumen"
+                },
+                "gene": {
+                    "type": "literal",
+                    "value": "Q14897890"
+                },
+                "cellularComp": {
+                    "type": "literal",
+                    "value": "Q14866090"
+                }
+            },
+            {
+                "geneId": {
+                    "type": "literal",
+                    "value": "6314"
+                },
+                "go": {
+                    "type": "literal",
+                    "value": "GO:0005654"
+                },
+                "cellularCompLabel": {
+                    "xml:lang": "en",
+                    "type": "literal",
+                    "value": "nucleoplasm"
+                },
+                "gene": {
+                    "type": "literal",
+                    "value": "Q18031384"
+                },
+                "cellularComp": {
+                    "type": "literal",
+                    "value": "Q14817956"
+                }
+            },
+            {
+                "geneId": {
+                    "type": "literal",
+                    "value": "6314"
+                },
+                "go": {
+                    "type": "literal",
+                    "value": "GO:0015630"
+                },
+                "cellularCompLabel": {
+                    "xml:lang": "en",
+                    "type": "literal",
+                    "value": "microtubule cytoskeleton"
+                },
+                "gene": {
+                    "type": "literal",
+                    "value": "Q18031384"
+                },
+                "cellularComp": {
+                    "type": "literal",
+                    "value": "Q14888122"
+                }
+            },
+            {
+                "geneId": {
+                    "type": "literal",
+                    "value": "375790"
+                },
+                "go": {
+                    "type": "literal",
+                    "value": "GO:0016021"
+                },
+                "cellularCompLabel": {
+                    "xml:lang": "en",
+                    "type": "literal",
+                    "value": "integral component of membrane"
+                },
+                "gene": {
+                    "type": "literal",
+                    "value": "Q14897890"
+                },
+                "cellularComp": {
+                    "type": "literal",
+                    "value": "Q14327652"
+                }
+            },
+            {
+                "geneId": {
+                    "type": "literal",
+                    "value": "375790"
+                },
+                "go": {
+                    "type": "literal",
+                    "value": "GO:0005576"
+                },
+                "cellularCompLabel": {
+                    "xml:lang": "en",
+                    "type": "literal",
+                    "value": "extracellular region"
+                },
+                "gene": {
+                    "type": "literal",
+                    "value": "Q14897890"
+                },
+                "cellularComp": {
+                    "type": "literal",
+                    "value": "Q14645596"
+                }
+            },
+            {
+                "geneId": {
+                    "type": "literal",
+                    "value": "6314"
+                },
+                "go": {
+                    "type": "literal",
+                    "value": "GO:0016363"
+                },
+                "cellularCompLabel": {
+                    "xml:lang": "en",
+                    "type": "literal",
+                    "value": "nuclear matrix"
+                },
+                "gene": {
+                    "type": "literal",
+                    "value": "Q18031384"
+                },
+                "cellularComp": {
+                    "type": "literal",
+                    "value": "Q906755"
+                }
+            },
+            {
+                "geneId": {
+                    "type": "literal",
+                    "value": "375790"
+                },
+                "go": {
+                    "type": "literal",
+                    "value": "GO:0016020"
+                },
+                "cellularCompLabel": {
+                    "xml:lang": "en",
+                    "type": "literal",
+                    "value": "membrane"
+                },
+                "gene": {
+                    "type": "literal",
+                    "value": "Q14897890"
+                },
+                "cellularComp": {
+                    "type": "literal",
+                    "value": "Q14349455"
+                }
+            }
+        ]
     }
-]
+}

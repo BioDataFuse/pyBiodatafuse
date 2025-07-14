@@ -7,13 +7,18 @@ import datetime
 import os
 import warnings
 from string import Template
+from typing import Any, Dict
 
 import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
 from SPARQLWrapper.SPARQLExceptions import SPARQLWrapperException
 
-from pyBiodatafuse.constants import WIKIDATA, WIKIDATA_CC_COL, WIKIDATA_ENDPOINT
-from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interest
+import pyBiodatafuse.constants as Cons
+from pyBiodatafuse.utils import (
+    collapse_data_sources,
+    get_identifier_of_interest,
+    give_annotator_warning,
+)
 
 
 def check_endpoint_wikidata() -> bool:
@@ -24,7 +29,7 @@ def check_endpoint_wikidata() -> bool:
     with open(os.path.dirname(__file__) + "/queries/wikidata-test.rq", "r") as fin:
         sparql_query = fin.read()
 
-    sparql = SPARQLWrapper(WIKIDATA_ENDPOINT)
+    sparql = SPARQLWrapper(Cons.WIKIDATA_ENDPOINT)
     sparql.setReturnFormat(JSON)
 
     sparql.setQuery(sparql_query)
@@ -70,7 +75,8 @@ def get_gene_cellular_component(bridgedb_df: pd.DataFrame):
 
     if not api_available:
         warnings.warn(
-            f"{WIKIDATA} SPARQL endpoint is not available. Unable to retrieve data.", stacklevel=2
+            f"{Cons.WIKIDATA} SPARQL endpoint is not available. Unable to retrieve data.",
+            stacklevel=2,
         )
         return pd.DataFrame(), {}
 
@@ -80,8 +86,8 @@ def get_gene_cellular_component(bridgedb_df: pd.DataFrame):
     # Add version to metadata file
     wikidata_version = get_version_wikidata()
 
-    data_df = get_identifier_of_interest(bridgedb_df, "NCBI Gene")
-    gene_list = data_df["target"].tolist()
+    data_df = get_identifier_of_interest(bridgedb_df, Cons.NCBI_GENE)
+    gene_list = data_df[Cons.TARGET_COL].tolist()
     gene_list = list(set(gene_list))
 
     query_gene_lists = []
@@ -98,7 +104,7 @@ def get_gene_cellular_component(bridgedb_df: pd.DataFrame):
     ) as fin:
         sparql_query = fin.read()
 
-    sparql = SPARQLWrapper(WIKIDATA_ENDPOINT)
+    sparql = SPARQLWrapper(Cons.WIKIDATA_ENDPOINT)
     sparql.setReturnFormat(JSON)
 
     query_count = 0
@@ -120,52 +126,60 @@ def get_gene_cellular_component(bridgedb_df: pd.DataFrame):
 
         intermediate_df = pd.concat([intermediate_df, df], ignore_index=True)
 
-    # Record the end time
+    # Record the end time and build metadata
     end_time = datetime.datetime.now()
-
-    if "cellularComp" not in intermediate_df.columns:
-        return pd.DataFrame(), {"datasource": WIKIDATA, "metadata": wikidata_version}
-
-    # Organize the annotation results as an array of dictionaries
-    intermediate_df = intermediate_df.rename(
-        columns={"cellularComp": "wikidata_id", "cellularCompLabel": "wikidata_label"}
-    )  # TODO: If these can be mapped to GO ids
-
-    intermediate_df = intermediate_df.rename(columns={"geneId": "target"})
-    # the next line does some magic
-    intermediate_df = (
-        intermediate_df.groupby("target")
-        .apply(lambda x: x[["wikidata_id", "wikidata_label", "go"]].to_dict(orient="records"))
-        .reset_index(name="Wikidata_cellular_components")
-    )
-
-    # Merge the two DataFrames on the target column
-    merged_df = collapse_data_sources(
-        data_df=data_df,
-        source_namespace="NCBI Gene",
-        target_df=intermediate_df,
-        common_cols=["target"],
-        target_specific_cols=["Wikidata_cellular_components"],
-        col_name=WIKIDATA_CC_COL,
-    )
-
-    # Metdata details
-    # Get the current date and time
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-    # Calculate the time elapsed
     time_elapsed = str(end_time - start_time)
 
     # Add the datasource, query, query time, and the date to metadata
-    wikidata_metadata = {
-        "datasource": WIKIDATA,
+    wikidata_metadata: Dict[str, Any] = {
+        "datasource": Cons.WIKIDATA,
         "metadata": {"source_version": wikidata_version},
         "query": {
             "size": len(gene_list),
             "time": time_elapsed,
             "date": current_date,
-            "url": WIKIDATA_ENDPOINT,
+            "url": Cons.WIKIDATA_ENDPOINT,
         },
     }
+
+    if "cellularComp" not in intermediate_df.columns:
+        return pd.DataFrame(), wikidata_metadata
+
+    # Organize the annotation results as an array of dictionaries
+    intermediate_df = intermediate_df.rename(
+        columns={
+            "cellularComp": Cons.WIKIDATA_ID_COL,
+            "cellularCompLabel": Cons.WIKIDATA_LABEL_COL,
+            "go": Cons.GO_ID,
+        }
+    )
+
+    intermediate_df = intermediate_df.rename(columns={"geneId": Cons.TARGET_COL})
+
+    # Merge the two DataFrames on the target column
+    merged_df = collapse_data_sources(
+        data_df=data_df,
+        source_namespace=Cons.NCBI_GENE,
+        target_df=intermediate_df,
+        common_cols=[Cons.TARGET_COL],
+        target_specific_cols=list(Cons.WIKIDATA_OUTPUT_DICT.keys()),
+        col_name=Cons.WIKIDATA_CC_COL,
+    )
+
+    # Calculate the number of new nodes
+    num_new_nodes = intermediate_df[Cons.WIKIDATA_ID_COL].nunique()
+    # Calculate the number of new edges
+    num_new_edges = intermediate_df.drop_duplicates(
+        subset=[Cons.TARGET_COL, Cons.WIKIDATA_ID_COL]
+    ).shape[0]
+
+    # Check the intermediate_df
+    if num_new_edges != len(intermediate_df):
+        give_annotator_warning(Cons.WIKIDATA)
+
+    # Add the number of new nodes and edges to metadata
+    wikidata_metadata[Cons.QUERY][Cons.NUM_NODES] = num_new_nodes
+    wikidata_metadata[Cons.QUERY][Cons.NUM_EDGES] = num_new_edges
 
     return merged_df, wikidata_metadata

@@ -5,19 +5,12 @@
 
 import datetime
 import warnings
-from typing import Any
 
 import numpy as np
 import pandas as pd
 import requests
 
-from pyBiodatafuse.constants import (
-    ENSEMBL,
-    ENSEMBL_ENDPOINT,
-    ENSEMBL_GENE_INPUT_ID,
-    ENSEMBL_HOMOLOG_COL,
-    ENSEMBL_HOMOLOG_MAIN_LABEL,
-)
+import pyBiodatafuse.constants as Cons
 from pyBiodatafuse.utils import get_identifier_of_interest
 
 
@@ -26,7 +19,7 @@ def check_endpoint_ensembl() -> bool:
 
     :returns: A True statement if the endpoint is available, else return False
     """
-    response = requests.get(f"{ENSEMBL_ENDPOINT}/info/ping")
+    response = requests.get(f"{Cons.ENSEMBL_ENDPOINT}/info/ping")
     # Check if API is down
     if response.status_code == 200:
         return True
@@ -40,7 +33,7 @@ def check_version_ensembl() -> str:
     :returns: A True statement if the endpoint is available, else return False
     """
     response = requests.get(
-        f"{ENSEMBL_ENDPOINT}/info/rest", headers={"Content-Type": "application/json"}
+        f"{Cons.ENSEMBL_ENDPOINT}/info/rest", headers={"Content-Type": "application/json"}
     )
     # Check if API is down
     return response.text
@@ -53,20 +46,22 @@ def get_human_homologs(row):
     :returns: dictionary mapping mouse genes to human homologs.
     """
     response = requests.get(
-        f"{ENSEMBL_ENDPOINT}/homology/id/mouse/{row['target']}",
+        f"{Cons.ENSEMBL_ENDPOINT}/homology/id/mouse/{row['target']}",
         headers={"Content-Type": "application/json"},
         params={"target_species": "homo_sapiens"},
     )
 
-    if response.status_code == 200:
-        data = response.json()
-        if "data" in data and len(data["data"]) > 0:
-            for homology in data["data"][0].get("homologies", []):
-                if homology["target"]["species"] == "homo_sapiens":
-                    homolog = homology["target"]["id"]
-                    return [{ENSEMBL_HOMOLOG_MAIN_LABEL: homolog}]
+    if response.status_code != 200:
+        return [{Cons.ENSEMBL_HOMOLOG_MAIN_LABEL: np.nan}]
 
-    return [{ENSEMBL_HOMOLOG_MAIN_LABEL: np.nan}]
+    data = response.json()
+    if "data" in data and len(data["data"]) > 0:
+        for homology in data["data"][0].get("homologies", []):
+            if homology["target"]["species"] == "homo_sapiens":
+                homolog = homology["target"]["id"]
+                return [{Cons.ENSEMBL_HOMOLOG_MAIN_LABEL: homolog}]
+
+    return [{Cons.ENSEMBL_HOMOLOG_MAIN_LABEL: np.nan}]
 
 
 def get_homologs(bridgedb_df):
@@ -78,7 +73,7 @@ def get_homologs(bridgedb_df):
     api_available = check_endpoint_ensembl()
     if not api_available:
         warnings.warn(
-            f"{ENSEMBL} endpoint is not available. Unable to retrieve data.", stacklevel=2
+            f"{Cons.ENSEMBL} endpoint is not available. Unable to retrieve data.", stacklevel=2
         )
         return pd.DataFrame(), {}
 
@@ -87,12 +82,12 @@ def get_homologs(bridgedb_df):
     # Record the start time
     start_time = datetime.datetime.now()
 
-    data_df = get_identifier_of_interest(bridgedb_df, ENSEMBL_GENE_INPUT_ID)
+    data_df = get_identifier_of_interest(bridgedb_df, Cons.ENSEMBL_GENE_INPUT_ID)
     data_df = data_df.reset_index(drop=True)
-    gene_list = list(set(data_df["target"].tolist()))
+    gene_list = list(set(data_df[Cons.TARGET_COL].tolist()))
 
     # Get the human homologs
-    data_df[ENSEMBL_HOMOLOG_COL] = data_df.apply(lambda row: get_human_homologs(row), axis=1)
+    data_df[Cons.ENSEMBL_HOMOLOG_COL] = data_df.apply(lambda row: get_human_homologs(row), axis=1)
 
     # Record the end time
     end_time = datetime.datetime.now()
@@ -107,15 +102,15 @@ def get_homologs(bridgedb_df):
 
     # Add the datasource, query, query time, and the date to metadata
     kegg_metadata = {
-        "datasource": ENSEMBL,
+        "datasource": Cons.ENSEMBL,
         "metadata": {"source_version": ensembl_version},
         "query": {
             "size": len(gene_list),
-            "input_type": ENSEMBL_GENE_INPUT_ID,
+            "input_type": Cons.ENSEMBL_GENE_INPUT_ID,
             "number_of_added_edges": num_new_edges,
             "time": time_elapsed,
             "date": current_date,
-            "url": ENSEMBL_ENDPOINT,
+            "url": Cons.ENSEMBL_ENDPOINT,
         },
     }
 

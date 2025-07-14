@@ -1,6 +1,6 @@
 # coding: utf-8
 
-"""Python file for queriying DisGeNet database (https://www.disgenet.org/home/)."""
+"""Python file for querying DisGeNet database (https://www.disgenet.org/home/)."""
 
 import datetime
 import json
@@ -14,17 +14,12 @@ import requests
 from tqdm import tqdm
 from urllib3 import disable_warnings
 
-from pyBiodatafuse.constants import (
-    DISGENET,
-    DISGENET_DISEASE_COL,
-    DISGENET_DISEASE_OUTPUT_DICT,
-    DISGENET_ENDPOINT,
-    DISGENET_GENE_INPUT_ID,
-)
+import pyBiodatafuse.constants as Cons
 from pyBiodatafuse.utils import (
     check_columns_against_constants,
     collapse_data_sources,
     get_identifier_of_interest,
+    give_annotator_warning,
 )
 
 logger = logging.getLogger("disgenet")
@@ -143,44 +138,44 @@ def _format_disgenet_output(intermediate_df: pd.DataFrame) -> pd.DataFrame:
 
     intermediate_df.rename(
         columns={
-            "geneNcbiID": "target",
-            "diseaseName": "disease_name",
-            "diseaseType": "disease_type",
-            "diseaseUMLSCUI": "disease_umlscui",
+            "geneNcbiID": Cons.TARGET_COL,
+            "diseaseName": Cons.DISEASE_NAME,
+            "diseaseType": Cons.DISEASE_TYPE,
+            "diseaseUMLSCUI": Cons.DISEASE_UMLSCUI,
         },
         inplace=True,
     )
-    intermediate_df["target"] = intermediate_df["target"].values.astype(str)
+    intermediate_df[Cons.TARGET_COL] = intermediate_df[Cons.TARGET_COL].values.astype(str)
 
     missing_cols = [
-        col for col in DISGENET_DISEASE_OUTPUT_DICT.keys() if col not in intermediate_df.columns
+        col
+        for col in Cons.DISGENET_DISEASE_OUTPUT_DICT.keys()
+        if col not in intermediate_df.columns
     ]
     for col in missing_cols:
         intermediate_df[col] = None
 
     selected_columns = [
-        # "geneDSI",
-        # "geneDPI",
-        # "genepLI",
-        # "geneNcbiType",
-        # "geneProteinClassIDs",
-        # "geneProteinClassNames",
-        # "diseaseVocabularies",
-        "target",
-        *DISGENET_DISEASE_OUTPUT_DICT.keys(),
+        Cons.TARGET_COL,
+        *Cons.DISGENET_DISEASE_OUTPUT_DICT.keys(),
     ]
     intermediate_df = intermediate_df[selected_columns]
 
     # Adding namespace prefixes to the identifiers
-    intermediate_df["HPO"] = _format_dis_identifiers(intermediate_df["HPO"], namespace="HPO")
-    intermediate_df["NCI"] = _format_dis_identifiers(intermediate_df["NCI"], namespace="NCI")
-    intermediate_df["OMIM"] = _format_dis_identifiers(intermediate_df["OMIM"], namespace="MIM")
-    intermediate_df["MONDO"] = _format_dis_identifiers(intermediate_df["MONDO"], namespace="MONDO")
-    intermediate_df["ORDO"] = _format_dis_identifiers(intermediate_df["ORDO"], namespace="ORDO")
-    intermediate_df["EFO"] = _format_dis_identifiers(intermediate_df["EFO"], namespace="EFO")
-    intermediate_df["DO"] = _format_dis_identifiers(intermediate_df["DO"], namespace="DOID")
-    intermediate_df["MESH"] = _format_dis_identifiers(intermediate_df["MESH"], namespace="MESH")
-    intermediate_df["UMLS"] = _format_dis_identifiers(intermediate_df["UMLS"], namespace="UMLS")
+    identifier_mapper = {
+        Cons.HPO: "HPO",
+        Cons.NCI: "NCI",
+        Cons.OMIM: "MIM",
+        Cons.MONDO: "MONDO",
+        Cons.ORDO: "ORDO",
+        Cons.EFO: "EFO",
+        Cons.DO: "DOID",
+        Cons.MESH: "MESH",
+        Cons.UMLS: "UMLS",
+    }
+    for key, value in identifier_mapper.items():
+        intermediate_df[key] = _format_dis_identifiers(intermediate_df[key], namespace=value)
+
     return intermediate_df
 
 
@@ -196,7 +191,7 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
 
     if not api_available:
         warnings.warn(
-            f"{DISGENET} endpoint is not available. Unable to retrieve data.", stacklevel=2
+            f"{Cons.DISGENET} endpoint is not available. Unable to retrieve data.", stacklevel=2
         )
         return pd.DataFrame(), {}
 
@@ -208,7 +203,7 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
     s = requests.Session()
 
     # Extract the "target" values
-    data_df = get_identifier_of_interest(bridgedb_df, DISGENET_GENE_INPUT_ID)
+    data_df = get_identifier_of_interest(bridgedb_df, Cons.DISGENET_GENE_INPUT_ID)
 
     disgenet_output = []
 
@@ -230,7 +225,7 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
         c += 1
         # Get all the diseases associated with genes for the current chunk
         gda_response = s.get(
-            DISGENET_ENDPOINT, params=params, headers=httpheadersdict, verify=False
+            Cons.DISGENET_ENDPOINT, params=params, headers=httpheadersdict, verify=False
         )
 
         # If the status code of gda_response is 429, it means you have reached one of your query limits
@@ -248,7 +243,7 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
 
                 # Repeat your query
                 gda_response = s.get(
-                    DISGENET_ENDPOINT,
+                    Cons.DISGENET_ENDPOINT,
                     params=params,
                     headers=httpheadersdict,
                     verify=False,
@@ -271,14 +266,14 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
 
     # Add version, datasource, query, query time, and the date to metadata
     disgenet_metadata: Dict[str, Any] = {
-        "datasource": DISGENET,
+        "datasource": Cons.DISGENET,
         "metadata": disgenet_version,
         "query": {
             "size": len(data_df["target"].drop_duplicates()),
-            "input_type": DISGENET_GENE_INPUT_ID,
+            "input_type": Cons.DISGENET_GENE_INPUT_ID,
             "time": time_elapsed,
             "date": current_date,
-            "url": DISGENET_ENDPOINT,
+            "url": Cons.DISGENET_ENDPOINT,
         },
     }
 
@@ -286,7 +281,7 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
     intermediate_df = pd.DataFrame(disgenet_output)
     if "geneNcbiID" not in intermediate_df:
         warnings.warn(
-            f"There is no annotation for your input list in {DISGENET}.",
+            f"There is no annotation for your input list in {Cons.DISGENET}.",
             stacklevel=2,
         )
         return pd.DataFrame(), disgenet_metadata
@@ -297,34 +292,33 @@ def get_gene_disease(api_key: str, bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFr
     # Check if all keys in df match the keys in OUTPUT_DICT
     check_columns_against_constants(
         data_df=intermediate_df,
-        output_dict=DISGENET_DISEASE_OUTPUT_DICT,
-        check_values_in=["HPO", "NCI", "OMIM", "MONDO", "ORDO", "EFO", "DO", "MESH", "UMLS"],
+        output_dict=Cons.DISGENET_DISEASE_OUTPUT_DICT,
+        check_values_in=Cons.VALUE_CHECK_LIST,
     )
 
     merged_df = collapse_data_sources(
         data_df=bridgedb_df,
-        source_namespace=DISGENET_GENE_INPUT_ID,
+        source_namespace=Cons.DISGENET_GENE_INPUT_ID,
         target_df=intermediate_df,
-        common_cols=["target"],
-        target_specific_cols=list(DISGENET_DISEASE_OUTPUT_DICT.keys()),
-        col_name=DISGENET_DISEASE_COL,
+        common_cols=[Cons.TARGET_COL],
+        target_specific_cols=list(Cons.DISGENET_DISEASE_OUTPUT_DICT.keys()),
+        col_name=Cons.DISGENET_DISEASE_COL,
     )
 
     """Update metadata"""
     # Calculate the number of new nodes
-    num_new_nodes = intermediate_df["disease_name"].nunique()
+    num_new_nodes = intermediate_df[Cons.DISEASE_NAME].nunique()
     # Calculate the number of new edges
-    num_new_edges = intermediate_df.drop_duplicates(subset=["target", "disease_name"]).shape[0]
+    num_new_edges = intermediate_df.drop_duplicates(
+        subset=[Cons.TARGET_COL, Cons.DISEASE_NAME]
+    ).shape[0]
 
     # Check the intermediate_df
     if num_new_edges != len(intermediate_df):
-        warnings.warn(
-            f"The intermediate_df in {DISGENET} annotatur should be checked, please create an issue on https://github.com/BioDataFuse/pyBiodatafuse/issues/.",
-            stacklevel=2,
-        )
+        give_annotator_warning(Cons.DISGENET)
 
     # Add the number of new nodes and edges to metadata
-    disgenet_metadata["query"]["number_of_added_nodes"] = num_new_nodes
-    disgenet_metadata["query"]["number_of_added_edges"] = num_new_edges
+    disgenet_metadata[Cons.QUERY][Cons.NUM_NODES] = num_new_nodes
+    disgenet_metadata[Cons.QUERY][Cons.NUM_EDGES] = num_new_edges
 
     return merged_df, disgenet_metadata

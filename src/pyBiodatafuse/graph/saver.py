@@ -50,6 +50,29 @@ def save_cytoscape_json(graph: dict, output_path: str):
         json.dump(graph, out)
 
 
+def save_graph_to_tsv(g, output_dir="output"):
+    """Save the graph to TSV files for nodes and edges.
+
+    :param g: the input graph to save.
+    :param output_dir: the directory to save the TSV files.
+    """
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Save nodes
+    nodes_path = os.path.join(output_dir, "nodes.tsv")
+    with open(nodes_path, "w") as f:
+        f.write("node_id\tattributes\n")
+        for node, attrs in g.nodes(data=True):
+            f.write(f"{node}\t{json.dumps(attrs)}\n")
+
+    # Save edges
+    edges_path = os.path.join(output_dir, "edges.tsv")
+    with open(edges_path, "w") as f:
+        f.write("source\ttarget\tkey\tattributes\n")
+        for u, v, k, attrs in g.edges(keys=True, data=True):
+            f.write(f"{u}\t{v}\t{k}\t{json.dumps(attrs)}\n")
+
+
 def save_graph(
     combined_df: pd.DataFrame,
     combined_metadata: Dict[Any, Any],
@@ -91,7 +114,7 @@ def save_graph(
         pickle.dump(g, f)
 
     save_graph_to_graphml(g, graph_path_gml)  # for neo4j import
-    logger.warning(f"Graph saved in {graph_path_pickle} and {graph_path_gml}")
+    logger.warning(f"Graph saved in: \n {graph_path_pickle} \n {graph_path_gml}")
 
     save_graph_to_edgelist(g, graph_path_edgelist)
     logger.warning(f"Graph saved in {graph_path_edgelist}")
