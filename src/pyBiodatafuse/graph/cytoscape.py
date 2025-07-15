@@ -48,6 +48,18 @@ def _replace_graph_attrs(g: nx.MultiDiGraph):
     return g
 
 
+def convert_graph_to_json(g: nx.MultiDiGraph):
+    """Convert a NetworkX graph to cytoscape json file.
+    :param g: the NetworkX graph object.
+    :returns: a cytoscape network json object.
+    """
+    adj_g = _replace_graph_attrs(g)
+
+    cytoscape_graph = nx.cytoscape_data(adj_g)
+
+    return cytoscape_graph
+    
+
 def load_graph(g: nx.MultiDiGraph, network_name: str):
     """Load the obtained graph into a running instance of Cytoscape.
 
