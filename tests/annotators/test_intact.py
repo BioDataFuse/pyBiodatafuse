@@ -29,7 +29,7 @@ class TestIntact(unittest.TestCase):
         )
 
         obtained_data, metadata = intact.get_gene_interactions(
-            bridgedb_dataframe, interaction_type="both"
+            bridgedb_dataframe, interaction_type="all"
         )
 
         expected_data = pd.Series(
