@@ -29,75 +29,75 @@ class TestIntact(unittest.TestCase):
         )
 
         obtained_data, metadata = intact.get_gene_interactions(
-            bridgedb_dataframe, interaction_type="all"
+            bridgedb_dataframe, interaction_type="both"
         )
 
         expected_data = pd.Series(
             [
                 [
                     {
-                        'interaction_id': 'EBI-7882257',
-                        'interactor_id_A': 'EBI-1755945',
-                        'interactor_id_B': 'EBI-1755945',
-                        'score': 0.56,
-                        'biological_role_A': 'unspecified role',
-                        'biological_role_B': 'unspecified role',
-                        'type': 'direct interaction',
-                        'detection_method': 'x-ray diffraction',
-                        'host_organism': 'In vitro',
-                        'interactor_A_name': 'dag1_human',
-                        'interactor_B_name': 'dag1_human',
-                        'interactor_A_species': 'Homo sapiens',
-                        'interactor_B_species': 'Homo sapiens',
-                        'molecule_A': 'DAG1',
-                        'molecule_B': 'DAG1',
-                        'id_A': 'uniprotkb:Q14118',
-                        'id_B': 'uniprotkb:Q14118',
-                        'pubmed_publication_id': '11423118',
-                        'intact_link_to': 'DAG1'
+                        "interaction_id": "EBI-7882257",
+                        "interactor_id_A": "EBI-1755945",
+                        "interactor_id_B": "EBI-1755945",
+                        "score": 0.56,
+                        "biological_role_A": "unspecified role",
+                        "biological_role_B": "unspecified role",
+                        "type": "direct interaction",
+                        "detection_method": "x-ray diffraction",
+                        "host_organism": "In vitro",
+                        "interactor_A_name": "dag1_human",
+                        "interactor_B_name": "dag1_human",
+                        "interactor_A_species": "Homo sapiens",
+                        "interactor_B_species": "Homo sapiens",
+                        "molecule_A": "DAG1",
+                        "molecule_B": "DAG1",
+                        "id_A": "uniprotkb:Q14118",
+                        "id_B": "uniprotkb:Q14118",
+                        "pubmed_publication_id": "11423118",
+                        "intact_link_to": "DAG1",
                     },
                     {
-                        'interaction_id': 'EBI-7882311',
-                        'interactor_id_A': 'EBI-1755945',
-                        'interactor_id_B': 'EBI-1755945',
-                        'score': 0.56,
-                        'biological_role_A': 'unspecified role',
-                        'biological_role_B': 'unspecified role',
-                        'type': 'direct interaction',
-                        'detection_method': 'elisa',
-                        'host_organism': 'In vitro',
-                        'interactor_A_name': 'dag1_human',
-                        'interactor_B_name': 'dag1_human',
-                        'interactor_A_species': 'Homo sapiens',
-                        'interactor_B_species': 'Homo sapiens',
-                        'molecule_A': 'DAG1',
-                        'molecule_B': 'DAG1',
-                        'id_A': 'uniprotkb:Q14118',
-                        'id_B': 'uniprotkb:Q14118',
-                        'pubmed_publication_id': '11423118',
-                        'intact_link_to': 'DAG1'
+                        "interaction_id": "EBI-7882311",
+                        "interactor_id_A": "EBI-1755945",
+                        "interactor_id_B": "EBI-1755945",
+                        "score": 0.56,
+                        "biological_role_A": "unspecified role",
+                        "biological_role_B": "unspecified role",
+                        "type": "direct interaction",
+                        "detection_method": "elisa",
+                        "host_organism": "In vitro",
+                        "interactor_A_name": "dag1_human",
+                        "interactor_B_name": "dag1_human",
+                        "interactor_A_species": "Homo sapiens",
+                        "interactor_B_species": "Homo sapiens",
+                        "molecule_A": "DAG1",
+                        "molecule_B": "DAG1",
+                        "id_A": "uniprotkb:Q14118",
+                        "id_B": "uniprotkb:Q14118",
+                        "pubmed_publication_id": "11423118",
+                        "intact_link_to": "DAG1",
                     },
                     {
-                        'interaction_id': 'EBI-5327885',
-                        'interactor_id_A': 'EBI-5327879',
-                        'interactor_id_B': 'EBI-1755945',
-                        'score': 0.4,
-                        'biological_role_A': 'unspecified role',
-                        'biological_role_B': 'unspecified role',
-                        'type': 'physical association',
-                        'detection_method': 'biophysical',
-                        'host_organism': 'Homo sapiens HeLa S3 epitheloid cervical carcinoma cell',
-                        'interactor_A_name': 'ganglioside_gm1',
-                        'interactor_B_name': 'dag1_human',
-                        'interactor_A_species': 'Chemical synthesis (Chemical synthesis)',
-                        'interactor_B_species': 'Homo sapiens',
-                        'molecule_A': 'ganglioside_gm1',
-                        'molecule_B': 'DAG1',
-                        'id_A': 'CHEBI:61048',
-                        'id_B': 'uniprotkb:Q14118',
-                        'pubmed_publication_id': '22106087',
-                        'intact_link_to': 'CHEBI:61048'
-                    }
+                        "interaction_id": "EBI-5327885",
+                        "interactor_id_A": "EBI-5327879",
+                        "interactor_id_B": "EBI-1755945",
+                        "score": 0.4,
+                        "biological_role_A": "unspecified role",
+                        "biological_role_B": "unspecified role",
+                        "type": "physical association",
+                        "detection_method": "biophysical",
+                        "host_organism": "Homo sapiens HeLa S3 epitheloid cervical carcinoma cell",
+                        "interactor_A_name": "ganglioside_gm1",
+                        "interactor_B_name": "dag1_human",
+                        "interactor_A_species": "Chemical synthesis (Chemical synthesis)",
+                        "interactor_B_species": "Homo sapiens",
+                        "molecule_A": "ganglioside_gm1",
+                        "molecule_B": "DAG1",
+                        "id_A": "CHEBI:61048",
+                        "id_B": "uniprotkb:Q14118",
+                        "pubmed_publication_id": "22106087",
+                        "intact_link_to": "CHEBI:61048",
+                    },
                 ]
             ]
         )
@@ -119,7 +119,9 @@ class TestIntact(unittest.TestCase):
             }
         )
 
-        obtained_data, metadata = intact.get_compound_interactions(bridgedb_dataframe)
+        obtained_data, metadata = intact.get_compound_interactions(
+            bridgedb_dataframe, interaction_type="both"
+        )
 
         expected_data = pd.Series(
             [
@@ -143,7 +145,7 @@ class TestIntact(unittest.TestCase):
                         "id_A": "uniprotkb:P07342",
                         "id_B": "CHEBI:15361",
                         "pubmed_publication_id": "16390333",
-                        "intact_link_to": None,
+                        "intact_link_to": "EBI-9096",
                     },
                     {
                         "interaction_id": "EBI-6621805",
@@ -164,7 +166,7 @@ class TestIntact(unittest.TestCase):
                         "id_A": "uniprotkb:P00338",
                         "id_B": "CHEBI:15361",
                         "pubmed_publication_id": "23523103",
-                        "intact_link_to": None,
+                        "intact_link_to": "EBI-372327",
                     },
                 ]
             ]

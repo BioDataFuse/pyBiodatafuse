@@ -308,8 +308,8 @@ INTACT_ID_A = "id_A"
 INTACT_ID_B = "id_B"
 INTACT_PUBMED_PUBLICATION_ID = "pubmed_publication_id"
 
-INTACT_COMPOUND_INTERACTION_TYPES = ["compound_compound", "compound_gene", "all"]
-INTACT_GENE_INTERACTION_TYPES = ["gene_gene", "gene_compound", "all"]
+INTACT_COMPOUND_INTERACTION_TYPES = ["compound_compound", "compound_gene", "both_compound"]
+INTACT_GENE_INTERACTION_TYPES = ["gene_gene", "gene_compound", "both"]
 
 INTACT_OUTPUT_DICT = {
     INTACT_INTERACTION_ID: str,

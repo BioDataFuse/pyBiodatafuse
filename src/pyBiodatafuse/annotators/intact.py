@@ -44,15 +44,6 @@ def check_version_intact() -> dict:
         return {"source_version": "unknown"}
 
 
-def clean_id(identifier: str) -> str:
-    """Strip the source suffix (e.g., ' (uniprotkb)') from an identifier string.
-
-    :param identifier: The identifier string to clean.
-    :returns: The cleaned identifier without the suffix.
-    """
-    return identifier.split(" ")[0] if identifier else identifier
-
-
 def get_intact_interactions(gene_ids: List[str]) -> List[dict]:
     """Retrieve protein interactions for a list of genes from IntAct.
 
@@ -168,13 +159,14 @@ def get_filtered_interactions(
     :param valid_intact_acs: Set of valid IntAct ACs.
     :param intact_ac_to_entity: Dictionary mapping IntAct ACs to entity.
     :param entity_to_input_id: Dictionary mapping entities to input IDs.
-    :param interaction_type: Either 'gene_gene', 'gene_compound', 'compound_compound', 'compound_gene', or 'all'.
+    :param interaction_type: Either 'gene_gene', 'gene_compound', 'compound_compound', 'compound_gene', or 'both'.
     :returns: A dictionary of filtered interactions per input ID.
     """
     results: Dict[str, List[dict]] = {idx: [] for idx in batch_ids}
     interactions = get_intact_interactions(batch_ids)
 
     for interaction in interactions:
+        print(interaction)
         if interaction_type in Cons.INTACT_GENE_INTERACTION_TYPES:
             id_a = interaction.get(Cons.INTACT_INTERACTOR_ID_A)
             id_b = interaction.get(Cons.INTACT_INTERACTOR_ID_B)
@@ -219,7 +211,7 @@ def get_filtered_interactions(
             if (has_chebi_a and has_uniprot_b) or (has_chebi_b and has_uniprot_a):
                 keep_interaction = True
 
-        elif "all" in interaction_type:
+        elif "both" in interaction_type:
             is_gene_gene = (
                 has_uniprot_a
                 and has_uniprot_b
@@ -240,6 +232,11 @@ def get_filtered_interactions(
             continue
 
         for idx in batch_ids:
+            print(f"[DEBUG] id_a: {id_a}, id_b: {id_b}")
+            print(f"[DEBUG] valid_intact_acs: {list(valid_intact_acs)[:5]}...")
+            print(
+                f"[DEBUG] intact_ac_to_entity.get(id_a): {intact_ac_to_entity.get(id_a)}, idx: {idx}"
+            )
             if id_a in valid_intact_acs and intact_ac_to_entity.get(id_a) == idx:
                 partner_id = intact_ac_to_entity.get(id_b)
                 partner_display_id = entity_to_input_id.get(partner_id, partner_id or alt_ids_b)
@@ -262,11 +259,11 @@ def get_filtered_interactions(
     return results
 
 
-def get_gene_interactions(bridgedb_df: pd.DataFrame, interaction_type: str = "all"):
+def get_gene_interactions(bridgedb_df: pd.DataFrame, interaction_type: str = "both"):
     """Annotate genes with interaction data from IntAct.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query.
-    :param interaction_type: Either 'gene_gene', 'gene_compound' or 'all'.
+    :param interaction_type: Either 'gene_gene', 'gene_compound' or 'both'.
     :raises ValueError: If an invalid interaction_type is provided.
     :returns: a tuple (DataFrame containing the IntAct output, metadata dictionary)
     """
@@ -346,11 +343,11 @@ def get_gene_interactions(bridgedb_df: pd.DataFrame, interaction_type: str = "al
     return data_df, intact_metadata
 
 
-def get_compound_interactions(bridgedb_df: pd.DataFrame, interaction_type: str = "all"):
+def get_compound_interactions(bridgedb_df: pd.DataFrame, interaction_type: str = "both"):
     """Annotate compounds with interaction data from IntAct.
 
     :param bridgedb_df: BridgeDb output for creating the list of compound ids to query.
-    :param interaction_type: Either 'compound_compound', 'compound_gene' or 'all'.
+    :param interaction_type: Either 'compound_compound', 'compound_gene' or 'both'.
     :raises ValueError: If an invalid interaction_type is provided.
     :returns: a tuple (DataFrame containing the IntAct output, metadata dictionary)
     """
@@ -365,6 +362,9 @@ def get_compound_interactions(bridgedb_df: pd.DataFrame, interaction_type: str =
     )
     data_df = data_df[data_df[Cons.TARGET_COL].str.startswith("CHEBI:")].reset_index(drop=True)
 
+    if interaction_type == "both":
+        interaction_type = "both_compound"
+
     if interaction_type not in Cons.INTACT_COMPOUND_INTERACTION_TYPES:
         raise ValueError(
             f"Invalid interaction_type: {interaction_type}. Must be {Cons.INTACT_COMPOUND_INTERACTION_TYPES}."
@@ -376,12 +376,18 @@ def get_compound_interactions(bridgedb_df: pd.DataFrame, interaction_type: str =
         row[Cons.TARGET_COL]: row[Cons.IDENTIFIER_COL] for _, row in data_df.iterrows()
     }
 
+    print("[DEBUG] Building intact_ac_to_entity:")
+
     intact_ac_to_chebi = {
         chebi_id: chebi_id for chebi_id in chebi_list
     }  # intact id is same as chebi id
 
+    for chebi_id in chebi_list:
+        print(f"  {chebi_id} -> {chebi_id}")
+
     all_results = {}
     batch_size = 10
+    print(chebi_list)
     for i in tqdm(range(0, len(chebi_list), batch_size), desc="Querying IntAct for compounds"):
         batch = chebi_list[i : i + batch_size]
         batch_results = get_filtered_interactions(
