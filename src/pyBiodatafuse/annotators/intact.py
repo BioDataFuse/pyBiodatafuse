@@ -166,7 +166,6 @@ def get_filtered_interactions(
     interactions = get_intact_interactions(batch_ids)
 
     for interaction in interactions:
-        print(interaction)
         if interaction_type in Cons.INTACT_GENE_INTERACTION_TYPES:
             id_a = interaction.get(Cons.INTACT_INTERACTOR_ID_A)
             id_b = interaction.get(Cons.INTACT_INTERACTOR_ID_B)
@@ -232,11 +231,6 @@ def get_filtered_interactions(
             continue
 
         for idx in batch_ids:
-            print(f"[DEBUG] id_a: {id_a}, id_b: {id_b}")
-            print(f"[DEBUG] valid_intact_acs: {list(valid_intact_acs)[:5]}...")
-            print(
-                f"[DEBUG] intact_ac_to_entity.get(id_a): {intact_ac_to_entity.get(id_a)}, idx: {idx}"
-            )
             if id_a in valid_intact_acs and intact_ac_to_entity.get(id_a) == idx:
                 partner_id = intact_ac_to_entity.get(id_b)
                 partner_display_id = entity_to_input_id.get(partner_id, partner_id or alt_ids_b)
@@ -376,18 +370,12 @@ def get_compound_interactions(bridgedb_df: pd.DataFrame, interaction_type: str =
         row[Cons.TARGET_COL]: row[Cons.IDENTIFIER_COL] for _, row in data_df.iterrows()
     }
 
-    print("[DEBUG] Building intact_ac_to_entity:")
-
     intact_ac_to_chebi = {
         chebi_id: chebi_id for chebi_id in chebi_list
     }  # intact id is same as chebi id
 
-    for chebi_id in chebi_list:
-        print(f"  {chebi_id} -> {chebi_id}")
-
     all_results = {}
     batch_size = 10
-    print(chebi_list)
     for i in tqdm(range(0, len(chebi_list), batch_size), desc="Querying IntAct for compounds"):
         batch = chebi_list[i : i + batch_size]
         batch_results = get_filtered_interactions(
