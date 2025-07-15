@@ -151,6 +151,7 @@ def get_filtered_interactions(
     valid_intact_acs: set,
     intact_ac_to_entity: dict,
     entity_to_input_id: dict,
+    is_compound: bool,
     interaction_type: str = "gene_gene",
 ) -> Dict[str, List[dict]]:
     """Filter interactions based on data type.
@@ -159,6 +160,7 @@ def get_filtered_interactions(
     :param valid_intact_acs: Set of valid IntAct ACs.
     :param intact_ac_to_entity: Dictionary mapping IntAct ACs to entity.
     :param entity_to_input_id: Dictionary mapping entities to input IDs.
+    :param is_compound: Boolean if the input datatype are compounds.
     :param interaction_type: Either 'gene_gene', 'gene_compound', 'compound_compound', 'compound_gene', or 'both'.
     :returns: A dictionary of filtered interactions per input ID.
     """
@@ -166,7 +168,7 @@ def get_filtered_interactions(
     interactions = get_intact_interactions(batch_ids)
 
     for interaction in interactions:
-        if interaction_type in Cons.INTACT_GENE_INTERACTION_TYPES:
+        if interaction_type in Cons.INTACT_GENE_INTERACTION_TYPES and not is_compound:
             id_a = interaction.get(Cons.INTACT_INTERACTOR_ID_A)
             id_b = interaction.get(Cons.INTACT_INTERACTOR_ID_B)
             alt_ids_a = interaction.get(Cons.INTACT_ID_A)
@@ -297,6 +299,7 @@ def get_gene_interactions(bridgedb_df: pd.DataFrame, interaction_type: str = "bo
             set(intact_ac_to_ensembl.keys()),
             intact_ac_to_ensembl,
             ensembl_to_input_id,
+            is_compound=False,
             interaction_type=interaction_type,
         )
         all_results.update(batch_results)
@@ -356,9 +359,6 @@ def get_compound_interactions(bridgedb_df: pd.DataFrame, interaction_type: str =
     )
     data_df = data_df[data_df[Cons.TARGET_COL].str.startswith("CHEBI:")].reset_index(drop=True)
 
-    if interaction_type == "both":
-        interaction_type = "both_compound"
-
     if interaction_type not in Cons.INTACT_COMPOUND_INTERACTION_TYPES:
         raise ValueError(
             f"Invalid interaction_type: {interaction_type}. Must be {Cons.INTACT_COMPOUND_INTERACTION_TYPES}."
@@ -383,6 +383,7 @@ def get_compound_interactions(bridgedb_df: pd.DataFrame, interaction_type: str =
             valid_intact_acs=set(chebi_list),
             intact_ac_to_entity=intact_ac_to_chebi,
             entity_to_input_id=chebi_to_input_id,
+            is_compound=True,
             interaction_type=interaction_type,
         )
         all_results.update(batch_results)
