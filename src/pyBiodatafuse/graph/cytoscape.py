@@ -11,36 +11,29 @@ import pyBiodatafuse.constants as Cons
 def _replace_graph_attrs(g: nx.MultiDiGraph):
     """Adapt the node and edge attributes keys to the cytoscape json structure.
 
-
     :param g: input NetworkX graph object.
     :returns: output NetworkX graph object.
     """
-    # Fix node attributes
     for node in list(g.nodes()):
-        attrs = g.nodes[node]
-        # Set 'id' explicitly
-        attrs['id'] = node
-        if 'name' in attrs:
-            attrs['label'] = attrs['name']
-            del attrs['name']
-        if 'source' in attrs:
-            attrs['datasource'] = attrs['source']
-            del attrs['source']
+        for k, v in list(g.nodes[node].items()):
+            if k == "name":
+                nx.set_node_attributes(g, {node: {"label": v}})
+                del g.nodes[node]["name"]
+            elif k == "source":
+                nx.set_node_attributes(g, {node: {"datasource": v}})
+                del g.nodes[node]["source"]
 
-    # Fix edge attributes
-    for u, v, k in g.edges(keys=True):
-        attrs = g[u][v][k]
-        # Edge source/target must match node IDs
-        attrs['source'] = u
-        attrs['target'] = v
-        if 'label' in attrs:
-            attrs['interaction'] = attrs['label']
-            del attrs['label']
-        if 'source' in attrs:
-            attrs['datasource'] = attrs['source']
-            del attrs['source']
+    for u, v, k in list(g.edges(keys=True)):
+        for x, y in list(g[u][v][k].items()):
+            if x == "label":
+                g[u][v][k]["interaction"] = y
+                del g[u][v][k]["label"]
+            elif x == "source":
+                g[u][v][k]["datasource"] = y
+                del g[u][v][k]["source"]
 
     return g
+
 
 
 def convert_graph_to_json(g: nx.MultiDiGraph):
