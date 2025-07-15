@@ -98,7 +98,12 @@ def get_aops_gene(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
     for batch in tqdm(query_batches, desc=f"Querying {Cons.AOPWIKIRDF} for genes"):
         # Prepare the substitution dictionary
         substit_dict = {
-            "genes": str(['"' + target.replace('"', "") + '"' for target in batch.split(" ")])
+            "genes": str(
+                [
+                    "<https://identifiers.org/ensembl/" + target.replace('"', "") + ">"
+                    for target in batch.split(" ")
+                ]
+            )
             .replace("[", "")
             .replace("]", "")
             .replace("'", "")

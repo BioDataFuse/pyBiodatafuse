@@ -175,8 +175,6 @@ AOPWIKI_COMPOUND_INPUT_ID = PUBCHEM_COMPOUND
 PATHWAY_ID = "pathway_id"
 PATHWAY_LABEL = "pathway_label"
 PATHWAY_GENE_COUNTS = "pathway_gene_counts"
-PATHWAY_GENES = "pathway_genes"
-PATHWAY_COMPOUND_COUNTS = "pathway_compound_counts"
 PATHWAY_COMPOUNDS = "pathway_compounds"
 PATHWAYS = "pathways"
 
