@@ -59,7 +59,7 @@ def convert_graph_to_json(g: nx.MultiDiGraph):
     cytoscape_graph = nx.cytoscape_data(adj_g)
     
     return cytoscape_graph
-    
+
 
 def load_graph(g: nx.MultiDiGraph, network_name: str):
     """Load the obtained graph into a running instance of Cytoscape.
