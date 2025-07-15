@@ -41,7 +41,6 @@ def _replace_graph_attrs(g: nx.MultiDiGraph):
         attrs[Cons.TARGET] = v
         if Cons.LABEL in attrs:
             attrs[Cons.INTERACTION] = attrs[Cons.LABEL]
-            del attrs[Cons.LABEL]
         else:
             raise ValueError("Missing label ", attrs)
 
