@@ -240,7 +240,9 @@ def add_intact_interactions_subgraph(g, gene_node_label, annot_list):
                     Cons.INTACT_INTERACTOR_A_NAME if is_a_chebi else Cons.INTACT_INTERACTOR_B_NAME
                 ),
                 Cons.SPECIES: interaction.get(
-                    Cons.INTACT_INTERACTOR_A_SPECIES if is_a_chebi else Cons.INTACT_INTERACTOR_B_SPECIES
+                    Cons.INTACT_INTERACTOR_A_SPECIES
+                    if is_a_chebi
+                    else Cons.INTACT_INTERACTOR_B_SPECIES
                 ),
                 Cons.MOLECULE: interaction.get(
                     Cons.INTACT_MOLECULE_A if is_a_chebi else Cons.INTACT_MOLECULE_B
@@ -264,7 +266,9 @@ def add_intact_interactions_subgraph(g, gene_node_label, annot_list):
                     if method not in prev:
                         prev.append(method)
                 else:
-                    existing[Cons.INTACT_DETECTION_METHOD] = [prev, method] if method != prev else prev
+                    existing[Cons.INTACT_DETECTION_METHOD] = (
+                        [prev, method] if method != prev else prev
+                    )
         else:
             edge_attrs[Cons.EDGE_HASH] = hash(frozenset(edge_attrs.items()))
             merged_edges[edge_key] = edge_attrs
