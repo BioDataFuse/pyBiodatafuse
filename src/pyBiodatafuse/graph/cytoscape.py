@@ -14,6 +14,7 @@ def _replace_graph_attrs(g: nx.MultiDiGraph):
 
     :param g: input NetworkX graph object.
     :returns: output NetworkX graph object.
+    :raises ValueError: if a node is missing a name or an edge is missing a label.
     """
     # Fix node attributes
     for node, attrs in g.nodes(data=True):
