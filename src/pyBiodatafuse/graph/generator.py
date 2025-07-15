@@ -441,8 +441,8 @@ def add_minerva_gene_pathway_subgraph(g, gene_node_label, annot_list):
         annot_node_attrs.update(
             {
                 Cons.DATASOURCE: Cons.MINERVA,
-                Cons.PATHWAY_LABEL: annot[Cons.PATHWAY_LABEL],
-                Cons.PATHWAY_ID: annot[Cons.PATHWAY_ID],
+                Cons.NAME: annot[Cons.PATHWAY_LABEL],
+                Cons.ID: annot[Cons.PATHWAY_ID],
                 Cons.GENE_COUNTS: annot[Cons.PATHWAY_GENE_COUNTS],
             }
         )
@@ -489,8 +489,8 @@ def add_wikipathways_gene_pathway_subgraph(g, gene_node_label, annot_list):
         annot_node_attrs.update(
             {
                 Cons.DATASOURCE: Cons.WIKIPATHWAYS,
-                Cons.PATHWAY_LABEL: annot[Cons.PATHWAY_LABEL],
-                Cons.PATHWAY_ID: annot[Cons.PATHWAY_ID],
+                Cons.NAME: annot[Cons.PATHWAY_LABEL],
+                Cons.ID: annot[Cons.PATHWAY_ID],
                 Cons.GENE_COUNTS: annot[Cons.PATHWAY_GENE_COUNTS],
             }
         )
@@ -537,8 +537,8 @@ def add_kegg_gene_pathway_subgraph(g, gene_node_label, annot_list):
         annot_node_attrs.update(
             {
                 Cons.DATASOURCE: Cons.KEGG,
-                Cons.PATHWAY_LABEL: annot[Cons.PATHWAY_LABEL],
-                Cons.PATHWAY_ID: annot[Cons.PATHWAY_ID],
+                Cons.NAME: annot[Cons.PATHWAY_LABEL],
+                Cons.ID: annot[Cons.PATHWAY_ID],
                 Cons.GENE_COUNTS: annot[Cons.PATHWAY_GENE_COUNTS],
             }
         )
@@ -1173,8 +1173,8 @@ def add_opentargets_gene_reactome_pathway_subgraph(g, gene_node_label, annot_lis
         annot_node_attrs.update(
             {
                 Cons.DATASOURCE: Cons.OPENTARGETS,
-                Cons.PATHWAY_LABEL: annot[Cons.PATHWAY_LABEL],
-                Cons.PATHWAY_ID: annot[Cons.PATHWAY_ID],
+                Cons.NAME: annot[Cons.PATHWAY_LABEL],
+                Cons.ID: annot[Cons.PATHWAY_ID],
             }
         )
 
@@ -1219,8 +1219,8 @@ def add_opentargets_gene_go_subgraph(g, gene_node_label, annot_list):
         annot_node_attrs = Cons.OPENTARGETS_GO_NODE_ATTRS.copy()
         annot_node_attrs.update(
             {
-                Cons.PATHWAY_LABEL: annot[Cons.OPENTARGETS_GO_NAME],
-                Cons.PATHWAY_ID: annot[Cons.OPENTARGETS_GO_ID],
+                Cons.NAME: annot[Cons.OPENTARGETS_GO_NAME],
+                Cons.ID: annot[Cons.OPENTARGETS_GO_ID],
                 Cons.DATASOURCE: Cons.OPENTARGETS,
             }
         )
@@ -1709,8 +1709,8 @@ def add_wikipathways_molecular_subgraph(g, gene_node_label, annot_list):
                 node_attrs = Cons.MOLECULAR_PATHWAY_NODE_ATTRS.copy()
                 node_attrs.update(
                     {
-                        Cons.PATHWAY_ID: annot.get(Cons.PATHWAY_ID, ""),
-                        Cons.PATHWAY_LABEL: annot.get(Cons.PATHWAY_LABEL, ""),
+                        Cons.ID: annot.get(Cons.PATHWAY_ID, ""),
+                        Cons.NAME: annot.get(Cons.PATHWAY_LABEL, ""),
                         Cons.ID: target_node_label,
                     }
                 )

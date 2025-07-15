@@ -650,9 +650,9 @@ WIKIPATHWAY_NAMESPACE_DICT = {
     WIKIPATHWAYS_TARGET_METABOLITE: PUBCHEM_COMPOUND_CID,
 }
 
-
-# AOPWIKI
-
+"""
+AOPWIKI variables
+"""
 AOP = "aop"
 AOP_TITLE = "aop_title"
 MIE_TITLE = "MIE_title"
@@ -849,18 +849,6 @@ GENE_PATHWAY_EDGE_ATTRS = {
     LABEL: GENE_PATHWAY_EDGE_LABEL,
 }
 
-# molecular pathway node
-MOLECULAR_PATHWAY_NODE_LABEL = "Pathway"
-MOLECULAR_PATHWAY_NODE_MAIN_LABEL = "pathway_id"
-WIKIPATHWAYS_MOLECULAR_NODE_ATTRS = {
-    "pathway_id": "str",
-    "pathway_label": "str",
-    "id": "str",
-    "labels": MOLECULAR_PATHWAY_NODE_LABEL,
-}
-WIKIPATHWAYS_MOLECULAR_EDGE_ATTRS = {"interaction_type": "str", "rhea_id": str}
-MOLECULAR_GENE_PATHWAY_EDGE_LABEL = "part_of"
-MOLECULAR_INTERACTION_EDGE_ATTRS = {"interaction_type": "str", "rhea_id": str}
 # GO nodes
 # Open Targets - GO processes
 GO_BP_NODE_LABEL = "Biological Process"
@@ -875,6 +863,7 @@ GO_NODE_ATTRS = {
 }
 GENE_GO_EDGE_LABEL = "part_of"
 GENE_GO_EDGE_ATTRS = {"datasource": OPENTARGETS, "label": GENE_GO_EDGE_LABEL}
+
 # IntAct interactions
 SPECIES = "species"
 # INTACT_INTERACTION_TYPE = "interaction_type"
@@ -1199,6 +1188,59 @@ AOPWIKI_NODE_ATTRS = {
     "organ": None,
 }
 
+"""
+Cytoscape variables
+"""
+NODE_TYPE = "node_type"
+SOURCE = "source"
+TARGET = "target"
+INTERACTION = "interaction"
+
+ALL_NODE_LABELS = {
+    GENE_NODE_LABEL: "ELLIPSE",
+    TRANS_FACTOR_NODE_LABEL: "ELLIPSE",
+    HOMOLOG_NODE_LABEL: "ELLIPSE",
+    DISEASE_NODE_LABEL: "HEXAGON",
+    COMPOUND_NODE_LABEL: "DIAMOND",
+    ANATOMICAL_NODE_LABEL: "RECTANGLE",
+    PATHWAY_NODE_LABEL: "ROUND_RECTANGLE",
+    GO_BP_NODE_LABEL: "ROUND_RECTANGLE",
+    GO_MF_NODE_LABEL: "ROUND_RECTANGLE",
+    GO_CC_NODE_LABEL: "ROUND_RECTANGLE",
+    SIDE_EFFECT_NODE_LABEL: "OCTAGON",
+    PHENOTYPE_NODE_LABEL: "HEXAGON",
+    MIRNA_NODE_LABEL: "HEXAGON",
+    MITOCHONDRIAL_PATHWAY_NODE_LABEL: "ROUND_RECTANGLE",
+    KEY_EVENT_NODE_LABEL: "OCTAGON",
+    MIE_NODE_LABEL: "ROUND_RECTANGLE",
+    AOP_NODE_LABEL: "ROUND_RECTANGLE",
+    AO_NODE_LABEL: "ROUND_RECTANGLE",
+}
+
+COLOR_MAPPER = {
+    GENE_NODE_LABEL: "#42d4f4",
+    DISEASE_NODE_LABEL: "#4363d8",
+    COMPOUND_NODE_LABEL: "#e6194B",
+    ANATOMICAL_NODE_LABEL: "#ff7b00",
+    PATHWAY_NODE_LABEL: "#ffa652",
+    GO_BP_NODE_LABEL: "#ffcd90",
+    GO_MF_NODE_LABEL: "#3cb44b",
+    GO_CC_NODE_LABEL: "#ffd700",
+    SIDE_EFFECT_NODE_LABEL: "#aaffc3",
+    HOMOLOG_NODE_LABEL: "#9b59b6",
+    PHENOTYPE_NODE_LABEL: "#000075",
+    MIRNA_NODE_LABEL: "#e91e63",
+    TRANS_FACTOR_NODE_LABEL: "#8e24aa",
+    MITOCHONDRIAL_PATHWAY_NODE_LABEL: "#00bcd4",
+    KEY_EVENT_NODE_LABEL: "#ff5722",
+    MIE_NODE_LABEL: "#795548",
+    AOP_NODE_LABEL: "#607d8b",
+    AO_NODE_LABEL: "#f44336",
+}
+
+"""
+RDF variables
+"""
 # Mapper from namespace to BridgeDB datasource
 COMPOUND_NAMESPACE_MAPPER = {"pubchem.compound": "PubChem Compound", "CHEMBL": "ChEMBL compound"}
 

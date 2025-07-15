@@ -436,26 +436,26 @@ def load_graph(g: nx.MultiDiGraph, uri: str, username: str, password: str):
             ).save()
         elif node_type == Cons.PATHWAY_NODE_LABEL.lower():
             n = Pathway(
-                idx=node_data[Cons.PATHWAY_ID],
-                name=node_data[Cons.PATHWAY_LABEL],
+                idx=node_data[Cons.ID],
+                name=node_data[Cons.NAME],
                 datasource=node_data[Cons.DATASOURCE],
             ).save()
         elif node_type == Cons.GO_BP_NODE_LABEL.lower():
             n = BiologicalProcess(
-                idx=node_data[Cons.PATHWAY_ID],
-                name=node_data[Cons.PATHWAY_LABEL],
+                idx=node_data[Cons.ID],
+                name=node_data[Cons.NAME],
                 datasource=node_data[Cons.DATASOURCE],
             ).save()
         elif node_type == Cons.GO_MF_NODE_LABEL.lower():
             n = MolecularFunction(
-                idx=node_data[Cons.PATHWAY_ID],
-                name=node_data[Cons.PATHWAY_LABEL],
+                idx=node_data[Cons.ID],
+                name=node_data[Cons.NAME],
                 datasource=node_data[Cons.DATASOURCE],
             ).save()
         elif node_type == Cons.GO_CC_NODE_LABEL.lower():
             n = CellularComponent(
-                idx=node_data[Cons.PATHWAY_ID],
-                name=node_data[Cons.PATHWAY_LABEL],
+                idx=node_data[Cons.ID],
+                name=node_data[Cons.NAME],
                 datasource=node_data[Cons.DATASOURCE],
             ).save()
         elif node_type == Cons.SIDE_EFFECT_NODE_LABEL.lower():
