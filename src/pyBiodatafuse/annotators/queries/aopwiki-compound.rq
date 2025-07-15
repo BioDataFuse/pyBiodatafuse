@@ -14,9 +14,10 @@ WHERE {
   ?object skos:exactMatch ?id .
   ?id a edam:data_1033 ; 
       edam:data_1033 ?Ensembl .}
+
   ?stressor aopo:has_chemical_entity ?chemical .
-    ?chemical cheminf:000446 ?cas_id ;
-              dc:title ?compound_name .
+  ?chemical cheminf:000446 ?cas_id ;
+       dc:title ?compound_name .
   ?MIE dc:title ?MIE_title .
   ?aop aopo:has_key_event_relationship ?KER .
   ?KER a aopo:KeyEventRelationship ;
