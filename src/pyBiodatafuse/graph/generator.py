@@ -202,116 +202,77 @@ def add_intact_interactions_subgraph(g, gene_node_label, annot_list):
     :returns: a NetworkX MultiDiGraph
     """
     logger.debug("Adding IntAct nodes and edges")
-    if not hasattr(add_intact_interactions_subgraph, "seen_interaction_ids"):
-        add_intact_interactions_subgraph.seen_interaction_ids = {}
 
-    if gene_node_label not in add_intact_interactions_subgraph.seen_interaction_ids:
-        add_intact_interactions_subgraph.seen_interaction_ids[gene_node_label] = set()
-
-    seen_interaction_ids = set()
-    edges_seen = {}
+    if not hasattr(add_intact_interactions_subgraph, "_cache"):
+        add_intact_interactions_subgraph._cache = {}
+    cache = add_intact_interactions_subgraph._cache
+    seen_ids = cache.setdefault(gene_node_label, set())
+    merged_edges = {}
 
     for interaction in annot_list:
-        # Compute a signature that excludes 'intact_link_to'
-        interaction_signature = frozenset(
-            sorted((k, tuple(v) if isinstance(v, list) else v)
-                for k, v in interaction.items()
-                if k not in ('intact_link_to', 'interaction_id') and v is not None)
-        )
-
-        print(f"\n---\nProcessing interaction:")
-        print(json.dumps(interaction, indent=2))  # Pretty print the interaction
-        print(f"Signature (excluding 'intact_link_to'):\n{interaction_signature}")
-
-        if interaction_signature in seen_interaction_ids:
-            print("Duplicate detected. Skipping this interaction.")
+        interaction_id = interaction.get(Cons.INTACT_INTERACTION_ID)
+        if not interaction_id or interaction_id in seen_ids:
             continue
-        else:
-            print("Unique interaction. Adding to graph.")
+        seen_ids.add(interaction_id)
 
-        seen_interaction_ids.add(interaction_signature)
-
-        try:
-            id_a = interaction[Cons.INTACT_ID_A]
-            id_b = interaction[Cons.INTACT_ID_B]
-        except KeyError:
-            print("Missing interactor IDs. Skipping.")
+        id_a = interaction.get(Cons.INTACT_ID_A)
+        id_b = interaction.get(Cons.INTACT_ID_B)
+        if not id_a or not id_b:
             continue
 
-        is_a_chebi = isinstance(id_a, str) and id_a.startswith("CHEBI:")
-        is_b_chebi = isinstance(id_b, str) and id_b.startswith("CHEBI:")
-
+        is_a_chebi = str(id_a).startswith("CHEBI:")
+        is_b_chebi = str(id_b).startswith("CHEBI:")
         if is_a_chebi:
-            partner_node_label = id_a
-            partner_name = interaction[Cons.INTACT_INTERACTOR_A_NAME]
-            partner_species = interaction[Cons.INTACT_INTERACTOR_A_SPECIES]
-            molecule = interaction[Cons.INTACT_MOLECULE_A]
-            is_compound = True
+            partner = id_a
         elif is_b_chebi:
-            partner_node_label = id_b
-            partner_name = interaction[Cons.INTACT_INTERACTOR_B_NAME]
-            partner_species = interaction[Cons.INTACT_INTERACTOR_B_SPECIES]
-            molecule = interaction[Cons.INTACT_MOLECULE_B]
-            is_compound = True
+            partner = id_b
         else:
-            partner_node_label = interaction[Cons.INTACT_PPI_EDGE_MAIN_LABEL]
-            is_compound = False
-
-        if not partner_node_label or pd.isna(partner_node_label):
+            partner = interaction.get(Cons.INTACT_PPI_EDGE_MAIN_LABEL)
+        if not partner or pd.isna(partner):
             continue
 
-        edge_key = tuple(sorted([gene_node_label, partner_node_label]))
-        print(edge_key)
-        if edge_key in edges_seen:
-            existing = edges_seen[edge_key]
-            method = interaction[Cons.INTACT_DETECTION_METHOD]
-            if method:
-                if isinstance(existing[Cons.INTACT_DETECTION_METHOD], list):
-                    existing[Cons.INTACT_DETECTION_METHOD].append(method)
+        # Create or merge node if compound
+        if is_a_chebi or is_b_chebi:
+            compound_attrs = {
+                **Cons.INTACT_COMPOUND_NODE_ATTRS,
+                Cons.ID: partner,
+                Cons.NAME: interaction.get(
+                    Cons.INTACT_INTERACTOR_A_NAME if is_a_chebi else Cons.INTACT_INTERACTOR_B_NAME
+                ),
+                Cons.SPECIES: interaction.get(
+                    Cons.INTACT_INTERACTOR_A_SPECIES if is_a_chebi else Cons.INTACT_INTERACTOR_B_SPECIES
+                ),
+                Cons.MOLECULE: interaction.get(
+                    Cons.INTACT_MOLECULE_A if is_a_chebi else Cons.INTACT_MOLECULE_B
+                ),
+                Cons.LABEL: Cons.COMPOUND_NODE_LABEL,
+            }
+            merge_node(g, partner, compound_attrs)
+
+        edge_key = tuple(sorted([gene_node_label, partner]))
+        edge_attrs = {k: v for k, v in Cons.INTACT_PPI_EDGE_ATTRS.items()}
+        for k, v in interaction.items():
+            if v is not None and (not isinstance(v, str) or v.strip()):
+                edge_attrs[k] = ",".join(map(str, v)) if isinstance(v, list) else v
+
+        method = interaction.get(Cons.INTACT_DETECTION_METHOD)
+        existing = merged_edges.get(edge_key)
+        if existing:
+            prev = existing.get(Cons.INTACT_DETECTION_METHOD)
+            if method and method != prev:
+                if isinstance(prev, list):
+                    if method not in prev:
+                        prev.append(method)
                 else:
-                    existing[Cons.INTACT_DETECTION_METHOD] = [
-                        existing[Cons.INTACT_DETECTION_METHOD],
-                        method,
-                    ]
-            continue
+                    existing[Cons.INTACT_DETECTION_METHOD] = [prev, method] if method != prev else prev
+        else:
+            edge_attrs[Cons.EDGE_HASH] = hash(frozenset(edge_attrs.items()))
+            merged_edges[edge_key] = edge_attrs
 
-        
-    for interaction in interactions:
-        interaction_id = interaction["interaction_id"]
-        
-        if interaction_id in seen_interaction_ids:
-            continue 
-        
-        seen_interaction_ids.add(interaction_id)
+    for (src, tgt), attrs in merged_edges.items():
+        if not g.has_edge(src, tgt):
+            g.add_edge(src, tgt, label=attrs[Cons.LABEL], attr_dict=attrs)
 
-        if is_compound:
-            annot_node_attrs = Cons.INTACT_COMPOUND_NODE_ATTRS.copy()
-            annot_node_attrs[Cons.ID] = partner_node_label
-            annot_node_attrs[Cons.NAME] = partner_name
-            annot_node_attrs[Cons.SPECIES] = partner_species
-            annot_node_attrs[Cons.MOLECULE] = molecule
-            annot_node_attrs[Cons.LABEL] = Cons.COMPOUND_NODE_LABEL
-            merge_node(g, partner_node_label, annot_node_attrs)
-
-        edge_attrs = Cons.INTACT_PPI_EDGE_ATTRS.copy()
-
-        for key, value in interaction.items():
-            if value is None or (isinstance(value, str) and not value.strip()):
-                continue
-            edge_attrs[key] = ",".join(map(str, value)) if isinstance(value, list) else value
-
-        edge_attrs[Cons.EDGE_HASH] = hash(interaction_signature)
-
-        edges_seen[edge_key] = edge_attrs
-
-    for (source, target), edge_attrs in edges_seen.items():
-        g.add_edge(
-            source,
-            target,
-            label=edge_attrs[Cons.LABEL],
-            attr_dict=edge_attrs,
-        )
-    print(f"\nSeen interaction signatures so far: {len(seen_interaction_ids)}")
     return g
 
 
