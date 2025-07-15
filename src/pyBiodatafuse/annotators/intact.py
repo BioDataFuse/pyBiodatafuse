@@ -168,7 +168,7 @@ def get_filtered_interactions(
     :param valid_intact_acs: Set of valid IntAct ACs.
     :param intact_ac_to_entity: Dictionary mapping IntAct ACs to entity.
     :param entity_to_input_id: Dictionary mapping entities to input IDs.
-    :param interaction_type: Either 'gene_gene', 'gene_compound', 'compound_compound', 'compound_gene', or 'both'.
+    :param interaction_type: Either 'gene_gene', 'gene_compound', 'compound_compound', 'compound_gene', or 'all'.
     :returns: A dictionary of filtered interactions per input ID.
     """
     results: Dict[str, List[dict]] = {idx: [] for idx in batch_ids}
@@ -219,7 +219,7 @@ def get_filtered_interactions(
             if (has_chebi_a and has_uniprot_b) or (has_chebi_b and has_uniprot_a):
                 keep_interaction = True
 
-        elif "both" in interaction_type:
+        elif "all" in interaction_type:
             is_gene_gene = (
                 has_uniprot_a
                 and has_uniprot_b
@@ -259,11 +259,11 @@ def get_filtered_interactions(
     return results
 
 
-def get_gene_interactions(bridgedb_df: pd.DataFrame, interaction_type: str = "both"):
+def get_gene_interactions(bridgedb_df: pd.DataFrame, interaction_type: str = "all"):
     """Annotate genes with interaction data from IntAct.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query.
-    :param interaction_type: Either 'gene_gene', 'gene_compound' or 'both'.
+    :param interaction_type: Either 'gene_gene', 'gene_compound' or 'all'.
     :raises ValueError: If an invalid interaction_type is provided.
     :returns: a tuple (DataFrame containing the IntAct output, metadata dictionary)
     """
@@ -343,11 +343,11 @@ def get_gene_interactions(bridgedb_df: pd.DataFrame, interaction_type: str = "bo
     return data_df, intact_metadata
 
 
-def get_compound_interactions(bridgedb_df: pd.DataFrame, interaction_type: str = "both_compounds"):
+def get_compound_interactions(bridgedb_df: pd.DataFrame, interaction_type: str = "all"):
     """Annotate compounds with interaction data from IntAct.
 
     :param bridgedb_df: BridgeDb output for creating the list of compound ids to query.
-    :param interaction_type: Either 'compound_compound', 'compound_gene' or 'both_compounds'.
+    :param interaction_type: Either 'compound_compound', 'compound_gene' or 'all'.
     :raises ValueError: If an invalid interaction_type is provided.
     :returns: a tuple (DataFrame containing the IntAct output, metadata dictionary)
     """
