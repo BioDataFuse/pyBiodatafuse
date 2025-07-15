@@ -242,7 +242,7 @@ def get_filtered_interactions(
         for idx in batch_ids:
             if id_a in valid_intact_acs and intact_ac_to_entity.get(id_a) == idx:
                 partner_id = intact_ac_to_entity.get(id_b)
-                partner_display_id = entity_to_input_id.get(partner_id, partner_id or alt_ids_b) 
+                partner_display_id = entity_to_input_id.get(partner_id, partner_id or alt_ids_b)
             elif id_b in valid_intact_acs and intact_ac_to_entity.get(id_b) == idx:
                 partner_id = intact_ac_to_entity.get(id_a)
                 partner_display_id = entity_to_input_id.get(partner_id, partner_id or alt_ids_a)
