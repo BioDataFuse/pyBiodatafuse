@@ -161,8 +161,8 @@ def get_filtered_interactions(
     :param intact_ac_to_entity: Dictionary mapping IntAct ACs to entity.
     :param entity_to_input_id: Dictionary mapping entities to input IDs.
     :param is_compound: Boolean if the input datatype are compounds.
-    :param interaction_type: Either 'gene_gene', 'gene_compound', 'compound_compound', 'compound_gene', or 'both'. 
-        If the input identifiers are genes, then 'both' will refer to 'gene_gene' and 'gene_compound'. If the 
+    :param interaction_type: Either 'gene_gene', 'gene_compound', 'compound_compound', 'compound_gene', or 'both'.
+        If the input identifiers are genes, then 'both' will refer to 'gene_gene' and 'gene_compound'. If the
         input identifiers are compounds, then 'both' will refer to 'compound_compound' and 'compound_gene'.
     :returns: A dictionary of filtered interactions per input ID.
     """
