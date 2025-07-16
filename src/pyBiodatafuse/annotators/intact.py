@@ -161,7 +161,9 @@ def get_filtered_interactions(
     :param intact_ac_to_entity: Dictionary mapping IntAct ACs to entity.
     :param entity_to_input_id: Dictionary mapping entities to input IDs.
     :param is_compound: Boolean if the input datatype are compounds.
-    :param interaction_type: Either 'gene_gene', 'gene_compound', 'compound_compound', 'compound_gene', or 'both'.
+    :param interaction_type: Either 'gene_gene', 'gene_compound', 'compound_compound', 'compound_gene', or 'both'. 
+        If the input identifiers are genes, then 'both' will refer to 'gene_gene' and 'gene_compound'. If the 
+        input identifiers are compounds, then 'both' will refer to 'compound_compound' and 'compound_gene'.
     :returns: A dictionary of filtered interactions per input ID.
     """
     results: Dict[str, List[dict]] = {idx: [] for idx in batch_ids}
@@ -259,7 +261,8 @@ def get_gene_interactions(bridgedb_df: pd.DataFrame, interaction_type: str = "bo
     """Annotate genes with interaction data from IntAct.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query.
-    :param interaction_type: Either 'gene_gene', 'gene_compound' or 'both'.
+    :param interaction_type: Either 'gene_gene', 'gene_compound' or 'both'. If the input is 'both', 'gene_gene' and
+        'gene_compound' will be queried.
     :raises ValueError: If an invalid interaction_type is provided.
     :returns: a tuple (DataFrame containing the IntAct output, metadata dictionary)
     """
@@ -344,7 +347,8 @@ def get_compound_interactions(bridgedb_df: pd.DataFrame, interaction_type: str =
     """Annotate compounds with interaction data from IntAct.
 
     :param bridgedb_df: BridgeDb output for creating the list of compound ids to query.
-    :param interaction_type: Either 'compound_compound', 'compound_gene' or 'both'.
+    :param interaction_type: Either 'compound_compound', 'compound_gene' or 'both'. If the input is 'both',
+        'compound_compound' and 'compound_gene' will be queried.
     :raises ValueError: If an invalid interaction_type is provided.
     :returns: a tuple (DataFrame containing the IntAct output, metadata dictionary)
     """
