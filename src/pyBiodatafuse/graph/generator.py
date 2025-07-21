@@ -566,6 +566,7 @@ def add_kegg_gene_pathway_subgraph(g, gene_node_label, annot_list):
 
     return g
 
+
 def add_kegg_compound_pathway_subgraph(g, compound_node_label, annot_list):
     """Construct part of the graph by linking the compounds to pathways from KEGG.
 
