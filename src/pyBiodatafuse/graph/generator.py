@@ -566,6 +566,53 @@ def add_kegg_gene_pathway_subgraph(g, gene_node_label, annot_list):
 
     return g
 
+def add_kegg_compound_pathway_subgraph(g, compound_node_label, annot_list):
+    """Construct part of the graph by linking the compounds to pathways from KEGG.
+
+    :param g: the input graph to extend with new nodes and edges.
+    :param compound_node_label: the compound node to be linked to pathways from KEGG.
+    :param annot_list: list of pathways from KEGG.
+    :returns: a NetworkX MultiDiGraph
+    """
+    logger.debug("Adding KEGG nodes and edges")
+    for annot in annot_list:
+        if pd.isna(annot[Cons.PATHWAY_LABEL]):
+            continue
+
+        annot_node_label = annot[Cons.KEGG_PATHWAY_NODE_MAIN_LABEL]
+        annot_node_attrs = Cons.KEGG_PATHWAY_NODE_ATTRS.copy()
+        annot_node_attrs.update(
+            {
+                Cons.DATASOURCE: Cons.KEGG,
+                Cons.NAME: annot[Cons.PATHWAY_LABEL],
+                Cons.ID: annot[Cons.PATHWAY_ID],
+                Cons.PATHWAY_COMPOUND_COUNTS: annot[Cons.PATHWAY_COMPOUND_COUNTS],
+            }
+        )
+
+        merge_node(g, annot_node_label, annot_node_attrs)
+
+        edge_attrs = Cons.GENE_PATHWAY_EDGE_ATTRS.copy()
+        edge_attrs[Cons.DATASOURCE] = Cons.KEGG
+
+        edge_hash = hash(frozenset(edge_attrs.items()))
+        edge_attrs[Cons.EDGE_HASH] = edge_hash
+        edge_data = g.get_edge_data(compound_node_label, annot_node_label)
+        edge_data = {} if edge_data is None else edge_data
+        node_exists = [
+            x for x, y in edge_data.items() if y["attr_dict"][Cons.EDGE_HASH] == edge_hash
+        ]
+
+        if len(node_exists) == 0:
+            g.add_edge(
+                compound_node_label,
+                annot_node_label,
+                label=Cons.GENE_PATHWAY_EDGE_LABEL,
+                attr_dict=edge_attrs,
+            )
+
+    return g
+
 
 def add_kegg_compounds_subgraph(g, pathway_node_label, compounds_list, combined_df):
     """Construct part of the graph by linking the KEGG compound to its respective pathway.
@@ -2277,7 +2324,6 @@ def _built_gene_based_graph(
 def _built_compound_based_graph(
     g: nx.MultiDiGraph,
     combined_df: pd.DataFrame,
-    disease_compound=None,
     pathway_compound=None,
 ):
     """Build a compound-based graph."""
@@ -2290,6 +2336,7 @@ def _built_compound_based_graph(
     func_dict = {
         Cons.MOLMEDB_COMPOUND_PROTEIN_COL: add_molmedb_compound_gene_subgraph,
         Cons.INTACT_COMPOUND_INTERACT_COL: add_intact_compound_interactions_subgraph,
+        Cons.KEGG_PATHWAY_COL: add_kegg_compound_pathway_subgraph,
     }  # type: ignore
 
     for _i, row in tqdm(combined_df.iterrows(), total=combined_df.shape[0], desc="Building graph"):
@@ -2297,16 +2344,6 @@ def _built_compound_based_graph(
             continue
         compound_node_label = add_compound_node(g, row)
         process_annotations(g, compound_node_label, row, func_dict)
-
-    # Process disease-compound relationships
-    dnodes = {
-        d["attr_dict"][Cons.EFO]: n
-        for n, d in g.nodes(data=True)
-        if d["attr_dict"][Cons.LABEL] == Cons.DISEASE_NODE_LABEL
-        and d["attr_dict"][Cons.EFO] is not None
-    }
-    if disease_compound is not None:
-        process_disease_compound(g, disease_compound, disease_nodes=dnodes)
 
     if pathway_compound is not None:
         process_kegg_pathway_compound(g, pathway_compound, combined_df)
@@ -2340,9 +2377,9 @@ def build_networkx_graph(
         return _built_gene_based_graph(
             g, combined_df, disease_compound, pathway_compound, homolog_df_list
         )
-    elif main_target_type == Cons.PUBCHEM_COMPOUND:
+    if Cons.PUBCHEM_COMPOUND in combined_df["target.source"].values:
         return _built_compound_based_graph(
-            g, combined_df, disease_compound, pathway_compound, homolog_df_list
+            g, combined_df, pathway_compound
         )
     else:
         raise ValueError(f"Unsupported target type: {main_target_type}")
