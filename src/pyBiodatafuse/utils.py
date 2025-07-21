@@ -161,46 +161,62 @@ def combine_with_homologs(df: pd.DataFrame, homolog_dfs: list) -> pd.DataFrame:
 
     :param df: An already combined df containing output of non-homolog annotators.
     :param homolog_dfs: List of homolog dataframes to be combined.
-    :returns: Merged DataFrame with only the required columns.
+    :returns: Merged DataFrame with homolog-derived data added, clean of temp columns.
     """
     df[Cons.ENSEMBL_HOMOLOGS] = df[Cons.ENSEMBL_HOMOLOGS].apply(
         lambda x: [{"homolog": x["homolog"]}] if isinstance(x, dict) else x
     )
 
     exploded_df = df.explode(Cons.ENSEMBL_HOMOLOGS)
-    exploded_df[Cons.ENSEMBL_HOMOLOGS] = exploded_df[Cons.ENSEMBL_HOMOLOGS].apply(
+
+    exploded_df["homolog"] = exploded_df[Cons.ENSEMBL_HOMOLOGS].apply(
         lambda x: x["homolog"] if isinstance(x, dict) else None
     )
 
-    merged_df = exploded_df.copy()
-    homolog_dfs = [df for df in homolog_dfs if not df.empty and df is not None and len(df) > 0]
-    for homolog_df in homolog_dfs:
+    exploded_df = exploded_df.rename(columns={"identifier": "original_identifier"})
 
-        # Get only the identifier and last column from the homolog DataFrame
+    for homolog_df in homolog_dfs:
+        if homolog_df is None or homolog_df.empty:
+            continue
+
         last_col = homolog_df.columns[-1]
         temp_df = homolog_df[["identifier", last_col]].copy()
+        temp_col = f"{last_col}_temp"
+        temp_df = temp_df.rename(columns={last_col: temp_col})
 
-        merged_df = pd.merge(
-            merged_df,
-            temp_df,
-            how="left",
-            left_on="homolog",
-            right_on="identifier",
-            suffixes=("", "_temp"),
+        exploded_df = pd.merge(
+            exploded_df, temp_df, how="left", left_on="homolog", right_on="identifier"
         )
 
-        if "identifier_temp" in merged_df.columns:
-            merged_df.drop(columns=["identifier_temp"], inplace=True)
+        if "identifier" in exploded_df.columns:
+            exploded_df.drop(columns=["identifier"], inplace=True)
 
-    if "identifier" in merged_df.columns:
-        merged_df = merged_df.loc[:, ~merged_df.columns.duplicated()]
+    for col in exploded_df.columns:
+        if col.endswith("_temp"):
+            base_col = col.replace("_temp", "")
+            if base_col in exploded_df.columns:
+                exploded_df[base_col] = exploded_df[base_col].combine_first(exploded_df[col])
+            else:
+                exploded_df[base_col] = exploded_df[col]
 
-    # Ensure that homolog column contains a nested dictionary
-    merged_df[Cons.ENSEMBL_HOMOLOGS] = merged_df[Cons.ENSEMBL_HOMOLOGS].apply(
-        lambda x: [{"homolog": x["homolog"]}] if isinstance(x, dict) else x
+    exploded_df.drop(
+        columns=[col for col in exploded_df.columns if col.endswith("_temp")], inplace=True
+    )
+    exploded_df.drop(columns=["homolog", "identifier_y"], errors="ignore", inplace=True)
+
+    exploded_df = exploded_df.rename(columns={"original_identifier": "identifier"})
+
+    exploded_df[Cons.ENSEMBL_HOMOLOGS] = exploded_df[Cons.ENSEMBL_HOMOLOGS].apply(
+        lambda x: (
+            [x]
+            if isinstance(x, dict) and "homolog" in x
+            else ([{"homolog": x}] if isinstance(x, str) and pd.notnull(x) else [])
+        )
     )
 
-    return merged_df
+    exploded_df = exploded_df[~exploded_df["identifier.source"].isna()]
+
+    return exploded_df
 
 
 def check_columns_against_constants(
@@ -260,30 +276,27 @@ def create_harmonized_input_file(
     harmonized_data = []
 
     for _i, row in annotated_df.iterrows():
-        # Extract the identifier
-        if identifier_source is None:
-            id = row[Cons.IDENTIFIER_COL]
-            id_source = row[Cons.IDENTIFIER_SOURCE_COL]
-
         # Extract the the target column
         target_data = row[target_col]
 
         # Loop through each dictionary in the target data
         for entry in target_data:
-            source_idx = entry.get(identifier_source)
             target_idx = entry.get(target_source)
 
-            if source_idx is None or target_idx in [None, ""]:
+            if target_idx in [None, ""] or pd.isna(target_idx) or target_idx.split(":")[1] == "":
                 continue
 
-            if pd.isna(target_idx) or pd.isna(source_idx):
-                continue
+            if identifier_source is None:
+                id = row[Cons.IDENTIFIER_COL]
+                id_source = row[Cons.IDENTIFIER_SOURCE_COL]
+            else:
+                source_idx = entry.get(identifier_source, None)
 
-            if source_idx.split(":")[1] == "" or target_idx.split(":")[1] == "":
-                continue
+                if source_idx is None or source_idx.split(":")[1] == "":
+                    continue
 
-            id = source_idx.replace(":", "_")
-            id_source = identifier_source
+                id = source_idx.replace(":", "_")
+                id_source = identifier_source
 
             # Extract the specific target identifiers based on the target_source
             for target in target_idx.split(", "):

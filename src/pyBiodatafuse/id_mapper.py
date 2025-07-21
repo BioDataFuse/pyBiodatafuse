@@ -238,23 +238,15 @@ def bridgedb_xref(
     """
     if input_species is None:
         input_species = "Human"
-
-    if output_datasource is None or "All":
-        output_datasource = [
-            "Uniprot-TrEMBL",
-            "NCBI Gene",
-            "Ensembl",
-            "HGNC Accession Number",
-            "HGNC",
-            "MGI",
-        ]
-    else:
-        assert isinstance(output_datasource, list), "output_datasource must be a list"
-
     data_sources = read_datasource_file()
     input_source = data_sources.loc[
         data_sources[Cons.SOURCE_COL] == input_datasource, "systemCode"
     ].iloc[0]
+    input_type = data_sources.loc[data_sources[Cons.SOURCE_COL] == input_datasource, "type"].iloc[0]
+    if output_datasource is None or "All":
+        output_datasource = data_sources[data_sources["type"] == input_type]["source"].tolist()
+    else:
+        assert isinstance(output_datasource, list), "output_datasource must be a list"
 
     if len(identifiers) < 1:
         raise ValueError("Please provide at least one identifier datasource, e.g. HGNC")
@@ -299,9 +291,9 @@ def bridgedb_xref(
             target_source = target_parts[0]
             target_id = ":".join(target_parts[1:])
 
-            parsed_results.append([identifier, identifier_source, target_id, target_source])
-
-    # Create a DataFrame
+            parsed_results.append(
+                [identifier, identifier_source, target_id, target_source]
+            )  # Create a DataFrame
     bridgedb = pd.DataFrame(
         parsed_results,
         columns=[
@@ -316,19 +308,15 @@ def bridgedb_xref(
     bridgedb[Cons.TARGET_SOURCE_COL] = bridgedb[Cons.TARGET_SOURCE_COL].map(
         data_sources.set_index("systemCode")[Cons.SOURCE_COL]
     )
-
     # Drop not mapped ids
     bridgedb = bridgedb.dropna(subset=[Cons.TARGET_SOURCE_COL])
-
     # Subset based on the output_datasource
     bridgedb_subset = bridgedb[bridgedb[Cons.TARGET_SOURCE_COL].isin(output_datasource)]
-
     bridgedb_subset = bridgedb_subset.drop_duplicates()
     identifiers.columns = [
         "{}{}".format(c, "" if c in "identifier" else "_dea") for c in identifiers.columns
     ]
     bridgedb_subset = bridgedb_subset.merge(identifiers, on=Cons.IDENTIFIER_COL)
-
     """Metadata details"""
     # Get the current date and time
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")

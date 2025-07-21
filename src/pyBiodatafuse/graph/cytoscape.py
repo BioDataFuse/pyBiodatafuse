@@ -4,6 +4,7 @@
 
 import networkx as nx
 import py4cytoscape as p4c
+from py4cytoscape.networks import create_network_from_networkx
 
 import pyBiodatafuse.constants as Cons
 
@@ -13,24 +14,35 @@ def _replace_graph_attrs(g: nx.MultiDiGraph):
 
     :param g: input NetworkX graph object.
     :returns: output NetworkX graph object.
+    :raises ValueError: if a node is missing a name or an edge is missing a label.
     """
-    for node in list(g.nodes()):
-        for k, v in list(g.nodes[node].items()):
-            if k == "name":
-                nx.set_node_attributes(g, {node: {"label": v}})
-                del g.nodes[node]["name"]
-            elif k == "source":
-                nx.set_node_attributes(g, {node: {"datasource": v}})
-                del g.nodes[node]["source"]
+    # Fix node attributes
+    for node, attrs in g.nodes(data=True):
+        # Set 'id' explicitly
+        attrs[Cons.ID] = node
 
-    for u, v, k in list(g.edges(keys=True)):
-        for x, y in list(g[u][v][k].items()):
-            if x == "label":
-                g[u][v][k]["interaction"] = y
-                del g[u][v][k]["label"]
-            elif x == "source":
-                g[u][v][k]["datasource"] = y
-                del g[u][v][k]["source"]
+        # Rename label to node type
+        attrs[Cons.NODE_TYPE] = attrs[Cons.LABEL]
+        del attrs[Cons.LABEL]
+
+        # Adding a label i.e name of the node
+        if Cons.NAME in attrs:
+            attrs[Cons.LABEL] = attrs[Cons.NAME]
+            del attrs[Cons.NAME]
+        else:
+            raise ValueError("Missing name ", attrs)
+
+    # Fix edge attributes
+    for u, v, k in g.edges(keys=True):
+        attrs = g[u][v][k]
+
+        # Edge source/target must match node IDs
+        attrs[Cons.SOURCE] = u
+        attrs[Cons.TARGET] = v
+        if Cons.LABEL in attrs:
+            attrs[Cons.INTERACTION] = attrs[Cons.LABEL]
+        else:
+            raise ValueError("Missing label ", attrs)
 
     return g
 
@@ -42,7 +54,6 @@ def convert_graph_to_json(g: nx.MultiDiGraph):
     :returns: a cytoscape network json object.
     """
     adj_g = _replace_graph_attrs(g)
-
     cytoscape_graph = nx.cytoscape_data(adj_g)
 
     return cytoscape_graph
@@ -54,11 +65,13 @@ def load_graph(g: nx.MultiDiGraph, network_name: str):
     :param g: input NetworkX graph object.
     :param network_name: Network name to appear in Cytoscape.
     """
+    g = g.copy()
     adj_g = _replace_graph_attrs(g)
 
     # Define the visual style as a dictionary
     default = {
         "title": "BioDataFuse_style",
+        "layout_name": "force-directed",
         "defaults": [
             {"visualProperty": "NODE_FILL_COLOR", "value": "#FF0000"},
             {"visualProperty": "EDGE_COLOR", "value": "#000000"},
@@ -67,7 +80,7 @@ def load_graph(g: nx.MultiDiGraph, network_name: str):
     }
 
     # Create the network in Cytoscape
-    p4c.networks.create_network_from_networkx(
+    create_network_from_networkx(
         adj_g,
         title=network_name,
         collection="BioDataFuse",
@@ -77,55 +90,10 @@ def load_graph(g: nx.MultiDiGraph, network_name: str):
     p4c.styles.create_visual_style(default)
 
     # Define node shape and color mapping
-    column = "labels"
-    values = [
-        Cons.GENE_NODE_LABEL,
-        Cons.ANATOMICAL_NODE_LABEL,
-        Cons.DISEASE_NODE_LABEL,
-        Cons.GO_BP_NODE_LABEL,
-        Cons.GO_MF_NODE_LABEL,
-        Cons.GO_CC_NODE_LABEL,
-        Cons.PATHWAY_NODE_LABEL,
-        Cons.COMPOUND_NODE_LABEL,
-        Cons.SIDE_EFFECT_NODE_LABEL,
-        Cons.HOMOLOG_NODE_LABEL,
-        Cons.KEY_EVENT_NODE_LABEL,
-        Cons.MIE_NODE_LABEL,
-        Cons.AOP_NODE_LABEL,
-        Cons.AO_NODE_LABEL,
-    ]
-    shapes = [
-        "ELLIPSE",  # Genes
-        "HEXAGON",  # Anatomical
-        "VEE",  # Diseases
-        "PARALLELOGRAM",  # GO BP
-        "ROUND_RECTANGLE",  # GO MF
-        "RECTANGLE",  # GO CC
-        "OCTAGON",  # Pathways
-        "DIAMOND",  # Compounds
-        "TRIANGLE",  # Side Effects
-        "Ellipse",  # Homologs
-        "TRIANGLE",  # Key Events
-        "TRIANGLE",  # MIE
-        "VEE",  # AOP
-        "OCTAGON",  # AO
-    ]
-    colors = [
-        "#42d4f4",  # Cyan for Genes
-        "#4363d8",  # Blue for Anatomical
-        "#e6194B",  # Red for Diseases
-        "#ff7b00",  # Orange for GO BP
-        "#ffa652",  # Orange for GO MF
-        "#ffcd90",  # Orange for GO CC
-        "#3cb44b",  # Green for Pathways
-        "#ffd700",  # Gold for Compounds
-        "#aaffc3",  # Mint for Side Effects
-        "#9b59b6",  # Purple for Homologs
-        "#aaffc3",  # Mint for Key Events
-        "#3cb44b",  # Green for MIE
-        "#000075",  # Navy for AOP
-        "#e6194B",  # Red for AO
-    ]
+    column = Cons.LABEL
+    values = list(Cons.ALL_NODE_LABELS.keys())
+    shapes = list(Cons.ALL_NODE_LABELS.values())
+    colors = list(Cons.COLOR_MAPPER.values())
 
     # Apply node shape and color mappings
     p4c.set_node_color_mapping(

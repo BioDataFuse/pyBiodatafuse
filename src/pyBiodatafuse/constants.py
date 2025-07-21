@@ -46,7 +46,7 @@ OPENTARGETS_REACTOME = "OpenTargets_reactome"
 TFLINK = "TFLink"
 GPROFILER = "g:Profiler"
 MITOCARTA = "MitoCarta"
-AOPWIKIRDF = "AOP Wiki RDF"
+AOPWIKIRDF = "AOP_Wiki_RDF"
 
 """
 All weblinks for the datasources
@@ -90,6 +90,7 @@ ENSEMBL_HOMOLOG_COL = f"{ENSEMBL}_homologs"
 INTACT_INTERACT_COL = f"{INTACT}_gene_interactions"
 INTACT_COMPOUND_INTERACT_COL = f"{INTACT}_compound_interactions"
 KEGG_PATHWAY_COL = f"{KEGG}_pathways"
+KEGG_COMPOUND_COL = f"{KEGG}_compounds"
 LITERATURE_DISEASE_COL = "literature_based_info"
 OPENTARGETS_REACTOME_COL = f"{OPENTARGETS}_reactome"
 OPENTARGETS_GO_COL = f"{OPENTARGETS}_go"
@@ -102,12 +103,11 @@ MOLMEDB_COMPOUND_PROTEIN_COL = f"{MOLMEDB}_transporter_inhibited"
 PUBCHEM_COMPOUND_ASSAYS_COL = f"{PUBCHEM}_assays"
 STRING_INTERACT_COL = f"{STRING}_interactions"
 WIKIDATA_CC_COL = f"{WIKIDATA}_cellular_components"
-AOPWIKIRDF = "aop_gene"  # todo fix this
-AOPWIKI_COMPOUND_COL = "pubchem_compound"  # todo fix this
 WIKIPATHWAYS_MOLECULAR_COL = f"{WIKIPATHWAYS}_molecular"
 WIKIPATHWAYS_PATHWAY_COL = f"{WIKIPATHWAYS}_pathway"
 MITOCART_PATHWAY_COL = f"{MITOCARTA}_pathways"
-AOPWIKI_GENE_COL = "aop_gene"  #
+AOPWIKI_GENE_COL = f"{AOPWIKIRDF}_genes"
+AOPWIKI_COMPOUND_COL = f"{AOPWIKIRDF}_compounds"
 
 # Ontologies and vocabularies namespaces
 PUBCHEM_COMPOUND = "PubChem Compound"
@@ -127,6 +127,7 @@ CHEBI = "ChEBI"
 UNIPROT_TREMBL = "Uniprot-TrEMBL"
 CHEMBL = "CHEMBL"
 CHEMBL_ID = "chembl_id"
+KEGG_COMPOUND = "KEGG Compound"
 INCHI = "InChI"
 INCHIKEY = "InChIKey"
 SMILES = "SMILES"
@@ -139,7 +140,10 @@ BIODATAFUSE = "Biodatafuse"
 UBERON = "UBERON"
 CIO = "CIO"
 WIKIPATHWAY = "WP"
-
+AOP_PATHWAY = "AOP"
+MOL_INITIATING_EVENT = "MIE"
+KEY_EVENT = "KE"
+ADVERSE_OUTCOME = "AO"
 
 # Input type for each data source
 BGEE_GENE_INPUT_ID = ENSEMBL
@@ -148,6 +152,7 @@ ENSEMBL_GENE_INPUT_ID = ENSEMBL
 INTACT_GENE_INPUT_ID = ENSEMBL
 INTACT_COMPOUND_INPUT_ID = CHEBI
 KEGG_GENE_INPUT_ID = NCBI_GENE
+KEGG_COMPOUND_INPUT_ID = KEGG_COMPOUND
 OPENTARGETS_GENE_INPUT_ID = ENSEMBL
 OPENTARGETS_COMPOUND_INPUT_ID = PUBCHEM_COMPOUND
 OPENTARGETS_COMPOUND_QUERY_INPUT_ID = CHEMBL_ID
@@ -170,6 +175,8 @@ AOPWIKI_COMPOUND_INPUT_ID = PUBCHEM_COMPOUND
 PATHWAY_ID = "pathway_id"
 PATHWAY_LABEL = "pathway_label"
 PATHWAY_GENE_COUNTS = "pathway_gene_counts"
+PATHWAY_GENES = "pathway_genes"
+PATHWAY_COMPOUND_COUNTS = "pathway_compound_counts"
 PATHWAY_COMPOUNDS = "pathway_compounds"
 PATHWAYS = "pathways"
 
@@ -645,39 +652,77 @@ WIKIPATHWAY_NAMESPACE_DICT = {
     WIKIPATHWAYS_TARGET_METABOLITE: PUBCHEM_COMPOUND_CID,
 }
 
+"""
+AOPWIKI variables
+"""
+AOP = "aop"
+AOP_TITLE = "aop_title"
+MIE_TITLE = "MIE_title"
+MIE = "MIE"
+KE_DOWNSTREAM = "KE_downstream"
+KE_DOWNSTREAM_TITLE = "KE_downstream_title"
+KER = "KER"
+AO = "ao"
+AO_TITLE = "ao_title"
+KE_UPSTREAM = "KE_upstream"
+KE_UPSTREAM_TITLE = "KE_upstream_title"
+KE_UPSTREAM_ORGAN = "KE_upstream_organ"
+KE_DOWNSTREAM_ORGAN = "KE_downstream_organ"
+PUBCHEM_COMPOUND_AOPWIKI = "pubchem_compound"
 
-# AOPWIKI
 AOPWIKI_GENE_OUTPUT_DICT = {
-    "aop": str,
-    "aop_title": str,
-    "MIEtitle": str,
-    "MIE": str,
-    "KE_downstream": str,
-    "KE_downstream_title": str,
-    "KER": str,
-    "ao": str,
-    "ao_title": str,
-    "KE_upstream": str,
-    "KE_upstream_title": str,
-    "KE_upstream_organ": str,
-    "KE_downstream_organ": str,
-    "pubchem_compound": str,
+    AOP: str,
+    AOP_TITLE: str,
+    MIE_TITLE: str,
+    MIE: str,
+    KE_DOWNSTREAM: str,
+    KE_DOWNSTREAM_TITLE: str,
+    KER: str,
+    AO: str,
+    AO_TITLE: str,
+    KE_UPSTREAM: str,
+    KE_UPSTREAM_TITLE: str,
+    KE_UPSTREAM_ORGAN: str,
+    KE_DOWNSTREAM_ORGAN: str,
+    PUBCHEM_COMPOUND_AOPWIKI: str,
 }
 
 AOPWIKI_COMPOUND_OUTPUT_DICT = {
-    "aop": str,
-    "aop_title": str,
-    "MIEtitle": str,
-    "MIE": str,
-    "KE_downstream": str,
-    "KE_downstream_title": str,
-    "KER": str,
-    "ao": str,
-    "ao_title": str,
-    "KE_upstream": str,
-    "KE_upstream_title": str,
-    "KE_upstream_organ": str,
-    "KE_downstream_organ": str,
+    AOP: str,
+    AOP_TITLE: str,
+    MIE_TITLE: str,
+    MIE: str,
+    KE_DOWNSTREAM: str,
+    KE_DOWNSTREAM_TITLE: str,
+    KER: str,
+    AO: str,
+    AO_TITLE: str,
+    KE_UPSTREAM: str,
+    KE_UPSTREAM_TITLE: str,
+    KE_UPSTREAM_ORGAN: str,
+    KE_DOWNSTREAM_ORGAN: str,
+}
+
+
+# QUERY_PROCESS = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-get-by-biological-process.rq.rq")
+
+AOPWIKI_GENE_PARAMS = {
+    "type_of_input": "genes",
+    "uri": "<https://identifiers.org/ensembl/",
+    "column": AOPWIKI_GENE_INPUT_ID,
+    "input_col": AOPWIKI_GENE_INPUT_ID,
+    "output_dict": AOPWIKI_GENE_OUTPUT_DICT,
+    "query_file_name": "aopwiki-gene.rq",
+    "output_col": AOPWIKI_GENE_COL,
+}
+AOPWIKI_COMPOUND_PARAMS = {
+    "type_of_input": "compounds",
+    "uri": "<https://identifiers.org/pubchem.compound/",
+    "column": AOPWIKI_COMPOUND_INPUT_ID,
+    "input_col": "pubchem_compound",
+    "output_dict": AOPWIKI_COMPOUND_OUTPUT_DICT,
+    "query_file_name": "aopwiki-compound.rq",
+    "output_col": AOPWIKI_COMPOUND_COL,
 }
 
 # TODO: Look into this
@@ -690,7 +735,7 @@ Node and edge main lable and attributes
 DATASOURCE = "datasource"
 NAME = ENTITY_NAME
 ID = "id"
-LABEL = "labels"
+LABEL = "label"
 EDGE_HASH = "edge_hash"
 
 # Node types
@@ -708,6 +753,22 @@ PHENOTYPE_NODE_LABEL = "Phenotype"
 MIRNA_NODE_LABEL = "miRNA"
 TRANS_FACTOR_NODE_LABEL = "Transcription Factor"
 MITOCHONDRIAL_PATHWAY_NODE_LABEL = "Mitochondrial Pathway"
+KEY_EVENT_NODE_LABEL = "Key Event"
+MIE_NODE_LABEL = "Molecular Initiating Event"
+AOP_NODE_LABEL = "Adverse Outcome Pathway"
+AO_NODE_LABEL = "Adverse Outcome"
+
+# Edge types (Neo4j)
+INTERACTS_WITH = "INTERACTS_WITH"
+PART_OF = "PART_OF"
+ASSOCIATED_WITH = "ASSOCIATED_WITH"
+ACTIVATES = "ACTIVATES"
+HAS_SIDE_EFFECT = "HAS_SIDE_EFFECT"
+TREATS = "TREATS"
+INHIBITS = "INHIBITS"
+EXPRESSED_BY = "EXPRESSED_BY"
+UPSTREAM_OF = "UPSTREAM_OF"
+DOWNSTREAM_OF = "DOWNSTREAM_OF"
 
 """
 Anatomical entity nodes and edges
@@ -790,18 +851,6 @@ GENE_PATHWAY_EDGE_ATTRS = {
     LABEL: GENE_PATHWAY_EDGE_LABEL,
 }
 
-# molecular pathway node
-MOLECULAR_PATHWAY_NODE_LABEL = "Pathway"
-MOLECULAR_PATHWAY_NODE_MAIN_LABEL = "pathway_id"
-WIKIPATHWAYS_MOLECULAR_NODE_ATTRS = {
-    "pathway_id": "str",
-    "pathway_label": "str",
-    "id": "str",
-    "labels": MOLECULAR_PATHWAY_NODE_LABEL,
-}
-WIKIPATHWAYS_MOLECULAR_EDGE_ATTRS = {"interaction_type": "str", "rhea_id": str}
-MOLECULAR_GENE_PATHWAY_EDGE_LABEL = "part_of"
-MOLECULAR_INTERACTION_EDGE_ATTRS = {"interaction_type": "str", "rhea_id": str}
 # GO nodes
 # Open Targets - GO processes
 GO_BP_NODE_LABEL = "Biological Process"
@@ -816,6 +865,7 @@ GO_NODE_ATTRS = {
 }
 GENE_GO_EDGE_LABEL = "part_of"
 GENE_GO_EDGE_ATTRS = {"datasource": OPENTARGETS, "label": GENE_GO_EDGE_LABEL}
+
 # IntAct interactions
 SPECIES = "species"
 # INTACT_INTERACTION_TYPE = "interaction_type"
@@ -834,7 +884,6 @@ KEGG_PATHWAY_NODE_ATTRS = PATHWAY_NODE_ATTRS.copy()
 KEGG_PATHWAY_NODE_ATTRS.update(
     {
         DATASOURCE: KEGG,
-        ID: None,
         GENE_COUNTS: None,
     }
 )
@@ -845,7 +894,6 @@ MINERVA_PATHWAY_NODE_ATTRS = PATHWAY_NODE_ATTRS.copy()
 MINERVA_PATHWAY_NODE_ATTRS.update(
     {
         DATASOURCE: MINERVA,
-        ID: None,
         GENE_COUNTS: None,
     }
 )
@@ -856,8 +904,6 @@ OPENTARGETS_GO_NODE_ATTRS = PATHWAY_NODE_ATTRS.copy()
 OPENTARGETS_GO_NODE_ATTRS.update(
     {
         DATASOURCE: OPENTARGETS,
-        NAME: None,
-        ID: None,
     }
 )
 
@@ -866,29 +912,21 @@ OPENTARGETS_GENE_GO_EDGE_ATTRS.update({DATASOURCE: OPENTARGETS})
 
 OPENTARGETS_REACTOME_NODE_MAIN_LABEL = PATHWAY_ID
 OPENTARGETS_REACTOME_NODE_ATTRS = PATHWAY_NODE_ATTRS.copy()
-OPENTARGETS_REACTOME_NODE_ATTRS.update(
-    {
-        DATASOURCE: OPENTARGETS,
-        NAME: None,
-        ID: None,
-    }
-)
+OPENTARGETS_REACTOME_NODE_ATTRS.update({DATASOURCE: OPENTARGETS})
 OPENTARGETS_GENE_REACTOME_EDGE_ATTRS = GENE_PATHWAY_EDGE_ATTRS.copy()
 OPENTARGETS_GENE_REACTOME_EDGE_ATTRS.update({DATASOURCE: OPENTARGETS})
 
 # Wikipathways
 WIKIPATHWAYS_NODE_MAIN_LABEL = PATHWAY_ID
 WIKIPATHWAYS_NODE_ATTRS = PATHWAY_NODE_ATTRS.copy()
-WIKIPATHWAYS_NODE_ATTRS.update({DATASOURCE: WIKIPATHWAYS, ID: None, GENE_COUNTS: None})
+WIKIPATHWAYS_NODE_ATTRS.update({DATASOURCE: WIKIPATHWAYS, GENE_COUNTS: None})
 
 MOLECULAR_PATHWAY_NODE_MAIN_LABEL = PATHWAY_ID
-MOLECULAR_GENE_NODE_ATTRS = PATHWAY_NODE_ATTRS.copy()
-MOLECULAR_PATHWAY_NODE_ATTRS = {
-    PATHWAY_ID: None,
-    PATHWAY_LABEL: None,
-}
+MOLECULAR_PATHWAY_NODE_ATTRS = PATHWAY_NODE_ATTRS.copy()
+MOLECULAR_PATHWAY_NODE_ATTRS.update({DATASOURCE: WIKIPATHWAYS})
+
 WIKIPATHWAYS_INTERACTION_TYPE = "interaction_type"
-# MOLECULAR_INTERACTION_EDGE_ATTRS = GENE_PATHWAY_EDGE_ATTRS.copy()
+MOLECULAR_INTERACTION_EDGE_ATTRS = GENE_PATHWAY_EDGE_ATTRS.copy()  # type: ignore
 MOLECULAR_INTERACTION_EDGE_ATTRS.update(
     {
         WIKIPATHWAYS_INTERACTION_TYPE: None,
@@ -1039,13 +1077,15 @@ PUBCHEM_COMPOUND_NODE_ATTRS = {
 
 PUBCHEM_ASSAY_TYPE = "assay_type"
 PUBCHEM_ASSAY_ID = "pubchem_assay_id"
-PUBCHEM_OUTCOME = "outcome"
+PUBCHEM_EDGE_LABEL_MAPPER = {
+    "active": "activates",
+    "inactive": "inhibits",
+}
 
 PUBCHEM_GENE_COMPOUND_EDGE_ATTRS = {
     DATASOURCE: PUBCHEM,
     PUBCHEM_ASSAY_TYPE: None,
     PUBCHEM_ASSAY_ID: None,
-    PUBCHEM_OUTCOME: None,
     LABEL: None,
 }
 
@@ -1125,35 +1165,83 @@ LITERATURE_DISEASE_EDGE_ATTRS = {
 
 
 # AOPWIKI
+AOP_NODE_MAIN_LABEL = "aop"
+AOP_EDGE_LABEL = "associated_with"  # Gene to AOP edge
+MIE_NODE_MAIN_LABEL = "MIE"
+MIE_AOP_EDGE_LABEL = "upstream_of"  # MIE to AOP edge
+KEY_EVENT_UPSTREAM_NODE_MAIN_LABEL = "KE_upstream"
+KE_UPSTREAM_MIE_EDGE_LABEL = "upstream_of"  # KE upstream to MIE edge
+KEY_EVENT_DOWNSTREAM_NODE_MAIN_LABEL = "KE_downstream"
+KE_DOWNSTREAM_KE_EDGE_LABEL = "downstream_of"  # KE downstream to KE upstream edge
+AO_NODE_MAIN_LABEL = "ao"
+AO_KE_EDGE_LABEL = "associated_with"  # KE downstream to AO edge
 
-KEY_EVENT_NODE_LABEL = "Key Event"
-MIE_NODE_LABEL = "Molecular Initiating Event"
-AOP_NODE_LABEL = "Adverse Outcome Pathway"
-AO_NODE_LABEL = "Adverse Outcome"
-
-# AOPWIKI Edge Labels
-AOP_GENE_EDGE_LABEL = "associated_with"  # Gene to AOP edge
-MIE_AOP_EDGE_LABEL = "upstream"  # MIE to AOP edge
-KE_UPSTREAM_MIE_EDGE_LABEL = "upstream"  # KE upstream to MIE edge
-KE_DOWNSTREAM_KE_EDGE_LABEL = "downstream"  # KE downstream to KE upstream edge
-KE_DOWNSTREAM_AO_EDGE_LABEL = "downstream"  # KE downstream to AO edge
 AOPWIKI_EDGE_ATTRS = {
-    "datasource": AOPWIKIRDF,
-    "relation": None,
-    "label": None,
+    DATASOURCE: AOPWIKIRDF,
+    LABEL: None,
 }
-MIE_NODE_LABEL = "Molecular Initiating Event"
-KE_NODE_LABEL = "Key Event"
-AO_NODE_LABEL = "Adverse Outcome"
 
 AOPWIKI_NODE_ATTRS = {
-    "datasource": AOPWIKIRDF,
-    "title": None,
-    "type": None,
+    DATASOURCE: AOPWIKIRDF,
+    NAME: None,
+    ID: None,
+    LABEL: None,
     "organ": None,
-    "labels": None,
 }
 
+"""
+Cytoscape variables
+"""
+NODE_TYPE = "node_type"
+SOURCE = "source"
+TARGET = "target"
+INTERACTION = "interaction"
+
+ALL_NODE_LABELS = {
+    GENE_NODE_LABEL: "ELLIPSE",
+    TRANS_FACTOR_NODE_LABEL: "ELLIPSE",
+    HOMOLOG_NODE_LABEL: "ELLIPSE",
+    DISEASE_NODE_LABEL: "HEXAGON",
+    COMPOUND_NODE_LABEL: "DIAMOND",
+    ANATOMICAL_NODE_LABEL: "RECTANGLE",
+    PATHWAY_NODE_LABEL: "ROUND_RECTANGLE",
+    GO_BP_NODE_LABEL: "ROUND_RECTANGLE",
+    GO_MF_NODE_LABEL: "ROUND_RECTANGLE",
+    GO_CC_NODE_LABEL: "ROUND_RECTANGLE",
+    SIDE_EFFECT_NODE_LABEL: "OCTAGON",
+    PHENOTYPE_NODE_LABEL: "HEXAGON",
+    MIRNA_NODE_LABEL: "HEXAGON",
+    MITOCHONDRIAL_PATHWAY_NODE_LABEL: "ROUND_RECTANGLE",
+    KEY_EVENT_NODE_LABEL: "OCTAGON",
+    MIE_NODE_LABEL: "ROUND_RECTANGLE",
+    AOP_NODE_LABEL: "ROUND_RECTANGLE",
+    AO_NODE_LABEL: "ROUND_RECTANGLE",
+}
+
+COLOR_MAPPER = {
+    GENE_NODE_LABEL: "#42d4f4",
+    DISEASE_NODE_LABEL: "#4363d8",
+    COMPOUND_NODE_LABEL: "#e6194B",
+    ANATOMICAL_NODE_LABEL: "#ff7b00",
+    PATHWAY_NODE_LABEL: "#ffa652",
+    GO_BP_NODE_LABEL: "#ffcd90",
+    GO_MF_NODE_LABEL: "#3cb44b",
+    GO_CC_NODE_LABEL: "#ffd700",
+    SIDE_EFFECT_NODE_LABEL: "#aaffc3",
+    HOMOLOG_NODE_LABEL: "#9b59b6",
+    PHENOTYPE_NODE_LABEL: "#000075",
+    MIRNA_NODE_LABEL: "#e91e63",
+    TRANS_FACTOR_NODE_LABEL: "#8e24aa",
+    MITOCHONDRIAL_PATHWAY_NODE_LABEL: "#00bcd4",
+    KEY_EVENT_NODE_LABEL: "#ff5722",
+    MIE_NODE_LABEL: "#795548",
+    AOP_NODE_LABEL: "#607d8b",
+    AO_NODE_LABEL: "#f44336",
+}
+
+"""
+RDF variables
+"""
 # Mapper from namespace to BridgeDB datasource
 COMPOUND_NAMESPACE_MAPPER = {"pubchem.compound": "PubChem Compound", "CHEMBL": "ChEMBL compound"}
 

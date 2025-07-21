@@ -272,7 +272,7 @@ def get_compound_gene_inhibitor(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame
             .apply(lambda x: ", ".join(x))
             .reset_index()
         )
-        df2[Cons.MOLMEDB_UNIPROT_ID] = df2[Cons.MOLMEDB_UNIPROT_TREMBL_ID].apply(
+        df2[Cons.MOLMEDB_UNIPROT_TREMBL_ID] = df2[Cons.MOLMEDB_UNIPROT_TREMBL_ID].apply(
             lambda x: f"{Cons.UNIPROT_TREMBL}:{x}"
         )
 
