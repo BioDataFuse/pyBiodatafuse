@@ -2039,7 +2039,6 @@ def add_compound_node(g, row):
         Cons.DATASOURCE: Cons.BRIDGEDB,
         Cons.NAME: f"{row[Cons.IDENTIFIER_SOURCE_COL]}:{row[Cons.IDENTIFIER_COL]}",
         Cons.ID: row[Cons.TARGET_COL],
-        Cons.LABEL: Cons.COMPOUND_NODE_LABEL,
         Cons.LABEL: Cons.COMPOUND_NODE_LABEL,  # Ensure label
         row[Cons.TARGET_SOURCE_COL]: f"{row[Cons.TARGET_SOURCE_COL]}:{row[Cons.TARGET_COL]}",
     }
