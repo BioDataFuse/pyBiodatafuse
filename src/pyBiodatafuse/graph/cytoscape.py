@@ -41,11 +41,22 @@ def _replace_graph_attrs(g: nx.MultiDiGraph):
         attrs[Cons.TARGET] = v
         if Cons.LABEL in attrs:
             attrs[Cons.INTERACTION] = attrs[Cons.LABEL]
-            del attrs[Cons.LABEL]
         else:
             raise ValueError("Missing label ", attrs)
 
     return g
+
+
+def convert_graph_to_json(g: nx.MultiDiGraph):
+    """Convert a NetworkX graph to cytoscape json file.
+
+    :param g: the NetworkX graph object.
+    :returns: a cytoscape network json object.
+    """
+    adj_g = _replace_graph_attrs(g)
+    cytoscape_graph = nx.cytoscape_data(adj_g)
+
+    return cytoscape_graph
 
 
 def load_graph(g: nx.MultiDiGraph, network_name: str):
