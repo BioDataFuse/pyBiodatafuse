@@ -1125,6 +1125,14 @@ ENSEMBL_HOMOLOG_EDGE_ATTRS = {
     "label": ENSEMBL_HOMOLOG_EDGE_LABEL,
 }
 
+# Intact Genes
+INTACT_GENE_NODE_ATTRS = {
+    DATASOURCE: INTACT,
+    ID: None,
+    NAME: None,
+    LABEL: GENE_NODE_LABEL,
+}
+
 # TFLink
 NAME_TARGET = "name_target"
 UNIPROTID_TARGET = "uniprotid_target"

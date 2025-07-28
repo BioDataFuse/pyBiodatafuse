@@ -279,89 +279,87 @@ def add_intact_interactions_subgraph(g, gene_node_label, annot_list):
     return g
 
 
-# TODO: test this function
 def add_intact_compound_interactions_subgraph(g, compound_node_label, annot_list):
-    """Construct part of the graph by linking the compound interactions via IntAct, including all interaction attributes.
+    """Construct part of the graph by linking compound interactions via IntAct, including all interaction attributes.
 
     :param g: the input graph to extend with new nodes and edges.
-    :param compound_node_label: the compound node label (used as source node), expected as a ChEBI ID (e.g., '15361').
-    :param annot_list: list of interaction dicts from IntAct.
+    :param compound_node_label: the compound node to be linked to compounds or proteins.
+    :param annot_list: list of interactions from IntAct.
     :returns: a NetworkX MultiDiGraph
     """
-    logger.debug("Adding IntAct compound nodes and edges")
-    if not hasattr(add_intact_compound_interactions_subgraph, "seen_interaction_ids"):
-        add_intact_compound_interactions_subgraph.seen_interaction_ids = set()
+    logger.debug("Adding IntAct nodes and edges")
 
-    seen_interaction_ids = add_intact_compound_interactions_subgraph.seen_interaction_ids
-    edges_seen = {}
-
-    compound_full_id = f"CHEBI:{compound_node_label.strip()}"
+    if not hasattr(add_intact_compound_interactions_subgraph, "_cache"):
+        add_intact_compound_interactions_subgraph._cache = {}
+    cache = add_intact_compound_interactions_subgraph._cache
+    seen_ids = cache.setdefault(compound_node_label, set())
+    merged_edges = {}
 
     for interaction in annot_list:
-        interaction_id = interaction[Cons.INTACT_BINARY_INTERACTION_ID]
-        if not interaction_id or interaction_id in seen_interaction_ids:
+        interaction_id = interaction.get(Cons.INTACT_INTERACTION_ID)
+        if not interaction_id or interaction_id in seen_ids:
             continue
-        seen_interaction_ids.add(interaction_id)
+        seen_ids.add(interaction_id)
 
-        id_a = interaction[Cons.INTACT_ID_A].strip()
-        id_b = interaction[Cons.INTACT_ID_B].strip()
+        id_a = interaction.get(Cons.INTACT_ID_A)
+        id_b = interaction.get(Cons.INTACT_ID_B)
+        if not id_a or not id_b:
+            continue
 
-        if compound_full_id == id_a:
-            partner_id = id_b
-            partner_name = interaction[Cons.INTACT_INTERACTOR_B_NAME]
-            partner_species = interaction[Cons.INTACT_INTERACTOR_B_SPECIES]
-            partner_molecule = interaction[Cons.INTACT_MOLECULE_B]
-        elif compound_full_id == id_b:
-            partner_id = id_a
-            partner_name = interaction[Cons.INTACT_INTERACTOR_A_NAME]
-            partner_species = interaction[Cons.INTACT_INTERACTOR_A_SPECIES]
-            partner_molecule = interaction[Cons.INTACT_MOLECULE_A]
+        # Normalize IDs: always strip 'CHEBI:' prefix if present
+        id_a_clean = id_a.replace("CHEBI:", "")
+        id_b_clean = id_b.replace("CHEBI:", "")
+
+        # Determine which one is the partner (not the input compound node)
+        if id_a_clean == compound_node_label:
+            partner_id = id_b_clean
+            partner_name = interaction.get(Cons.INTACT_INTERACTOR_B_NAME)
+            partner_species = interaction.get(Cons.INTACT_INTERACTOR_B_SPECIES)
+            partner_molecule = interaction.get(Cons.INTACT_MOLECULE_B)
+        elif id_b_clean == compound_node_label:
+            partner_id = id_a_clean
+            partner_name = interaction.get(Cons.INTACT_INTERACTOR_A_NAME)
+            partner_species = interaction.get(Cons.INTACT_INTERACTOR_A_SPECIES)
+            partner_molecule = interaction.get(Cons.INTACT_MOLECULE_A)
         else:
             continue
 
-        if not partner_id or pd.isna(partner_id):
-            continue
-
-        edge_key = (compound_node_label, partner_id)
-        if edge_key in edges_seen:
-            existing_methods = edges_seen[edge_key].get("detection_method", "")
-            new_method = interaction.get("detection_method", "")
-            if new_method and new_method not in existing_methods:
-                existing_methods += f",{new_method}"
-                edges_seen[edge_key]["detection_method"] = existing_methods
-            continue
-
-        node_label_type = (
-            Cons.COMPOUND_NODE_LABELS if partner_id.startswith("CHEBI:") else Cons.GENE_NODE_LABELS
-        )
-
-        partner_node_attrs = {
-            "id": partner_id,
-            "label": partner_name,
-            "species": partner_species,
-            "molecule": partner_molecule,
-            Cons.LABEL: node_label_type,
+        compound_attrs = {
+            **Cons.INTACT_COMPOUND_NODE_ATTRS,
+            Cons.ID: partner_id,
+            Cons.NAME: partner_name,
+            Cons.SPECIES: partner_species,
+            Cons.MOLECULE: partner_molecule,
+            Cons.LABEL: Cons.COMPOUND_NODE_LABEL,
         }
-        merge_node(g, partner_id, partner_node_attrs)
+        merge_node(g, partner_id, compound_attrs)
 
-        edge_attrs = {
-            key: ",".join(map(str, value)) if isinstance(value, list) else value
-            for key, value in interaction.items()
-            if value is not None and not (isinstance(value, str) and not value.strip())
-        }
-        edge_attrs["detection_method"] = interaction.get("detection_method", "")
-        edge_attrs["interaction_type"] = interaction.get("type", "compound-ppi")
-        edge_attrs["edge_hash"] = hash(frozenset(edge_attrs.items()))
+        # Edge construction
+        edge_key = tuple(sorted([compound_node_label, partner_id]))
+        edge_attrs = {k: v for k, v in Cons.INTACT_PPI_EDGE_ATTRS.items()}
+        for k, v in interaction.items():
+            if v is not None and (not isinstance(v, str) or v.strip()):
+                edge_attrs[k] = ",".join(map(str, v)) if isinstance(v, list) else v
 
-        edges_seen[edge_key] = edge_attrs
+        method = interaction.get(Cons.INTACT_DETECTION_METHOD)
+        existing = merged_edges.get(edge_key)
+        if existing:
+            prev = existing.get(Cons.INTACT_DETECTION_METHOD)
+            if method and method != prev:
+                if isinstance(prev, list):
+                    if method not in prev:
+                        prev.append(method)
+                else:
+                    existing[Cons.INTACT_DETECTION_METHOD] = (
+                        [prev, method] if method != prev else prev
+                    )
+        else:
+            edge_attrs[Cons.EDGE_HASH] = hash(frozenset(edge_attrs.items()))
+            merged_edges[edge_key] = edge_attrs
 
-    for (source, target), edge_attrs in edges_seen.items():
-        g.add_edge(
-            source,
-            target,
-            label=edge_attrs.get("interaction_type", "compound-ppi"),
-            attr_dict=edge_attrs,
-        )
+    for (src, tgt), attrs in merged_edges.items():
+        if not g.has_edge(src, tgt):
+            g.add_edge(src, tgt, label=attrs[Cons.LABEL], attr_dict=attrs)
 
     return g
 
@@ -2236,6 +2234,15 @@ def normalize_edge_attributes(g):
 
             del g[u][v][k]["attr_dict"]
 
+def normalize_chebi(val):
+    """Normalize both chebi identifiers from bridgedb into a singular identifier to avoid duplications.
+
+    :param val: Columns that include CHEBI.
+    """
+    if isinstance(val, str) and val.isdigit():
+        return f"CHEBI:{val}"
+    return val
+
 
 def _built_gene_based_graph(
     g: nx.MultiDiGraph,
@@ -2320,7 +2327,7 @@ def _built_compound_based_graph(
     pathway_compound=None,
 ):
     """Build a compound-based graph."""
-    compound_identifiers = [Cons.PUBCHEM_COMPOUND, Cons.CHEBI, Cons.INCHIKEY]
+    compound_identifiers = [Cons.PUBCHEM_COMPOUND, Cons.INCHIKEY]
 
     combined_df = combined_df[
         combined_df[Cons.TARGET_SOURCE_COL].isin(compound_identifiers)
