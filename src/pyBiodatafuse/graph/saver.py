@@ -114,7 +114,7 @@ def save_graph(
         pickle.dump(g, f)
 
     save_graph_to_graphml(g, graph_path_gml)  # for neo4j import
-    logger.warning(f"Graph saved in {graph_path_pickle} and {graph_path_gml}")
+    logger.warning(f"Graph saved in: \n {graph_path_pickle} \n {graph_path_gml}")
 
     save_graph_to_edgelist(g, graph_path_edgelist)
     logger.warning(f"Graph saved in {graph_path_edgelist}")
