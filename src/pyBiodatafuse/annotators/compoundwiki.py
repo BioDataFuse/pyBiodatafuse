@@ -7,7 +7,7 @@ import logging
 import os
 import warnings
 from string import Template
-from typing import List
+from typing import List, Tuple
 
 import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
@@ -50,7 +50,11 @@ def get_version_compoundwiki() -> dict:
 
 
 def query_compoundwiki(compound_ids) -> dict:
-    """Query CompoundWiki with a list of compound identifiers."""
+    """Query CompoundWiki with a list of compound identifiers.
+
+    :param compound_ids: A list of compound identifiers (e.g., PubChem CIDs, KEGG IDs, etc.)
+    :returns: A dictionary mapping each compound ID to its CompoundWiki annotations
+    """
     from string import Template
 
     query_batches = []
@@ -116,9 +120,20 @@ def query_compoundwiki(compound_ids) -> dict:
     return grouped
 
 
+def inject_compoundwiki_annotations(
+    df: pd.DataFrame,
+    column_name: str,
+    id: str,
+    annotation_map: dict
+) -> pd.DataFrame:
+    """Inject CompoundWiki annotations into nested compound dictionaries in a DataFrame column.
 
-def inject_compoundwiki_annotations(df: pd.DataFrame, column_name: str, id: str, annotation_map: dict) -> pd.DataFrame:
-    """Inject CompoundWiki annotations into a dataframe column with compound lists of dicts."""
+    :param df: DataFrame containing a column with nested lists of compound dictionaries
+    :param column_name: Name of the column to inject annotations into
+    :param id: Key to extract the compound identifier from each nested dictionary (e.g., 'id', 'id_A')
+    :param annotation_map: Dictionary mapping compound IDs to annotation dicts from CompoundWiki
+    :returns: Updated DataFrame with CompoundWiki annotations injected
+    """
     if column_name not in df.columns:
         return df
 
@@ -140,7 +155,16 @@ def inject_compoundwiki_annotations(df: pd.DataFrame, column_name: str, id: str,
     return df
 
 
-def get_compound_annotations(combined_df: pd.DataFrame, kegg_compound_df: pd.DataFrame = None):
+def get_compound_annotations(
+    combined_df: pd.DataFrame,
+    kegg_compound_df: pd.DataFrame = None
+) -> Tuple[pd.DataFrame, dict]:
+    """Annotate compounds in the input DataFrame using CompoundWiki data.
+
+    :param combined_df: Main DataFrame containing compound identifiers and interaction columns
+    :param kegg_compound_df: Optional DataFrame for KEGG annotations (if available)
+    :returns: Tuple of (annotated DataFrame, metadata dictionary for provenance)
+    """
     if not check_endpoint_compoundwiki():
         warnings.warn(f"{Cons.COMPOUNDWIKI} SPARQL endpoint is not available.", stacklevel=2)
         return pd.DataFrame(), {}
@@ -267,7 +291,16 @@ def get_compound_annotations(combined_df: pd.DataFrame, kegg_compound_df: pd.Dat
     return combined_df, compoundwiki_metadata
 
 
-def query_bridgedb_for_pubchem(compound_ids: List[str], input_datatype: str) -> List[str]:
+def query_bridgedb_for_pubchem(
+    compound_ids: List[str],
+    input_datatype: str
+) -> Tuple[List[str], dict]:
+    """Query BridgeDb to convert compound identifiers to PubChem Compound IDs.
+
+    :param compound_ids: List of original identifiers (e.g., ChEBI, KEGG)
+    :param input_datatype: Data source of input IDs (e.g., 'ChEBI', 'KEGG Compound')
+    :returns: A tuple of (list of PubChem IDs, mapping from original ID to PubChem ID)
+    """
 
     print(f"Querying BridgeDb for PubChem IDs from {input_datatype}...")
 
