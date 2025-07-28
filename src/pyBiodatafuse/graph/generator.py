@@ -1666,6 +1666,37 @@ def add_opentargets_disease_compound_subgraph(g, disease_node, annot_list):
     return g
 
 
+def add_compoundwiki_subgraph(g, compound_node_label, annot_list):
+    """
+    Enrich an existing compound node in the graph with CompoundWiki annotations.
+
+    :param g: the input NetworkX graph (MultiDiGraph).
+    :param compound_node_label: the identifier (e.g., PubChem CID) of the compound node in the graph.
+    :param annot_list: list of annotation dictionaries from CompoundWiki (one per compound).
+    :return: the enriched NetworkX MultiDiGraph.
+    """
+    for annot in annot_list:
+        target_cid = str(annot.get("target"))
+        if not target_cid or target_cid != compound_node_label:
+            continue
+
+        annotations = annot.get("CompoundWiki_compounds", {})
+
+        if g.has_node(compound_node_label):
+            existing_attrs = g.nodes[compound_node_label].get("attr_dict", {})
+            existing_attrs.update(annotations)
+            existing_attrs["source"] = Cons.COMPOUNDWIKI
+            g.nodes[compound_node_label]["attr_dict"] = existing_attrs
+        else:
+            node_attrs = Cons.COMPOUNDWIKI_NODE_ATTRS.copy()
+            node_attrs.update(annotations)
+            node_attrs["id"] = compound_node_label
+            node_attrs["source"] = Cons.COMPOUNDWIKI
+            g.merge_node(compound_node_label, attr_dict=node_attrs)
+
+    return g
+
+
 def add_wikipathways_molecular_subgraph(g, gene_node_label, annot_list):
     """Construct part of the graph by linking molecular entities from WP with MIMs.
 
@@ -1984,7 +2015,27 @@ def add_gene_node(g, row, dea_columns):
         gene_node_attrs[c[:-4]] = row[c]
 
     g.add_node(gene_node_label, attr_dict=gene_node_attrs)
-    return gene_node_label
+    return
+
+
+def add_compound_node(g, row):
+    """Add compound node from each row of the combined_df to the graph.
+
+    :param g: the input graph to extend with compound nodes.
+    :param row: row in the combined DataFrame.
+    :returns: label for compound node
+    """
+    compound_node_label = row["identifier"]
+    compound_node_attrs = {
+        "datasource": Cons.BRIDGEDB,
+        "name": f"{row['identifier.source']}:{row['identifier']}",
+        "id": row["target"],
+        "labels": Cons.COMPOUND_NODE_LABELS,
+        row["target.source"]: row["target"],
+    }
+
+    g.add_node(compound_node_label, attr_dict=compound_node_attrs)
+    return compound_node_label
 
 
 def add_compound_node(g, row):
@@ -2290,7 +2341,7 @@ def _built_compound_based_graph(
     homolog_df_list=None,
 ):
     """Build a gene-based graph."""
-    combined_df = combined_df[(combined_df["target.source"] == "Ensembl")]
+    # combined_df = combined_df[(combined_df["target.source"] == "Ensembl")]
 
     dea_columns = [c for c in combined_df.columns if c.endswith("_dea")]
 
@@ -2302,12 +2353,15 @@ def _built_compound_based_graph(
     if homolog_df_list is not None:
         process_homologs(g, combined_df, homolog_df_list, func_dict, dea_columns)
 
-    for _i, row in tqdm(combined_df.iterrows(), total=combined_df.shape[0], desc="Building graph"):
-        if pd.isna(row["identifier"]) or pd.isna(row["target"]):
-            continue
-        gene_node_label = add_gene_node(g, row, dea_columns)
-        process_annotations(g, gene_node_label, row, func_dict)
-        process_ppi(g, gene_node_label, row)
+    else:
+        for _i, row in tqdm(
+            combined_df.iterrows(), total=combined_df.shape[0], desc="Building graph"
+        ):
+            if pd.isna(row["identifier"]) or pd.isna(row["target"]):
+                continue
+            compound_node_label = add_compound_node(g, row)
+            process_annotations(g, compound_node_label, row, func_dict)
+            process_ppi(g, compound_node_label, row)
 
     # Process disease-compound relationships
     dnodes = {

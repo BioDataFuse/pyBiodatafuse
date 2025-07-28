@@ -8,6 +8,7 @@ API endpoints for each data source
 """
 BRIDGEDB_ENDPOINT = "https://webservice.bridgedb.org"
 BGEE_ENDPOINT = "https://www.bgee.org/sparql/"
+COMPOUNDWIKI_ENDPOINT = "https://compoundcloud.wikibase.cloud/query/sparql"
 DISGENET_ENDPOINT = "https://api.disgenet.com/api/v1/gda/summary"
 ENSEMBL_ENDPOINT = "https://rest.ensembl.org"
 INTACT_ENDPOINT = "https://www.ebi.ac.uk/intact"
@@ -31,6 +32,7 @@ All data sources
 """
 BRIDGEDB = "BridgeDB"
 BGEE = "Bgee"
+COMPOUNDWIKI = "CompoundWiki"
 DISGENET = "DISGENET"
 ENSEMBL = "Ensembl"
 INTACT = "IntAct"
@@ -85,6 +87,7 @@ IDENTIFIER_SOURCE_COL = "identifier.source"
 SOURCE_COL = "source"
 
 BGEE_GENE_EXPRESSION_LEVELS_COL = f"{BGEE}_gene_expression_levels"
+COMPOUNDWIKI_COL = f"{COMPOUNDWIKI}_compounds"
 DISGENET_DISEASE_COL = f"{DISGENET}_diseases"
 ENSEMBL_HOMOLOG_COL = f"{ENSEMBL}_homologs"
 INTACT_INTERACT_COL = f"{INTACT}_gene_interactions"
@@ -147,6 +150,7 @@ ADVERSE_OUTCOME = "AO"
 
 # Input type for each data source
 BGEE_GENE_INPUT_ID = ENSEMBL
+COMPOUNDWIKI_COMPOUND_INPUT_ID = PUBCHEM_COMPOUND
 DISGENET_GENE_INPUT_ID = NCBI_GENE
 ENSEMBL_GENE_INPUT_ID = ENSEMBL
 INTACT_GENE_INPUT_ID = ENSEMBL
