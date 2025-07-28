@@ -2234,15 +2234,6 @@ def normalize_edge_attributes(g):
 
             del g[u][v][k]["attr_dict"]
 
-def normalize_chebi(val):
-    """Normalize both chebi identifiers from bridgedb into a singular identifier to avoid duplications.
-
-    :param val: Columns that include CHEBI.
-    """
-    if isinstance(val, str) and val.isdigit():
-        return f"CHEBI:{val}"
-    return val
-
 
 def _built_gene_based_graph(
     g: nx.MultiDiGraph,
