@@ -427,7 +427,8 @@ def query_bridgedb_for_pubchem(
     bridgedb_df, bridgedb_metadata = id_mapper.bridgedb_xref(
         identifiers=data_input,
         input_species="Human",
-        input_datasource=input_datatype
+        input_datasource=input_datatype,
+        output_datasource=None
     )
 
     if bridgedb_df.empty:
