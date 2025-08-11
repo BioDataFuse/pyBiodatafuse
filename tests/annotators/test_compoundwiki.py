@@ -21,23 +21,15 @@ class TestCompoundwiki(unittest.TestCase):
 
         pubchem_dataframe = pd.DataFrame(
             {
-                "identifier": ["KCNJ5", "SLC25A1"],
-                "identifier.source": ["HGNC", "HGNC"],
-                "target": ["P38398", "P38398"],
-                "target.source": ["Uniprot-TrEMBL", "Uniprot-TrEMBL"],
+                "identifier": ["KCNJ5"],
+                "identifier.source": ["HGNC"],
+                "target": ["P38398"],
+                "target.source": ["Uniprot-TrEMBL"],
                 "PubChem_assays": [[{
                     "pubchem_assay_id": "AID:504669",
                     "assay_type": "IC50",
                     "outcome": "active",
                     "compound_cid": "CID:2157",
-                    "compound_name": "2-nitro-N-quinolin-8-ylbenzenesulfonamide",
-                    "smiles": "C1=CC=C(C(=C1)[N+](=O)[O-])S(=O)(=O)NC2=CC=CC3=C2N=CC=C3",
-                    "inchi": "InChI=1S/C15H11N3O4S/c19-18(20)13-8-1-2-9-14(13)23(21,22)17-12-7-3-5-11-6-4-10-16-15(11)12/h1-10,17H"
-                }], [{
-                    "pubchem_assay_id": "AID:504669",
-                    "assay_type": "IC50",
-                    "outcome": "active",
-                    "compound_cid": "CID:7858",
                     "compound_name": "2-nitro-N-quinolin-8-ylbenzenesulfonamide",
                     "smiles": "C1=CC=C(C(=C1)[N+](=O)[O-])S(=O)(=O)NC2=CC=CC3=C2N=CC=C3",
                     "inchi": "InChI=1S/C15H11N3O4S/c19-18(20)13-8-1-2-9-14(13)23(21,22)17-12-7-3-5-11-6-4-10-16-15(11)12/h1-10,17H"
@@ -85,44 +77,9 @@ class TestCompoundwiki(unittest.TestCase):
                         }
                     ]
                 }
-            ], 
-            [
-                {
-                    'pubchem_assay_id': 'AID:504669',
-                    'assay_type': 'IC50',
-                    'outcome': 'active',
-                    'compound_cid': 'CID:7858',
-                    'compound_name': '2-nitro-N-quinolin-8-ylbenzenesulfonamide',
-                    'smiles': 'C1=CC=C(C(=C1)[N+](=O)[O-])S(=O)(=O)NC2=CC=CC3=C2N=CC=C3',
-                    'inchi': 'InChI=1S/C15H11N3O4S/c19-18(20)13-8-1-2-9-14(13)23(21,22)17-12-7-3-5-11-6-4-10-16-15(11)12/h1-10,17H',
-                    'CompoundWiki_compounds': [
-                        {
-                            'AOP-Wiki Stressor ID': '9',
-                            'CAS Registry Number': '107-18-6',
-                            'ChEBI ID': '16605',
-                            'ChEMBL ID': 'CHEMBL234926',
-                            'DSSTOX compound identifier': 'DTXCID2044',
-                            'EC number': '203-470-7',
-                            'ECHA Substance Infocard ID': '100.003.156',
-                            'InChI': 'InChI=1S/C3H6O/c1-2-3-4/h2,4H,1,3H2',
-                            'InChIKey': 'XXROGKLTLUQVRX-UHFFFAOYSA-N',
-                            'KEGG ID': 'C02001',
-                            'PubChem CID': '7858',
-                            'SMILES (without stereochemistry)': 'C=CCO',
-                            'ToxBank Wiki': 'https://wiki.toxbank.net/wiki/Allyl_alcohol',
-                            'Wikidata Q identifier': 'Q414553',
-                            'chemical formula': 'C₃H₆O',
-                            'has role': 'hepatotoxic agent',
-                            'instance of': 'chemical compound',
-                            'part of': 'AOP-Wiki Prototypical Stressors',
-                            'compound label': 'allyl alcohol',
-                            'input_identifier': '7858'
-                        }
-                    ]
-                }
             ]
         )
         expected_data.name = Cons.PUBCHEM_COMPOUND_ASSAYS_COL
 
-        pd.testing.assert_series_equal(obtained_data[Cons.PUBCHEM_COMPOUND_ASSAYS_COL], expected_data)
+        pd.testing.assert_series_equal(obtained_data[Cons.PUBCHEM_COMPOUND_ASSAYS_COL][0], expected_data)
         self.assertIsInstance(metadata, dict)

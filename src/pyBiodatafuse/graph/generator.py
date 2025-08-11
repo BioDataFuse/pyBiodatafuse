@@ -260,7 +260,7 @@ def add_intact_interactions_subgraph(g, gene_node_label, annot_list):
                             if mapped_key and value is not None and str(value).strip():
                                 compound_attrs[mapped_key] = value
                         break
-            
+
             merge_node(g, partner, compound_attrs)
 
         edge_key = tuple(sorted([gene_node_label, partner]))
@@ -1961,7 +1961,7 @@ def add_compoundwiki_annotations(node_attrs: dict, annot: dict) -> dict:
 
         if not skip_matching:
             input_id_raw = cw_dict.get(getattr(Cons, "COMPOUNDWIKI_INPUT", "input_identifier")) \
-                            or cw_dict.get("input_identifier")
+                or cw_dict.get("input_identifier")
             if input_id_raw is not None:
                 input_id_comp = str(input_id_raw).strip()
                 if input_id_comp.upper().startswith("CID:"):

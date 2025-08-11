@@ -34,7 +34,8 @@ def check_endpoint_compoundwiki() -> bool:
     except SPARQLWrapperException:
         return False
 
-#TODO Wait until Compoundwiki includes versioning.
+
+# TODO: Wait until Compoundwiki includes versioning.
 def get_version_compoundwiki() -> dict:
     """Return metadata with a timestamp for versioning."""
     now = str(datetime.datetime.now())
@@ -56,8 +57,6 @@ def query_compoundwiki(compound_ids) -> dict:
     :param compound_ids: A list of compound identifiers (e.g., PubChem CIDs, KEGG IDs, etc.)
     :returns: A dictionary mapping each compound ID to its CompoundWiki annotations
     """
-    from string import Template
-
     query_batches = []
     if len(compound_ids) > 25:
         for i in range(0, len(compound_ids), 25):
@@ -92,7 +91,6 @@ def query_compoundwiki(compound_ids) -> dict:
                 compound_to_cid[row["compound"]] = row["val"]
 
         result_df = pd.concat([result_df, df], ignore_index=True)
-        print("A: ", result_df)
 
     if result_df.empty or "compound" not in result_df.columns:
         return {}
@@ -129,7 +127,7 @@ def inject_compoundwiki_annotations(
 
     :param df: DataFrame containing a column with nested lists of compound dictionaries
     :param column_name: Name of the column to inject annotations into
-    :param id: Key to extract the compound identifier from each nested dictionary (e.g., 'id', 'id_A')
+    :param id_key: Key to extract the compound identifier from each nested dictionary (e.g., 'id', 'id_A')
     :param annotation_map: Dictionary mapping compound IDs to annotation dicts from CompoundWiki
     :returns: Updated DataFrame with CompoundWiki annotations injected
     """
@@ -143,7 +141,6 @@ def inject_compoundwiki_annotations(
                 if isinstance(compound, dict):
                     compound_id = compound.get(id_key)
                     if compound_id in annotation_map:
-                        print(f"Injecting CompoundWiki annotation for {compound_id}")
                         compound[Cons.COMPOUNDWIKI_COL] = annotation_map[compound_id]
         updated_column.append(entry)
 
@@ -206,11 +203,11 @@ def get_compound_annotations(
     # --- IntAct block ---
     for intact_col in [Cons.INTACT_INTERACT_COL, Cons.INTACT_COMPOUND_INTERACT_COL]:
         if intact_col in combined_df.columns:
-            print(f"Processing IntAct column for compounds: {intact_col}")
+            print(f"Processing {Cons.INTACT} column for compounds: {intact_col}")
             chebi_ids = set()
 
             # Collect all ChEBI IDs
-            for idx, interactions in combined_df[intact_col].dropna().items():
+            for _idx, interactions in combined_df[intact_col].dropna().items():
                 if isinstance(interactions, list):
                     for interaction in interactions:
                         if isinstance(interaction, dict):
@@ -251,7 +248,7 @@ def get_compound_annotations(
 
     # --- KEGG block --- TODO: Needs testing
     if kegg_compound_df is not None and Cons.KEGG_PATHWAY_COL in combined_df.columns:
-        print("Processing KEGG column for compounds...")
+        print(f"Processing {Cons.KEGG} column for compounds: {Cons.KEGG_PATHWAY_COL}")
         kegg_ids = []
 
         for entry in kegg_compound_df[Cons.KEGG_COMPOUND_COL].dropna():
@@ -275,7 +272,7 @@ def get_compound_annotations(
 
     # --- PubChem block ---
     if Cons.PUBCHEM_COMPOUND_ASSAYS_COL in combined_df.columns:
-        print("Processing PubChem column for compounds...")
+        print(f"Processing {Cons.PUBCHEM} column for compounds: {Cons.PUBCHEM_COMPOUND_ASSAYS_COL}")
 
         pubchem_ids = []
 
@@ -321,7 +318,7 @@ def get_compound_annotations(
     # --- MolMeDB block ---
     for molmedb_col in [Cons.MOLMEDB_PROTEIN_COMPOUND_COL, Cons.MOLMEDB_COMPOUND_PROTEIN_COL]:
         if molmedb_col in combined_df.columns:
-            print("Processing MolMeDB column for compounds...")
+            print(f"Processing {Cons.MOLMEDB} column for compounds: {molmedb_col}")
 
             inchikeys = []
 
@@ -360,7 +357,7 @@ def get_compound_annotations(
 
     # --- OpenTargets block ---
     if Cons.OPENTARGETS_GENE_COMPOUND_COL in combined_df.columns:
-        print("Processing OpenTargets column for compounds...")
+        print(f"Processing {Cons.OPENTARGETS} column for compounds: {Cons.OPENTARGETS_GENE_COMPOUND_COL}")
 
         chembl_ids = []
 
@@ -426,7 +423,6 @@ def query_bridgedb_for_pubchem(
     :param input_datatype: Data source of input IDs (e.g., 'ChEBI', 'KEGG Compound')
     :returns: A tuple of (list of PubChem IDs, mapping from original ID to PubChem ID)
     """
-
     print(f"Querying BridgeDb for PubChem IDs from {input_datatype}...")
 
     data_input = pd.DataFrame(compound_ids, columns=["identifier"])
@@ -439,18 +435,15 @@ def query_bridgedb_for_pubchem(
     )
 
     if bridgedb_df.empty:
-        print("BridgeDb returned no results.")
         return [], {}
 
     # Filter for rows with PubChem Compound in target.source
     pubchem_df = bridgedb_df[bridgedb_df["target.source"] == Cons.COMPOUNDWIKI_COMPOUND_INPUT_ID]
 
     if pubchem_df.empty:
-        print("No PubChem Compound IDs found in BridgeDb result.")
         return [], {}
 
     pubchem_ids = list(set(pubchem_df[Cons.TARGET_COL].tolist()))
     id_to_pubchem = dict(pubchem_df[['identifier', Cons.TARGET_COL]].values)
-    print("id_to_pubchem ", id_to_pubchem)
 
     return pubchem_ids, id_to_pubchem
