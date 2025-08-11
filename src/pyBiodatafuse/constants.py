@@ -8,6 +8,7 @@ API endpoints for each data source
 """
 BRIDGEDB_ENDPOINT = "https://webservice.bridgedb.org"
 BGEE_ENDPOINT = "https://www.bgee.org/sparql/"
+COMPOUNDWIKI_ENDPOINT = "https://compoundcloud.wikibase.cloud/query/sparql"
 DISGENET_ENDPOINT = "https://api.disgenet.com/api/v1/gda/summary"
 ENSEMBL_ENDPOINT = "https://rest.ensembl.org"
 INTACT_ENDPOINT = "https://www.ebi.ac.uk/intact"
@@ -31,6 +32,7 @@ All data sources
 """
 BRIDGEDB = "BridgeDB"
 BGEE = "Bgee"
+COMPOUNDWIKI = "CompoundWiki"
 DISGENET = "DISGENET"
 ENSEMBL = "Ensembl"
 INTACT = "IntAct"
@@ -85,6 +87,7 @@ IDENTIFIER_SOURCE_COL = "identifier.source"
 SOURCE_COL = "source"
 
 BGEE_GENE_EXPRESSION_LEVELS_COL = f"{BGEE}_gene_expression_levels"
+COMPOUNDWIKI_COL = f"{COMPOUNDWIKI}_compounds"
 DISGENET_DISEASE_COL = f"{DISGENET}_diseases"
 ENSEMBL_HOMOLOG_COL = f"{ENSEMBL}_homologs"
 INTACT_INTERACT_COL = f"{INTACT}_gene_interactions"
@@ -147,6 +150,7 @@ ADVERSE_OUTCOME = "AO"
 
 # Input type for each data source
 BGEE_GENE_INPUT_ID = ENSEMBL
+COMPOUNDWIKI_COMPOUND_INPUT_ID = PUBCHEM_COMPOUND
 DISGENET_GENE_INPUT_ID = NCBI_GENE
 ENSEMBL_GENE_INPUT_ID = ENSEMBL
 INTACT_GENE_INPUT_ID = ENSEMBL
@@ -235,6 +239,51 @@ ANATOMICAL_ENTITIES_LIST = [
     "respiratory system",
     "skeletal system",
 ]
+
+"""
+CompoundWiki Variables
+"""
+COMPOUNDWIKI_CAS_REGISTRY_NUMBER = 'CAS Registry Number'
+COMPOUNDWIKI_CHEBI_ID = 'ChEBI ID'
+COMPOUNDWIKI_CHEMBL_ID = 'ChEMBL ID'
+COMPOUNDWIKI_COSING_NUMBER = 'CosIng number'
+COMPOUNDWIKI_DSSTOX_ID = 'DSSTOX compound identifier'
+COMPOUNDWIKI_EC_NUMBER = 'EC number'
+COMPOUNDWIKI_ECHA_ID = 'ECHA Substance Infocard ID'
+COMPOUNDWIKI_INCHI = 'InChI'
+COMPOUNDWIKI_INCHI_KEY = 'InChIKey'
+COMPOUNDWIKI_KEGG_ID = 'KEGG ID'
+COMPOUNDWIKI_PUBCHEM_ID = 'PubChem CID'
+COMPOUNDWIKI_SMILES ='SMILES'
+COMPOUNDWIKI_WIKIDATA_ID = 'Wikidata Q identifier'
+COMPOUNDWIKI_FORMULA = 'chemical formula'
+COMPOUNDWIKI_INSTANCE = 'instance of'
+COMPOUNDWIKI_MASS = 'mass'
+COMPOUNDWIKI_METABOLISM_PATHWAY = 'xenobiotic metabolism pathway'
+COMPOUNDWIKI_LABEL = 'compound label'
+COMPOUNDWIKI_INPUT = 'input_identifier'
+
+COMPOUNDWIKI_OUTPUT_DICT = {
+    COMPOUNDWIKI_CAS_REGISTRY_NUMBER: str, #'56-65-5'
+    COMPOUNDWIKI_CHEBI_ID: str, #'15422'
+    COMPOUNDWIKI_CHEMBL_ID: str, #'CHEMBL14249'
+    COMPOUNDWIKI_COSING_NUMBER: str, #'31370'
+    COMPOUNDWIKI_DSSTOX_ID: str, #'DTXCID302559'
+    COMPOUNDWIKI_EC_NUMBER: str, #'200-283-2'
+    COMPOUNDWIKI_ECHA_ID: str, #'100.000.258'
+    COMPOUNDWIKI_INCHI: str, #'InChI=1S/C10H16N5O13P3/...'
+    COMPOUNDWIKI_INCHI_KEY: str, #'ZKHQWZAMYRWXGA-KQYNXXCUSA-N'
+    COMPOUNDWIKI_KEGG_ID: str, #'D08646'
+    COMPOUNDWIKI_PUBCHEM_ID: str, #'5957'
+    COMPOUNDWIKI_SMILES: str, #'C1=NC2=C(C(=N1)N)N=CN2[C@H]3[C@@H]([C@@H]([C@H](O3)COP(=O)(O)OP(=O)(O)OP(=O)(O)O)O)O'
+    COMPOUNDWIKI_WIKIDATA_ID: str, #'Q80863'
+    COMPOUNDWIKI_FORMULA: str, #'C₁₀H₁₆N₅O₁₃P₃'
+    COMPOUNDWIKI_INSTANCE: str, #'organophosphates'
+    COMPOUNDWIKI_MASS: str, #'507.1815'
+    COMPOUNDWIKI_METABOLISM_PATHWAY: str, #'WP521'
+    COMPOUNDWIKI_LABEL: str, #'adenosine triphosphate'
+    COMPOUNDWIKI_INPUT: str, #'5957'
+}
 
 """
 DISGENET variables
