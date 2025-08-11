@@ -170,7 +170,6 @@ def get_compound_annotations(
 
     # --- Input Identifiers ---
     if Cons.IDENTIFIER_COL in combined_df.columns and Cons.IDENTIFIER_SOURCE_COL in combined_df.columns:
-        print("Processing input identifiers for compounds...")
 
         id_source_unique = combined_df[Cons.IDENTIFIER_SOURCE_COL].dropna().unique()
 
@@ -186,7 +185,7 @@ def get_compound_annotations(
                 annotations = [input_map.get(str(x), empty_annotation) for x in combined_df[Cons.IDENTIFIER_COL]]
             else:
                 # Query BridgeDB for PubChem IDs, then query CompoundWiki
-                pubchem_ids, id_to_pubchem = query_bridgedb_for_pubchem(input_id_list, id_source)
+                pubchem_ids, id_to_pubchem = query_bridgedb_for_pubchem(list(input_id_list), id_source)
                 if pubchem_ids:
                     input_map = query_compoundwiki(pubchem_ids)
                     annotations = [
@@ -220,7 +219,7 @@ def get_compound_annotations(
 
             if chebi_ids:
                 # Convert ChEBI → PubChem
-                pubchem_ids, id_to_pubchem = query_bridgedb_for_pubchem(chebi_ids, "ChEBI")
+                pubchem_ids, id_to_pubchem = query_bridgedb_for_pubchem(list(chebi_ids), "ChEBI")
                 if pubchem_ids:
                     intact_map_cid = query_compoundwiki(pubchem_ids)
 
@@ -336,7 +335,7 @@ def get_compound_annotations(
 
             if inchikeys:
                 # Convert InChIKeys to PubChem IDs
-                pubchem_ids, inchikey_to_pubchem = query_bridgedb_for_pubchem(inchikeys, "InChIKey")
+                pubchem_ids, inchikey_to_pubchem = query_bridgedb_for_pubchem(list(inchikeys), "InChIKey")
 
                 if pubchem_ids:
                     # Query CompoundWiki with the PubChem IDs
@@ -375,7 +374,7 @@ def get_compound_annotations(
 
         if chembl_ids:
             # Convert CHEMBL to PubChem IDs
-            pubchem_ids, chembl_to_pubchem = query_bridgedb_for_pubchem(chembl_ids, "ChEMBL compound")
+            pubchem_ids, chembl_to_pubchem = query_bridgedb_for_pubchem(list(chembl_ids), "ChEMBL compound")
 
             if pubchem_ids:
                 # Query CompoundWiki with the PubChem IDs
@@ -423,15 +422,13 @@ def query_bridgedb_for_pubchem(
     :param input_datatype: Data source of input IDs (e.g., 'ChEBI', 'KEGG Compound')
     :returns: A tuple of (list of PubChem IDs, mapping from original ID to PubChem ID)
     """
-    print(f"Querying BridgeDb for PubChem IDs from {input_datatype}...")
-
     data_input = pd.DataFrame(compound_ids, columns=["identifier"])
 
     bridgedb_df, bridgedb_metadata = id_mapper.bridgedb_xref(
         identifiers=data_input,
         input_species="Human",
         input_datasource=input_datatype,
-        output_datasource="All"
+        output_datasource=["All"]
     )
 
     if bridgedb_df.empty:
