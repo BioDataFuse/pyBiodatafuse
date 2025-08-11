@@ -81,5 +81,5 @@ class TestCompoundwiki(unittest.TestCase):
         )
         expected_data.name = Cons.PUBCHEM_COMPOUND_ASSAYS_COL
 
-        pd.testing.assert_series_equal(obtained_data[Cons.PUBCHEM_COMPOUND_ASSAYS_COL][0], expected_data)
+        pd.testing.assert_series_equal(obtained_data[Cons.PUBCHEM_COMPOUND_ASSAYS_COL], expected_data)
         self.assertIsInstance(metadata, dict)

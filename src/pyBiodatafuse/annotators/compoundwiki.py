@@ -165,7 +165,7 @@ def get_compound_annotations(
     start_time = datetime.datetime.now()
     compoundwiki_version = get_version_compoundwiki()
     annotation_map = {}
-    
+
     empty_annotation = [{key: np.nan for key in Cons.COMPOUNDWIKI_OUTPUT_DICT.keys()}]
 
     # --- Input Identifiers ---
