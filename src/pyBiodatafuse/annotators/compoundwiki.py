@@ -249,7 +249,6 @@ def get_compound_annotations(
                             intact_map_original,
                         )
 
-
     # --- KEGG block --- TODO: Needs testing
     if kegg_compound_df is not None and Cons.KEGG_PATHWAY_COL in combined_df.columns:
         print("Processing KEGG column for compounds...")
@@ -274,7 +273,7 @@ def get_compound_annotations(
                 kegg_map,
             )
 
-    # --- PubChem block --- TODO: Needs testing
+    # --- PubChem block ---
     if Cons.PUBCHEM_COMPOUND_ASSAYS_COL in combined_df.columns:
         print("Processing PubChem column for compounds...")
 
@@ -319,7 +318,7 @@ def get_compound_annotations(
                 },
             )
 
-    # --- MolMeDB block --- TODO: Needs testing
+    # --- MolMeDB block ---
     for molmedb_col in [Cons.MOLMEDB_PROTEIN_COMPOUND_COL, Cons.MOLMEDB_COMPOUND_PROTEIN_COL]:
         if molmedb_col in combined_df.columns:
             print("Processing MolMeDB column for compounds...")
@@ -359,7 +358,7 @@ def get_compound_annotations(
                         },
                     )
 
-    # --- OpenTargets block --- TODO: Needs testing
+    # --- OpenTargets block ---
     if Cons.OPENTARGETS_GENE_COMPOUND_COL in combined_df.columns:
         print("Processing OpenTargets column for compounds...")
 
@@ -400,7 +399,6 @@ def get_compound_annotations(
                     Cons.CHEMBL_ID,
                     injection_map,
                 )
-
 
     end_time = datetime.datetime.now()
 
