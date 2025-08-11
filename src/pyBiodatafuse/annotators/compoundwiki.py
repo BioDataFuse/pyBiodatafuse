@@ -183,7 +183,7 @@ def get_compound_annotations(
                 # Directly query CompoundWiki
                 input_map = query_compoundwiki(input_id_list)
                 annotations = [input_map.get(str(x), empty_annotation) for x in combined_df[Cons.IDENTIFIER_COL]]
-            else:
+            elif id_source in Cons.BRIDGEDB_INPUT_DICT:
                 # Query BridgeDB for PubChem IDs, then query CompoundWiki
                 pubchem_ids, id_to_pubchem = query_bridgedb_for_pubchem(list(input_id_list), id_source)
                 if pubchem_ids:
@@ -194,6 +194,8 @@ def get_compound_annotations(
                     ]
                 else:
                     annotations = [empty_annotation for _ in range(len(combined_df))]
+            else:
+                annotations = [empty_annotation for _ in range(len(combined_df))]
 
             # Only add column if there is at least one non-empty annotation
             if any(annotation != empty_annotation for annotation in annotations):
