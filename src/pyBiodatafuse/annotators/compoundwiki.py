@@ -2,22 +2,24 @@
 
 """Python file for querying the CompoundWiki database (https://compoundcloud.wikibase.cloud/)."""
 
+import pyBiodatafuse.constants as Cons
+
 import datetime
 import logging
 import os
 import warnings
 from string import Template
-from typing import List, Tuple
+from typing import List, Tuple, Literal
 
 import pandas as pd
 import numpy as np
 from SPARQLWrapper import JSON, SPARQLWrapper
 from SPARQLWrapper.SPARQLExceptions import SPARQLWrapperException
 
-import pyBiodatafuse.constants as Cons
 from pyBiodatafuse import id_mapper
 from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interest
 
+BRIDGEDB_INPUTS = Literal[tuple(Cons.BRIDGEDB_INPUT_DICT.keys())]
 
 def check_endpoint_compoundwiki() -> bool:
     """Check the availability of the CompoundWiki SPARQL endpoint."""
@@ -183,7 +185,7 @@ def get_compound_annotations(
                 # Directly query CompoundWiki
                 input_map = query_compoundwiki(input_id_list)
                 annotations = [input_map.get(str(x), empty_annotation) for x in combined_df[Cons.IDENTIFIER_COL]]
-            elif id_source in Cons.BRIDGEDB_INPUT_DICT:
+            else:
                 # Query BridgeDB for PubChem IDs, then query CompoundWiki
                 pubchem_ids, id_to_pubchem = query_bridgedb_for_pubchem(list(input_id_list), id_source)
                 if pubchem_ids:
@@ -194,8 +196,6 @@ def get_compound_annotations(
                     ]
                 else:
                     annotations = [empty_annotation for _ in range(len(combined_df))]
-            else:
-                annotations = [empty_annotation for _ in range(len(combined_df))]
 
             # Only add column if there is at least one non-empty annotation
             if any(annotation != empty_annotation for annotation in annotations):
@@ -416,7 +416,7 @@ def get_compound_annotations(
 
 def query_bridgedb_for_pubchem(
     compound_ids: List[str],
-    input_datatype: str
+    input_datatype: BRIDGEDB_INPUTS, # type: ignore
 ) -> Tuple[List[str], dict]:
     """Query BridgeDb to convert compound identifiers to PubChem Compound IDs.
 
