@@ -1364,8 +1364,6 @@ def add_opentargets_gene_compound_subgraph(g, gene_node_label, annot_list):
         # Compoundwiki
         annot_node_attrs = add_compoundwiki_annotations(annot_node_attrs, annot)
 
-        print(annot_node_label, annot_node_attrs)
-
         merge_node(g, annot_node_label, annot_node_attrs)
 
         edge_attrs = Cons.OPENTARGETS_GENE_COMPOUND_EDGE_ATTRS.copy()
@@ -1549,8 +1547,6 @@ def add_pubchem_assay_subgraph(g, gene_node_label, annot_list):
 
         # Compoundwiki
         annot_node_attrs = add_compoundwiki_annotations(annot_node_attrs, annot)
-
-        print(annot_node_label, annot_node_attrs)
 
         # g.add_node(annot_node_label, attr_dict=annot_node_attrs)
         merge_node(g, annot_node_label, annot_node_attrs)
