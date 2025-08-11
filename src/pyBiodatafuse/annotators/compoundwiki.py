@@ -215,11 +215,11 @@ def get_compound_annotations(
                                 if isinstance(val, str) and val.startswith("CHEBI:"):
                                     chebi_ids.add(val)
 
-            chebi_ids = list(chebi_ids)
+            chebi_ids_list = list(chebi_ids)
 
-            if chebi_ids:
+            if chebi_ids_list:
                 # Convert ChEBI → PubChem
-                pubchem_ids, id_to_pubchem = query_bridgedb_for_pubchem(list(chebi_ids), "ChEBI")
+                pubchem_ids, id_to_pubchem = query_bridgedb_for_pubchem(chebi_ids_list, "ChEBI")
                 if pubchem_ids:
                     intact_map_cid = query_compoundwiki(pubchem_ids)
 
