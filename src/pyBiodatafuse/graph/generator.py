@@ -1364,6 +1364,8 @@ def add_opentargets_gene_compound_subgraph(g, gene_node_label, annot_list):
         # Compoundwiki
         annot_node_attrs = add_compoundwiki_annotations(annot_node_attrs, annot)
 
+        print(annot_node_label, annot_node_attrs)
+
         merge_node(g, annot_node_label, annot_node_attrs)
 
         edge_attrs = Cons.OPENTARGETS_GENE_COMPOUND_EDGE_ATTRS.copy()
@@ -1547,6 +1549,8 @@ def add_pubchem_assay_subgraph(g, gene_node_label, annot_list):
 
         # Compoundwiki
         annot_node_attrs = add_compoundwiki_annotations(annot_node_attrs, annot)
+
+        print(annot_node_label, annot_node_attrs)
 
         # g.add_node(annot_node_label, attr_dict=annot_node_attrs)
         merge_node(g, annot_node_label, annot_node_attrs)
@@ -1932,22 +1936,63 @@ def add_compoundwiki_annotations(node_attrs: dict, annot: dict) -> dict:
     :param annot: the interaction/inhibitor annotation dict
     :return: node_attrs updated with CompoundWiki fields if present
     """
-    cw_list = annot.get("CompoundWiki_compounds")
+    cw_key = getattr(Cons, "COMPOUNDWIKI_COL", "CompoundWiki_compounds")
+    cw_list = annot.get(cw_key) or annot.get("CompoundWiki_compounds")
     if not cw_list or not isinstance(cw_list, list):
         return node_attrs
 
-    node_id = node_attrs.get(Cons.ID)
+    source = node_attrs.get("datasource", "")
+    skip_matching = source in {Cons.PUBCHEM, Cons.OPENTARGETS}
+
+    if not skip_matching:
+        node_id_raw = node_attrs.get(Cons.ID)
+        node_id_comp = None
+        if node_id_raw is not None:
+            node_id_comp = str(node_id_raw).strip()
+            if node_id_comp.upper().startswith("CID:"):
+                node_id_comp = node_id_comp[4:].strip()
+            elif node_id_comp.upper().startswith("CHEMBL:"):
+                node_id_comp = node_id_comp[7:].strip()
+            node_id_comp = node_id_comp.lower()
+
     for cw_dict in cw_list:
         if not isinstance(cw_dict, dict):
             continue
-        input_id = cw_dict.get("input_identifier")
-        if input_id and node_id and input_id != node_id:
-            continue
+
+        if not skip_matching:
+            input_id_raw = cw_dict.get(getattr(Cons, "COMPOUNDWIKI_INPUT", "input_identifier")) \
+                            or cw_dict.get("input_identifier")
+            if input_id_raw is not None:
+                input_id_comp = str(input_id_raw).strip()
+                if input_id_comp.upper().startswith("CID:"):
+                    input_id_comp = input_id_comp[4:].strip()
+                elif input_id_comp.upper().startswith("CHEMBL:"):
+                    input_id_comp = input_id_comp[7:].strip()
+                input_id_comp = input_id_comp.lower()
+
+                if input_id_comp and node_id_comp and input_id_comp != node_id_comp:
+                    continue
 
         for key, value in cw_dict.items():
-            mapped_key = Cons.COMPOUNDWIKI_OUTPUT_DICT.get(key)
-            if mapped_key and value is not None and str(value).strip():
-                node_attrs[mapped_key] = value
+            if key in (getattr(Cons, "COMPOUNDWIKI_INPUT", "input_identifier"), "input_identifier"):
+                continue
+            if value is None or (isinstance(value, str) and not value.strip()):
+                continue
+
+            normalized_chars = []
+            last_was_underscore = False
+            for ch in str(key).strip():
+                if ch.isalnum():
+                    normalized_chars.append(ch.lower())
+                    last_was_underscore = False
+                else:
+                    if not last_was_underscore:
+                        normalized_chars.append("_")
+                        last_was_underscore = True
+            attr_name = "".join(normalized_chars).strip("_")
+
+            node_attrs[attr_name] = value
+
         break
 
     return node_attrs
