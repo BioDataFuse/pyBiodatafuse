@@ -21,6 +21,7 @@ from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interes
 
 BRIDGEDB_INPUTS = Literal[tuple(Cons.BRIDGEDB_INPUT_DICT.keys())]
 
+
 def check_endpoint_compoundwiki() -> bool:
     """Check the availability of the CompoundWiki SPARQL endpoint."""
     with open(os.path.dirname(__file__) + "/queries/compoundwiki-test.rq", "r") as fin:
@@ -416,7 +417,7 @@ def get_compound_annotations(
 
 def query_bridgedb_for_pubchem(
     compound_ids: List[str],
-    input_datatype: BRIDGEDB_INPUTS, # type: ignore
+    input_datatype: BRIDGEDB_INPUTS,  # type: ignore
 ) -> Tuple[List[str], dict]:
     """Query BridgeDb to convert compound identifiers to PubChem Compound IDs.
 
