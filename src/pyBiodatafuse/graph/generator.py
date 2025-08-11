@@ -249,6 +249,18 @@ def add_intact_interactions_subgraph(g, gene_node_label, annot_list):
                 ),
                 Cons.LABEL: Cons.COMPOUND_NODE_LABEL,
             }
+
+            # CompoundWiki
+            cw_list = interaction.get("CompoundWiki_compounds")
+            if cw_list and isinstance(cw_list, list):
+                for cw_dict in cw_list:
+                    if cw_dict.get("input_identifier") == partner:
+                        for key, value in cw_dict.items():
+                            mapped_key = Cons.COMPOUNDWIKI_OUTPUT_DICT.get(key)
+                            if mapped_key and value is not None and str(value).strip():
+                                compound_attrs[mapped_key] = value
+                        break
+            
             merge_node(g, partner, compound_attrs)
 
         edge_key = tuple(sorted([gene_node_label, partner]))
@@ -1349,6 +1361,9 @@ def add_opentargets_gene_compound_subgraph(g, gene_node_label, annot_list):
             if not pd.isna(annot[key]):
                 annot_node_attrs[key] = annot[key]
 
+        # Compoundwiki
+        annot_node_attrs = add_compoundwiki_annotations(annot_node_attrs, annot)
+
         merge_node(g, annot_node_label, annot_node_attrs)
 
         edge_attrs = Cons.OPENTARGETS_GENE_COMPOUND_EDGE_ATTRS.copy()
@@ -1409,6 +1424,9 @@ def add_molmedb_gene_inhibitor_subgraph(g, gene_node_label, annot_list):
                 Cons.DATASOURCE: Cons.MOLMEDB,
             }
         )
+
+        # CompoundWiki
+        annot_node_attrs = add_compoundwiki_annotations(annot_node_attrs, annot)
 
         merge_node(g, annot_node_label, annot_node_attrs)
 
@@ -1526,6 +1544,9 @@ def add_pubchem_assay_subgraph(g, gene_node_label, annot_list):
         )
         if not pd.isna(annot["smiles"]):
             annot_node_attrs[Cons.SMILES] = annot["smiles"]
+
+        # Compoundwiki
+        annot_node_attrs = add_compoundwiki_annotations(annot_node_attrs, annot)
 
         # g.add_node(annot_node_label, attr_dict=annot_node_attrs)
         merge_node(g, annot_node_label, annot_node_attrs)
@@ -1662,6 +1683,37 @@ def add_opentargets_disease_compound_subgraph(g, disease_node, annot_list):
             add_opentargets_compound_side_effect_subgraph(
                 g, annot_node_label, annot[Cons.OPENTARGETS_ADVERSE_EFFECT]
             )
+
+    return g
+
+
+def add_compoundwiki_subgraph(g, compound_node_label, annot_list):
+    """
+    Enrich an existing compound node in the graph with CompoundWiki annotations.
+
+    :param g: the input NetworkX graph (MultiDiGraph).
+    :param compound_node_label: the identifier (e.g., PubChem CID) of the compound node in the graph.
+    :param annot_list: list of annotation dictionaries from CompoundWiki (one per compound).
+    :return: the enriched NetworkX MultiDiGraph.
+    """
+    for annot in annot_list:
+        target_cid = str(annot.get("target"))
+        if not target_cid or target_cid != compound_node_label:
+            continue
+
+        annotations = annot.get("CompoundWiki_compounds", {})
+
+        if g.has_node(compound_node_label):
+            existing_attrs = g.nodes[compound_node_label].get("attr_dict", {})
+            existing_attrs.update(annotations)
+            existing_attrs["source"] = Cons.COMPOUNDWIKI
+            g.nodes[compound_node_label]["attr_dict"] = existing_attrs
+        else:
+            node_attrs = Cons.COMPOUNDWIKI_NODE_ATTRS.copy()
+            node_attrs.update(annotations)
+            node_attrs["id"] = compound_node_label
+            node_attrs["source"] = Cons.COMPOUNDWIKI
+            g.merge_node(compound_node_label, attr_dict=node_attrs)
 
     return g
 
@@ -1871,6 +1923,34 @@ def add_aopwiki_subgraph(g, entity_node_label, annot_list):
                     )
 
     return g
+
+
+def add_compoundwiki_annotations(node_attrs: dict, annot: dict) -> dict:
+    """Add CompoundWiki compound annotations to a node if available.
+
+    :param node_attrs: dict of current node attributes
+    :param annot: the interaction/inhibitor annotation dict
+    :return: node_attrs updated with CompoundWiki fields if present
+    """
+    cw_list = annot.get("CompoundWiki_compounds")
+    if not cw_list or not isinstance(cw_list, list):
+        return node_attrs
+
+    node_id = node_attrs.get(Cons.ID)
+    for cw_dict in cw_list:
+        if not isinstance(cw_dict, dict):
+            continue
+        input_id = cw_dict.get("input_identifier")
+        if input_id and node_id and input_id != node_id:
+            continue
+
+        for key, value in cw_dict.items():
+            mapped_key = Cons.COMPOUNDWIKI_OUTPUT_DICT.get(key)
+            if mapped_key and value is not None and str(value).strip():
+                node_attrs[mapped_key] = value
+        break
+
+    return node_attrs
 
 
 def edge_exists(g, source, target, edge_attrs):
