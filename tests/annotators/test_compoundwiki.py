@@ -39,7 +39,7 @@ class TestCompoundwiki(unittest.TestCase):
 
         obtained_data, metadata = compoundwiki.get_compound_annotations(pubchem_dataframe)
 
-        expected_data = pd.Series(
+        expected_data = pd.Series([
             [
                 {
                     'pubchem_assay_id': 'AID:504669',
@@ -78,7 +78,7 @@ class TestCompoundwiki(unittest.TestCase):
                     ]
                 }
             ]
-        )
+        ])
         expected_data.name = Cons.PUBCHEM_COMPOUND_ASSAYS_COL
 
         pd.testing.assert_series_equal(obtained_data[Cons.PUBCHEM_COMPOUND_ASSAYS_COL], expected_data)
