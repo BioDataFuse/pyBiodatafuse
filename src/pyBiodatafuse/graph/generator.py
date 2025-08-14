@@ -345,6 +345,7 @@ def add_intact_compound_interactions_subgraph(g, compound_node_label, annot_list
             Cons.SPECIES: partner_species,
             Cons.MOLECULE: partner_molecule,
             Cons.LABEL: Cons.COMPOUND_NODE_LABEL,
+            Cons.DATASOURCE: Cons.COMPOUNDWIKI
         }
         merge_node(g, partner_id, compound_attrs)
 
@@ -2150,6 +2151,9 @@ def add_compoundwiki_annotations(node_attrs: dict, annot: dict) -> dict:
             attr_name = "".join(normalized_chars).strip("_")
 
             node_attrs[attr_name] = value
+            node_attrs.update({
+                Cons.SOURCE: Cons.COMPOUNDWIKI
+            })
 
         break
 
@@ -2277,7 +2281,7 @@ def add_compound_node(g, row):
     :param row: row in the combined DataFrame.
     :returns: label for compound node
     """
-    compound_node_label = row["identifier"]
+    compound_node_label = row[Cons.IDENTIFIER_COL]
     compound_node_attrs = {
         Cons.DATASOURCE: Cons.BRIDGEDB,
         Cons.NAME: f"{row[Cons.IDENTIFIER_SOURCE_COL]}:{row[Cons.IDENTIFIER_COL]}",
@@ -2285,6 +2289,15 @@ def add_compound_node(g, row):
         Cons.LABEL: Cons.COMPOUND_NODE_LABEL,  # Ensure label
         row[Cons.TARGET_SOURCE_COL]: f"{row[Cons.TARGET_SOURCE_COL]}:{row[Cons.TARGET_COL]}",
     }
+
+    # Add CompoundWiki annotations if column exists
+    if Cons.COMPOUNDWIKI_COL in row.index and pd.notna(row[Cons.COMPOUNDWIKI_COL]):
+        annotations = row[Cons.COMPOUNDWIKI_COL]
+        if isinstance(annotations, list) and annotations:
+            for ann in annotations:
+                for k, v in ann.items():
+                    if pd.notna(v):
+                        compound_node_attrs[k] = v
 
     g.add_node(compound_node_label, attr_dict=compound_node_attrs)
     return compound_node_label
