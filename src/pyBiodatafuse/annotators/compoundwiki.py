@@ -413,7 +413,7 @@ def get_compound_annotations(
 
 def query_bridgedb_for_pubchem(
     compound_ids: List[str],
-    input_datatype: str  #type: ignore
+    input_datatype: str  # type: ignore
 ) -> Tuple[List[str], dict]:
     """Query BridgeDb to convert compound identifiers to PubChem Compound IDs.
 
