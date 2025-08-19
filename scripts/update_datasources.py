@@ -9,7 +9,7 @@ Usage:
 Requirements:
     - Python 3.9-3.10
     - pandas
-    - requests
+    - bioregistry
 
 Notes:
     - The Bioregistry API is accessed using the URL template:
@@ -19,11 +19,10 @@ Notes:
 
 Raises:
     - FileNotFoundError: If the `resources/datasources.csv` file is not found.
-    - requests.exceptions.RequestException: If there is an issue with the API request.
 """
 
+import bioregistry
 import pandas as pd
-import requests
 
 
 def update_datasources_file():
@@ -31,37 +30,22 @@ def update_datasources_file():
     Updates the datasources.csv file with pattern data fetched from the Bioregistry API.
 
     Note:
-        - The Bioregistry API is accessed using the URL template:
-          "https://bioregistry.io/api/registry/{prefix}?format=json".
+        - The Bioregistry API is accessed via :func:`bioregistry.get_pattern`
         - If a prefix does not have a corresponding pattern in the API, an empty string is used.
 
     Raises:
         FileNotFoundError: If the datasources.csv file is not found.
-        requests.exceptions.RequestException: If there is an issue with the API request.
     """
-    url_bioregistry = "https://bioregistry.io/api/registry/{}?format=json"
 
     # Access the datasources.csv file using importlib.resources
     csv_path = "resources/datasources.csv"
-    with open(csv_path) as f:
-        # Read the CSV file using pandas
-        df = pd.read_csv(f)
+ 
+    df = pd.read_csv(csv_path)
 
-        # Add a new column "pattern" and fetch data from Bioregistry
-        def fetch_pattern(prefix):
-            if pd.notna(prefix):
-                response = requests.get(url_bioregistry.format(prefix))
-                if response.status_code == 200:
-                    print(response.json().get("pattern", ""))
-                    return response.json().get("pattern", "")
-                else:
-                    print("bad request for ", prefix)
-            return ""
+    df["pattern"] = df["prefix"].map(bioregistry.get_pattern, na_action="ignore")
 
-        df["pattern"] = df["prefix"].map(fetch_pattern)
-
-        # Write the updated data back to the CSV file
-        df.to_csv(csv_path, index=False)
+    # Write the updated data back to the CSV file
+    df.to_csv(csv_path, index=False)
 
 
 if __name__ == "__main__":
