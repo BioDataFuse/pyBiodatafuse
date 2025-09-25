@@ -1,0 +1,19 @@
+mito_pathways,ensembl_id,intersections,no_upregulated_genes,no_downregulated_genes
+Apoptosis,['ENSMUSG00000078566'],1,1,0
+Biotin utilizing proteins,['ENSMUSG00000024892'],1,0,1
+Branched-chain amino acid dehydrogenase complex,['ENSMUSG00000037826'],1,0,1
+Branched-chain amino acid metabolism,['ENSMUSG00000027332'],1,0,1
+Carnitine shuttle,"['ENSMUSG00000024900', 'ENSMUSG00000078937']",2,2,0
+Cholesterol-associated,"['ENSMUSG00000059743', 'ENSMUSG00000058258']",2,0,2
+Fatty acid oxidation,['ENSMUSG00000020333'],1,0,1
+Folate and 1-C metabolism,['ENSMUSG00000005667'],1,0,1
+Glycine cleavage system,['ENSMUSG00000024827'],1,0,1
+Glycine metabolism,['ENSMUSG00000006378'],1,0,1
+Mitochondrial ribosome assembly,['ENSMUSG00000028706'],1,0,1
+Nucleotide synthesis and processing,['ENSMUSG00000027203'],1,1,0
+Pyruvate metabolism,"['ENSMUSG00000019577', 'ENSMUSG00000049225']",2,1,1
+SLC25A family,['ENSMUSG00000002346'],1,1,0
+Sulfur metabolism,['ENSMUSG00000049858'],1,0,1
+Vitamin B12 metabolism,['ENSMUSG00000029575'],1,0,1
+mtDNA maintenance,['ENSMUSG00000041064'],1,1,0
+mtDNA repair,['ENSMUSG00000033762'],1,1,0
