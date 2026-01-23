@@ -11,7 +11,12 @@ import seaborn as sns
 from tabulate import tabulate
 
 from pyBiodatafuse.analyzer.explorer.patent import get_patent_from_pubchem
-from pyBiodatafuse.constants import COMPOUND_NAMESPACE_MAPPER
+from pyBiodatafuse.constants import (
+    COMPOUND_NAMESPACE_MAPPER,
+    LABEL,
+    DATASOURCE,
+    COMPOUND_NODE_LABEL,
+)
 from pyBiodatafuse.graph.generator import build_networkx_graph, load_dataframe_from_pickle
 
 
@@ -103,7 +108,7 @@ class BioGraph(nx.MultiDiGraph):
     ) -> Optional[pd.DataFrame]:
         """Count the differnent nodes type in the graph."""
         node_data = pd.DataFrame(self.graph.nodes(data=True), columns=["node", "data"])
-        node_data["node_type"] = node_data["data"].apply(lambda x: x["labels"])
+        node_data["node_type"] = node_data["data"].apply(lambda x: x[LABEL])
         node_count = node_data["node_type"].value_counts().reset_index()
         node_count = node_count.sort_values(by="count", ascending=False)
 
@@ -118,7 +123,7 @@ class BioGraph(nx.MultiDiGraph):
     ) -> Optional[pd.DataFrame]:
         """Count the different edge types in the graph."""
         edge_data = pd.DataFrame(self.graph.edges(data=True), columns=["source", "target", "data"])
-        edge_data["edge_type"] = edge_data["data"].apply(lambda x: x["label"])
+        edge_data["edge_type"] = edge_data["data"].apply(lambda x: x[LABEL])
         edge_count = edge_data["edge_type"].value_counts().reset_index()
         edge_count = edge_count.sort_values(by="count", ascending=False)
 
@@ -148,8 +153,8 @@ class BioGraph(nx.MultiDiGraph):
     def count_nodes_by_data_source(self, plot: bool = False) -> Optional[pd.DataFrame]:
         """Get the count of nodes by data source."""
         node_data = pd.DataFrame(self.graph.nodes(data=True), columns=["node", "data"])
-        node_data["node_type"] = node_data["data"].apply(lambda x: x["labels"])
-        node_data["node_source"] = node_data["data"].apply(lambda x: x["datasource"])
+        node_data["node_type"] = node_data["data"].apply(lambda x: x[LABEL])
+        node_data["node_source"] = node_data["data"].apply(lambda x: x[DATASOURCE])
         node_source_count = (
             node_data.groupby(["node_type", "node_source"]).size().reset_index(name="count")
         )
@@ -163,8 +168,8 @@ class BioGraph(nx.MultiDiGraph):
     def count_edge_by_data_source(self, plot: bool = False) -> Optional[pd.DataFrame]:
         """Get the count of edges by data source."""
         edge_data = pd.DataFrame(self.graph.edges(data=True), columns=["source", "target", "data"])
-        edge_data["edge_type"] = edge_data["data"].apply(lambda x: x["label"])
-        edge_data["edge_source"] = edge_data["data"].apply(lambda x: x["datasource"])
+        edge_data["edge_type"] = edge_data["data"].apply(lambda x: x[LABEL])
+        edge_data["edge_source"] = edge_data["data"].apply(lambda x: x[DATASOURCE])
         edge_source_count = (
             edge_data.groupby(["edge_type", "edge_source"]).size().reset_index(name="count")
         )
@@ -178,9 +183,9 @@ class BioGraph(nx.MultiDiGraph):
 
     def get_all_nodes_by_labels(self) -> Dict[str, Any]:
         """Get all nodes with their label type."""
-        label_dict = {}  # type: Dict[str, Any]
+        label_dict = {}  # type: ignore
         for node, data in self.graph.nodes(data=True):
-            node_type = data["labels"]
+            node_type = data[LABEL]
             if node_type not in label_dict:
                 label_dict[node_type] = []
             label_dict[node_type].append((node, data))
@@ -206,7 +211,7 @@ class BioGraph(nx.MultiDiGraph):
     def get_patents_for_compounds(self):
         """Get patents for compounds."""
         # TODO: Function in test mode!!
-        compound_nodes = self.get_all_nodes_by_type("Compound")
+        compound_nodes = self.get_all_nodes_by_type(COMPOUND_NODE_LABEL)
 
         t = []
         for node_idx, _ in compound_nodes:
@@ -249,6 +254,6 @@ class BioGraph(nx.MultiDiGraph):
             self.node_count["node_type"].to_list()
         )
 
-        nodes = [node for node, label in self.graph.nodes(data="labels") if label in node_types]
+        nodes = [node for node, label in self.graph.nodes(data=LABEL) if label in node_types]
         subgraph = self.graph.subgraph(nodes)
         return subgraph

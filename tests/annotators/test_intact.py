@@ -96,7 +96,7 @@ class TestIntact(unittest.TestCase):
                         "id_A": "CHEBI:61048",
                         "id_B": "uniprotkb:Q14118",
                         "pubmed_publication_id": "22106087",
-                        "intact_link_to": None,
+                        "intact_link_to": "CHEBI:61048",
                     },
                 ]
             ]
@@ -119,7 +119,9 @@ class TestIntact(unittest.TestCase):
             }
         )
 
-        obtained_data, metadata = intact.get_compound_interactions(bridgedb_dataframe)
+        obtained_data, metadata = intact.get_compound_interactions(
+            bridgedb_dataframe, interaction_type="both"
+        )
 
         expected_data = pd.Series(
             [
@@ -143,7 +145,7 @@ class TestIntact(unittest.TestCase):
                         "id_A": "uniprotkb:P07342",
                         "id_B": "CHEBI:15361",
                         "pubmed_publication_id": "16390333",
-                        "intact_link_to": None,
+                        "intact_link_to": "EBI-9096",
                     },
                     {
                         "interaction_id": "EBI-6621805",
@@ -164,7 +166,7 @@ class TestIntact(unittest.TestCase):
                         "id_A": "uniprotkb:P00338",
                         "id_B": "CHEBI:15361",
                         "pubmed_publication_id": "23523103",
-                        "intact_link_to": None,
+                        "intact_link_to": "EBI-372327",
                     },
                 ]
             ]

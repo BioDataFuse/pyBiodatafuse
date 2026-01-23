@@ -66,6 +66,9 @@ def add_data_source_node(g: Graph, source: str) -> URIRef:
     :param source: String containing the name of the source of the data.
     :return: URIRef for the created data source node.
     """
+    # TODO: fix
+    if "OpenTargets" in source:
+        source = "OpenTargets"
     data_source_name = Literal(source, datatype=XSD.string)
     data_source_url = URIRef(DATA_SOURCES[source])
     g.add((data_source_url, RDF.type, URIRef(NODE_TYPES["data_source_node"])))
