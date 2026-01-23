@@ -3,7 +3,6 @@
 
 """Populate a BDF RDF graph with literature-based evidence."""
 
-
 from rdflib import Literal, URIRef
 from rdflib.namespace import OWL, RDF, RDFS
 

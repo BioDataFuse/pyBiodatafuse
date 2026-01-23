@@ -6,7 +6,6 @@ import json
 import logging
 import os
 import pickle
-
 from logging import Logger
 
 import networkx as nx
@@ -1914,17 +1913,21 @@ def add_aopwiki_compound_subgraph(g, compound_node_label, annot_list):
     :returns: a NetworkX MultiDiGraph
     """
     for annot in annot_list:
-        aop_node_label = mie_node_label = ke_upstream_node_label = ke_downstream_node_label = ao_node_label = None
+        aop_node_label = mie_node_label = ke_upstream_node_label = ke_downstream_node_label = (
+            ao_node_label
+        ) = None
 
         # Add AOP node
         if annot.get("aop") and not pd.isna(annot["aop"]):
             aop_node_label = f"{Cons.AOP_PATHWAY}:{annot['aop']}"
             aop_node_attrs = Cons.AOPWIKI_NODE_ATTRS.copy()
-            aop_node_attrs.update({
-                Cons.ID: aop_node_label,
-                Cons.NAME: annot.get("aop_title", "Unknown"),
-                Cons.LABEL: Cons.AOP_NODE_LABEL,
-            })
+            aop_node_attrs.update(
+                {
+                    Cons.ID: aop_node_label,
+                    Cons.NAME: annot.get("aop_title", "Unknown"),
+                    Cons.LABEL: Cons.AOP_NODE_LABEL,
+                }
+            )
             g.add_node(aop_node_label, attr_dict=aop_node_attrs)
 
             # Connect compound to AOP node
@@ -1942,11 +1945,13 @@ def add_aopwiki_compound_subgraph(g, compound_node_label, annot_list):
         if annot.get("MIE") and not pd.isna(annot["MIE"]):
             mie_node_label = f"{Cons.MOL_INITIATING_EVENT}:{annot['MIE']}"
             mie_node_attrs = Cons.AOPWIKI_NODE_ATTRS.copy()
-            mie_node_attrs.update({
-                Cons.ID: mie_node_label,
-                Cons.NAME: annot.get("MIE_title", "Unknown"),
-                Cons.LABEL: Cons.MIE_NODE_LABEL,
-            })
+            mie_node_attrs.update(
+                {
+                    Cons.ID: mie_node_label,
+                    Cons.NAME: annot.get("MIE_title", "Unknown"),
+                    Cons.LABEL: Cons.MIE_NODE_LABEL,
+                }
+            )
             g.add_node(mie_node_label, attr_dict=mie_node_attrs)
 
             # Connect MIE to AOP node
@@ -1965,12 +1970,14 @@ def add_aopwiki_compound_subgraph(g, compound_node_label, annot_list):
         if annot.get("KE_upstream") and not pd.isna(annot["KE_upstream"]):
             ke_upstream_node_label = f"{Cons.KEY_EVENT}:{annot['KE_upstream']}"
             ke_upstream_node_attrs = Cons.AOPWIKI_NODE_ATTRS.copy()
-            ke_upstream_node_attrs.update({
-                Cons.ID: ke_upstream_node_label,
-                Cons.NAME: annot.get("KE_upstream_title", "Unknown"),
-                Cons.LABEL: Cons.KEY_EVENT_NODE_LABEL,
-                "organ": annot.get("KE_upstream_organ", ""),
-            })
+            ke_upstream_node_attrs.update(
+                {
+                    Cons.ID: ke_upstream_node_label,
+                    Cons.NAME: annot.get("KE_upstream_title", "Unknown"),
+                    Cons.LABEL: Cons.KEY_EVENT_NODE_LABEL,
+                    "organ": annot.get("KE_upstream_organ", ""),
+                }
+            )
             g.add_node(ke_upstream_node_label, attr_dict=ke_upstream_node_attrs)
 
             # Connect KE upstream to MIE node
@@ -1989,12 +1996,14 @@ def add_aopwiki_compound_subgraph(g, compound_node_label, annot_list):
         if annot.get("KE_downstream") and not pd.isna(annot["KE_downstream"]):
             ke_downstream_node_label = f"{Cons.KEY_EVENT}:{annot['KE_downstream']}"
             ke_downstream_node_attrs = Cons.AOPWIKI_NODE_ATTRS.copy()
-            ke_downstream_node_attrs.update({
-                Cons.ID: ke_downstream_node_label,
-                Cons.NAME: annot.get("KE_downstream_title", "Unknown"),
-                Cons.LABEL: Cons.KEY_EVENT_NODE_LABEL,
-                "organ": annot.get("KE_downstream_organ", ""),
-            })
+            ke_downstream_node_attrs.update(
+                {
+                    Cons.ID: ke_downstream_node_label,
+                    Cons.NAME: annot.get("KE_downstream_title", "Unknown"),
+                    Cons.LABEL: Cons.KEY_EVENT_NODE_LABEL,
+                    "organ": annot.get("KE_downstream_organ", ""),
+                }
+            )
             g.add_node(ke_downstream_node_label, attr_dict=ke_downstream_node_attrs)
 
             # Connect KE upstream to KE downstream
@@ -2013,11 +2022,13 @@ def add_aopwiki_compound_subgraph(g, compound_node_label, annot_list):
         if annot.get("ao") and not pd.isna(annot["ao"]):
             ao_node_label = f"{Cons.ADVERSE_OUTCOME}:{annot['ao']}"
             ao_node_attrs = Cons.AOPWIKI_NODE_ATTRS.copy()
-            ao_node_attrs.update({
-                Cons.ID: ao_node_label,
-                Cons.NAME: annot.get("ao_title", "Unknown"),
-                Cons.LABEL: Cons.AO_NODE_LABEL,
-            })
+            ao_node_attrs.update(
+                {
+                    Cons.ID: ao_node_label,
+                    Cons.NAME: annot.get("ao_title", "Unknown"),
+                    Cons.LABEL: Cons.AO_NODE_LABEL,
+                }
+            )
             g.add_node(ao_node_label, attr_dict=ao_node_attrs)
 
             # Connect KE upstream to AO node
@@ -2501,8 +2512,6 @@ def build_networkx_graph(
             g, combined_df, disease_compound, pathway_compound, homolog_df_list
         )
     if Cons.PUBCHEM_COMPOUND in combined_df["target.source"].values:
-        return _built_compound_based_graph(
-            g, combined_df, pathway_compound
-        )
+        return _built_compound_based_graph(g, combined_df, pathway_compound)
     else:
         raise ValueError(f"Unsupported target type: {main_target_type}")

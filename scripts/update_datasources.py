@@ -28,9 +28,10 @@ Raises:
     - FileNotFoundError: If the `resources/datasources.csv` file is not found.
 """
 
+from pathlib import Path
+
 import bioregistry
 import pandas as pd
-from pathlib import Path
 
 HERE = Path(__file__).parent.resolve()
 ROOT = HERE.parent.resolve()

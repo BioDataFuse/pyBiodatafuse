@@ -2,7 +2,6 @@
 
 """Populate a BDF RDF graph with gene ontology terms related to genes."""
 
-
 from typing import Optional
 
 from bioregistry import get_iri
