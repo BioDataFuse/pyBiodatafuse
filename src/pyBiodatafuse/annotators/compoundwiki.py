@@ -3,7 +3,6 @@
 """Python file for querying the CompoundWiki database (https://compoundcloud.wikibase.cloud/)."""
 
 import datetime
-import logging
 import os
 import warnings
 from string import Template
@@ -16,7 +15,6 @@ from SPARQLWrapper.SPARQLExceptions import SPARQLWrapperException
 
 import pyBiodatafuse.constants as Cons
 from pyBiodatafuse import id_mapper
-from pyBiodatafuse.utils import collapse_data_sources, get_identifier_of_interest
 
 
 def check_endpoint_compoundwiki() -> bool:
@@ -108,20 +106,19 @@ def query_compoundwiki(compound_ids) -> dict:
         props = {row["property"]: row["value"] for _, row in df_group.iterrows()}
         label = df_group["compoundLabel"].iloc[0] if "compoundLabel" in df_group.columns else None
         input_id = df_group["target"].iloc[0]
-        props.update({
-            "compound label": label,
-            "input_identifier": input_id,
-        })
+        props.update(
+            {
+                "compound label": label,
+                "input_identifier": input_id,
+            }
+        )
         grouped[target] = [props]
 
     return grouped
 
 
 def inject_compoundwiki_annotations(
-    df: pd.DataFrame,
-    column_name: str,
-    id_key: str,
-    annotation_map: dict
+    df: pd.DataFrame, column_name: str, id_key: str, annotation_map: dict
 ) -> pd.DataFrame:
     """Inject CompoundWiki annotations into nested compound dictionaries in a DataFrame column.
 
@@ -149,8 +146,7 @@ def inject_compoundwiki_annotations(
 
 
 def get_compound_annotations(
-    combined_df: pd.DataFrame,
-    kegg_compound_df: pd.DataFrame = None
+    combined_df: pd.DataFrame, kegg_compound_df: pd.DataFrame = None
 ) -> Tuple[pd.DataFrame, dict]:
     """Annotate compounds in the input DataFrame using CompoundWiki data.
 
@@ -169,7 +165,10 @@ def get_compound_annotations(
     empty_annotation = [{key: np.nan for key in Cons.COMPOUNDWIKI_OUTPUT_DICT.keys()}]
 
     # --- Input Identifiers ---
-    if Cons.IDENTIFIER_COL in combined_df.columns and Cons.IDENTIFIER_SOURCE_COL in combined_df.columns:
+    if (
+        Cons.IDENTIFIER_COL in combined_df.columns
+        and Cons.IDENTIFIER_SOURCE_COL in combined_df.columns
+    ):
 
         id_source_unique = combined_df[Cons.IDENTIFIER_SOURCE_COL].dropna().unique()
 
@@ -181,9 +180,14 @@ def get_compound_annotations(
 
             if id_source == "PubChem-compound":
                 input_map = query_compoundwiki(input_id_list)
-                annotations = [input_map.get(str(x), empty_annotation) for x in combined_df[Cons.IDENTIFIER_COL]]
+                annotations = [
+                    input_map.get(str(x), empty_annotation)
+                    for x in combined_df[Cons.IDENTIFIER_COL]
+                ]
             else:
-                pubchem_ids, id_to_pubchem = query_bridgedb_for_pubchem(list(input_id_list), id_source)
+                pubchem_ids, id_to_pubchem = query_bridgedb_for_pubchem(
+                    list(input_id_list), id_source
+                )
                 if pubchem_ids:
                     input_map = query_compoundwiki(pubchem_ids)
                     annotations = [
@@ -198,7 +202,9 @@ def get_compound_annotations(
 
     # --- OpenTargets ---
     if Cons.OPENTARGETS_GENE_COMPOUND_COL in combined_df.columns:
-        print(f"Processing {Cons.OPENTARGETS} column for compounds: {Cons.OPENTARGETS_GENE_COMPOUND_COL}")
+        print(
+            f"Processing {Cons.OPENTARGETS} column for compounds: {Cons.OPENTARGETS_GENE_COMPOUND_COL}"
+        )
 
         chembl_ids = []
 
@@ -216,7 +222,9 @@ def get_compound_annotations(
 
         if chembl_ids:
             # Convert identifiers to PubChem identifiers
-            pubchem_ids, chembl_to_pubchem = query_bridgedb_for_pubchem(list(chembl_ids), "ChEMBL compound")
+            pubchem_ids, chembl_to_pubchem = query_bridgedb_for_pubchem(
+                list(chembl_ids), "ChEMBL compound"
+            )
 
             if pubchem_ids:
                 # Query CompoundWiki with the PubChem identifiers
@@ -366,7 +374,9 @@ def get_compound_annotations(
             inchikeys = list(set(inchikeys))
 
             if inchikeys:
-                pubchem_ids, inchikey_to_pubchem = query_bridgedb_for_pubchem(list(inchikeys), "InChIKey")
+                pubchem_ids, inchikey_to_pubchem = query_bridgedb_for_pubchem(
+                    list(inchikeys), "InChIKey"
+                )
 
                 if pubchem_ids:
                     molmedb_map = query_compoundwiki(pubchem_ids)
@@ -400,8 +410,7 @@ def get_compound_annotations(
 
 
 def query_bridgedb_for_pubchem(
-    compound_ids: List[str],
-    input_datatype: str  # type: ignore
+    compound_ids: List[str], input_datatype: str  # type: ignore
 ) -> Tuple[List[str], dict]:
     """Query BridgeDb to convert compound identifiers to PubChem Compound IDs.
 
@@ -415,7 +424,7 @@ def query_bridgedb_for_pubchem(
         identifiers=data_input,
         input_species="Human",
         input_datasource=input_datatype,  # type: ignore
-        output_datasource=["All"]
+        output_datasource=["All"],
     )
 
     if bridgedb_df.empty:
@@ -428,6 +437,6 @@ def query_bridgedb_for_pubchem(
         return [], {}
 
     pubchem_ids = list(set(pubchem_df[Cons.TARGET_COL].tolist()))
-    id_to_pubchem = dict(pubchem_df[['identifier', Cons.TARGET_COL]].values)
+    id_to_pubchem = dict(pubchem_df[["identifier", Cons.TARGET_COL]].values)
 
     return pubchem_ids, id_to_pubchem
