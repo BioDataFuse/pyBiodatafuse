@@ -15,25 +15,25 @@
                                 "crossReferences": [
                                     {
                                         "source": "DailyMed",
-                                        "reference": [
+                                        "ids": [
                                             "dexamethasone"
                                         ]
                                     },
                                     {
                                         "source": "EMA",
-                                        "reference": [
+                                        "ids": [
                                             "human/EPAR/ozurdex"
                                         ]
                                     },
                                     {
                                         "source": "drugbank",
-                                        "reference": [
+                                        "ids": [
                                             "DB01234"
                                         ]
                                     },
                                     {
                                         "source": "chEBI",
-                                        "reference": [
+                                        "ids": [
                                             "41879"
                                         ]
                                     }
@@ -72,13 +72,13 @@
                                 "crossReferences": [
                                     {
                                         "source": "DailyMed",
-                                        "reference": [
+                                        "ids": [
                                             "triamcinolone%20acetonide"
                                         ]
                                     },
                                     {
                                         "source": "chEBI",
-                                        "reference": [
+                                        "ids": [
                                             "71418"
                                         ]
                                     }
@@ -174,19 +174,19 @@
                                 "crossReferences": [
                                     {
                                         "source": "DailyMed",
-                                        "reference": [
+                                        "ids": [
                                             "midazolam"
                                         ]
                                     },
                                     {
                                         "source": "drugbank",
-                                        "reference": [
+                                        "ids": [
                                             "DB00683"
                                         ]
                                     },
                                     {
                                         "source": "chEBI",
-                                        "reference": [
+                                        "ids": [
                                             "6931"
                                         ]
                                     }
@@ -282,13 +282,13 @@
                                 "crossReferences": [
                                     {
                                         "source": "drugbank",
-                                        "reference": [
+                                        "ids": [
                                             "DB00633"
                                         ]
                                     },
                                     {
                                         "source": "chEBI",
-                                        "reference": [
+                                        "ids": [
                                             "4466"
                                         ]
                                     }
@@ -384,19 +384,19 @@
                                 "crossReferences": [
                                     {
                                         "source": "DailyMed",
-                                        "reference": [
+                                        "ids": [
                                             "midazolam"
                                         ]
                                     },
                                     {
                                         "source": "drugbank",
-                                        "reference": [
+                                        "ids": [
                                             "DB00683"
                                         ]
                                     },
                                     {
                                         "source": "chEBI",
-                                        "reference": [
+                                        "ids": [
                                             "6931"
                                         ]
                                     }
@@ -492,25 +492,25 @@
                                 "crossReferences": [
                                     {
                                         "source": "DailyMed",
-                                        "reference": [
+                                        "ids": [
                                             "dexamethasone"
                                         ]
                                     },
                                     {
                                         "source": "EMA",
-                                        "reference": [
+                                        "ids": [
                                             "human/EPAR/ozurdex"
                                         ]
                                     },
                                     {
                                         "source": "drugbank",
-                                        "reference": [
+                                        "ids": [
                                             "DB01234"
                                         ]
                                     },
                                     {
                                         "source": "chEBI",
-                                        "reference": [
+                                        "ids": [
                                             "41879"
                                         ]
                                     }
@@ -549,19 +549,19 @@
                                 "crossReferences": [
                                     {
                                         "source": "DailyMed",
-                                        "reference": [
+                                        "ids": [
                                             "midazolam"
                                         ]
                                     },
                                     {
                                         "source": "drugbank",
-                                        "reference": [
+                                        "ids": [
                                             "DB00683"
                                         ]
                                     },
                                     {
                                         "source": "chEBI",
-                                        "reference": [
+                                        "ids": [
                                             "6931"
                                         ]
                                     }
@@ -657,13 +657,13 @@
                                 "crossReferences": [
                                     {
                                         "source": "drugbank",
-                                        "reference": [
+                                        "ids": [
                                             "DB00633"
                                         ]
                                     },
                                     {
                                         "source": "chEBI",
-                                        "reference": [
+                                        "ids": [
                                             "4466"
                                         ]
                                     }
@@ -759,19 +759,19 @@
                                 "crossReferences": [
                                     {
                                         "source": "DailyMed",
-                                        "reference": [
+                                        "ids": [
                                             "midazolam"
                                         ]
                                     },
                                     {
                                         "source": "drugbank",
-                                        "reference": [
+                                        "ids": [
                                             "DB00683"
                                         ]
                                     },
                                     {
                                         "source": "chEBI",
-                                        "reference": [
+                                        "ids": [
                                             "6931"
                                         ]
                                     }
@@ -867,13 +867,13 @@
                                 "crossReferences": [
                                     {
                                         "source": "drugbank",
-                                        "reference": [
+                                        "ids": [
                                             "DB01435"
                                         ]
                                     },
                                     {
                                         "source": "chEBI",
-                                        "reference": [
+                                        "ids": [
                                             "31225"
                                         ]
                                     }
@@ -903,19 +903,19 @@
                                 "crossReferences": [
                                     {
                                         "source": "DailyMed",
-                                        "reference": [
+                                        "ids": [
                                             "fentanyl"
                                         ]
                                     },
                                     {
                                         "source": "drugbank",
-                                        "reference": [
+                                        "ids": [
                                             "DB00813"
                                         ]
                                     },
                                     {
                                         "source": "chEBI",
-                                        "reference": [
+                                        "ids": [
                                             "119915"
                                         ]
                                     }
@@ -1011,19 +1011,19 @@
                                 "crossReferences": [
                                     {
                                         "source": "DailyMed",
-                                        "reference": [
+                                        "ids": [
                                             "midazolam"
                                         ]
                                     },
                                     {
                                         "source": "drugbank",
-                                        "reference": [
+                                        "ids": [
                                             "DB00683"
                                         ]
                                     },
                                     {
                                         "source": "chEBI",
-                                        "reference": [
+                                        "ids": [
                                             "6931"
                                         ]
                                     }
@@ -1119,25 +1119,25 @@
                                 "crossReferences": [
                                     {
                                         "source": "DailyMed",
-                                        "reference": [
+                                        "ids": [
                                             "dexamethasone"
                                         ]
                                     },
                                     {
                                         "source": "EMA",
-                                        "reference": [
+                                        "ids": [
                                             "human/EPAR/ozurdex"
                                         ]
                                     },
                                     {
                                         "source": "drugbank",
-                                        "reference": [
+                                        "ids": [
                                             "DB01234"
                                         ]
                                     },
                                     {
                                         "source": "chEBI",
-                                        "reference": [
+                                        "ids": [
                                             "41879"
                                         ]
                                     }
@@ -1176,7 +1176,7 @@
                                 "crossReferences": [
                                     {
                                         "source": "drugbank",
-                                        "reference": [
+                                        "ids": [
                                             "DB11774"
                                         ]
                                     }
@@ -1203,7 +1203,7 @@
                                 "crossReferences": [
                                     {
                                         "source": "drugbank",
-                                        "reference": [
+                                        "ids": [
                                             "DB11774"
                                         ]
                                     }
@@ -1230,7 +1230,7 @@
                                 "crossReferences": [
                                     {
                                         "source": "drugbank",
-                                        "reference": [
+                                        "ids": [
                                             "DB14631"
                                         ]
                                     }
@@ -1247,7 +1247,7 @@
                                 "crossReferences": [
                                     {
                                         "source": "DailyMed",
-                                        "reference": [
+                                        "ids": [
                                             "prednisolone%20sodium%20phosphate"
                                         ]
                                     }
@@ -1343,19 +1343,19 @@
                                 "crossReferences": [
                                     {
                                         "source": "DailyMed",
-                                        "reference": [
+                                        "ids": [
                                             "mometasone%20furoate"
                                         ]
                                     },
                                     {
                                         "source": "drugbank",
-                                        "reference": [
+                                        "ids": [
                                             "DB14512"
                                         ]
                                     },
                                     {
                                         "source": "chEBI",
-                                        "reference": [
+                                        "ids": [
                                             "47564"
                                         ]
                                     }

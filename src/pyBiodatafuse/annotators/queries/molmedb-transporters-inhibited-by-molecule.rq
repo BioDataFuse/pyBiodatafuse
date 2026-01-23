@@ -20,7 +20,8 @@ VALUES ?inhibitorInChIKey { $inhibitor_list }
     								sio:SIO_000008 [ sio:SIO_000300 ?uniprot_trembl_id];
                                      rdfs:label ?hgcn_id;
 									];
-                    bao:BAO_0000208 [rdf:type mmdbvoc:InhibitionAssay;
-                                     sio:SIO_000300 repr:PositiveResult].
+                    bao:BAO_0000208 [^bao:BAO_0095000 [rdf:type mmdbvoc:InhibitionAssay;
+                                                       sio:SIO_000300 repr:PositiveResult]].
   ?ref bibo:pmid ?source_pmid
+  OPTIONAL {?ref bibo:doi ?source_doi}
 }

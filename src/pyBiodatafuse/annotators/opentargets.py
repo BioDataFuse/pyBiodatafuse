@@ -361,9 +361,7 @@ def _process_compounds(
 
     drug_df[Cons.DRUGBANK_ID] = drug_df["cross_references"].apply(
         lambda x: (
-            next((ref["reference"][0] for ref in x if ref["source"] == "drugbank"), None)
-            if x
-            else None
+            next((ref["ids"][0] for ref in x if ref["source"] == "drugbank"), None) if x else None
         )
     )
     drug_df[Cons.DRUGBANK_ID] = drug_df[Cons.DRUGBANK_ID].apply(
@@ -428,7 +426,7 @@ def get_gene_compound_interactions(
                   maximumClinicalTrialPhase
                   crossReferences {
                     source
-                    reference
+                    ids
                   }
                   adverseEvents {
                     count
@@ -597,8 +595,8 @@ def get_disease_compound_interactions(
                         isApproved
                         maximumClinicalTrialPhase
                         crossReferences {
+                            ids
                             source
-                            reference
                         }
                         adverseEvents{
                             count
@@ -611,10 +609,18 @@ def get_disease_compound_interactions(
             }
         }
     }"""
+    final_data = []
 
-    query_string = query_string.replace("$efoIds", str(efo_ids).replace("'", '"'))
+    # query in batches of 25
+    for i in range(0, len(efo_ids), 25):
+        batch_ids = efo_ids[i : i + 25]
+        query_string = query_string.replace("$efoIds", str(batch_ids).replace("'", '"'))
+        r = requests.post(Cons.OPENTARGETS_ENDPOINT, json={"query": query_string}).json()
+        if not r.get("data", {}).get("diseases") or r is None:
+            continue
 
-    r = requests.post(Cons.OPENTARGETS_ENDPOINT, json={"query": query_string}).json()
+        final_data.append(r)
+
     # Record the end time
     end_time = datetime.datetime.now()
 
@@ -636,34 +642,35 @@ def get_disease_compound_interactions(
     # Generate the OpenTargets DataFrame
     intermediate_df = pd.DataFrame()
 
-    if not r.get("data", {}).get("diseases"):
+    if len(final_data) == 0:
         warnings.warn(
             f"There is no annotation for your input list in {Cons.OPENTARGETS_DISEASE_COMPOUND_COL}.",
             stacklevel=2,
         )
         return pd.DataFrame(), opentargets_version
 
-    for disease in tqdm(r["data"]["diseases"], desc="Processing diseases-drug interactions"):
-        if not disease["knownDrugs"]:
-            continue
+    for data in tqdm(final_data, desc="Processing diseases-drug interactions"):
+        for disease in data["data"]["diseases"]:
+            if not disease["knownDrugs"]:
+                continue
 
-        # Based on clinical trial data
-        drug_info = disease["knownDrugs"]["rows"]
-        drug_df = pd.DataFrame(drug_info)
+            # Based on clinical trial data
+            drug_info = disease["knownDrugs"]["rows"]
+            drug_df = pd.DataFrame(drug_info)
 
-        if drug_df.empty:
-            continue
+            if drug_df.empty:
+                continue
 
-        drug_df = _process_compounds(drug_df, disease["id"], "disease")
+            drug_df = _process_compounds(drug_df, disease["id"], "disease")
 
-        intermediate_df = pd.concat([intermediate_df, drug_df], ignore_index=True)
-        intermediate_df = intermediate_df.drop_duplicates(
-            subset=[
-                col
-                for col in intermediate_df.columns
-                if col not in [Cons.OPENTARGETS_ADVERSE_EFFECT, "mechanisms_of_action"]
-            ]
-        )
+            intermediate_df = pd.concat([intermediate_df, drug_df], ignore_index=True)
+            intermediate_df = intermediate_df.drop_duplicates(
+                subset=[
+                    col
+                    for col in intermediate_df.columns
+                    if col not in [Cons.OPENTARGETS_ADVERSE_EFFECT, "mechanisms_of_action"]
+                ]
+            )
 
     if intermediate_df.empty:
         warnings.warn(

@@ -12,7 +12,7 @@ from rdflib.namespace import RDF, RDFS, XSD
 import pyBiodatafuse.constants as Cons
 
 
-def add_gene_nodes(g: Graph, row) -> Optional[URIRef]:
+def get_gene_node(g: Graph, row) -> tuple:
     """Create and add a gene node and associated protein node to the RDF graph.
 
     :param g: (Graph): RDF graph to which the gene and protein nodes are added.
@@ -28,4 +28,4 @@ def add_gene_nodes(g: Graph, row) -> Optional[URIRef]:
             g.add((gene_node, RDF.type, URIRef(Cons.NODE_TYPES["gene_node"])))
             g.add((gene_node, RDFS.label, Literal(row[Cons.IDENTIFIER_COL], datatype=XSD.string)))
             return gene_node
-    return None
+    return (None, None)

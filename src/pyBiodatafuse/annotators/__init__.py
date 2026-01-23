@@ -2,6 +2,7 @@
 
 """Data sources and their annotation pipelines."""
 
+import pyBiodatafuse.annotators.aopwiki
 import pyBiodatafuse.annotators.bgee
 import pyBiodatafuse.annotators.disgenet
 import pyBiodatafuse.annotators.minerva
