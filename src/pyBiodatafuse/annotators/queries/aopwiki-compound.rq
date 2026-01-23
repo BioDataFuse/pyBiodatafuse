@@ -1,4 +1,4 @@
-SELECT DISTINCT ?aop ?aop_title ?MIE_title ?MIE ?KE_downstream ?KE_downstream_title ?KER ?ao ?KE_upstream ?KE_upstream_title ?KE_upstream_organ ?KE_downstream_organ ?pubchem_compound (REPLACE(STR(?Ensembl), "https://identifiers.org/ensembl/", "") AS ?Ensembl)
+SELECT DISTINCT ?aop ?aop_title ?MIE_title ?MIE ?KE_downstream ?KE_downstream_title ?KER ?ao ?ao_title ?KE_upstream ?KE_upstream_title ?KE_upstream_organ ?KE_downstream_organ ?pubchem_compound (REPLACE(STR(?Ensembl), "https://identifiers.org/ensembl/", "") AS ?Ensembl)
 WHERE {
   VALUES ?pubchem_compound { $compounds }
   ?chemical skos:exactMatch ?pubchem_compound .
