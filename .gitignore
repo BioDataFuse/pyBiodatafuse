@@ -931,3 +931,6 @@ examples/usecases/PKD/disgenet.env
 src/pyBiodatafuse/test.py
 test.py
 *.edgelist
+*.tsv
+*.json
+*.svg
