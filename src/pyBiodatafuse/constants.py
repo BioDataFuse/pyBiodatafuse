@@ -712,7 +712,7 @@ KE_DOWNSTREAM = "KE_downstream"
 KE_DOWNSTREAM_TITLE = "KE_downstream_title"
 KER = "KER"
 AO = "ao"
-# AO_TITLE = "ao_title"
+AO_TITLE = "ao_title"
 KE_UPSTREAM = "KE_upstream"
 KE_UPSTREAM_TITLE = "KE_upstream_title"
 KE_UPSTREAM_ORGAN = "KE_upstream_organ"
@@ -745,7 +745,7 @@ AOPWIKI_COMPOUND_OUTPUT_DICT = {
     KE_DOWNSTREAM_TITLE: str,
     KER: str,
     AO: str,
-    # AO_TITLE: str,
+    AO_TITLE: str,
     KE_UPSTREAM: str,
     KE_UPSTREAM_TITLE: str,
     KE_UPSTREAM_ORGAN: str,
