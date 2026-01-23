@@ -112,7 +112,6 @@ def get_aops_gene(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
         # Execute the query and process results
         sparql.setQuery(query)
         res = sparql.queryAndConvert()
-        print(res)
         res_df = pd.DataFrame(
             [
                 {k: (v["value"] if "value" in v else "") for k, v in item.items()}
