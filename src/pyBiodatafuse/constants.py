@@ -728,7 +728,7 @@ AOPWIKI_GENE_OUTPUT_DICT = {
     KE_DOWNSTREAM_TITLE: str,
     KER: str,
     AO: str,
-    # AO_TITLE: str,
+    AO_TITLE: str,
     KE_UPSTREAM: str,
     KE_UPSTREAM_TITLE: str,
     KE_UPSTREAM_ORGAN: str,
