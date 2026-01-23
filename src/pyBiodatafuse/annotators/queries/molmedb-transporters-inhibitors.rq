@@ -20,8 +20,8 @@ WHERE {
                     bao:BAO_0090012 ?transporter ;
                     bao:BAO_0000426 [dcterms:references	?ref] ;
                     bao:BAO_0090012 ?inhibitor ;
-                    bao:BAO_0000208 [rdf:type mmdbvoc:InhibitionAssay;
-                                     sio:SIO_000300 repr:PositiveResult].
+                    bao:BAO_0000208 [^bao:BAO_0095000 [rdf:type mmdbvoc:InhibitionAssay;
+                                                       sio:SIO_000300 repr:PositiveResult]].
   ?inhibitor rdf:type bao:BAO_0000076;
              rdfs:label ?label;
              sio:SIO_000008 [rdf:type sio:CHEMINF_000059;
@@ -29,7 +29,8 @@ WHERE {
              sio:SIO_000008 [rdf:type sio:CHEMINF_000018;
                              sio:SIO_000300 ?SMILES].             
   ?ref bibo:pmid ?source_pmid
-  OPTIONAL {?inhibitor sio:SIO_000008 [rdf:type sio:CHEMINF_000421;
+  OPTIONAL {?ref bibo:doi ?source_doi}
+  OPTIONAL {?inhibitor sio:SIO_000008 [rdf:type sio:CHEMINF_000412;
                              sio:SIO_000300 ?chembl_id]}
   OPTIONAL {?inhibitor sio:SIO_000008 [rdf:type sio:CHEMINF_000407;
                              sio:SIO_000300 ?chebi_id]}
