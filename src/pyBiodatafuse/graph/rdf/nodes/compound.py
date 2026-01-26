@@ -2,7 +2,6 @@
 
 """Populate a BDF RDF graph with compound data."""
 
-
 from typing import Optional
 
 from rdflib import Graph, Literal, URIRef
@@ -247,3 +246,115 @@ def add_tested_compound_node(
         )
     )
     return tested_compound_node
+
+
+def add_compoundwiki_annotations(
+    g: Graph,
+    target_node: URIRef,
+    compoundwiki_data: list,
+) -> None:
+    """Add CompoundWiki annotations to a target node (gene or protein).
+
+    :param g: RDF graph to which the CompoundWiki annotations will be added.
+    :param target_node: URIRef of the target node (gene or protein from PubChem assays).
+    :param compoundwiki_data: List of CompoundWiki annotation dictionaries.
+    """
+    if not compoundwiki_data:
+        return
+
+    for annotation_list in compoundwiki_data:
+        if not isinstance(annotation_list, list):
+            continue
+
+        for annotation in annotation_list:
+            if not isinstance(annotation, dict):
+                continue
+
+            # Get compound identifiers
+            pubchem_cid = annotation.get(Cons.COMPOUNDWIKI_PUBCHEM_ID)
+            compound_label = annotation.get(Cons.COMPOUNDWIKI_LABEL)
+            inchi = annotation.get(Cons.COMPOUNDWIKI_INCHI)
+            smiles = annotation.get(Cons.COMPOUNDWIKI_SMILES)
+
+            if not pubchem_cid:
+                continue
+
+            # Create compound node URI
+            pubchem_cid_clean = str(pubchem_cid).strip()
+            compound_uri = f"https://pubchem.ncbi.nlm.nih.gov/compound/{pubchem_cid_clean}"
+            compound_node = URIRef(compound_uri)
+
+            # Add compound node with basic properties
+            g.add((compound_node, RDF.type, URIRef(Cons.NODE_TYPES["compound_node"])))
+
+            if compound_label:
+                g.add((compound_node, RDFS.label, Literal(compound_label, datatype=XSD.string)))
+
+            # Add chemical structure identifiers
+            if inchi:
+                g.add(
+                    (
+                        compound_node,
+                        URIRef(Cons.PREDICATES["chebi_inchi"]),
+                        Literal(inchi, datatype=XSD.string),
+                    )
+                )
+
+            if smiles:
+                g.add(
+                    (
+                        compound_node,
+                        URIRef(Cons.PREDICATES["chebi_smiles"]),
+                        Literal(smiles, datatype=XSD.string),
+                    )
+                )
+
+            # Add cross-references to other databases
+            chebi_id = annotation.get(Cons.COMPOUNDWIKI_CHEBI_ID)
+            if chebi_id:
+                chebi_uri = f"http://purl.obolibrary.org/obo/CHEBI_{str(chebi_id).strip()}"
+                g.add((compound_node, OWL.sameAs, URIRef(chebi_uri)))
+
+            chembl_id = annotation.get(Cons.COMPOUNDWIKI_CHEMBL_ID)
+            if chembl_id:
+                chembl_uri = (
+                    f"https://www.ebi.ac.uk/chembl/compound_report_card/{str(chembl_id).strip()}"
+                )
+                g.add((compound_node, OWL.sameAs, URIRef(chembl_uri)))
+
+            kegg_id = annotation.get(Cons.COMPOUNDWIKI_KEGG_ID)
+            if kegg_id:
+                kegg_uri = f"https://www.genome.jp/entry/{str(kegg_id).strip()}"
+                g.add((compound_node, OWL.sameAs, URIRef(kegg_uri)))
+
+            wikidata_id = annotation.get(Cons.COMPOUNDWIKI_WIKIDATA_ID)
+            if wikidata_id:
+                wikidata_uri = f"http://www.wikidata.org/entity/{str(wikidata_id).strip()}"
+                g.add((compound_node, OWL.sameAs, URIRef(wikidata_uri)))
+
+            # Add chemical formula if available
+            formula = annotation.get(Cons.COMPOUNDWIKI_FORMULA)
+            if formula:
+                g.add(
+                    (
+                        compound_node,
+                        URIRef(Cons.PREDICATES["molecular_formula"]),  # has chemical formula
+                        Literal(formula, datatype=XSD.string),
+                    )
+                )
+
+            # Link compound to target node (association)
+            g.add(
+                (
+                    target_node,
+                    URIRef(Cons.PREDICATES["sio_is_associated_with"]),
+                    compound_node,
+                )
+            )
+            g.add(
+                (
+                    compound_node,
+                    URIRef(Cons.PREDICATES["sio_is_associated_with"]),
+                    target_node,
+                )
+            )

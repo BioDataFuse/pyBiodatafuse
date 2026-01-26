@@ -45,6 +45,7 @@ from pyBiodatafuse.graph.rdf.metadata import add_metadata
 from pyBiodatafuse.graph.rdf.nodes.aop import add_aop_data
 from pyBiodatafuse.graph.rdf.nodes.compound import (
     add_associated_compound_node,
+    add_compoundwiki_annotations,
     add_inhibitor_transporter_node,
     add_transporter_inhibitor_node,
     get_compound_node,
@@ -254,6 +255,11 @@ class BDFGraph(Graph):
             except Exception as e:
                 logger.warning("Failed to process molecular pathway data for gene node: %s", e)
 
+            try:
+                self.process_compoundwiki_data(gene_node, row)
+            except Exception as e:
+                logger.warning("Failed to process CompoundWiki data for gene node: %s", e)
+
         if compound:
             try:
                 self.process_pathways(row, compound_node, protein_nodes=[])
@@ -276,6 +282,11 @@ class BDFGraph(Graph):
                 self.process_molecular_pathway(pathways_data, compound_node, id_number)
             except Exception as e:
                 logger.warning("Failed to process molecular pathway data for compound node: %s", e)
+
+            try:
+                self.process_compoundwiki_data(compound_node, row)
+            except Exception as e:
+                logger.warning("Failed to process CompoundWiki data for compound node: %s", e)
 
     # Class methods about specific nodes begin here
     # If you add a new method, try to import most of the code from another script
@@ -410,6 +421,80 @@ class BDFGraph(Graph):
         if compound_data is not None:
             for compound in compound_data:
                 add_associated_compound_node(self, compound, gene_node)
+
+    def process_compoundwiki_data(self, target_node: URIRef, row: pd.Series) -> None:
+        """
+        Process CompoundWiki annotation data and add to the RDF graph.
+
+        :param target_node: URIRef of the target node (gene or protein).
+        :param row: Data row containing CompoundWiki annotations.
+        """
+        # Check if we have PubChem assays with CompoundWiki annotations
+        pubchem_assays = row.get(Cons.PUBCHEM_COMPOUND_ASSAYS_COL, None)
+        if pubchem_assays and isinstance(pubchem_assays, list):
+            for assay in pubchem_assays:
+                if isinstance(assay, dict):
+                    compoundwiki_annotations = assay.get(Cons.COMPOUNDWIKI_COL, None)
+                    if compoundwiki_annotations:
+                        add_compoundwiki_annotations(
+                            self,
+                            target_node,
+                            [compoundwiki_annotations],
+                        )
+
+        # Check for CompoundWiki annotations in OpenTargets compound data
+        opentargets_compounds = row.get(Cons.OPENTARGETS_GENE_COMPOUND_COL, None)
+        if opentargets_compounds and isinstance(opentargets_compounds, list):
+            for compound in opentargets_compounds:
+                if isinstance(compound, dict):
+                    compoundwiki_annotations = compound.get(Cons.COMPOUNDWIKI_COL, None)
+                    if compoundwiki_annotations:
+                        add_compoundwiki_annotations(
+                            self,
+                            target_node,
+                            [compoundwiki_annotations],
+                        )
+
+        # Check for CompoundWiki annotations in IntAct interaction data
+        for intact_col in [Cons.INTACT_INTERACT_COL, Cons.INTACT_COMPOUND_INTERACT_COL]:
+            intact_data = row.get(intact_col, None)
+            if intact_data and isinstance(intact_data, list):
+                for interaction in intact_data:
+                    if isinstance(interaction, dict):
+                        compoundwiki_annotations = interaction.get(Cons.COMPOUNDWIKI_COL, None)
+                        if compoundwiki_annotations:
+                            add_compoundwiki_annotations(
+                                self,
+                                target_node,
+                                [compoundwiki_annotations],
+                            )
+
+        # Check for CompoundWiki annotations in KEGG pathway data
+        kegg_pathways = row.get(Cons.KEGG_PATHWAY_COL, None)
+        if kegg_pathways and isinstance(kegg_pathways, list):
+            for pathway in kegg_pathways:
+                if isinstance(pathway, dict):
+                    compoundwiki_annotations = pathway.get(Cons.COMPOUNDWIKI_COL, None)
+                    if compoundwiki_annotations:
+                        add_compoundwiki_annotations(
+                            self,
+                            target_node,
+                            [compoundwiki_annotations],
+                        )
+
+        # Check for CompoundWiki annotations in MolMeDB data
+        for molmedb_col in [Cons.MOLMEDB_PROTEIN_COMPOUND_COL, Cons.MOLMEDB_COMPOUND_PROTEIN_COL]:
+            molmedb_data = row.get(molmedb_col, None)
+            if molmedb_data and isinstance(molmedb_data, list):
+                for compound in molmedb_data:
+                    if isinstance(compound, dict):
+                        compoundwiki_annotations = compound.get(Cons.COMPOUNDWIKI_COL, None)
+                        if compoundwiki_annotations:
+                            add_compoundwiki_annotations(
+                                self,
+                                target_node,
+                                [compoundwiki_annotations],
+                            )
 
     def process_literature_data(
         self,
