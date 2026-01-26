@@ -2,5 +2,4 @@
 
 """init script."""
 
-
 from .rdf import BDFGraph

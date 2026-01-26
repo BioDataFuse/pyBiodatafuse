@@ -5,7 +5,6 @@
 import json
 import logging
 import pickle
-
 from logging import Logger
 
 import networkx as nx

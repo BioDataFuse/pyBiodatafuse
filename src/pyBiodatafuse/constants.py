@@ -2,7 +2,6 @@
 
 """Python constant file."""
 
-
 """
 API endpoints for each data source
 """

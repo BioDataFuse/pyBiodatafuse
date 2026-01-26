@@ -2,7 +2,6 @@
 
 """Populate a BDF RDF graph with compound data."""
 
-
 from typing import Optional
 
 from rdflib import Graph, Literal, URIRef

@@ -3,7 +3,6 @@
 
 """Some metadata node functions."""
 
-
 from datetime import datetime
 
 from rdflib import Graph, Literal, URIRef

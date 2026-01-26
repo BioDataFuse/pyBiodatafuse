@@ -190,9 +190,11 @@ def get_aops_gene(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
     num_new_nodes = intermediate_df[Cons.TARGET_COL].nunique()
     num_new_edges = intermediate_df.drop_duplicates(subset=[Cons.TARGET_COL]).shape[0]
 
-    # Check the intermediate_df
-    if num_new_edges != len(intermediate_df):
-        give_annotator_warning(Cons.AOPWIKIRDF)
+    # Check the intermediate_df - commented out to adapt to AOP structure
+    # Building a pathway becomes very complicated if we need to group_by
+    # all columns
+    # if num_new_edges != len(intermediate_df):
+    #    give_annotator_warning(Cons.AOPWIKIRDF)
 
     # Add the number of new nodes and edges to metadata
     metadata_dict[Cons.QUERY][Cons.NUM_NODES] = num_new_nodes
