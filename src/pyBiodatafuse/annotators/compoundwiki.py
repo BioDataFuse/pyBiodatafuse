@@ -10,6 +10,7 @@ from typing import List, Tuple
 
 import numpy as np
 import pandas as pd
+import requests
 from SPARQLWrapper import JSON, SPARQLWrapper
 from SPARQLWrapper.SPARQLExceptions import SPARQLWrapperException
 
@@ -33,20 +34,57 @@ def check_endpoint_compoundwiki() -> bool:
         return False
 
 
-# TODO: Wait until Compoundwiki includes versioning.
 def get_version_compoundwiki() -> dict:
-    """Return metadata with a timestamp for versioning."""
-    now = str(datetime.datetime.now())
-    return {
-        "metadata": {
-            "data_version": {
-                "dataVersion": {
-                    "year": now[0:4],
-                    "month": now[5:7],
-                }
-            },
-        },
+    """Get version of CompoundWiki from the MediaWiki API.
+
+    Fetches the most recent change from CompoundWiki to get version information
+    including revision ID (revid) and timestamp.
+
+    :returns: a dictionary containing the version information with revid as source_version
+    """
+    # CompoundWiki MediaWiki API endpoint for recent changes
+    api_url = "https://compoundcloud.wikibase.cloud/w/api.php"
+    params = {
+        "action": "query",
+        "list": "recentchanges",
+        "rcprop": "title|ids|sizes|flags|user|timestamp",
+        "rclimit": "1",
+        "format": "json",
     }
+
+    try:
+        response = requests.get(api_url, params=params, timeout=10)
+        response.raise_for_status()
+        data = response.json()
+
+        # Extract version information from the API response
+        if "query" in data and "recentchanges" in data["query"]:
+            recent_changes = data["query"]["recentchanges"]
+            if recent_changes:
+                recent_change = recent_changes[0]
+                revid = recent_change.get("revid", "")
+                timestamp = recent_change.get("timestamp", "")
+
+                # Use revid as the source_version, with timestamp as additional info
+                # Format: "revid_30029 (2026-01-25)"
+                if timestamp:
+                    dt = datetime.datetime.fromisoformat(timestamp.replace("Z", "+00:00"))
+                    date_str = dt.strftime("%Y-%m-%d")
+                    source_version = f"revid_{revid} ({date_str})"
+                else:
+                    source_version = f"revid_{revid}"
+
+                return {"source_version": source_version}
+
+    except (requests.RequestException, KeyError, ValueError) as e:
+        warnings.warn(
+            f"Could not fetch CompoundWiki version from API: {e}. Using current timestamp.",
+            stacklevel=2,
+        )
+
+    # Fallback to current timestamp if API call fails
+    now = datetime.datetime.now()
+    return {"source_version": f"unknown ({now.strftime('%Y-%m-%d')})"}
 
 
 def query_compoundwiki(compound_ids) -> dict:
@@ -397,7 +435,7 @@ def get_compound_annotations(
 
     compoundwiki_metadata = {
         "datasource": Cons.COMPOUNDWIKI,
-        "metadata": {"source_version": compoundwiki_version},
+        "metadata": compoundwiki_version,
         "query": {
             "size": sum(len(v) if v is not None else 0 for v in annotation_map.values()),
             "time": str(end_time - start_time),

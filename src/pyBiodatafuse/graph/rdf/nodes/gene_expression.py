@@ -3,10 +3,20 @@
 """Populate a BDF RDF graph with gene expression data."""
 
 from bioregistry import get_iri
-from rdflib import Graph, Literal, URIRef
-from rdflib.namespace import RDF, RDFS, XSD
+from rdflib import Graph, URIRef
+from rdflib.namespace import XSD
 
 import pyBiodatafuse.constants as Cons
+from pyBiodatafuse.graph.rdf.nodes.base import (
+    add_label,
+    add_triple,
+    add_type,
+    add_value,
+    create_node,
+    link_has_part,
+    link_has_source,
+    safe_get,
+)
 from pyBiodatafuse.graph.rdf.nodes.experimental_process import add_experimental_process_node
 from pyBiodatafuse.graph.rdf.utils import add_data_source_node
 
@@ -31,133 +41,61 @@ def add_gene_expression_data(
     :param new_uris: Dictionary with updated project base URIs for the nodes.
     """
     for data in expression_data:
-        if not data.get(Cons.ANATOMICAL_ID, None):
+        anatomical_id = safe_get(data, Cons.ANATOMICAL_ID)
+        if not anatomical_id:
             continue
 
-        gene_expression_value_node = URIRef(
-            f"{new_uris['gene_expression_value_base_node']}/{id_number}/{source_idx}"
-        )
-        developmental_stage_iri = get_iri(data[Cons.DEVELOPMENTAL_ID].replace("_", ":"))
+        # Get developmental stage node
+        dev_id = safe_get(data, Cons.DEVELOPMENTAL_ID)
+        if not dev_id:
+            continue
+        developmental_stage_iri = get_iri(dev_id.replace("_", ":"))
         if not developmental_stage_iri:
             continue
         developmental_stage_node = URIRef(developmental_stage_iri)
 
-        anatomical_entity = data[Cons.ANATOMICAL_ID]
-        anatomical_entity_iri = get_iri(anatomical_entity.replace("_", ":"))
+        # Get anatomical entity node
+        anatomical_entity_iri = get_iri(anatomical_id.replace("_", ":"))
         if not anatomical_entity_iri:
             continue
         anatomical_entity_node = URIRef(anatomical_entity_iri)
+
+        # Create expression value node
         exp_uri = new_uris["gene_expression_value_base_node"]
-
-        gene_expression_value_node = URIRef(
-            f"{exp_uri}/{id_number}/{source_idx}_{anatomical_entity}"
+        gene_expression_value_node = create_node(
+            f"{exp_uri}/{id_number}/", f"{source_idx}_{anatomical_id}"
         )
 
-        g.add(
-            (
-                gene_node,
-                URIRef(Cons.PREDICATES["sio_has_measurement_value"]),
-                gene_expression_value_node,
-            )
+        # Link gene to expression value
+        add_triple(g, gene_node, "sio_has_measurement_value", gene_expression_value_node)
+        add_triple(
+            g, gene_expression_value_node, "sio_is_associated_with", anatomical_entity_node
         )
-        g.add(
-            (
-                gene_expression_value_node,
-                URIRef(Cons.PREDICATES["sio_is_associated_with"]),
-                anatomical_entity_node,
-            )
-        )
-        g.add(
-            (
-                gene_expression_value_node,
-                URIRef(Cons.PREDICATES["sio_is_associated_with"]),
-                developmental_stage_node,
-            )
+        add_triple(
+            g, gene_expression_value_node, "sio_is_associated_with", developmental_stage_node
         )
 
-        # g.add((gene_node, URIRef(PREDICATES['sio_is_part_of']), cellular_component))
-        # g.add((gene_node, URIRef(PREDICATES['sio_is_represented_by']), gene_symbol))
+        # Add types and labels
+        add_type(g, gene_expression_value_node, Cons.NODE_TYPES["gene_expression_value_node"])
+        expression_level = safe_get(data, "expression_level")
+        if expression_level is not None:
+            add_value(g, gene_expression_value_node, expression_level, XSD.double)
 
-        g.add(
-            (
-                gene_expression_value_node,
-                RDF.type,
-                URIRef(Cons.NODE_TYPES["gene_expression_value_node"]),
-            )
-        )
-        g.add(
-            (
-                gene_expression_value_node,
-                URIRef(Cons.PREDICATES["sio_has_value"]),
-                Literal(data["expression_level"], datatype=XSD.double),
-            )
-        )
+        add_type(g, anatomical_entity_node, Cons.NODE_TYPES["anatomical_entity_node"])
+        add_label(g, anatomical_entity_node, safe_get(data, Cons.ANATOMICAL_NAME))
 
-        g.add((anatomical_entity_node, RDF.type, URIRef(Cons.NODE_TYPES["anatomical_entity_node"])))
-        g.add(
-            (
-                anatomical_entity_node,
-                RDFS.label,
-                Literal(data[Cons.ANATOMICAL_NAME], datatype=XSD.string),
-            )
-        )
-        g.add(
-            (
-                developmental_stage_node,
-                RDFS.label,
-                Literal(data[Cons.DEVELOPMENTAL_STAGE_NAME], datatype=XSD.string),
-            )
-        )
-        g.add(
-            (
-                developmental_stage_node,
-                RDF.type,
-                URIRef(Cons.NODE_TYPES["developmental_stage_node"]),
-            )
-        )
-        g.add(
-            (
-                gene_expression_value_node,
-                RDF.type,
-                URIRef(Cons.NODE_TYPES["gene_expression_value_node"]),
-            )
-        )
-        g.add((gene_expression_value_node, URIRef(Cons.PREDICATES["sio_has_input"]), gene_node))
+        add_type(g, developmental_stage_node, Cons.NODE_TYPES["developmental_stage_node"])
+        add_label(g, developmental_stage_node, safe_get(data, Cons.DEVELOPMENTAL_STAGE_NAME))
 
-        # Add experimental node
+        # Link input
+        add_triple(g, gene_expression_value_node, "sio_has_input", gene_node)
+
+        # Add experimental process nodes
         if experimental_process_data:
             for exp in experimental_process_data:
-                experimental_process_node = add_experimental_process_node(
-                    g=g,
-                    data=exp,
-                )
+                experimental_process_node = add_experimental_process_node(g=g, data=exp)
                 if experimental_process_node:
-                    g.add(
-                        (
-                            gene_node,
-                            URIRef(Cons.PREDICATES["sio_is_part_of"]),
-                            experimental_process_node,
-                        )
-                    )
-                    g.add(
-                        (
-                            experimental_process_node,
-                            URIRef(Cons.PREDICATES["sio_has_part"]),
-                            gene_node,
-                        )
-                    )
-                    g.add(
-                        (
-                            experimental_process_node,
-                            URIRef(Cons.PREDICATES["sio_has_part"]),
-                            anatomical_entity_node,
-                        )
-                    )
+                    link_has_part(g, experimental_process_node, gene_node)
+                    link_has_part(g, experimental_process_node, anatomical_entity_node)
                     data_source_node = add_data_source_node(g, "Bgee")
-                    g.add(
-                        (
-                            gene_expression_value_node,
-                            URIRef(Cons.PREDICATES["sio_has_source"]),
-                            data_source_node,
-                        )
-                    )
+                    link_has_source(g, gene_expression_value_node, data_source_node)

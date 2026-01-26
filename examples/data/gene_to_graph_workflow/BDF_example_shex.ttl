@@ -54,13 +54,69 @@ PREFIX ensembl: <https://identifiers.org/ensembl:>
 PREFIX bdf: <https://biodatafuse.org/>
 PREFIX mondo: <https://monarchinitiative.org/disease/>
 PREFIX umls: <https://www.ncbi.nlm.nih.gov/medgen/>
+PREFIX cheminf: < http://semanticscience.org/resource/>
+PREFIX pav: <http://purl.org/pav/>
 PREFIX ns1: <http://vocabularies.wikipathways.org/wp#>
+
+weso-s:DisGeNET_Evidence_Index
+{
+   rdf:type  [bdfo:DisGeNET_Evidence_Index]  ;                 # 100.0 %
+   sio:SIO_000300  xsd:double                                  # 100.0 %
+}
+
+
+weso-s:NCIT_C25338
+{
+   rdf:type  [obo:NCIT_C25338]  ;                              # 100.0 %
+   sio:SIO_000300  xsd:double                                  # 100.0 %
+}
+
+
+weso-s:SIO_001077
+{
+   rdf:type  [sio:SIO_001077]  ;                               # 100.0 %
+   sio:SIO_001403  xsd:string  {2};                            # 100.0 %
+   sio:SIO_000300  xsd:double  ;                               # 100.0 %
+   sio:SIO_000230  xsd:string                                  # 100.0 %
+}
+
+
+weso-s:Interaction
+{
+   rdf:type  [<https://vocabularies.wikipathways.org/wp#Interaction>]  ;          # 100.0 %
+   sio:SIO_000068  IRI  +;                                     # 100.0 %
+            # 28.95622895622896 % obj: IRI. Cardinality: {1}
+            # 23.905723905723907 % obj: IRI. Cardinality: {13}
+            # 20.2020202020202 % obj: IRI. Cardinality: {2}
+            # 10.1010101010101 % obj: IRI. Cardinality: {3}
+            # 10.1010101010101 % obj: IRI. Cardinality: {15}
+            # 2.6936026936026933 % obj: IRI. Cardinality: {4}
+            # 2.6936026936026933 % obj: IRI. Cardinality: {5}
+            # 0.6734006734006733 % obj: IRI. Cardinality: {46}
+            # 0.33670033670033667 % obj: IRI. Cardinality: {17}
+            # 0.33670033670033667 % obj: IRI. Cardinality: {6}
+   rdfs:label  xsd:string  ;                                   # 100.0 %
+   sio:SIO_000028  @weso-s:NCIT_C16612  *
+            # 97.97979797979798 % obj: @weso-s:NCIT_C16612. Cardinality: +
+            # 22.55892255892256 % obj: @weso-s:NCIT_C16612. Cardinality: {4}
+            # 20.875420875420875 % obj: @weso-s:NCIT_C16612. Cardinality: {2}
+            # 17.50841750841751 % obj: @weso-s:NCIT_C16612. Cardinality: {13}
+            # 15.488215488215488 % obj: @weso-s:NCIT_C16612. Cardinality: {6}
+            # 10.774410774410773 % obj: @weso-s:NCIT_C16612. Cardinality: {3}
+            # 3.7037037037037033 % obj: @weso-s:NCIT_C16612. Cardinality: {1}
+            # 3.7037037037037033 % obj: @weso-s:NCIT_C16612. Cardinality: {8}
+            # 2.6936026936026933 % obj: @weso-s:NCIT_C16612. Cardinality: {5}
+            # 0.6734006734006733 % obj: @weso-s:NCIT_C16612. Cardinality: {11}
+            # 94.27609427609428 % obj: @weso-s:NCIT_C17021. Cardinality: +
+            # 5.05050505050505 % obj: @weso-s:SIO_010038. Cardinality: +
+}
+
 
 weso-s:NCIT_C17021
 {
    rdf:type  [obo:NCIT_C17021]  ;                              # 100.0 %
    sio:SIO_000068  @weso-s:Interaction  +;                     # 100.0 %
-            # 27.807486631016044 % obj: @weso-s:Interaction. Cardinality: {2}
+            # 27.27272727272727 % obj: @weso-s:Interaction. Cardinality: {2}
             # 26.47058823529412 % obj: @weso-s:Interaction. Cardinality: {33}
             # 10.962566844919785 % obj: @weso-s:Interaction. Cardinality: {30}
             # 8.02139037433155 % obj: @weso-s:Interaction. Cardinality: {45}
@@ -72,6 +128,7 @@ weso-s:NCIT_C17021
             # 1.6042780748663104 % obj: @weso-s:Interaction. Cardinality: {12}
             # 1.06951871657754 % obj: @weso-s:Interaction. Cardinality: {24}
             # 0.8021390374331552 % obj: @weso-s:Interaction. Cardinality: {46}
+            # 0.53475935828877 % obj: @weso-s:Interaction. Cardinality: {3}
             # 0.53475935828877 % obj: @weso-s:Interaction. Cardinality: {16}
             # 0.53475935828877 % obj: @weso-s:Interaction. Cardinality: {102}
    ns1:Interaction  @weso-s:NCIT_C16612  +;                    # 100.0 %
@@ -91,33 +148,73 @@ weso-s:NCIT_C17021
             # 12.032085561497325 % obj: @weso-s:NCIT_C16612. Cardinality: {1}
             # 1.8716577540106951 % obj: @weso-s:NCIT_C16612. Cardinality: {2}
    ns1:Conversion  @weso-s:NCIT_C16612  ?;
-            # 5.347593582887701 % obj: @weso-s:NCIT_C16612. Cardinality: {1}
+            # 5.88235294117647 % obj: @weso-s:NCIT_C16612. Cardinality: {1}
    ns1:TranscriptionTranslation  @weso-s:NCIT_C16612  ?
             # 3.2085561497326207 % obj: @weso-s:NCIT_C16612. Cardinality: {1}
 }
 
 
-weso-s:NCIT_C25338
+weso-s:Dataset
 {
-   rdf:type  [obo:NCIT_C25338]  ;                              # 100.0 %
-   sio:SIO_000300  xsd:double                                  # 100.0 %
+   rdf:type  [dcat:Dataset]  ;                                 # 100.0 %
+   rdf:type  [void:Dataset]  ;                                 # 100.0 %
+   dcat:accessURL  IRI  ;                                      # 100.0 %
+            # 60.0 % obj: @weso-s:WebAPI. Cardinality: {1}
+   prov:generatedAtTime  xsd:dateTime  ;                       # 100.0 %
+   dcterms:title  xsd:string  ;                                # 100.0 %
+   pav:retrievedOn  xsd:dateTime  ;                            # 100.0 %
+   rdfs:label  xsd:string  ;                                   # 100.0 %
+   pav:retrievedFrom  IRI  ?;
+            # 90.0 % obj: IRI. Cardinality: {1}
+   schema:url  IRI  ?;
+            # 90.0 % obj: IRI. Cardinality: {1}
+            # 10.0 % obj: @weso-s:SIO_000750. Cardinality: {1}
+   dcterms:source  IRI  ?;
+            # 90.0 % obj: IRI. Cardinality: {1}
+   dcat:landingPage  IRI  ?;
+            # 90.0 % obj: IRI. Cardinality: {1}
+            # 10.0 % obj: @weso-s:SIO_000750. Cardinality: {1}
+   dcterms:license  IRI  ?;
+            # 70.0 % obj: IRI. Cardinality: {1}
+   dcterms:hasVersion  xsd:string  ?;
+            # 60.0 % obj: xsd:string. Cardinality: {1}
+   pav:version  xsd:string  ?;
+            # 60.0 % obj: xsd:string. Cardinality: {1}
+   void:sparqlEndpoint  IRI  ?
+            # 40.0 % obj: IRI. Cardinality: {1}
+            # 10.0 % obj: @weso-s:WebAPI. Cardinality: {1}
 }
 
 
-weso-s:DisGeNET_Evidence_Index
+weso-s:Dataset
 {
-   rdf:type  [bdfo:DisGeNET_Evidence_Index]  ;                 # 100.0 %
-   sio:SIO_000300  xsd:double                                  # 100.0 %
-}
-
-
-weso-s:SIO_001077
-{
-   rdf:type  [sio:SIO_001077]  ;                               # 100.0 %
-   sio:SIO_001403  @weso-s:NCIT_C43531  ;                      # 100.0 %
-            # 100.0 % obj: @weso-s:SIO_001262. Cardinality: {1}
-   sio:SIO_000230  @weso-s:NCIT_C16612  ;                      # 100.0 %
-   sio:SIO_000300  xsd:double                                  # 100.0 %
+   rdf:type  [dcat:Dataset]  ;                                 # 100.0 %
+   rdf:type  [void:Dataset]  ;                                 # 100.0 %
+   dcat:accessURL  IRI  ;                                      # 100.0 %
+            # 60.0 % obj: @weso-s:WebAPI. Cardinality: {1}
+   prov:generatedAtTime  xsd:dateTime  ;                       # 100.0 %
+   dcterms:title  xsd:string  ;                                # 100.0 %
+   pav:retrievedOn  xsd:dateTime  ;                            # 100.0 %
+   rdfs:label  xsd:string  ;                                   # 100.0 %
+   pav:retrievedFrom  IRI  ?;
+            # 90.0 % obj: IRI. Cardinality: {1}
+   schema:url  IRI  ?;
+            # 90.0 % obj: IRI. Cardinality: {1}
+            # 10.0 % obj: @weso-s:SIO_000750. Cardinality: {1}
+   dcterms:source  IRI  ?;
+            # 90.0 % obj: IRI. Cardinality: {1}
+   dcat:landingPage  IRI  ?;
+            # 90.0 % obj: IRI. Cardinality: {1}
+            # 10.0 % obj: @weso-s:SIO_000750. Cardinality: {1}
+   dcterms:license  IRI  ?;
+            # 70.0 % obj: IRI. Cardinality: {1}
+   dcterms:hasVersion  xsd:string  ?;
+            # 60.0 % obj: xsd:string. Cardinality: {1}
+   pav:version  xsd:string  ?;
+            # 60.0 % obj: xsd:string. Cardinality: {1}
+   void:sparqlEndpoint  IRI  ?
+            # 40.0 % obj: IRI. Cardinality: {1}
+            # 10.0 % obj: @weso-s:WebAPI. Cardinality: {1}
 }
 
 
@@ -125,50 +222,31 @@ weso-s:NCIT_C7057
 {
    rdf:type  [obo:NCIT_C7057]  ;                               # 100.0 %
    owl:sameAs  IRI  +;                                         # 100.0 %
-            # 16.756756756756758 % obj: IRI. Cardinality: {5}
-            # 15.675675675675677 % obj: IRI. Cardinality: {8}
-            # 13.513513513513514 % obj: IRI. Cardinality: {7}
-            # 9.18918918918919 % obj: IRI. Cardinality: {9}
-            # 9.18918918918919 % obj: IRI. Cardinality: {6}
-            # 6.486486486486487 % obj: IRI. Cardinality: {2}
-            # 5.405405405405405 % obj: IRI. Cardinality: {10}
-            # 4.324324324324325 % obj: IRI. Cardinality: {4}
-            # 3.783783783783784 % obj: IRI. Cardinality: {11}
-            # 3.2432432432432434 % obj: IRI. Cardinality: {3}
-            # 2.7027027027027026 % obj: IRI. Cardinality: {12}
-            # 1.6216216216216217 % obj: IRI. Cardinality: {14}
-            # 1.0810810810810811 % obj: IRI. Cardinality: {34}
-            # 1.0810810810810811 % obj: IRI. Cardinality: {17}
-            # 1.0810810810810811 % obj: IRI. Cardinality: {13}
-            # 0.5405405405405406 % obj: IRI. Cardinality: {18}
-            # 0.5405405405405406 % obj: IRI. Cardinality: {80}
-            # 0.5405405405405406 % obj: IRI. Cardinality: {26}
-            # 0.5405405405405406 % obj: IRI. Cardinality: {16}
-            # 0.5405405405405406 % obj: IRI. Cardinality: {37}
-            # 0.5405405405405406 % obj: IRI. Cardinality: {15}
-            # 0.5405405405405406 % obj: IRI. Cardinality: {35}
-            # 0.5405405405405406 % obj: IRI. Cardinality: {19}
-            # 0.5405405405405406 % obj: IRI. Cardinality: {22}
+            # 16.41025641025641 % obj: IRI. Cardinality: {5}
+            # 15.384615384615385 % obj: IRI. Cardinality: {8}
+            # 12.307692307692308 % obj: IRI. Cardinality: {7}
+            # 9.743589743589745 % obj: IRI. Cardinality: {6}
+            # 9.230769230769232 % obj: IRI. Cardinality: {9}
+            # 7.179487179487179 % obj: IRI. Cardinality: {10}
+            # 6.153846153846154 % obj: IRI. Cardinality: {2}
+            # 5.641025641025641 % obj: IRI. Cardinality: {4}
+            # 3.076923076923077 % obj: IRI. Cardinality: {3}
+            # 3.076923076923077 % obj: IRI. Cardinality: {11}
+            # 2.051282051282051 % obj: IRI. Cardinality: {13}
+            # 2.051282051282051 % obj: IRI. Cardinality: {12}
+            # 1.0256410256410255 % obj: IRI. Cardinality: {34}
+            # 1.0256410256410255 % obj: IRI. Cardinality: {17}
+            # 1.0256410256410255 % obj: IRI. Cardinality: {14}
+            # 0.5128205128205128 % obj: IRI. Cardinality: {19}
+            # 0.5128205128205128 % obj: IRI. Cardinality: {18}
+            # 0.5128205128205128 % obj: IRI. Cardinality: {15}
+            # 0.5128205128205128 % obj: IRI. Cardinality: {80}
+            # 0.5128205128205128 % obj: IRI. Cardinality: {26}
+            # 0.5128205128205128 % obj: IRI. Cardinality: {16}
+            # 0.5128205128205128 % obj: IRI. Cardinality: {38}
+            # 0.5128205128205128 % obj: IRI. Cardinality: {35}
+            # 0.5128205128205128 % obj: IRI. Cardinality: {22}
    rdfs:label  xsd:string                                      # 100.0 %
-}
-
-
-weso-s:SIO_000983
-{
-   rdf:type  [sio:SIO_000983]  ;                               # 100.0 %
-   sio:SIO_000628  @weso-s:NCIT_C16612  ;                      # 100.0 %
-            # 100.0 % obj: @weso-s:NCIT_C7057. Cardinality: {1}
-   sio:SIO_000216  @weso-s:NCIT_C25338  +                      # 100.0 %
-            # 39.24050632911392 % obj: @weso-s:NCIT_C25338. Cardinality: {15}
-            # 18.143459915611814 % obj: @weso-s:NCIT_C25338. Cardinality: {1}
-            # 10.126582278481013 % obj: @weso-s:NCIT_C25338. Cardinality: {11}
-            # 8.860759493670885 % obj: @weso-s:NCIT_C25338. Cardinality: {23}
-            # 8.438818565400844 % obj: @weso-s:NCIT_C25338. Cardinality: {5}
-            # 6.751054852320674 % obj: @weso-s:NCIT_C25338. Cardinality: {10}
-            # 6.329113924050633 % obj: @weso-s:NCIT_C25338. Cardinality: {4}
-            # 2.109704641350211 % obj: @weso-s:NCIT_C25338. Cardinality: {3}
-            # 89.87341772151899 % obj: @weso-s:DisGeNET_Evidence_Index. Cardinality: +
-            # 0.8438818565400843 % obj: @weso-s:DisGeNET_Evidence_Level. Cardinality: +
 }
 
 
@@ -194,151 +272,208 @@ weso-s:SIO_010038
 }
 
 
+weso-s:DisGeNET_Evidence_Level
+{
+   rdf:type  [bdfo:DisGeNET_Evidence_Level]  ;                 # 100.0 %
+   sio:SIO_000300  xsd:string                                  # 100.0 %
+}
+
+
 weso-s:NCIT_C16612
 {
    rdf:type  [obo:NCIT_C16612]  ;                              # 100.0 %
    sio:SIO_000068  @weso-s:Interaction  +;                     # 100.0 %
-            # 19.642857142857142 % obj: @weso-s:Interaction. Cardinality: {2}
+            # 17.857142857142858 % obj: @weso-s:Interaction. Cardinality: {2}
             # 17.857142857142858 % obj: @weso-s:Interaction. Cardinality: {33}
             # 12.5 % obj: @weso-s:Interaction. Cardinality: {30}
             # 10.714285714285714 % obj: @weso-s:Interaction. Cardinality: {45}
             # 5.357142857142857 % obj: @weso-s:Interaction. Cardinality: {69}
-            # 3.571428571428571 % obj: @weso-s:Interaction. Cardinality: {22}
-            # 3.571428571428571 % obj: @weso-s:Interaction. Cardinality: {16}
-            # 3.571428571428571 % obj: @weso-s:Interaction. Cardinality: {12}
             # 3.571428571428571 % obj: @weso-s:Interaction. Cardinality: {20}
+            # 3.571428571428571 % obj: @weso-s:Interaction. Cardinality: {12}
+            # 3.571428571428571 % obj: @weso-s:Interaction. Cardinality: {16}
+            # 3.571428571428571 % obj: @weso-s:Interaction. Cardinality: {22}
             # 3.571428571428571 % obj: @weso-s:Interaction. Cardinality: {15}
-            # 1.7857142857142856 % obj: @weso-s:Interaction. Cardinality: {75}
-            # 1.7857142857142856 % obj: @weso-s:Interaction. Cardinality: {44}
             # 1.7857142857142856 % obj: @weso-s:Interaction. Cardinality: {8}
-            # 1.7857142857142856 % obj: @weso-s:Interaction. Cardinality: {9}
+            # 1.7857142857142856 % obj: @weso-s:Interaction. Cardinality: {4}
             # 1.7857142857142856 % obj: @weso-s:Interaction. Cardinality: {102}
-            # 1.7857142857142856 % obj: @weso-s:Interaction. Cardinality: {24}
+            # 1.7857142857142856 % obj: @weso-s:Interaction. Cardinality: {44}
+            # 1.7857142857142856 % obj: @weso-s:Interaction. Cardinality: {75}
             # 1.7857142857142856 % obj: @weso-s:Interaction. Cardinality: {79}
-            # 1.7857142857142856 % obj: @weso-s:Interaction. Cardinality: {46}
+            # 1.7857142857142856 % obj: @weso-s:Interaction. Cardinality: {24}
             # 1.7857142857142856 % obj: @weso-s:Interaction. Cardinality: {3}
+            # 1.7857142857142856 % obj: @weso-s:Interaction. Cardinality: {9}
+            # 1.7857142857142856 % obj: @weso-s:Interaction. Cardinality: {46}
+   ns1:Interaction  IRI  +;                                    # 100.0 %
+            # 73.21428571428571 % obj: IRI. Cardinality: {1}
+            # 10.714285714285714 % obj: IRI. Cardinality: {2}
+            # 1.7857142857142856 % obj: IRI. Cardinality: {111}
+            # 1.7857142857142856 % obj: IRI. Cardinality: {10}
+            # 1.7857142857142856 % obj: IRI. Cardinality: {49}
+            # 1.7857142857142856 % obj: IRI. Cardinality: {18}
+            # 1.7857142857142856 % obj: IRI. Cardinality: {139}
+            # 1.7857142857142856 % obj: IRI. Cardinality: {71}
+            # 1.7857142857142856 % obj: IRI. Cardinality: {3}
+            # 1.7857142857142856 % obj: IRI. Cardinality: {7}
+            # 1.7857142857142856 % obj: IRI. Cardinality: {6}
+            # 80.35714285714286 % obj: @weso-s:NCIT_C16612. Cardinality: +
+            # 16.071428571428573 % obj: @weso-s:NCIT_C17021. Cardinality: +
+            # 7.142857142857142 % obj: @weso-s:SIO_010038. Cardinality: +
    rdfs:label  xsd:string  ;                                   # 100.0 %
    ns1:DirectedInteraction  IRI  +;                            # 100.0 %
             # 73.21428571428571 % obj: IRI. Cardinality: {1}
             # 10.714285714285714 % obj: IRI. Cardinality: {2}
-            # 1.7857142857142856 % obj: IRI. Cardinality: {71}
-            # 1.7857142857142856 % obj: IRI. Cardinality: {139}
-            # 1.7857142857142856 % obj: IRI. Cardinality: {7}
-            # 1.7857142857142856 % obj: IRI. Cardinality: {18}
-            # 1.7857142857142856 % obj: IRI. Cardinality: {10}
-            # 1.7857142857142856 % obj: IRI. Cardinality: {3}
-            # 1.7857142857142856 % obj: IRI. Cardinality: {49}
-            # 1.7857142857142856 % obj: IRI. Cardinality: {6}
             # 1.7857142857142856 % obj: IRI. Cardinality: {111}
+            # 1.7857142857142856 % obj: IRI. Cardinality: {10}
+            # 1.7857142857142856 % obj: IRI. Cardinality: {49}
+            # 1.7857142857142856 % obj: IRI. Cardinality: {18}
+            # 1.7857142857142856 % obj: IRI. Cardinality: {139}
+            # 1.7857142857142856 % obj: IRI. Cardinality: {71}
+            # 1.7857142857142856 % obj: IRI. Cardinality: {3}
+            # 1.7857142857142856 % obj: IRI. Cardinality: {7}
+            # 1.7857142857142856 % obj: IRI. Cardinality: {6}
             # 80.35714285714286 % obj: @weso-s:NCIT_C16612. Cardinality: +
             # 16.071428571428573 % obj: @weso-s:NCIT_C17021. Cardinality: +
             # 7.142857142857142 % obj: @weso-s:SIO_010038. Cardinality: +
-   ns1:Interaction  IRI  +;                                    # 100.0 %
-            # 73.21428571428571 % obj: IRI. Cardinality: {1}
-            # 10.714285714285714 % obj: IRI. Cardinality: {2}
-            # 1.7857142857142856 % obj: IRI. Cardinality: {71}
-            # 1.7857142857142856 % obj: IRI. Cardinality: {139}
-            # 1.7857142857142856 % obj: IRI. Cardinality: {7}
-            # 1.7857142857142856 % obj: IRI. Cardinality: {18}
-            # 1.7857142857142856 % obj: IRI. Cardinality: {10}
-            # 1.7857142857142856 % obj: IRI. Cardinality: {3}
-            # 1.7857142857142856 % obj: IRI. Cardinality: {49}
-            # 1.7857142857142856 % obj: IRI. Cardinality: {6}
-            # 1.7857142857142856 % obj: IRI. Cardinality: {111}
-            # 80.35714285714286 % obj: @weso-s:NCIT_C16612. Cardinality: +
-            # 16.071428571428573 % obj: @weso-s:NCIT_C17021. Cardinality: +
-            # 7.142857142857142 % obj: @weso-s:SIO_010038. Cardinality: +
-   ns1:Inhibition  IRI  *;
-            # 30.357142857142854 % obj: IRI. Cardinality: +
-            # 23.214285714285715 % obj: IRI. Cardinality: {1}
-            # 1.7857142857142856 % obj: IRI. Cardinality: {11}
-            # 1.7857142857142856 % obj: IRI. Cardinality: {86}
-            # 1.7857142857142856 % obj: IRI. Cardinality: {2}
-            # 1.7857142857142856 % obj: IRI. Cardinality: {23}
-            # 23.214285714285715 % obj: @weso-s:NCIT_C16612. Cardinality: +
-            # 7.142857142857142 % obj: @weso-s:NCIT_C17021. Cardinality: +
    ns1:Stimulation  IRI  *;
             # 30.357142857142854 % obj: IRI. Cardinality: +
             # 16.071428571428573 % obj: IRI. Cardinality: {1}
-            # 3.571428571428571 % obj: IRI. Cardinality: {3}
-            # 3.571428571428571 % obj: IRI. Cardinality: {2}
             # 3.571428571428571 % obj: IRI. Cardinality: {6}
-            # 1.7857142857142856 % obj: IRI. Cardinality: {31}
+            # 3.571428571428571 % obj: IRI. Cardinality: {2}
+            # 3.571428571428571 % obj: IRI. Cardinality: {3}
             # 1.7857142857142856 % obj: IRI. Cardinality: {9}
+            # 1.7857142857142856 % obj: IRI. Cardinality: {31}
             # 16.071428571428573 % obj: @weso-s:NCIT_C16612. Cardinality: +
             # 12.5 % obj: @weso-s:NCIT_C17021. Cardinality: +
             # 1.7857142857142856 % obj: @weso-s:SIO_010038. Cardinality: {1}
-   sio:SIO_000216  @weso-s:SIO_001077  *;
-            # 19.642857142857142 % obj: @weso-s:SIO_001077. Cardinality: +
-            # 3.571428571428571 % obj: @weso-s:SIO_001077. Cardinality: {9}
-            # 3.571428571428571 % obj: @weso-s:SIO_001077. Cardinality: {68}
-            # 1.7857142857142856 % obj: @weso-s:SIO_001077. Cardinality: {255}
-            # 1.7857142857142856 % obj: @weso-s:SIO_001077. Cardinality: {187}
-            # 1.7857142857142856 % obj: @weso-s:SIO_001077. Cardinality: {51}
-            # 1.7857142857142856 % obj: @weso-s:SIO_001077. Cardinality: {80}
-            # 1.7857142857142856 % obj: @weso-s:SIO_001077. Cardinality: {391}
-            # 1.7857142857142856 % obj: @weso-s:SIO_001077. Cardinality: {170}
-            # 1.7857142857142856 % obj: @weso-s:SIO_001077. Cardinality: {17}
+   ns1:Inhibition  IRI  *;
+            # 30.357142857142854 % obj: IRI. Cardinality: +
+            # 23.214285714285715 % obj: IRI. Cardinality: {1}
+            # 1.7857142857142856 % obj: IRI. Cardinality: {23}
+            # 1.7857142857142856 % obj: IRI. Cardinality: {2}
+            # 1.7857142857142856 % obj: IRI. Cardinality: {86}
+            # 1.7857142857142856 % obj: IRI. Cardinality: {11}
+            # 23.214285714285715 % obj: @weso-s:NCIT_C16612. Cardinality: +
+            # 7.142857142857142 % obj: @weso-s:NCIT_C17021. Cardinality: +
+   sio:SIO_000216  xsd:string  *;
+            # 19.642857142857142 % obj: xsd:string. Cardinality: +
+            # 3.571428571428571 % obj: xsd:string. Cardinality: {68}
+            # 3.571428571428571 % obj: xsd:string. Cardinality: {9}
+            # 1.7857142857142856 % obj: xsd:string. Cardinality: {17}
+            # 1.7857142857142856 % obj: xsd:string. Cardinality: {80}
+            # 1.7857142857142856 % obj: xsd:string. Cardinality: {391}
+            # 1.7857142857142856 % obj: xsd:string. Cardinality: {187}
+            # 1.7857142857142856 % obj: xsd:string. Cardinality: {255}
+            # 1.7857142857142856 % obj: xsd:string. Cardinality: {170}
+            # 1.7857142857142856 % obj: xsd:string. Cardinality: {51}
+   pav:importedFrom  @weso-s:Dataset  *;
+            # 19.642857142857142 % obj: @weso-s:Dataset. Cardinality: {6}
    graph:interactionInteraction  @weso-s:NCIT_C16612  *;
             # 16.071428571428573 % obj: @weso-s:NCIT_C16612. Cardinality: +
+            # 3.571428571428571 % obj: @weso-s:NCIT_C16612. Cardinality: {3}
             # 3.571428571428571 % obj: @weso-s:NCIT_C16612. Cardinality: {12}
             # 3.571428571428571 % obj: @weso-s:NCIT_C16612. Cardinality: {1}
-            # 3.571428571428571 % obj: @weso-s:NCIT_C16612. Cardinality: {3}
-            # 1.7857142857142856 % obj: @weso-s:NCIT_C16612. Cardinality: {4}
-            # 1.7857142857142856 % obj: @weso-s:NCIT_C16612. Cardinality: {5}
             # 1.7857142857142856 % obj: @weso-s:NCIT_C16612. Cardinality: {10}
+            # 1.7857142857142856 % obj: @weso-s:NCIT_C16612. Cardinality: {5}
+            # 1.7857142857142856 % obj: @weso-s:NCIT_C16612. Cardinality: {4}
    graph:interactionDirectedInteraction  @weso-s:NCIT_C16612  *;
             # 16.071428571428573 % obj: @weso-s:NCIT_C16612. Cardinality: +
+            # 3.571428571428571 % obj: @weso-s:NCIT_C16612. Cardinality: {3}
             # 3.571428571428571 % obj: @weso-s:NCIT_C16612. Cardinality: {12}
             # 3.571428571428571 % obj: @weso-s:NCIT_C16612. Cardinality: {1}
-            # 3.571428571428571 % obj: @weso-s:NCIT_C16612. Cardinality: {3}
-            # 1.7857142857142856 % obj: @weso-s:NCIT_C16612. Cardinality: {4}
-            # 1.7857142857142856 % obj: @weso-s:NCIT_C16612. Cardinality: {5}
             # 1.7857142857142856 % obj: @weso-s:NCIT_C16612. Cardinality: {10}
+            # 1.7857142857142856 % obj: @weso-s:NCIT_C16612. Cardinality: {5}
+            # 1.7857142857142856 % obj: @weso-s:NCIT_C16612. Cardinality: {4}
    graph:interactionStimulation  @weso-s:NCIT_C16612  *;
             # 12.5 % obj: @weso-s:NCIT_C16612. Cardinality: +
             # 7.142857142857142 % obj: @weso-s:NCIT_C16612. Cardinality: {1}
             # 3.571428571428571 % obj: @weso-s:NCIT_C16612. Cardinality: {2}
             # 1.7857142857142856 % obj: @weso-s:NCIT_C16612. Cardinality: {3}
+   ns1:Conversion  IRI  *;
+            # 12.5 % obj: IRI. Cardinality: +
+            # 7.142857142857142 % obj: IRI. Cardinality: {1}
+            # 1.7857142857142856 % obj: IRI. Cardinality: {2}
+            # 1.7857142857142856 % obj: IRI. Cardinality: {16}
+            # 1.7857142857142856 % obj: IRI. Cardinality: {4}
+            # 7.142857142857142 % obj: @weso-s:NCIT_C16612. Cardinality: {1}
+            # 5.357142857142857 % obj: @weso-s:NCIT_C17021. Cardinality: +
    ns1:TranscriptionTranslation  IRI  *;
             # 10.714285714285714 % obj: IRI. Cardinality: +
             # 7.142857142857142 % obj: IRI. Cardinality: {1}
-            # 1.7857142857142856 % obj: IRI. Cardinality: {3}
             # 1.7857142857142856 % obj: IRI. Cardinality: {9}
+            # 1.7857142857142856 % obj: IRI. Cardinality: {3}
             # 7.142857142857142 % obj: @weso-s:NCIT_C16612. Cardinality: {1}
-            # 3.571428571428571 % obj: @weso-s:NCIT_C17021. Cardinality: +
-   ns1:Conversion  IRI  *;
-            # 8.928571428571429 % obj: IRI. Cardinality: +
-            # 5.357142857142857 % obj: IRI. Cardinality: {1}
-            # 1.7857142857142856 % obj: IRI. Cardinality: {16}
-            # 1.7857142857142856 % obj: IRI. Cardinality: {4}
-            # 5.357142857142857 % obj: @weso-s:NCIT_C16612. Cardinality: {1}
             # 3.571428571428571 % obj: @weso-s:NCIT_C17021. Cardinality: +
    graph:interactionInhibition  @weso-s:NCIT_C16612  *;
             # 7.142857142857142 % obj: @weso-s:NCIT_C16612. Cardinality: +
             # 3.571428571428571 % obj: @weso-s:NCIT_C16612. Cardinality: {3}
+            # 1.7857142857142856 % obj: @weso-s:NCIT_C16612. Cardinality: {1}
             # 1.7857142857142856 % obj: @weso-s:NCIT_C16612. Cardinality: {7}
-            # 1.7857142857142856 % obj: @weso-s:NCIT_C16612. Cardinality: {1}
    graph:interactionConversion  @weso-s:NCIT_C16612  *;
-            # 3.571428571428571 % obj: @weso-s:NCIT_C16612. Cardinality: +
+            # 5.357142857142857 % obj: @weso-s:NCIT_C16612. Cardinality: +
+            # 3.571428571428571 % obj: @weso-s:NCIT_C16612. Cardinality: {1}
             # 1.7857142857142856 % obj: @weso-s:NCIT_C16612. Cardinality: {2}
-            # 1.7857142857142856 % obj: @weso-s:NCIT_C16612. Cardinality: {1}
    graph:interactionTranscriptionTranslation  @weso-s:NCIT_C16612  *
             # 3.571428571428571 % obj: @weso-s:NCIT_C16612. Cardinality: {2}
 }
 
 
-weso-s:Interaction
+weso-s:SIO_000983
 {
-   rdf:type  [<https://vocabularies.wikipathways.org/wp#Interaction>]  ;          # 100.0 %
+   rdf:type  [sio:SIO_000983]  ;                               # 100.0 %
+   sio:SIO_000216  xsd:string  +;                              # 100.0 %
+            # 34.93975903614458 % obj: xsd:string. Cardinality: {30}
+            # 15.66265060240964 % obj: xsd:string. Cardinality: {2}
+            # 9.236947791164658 % obj: xsd:string. Cardinality: {10}
+            # 7.228915662650602 % obj: xsd:string. Cardinality: {46}
+            # 6.024096385542169 % obj: xsd:string. Cardinality: {22}
+            # 6.024096385542169 % obj: xsd:string. Cardinality: {8}
+            # 4.819277108433735 % obj: xsd:string. Cardinality: {20}
+            # 4.417670682730924 % obj: xsd:string. Cardinality: {15}
+            # 3.2128514056224895 % obj: xsd:string. Cardinality: {11}
+            # 1.6064257028112447 % obj: xsd:string. Cardinality: {6}
+            # 1.6064257028112447 % obj: xsd:string. Cardinality: {33}
+            # 1.6064257028112447 % obj: xsd:string. Cardinality: {3}
+            # 1.2048192771084338 % obj: xsd:string. Cardinality: {45}
+            # 0.8032128514056224 % obj: xsd:string. Cardinality: {23}
+            # 0.8032128514056224 % obj: xsd:string. Cardinality: {69}
+            # 0.4016064257028112 % obj: xsd:string. Cardinality: {12}
+            # 0.4016064257028112 % obj: xsd:string. Cardinality: {9}
+   sio:SIO_000628  @weso-s:NCIT_C7057                          # 100.0 %
+            # 100.0 % obj: @weso-s:NCIT_C16612. Cardinality: {1}
+}
+
+
+weso-s:NCIT_C172573
+{
+   rdf:type  [obo:NCIT_C172573]  ;                             # 100.0 %
+   owl:sameAs  @weso-s:SIO_010038  ;                           # 100.0 %
    rdfs:label  xsd:string                                      # 100.0 %
 }
 
 
-weso-s:DisGeNET_Evidence_Level
+weso-s:DataService
 {
-   rdf:type  [bdfo:DisGeNET_Evidence_Level]  ;                 # 100.0 %
-   sio:SIO_000300  xsd:string                                  # 100.0 %
+   dcat:endpointURL  IRI  ;                                    # 100.0 %
+            # 60.0 % obj: @weso-s:WebAPI. Cardinality: {1}
+   rdf:type  [dcat:DataService]  ;                             # 100.0 %
+   rdf:type  [schema:WebAPI]  ;                                # 100.0 %
+   rdfs:label  xsd:string  ;                                   # 100.0 %
+   dcat:servesDataset  @weso-s:Dataset  {2}                    # 100.0 %
+}
+
+
+weso-s:WebAPI
+{
+   rdf:type  [schema:WebAPI]  ;                                # 100.0 %
+   dcat:endpointURL  IRI  ?;
+            # 66.66666666666666 % obj: IRI. Cardinality: {1}
+            # 40.0 % obj: @weso-s:WebAPI. Cardinality: {1}
+   rdf:type  [dcat:DataService]  ?;
+            # 66.66666666666666 % obj: dcat:DataService. Cardinality: {1}
+   rdfs:label  xsd:string  ?;
+            # 66.66666666666666 % obj: xsd:string. Cardinality: {1}
+   dcat:servesDataset  @weso-s:Dataset  *
+            # 66.66666666666666 % obj: @weso-s:Dataset. Cardinality: {2}
 }
 
 
@@ -349,24 +484,10 @@ weso-s:SIO_001262
 }
 
 
-weso-s:NCIT_C172573
-{
-   owl:sameAs  @weso-s:SIO_010038  ;                           # 100.0 %
-   rdf:type  [obo:NCIT_C172573]  ;                             # 100.0 %
-   rdfs:label  xsd:string                                      # 100.0 %
-}
-
-
-weso-s:WebAPI
-{
-   rdf:type  [schema:WebAPI]                                   # 100.0 %
-}
-
-
 weso-s:SIO_000750
 {
-   rdfs:label  xsd:string  ;                                   # 100.0 %
-   rdf:type  [sio:SIO_000750]                                  # 100.0 %
+   rdf:type  [sio:SIO_000750]  ;                               # 100.0 %
+   rdfs:label  xsd:string                                      # 100.0 %
 }
 
 
@@ -374,6 +495,18 @@ weso-s:NCIT_C43531
 {
    rdf:type  [obo:NCIT_C43531]  ;                              # 100.0 %
    rdfs:label  xsd:string                                      # 100.0 %
+}
+
+
+weso-s:Catalog
+{
+   prov:wasDerivedFrom  @weso-s:Dataset  {20};                 # 100.0 %
+   dcterms:source  @weso-s:Dataset  {20};                      # 100.0 %
+   dcterms:title  xsd:string  ;                                # 100.0 %
+   rdf:type  [dcat:Catalog]  ;                                 # 100.0 %
+   dcterms:identifier  @weso-s:Catalog  ;                      # 100.0 %
+   dcterms:created  xsd:dateTime  ;                            # 100.0 %
+   dcterms:creator  IRI                                        # 100.0 %
 }
 
 

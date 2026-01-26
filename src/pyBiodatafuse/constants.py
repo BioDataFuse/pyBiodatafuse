@@ -1668,3 +1668,213 @@ SOURCE_NAMESPACES = {
     "Minerva": "https://minerva-net.lcsb.uni.lu/",
     # TODO ADD ALL
 }
+
+# =============================================================================
+# Dataset Provenance and Versioning
+# =============================================================================
+
+# PROV-O (Provenance Ontology) namespace and predicates
+PROV_NAMESPACE = "http://www.w3.org/ns/prov#"
+PROV_PREDICATES = {
+    "was_derived_from": f"{PROV_NAMESPACE}wasDerivedFrom",
+    "was_generated_by": f"{PROV_NAMESPACE}wasGeneratedBy",
+    "was_attributed_to": f"{PROV_NAMESPACE}wasAttributedTo",
+    "used": f"{PROV_NAMESPACE}used",
+    "generated_at_time": f"{PROV_NAMESPACE}generatedAtTime",
+    "started_at_time": f"{PROV_NAMESPACE}startedAtTime",
+    "ended_at_time": f"{PROV_NAMESPACE}endedAtTime",
+    "at_location": f"{PROV_NAMESPACE}atLocation",
+}
+PROV_TYPES = {
+    "entity": f"{PROV_NAMESPACE}Entity",
+    "activity": f"{PROV_NAMESPACE}Activity",
+    "agent": f"{PROV_NAMESPACE}Agent",
+    "software_agent": f"{PROV_NAMESPACE}SoftwareAgent",
+}
+
+# DCAT (Data Catalog Vocabulary) namespace and predicates
+DCAT_NAMESPACE = "http://www.w3.org/ns/dcat#"
+DCAT_PREDICATES = {
+    "distribution": f"{DCAT_NAMESPACE}distribution",
+    "access_url": f"{DCAT_NAMESPACE}accessURL",
+    "download_url": f"{DCAT_NAMESPACE}downloadURL",
+    "media_type": f"{DCAT_NAMESPACE}mediaType",
+    "landing_page": f"{DCAT_NAMESPACE}landingPage",
+    "serves_dataset": f"{DCAT_NAMESPACE}servesDataset",
+    "endpoint_url": f"{DCAT_NAMESPACE}endpointURL",
+}
+DCAT_TYPES = {
+    "dataset": f"{DCAT_NAMESPACE}Dataset",
+    "distribution": f"{DCAT_NAMESPACE}Distribution",
+    "data_service": f"{DCAT_NAMESPACE}DataService",
+    "catalog": f"{DCAT_NAMESPACE}Catalog",
+}
+
+# Dublin Core Terms namespace and predicates
+DCTERMS_NAMESPACE = "http://purl.org/dc/terms/"
+DCTERMS_PREDICATES = {
+    "title": f"{DCTERMS_NAMESPACE}title",
+    "description": f"{DCTERMS_NAMESPACE}description",
+    "creator": f"{DCTERMS_NAMESPACE}creator",
+    "publisher": f"{DCTERMS_NAMESPACE}publisher",
+    "issued": f"{DCTERMS_NAMESPACE}issued",
+    "modified": f"{DCTERMS_NAMESPACE}modified",
+    "version": f"{DCTERMS_NAMESPACE}hasVersion",
+    "identifier": f"{DCTERMS_NAMESPACE}identifier",
+    "source": f"{DCTERMS_NAMESPACE}source",
+    "license": f"{DCTERMS_NAMESPACE}license",
+    "access_rights": f"{DCTERMS_NAMESPACE}accessRights",
+}
+
+# PAV (Provenance, Authoring and Versioning) namespace
+PAV_NAMESPACE = "http://purl.org/pav/"
+PAV_PREDICATES = {
+    "version": f"{PAV_NAMESPACE}version",
+    "created_on": f"{PAV_NAMESPACE}createdOn",
+    "retrieved_from": f"{PAV_NAMESPACE}retrievedFrom",
+    "retrieved_on": f"{PAV_NAMESPACE}retrievedOn",
+    "imported_from": f"{PAV_NAMESPACE}importedFrom",
+    "imported_on": f"{PAV_NAMESPACE}importedOn",
+}
+
+# Schema.org predicates for web services
+SCHEMA_NAMESPACE = "https://schema.org/"
+SCHEMA_PREDICATES = {
+    "provider": f"{SCHEMA_NAMESPACE}provider",
+    "version": f"{SCHEMA_NAMESPACE}version",
+    "date_modified": f"{SCHEMA_NAMESPACE}dateModified",
+    "url": f"{SCHEMA_NAMESPACE}url",
+    "name": f"{SCHEMA_NAMESPACE}name",
+}
+SCHEMA_TYPES = {
+    "web_api": f"{SCHEMA_NAMESPACE}WebAPI",
+    "dataset": f"{SCHEMA_NAMESPACE}Dataset",
+    "organization": f"{SCHEMA_NAMESPACE}Organization",
+    "software_application": f"{SCHEMA_NAMESPACE}SoftwareApplication",
+}
+
+# VoID (Vocabulary of Interlinked Datasets) namespace
+VOID_NAMESPACE = "http://rdfs.org/ns/void#"
+VOID_PREDICATES = {
+    "sparql_endpoint": f"{VOID_NAMESPACE}sparqlEndpoint",
+    "data_dump": f"{VOID_NAMESPACE}dataDump",
+    "triples": f"{VOID_NAMESPACE}triples",
+    "vocabulary": f"{VOID_NAMESPACE}vocabulary",
+    "subset": f"{VOID_NAMESPACE}subset",
+}
+VOID_TYPES = {
+    "dataset": f"{VOID_NAMESPACE}Dataset",
+    "linkset": f"{VOID_NAMESPACE}Linkset",
+}
+
+# Data source URIs for provenance tracking (use identifiers.org where possible)
+DATA_SOURCE_IDENTIFIERS = {
+    BGEE: "https://identifiers.org/bgee",
+    BRIDGEDB: "https://identifiers.org/bridgedb",
+    COMPOUNDWIKI: "https://compoundcloud.wikibase.cloud/",
+    DISGENET: "https://identifiers.org/disgenet",
+    ENSEMBL: "https://identifiers.org/ensembl",
+    INTACT: "https://identifiers.org/intact",
+    KEGG: "https://identifiers.org/kegg",
+    MINERVA: "https://minerva-net.lcsb.uni.lu/",
+    MOLMEDB: "https://molmedb.upol.cz/",
+    OPENTARGETS: "https://platform.opentargets.org/",
+    PUBCHEM: "https://identifiers.org/pubchem.compound",
+    STRING: "https://identifiers.org/string",
+    WIKIDATA: "https://www.wikidata.org/",
+    WIKIPATHWAYS: "https://identifiers.org/wikipathways",
+    AOPWIKIRDF: "https://aopwiki.rdf.bigcat-bioinformatics.org/",
+    TFLINK: "https://tflink.net/",
+    MITOCARTA: "https://www.broadinstitute.org/mitocarta/",
+}
+
+# Data source SPARQL endpoints (where applicable)
+DATA_SOURCE_SPARQL_ENDPOINTS = {
+    BGEE: BGEE_ENDPOINT,
+    COMPOUNDWIKI: COMPOUNDWIKI_ENDPOINT,
+    WIKIDATA: WIKIDATA_ENDPOINT,
+    WIKIPATHWAYS: WIKIPATHWAYS_ENDPOINT,
+    AOPWIKIRDF: AOPWIKI_ENDPOINT,
+    MOLMEDB: MOLMEDB_ENDPOINT,
+    PUBCHEM: PUBCHEM_ENDPOINT,
+}
+
+# Data source API endpoints (REST/GraphQL)
+# These are used for dataset provenance in RDF generation
+DATA_SOURCE_API_ENDPOINTS = {
+    BGEE: BGEE_ENDPOINT,
+    BRIDGEDB: BRIDGEDB_ENDPOINT,
+    COMPOUNDWIKI: COMPOUNDWIKI_ENDPOINT,
+    DISGENET: DISGENET_ENDPOINT,
+    ENSEMBL: ENSEMBL_ENDPOINT,
+    INTACT: INTACT_ENDPOINT,
+    KEGG: KEGG_ENDPOINT,
+    MINERVA: MINERVA_ENDPOINT,
+    MOLMEDB: MOLMEDB_ENDPOINT,
+    OPENTARGETS: OPENTARGETS_ENDPOINT,
+    PUBCHEM: PUBCHEM_ENDPOINT,
+    STRING: STRING_ENDPOINT,
+    WIKIDATA: WIKIDATA_ENDPOINT,
+    WIKIPATHWAYS: WIKIPATHWAYS_ENDPOINT,
+    AOPWIKIRDF: AOPWIKI_ENDPOINT,
+}
+
+# Data source license URLs
+DATA_SOURCE_LICENSES = {
+    BGEE: "https://creativecommons.org/publicdomain/zero/1.0/",
+    COMPOUNDWIKI: "https://creativecommons.org/publicdomain/zero/1.0/",
+    DISGENET: "https://www.disgenet.org/legal",
+    INTACT: "https://creativecommons.org/licenses/by/4.0/",
+    OPENTARGETS: "https://creativecommons.org/licenses/by/4.0/",
+    PUBCHEM: "https://www.ncbi.nlm.nih.gov/home/about/policies/",
+    STRING: "https://creativecommons.org/licenses/by/4.0/",
+    WIKIDATA: "https://creativecommons.org/publicdomain/zero/1.0/",
+    WIKIPATHWAYS: "https://creativecommons.org/publicdomain/zero/1.0/",
+    AOPWIKIRDF: "https://creativecommons.org/licenses/by/4.0/",
+}
+
+# Mapping from processing function names to data sources
+PROCESS_FUNCTION_TO_DATASOURCE = {
+    "process_ppi_data": STRING,
+    "process_disease_data": [DISGENET, OPENTARGETS],
+    "process_expression_data": BGEE,
+    "process_pathways": [WIKIPATHWAYS, MINERVA, OPENTARGETS],
+    "process_processes_data": OPENTARGETS,
+    "process_compound_data": OPENTARGETS,
+    "process_literature_data": PUBCHEM,
+    "process_transporter_inhibitor_data": MOLMEDB,
+    "process_inhibitor_transporter_data": MOLMEDB,
+    "process_aop_data": AOPWIKIRDF,
+    "process_molecular_pathway": WIKIPATHWAYS,
+    "process_compoundwiki_data": COMPOUNDWIKI,
+}
+
+# Mapping from data columns to their primary data source
+# Used for linking RDF nodes to their source datasets
+COLUMN_TO_DATASOURCE = {
+    BGEE_GENE_EXPRESSION_LEVELS_COL: BGEE,
+    COMPOUNDWIKI_COL: COMPOUNDWIKI,
+    DISGENET_DISEASE_COL: DISGENET,
+    INTACT_INTERACT_COL: INTACT,
+    INTACT_COMPOUND_INTERACT_COL: INTACT,
+    KEGG_PATHWAY_COL: KEGG,
+    KEGG_COMPOUND_COL: KEGG,
+    MINERVA_PATHWAY_COL: MINERVA,
+    MOLMEDB_PROTEIN_COMPOUND_COL: MOLMEDB,
+    MOLMEDB_COMPOUND_PROTEIN_COL: MOLMEDB,
+    OPENTARGETS_DISEASE_COL: OPENTARGETS,
+    OPENTARGETS_GO_COL: OPENTARGETS,
+    OPENTARGETS_GENE_COMPOUND_COL: OPENTARGETS,
+    OPENTARGETS_REACTOME_COL: OPENTARGETS,
+    PUBCHEM_COMPOUND_ASSAYS_COL: PUBCHEM,
+    STRING_INTERACT_COL: STRING,
+    WIKIDATA_CC_COL: WIKIDATA,
+    WIKIPATHWAYS_MOLECULAR_COL: WIKIPATHWAYS,
+    WIKIPATHWAYS_PATHWAY_COL: WIKIPATHWAYS,
+    AOPWIKI_GENE_COL: AOPWIKIRDF,
+    AOPWIKI_COMPOUND_COL: AOPWIKIRDF,
+}
+
+# RDF predicate for linking data nodes to their source dataset
+SOURCE_DATASET_PREDICATE = f"{PAV_NAMESPACE}importedFrom"
+

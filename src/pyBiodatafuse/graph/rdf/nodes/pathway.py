@@ -1,15 +1,25 @@
 # pathway.py
 
-
 """Populate a BDF RDF graph with pathway nodes."""
 
-from rdflib import Graph, Literal, URIRef
-from rdflib.namespace import RDF, RDFS, XSD
+from typing import Optional
+
+from rdflib import Graph, URIRef
 
 import pyBiodatafuse.constants as Cons
+from pyBiodatafuse.graph.rdf.nodes.base import (
+    add_label,
+    add_same_as,
+    add_type,
+    create_node,
+    extract_id,
+    link_has_part,
+    link_has_source,
+    safe_get,
+)
 
 
-def add_pathway_node(g: Graph, data: dict, source: str):
+def add_pathway_node(g: Graph, data: dict, source: str) -> Optional[URIRef]:
     """Create and add a pathway node to the RDF graph.
 
     :param g: RDF graph to which the pathway node will be added.
@@ -17,39 +27,45 @@ def add_pathway_node(g: Graph, data: dict, source: str):
     :param source: Source of the pathway information (e.g., WikiPathways, Reactome).
     :return: URIRef for the created pathway node.
     """
-    pathway_label = data.get(Cons.PATHWAY_LABEL, None)
-    pathway_id = data.get(Cons.PATHWAY_ID, None)
+    pathway_label = safe_get(data, Cons.PATHWAY_LABEL)
+    pathway_id = safe_get(data, Cons.PATHWAY_ID)
 
-    if pathway_id:
-        pathway_iri = ""
-        iri_source = None
-        if source == Cons.WIKIPATHWAYS_PATHWAY_COL:
-            pathway_iri = Cons.NODE_URI_PREFIXES[Cons.WIKIPATHWAYS] + str(pathway_id.split(":")[1])
-            iri_source = Cons.SOURCE_NAMESPACES[Cons.WIKIPATHWAYS]
+    if not pathway_id:
+        return None
 
-        if source == Cons.OPENTARGETS_REACTOME_COL:
-            pathway_id = pathway_id.split(":")[1]
-            pathway_iri = Cons.NODE_URI_PREFIXES[Cons.REACTOME] + str(pathway_id)
-            iri_source = Cons.SOURCE_NAMESPACES[Cons.REACTOME]
-            source = Cons.REACTOME
-        if source == Cons.MINERVA_PATHWAY_COL:
-            pathway_iri = Cons.NODE_URI_PREFIXES[Cons.MINERVA] + str(pathway_id)
-            iri_source = Cons.SOURCE_NAMESPACES["Minerva"]
+    pathway_node = None
+    iri_source = None
 
-        pathway_node = URIRef(pathway_iri)
-        g.add((pathway_node, RDF.type, URIRef(Cons.NODE_TYPES["pathway_node"])))
-        g.add((pathway_node, RDFS.label, Literal(pathway_label, datatype=XSD.string)))
+    if source == Cons.WIKIPATHWAYS_PATHWAY_COL:
+        clean_id = extract_id(pathway_id)
+        pathway_node = create_node(Cons.NODE_URI_PREFIXES[Cons.WIKIPATHWAYS], clean_id)
+        iri_source = Cons.SOURCE_NAMESPACES[Cons.WIKIPATHWAYS]
+
+    elif source == Cons.OPENTARGETS_REACTOME_COL:
+        clean_id = extract_id(pathway_id)
+        pathway_node = create_node(Cons.NODE_URI_PREFIXES[Cons.REACTOME], clean_id)
+        iri_source = Cons.SOURCE_NAMESPACES[Cons.REACTOME]
+        source = Cons.REACTOME
+
+    elif source == Cons.MINERVA_PATHWAY_COL:
+        pathway_node = create_node(Cons.NODE_URI_PREFIXES[Cons.MINERVA], pathway_id)
+        iri_source = Cons.SOURCE_NAMESPACES["Minerva"]
+
+    if pathway_node:
+        add_type(g, pathway_node, Cons.NODE_TYPES["pathway_node"])
+        add_label(g, pathway_node, pathway_label)
+
         if iri_source:
-            g.add((pathway_node, URIRef(Cons.PREDICATES["sio_has_source"]), URIRef(iri_source)))
-            g.add((URIRef(iri_source), RDFS.label, Literal(source, datatype=XSD.string)))
-            # data_source_node = add_data_source_node(g, source)
-            g.add((URIRef(iri_source), RDF.type, URIRef(Cons.NODE_TYPES["data_source_node"])))
-        return pathway_node
+            source_node = URIRef(iri_source)
+            link_has_source(g, pathway_node, source_node)
+            add_label(g, source_node, source)
+            add_type(g, source_node, Cons.NODE_TYPES["data_source_node"])
+
+    return pathway_node
 
 
 def add_molecular_pathway_node(g, el, identifier, id_number):
-    """
-    Add a molecular pathway node and related triples to the RDF graph.
+    """Add a molecular pathway node and related triples to the RDF graph.
 
     :param g: RDF graph.
     :param el: Dictionary with pathway data.
@@ -58,100 +74,104 @@ def add_molecular_pathway_node(g, el, identifier, id_number):
     """
     from pyBiodatafuse.graph.rdf.nodes.gene import get_gene_node
 
-    pathway_id = el.get("pathway_id", None)
-    pathway_label = el.get("pathway_label", None)
-    target_gene = el.get("targetGene", None)
-    target_protein = el.get("targetProtein", None)
-    target_metabolite = el.get("targetMetabolite", None)
-    mimtype = el.get("mimtype", None)
-    rhea_id = el.get("rhea_id", None)
-    if mimtype:
-        mimtype_node = URIRef("http://vocabularies.wikipathways.org/wp#" + mimtype)
-        g.add((mimtype_node, RDF.type, URIRef(Cons.NODE_TYPES["interaction"])))
-        g.add((mimtype_node, RDFS.label, Literal(mimtype, datatype=XSD.string)))
-        mim_node = URIRef(g.new_uris["interaction"] + mimtype + "_" + id_number)
-        g.add((mim_node, RDF.type, URIRef(Cons.NODE_TYPES["interaction"])))
-        g.add((mim_node, RDFS.label, Literal(mimtype + "_" + id_number, datatype=XSD.string)))
-        g.add((identifier, URIRef(Cons.PREDICATES["sio_is_part_of"]), mim_node))
-        if pathway_id and pathway_label:
-            pathway_node = URIRef(
-                "https://www.wikipathways.org/pathways/" + pathway_id.split(":")[1]
-            )
-            g.add((pathway_node, URIRef(Cons.PREDICATES["sio_has_part"]), mimtype_node))
-            g.add((identifier, URIRef(Cons.PREDICATES["sio_is_part_of"]), pathway_node))
-            g.add((pathway_node, URIRef(Cons.PREDICATES["sio_has_part"]), identifier))
-            g.add((pathway_node, URIRef(Cons.PREDICATES["sio_has_part"]), mim_node))
+    pathway_id = safe_get(el, "pathway_id")
+    pathway_label = safe_get(el, "pathway_label")
+    target_gene = safe_get(el, "targetGene")
+    target_protein = safe_get(el, "targetProtein")
+    target_metabolite = safe_get(el, "targetMetabolite")
+    mimtype = safe_get(el, "mimtype")
+    rhea_id = safe_get(el, "rhea_id")
 
-        if target_gene:
-            target_gene_node = get_gene_node(
-                g,
-                {
-                    "target.source": "Ensembl",
-                    "target": target_gene,
-                    "identifier": target_gene,
-                },
-            )
-            if target_gene_node:
-                g.add(
-                    (
-                        identifier,
-                        URIRef(g.new_uris["interaction"] + mimtype),
-                        target_gene_node,
-                    )
-                )
-                g.add(
-                    (
-                        target_gene_node,
-                        URIRef("http://vocabularies.wikipathways.org/wp#" + mimtype),
-                        identifier,
-                    )
-                )
-                g.add((target_gene_node, URIRef(Cons.PREDICATES["sio_is_part_of"]), mim_node))
+    if not mimtype:
+        return
 
-        if target_protein:
-            target_protein_node = URIRef(Cons.BASE_URLS_DBS["uniprot"] + target_protein)
-            g.add((target_protein_node, RDF.type, URIRef(Cons.NODE_TYPES["protein_node"])))
+    # Create MIM type node
+    mimtype_node = URIRef("http://vocabularies.wikipathways.org/wp#" + mimtype)
+    add_type(g, mimtype_node, Cons.NODE_TYPES["interaction"])
+    add_label(g, mimtype_node, mimtype)
+
+    # Create interaction instance node
+    mim_node = URIRef(g.new_uris["interaction"] + mimtype + "_" + id_number)
+    add_type(g, mim_node, Cons.NODE_TYPES["interaction"])
+    add_label(g, mim_node, mimtype + "_" + id_number)
+    link_has_part(g, mim_node, identifier, bidirectional=True)
+
+    # Link pathway
+    if pathway_id and pathway_label:
+        clean_pathway_id = extract_id(pathway_id)
+        pathway_node = create_node(
+            "https://www.wikipathways.org/pathways/", clean_pathway_id
+        )
+        link_has_part(g, pathway_node, mimtype_node)
+        link_has_part(g, pathway_node, identifier)
+        link_has_part(g, pathway_node, mim_node)
+
+    # Link target gene
+    if target_gene:
+        target_gene_node = get_gene_node(
+            g,
+            {"target.source": "Ensembl", "target": target_gene, "identifier": target_gene},
+        )
+        if target_gene_node:
             g.add(
                 (
                     identifier,
-                    URIRef("http://vocabularies.wikipathways.org/wp#" + mimtype),
-                    target_protein_node,
+                    URIRef(g.new_uris["interaction"] + mimtype),
+                    target_gene_node,
                 )
             )
             g.add(
                 (
-                    target_protein_node,
+                    target_gene_node,
                     URIRef("http://vocabularies.wikipathways.org/wp#" + mimtype),
                     identifier,
                 )
             )
-            g.add((target_protein_node, URIRef(Cons.PREDICATES["sio_is_part_of"]), mim_node))
+            link_has_part(g, mim_node, target_gene_node, bidirectional=True)
 
-        if target_metabolite:
-            target_metabolite_node = URIRef(Cons.NODE_TYPES["compound_node"] + target_metabolite)
-            g.add((target_metabolite_node, RDF.type, URIRef(Cons.NODE_TYPES["compound_node"])))
-            g.add(
-                (
-                    identifier,
-                    URIRef("http://vocabularies.wikipathways.org/wp#" + mimtype),
-                    target_metabolite_node,
-                )
+    # Link target protein
+    if target_protein:
+        target_protein_node = create_node(Cons.BASE_URLS_DBS["uniprot"], target_protein)
+        add_type(g, target_protein_node, Cons.NODE_TYPES["protein_node"])
+        g.add(
+            (
+                identifier,
+                URIRef("http://vocabularies.wikipathways.org/wp#" + mimtype),
+                target_protein_node,
             )
-            g.add(
-                (
-                    target_metabolite_node,
-                    URIRef("http://vocabularies.wikipathways.org/wp#" + mimtype),
-                    identifier,
-                )
+        )
+        g.add(
+            (
+                target_protein_node,
+                URIRef("http://vocabularies.wikipathways.org/wp#" + mimtype),
+                identifier,
             )
-            g.add((identifier, URIRef(Cons.PREDICATES["sio_is_part_of"]), mim_node))
-            g.add(
-                (
-                    target_metabolite_node,
-                    URIRef(Cons.PREDICATES["sio_is_part_of"]),
-                    mim_node,
-                )
-            )
+        )
+        link_has_part(g, mim_node, target_protein_node, bidirectional=True)
 
-        if rhea_id:
-            g.add((mim_node, URIRef(Cons.PREDICATES["sameAs"]), URIRef(rhea_id)))
+    # Link target metabolite
+    if target_metabolite:
+        target_metabolite_node = URIRef(
+            Cons.NODE_TYPES["compound_node"] + target_metabolite
+        )
+        add_type(g, target_metabolite_node, Cons.NODE_TYPES["compound_node"])
+        g.add(
+            (
+                identifier,
+                URIRef("http://vocabularies.wikipathways.org/wp#" + mimtype),
+                target_metabolite_node,
+            )
+        )
+        g.add(
+            (
+                target_metabolite_node,
+                URIRef("http://vocabularies.wikipathways.org/wp#" + mimtype),
+                identifier,
+            )
+        )
+        link_has_part(g, mim_node, identifier, bidirectional=True)
+        link_has_part(g, mim_node, target_metabolite_node, bidirectional=True)
+
+    # Link rhea_id
+    if rhea_id:
+        add_same_as(g, mim_node, URIRef(rhea_id), bidirectional=False)
