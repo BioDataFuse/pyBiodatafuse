@@ -13,9 +13,9 @@ from tabulate import tabulate
 from pyBiodatafuse.analyzer.explorer.patent import get_patent_from_pubchem
 from pyBiodatafuse.constants import (
     COMPOUND_NAMESPACE_MAPPER,
-    LABEL,
-    DATASOURCE,
     COMPOUND_NODE_LABEL,
+    DATASOURCE,
+    LABEL,
 )
 from pyBiodatafuse.graph.generator import build_networkx_graph, load_dataframe_from_pickle
 

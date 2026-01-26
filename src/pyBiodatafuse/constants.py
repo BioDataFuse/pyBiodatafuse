@@ -2,7 +2,6 @@
 
 """Python constant file."""
 
-
 """
 API endpoints for each data source
 """
@@ -1467,6 +1466,7 @@ NAMESPACE_BINDINGS = {
     "mondo": "https://monarchinitiative.org/disease/",
     "umls": "https://www.ncbi.nlm.nih.gov/medgen/",
     "so": "http://purl.obolibrary.org/obo/so#",
+    "cheminf": " http://semanticscience.org/resource/",
 }
 
 # Patterns URIs for nodes (one for each node in the schema)
@@ -1542,6 +1542,7 @@ PREDICATES = {
     "has_upstreamkey_event": "http://aopkb.org/aop_ontology#has_upstream_key_event",
     "has_downstreamkey_event": "http://aopkb.org/aop_ontology#has_downstream_key_event",
     "occurs_in": f"{NAMESPACE_BINDINGS['obo']}BFO_0000066",
+    "molecular_formula": f"{NAMESPACE_BINDINGS['cheminf']}CHEMINF_000042",
 }
 
 # Classes for clinical phases

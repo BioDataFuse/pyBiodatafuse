@@ -2,7 +2,6 @@
 
 """Populate a BDF RDF graph with assay data."""
 
-
 from rdflib import Graph, Literal, URIRef
 from rdflib.namespace import DC, RDF, RDFS, XSD
 

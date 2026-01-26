@@ -3,7 +3,6 @@
 
 """Populate a BDF RDF graph with gene and protein nodes."""
 
-
 from typing import Optional
 
 from rdflib import Graph, Literal, URIRef

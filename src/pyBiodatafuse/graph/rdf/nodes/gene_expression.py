@@ -2,7 +2,6 @@
 
 """Populate a BDF RDF graph with gene expression data."""
 
-
 from bioregistry import get_iri
 from rdflib import Graph, Literal, URIRef
 from rdflib.namespace import RDF, RDFS, XSD

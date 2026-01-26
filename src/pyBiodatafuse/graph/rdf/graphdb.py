@@ -83,9 +83,7 @@ class GraphDBManager:
                 graphdb:enable-literal-index "true" ;
             ]
             ].
-        """.format(
-            repository_name=repository_name
-        )
+        """.format(repository_name=repository_name)
         # Save the configuration content to a temporary file
         with tempfile.NamedTemporaryFile(delete=False, suffix=".ttl") as temp_file:
             temp_file.write(config_content.encode("utf-8"))

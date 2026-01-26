@@ -206,9 +206,7 @@ def get_pathway_info(row, is_compound):
                     Cons.PATHWAY_ID: np.nan,
                     Cons.PATHWAY_LABEL: np.nan,
                     counts: np.nan,
-                    identifiers: [
-                        {Cons.KEGG_IDENTIFIER: None, Cons.KEGG_COMPOUND_NAME: None}
-                    ],
+                    identifiers: [{Cons.KEGG_IDENTIFIER: None, Cons.KEGG_COMPOUND_NAME: None}],
                 }
             ],
         }
@@ -220,9 +218,7 @@ def get_pathway_info(row, is_compound):
                 Cons.PATHWAY_ID: np.nan,
                 Cons.PATHWAY_LABEL: np.nan,
                 counts: np.nan,
-                identifiers: [
-                    {Cons.KEGG_IDENTIFIER: None, Cons.KEGG_COMPOUND_NAME: None}
-                ],
+                identifiers: [{Cons.KEGG_IDENTIFIER: None, Cons.KEGG_COMPOUND_NAME: None}],
             }
         ]
         return kegg_dict
@@ -260,9 +256,7 @@ def get_pathway_info(row, is_compound):
                 Cons.PATHWAY_ID: np.nan,
                 Cons.PATHWAY_LABEL: np.nan,
                 counts: np.nan,
-                identifiers: [
-                    {Cons.KEGG_IDENTIFIER: None, Cons.KEGG_COMPOUND_NAME: None}
-                ],
+                identifiers: [{Cons.KEGG_IDENTIFIER: None, Cons.KEGG_COMPOUND_NAME: None}],
             }
         ]
     )
@@ -311,7 +305,9 @@ def get_pathways(bridgedb_df: pd.DataFrame):
     )
 
     # Get the links for the KEGG pathways
-    data_df[Cons.KEGG_PATHWAY_COL] = data_df.apply(lambda row: get_pathway_info(row, is_compound), axis=1)
+    data_df[Cons.KEGG_PATHWAY_COL] = data_df.apply(
+        lambda row: get_pathway_info(row, is_compound), axis=1
+    )
 
     data_df[Cons.KEGG_PATHWAY_COL] = data_df[Cons.KEGG_PATHWAY_COL].apply(
         lambda x: x[Cons.PATHWAYS] if isinstance(x, dict) and Cons.PATHWAYS in x else []
@@ -326,22 +322,26 @@ def get_pathways(bridgedb_df: pd.DataFrame):
     # Calculate the time elapsed
     time_elapsed = str(end_time - start_time)
     # Calculate new nodes
-    num_new_nodes = len({
-        p[Cons.PATHWAY_ID]
-        for pathway_list in data_df[Cons.KEGG_PATHWAY_COL]
-        if isinstance(pathway_list, list)
-        for p in pathway_list
-        if p.get(Cons.PATHWAY_ID)
-    })
+    num_new_nodes = len(
+        {
+            p[Cons.PATHWAY_ID]
+            for pathway_list in data_df[Cons.KEGG_PATHWAY_COL]
+            if isinstance(pathway_list, list)
+            for p in pathway_list
+            if p.get(Cons.PATHWAY_ID)
+        }
+    )
 
     # Calculate new edges
-    num_new_edges = len({
-        (row[Cons.TARGET_COL], p[Cons.PATHWAY_ID])
-        for _, row in data_df.iterrows()
-        if row[Cons.TARGET_COL] and isinstance(row[Cons.KEGG_PATHWAY_COL], list)
-        for p in row[Cons.KEGG_PATHWAY_COL]
-        if p.get(Cons.PATHWAY_ID)
-    })
+    num_new_edges = len(
+        {
+            (row[Cons.TARGET_COL], p[Cons.PATHWAY_ID])
+            for _, row in data_df.iterrows()
+            if row[Cons.TARGET_COL] and isinstance(row[Cons.KEGG_PATHWAY_COL], list)
+            for p in row[Cons.KEGG_PATHWAY_COL]
+            if p.get(Cons.PATHWAY_ID)
+        }
+    )
 
     # Add the datasource, query, query time, and the date to metadata
     kegg_metadata = {

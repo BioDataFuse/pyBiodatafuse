@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """Tests for the Pubchem annotator."""
+
 import json
 import os
 import unittest

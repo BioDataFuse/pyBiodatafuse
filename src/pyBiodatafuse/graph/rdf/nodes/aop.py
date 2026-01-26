@@ -2,7 +2,6 @@
 
 """Populate a BDF RDF g with AOP data."""
 
-
 from rdflib import Graph, Literal, URIRef
 from rdflib.namespace import OWL, RDF, RDFS, XSD
 

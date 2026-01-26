@@ -8,8 +8,8 @@ import warnings
 from string import Template
 from typing import List, Tuple
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 from SPARQLWrapper import JSON, SPARQLWrapper
 from SPARQLWrapper.SPARQLExceptions import SPARQLWrapperException
 

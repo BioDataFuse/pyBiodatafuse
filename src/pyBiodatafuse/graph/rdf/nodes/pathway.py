@@ -3,7 +3,6 @@
 
 """Populate a BDF RDF graph with pathway nodes."""
 
-
 from rdflib import Graph, Literal, URIRef
 from rdflib.namespace import RDF, RDFS, XSD
 
