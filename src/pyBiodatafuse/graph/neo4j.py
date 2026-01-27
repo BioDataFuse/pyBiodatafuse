@@ -93,6 +93,30 @@ class DownstreamOf(StructuredRel):
     datasource = StringProperty()
 
 
+class HasKeyEvent(StructuredRel):
+    """Relationship between an AOP and a key event."""
+
+    datasource = StringProperty()
+
+
+class HasAdverseOutcome(StructuredRel):
+    """Relationship between an AOP and an adverse outcome."""
+
+    datasource = StringProperty()
+
+
+class HasMolecularInitiatingEvent(StructuredRel):
+    """Relationship between an AOP and a molecular initiating event."""
+
+    datasource = StringProperty()
+
+
+class HasKeyEventRelationship(StructuredRel):
+    """Relationship between an AOP and a key event relationship."""
+
+    datasource = StringProperty()
+
+
 # Defining the nodes
 class Gene(StructuredNode):
     """Gene node."""
@@ -260,8 +284,22 @@ class AdverseOutcomePathway(StructuredNode):
     datasource = StringProperty(required=True)
     node_type = Cons.AOP_NODE_LABEL
 
-    # incoming relations (AO -> KeyEvent)
-    associated_with = RelationshipTo(Gene, Cons.ASSOCIATED_WITH, model=AssociatedWith)
+    # incoming relations (Gene -> AOP)
+    associated_with = RelationshipFrom(Gene, Cons.ASSOCIATED_WITH, model=AssociatedWith)
+
+    # outgoing relations (AOP -> KE, AO, MIE, KER)
+    has_key_event = RelationshipTo(
+        Cons.KEY_EVENT_NODE_LABEL.replace(" ", ""), Cons.HAS_KEY_EVENT, model=HasKeyEvent
+    )
+    has_adverse_outcome = RelationshipTo(
+        Cons.AO_NODE_LABEL.replace(" ", ""), Cons.HAS_ADVERSE_OUTCOME, model=HasAdverseOutcome
+    )
+    has_molecular_initiating_event = RelationshipTo(
+        Cons.MIE_NODE_LABEL.replace(" ", ""), Cons.HAS_MOLECULAR_INITIATING_EVENT, model=HasMolecularInitiatingEvent
+    )
+    has_key_event_relationship = RelationshipTo(
+        "KeyEventRelationship", Cons.HAS_KEY_EVENT_RELATIONSHIP, model=HasKeyEventRelationship
+    )
 
 
 class MolecularInitiatingEvent(StructuredNode):
@@ -299,6 +337,28 @@ class KeyEvent(StructuredNode):
     # outgoing relations (KeyEvent -> KeyEvent)
     downstream_of = RelationshipTo(
         Cons.KEY_EVENT_NODE_LABEL.replace(" ", ""), Cons.DOWNSTREAM_OF, model=DownstreamOf
+    )
+
+
+class KeyEventRelationship(StructuredNode):
+    """Key event relationship node."""
+
+    idx = StringProperty(required=True, unique_index=True, unique=True)
+    name = StringProperty()
+    datasource = StringProperty(required=True)
+    node_type = Cons.KEY_EVENT_RELATIONSHIP_NODE_LABEL
+
+    # incoming relations (AOP -> KER)
+    has_key_event_relationship = RelationshipFrom(
+        Cons.AOP_NODE_LABEL.replace(" ", ""), Cons.HAS_KEY_EVENT_RELATIONSHIP, model=HasKeyEventRelationship
+    )
+
+    # outgoing relations (KER -> KE)
+    has_upstream_key_event = RelationshipTo(
+        Cons.KEY_EVENT_NODE_LABEL.replace(" ", ""), "HAS_UPSTREAM_KEY_EVENT", model=HasKeyEvent
+    )
+    has_downstream_key_event = RelationshipTo(
+        Cons.KEY_EVENT_NODE_LABEL.replace(" ", ""), "HAS_DOWNSTREAM_KEY_EVENT", model=HasKeyEvent
     )
 
 
@@ -401,12 +461,31 @@ def exporter(
 
 
 def connect_db(uri: str, username: str, password: str):
-    """Connect to the Neo4j database."""
-    # This requires a local community version installation of Neo4j
-    my_driver = GraphDatabase().driver(uri, auth=(username, password))
-    config.DRIVER = my_driver
-
-    # Delete all nodes and relationships
+    """Connect to the Neo4j database.
+    
+    :param uri: URI for Neo4j database (e.g., 'bolt://localhost:7687')
+    :param username: Neo4j username
+    :param password: Neo4j password
+    """
+    # Set the connection URL for neomodel
+    # Format: bolt://username:password@host:port
+    from urllib.parse import urlparse
+    parsed = urlparse(uri)
+    host = parsed.hostname or "localhost"
+    port = parsed.port or 7687
+    
+    # Configure neomodel with the connection URL
+    connection_url = f"bolt://{username}:{password}@{host}:{port}"
+    config.DATABASE_URL = connection_url
+    
+    # Also set up the driver directly
+    driver = GraphDatabase.driver(
+        uri,
+        auth=(username, password)
+    )
+    config.DRIVER = driver
+    
+    # Clear existing data
     db.cypher_query("MATCH ()-[r]-() DELETE r")  # delete all relationships
     db.cypher_query("MATCH (n) DETACH DELETE n")  # delete all nodes
 
@@ -499,6 +578,12 @@ def load_graph(g: nx.MultiDiGraph, uri: str, username: str, password: str):
                 name=node_data[Cons.NAME],
                 datasource=node_data[Cons.DATASOURCE],
                 organ=node_data.get("organ", None),
+            ).save()
+        elif node_type == Cons.KEY_EVENT_RELATIONSHIP_NODE_LABEL.lower():
+            n = KeyEventRelationship(
+                idx=node_data[Cons.ID],
+                name=node_data.get(Cons.NAME, ""),
+                datasource=node_data[Cons.DATASOURCE],
             ).save()
         elif node_type == Cons.AO_NODE_LABEL.lower():
             n = AdverseOutcome(
@@ -614,6 +699,31 @@ def load_graph(g: nx.MultiDiGraph, uri: str, username: str, password: str):
                     target_node, {"datasource": data[Cons.DATASOURCE]}
                 )
                 edges.append([source_node, target_node, edge_type])
+
+            elif edge_type == Cons.HAS_KEY_EVENT:
+                source_node.has_key_event.connect(
+                    target_node, {"datasource": data[Cons.DATASOURCE]}
+                )
+                edges.append([source_node, target_node, edge_type])
+
+            elif edge_type == Cons.HAS_ADVERSE_OUTCOME:
+                source_node.has_adverse_outcome.connect(
+                    target_node, {"datasource": data[Cons.DATASOURCE]}
+                )
+                edges.append([source_node, target_node, edge_type])
+
+            elif edge_type == Cons.HAS_MOLECULAR_INITIATING_EVENT:
+                source_node.has_molecular_initiating_event.connect(
+                    target_node, {"datasource": data[Cons.DATASOURCE]}
+                )
+                edges.append([source_node, target_node, edge_type])
+
+            elif edge_type == Cons.HAS_KEY_EVENT_RELATIONSHIP:
+                source_node.has_key_event_relationship.connect(
+                    target_node, {"datasource": data[Cons.DATASOURCE]}
+                )
+                edges.append([source_node, target_node, edge_type])
+
             else:
                 raise ValueError(f"Edge type {edge_type} not found in Neo4j template")
 
