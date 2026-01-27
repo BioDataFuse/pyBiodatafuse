@@ -5,7 +5,6 @@
 
 import datetime
 import json
-import logging
 import urllib.parse
 import warnings
 from typing import Dict, List
@@ -16,7 +15,10 @@ import requests
 from tqdm import tqdm
 
 import pyBiodatafuse.constants as Cons
+from pyBiodatafuse.logging_config import get_logger
 from pyBiodatafuse.utils import get_identifier_of_interest, give_annotator_warning
+
+logger = get_logger(__name__)
 
 
 def check_endpoint_intact() -> bool:
@@ -40,7 +42,7 @@ def check_version_intact() -> dict:
         version_json = version_call.json()
         return {"source_version": version_json.get("version", "unknown")}
     except (requests.exceptions.RequestException, json.JSONDecodeError) as e:
-        logging.error(f"Error getting IntAct version: {e}")
+        logger.error(f"Error getting IntAct version: {e}")
         return {"source_version": "unknown"}
 
 
@@ -113,7 +115,7 @@ def get_intact_interactions(gene_ids: List[str]) -> List[dict]:
         return interactions
 
     except requests.RequestException as e:
-        logging.warning(f"Batch request failed for genes {gene_ids}: {e}")
+        logger.warning(f"Batch request failed for genes {gene_ids}: {e}")
         return []
 
 
@@ -142,7 +144,7 @@ def get_protein_intact_acs(id_of_interest: str) -> List[str]:
         return protein_acs
 
     except requests.exceptions.RequestException as e:
-        logging.warning(f"Failed to get interactors for {id_of_interest}: {e}")
+        logger.warning(f"Failed to get interactors for {id_of_interest}: {e}")
         return []
 
 

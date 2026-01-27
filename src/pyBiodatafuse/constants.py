@@ -826,6 +826,7 @@ MIRNA_NODE_LABEL = "miRNA"
 TRANS_FACTOR_NODE_LABEL = "Transcription Factor"
 MITOCHONDRIAL_PATHWAY_NODE_LABEL = "Mitochondrial Pathway"
 KEY_EVENT_NODE_LABEL = "Key Event"
+KEY_EVENT_RELATIONSHIP_NODE_LABEL = "Key Event Relationship"
 MIE_NODE_LABEL = "Molecular Initiating Event"
 AOP_NODE_LABEL = "Adverse Outcome Pathway"
 AO_NODE_LABEL = "Adverse Outcome"
@@ -841,6 +842,10 @@ INHIBITS = "INHIBITS"
 EXPRESSED_BY = "EXPRESSED_BY"
 UPSTREAM_OF = "UPSTREAM_OF"
 DOWNSTREAM_OF = "DOWNSTREAM_OF"
+HAS_KEY_EVENT = "HAS_KEY_EVENT"
+HAS_ADVERSE_OUTCOME = "HAS_ADVERSE_OUTCOME"
+HAS_MOLECULAR_INITIATING_EVENT = "HAS_MOLECULAR_INITIATING_EVENT"
+HAS_KEY_EVENT_RELATIONSHIP = "HAS_KEY_EVENT_RELATIONSHIP"
 
 """
 Anatomical entity nodes and edges
@@ -1282,7 +1287,7 @@ KE_UPSTREAM_MIE_EDGE_LABEL = "upstream_of"  # KE upstream to MIE edge
 KEY_EVENT_DOWNSTREAM_NODE_MAIN_LABEL = "KE_downstream"
 KE_DOWNSTREAM_KE_EDGE_LABEL = "downstream_of"  # KE downstream to KE upstream edge
 AO_NODE_MAIN_LABEL = "ao"
-AO_KE_EDGE_LABEL = "associated_with"  # KE downstream to AO edge
+AO_KE_EDGE_LABEL = "has_adverse_outcome"  # AOP to AO edge
 # Simple mode (pathway=False)
 KEY_EVENT_NODE_MAIN_LABEL = "ke"  # Simple KE from pathway=False mode
 AOP_KE_EDGE_LABEL = "has_key_event"  # AOP to KE edge (simple mode)
@@ -1529,6 +1534,14 @@ NAMESPACE_BINDINGS = {
     "umls": "https://www.ncbi.nlm.nih.gov/medgen/",
     "so": "http://purl.obolibrary.org/obo/so#",
     "cheminf": "http://semanticscience.org/resource/",
+    # WikiPathways vocabulary (http version used in pathway.py)
+    "wp": "http://vocabularies.wikipathways.org/wp#",
+    # WikiPathways vocabulary (https version used in NODE_TYPES interaction)
+    "wps": "https://vocabularies.wikipathways.org/wp#",
+    # AOP-Wiki ontology
+    "aopo": "http://aopkb.org/aop_ontology#",
+    # ChEBI properties (under OBO)
+    "chebi": "http://purl.obolibrary.org/obo/chebi/",
 }
 
 # Patterns URIs for nodes (one for each node in the schema)
@@ -1552,11 +1565,11 @@ NODE_TYPES = {
     "disease_node": f"{NAMESPACE_BINDINGS['obo']}NCIT_C7057",
     "gene_disease_association": f"{NAMESPACE_BINDINGS['sio']}SIO_000983",
     "score_node": f"{NAMESPACE_BINDINGS['obo']}NCIT_C25338",
-    "data_source_node": "http://semanticscience.org/resource/SIO_000750",
+    # Data source types - use DCAT/VOID Dataset (aligned with dataset_provenance.py)
+    "data_source_node": f"{NAMESPACE_BINDINGS['dcat']}Dataset",
     "gene_expression_value_node": f"{NAMESPACE_BINDINGS['sio']}SIO_001077",
     "anatomical_entity_node": "http://semanticscience.org/resource/SIO_001262",
     "tested_compound_node": "http://semanticscience.org/resource/SIO_010038",
-    "source_database": f"{NAMESPACE_BINDINGS['sio']}SIO_000750",
     "experimental_process_node": "http://www.ebi.ac.uk/efo/EFO_0002694",
     "pathway_node": f"{NAMESPACE_BINDINGS['obo']}PW_0000001",
     "adverse_event_node": f"{NAMESPACE_BINDINGS['obo']}OAE_0000001",

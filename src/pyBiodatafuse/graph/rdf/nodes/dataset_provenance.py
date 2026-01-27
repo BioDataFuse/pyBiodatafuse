@@ -16,7 +16,6 @@ Each data source queried during graph construction is represented as a
 dcat:Dataset with proper version information, access dates, and provenance.
 """
 
-import logging
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Set
 
@@ -24,9 +23,10 @@ from rdflib import Graph, Literal, URIRef
 from rdflib.namespace import RDF, RDFS, XSD
 
 import pyBiodatafuse.constants as Cons
+from pyBiodatafuse.logging_config import get_logger
 
 # Set up logger
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 # Mapping from metadata datasource names to normalized constant names
 # This ensures consistency between metadata-recorded sources and process-recorded sources

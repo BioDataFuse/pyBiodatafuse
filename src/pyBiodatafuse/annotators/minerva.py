@@ -3,7 +3,6 @@
 """Python file for queriying the MINERVA platform (https://minerva.pages.uni.lu/doc/)."""
 
 import datetime
-import logging
 import warnings
 from typing import Any, Dict, Optional, Tuple
 
@@ -12,6 +11,7 @@ import requests
 from tqdm import tqdm
 
 import pyBiodatafuse.constants as Cons
+from pyBiodatafuse.logging_config import get_logger
 from pyBiodatafuse.utils import (
     check_columns_against_constants,
     collapse_data_sources,
@@ -19,7 +19,7 @@ from pyBiodatafuse.utils import (
     give_annotator_warning,
 )
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 def check_endpoint_minerva() -> bool:

@@ -1,6 +1,5 @@
 """Provide utils for BDF RDF."""
 
-import logging
 import os
 
 import numpy as np
@@ -11,10 +10,16 @@ from rdflib.namespace import RDF, RDFS, SH, XSD
 from shexer.consts import SHACL_TURTLE, TURTLE
 from shexer.shaper import Shaper
 
-from pyBiodatafuse.constants import DATA_SOURCES, NAMESPACE_BINDINGS, NAMESPACE_SHAPES, NODE_TYPES
+from pyBiodatafuse.constants import (
+    DATA_SOURCES,
+    NAMESPACE_BINDINGS,
+    NAMESPACE_SHAPES,
+    NODE_TYPES,
+    VOID_TYPES,
+)
+from pyBiodatafuse.logging_config import get_logger
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 def replace_na_none(item):
@@ -62,6 +67,8 @@ def construct_uri(base_uri, identifier):
 def add_data_source_node(g: Graph, source: str) -> URIRef:
     """Create and add a data source node to the RDF graph.
 
+    Uses DCAT Dataset and VoID Dataset types, aligned with dataset_provenance.py.
+
     :param g: RDF graph to which the data source node will be added.
     :param source: String containing the name of the source of the data.
     :return: URIRef for the created data source node.
@@ -71,7 +78,9 @@ def add_data_source_node(g: Graph, source: str) -> URIRef:
         source = "OpenTargets"
     data_source_name = Literal(source, datatype=XSD.string)
     data_source_url = URIRef(DATA_SOURCES[source])
+    # Add both DCAT and VoID Dataset types (aligned with dataset_provenance.py)
     g.add((data_source_url, RDF.type, URIRef(NODE_TYPES["data_source_node"])))
+    g.add((data_source_url, RDF.type, URIRef(VOID_TYPES["dataset"])))
     g.add((data_source_url, RDFS.label, data_source_name))
     return data_source_url
 

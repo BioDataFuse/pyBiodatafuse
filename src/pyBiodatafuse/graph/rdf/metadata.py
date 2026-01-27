@@ -16,6 +16,7 @@ from pyBiodatafuse.constants import (
     NODE_TYPES,
     SCHEMA_NAMESPACE,
     SCHEMA_TYPES,
+    VOID_TYPES,
 )
 
 # Define namespace objects
@@ -277,12 +278,16 @@ def add_metadata(
 def add_data_source_node(g: Graph, source: str) -> URIRef:
     """Create and add a data source node to the RDF graph.
 
+    Uses DCAT Dataset and VoID Dataset types, aligned with dataset_provenance.py.
+
     :param g: RDF graph to which the data source node will be added.
     :param source: String containing the name of the source of the data
     :return: URIRef for the created data source node.
     """
     data_source_name = Literal(source, datatype=XSD.string)
     data_source_url = URIRef(DATA_SOURCES[source])
+    # Add both DCAT and VoID Dataset types (aligned with dataset_provenance.py)
     g.add((data_source_url, RDF.type, URIRef(NODE_TYPES["data_source_node"])))
+    g.add((data_source_url, RDF.type, URIRef(VOID_TYPES["dataset"])))
     g.add((data_source_url, RDFS.label, data_source_name))
     return data_source_url

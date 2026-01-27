@@ -10,6 +10,7 @@ import pyBiodatafuse.constants as Cons
 from pyBiodatafuse.graph.rdf.nodes.base import (
     add_label,
     add_same_as,
+    add_triple,
     add_type,
     create_node,
     extract_id,
@@ -59,7 +60,9 @@ def add_pathway_node(g: Graph, data: dict, source: str) -> Optional[URIRef]:
             source_node = URIRef(iri_source)
             link_has_source(g, pathway_node, source_node)
             add_label(g, source_node, source)
+            # Add both DCAT and VoID Dataset types (aligned with dataset_provenance.py)
             add_type(g, source_node, Cons.NODE_TYPES["data_source_node"])
+            add_type(g, source_node, Cons.VOID_TYPES["dataset"])
 
     return pathway_node
 
@@ -113,40 +116,19 @@ def add_molecular_pathway_node(g, el, identifier, id_number):
             {"target.source": "Ensembl", "target": target_gene, "identifier": target_gene},
         )
         if target_gene_node:
-            g.add(
-                (
-                    identifier,
-                    URIRef(g.new_uris["interaction"] + mimtype),
-                    target_gene_node,
-                )
-            )
-            g.add(
-                (
-                    target_gene_node,
-                    URIRef("http://vocabularies.wikipathways.org/wp#" + mimtype),
-                    identifier,
-                )
-            )
+            interaction_predicate = URIRef(g.new_uris["interaction"] + mimtype)
+            wp_predicate = URIRef("http://vocabularies.wikipathways.org/wp#" + mimtype)
+            add_triple(g, identifier, interaction_predicate, target_gene_node)
+            add_triple(g, target_gene_node, wp_predicate, identifier)
             link_has_part(g, mim_node, target_gene_node, bidirectional=True)
 
     # Link target protein
     if target_protein:
         target_protein_node = create_node(Cons.BASE_URLS_DBS["uniprot"], target_protein)
         add_type(g, target_protein_node, Cons.NODE_TYPES["protein_node"])
-        g.add(
-            (
-                identifier,
-                URIRef("http://vocabularies.wikipathways.org/wp#" + mimtype),
-                target_protein_node,
-            )
-        )
-        g.add(
-            (
-                target_protein_node,
-                URIRef("http://vocabularies.wikipathways.org/wp#" + mimtype),
-                identifier,
-            )
-        )
+        wp_predicate = URIRef("http://vocabularies.wikipathways.org/wp#" + mimtype)
+        add_triple(g, identifier, wp_predicate, target_protein_node)
+        add_triple(g, target_protein_node, wp_predicate, identifier)
         link_has_part(g, mim_node, target_protein_node, bidirectional=True)
 
     # Link target metabolite
@@ -155,20 +137,9 @@ def add_molecular_pathway_node(g, el, identifier, id_number):
             Cons.NODE_TYPES["compound_node"] + target_metabolite
         )
         add_type(g, target_metabolite_node, Cons.NODE_TYPES["compound_node"])
-        g.add(
-            (
-                identifier,
-                URIRef("http://vocabularies.wikipathways.org/wp#" + mimtype),
-                target_metabolite_node,
-            )
-        )
-        g.add(
-            (
-                target_metabolite_node,
-                URIRef("http://vocabularies.wikipathways.org/wp#" + mimtype),
-                identifier,
-            )
-        )
+        wp_predicate = URIRef("http://vocabularies.wikipathways.org/wp#" + mimtype)
+        add_triple(g, identifier, wp_predicate, target_metabolite_node)
+        add_triple(g, target_metabolite_node, wp_predicate, identifier)
         link_has_part(g, mim_node, identifier, bidirectional=True)
         link_has_part(g, mim_node, target_metabolite_node, bidirectional=True)
 

@@ -8,7 +8,6 @@ Adverse Outcome Pathways (AOPs) associated with genes and compounds.
 """
 
 import datetime
-import logging
 import os
 import warnings
 from string import Template
@@ -20,6 +19,7 @@ from SPARQLWrapper.SPARQLExceptions import SPARQLWrapperException
 from tqdm import tqdm
 
 import pyBiodatafuse.constants as Cons
+from pyBiodatafuse.logging_config import get_logger
 from pyBiodatafuse.utils import (
     check_columns_against_constants,
     collapse_data_sources,
@@ -34,7 +34,7 @@ QUERY_COMPOUND_SIMPLE = os.path.join(os.path.dirname(__file__), "queries", "aopw
 QUERY_GENE = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-gene.rq")
 QUERY_GENE_SIMPLE = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-gene-simple.rq")
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 def read_sparql_file(file_path: str) -> str:

@@ -48,7 +48,6 @@ Example::
                 self.record_datasource(Cons.NEW_SOURCE, node=node, interaction_type="new type")
 """
 
-import logging
 import time
 from typing import Any, Dict, List, Optional, Union
 
@@ -87,21 +86,10 @@ from pyBiodatafuse.graph.rdf.utils import (
     replace_na_none,
 )
 from pyBiodatafuse.id_mapper import read_datasource_file
+from pyBiodatafuse.logging_config import get_logger
 
 # Set up logger
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-
-# Create console handler with a higher log level
-console_handler = logging.StreamHandler()
-console_handler.setLevel(logging.INFO)
-
-# Create formatter and add it to the handler
-formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-console_handler.setFormatter(formatter)
-
-# Add the handler to the logger
-logger.addHandler(console_handler)
+logger = get_logger(__name__)
 
 
 class BDFGraph(Graph):

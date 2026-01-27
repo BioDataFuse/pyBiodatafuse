@@ -9,11 +9,11 @@ This module creates GO term nodes from OpenTargets annotation data.
 from typing import Optional
 
 from bioregistry import get_iri
-from rdflib import Graph, Literal, URIRef
-from rdflib.namespace import RDFS, XSD
+from rdflib import Graph, URIRef
+from rdflib.namespace import RDFS
 
 import pyBiodatafuse.constants as Cons
-from pyBiodatafuse.graph.rdf.nodes.base import add_label, link_has_source, safe_get
+from pyBiodatafuse.graph.rdf.nodes.base import add_label, add_triple, link_has_source, safe_get
 from pyBiodatafuse.graph.rdf.utils import add_data_source_node
 
 
@@ -39,10 +39,10 @@ def add_go_cpf(g: Graph, process_data: dict) -> Optional[URIRef]:
     label = safe_get(process_data, Cons.GO_NAME, curie)
     add_label(g, go_node, label)
 
-    # Add GO type as subclass
+    # Add GO type as subclass using add_triple
     go_type = safe_get(process_data, Cons.GO_TYPE)
     if go_type and go_type in Cons.GO_TYPES:
-        g.add((go_node, RDFS.subClassOf, URIRef(Cons.GO_TYPES[go_type])))
+        add_triple(g, go_node, RDFS.subClassOf, URIRef(Cons.GO_TYPES[go_type]))
 
     # Add data source
     source_node = add_data_source_node(g, Cons.OPENTARGETS_REACTOME_COL)

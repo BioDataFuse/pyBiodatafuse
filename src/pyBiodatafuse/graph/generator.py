@@ -3,9 +3,7 @@
 """Python module to construct a NetworkX graph from the annotated data frame."""
 
 import json
-import logging
 import pickle
-from logging import Logger
 
 import networkx as nx
 import numpy as np
@@ -13,9 +11,9 @@ import pandas as pd
 from tqdm import tqdm
 
 import pyBiodatafuse.constants as Cons
+from pyBiodatafuse.logging_config import get_logger
 
-logger = Logger(__name__)
-logger.setLevel(logging.INFO)
+logger = get_logger(__name__)
 
 
 def load_dataframe_from_pickle(pickle_path: str) -> pd.DataFrame:

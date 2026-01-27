@@ -5,7 +5,6 @@
 import csv
 import datetime
 import json
-import logging
 import os
 import re
 import time
@@ -19,8 +18,9 @@ from rdkit.Chem import CanonSmiles
 from tqdm import tqdm
 
 import pyBiodatafuse.constants as Cons
+from pyBiodatafuse.logging_config import get_logger
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 def read_datasource_file() -> pd.DataFrame:
