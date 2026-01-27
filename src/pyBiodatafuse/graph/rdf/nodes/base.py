@@ -115,8 +115,8 @@ def add_triple(
         else:
             predicate = URIRef(predicate)
 
-    # Convert string objects to Literals
-    if isinstance(obj, str):
+    # Convert string objects to Literals (but preserve URIRef objects)
+    if isinstance(obj, str) and not isinstance(obj, URIRef):
         obj = Literal(obj, datatype=XSD.string)
 
     g.add((subject, predicate, obj))

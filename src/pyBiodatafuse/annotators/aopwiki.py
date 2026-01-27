@@ -30,7 +30,9 @@ from pyBiodatafuse.utils import (
 # Pre-requisite:
 QUERY_LIMIT = 25
 QUERY_COMPOUND = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-compound.rq")
+QUERY_COMPOUND_SIMPLE = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-compound-simple.rq")
 QUERY_GENE = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-gene.rq")
+QUERY_GENE_SIMPLE = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-gene-simple.rq")
 
 logger = logging.getLogger(__name__)
 
@@ -62,10 +64,12 @@ def check_endpoint_aopwiki() -> bool:
         return False
 
 
-def get_aops_gene(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
+def get_aops_gene(bridgedb_df: pd.DataFrame, pathway: bool = False) -> Tuple[pd.DataFrame, dict]:
     """Query for AOPs associated with genes from AOP Wiki RDF.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene ids to query
+    :param pathway: if True, retrieve full pathway information including upstream/downstream key events.
+                   If False (default), retrieve simplified AOP information.
     :returns: a DataFrame containing the AOP Wiki RDF output and dictionary of the AOP Wiki RDF metadata
     """
     # Check if the endpoint is available
@@ -93,6 +97,9 @@ def get_aops_gene(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
     sparql = SPARQLWrapper(Cons.AOPWIKI_ENDPOINT)
     sparql.setReturnFormat(JSON)
 
+    # Select query file based on pathway parameter
+    query_file = QUERY_GENE if pathway else QUERY_GENE_SIMPLE
+
     intermediate_df = pd.DataFrame()
 
     for batch in tqdm(query_batches, desc=f"Querying {Cons.AOPWIKIRDF} for genes"):
@@ -106,7 +113,7 @@ def get_aops_gene(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
         }
 
         # Load and substitute the query template
-        with open(QUERY_GENE, "r") as f:
+        with open(query_file, "r") as f:
             query = Template(f.read()).substitute(substit_dict)
 
         # Execute the query and process results
@@ -143,7 +150,7 @@ def get_aops_gene(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
 
     # Step 5: Clean and process the results
     input_col = Cons.AOPWIKI_GENE_INPUT_ID
-    output_dict = Cons.AOPWIKI_GENE_OUTPUT_DICT
+    output_dict = Cons.AOPWIKI_GENE_OUTPUT_DICT if pathway else Cons.AOPWIKI_GENE_OUTPUT_DICT_SIMPLE
 
     for key in output_dict.keys():
         if key in intermediate_df.columns:
@@ -166,6 +173,7 @@ def get_aops_gene(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
             "time": time_elapsed,
             "date": current_date,
             "url": Cons.AOPWIKI_ENDPOINT,
+            "pathway": pathway,
         },
     }
 
@@ -190,9 +198,11 @@ def get_aops_gene(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
     num_new_nodes = intermediate_df[Cons.TARGET_COL].nunique()
     num_new_edges = intermediate_df.drop_duplicates(subset=[Cons.TARGET_COL]).shape[0]
 
-    # Check the intermediate_df
-    if num_new_edges != len(intermediate_df):
-        give_annotator_warning(Cons.AOPWIKIRDF)
+    # Check the intermediate_df - commented out to adapt to AOP structure
+    # Building a pathway becomes very complicated if we need to group_by
+    # all columns
+    # if num_new_edges != len(intermediate_df):
+    #    give_annotator_warning(Cons.AOPWIKIRDF)
 
     # Add the number of new nodes and edges to metadata
     metadata_dict[Cons.QUERY][Cons.NUM_NODES] = num_new_nodes
@@ -201,10 +211,12 @@ def get_aops_gene(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
     return merged_df, metadata_dict
 
 
-def get_aops_compound(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
+def get_aops_compound(bridgedb_df: pd.DataFrame, pathway: bool = False) -> Tuple[pd.DataFrame, dict]:
     """Query for AOPs associated with compounds from AOP Wiki RDF.
 
     :param bridgedb_df: BridgeDb output for creating the list of compound ids to query
+    :param pathway: if True, retrieve full pathway information including upstream/downstream key events.
+                   If False (default), retrieve simplified AOP information.
     :returns: a DataFrame containing the AOP Wiki RDF output and dictionary of the AOP Wiki RDF metadata
     """
     # Check if the endpoint is available
@@ -232,6 +244,9 @@ def get_aops_compound(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
     sparql = SPARQLWrapper(Cons.AOPWIKI_ENDPOINT)
     sparql.setReturnFormat(JSON)
 
+    # Select query file based on pathway parameter
+    query_file = QUERY_COMPOUND if pathway else QUERY_COMPOUND_SIMPLE
+
     intermediate_df = pd.DataFrame()
 
     for batch in tqdm(query_batches, desc=f"Querying {Cons.AOPWIKIRDF} for compounds"):
@@ -250,7 +265,7 @@ def get_aops_compound(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
         }
 
         # Load and substitute the query template
-        with open(QUERY_COMPOUND, "r") as f:
+        with open(query_file, "r") as f:
             query = Template(f.read()).substitute(substit_dict)
 
         # Execute the query and process results
@@ -287,7 +302,9 @@ def get_aops_compound(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
 
     # Step 5: Clean and process the results
     input_col = "pubchem_compound"
-    output_dict = Cons.AOPWIKI_COMPOUND_OUTPUT_DICT
+    output_dict = (
+        Cons.AOPWIKI_COMPOUND_OUTPUT_DICT if pathway else Cons.AOPWIKI_COMPOUND_OUTPUT_DICT_SIMPLE
+    )
 
     # Clean URLs in output columns
     for key in output_dict.keys():
@@ -315,6 +332,7 @@ def get_aops_compound(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
             "time": time_elapsed,
             "date": current_date,
             "url": Cons.AOPWIKI_ENDPOINT,
+            "pathway": pathway,
         },
     }
 
@@ -352,10 +370,13 @@ def get_aops_compound(bridgedb_df: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
 
 def get_aops(
     bridgedb_df: pd.DataFrame,
+    pathway: bool = False,
 ) -> Tuple[pd.DataFrame, dict]:
     """Query for AOPs associated with genes or compounds.
 
     :param bridgedb_df: BridgeDb output for creating the list of gene/compound ids to query
+    :param pathway: if True, retrieve full pathway information including upstream/downstream key events.
+                   If False (default), retrieve simplified AOP information.
     :raises ValueError: if the input identifiers are not recognized or if they are not admitted gene or compound identifiers
     :returns: a DataFrame containing the AOP Wiki RDF output and dictionary of the AOP Wiki RDF metadata
     """
@@ -364,12 +385,12 @@ def get_aops(
         Cons.AOPWIKI_GENE_INPUT_ID in bridgedb_df["identifier.source"].values
         or Cons.AOPWIKI_GENE_INPUT_ID in bridgedb_df["target.source"].values
     ):
-        return get_aops_gene(bridgedb_df)
+        return get_aops_gene(bridgedb_df, pathway=pathway)
     elif (
         Cons.AOPWIKI_COMPOUND_INPUT_ID in bridgedb_df["identifier.source"].values
         or Cons.AOPWIKI_COMPOUND_INPUT_ID in bridgedb_df["target.source"].values
     ):
-        return get_aops_compound(bridgedb_df)
+        return get_aops_compound(bridgedb_df, pathway=pathway)
     else:
         raise ValueError(
             f"Input identifiers must be either '{Cons.AOPWIKI_GENE_INPUT_ID}' or '{Cons.AOPWIKI_COMPOUND_INPUT_ID}'"

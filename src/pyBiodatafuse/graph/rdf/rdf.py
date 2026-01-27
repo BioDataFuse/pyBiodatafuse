@@ -72,6 +72,7 @@ from pyBiodatafuse.graph.rdf.nodes.dataset_provenance import (
     add_dataset_provenance_to_graph,
     record_datasource_from_metadata,
 )
+from pyBiodatafuse.graph.rdf.nodes.experimental_process import add_pubchem_assay_node
 from pyBiodatafuse.graph.rdf.nodes.gene import get_gene_node
 from pyBiodatafuse.graph.rdf.nodes.gene_disease import add_gene_disease_associations
 from pyBiodatafuse.graph.rdf.nodes.gene_expression import add_gene_expression_data
@@ -79,7 +80,12 @@ from pyBiodatafuse.graph.rdf.nodes.go_terms import add_go_cpf
 from pyBiodatafuse.graph.rdf.nodes.literature import add_literature_based_data
 from pyBiodatafuse.graph.rdf.nodes.pathway import add_molecular_pathway_node, add_pathway_node
 from pyBiodatafuse.graph.rdf.nodes.protein_protein import add_ppi_data
-from pyBiodatafuse.graph.rdf.utils import get_shacl_prefixes, get_shapes, replace_na_none
+from pyBiodatafuse.graph.rdf.utils import (
+    discover_prefixes_from_graph,
+    get_shacl_prefixes,
+    get_shapes,
+    replace_na_none,
+)
 from pyBiodatafuse.id_mapper import read_datasource_file
 
 # Set up logger
@@ -101,14 +107,29 @@ logger.addHandler(console_handler)
 class BDFGraph(Graph):
     """Main class for a BioDatafuse RDF Graph, superclass of rdflib.Graph."""
 
-    def __init__(self, base_uri: str, version_iri: str, author: str, orcid: str):
+    def __init__(
+        self,
+        base_uri: str,
+        version_iri: Optional[str] = None,
+        title: Optional[str] = None,
+        description: Optional[str] = None,
+        author: Optional[str] = None,
+        orcid: Optional[str] = None,
+        creators: Optional[List[Dict[str, str]]] = None,
+    ):
         """
         Initialize a new instance of the class with the provided metadata and URIs.
 
         :param base_uri: The base URI for the RDF graph.
-        :param version_iri: The version IRI for the RDF graph.
-        :param author: The author of the BDF graph.
-        :param orcid: The ORCID identifier for the author.
+        :param version_iri: The version IRI for the RDF graph (optional).
+        :param title: The title of the BDF graph (optional).
+        :param description: A description of the BDF graph (optional).
+        :param author: The author of the BDF graph (optional, use creators for multiple).
+        :param orcid: The ORCID identifier for the author (optional, use creators for multiple).
+        :param creators: A list of creator dictionaries, each with 'name' (required),
+                        'orcid' (optional), and 'url' (optional) keys. Example:
+                        [{'name': 'John Doe', 'orcid': 'https://orcid.org/0000-0001-2345-6789'},
+                         {'name': 'Jane Smith', 'url': 'https://example.org/jane'}]
         """
         # Initialize the rdflib.Graph superclass without passing extra arguments
         super().__init__()
@@ -116,8 +137,11 @@ class BDFGraph(Graph):
         # Assign parameters to instance attributes
         self.base_uri = base_uri
         self.version_iri = version_iri
+        self.title = title
+        self.description = description
         self.author = author
         self.orcid = orcid
+        self.creators = creators or []
 
         # Create and bind custom URIs and namespaces
         self.new_uris = {key: self.base_uri + value for key, value in Cons.URIS.items()}
@@ -143,6 +167,7 @@ class BDFGraph(Graph):
         self.bind("pav", Cons.PAV_NAMESPACE)
         self.bind("void", Cons.VOID_NAMESPACE)
         self.bind("schema", Cons.SCHEMA_NAMESPACE)
+        self.bind("foaf", Cons.FOAF_NAMESPACE)
 
     def generate_rdf(
         self, df: pd.DataFrame, metadata: Dict[str, Any], open_only: bool = False
@@ -167,7 +192,9 @@ class BDFGraph(Graph):
         df = df.applymap(replace_na_none)
         datasources = read_datasource_file()
         if not self.include_variants:
-            df = df[df[Cons.TARGET_SOURCE_COL] == Cons.ENSEMBL]
+            # Filter to keep only rows with valid gene identifier sources from datasources file
+            valid_gene_sources = list(datasources[datasources["type"] == "gene"]["source"])
+            df = df[df[Cons.TARGET_SOURCE_COL].isin(valid_gene_sources)]
 
         total_rows = df.shape[0]
         logger.info(f"Processing {total_rows} rows...")
@@ -199,6 +226,19 @@ class BDFGraph(Graph):
             graph_uri=self.version_iri,
             tracker=self.provenance_tracker,
         )
+
+        # Discover additional prefixes from URIs in the graph using bioregistry
+        logger.info("Discovering prefixes from graph URIs using bioregistry...")
+        discovered = discover_prefixes_from_graph(self)
+        if discovered:
+            logger.info(f"Discovered {len(discovered)} additional prefixes")
+            # Store discovered prefixes for use in shacl_prefixes()
+            if self._namespaces is None:
+                self._namespaces = {}
+            self._namespaces.update(discovered)
+            # Also bind them to the graph for serialization
+            for prefix, ns_uri in discovered.items():
+                self.bind(prefix, ns_uri)
 
     def record_datasource(
         self, datasource: str, node: Optional[URIRef] = None, interaction_type: Optional[str] = None
@@ -236,6 +276,31 @@ class BDFGraph(Graph):
             logger.warning("%s: %s", error_msg, e)
             return False
 
+    def _safe_iterate(
+        self, items: list, func, *args, error_msg: str = "Item processing failed", **kwargs
+    ) -> int:
+        """
+        Safely iterate over items and process each one, continuing on errors.
+
+        :param items: List of items to iterate over.
+        :param func: Function to call for each item. First argument will be the item.
+        :param args: Additional arguments to pass to the function after the item.
+        :param error_msg: Error message prefix for logging.
+        :param kwargs: Keyword arguments to pass to the function.
+        :return: Number of successfully processed items.
+        """
+        if not items:
+            return 0
+
+        success_count = 0
+        for item in items:
+            try:
+                func(item, *args, **kwargs)
+                success_count += 1
+            except Exception as e:
+                logger.warning("%s: %s", error_msg, e)
+        return success_count
+
     def process_row(self, row: pd.Series, i: int, datasources: pd.DataFrame) -> None:
         """
         Process a single row of the DataFrame and update the RDF graph.
@@ -268,10 +333,17 @@ class BDFGraph(Graph):
         if not self.valid_indices(source_idx, source_namespace, target_idx, target_namespace):
             return
 
-        source_curie = normalize_curie(f"{source_namespace}:{source_idx}")
-        target_curie = normalize_curie(f"{target_namespace}:{target_idx}")
-        if not source_curie or not target_curie:
-            return
+        # Map BridgeDB namespaces to bioregistry-compatible prefixes
+        source_prefix = Cons.BRIDGEDB_TO_BIOREGISTRY.get(source_namespace, source_namespace)
+        target_prefix = Cons.BRIDGEDB_TO_BIOREGISTRY.get(target_namespace, target_namespace)
+
+        # Try to normalize CURIEs but don't fail if normalization doesn't work
+        source_curie = normalize_curie(f"{source_prefix}:{source_idx}")
+        target_curie = normalize_curie(f"{target_prefix}:{target_idx}")
+        if not source_curie:
+            logger.debug("Could not normalize source CURIE: %s:%s", source_prefix, source_idx)
+        if not target_curie:
+            logger.debug("Could not normalize target CURIE: %s:%s", target_prefix, target_idx)
 
         id_number = f"{i:06d}"
 
@@ -389,6 +461,14 @@ class BDFGraph(Graph):
                 error_msg="Failed to process molecular pathway"
             )
 
+        # PubChem assay data
+        pubchem_assays = row.get(Cons.PUBCHEM_COMPOUND_ASSAYS_COL)
+        if pubchem_assays:
+            self._safe_process(
+                self.process_pubchem_assay_data, pubchem_assays, gene_node,
+                error_msg="Failed to process PubChem assay data"
+            )
+
         # CompoundWiki
         self._safe_process(
             self.process_compoundwiki_data, gene_node, row,
@@ -479,11 +559,16 @@ class BDFGraph(Graph):
         """
         Get gene node.
 
+        Dynamically creates gene nodes based on the target source.
+        The target source must have a corresponding entry in NODE_URI_PREFIXES.
+
         :param row: A series containing the data for a single row.
                     It must include the key "target.source".
         :return: A URIRef for the gene, else None.
         """
-        if row["target.source"] == "Ensembl":
+        target_source = row.get("target.source")
+        # Check if we have a URI prefix for this source
+        if target_source and target_source in Cons.NODE_URI_PREFIXES:
             return get_gene_node(self, row)
         return None
 
@@ -508,10 +593,13 @@ class BDFGraph(Graph):
         :param source_idx: Source index for the data.
         :param gene_node: RDF node representing the gene.
         """
-        if disease_data:
-            # Track which data sources contributed disease data
-            sources_used = set()
-            for j, disease in enumerate(disease_data):
+        if not disease_data:
+            return
+
+        # Track which data sources contributed disease data
+        sources_used = set()
+        for j, disease in enumerate(disease_data):
+            try:
                 add_gene_disease_associations(
                     self, id_number, source_idx, gene_node, disease, self.new_uris, j
                 )
@@ -520,10 +608,13 @@ class BDFGraph(Graph):
                     sources_used.add(Cons.DISGENET)
                 elif disease.get("opentargets_disease_assoc_score"):
                     sources_used.add(Cons.OPENTARGETS)
-            for source in sources_used:
-                self.record_datasource(
-                    source, node=gene_node, interaction_type="gene-disease association"
-                )
+            except Exception as e:
+                logger.warning("Failed to process disease entry %d: %s", j, e)
+
+        for source in sources_used:
+            self.record_datasource(
+                source, node=gene_node, interaction_type="gene-disease association"
+            )
 
     def process_expression_data(
         self, expression_data, id_number: str, source_idx: str, gene_node: URIRef
@@ -559,18 +650,24 @@ class BDFGraph(Graph):
         :param processes_data: A list of GO terms related to a gene.
         :param gene_node: The RDF node representing the gene.
         """
-        if processes_data:
-            data_added = False
-            for process_data in processes_data:
+        if not processes_data:
+            return
+
+        data_added = False
+        for process_data in processes_data:
+            try:
                 go_cpf = add_go_cpf(self, process_data)
                 if go_cpf:
                     self.add((gene_node, URIRef(Cons.PREDICATES["sio_is_part_of"]), go_cpf))
                     self.add((go_cpf, URIRef(Cons.PREDICATES["sio_has_part"]), gene_node))
                     data_added = True
-            if data_added:
-                self.record_datasource(
-                    Cons.OPENTARGETS, node=gene_node, interaction_type="GO annotation"
-                )
+            except Exception as e:
+                logger.warning("Failed to process GO term: %s", e)
+
+        if data_added:
+            self.record_datasource(
+                Cons.OPENTARGETS, node=gene_node, interaction_type="GO annotation"
+            )
 
     def process_compound_data(
         self, compound_data: Optional[List[Dict[str, Any]]], gene_node: URIRef
@@ -581,15 +678,49 @@ class BDFGraph(Graph):
         :param compound_data: List of compounds to be processed.
         :param gene_node: URIRef of gene node.
         """
-        if compound_data is not None:
-            data_added = False
-            for compound in compound_data:
+        if not compound_data:
+            return
+
+        data_added = False
+        for compound in compound_data:
+            try:
                 add_associated_compound_node(self, compound, gene_node)
                 data_added = True
-            if data_added:
-                self.record_datasource(
-                    Cons.OPENTARGETS, node=gene_node, interaction_type="gene-compound interaction"
-                )
+            except Exception as e:
+                logger.warning("Failed to process compound: %s", e)
+
+        if data_added:
+            self.record_datasource(
+                Cons.OPENTARGETS, node=gene_node, interaction_type="gene-compound interaction"
+            )
+
+    def process_pubchem_assay_data(
+        self, assay_data: List[Dict[str, Any]], gene_node: URIRef
+    ) -> None:
+        """
+        Process PubChem assay data and add to the RDF graph.
+
+        :param assay_data: List of PubChem assay entries to be processed.
+        :param gene_node: URIRef of gene node.
+        """
+        if not assay_data:
+            logger.warning("No assay data")
+            return
+
+        data_added = False
+        for assay in assay_data:
+            try:
+                if isinstance(assay, dict):
+                    assay_node = add_pubchem_assay_node(self, assay, gene_node)
+                    if assay_node:
+                        data_added = True
+            except Exception as e:
+                logger.warning("Failed to process PubChem assay: %s", e)
+
+        if data_added:
+            self.record_datasource(
+                Cons.PUBCHEM, node=gene_node, interaction_type="gene-compound assay"
+            )
 
     def process_compoundwiki_data(self, target_node: URIRef, row: pd.Series) -> None:
         """
@@ -604,37 +735,9 @@ class BDFGraph(Graph):
         pubchem_assays = row.get(Cons.PUBCHEM_COMPOUND_ASSAYS_COL, None)
         if pubchem_assays and isinstance(pubchem_assays, list):
             for assay in pubchem_assays:
-                if isinstance(assay, dict):
-                    compoundwiki_annotations = assay.get(Cons.COMPOUNDWIKI_COL, None)
-                    if compoundwiki_annotations:
-                        add_compoundwiki_annotations(
-                            self,
-                            target_node,
-                            [compoundwiki_annotations],
-                        )
-                        data_added = True
-
-        # Check for CompoundWiki annotations in OpenTargets compound data
-        opentargets_compounds = row.get(Cons.OPENTARGETS_GENE_COMPOUND_COL, None)
-        if opentargets_compounds and isinstance(opentargets_compounds, list):
-            for compound in opentargets_compounds:
-                if isinstance(compound, dict):
-                    compoundwiki_annotations = compound.get(Cons.COMPOUNDWIKI_COL, None)
-                    if compoundwiki_annotations:
-                        add_compoundwiki_annotations(
-                            self,
-                            target_node,
-                            [compoundwiki_annotations],
-                        )
-                        data_added = True
-
-        # Check for CompoundWiki annotations in IntAct interaction data
-        for intact_col in [Cons.INTACT_INTERACT_COL, Cons.INTACT_COMPOUND_INTERACT_COL]:
-            intact_data = row.get(intact_col, None)
-            if intact_data and isinstance(intact_data, list):
-                for interaction in intact_data:
-                    if isinstance(interaction, dict):
-                        compoundwiki_annotations = interaction.get(Cons.COMPOUNDWIKI_COL, None)
+                try:
+                    if isinstance(assay, dict):
+                        compoundwiki_annotations = assay.get(Cons.COMPOUNDWIKI_COL, None)
                         if compoundwiki_annotations:
                             add_compoundwiki_annotations(
                                 self,
@@ -642,26 +745,14 @@ class BDFGraph(Graph):
                                 [compoundwiki_annotations],
                             )
                             data_added = True
+                except Exception as e:
+                    logger.warning("Failed to process CompoundWiki from PubChem assay: %s", e)
 
-        # Check for CompoundWiki annotations in KEGG pathway data
-        kegg_pathways = row.get(Cons.KEGG_PATHWAY_COL, None)
-        if kegg_pathways and isinstance(kegg_pathways, list):
-            for pathway in kegg_pathways:
-                if isinstance(pathway, dict):
-                    compoundwiki_annotations = pathway.get(Cons.COMPOUNDWIKI_COL, None)
-                    if compoundwiki_annotations:
-                        add_compoundwiki_annotations(
-                            self,
-                            target_node,
-                            [compoundwiki_annotations],
-                        )
-                        data_added = True
-
-        # Check for CompoundWiki annotations in MolMeDB data
-        for molmedb_col in [Cons.MOLMEDB_PROTEIN_COMPOUND_COL, Cons.MOLMEDB_COMPOUND_PROTEIN_COL]:
-            molmedb_data = row.get(molmedb_col, None)
-            if molmedb_data and isinstance(molmedb_data, list):
-                for compound in molmedb_data:
+        # Check for CompoundWiki annotations in OpenTargets compound data
+        opentargets_compounds = row.get(Cons.OPENTARGETS_GENE_COMPOUND_COL, None)
+        if opentargets_compounds and isinstance(opentargets_compounds, list):
+            for compound in opentargets_compounds:
+                try:
                     if isinstance(compound, dict):
                         compoundwiki_annotations = compound.get(Cons.COMPOUNDWIKI_COL, None)
                         if compoundwiki_annotations:
@@ -671,6 +762,61 @@ class BDFGraph(Graph):
                                 [compoundwiki_annotations],
                             )
                             data_added = True
+                except Exception as e:
+                    logger.warning("Failed to process CompoundWiki from OpenTargets: %s", e)
+
+        # Check for CompoundWiki annotations in IntAct interaction data
+        for intact_col in [Cons.INTACT_INTERACT_COL, Cons.INTACT_COMPOUND_INTERACT_COL]:
+            intact_data = row.get(intact_col, None)
+            if intact_data and isinstance(intact_data, list):
+                for interaction in intact_data:
+                    try:
+                        if isinstance(interaction, dict):
+                            compoundwiki_annotations = interaction.get(Cons.COMPOUNDWIKI_COL, None)
+                            if compoundwiki_annotations:
+                                add_compoundwiki_annotations(
+                                    self,
+                                    target_node,
+                                    [compoundwiki_annotations],
+                                )
+                                data_added = True
+                    except Exception as e:
+                        logger.warning("Failed to process CompoundWiki from IntAct: %s", e)
+
+        # Check for CompoundWiki annotations in KEGG pathway data
+        kegg_pathways = row.get(Cons.KEGG_PATHWAY_COL, None)
+        if kegg_pathways and isinstance(kegg_pathways, list):
+            for pathway in kegg_pathways:
+                try:
+                    if isinstance(pathway, dict):
+                        compoundwiki_annotations = pathway.get(Cons.COMPOUNDWIKI_COL, None)
+                        if compoundwiki_annotations:
+                            add_compoundwiki_annotations(
+                                self,
+                                target_node,
+                                [compoundwiki_annotations],
+                            )
+                            data_added = True
+                except Exception as e:
+                    logger.warning("Failed to process CompoundWiki from KEGG: %s", e)
+
+        # Check for CompoundWiki annotations in MolMeDB data
+        for molmedb_col in [Cons.MOLMEDB_PROTEIN_COMPOUND_COL, Cons.MOLMEDB_COMPOUND_PROTEIN_COL]:
+            molmedb_data = row.get(molmedb_col, None)
+            if molmedb_data and isinstance(molmedb_data, list):
+                for compound in molmedb_data:
+                    try:
+                        if isinstance(compound, dict):
+                            compoundwiki_annotations = compound.get(Cons.COMPOUNDWIKI_COL, None)
+                            if compoundwiki_annotations:
+                                add_compoundwiki_annotations(
+                                    self,
+                                    target_node,
+                                    [compoundwiki_annotations],
+                                )
+                                data_added = True
+                    except Exception as e:
+                        logger.warning("Failed to process CompoundWiki from MolMeDB: %s", e)
 
         if data_added:
             self.record_datasource(
@@ -704,22 +850,25 @@ class BDFGraph(Graph):
                 else [literature_based_data]
             )
             for entry in entries:
-                if entry.get(Cons.UMLS, None):
-                    umls_parts = entry[Cons.UMLS].split(":")
-                    umlscui = umls_parts[1] if len(umls_parts) > 1 else None
-                    if not umlscui:
-                        continue
-                    disease_data_lit = {
-                        Cons.UMLS: umlscui,
-                        Cons.DISGENET_SCORE: None,
-                        Cons.DISGENET_EI: None,
-                        Cons.DISGENET_EL: None,
-                        Cons.DISEASE_NAME: entry[Cons.DISEASE_NAME],
-                    }
-                    add_literature_based_data(
-                        self, entry, gene_node, id_number, disease_data_lit, source_idx, new_uris, i
-                    )
-                    data_added = True
+                try:
+                    if entry.get(Cons.UMLS, None):
+                        umls_parts = entry[Cons.UMLS].split(":")
+                        umlscui = umls_parts[1] if len(umls_parts) > 1 else None
+                        if not umlscui:
+                            continue
+                        disease_data_lit = {
+                            Cons.UMLS: umlscui,
+                            Cons.DISGENET_SCORE: None,
+                            Cons.DISGENET_EI: None,
+                            Cons.DISGENET_EL: None,
+                            Cons.DISEASE_NAME: entry[Cons.DISEASE_NAME],
+                        }
+                        add_literature_based_data(
+                            self, entry, gene_node, id_number, disease_data_lit, source_idx, new_uris, i
+                        )
+                        data_added = True
+                except Exception as e:
+                    logger.warning("Failed to process literature entry: %s", e)
             if data_added:
                 self.record_datasource(
                     Cons.PUBCHEM, node=gene_node, interaction_type="literature-based association"
@@ -737,8 +886,11 @@ class BDFGraph(Graph):
         if transporter_inhibitor_data:
             data_added = False
             for entry in transporter_inhibitor_data:
-                add_transporter_inhibitor_node(self, gene_node, entry, self.base_uri)
-                data_added = True
+                try:
+                    add_transporter_inhibitor_node(self, gene_node, entry, self.base_uri)
+                    data_added = True
+                except Exception as e:
+                    logger.warning("Failed to process transporter inhibitor entry: %s", e)
             if data_added:
                 self.record_datasource(
                     Cons.MOLMEDB, node=gene_node, interaction_type="transporter inhibition"
@@ -756,8 +908,11 @@ class BDFGraph(Graph):
         if inhibitor_transporter_data:
             data_added = False
             for entry in inhibitor_transporter_data:
-                add_inhibitor_transporter_node(self, compound_node, entry, self.base_uri)
-                data_added = True
+                try:
+                    add_inhibitor_transporter_node(self, compound_node, entry, self.base_uri)
+                    data_added = True
+                except Exception as e:
+                    logger.warning("Failed to process inhibitor transporter entry: %s", e)
             if data_added:
                 self.record_datasource(
                     Cons.MOLMEDB, node=compound_node, interaction_type="transporter inhibition"
@@ -788,45 +943,49 @@ class BDFGraph(Graph):
             if pathway_data_list:
                 data_added = False
                 for pathway_data in pathway_data_list:
-                    if pathway_data.get("pathway_id"):
-                        pathway_node = add_pathway_node(self, pathway_data, source)
-                        self.add(
-                            (
-                                identifier_node,
-                                URIRef(Cons.PREDICATES["sio_is_part_of"]),
-                                pathway_node,
-                            )
-                        )
-                        self.add(
-                            (pathway_node, URIRef(Cons.PREDICATES["sio_has_part"]), identifier_node)
-                        )
-                        if protein_nodes:
-                            for protein_node in protein_nodes:
+                    try:
+                        if pathway_data.get("pathway_id"):
+                            pathway_node = add_pathway_node(self, pathway_data, source)
+                            if pathway_node:
                                 self.add(
                                     (
-                                        protein_node,
+                                        identifier_node,
                                         URIRef(Cons.PREDICATES["sio_is_part_of"]),
                                         pathway_node,
                                     )
                                 )
                                 self.add(
+                                    (pathway_node, URIRef(Cons.PREDICATES["sio_has_part"]), identifier_node)
+                                )
+                                if protein_nodes:
+                                    for protein_node in protein_nodes:
+                                        self.add(
+                                            (
+                                                protein_node,
+                                                URIRef(Cons.PREDICATES["sio_is_part_of"]),
+                                                pathway_node,
+                                            )
+                                        )
+                                        self.add(
+                                            (
+                                                pathway_node,
+                                                URIRef(Cons.PREDICATES["sio_has_part"]),
+                                                protein_node,
+                                            )
+                                        )
+                                self.add(
+                                    (pathway_node, URIRef(Cons.PREDICATES["sio_has_part"]), identifier_node)
+                                )
+                                self.add(
                                     (
                                         pathway_node,
-                                        URIRef(Cons.PREDICATES["sio_has_part"]),
-                                        protein_node,
+                                        URIRef(Cons.PREDICATES["sio_has_source"]),
+                                        URIRef(Cons.DATA_SOURCES[source]),
                                     )
                                 )
-                        self.add(
-                            (pathway_node, URIRef(Cons.PREDICATES["sio_has_part"]), identifier_node)
-                        )
-                        self.add(
-                            (
-                                pathway_node,
-                                URIRef(Cons.PREDICATES["sio_has_source"]),
-                                URIRef(Cons.DATA_SOURCES[source]),
-                            )
-                        )
-                        data_added = True
+                                data_added = True
+                    except Exception as e:
+                        logger.warning("Failed to process pathway entry from %s: %s", source, e)
                 if data_added:
                     self.record_datasource(
                         source_constants[source],
@@ -846,8 +1005,11 @@ class BDFGraph(Graph):
             return
         data_added = False
         for el in molecular_data:
-            add_molecular_pathway_node(self, el, identifier, id_number)
-            data_added = True
+            try:
+                add_molecular_pathway_node(self, el, identifier, id_number)
+                data_added = True
+            except Exception as e:
+                logger.warning("Failed to process molecular pathway entry: %s", e)
         if data_added:
             self.record_datasource(
                 Cons.WIKIPATHWAYS, node=identifier, interaction_type="molecular pathway"
@@ -867,10 +1029,13 @@ class BDFGraph(Graph):
 
         data_added = False
         for entry in stringdb_data:
-            if entry.get("Ensembl"):
-                result = add_ppi_data(g=self, gene_node=gene_node, entry=entry)
-                if result:
-                    data_added = True
+            try:
+                if entry.get("Ensembl"):
+                    result = add_ppi_data(g=self, gene_node=gene_node, entry=entry)
+                    if result:
+                        data_added = True
+            except Exception as e:
+                logger.warning("Failed to process PPI entry: %s", e)
 
         if data_added:
             self.record_datasource(
@@ -890,20 +1055,28 @@ class BDFGraph(Graph):
         :param gene_node: The gene URIRef. Defaults to None.
         :param compound_node: The compound URIRef. Defaults to None.
         """
+        if not aop_data:
+            return
+
         data_added = False
-        if aop_data and gene_node:
+
+        if gene_node:
             for entry in aop_data:
-                if entry.get("Ensembl"):
-                    add_aop_data(
-                        g=self,
-                        gene_node=gene_node,
-                        compound_node=None,
-                        entry=entry,
-                    )
-                    data_added = True
-        if aop_data and compound_node:
+                try:
+                    if entry.get("aop"):
+                        add_aop_data(
+                            g=self,
+                            gene_node=gene_node,
+                            compound_node=None,
+                            entry=entry,
+                        )
+                        data_added = True
+                except Exception as e:
+                    logger.warning("Failed to process AOP entry for gene: %s (entry: %s)", e, entry)
+
+        if compound_node:
             for entry in aop_data:
-                if entry.get("Ensembl"):
+                try:
                     add_aop_data(
                         g=self,
                         gene_node=None,
@@ -911,6 +1084,9 @@ class BDFGraph(Graph):
                         entry=entry,
                     )
                     data_added = True
+                except Exception as e:
+                    logger.warning("Failed to process AOP entry for compound: %s", e)
+
         if data_added:
             target_node = gene_node or compound_node
             self.record_datasource(
@@ -923,13 +1099,19 @@ class BDFGraph(Graph):
 
         :param metadata: Dataframe of BDF metadata to be added.
         """
+        # Use version_iri or fall back to base_uri for graph_uri
+        graph_uri = self.version_iri if self.version_iri else self.base_uri
+
         add_metadata(
             g=self,
-            graph_uri=self.version_iri,  # TODO fix
+            graph_uri=graph_uri,
+            metadata=metadata,
             version_iri=self.version_iri,
+            title=self.title,
+            description=self.description,
             author=self.author,
             orcid=self.orcid,
-            metadata=metadata,
+            creators=self.creators,
         )
 
     def shex(

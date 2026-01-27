@@ -1,545 +1,11 @@
-@prefix bdfo: <https://biodatafuse.org/onto/bdf#> .
-@prefix dcat: <http://www.w3.org/ns/dcat#> .
-@prefix dcterms: <http://purl.org/dc/terms/> .
-@prefix interaction: <https://biodatafuse.org/example/interaction> .
-@prefix ns1: <http://vocabularies.wikipathways.org/wp#> .
-@prefix obo: <http://purl.obolibrary.org/obo/> .
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix pav: <http://purl.org/pav/> .
-@prefix prov: <http://www.w3.org/ns/prov#> .
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix schema: <https://schema.org/> .
-@prefix sh: <http://www.w3.org/ns/shacl#> .
-@prefix sio: <http://semanticscience.org/resource/> .
-@prefix void: <http://rdfs.org/ns/void#> .
-@prefix weso-s: <http://weso.es/shapes/> .
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-
-weso-s:DataService a sh:NodeShape ;
-    sh:property [ a sh:PropertyShape ;
-            sh:in ( dcat:DataService ) ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path rdf:type ],
-        [ a sh:PropertyShape ;
-            sh:maxCount 2 ;
-            sh:minCount 2 ;
-            sh:node weso-s:Dataset ;
-            sh:path dcat:servesDataset ],
-        [ a sh:PropertyShape ;
-            sh:dataType xsd:string ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path rdfs:label ],
-        [ a sh:PropertyShape ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:IRI ;
-            sh:path dcat:endpointURL ],
-        [ a sh:PropertyShape ;
-            sh:in ( schema:WebAPI ) ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path rdf:type ] ;
-    sh:targetClass dcat:DataService .
-
-weso-s:DisGeNET_Evidence_Index a sh:NodeShape ;
-    sh:property [ a sh:PropertyShape ;
-            sh:in ( bdfo:DisGeNET_Evidence_Index ) ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path rdf:type ],
-        [ a sh:PropertyShape ;
-            sh:dataType xsd:double ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path sio:SIO_000300 ] ;
-    sh:targetClass bdfo:DisGeNET_Evidence_Index .
-
-weso-s:DisGeNET_Evidence_Level a sh:NodeShape ;
-    sh:property [ a sh:PropertyShape ;
-            sh:dataType xsd:string ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path sio:SIO_000300 ],
-        [ a sh:PropertyShape ;
-            sh:in ( bdfo:DisGeNET_Evidence_Level ) ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path rdf:type ] ;
-    sh:targetClass bdfo:DisGeNET_Evidence_Level .
-
-weso-s:NCIT_C17021 a sh:NodeShape ;
-    sh:property [ a sh:PropertyShape ;
-            sh:minCount 1 ;
-            sh:node weso-s:NCIT_C16612 ;
-            sh:path ns1:DirectedInteraction ],
-        [ a sh:PropertyShape ;
-            sh:in ( obo:NCIT_C17021 ) ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path rdf:type ],
-        [ a sh:PropertyShape ;
-            sh:node weso-s:NCIT_C16612 ;
-            sh:path ns1:Stimulation ],
-        [ a sh:PropertyShape ;
-            sh:minCount 1 ;
-            sh:node weso-s:NCIT_C16612 ;
-            sh:path ns1:Interaction ],
-        [ a sh:PropertyShape ;
-            sh:maxCount 1 ;
-            sh:node weso-s:NCIT_C16612 ;
-            sh:path ns1:TranscriptionTranslation ],
-        [ a sh:PropertyShape ;
-            sh:node weso-s:NCIT_C16612 ;
-            sh:path ns1:Inhibition ],
-        [ a sh:PropertyShape ;
-            sh:minCount 1 ;
-            sh:node weso-s:Interaction ;
-            sh:path sio:SIO_000068 ],
-        [ a sh:PropertyShape ;
-            sh:maxCount 1 ;
-            sh:node weso-s:NCIT_C16612 ;
-            sh:path ns1:Conversion ] ;
-    sh:targetClass obo:NCIT_C17021 .
-
-weso-s:NCIT_C172573 a sh:NodeShape ;
-    sh:property [ a sh:PropertyShape ;
-            sh:in ( obo:NCIT_C172573 ) ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path rdf:type ],
-        [ a sh:PropertyShape ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:node weso-s:SIO_010038 ;
-            sh:path owl:sameAs ],
-        [ a sh:PropertyShape ;
-            sh:dataType xsd:string ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path rdfs:label ] ;
-    sh:targetClass obo:NCIT_C172573 .
-
-weso-s:NCIT_C7057 a sh:NodeShape ;
-    sh:property [ a sh:PropertyShape ;
-            sh:dataType xsd:string ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path rdfs:label ],
-        [ a sh:PropertyShape ;
-            sh:in ( obo:NCIT_C7057 ) ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path rdf:type ],
-        [ a sh:PropertyShape ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:IRI ;
-            sh:path owl:sameAs ] ;
-    sh:targetClass obo:NCIT_C7057 .
-
-weso-s:SIO_000750 a sh:NodeShape ;
-    sh:property [ a sh:PropertyShape ;
-            sh:dataType xsd:string ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path rdfs:label ],
-        [ a sh:PropertyShape ;
-            sh:in ( sio:SIO_000750 ) ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path rdf:type ] ;
-    sh:targetClass sio:SIO_000750 .
-
-weso-s:SIO_000983 a sh:NodeShape ;
-    sh:property [ a sh:PropertyShape ;
-            sh:minCount 1 ;
-            sh:node weso-s:NCIT_C25338 ;
-            sh:path sio:SIO_000216 ],
-        [ a sh:PropertyShape ;
-            sh:in ( sio:SIO_000983 ) ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path rdf:type ],
-        [ a sh:PropertyShape ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:node weso-s:NCIT_C16612 ;
-            sh:path sio:SIO_000628 ] ;
-    sh:targetClass sio:SIO_000983 .
-
-weso-s:SIO_001262 a sh:NodeShape ;
-    sh:property [ a sh:PropertyShape ;
-            sh:in ( sio:SIO_001262 ) ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path rdf:type ],
-        [ a sh:PropertyShape ;
-            sh:dataType xsd:string ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path rdfs:label ] ;
-    sh:targetClass sio:SIO_001262 .
-
-weso-s:WebAPI a sh:NodeShape ;
-    sh:property [ a sh:PropertyShape ;
-            sh:in ( dcat:DataService ) ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path rdf:type ],
-        [ a sh:PropertyShape ;
-            sh:in ( schema:WebAPI ) ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path rdf:type ],
-        [ a sh:PropertyShape ;
-            sh:node weso-s:Dataset ;
-            sh:path dcat:servesDataset ],
-        [ a sh:PropertyShape ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:IRI ;
-            sh:path dcat:endpointURL ],
-        [ a sh:PropertyShape ;
-            sh:dataType xsd:string ;
-            sh:maxCount 1 ;
-            sh:path rdfs:label ] ;
-    sh:targetClass schema:WebAPI .
-
-weso-s:Catalog a sh:NodeShape ;
-    sh:property [ a sh:PropertyShape ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:node weso-s:Catalog ;
-            sh:path dcterms:identifier ],
-        [ a sh:PropertyShape ;
-            sh:maxCount 20 ;
-            sh:minCount 20 ;
-            sh:node weso-s:Dataset ;
-            sh:path dcterms:source ],
-        [ a sh:PropertyShape ;
-            sh:maxCount 20 ;
-            sh:minCount 20 ;
-            sh:node weso-s:Dataset ;
-            sh:path prov:wasDerivedFrom ],
-        [ a sh:PropertyShape ;
-            sh:dataType xsd:dateTime ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path dcterms:created ],
-        [ a sh:PropertyShape ;
-            sh:in ( dcat:Catalog ) ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path rdf:type ],
-        [ a sh:PropertyShape ;
-            sh:dataType xsd:string ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path dcterms:title ],
-        [ a sh:PropertyShape ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:IRI ;
-            sh:path dcterms:creator ] ;
-    sh:targetClass dcat:Catalog .
-
-weso-s:NCIT_C25338 a sh:NodeShape ;
-    sh:property [ a sh:PropertyShape ;
-            sh:dataType xsd:double ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path sio:SIO_000300 ],
-        [ a sh:PropertyShape ;
-            sh:in ( obo:NCIT_C25338 ) ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path rdf:type ] ;
-    sh:targetClass obo:NCIT_C25338 .
-
-weso-s:NCIT_C43531 a sh:NodeShape ;
-    sh:property [ a sh:PropertyShape ;
-            sh:dataType xsd:string ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path rdfs:label ],
-        [ a sh:PropertyShape ;
-            sh:in ( obo:NCIT_C43531 ) ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path rdf:type ] ;
-    sh:targetClass obo:NCIT_C43531 .
-
-weso-s:SIO_001077 a sh:NodeShape ;
-    sh:property [ a sh:PropertyShape ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:node weso-s:NCIT_C16612 ;
-            sh:path sio:SIO_000230 ],
-        [ a sh:PropertyShape ;
-            sh:dataType xsd:double ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path sio:SIO_000300 ],
-        [ a sh:PropertyShape ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:node weso-s:NCIT_C43531 ;
-            sh:path sio:SIO_001403 ],
-        [ a sh:PropertyShape ;
-            sh:in ( sio:SIO_001077 ) ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path rdf:type ] ;
-    sh:targetClass sio:SIO_001077 .
-
-weso-s:SIO_010038 a sh:NodeShape ;
-    sh:property [ a sh:PropertyShape ;
-            sh:maxCount 1 ;
-            sh:node weso-s:NCIT_C16612 ;
-            sh:path ns1:Stimulation ],
-        [ a sh:PropertyShape ;
-            sh:maxCount 1 ;
-            sh:node weso-s:NCIT_C16612 ;
-            sh:path ns1:Interaction ],
-        [ a sh:PropertyShape ;
-            sh:node weso-s:Interaction ;
-            sh:path sio:SIO_000068 ],
-        [ a sh:PropertyShape ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:IRI ;
-            sh:path owl:sameAs ],
-        [ a sh:PropertyShape ;
-            sh:in ( sio:SIO_010038 ) ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path rdf:type ],
-        [ a sh:PropertyShape ;
-            sh:dataType xsd:string ;
-            sh:maxCount 1 ;
-            sh:path rdfs:label ],
-        [ a sh:PropertyShape ;
-            sh:maxCount 1 ;
-            sh:node weso-s:NCIT_C16612 ;
-            sh:path ns1:DirectedInteraction ] ;
-    sh:targetClass sio:SIO_010038 .
-
-weso-s:Interaction a sh:NodeShape ;
-    sh:property [ a sh:PropertyShape ;
-            sh:dataType xsd:string ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path rdfs:label ],
-        [ a sh:PropertyShape ;
-            sh:in ( <https://vocabularies.wikipathways.org/wp#Interaction> ) ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path rdf:type ] ;
-    sh:targetClass <https://vocabularies.wikipathways.org/wp#Interaction> .
-
-weso-s:Dataset a sh:NodeShape ;
-    sh:property [ a sh:PropertyShape ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:IRI ;
-            sh:path dcterms:license ],
-        [ a sh:PropertyShape ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:IRI ;
-            sh:path dcat:accessURL ],
-        [ a sh:PropertyShape ;
-            sh:dataType xsd:dateTime ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path prov:generatedAtTime ],
-        [ a sh:PropertyShape ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:IRI ;
-            sh:path dcterms:license ],
-        [ a sh:PropertyShape ;
-            sh:dataType xsd:string ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path dcterms:title ],
-        [ a sh:PropertyShape ;
-            sh:dataType xsd:dateTime ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path pav:retrievedOn ],
-        [ a sh:PropertyShape ;
-            sh:dataType xsd:string ;
-            sh:maxCount 1 ;
-            sh:path dcterms:hasVersion ],
-        [ a sh:PropertyShape ;
-            sh:dataType xsd:string ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path rdfs:label ],
-        [ a sh:PropertyShape ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:IRI ;
-            sh:path dcat:accessURL ],
-        [ a sh:PropertyShape ;
-            sh:in ( void:Dataset ) ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path rdf:type ],
-        [ a sh:PropertyShape ;
-            sh:dataType xsd:string ;
-            sh:maxCount 1 ;
-            sh:path dcterms:hasVersion ],
-        [ a sh:PropertyShape ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:IRI ;
-            sh:path dcterms:source ],
-        [ a sh:PropertyShape ;
-            sh:in ( dcat:Dataset ) ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path rdf:type ],
-        [ a sh:PropertyShape ;
-            sh:dataType xsd:string ;
-            sh:maxCount 1 ;
-            sh:path pav:version ],
-        [ a sh:PropertyShape ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:IRI ;
-            sh:path schema:url ],
-        [ a sh:PropertyShape ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:IRI ;
-            sh:path void:sparqlEndpoint ],
-        [ a sh:PropertyShape ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:IRI ;
-            sh:path dcterms:source ],
-        [ a sh:PropertyShape ;
-            sh:dataType xsd:string ;
-            sh:maxCount 1 ;
-            sh:path pav:version ],
-        [ a sh:PropertyShape ;
-            sh:dataType xsd:string ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path dcterms:title ],
-        [ a sh:PropertyShape ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:IRI ;
-            sh:path dcat:landingPage ],
-        [ a sh:PropertyShape ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:IRI ;
-            sh:path pav:retrievedFrom ],
-        [ a sh:PropertyShape ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:IRI ;
-            sh:path schema:url ],
-        [ a sh:PropertyShape ;
-            sh:dataType xsd:string ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path rdfs:label ],
-        [ a sh:PropertyShape ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:IRI ;
-            sh:path dcat:landingPage ],
-        [ a sh:PropertyShape ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:IRI ;
-            sh:path pav:retrievedFrom ],
-        [ a sh:PropertyShape ;
-            sh:dataType xsd:dateTime ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path pav:retrievedOn ],
-        [ a sh:PropertyShape ;
-            sh:in ( void:Dataset ) ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path rdf:type ],
-        [ a sh:PropertyShape ;
-            sh:in ( dcat:Dataset ) ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path rdf:type ],
-        [ a sh:PropertyShape ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:IRI ;
-            sh:path void:sparqlEndpoint ],
-        [ a sh:PropertyShape ;
-            sh:dataType xsd:dateTime ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path prov:generatedAtTime ] ;
-    sh:targetClass void:Dataset,
-        dcat:Dataset .
-
-weso-s:NCIT_C16612 a sh:NodeShape ;
-    sh:property [ a sh:PropertyShape ;
-            sh:node weso-s:NCIT_C16612 ;
-            sh:path interaction:DirectedInteraction ],
-        [ a sh:PropertyShape ;
-            sh:in ( obo:NCIT_C16612 ) ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path rdf:type ],
-        [ a sh:PropertyShape ;
-            sh:node weso-s:SIO_001077 ;
-            sh:path sio:SIO_000216 ],
-        [ a sh:PropertyShape ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:IRI ;
-            sh:path ns1:Interaction ],
-        [ a sh:PropertyShape ;
-            sh:node weso-s:NCIT_C16612 ;
-            sh:path interaction:TranscriptionTranslation ],
-        [ a sh:PropertyShape ;
-            sh:nodeKind sh:IRI ;
-            sh:path ns1:TranscriptionTranslation ],
-        [ a sh:PropertyShape ;
-            sh:dataType xsd:string ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path rdfs:label ],
-        [ a sh:PropertyShape ;
-            sh:node weso-s:NCIT_C16612 ;
-            sh:path interaction:Interaction ],
-        [ a sh:PropertyShape ;
-            sh:node weso-s:NCIT_C16612 ;
-            sh:path interaction:Stimulation ],
-        [ a sh:PropertyShape ;
-            sh:nodeKind sh:IRI ;
-            sh:path ns1:Conversion ],
-        [ a sh:PropertyShape ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:IRI ;
-            sh:path ns1:DirectedInteraction ],
-        [ a sh:PropertyShape ;
-            sh:minCount 1 ;
-            sh:node weso-s:Interaction ;
-            sh:path sio:SIO_000068 ],
-        [ a sh:PropertyShape ;
-            sh:nodeKind sh:IRI ;
-            sh:path ns1:Inhibition ],
-        [ a sh:PropertyShape ;
-            sh:node weso-s:NCIT_C16612 ;
-            sh:path interaction:Inhibition ],
-        [ a sh:PropertyShape ;
-            sh:nodeKind sh:IRI ;
-            sh:path ns1:Stimulation ],
-        [ a sh:PropertyShape ;
-            sh:node weso-s:NCIT_C16612 ;
-            sh:path interaction:Conversion ] ;
-    sh:targetClass obo:NCIT_C16612 .
-
 @prefix : <http://weso.es/shapes/> .
 @prefix bdfo: <https://biodatafuse.org/onto/bdf#> .
 @prefix dcat: <http://www.w3.org/ns/dcat#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix interaction: <https://biodatafuse.org/example/interaction> .
+@prefix ncit: <http://purl.obolibrary.org/obo/NCIT_> .
 @prefix ns1: <http://vocabularies.wikipathways.org/wp#> .
-@prefix obo: <http://purl.obolibrary.org/obo/> .
+@prefix ns2: <http://aopkb.org/aop_ontology#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix pav: <http://purl.org/pav/> .
 @prefix prov: <http://www.w3.org/ns/prov#> .
@@ -553,25 +19,25 @@ weso-s:NCIT_C16612 a sh:NodeShape ;
 
 :DataService a sh:NodeShape ;
     sh:property [ a sh:PropertyShape ;
+            sh:in ( dcat:DataService ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
             sh:maxCount 2 ;
             sh:minCount 2 ;
             sh:node :Dataset ;
             sh:path dcat:servesDataset ],
-        [ a sh:PropertyShape ;
-            sh:dataType xsd:string ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path rdfs:label ],
         [ a sh:PropertyShape ;
             sh:maxCount 1 ;
             sh:minCount 1 ;
             sh:nodeKind sh:IRI ;
             sh:path dcat:endpointURL ],
         [ a sh:PropertyShape ;
-            sh:in ( dcat:DataService ) ;
+            sh:dataType xsd:string ;
             sh:maxCount 1 ;
             sh:minCount 1 ;
-            sh:path rdf:type ],
+            sh:path rdfs:label ],
         [ a sh:PropertyShape ;
             sh:in ( schema:WebAPI ) ;
             sh:maxCount 1 ;
@@ -605,48 +71,9 @@ weso-s:NCIT_C16612 a sh:NodeShape ;
             sh:path sio:SIO_000300 ] ;
     sh:targetClass bdfo:DisGeNET_Evidence_Level .
 
-:NCIT_C17021 a sh:NodeShape ;
+:KeyEvent a sh:NodeShape ;
     sh:property [ a sh:PropertyShape ;
-            sh:node :NCIT_C16612 ;
-            sh:path ns1:Stimulation ],
-        [ a sh:PropertyShape ;
-            sh:minCount 1 ;
-            sh:node :Interaction ;
-            sh:path sio:SIO_000068 ],
-        [ a sh:PropertyShape ;
-            sh:node :NCIT_C16612 ;
-            sh:path ns1:Inhibition ],
-        [ a sh:PropertyShape ;
-            sh:maxCount 1 ;
-            sh:node :NCIT_C16612 ;
-            sh:path ns1:TranscriptionTranslation ],
-        [ a sh:PropertyShape ;
-            sh:minCount 1 ;
-            sh:node :NCIT_C16612 ;
-            sh:path ns1:Interaction ],
-        [ a sh:PropertyShape ;
-            sh:minCount 1 ;
-            sh:node :NCIT_C16612 ;
-            sh:path ns1:DirectedInteraction ],
-        [ a sh:PropertyShape ;
-            sh:in ( obo:NCIT_C17021 ) ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path rdf:type ],
-        [ a sh:PropertyShape ;
-            sh:maxCount 1 ;
-            sh:node :NCIT_C16612 ;
-            sh:path ns1:Conversion ] ;
-    sh:targetClass obo:NCIT_C17021 .
-
-:NCIT_C172573 a sh:NodeShape ;
-    sh:property [ a sh:PropertyShape ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:node :SIO_010038 ;
-            sh:path owl:sameAs ],
-        [ a sh:PropertyShape ;
-            sh:in ( obo:NCIT_C172573 ) ;
+            sh:in ( ns2:KeyEvent ) ;
             sh:maxCount 1 ;
             sh:minCount 1 ;
             sh:path rdf:type ],
@@ -654,8 +81,64 @@ weso-s:NCIT_C16612 a sh:NodeShape ;
             sh:dataType xsd:string ;
             sh:maxCount 1 ;
             sh:minCount 1 ;
-            sh:path rdfs:label ] ;
-    sh:targetClass obo:NCIT_C172573 .
+            sh:path rdfs:label ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:path ns2:OrganContext ] ;
+    sh:targetClass ns2:KeyEvent .
+
+:NCIT_C17021 a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:node :NCIT_C16612 ;
+            sh:path ns1:Stimulation ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:node :NCIT_C16612 ;
+            sh:path ns1:TranscriptionTranslation ],
+        [ a sh:PropertyShape ;
+            sh:node :NCIT_C16612 ;
+            sh:path ns1:Inhibition ],
+        [ a sh:PropertyShape ;
+            sh:minCount 1 ;
+            sh:node :NCIT_C16612 ;
+            sh:path ns1:DirectedInteraction ],
+        [ a sh:PropertyShape ;
+            sh:minCount 1 ;
+            sh:node :NCIT_C16612 ;
+            sh:path ns1:Interaction ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:node :NCIT_C16612 ;
+            sh:path ns1:Conversion ],
+        [ a sh:PropertyShape ;
+            sh:minCount 1 ;
+            sh:node :Interaction ;
+            sh:path sio:SIO_000068 ],
+        [ a sh:PropertyShape ;
+            sh:in ( ncit:C17021 ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ] ;
+    sh:targetClass ncit:C17021 .
+
+:NCIT_C172573 a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdfs:label ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:node :SIO_010038 ;
+            sh:path owl:sameAs ],
+        [ a sh:PropertyShape ;
+            sh:in ( ncit:C172573 ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ] ;
+    sh:targetClass ncit:C172573 .
 
 :NCIT_C25338 a sh:NodeShape ;
     sh:property [ a sh:PropertyShape ;
@@ -664,24 +147,41 @@ weso-s:NCIT_C16612 a sh:NodeShape ;
             sh:minCount 1 ;
             sh:path sio:SIO_000300 ],
         [ a sh:PropertyShape ;
-            sh:in ( obo:NCIT_C25338 ) ;
+            sh:in ( ncit:C25338 ) ;
             sh:maxCount 1 ;
             sh:minCount 1 ;
             sh:path rdf:type ] ;
-    sh:targetClass obo:NCIT_C25338 .
+    sh:targetClass ncit:C25338 .
 
 :NCIT_C43531 a sh:NodeShape ;
     sh:property [ a sh:PropertyShape ;
-            sh:in ( obo:NCIT_C43531 ) ;
+            sh:dataType xsd:string ;
             sh:maxCount 1 ;
             sh:minCount 1 ;
-            sh:path rdf:type ],
+            sh:path rdfs:label ],
+        [ a sh:PropertyShape ;
+            sh:in ( ncit:C43531 ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ] ;
+    sh:targetClass ncit:C43531 .
+
+:NCIT_C7057 a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path owl:sameAs ],
         [ a sh:PropertyShape ;
             sh:dataType xsd:string ;
             sh:maxCount 1 ;
             sh:minCount 1 ;
-            sh:path rdfs:label ] ;
-    sh:targetClass obo:NCIT_C43531 .
+            sh:path rdfs:label ],
+        [ a sh:PropertyShape ;
+            sh:in ( ncit:C7057 ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ] ;
+    sh:targetClass ncit:C7057 .
 
 :SIO_000750 a sh:NodeShape ;
     sh:property [ a sh:PropertyShape ;
@@ -698,6 +198,595 @@ weso-s:NCIT_C16612 a sh:NodeShape ;
 
 :SIO_000983 a sh:NodeShape ;
     sh:property [ a sh:PropertyShape ;
+            sh:in ( sio:SIO_000983 ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:minCount 1 ;
+            sh:path sio:SIO_000216 ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:node :NCIT_C16612 ;
+            sh:path sio:SIO_000628 ] ;
+    sh:targetClass sio:SIO_000983 .
+
+:SIO_001077 a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:dataType xsd:double ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path sio:SIO_000300 ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path sio:SIO_000230 ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 2 ;
+            sh:minCount 2 ;
+            sh:path sio:SIO_001403 ],
+        [ a sh:PropertyShape ;
+            sh:in ( sio:SIO_001077 ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ] ;
+    sh:targetClass sio:SIO_001077 .
+
+:SIO_001262 a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdfs:label ],
+        [ a sh:PropertyShape ;
+            sh:in ( sio:SIO_001262 ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ] ;
+    sh:targetClass sio:SIO_001262 .
+
+:WebAPI a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:in ( dcat:DataService ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path dcat:endpointURL ],
+        [ a sh:PropertyShape ;
+            sh:node :Dataset ;
+            sh:path dcat:servesDataset ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:path rdfs:label ],
+        [ a sh:PropertyShape ;
+            sh:in ( schema:WebAPI ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ] ;
+    sh:targetClass schema:WebAPI .
+
+:AOP a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdfs:label ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:minCount 1 ;
+            sh:path ns2:has_key_event ],
+        [ a sh:PropertyShape ;
+            sh:in ( ns2:AOP ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ] ;
+    sh:targetClass ns2:AOP .
+
+:Catalog a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:in ( dcat:Catalog ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path dcterms:creator ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path dcterms:title ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:node :Catalog ;
+            sh:path dcterms:identifier ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path dcterms:created ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 18 ;
+            sh:minCount 18 ;
+            sh:node :Dataset ;
+            sh:path dcterms:source ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 18 ;
+            sh:minCount 18 ;
+            sh:node :Dataset ;
+            sh:path prov:wasDerivedFrom ] ;
+    sh:targetClass dcat:Catalog .
+
+:SIO_010038 a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:node :Interaction ;
+            sh:path sio:SIO_000068 ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:path rdfs:label ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:node :NCIT_C16612 ;
+            sh:path ns1:DirectedInteraction ],
+        [ a sh:PropertyShape ;
+            sh:in ( sio:SIO_010038 ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path owl:sameAs ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:node :NCIT_C16612 ;
+            sh:path ns1:Interaction ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:node :NCIT_C16612 ;
+            sh:path ns1:Stimulation ] ;
+    sh:targetClass sio:SIO_010038 .
+
+:Interaction a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:in ( <https://vocabularies.wikipathways.org/wp#Interaction> ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdfs:label ],
+        [ a sh:PropertyShape ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path sio:SIO_000068 ],
+        [ a sh:PropertyShape ;
+            sh:node :NCIT_C16612 ;
+            sh:path sio:SIO_000028 ] ;
+    sh:targetClass <https://vocabularies.wikipathways.org/wp#Interaction> .
+
+:Dataset a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path dcterms:license ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:path dcterms:hasVersion ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path dcterms:title ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdfs:label ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path dcat:accessURL ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 2 ;
+            sh:minCount 2 ;
+            sh:node :Dataset ;
+            sh:path pav:retrievedFrom ],
+        [ a sh:PropertyShape ;
+            sh:in ( void:Dataset ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path dcterms:license ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:path dcterms:hasVersion ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:path pav:version ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 2 ;
+            sh:minCount 2 ;
+            sh:node :Dataset ;
+            sh:path dcterms:source ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path dcterms:title ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path dcat:landingPage ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 2 ;
+            sh:minCount 2 ;
+            sh:node :Dataset ;
+            sh:path pav:retrievedFrom ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdfs:label ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path prov:generatedAtTime ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path dcat:accessURL ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path schema:url ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:path pav:version ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path pav:retrievedOn ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path pav:retrievedOn ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path void:sparqlEndpoint ],
+        [ a sh:PropertyShape ;
+            sh:in ( void:Dataset ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 2 ;
+            sh:minCount 2 ;
+            sh:node :Dataset ;
+            sh:path dcterms:source ],
+        [ a sh:PropertyShape ;
+            sh:in ( dcat:Dataset ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path schema:url ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path prov:generatedAtTime ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path dcat:landingPage ],
+        [ a sh:PropertyShape ;
+            sh:in ( dcat:Dataset ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path void:sparqlEndpoint ] ;
+    sh:targetClass void:Dataset,
+        dcat:Dataset .
+
+:NCIT_C16612 a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:nodeKind sh:IRI ;
+            sh:path ns1:Inhibition ],
+        [ a sh:PropertyShape ;
+            sh:node :NCIT_C16612 ;
+            sh:path interaction:Inhibition ],
+        [ a sh:PropertyShape ;
+            sh:minCount 1 ;
+            sh:node :Interaction ;
+            sh:path sio:SIO_000068 ],
+        [ a sh:PropertyShape ;
+            sh:nodeKind sh:IRI ;
+            sh:path ns1:Stimulation ],
+        [ a sh:PropertyShape ;
+            sh:node :NCIT_C16612 ;
+            sh:path interaction:Conversion ],
+        [ a sh:PropertyShape ;
+            sh:node :NCIT_C16612 ;
+            sh:path interaction:Interaction ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdfs:label ],
+        [ a sh:PropertyShape ;
+            sh:node :AOP ;
+            sh:path sio:SIO_001403 ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:path sio:SIO_000216 ],
+        [ a sh:PropertyShape ;
+            sh:in ( ncit:C16612 ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:nodeKind sh:IRI ;
+            sh:path ns1:Conversion ],
+        [ a sh:PropertyShape ;
+            sh:node :NCIT_C16612 ;
+            sh:path interaction:TranscriptionTranslation ],
+        [ a sh:PropertyShape ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path ns1:Interaction ],
+        [ a sh:PropertyShape ;
+            sh:nodeKind sh:IRI ;
+            sh:path ns1:TranscriptionTranslation ],
+        [ a sh:PropertyShape ;
+            sh:node :NCIT_C16612 ;
+            sh:path interaction:DirectedInteraction ],
+        [ a sh:PropertyShape ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path ns1:DirectedInteraction ],
+        [ a sh:PropertyShape ;
+            sh:node :Dataset ;
+            sh:path pav:importedFrom ],
+        [ a sh:PropertyShape ;
+            sh:node :NCIT_C16612 ;
+            sh:path interaction:Stimulation ] ;
+    sh:targetClass ncit:C16612 .
+
+@prefix : <http://weso.es/shapes/> .
+@prefix bdfo: <https://biodatafuse.org/onto/bdf#> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix ncit: <http://purl.obolibrary.org/obo/NCIT_> .
+@prefix ns1: <http://vocabularies.wikipathways.org/wp#> .
+@prefix ns2: <http://aopkb.org/aop_ontology#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix pav: <http://purl.org/pav/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix schema: <https://schema.org/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix sio: <http://semanticscience.org/resource/> .
+@prefix void: <http://rdfs.org/ns/void#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+:AOP a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:in ( ns2:AOP ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:minCount 1 ;
+            sh:path ns2:has_key_event ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdfs:label ] ;
+    sh:targetClass ns2:AOP .
+
+:DataService a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:in ( schema:WebAPI ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 2 ;
+            sh:minCount 2 ;
+            sh:node :Dataset ;
+            sh:path dcat:servesDataset ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path dcat:endpointURL ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdfs:label ],
+        [ a sh:PropertyShape ;
+            sh:in ( dcat:DataService ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ] ;
+    sh:targetClass dcat:DataService .
+
+:DisGeNET_Evidence_Index a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:dataType xsd:double ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path sio:SIO_000300 ],
+        [ a sh:PropertyShape ;
+            sh:in ( bdfo:DisGeNET_Evidence_Index ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ] ;
+    sh:targetClass bdfo:DisGeNET_Evidence_Index .
+
+:DisGeNET_Evidence_Level a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:in ( bdfo:DisGeNET_Evidence_Level ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path sio:SIO_000300 ] ;
+    sh:targetClass bdfo:DisGeNET_Evidence_Level .
+
+:KeyEvent a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdfs:label ],
+        [ a sh:PropertyShape ;
+            sh:in ( ns2:KeyEvent ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ] ;
+    sh:targetClass ns2:KeyEvent .
+
+:NCIT_C17021 a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:minCount 1 ;
+            sh:node :NCIT_C16612 ;
+            sh:path ns1:Interaction ],
+        [ a sh:PropertyShape ;
+            sh:minCount 1 ;
+            sh:node :NCIT_C16612 ;
+            sh:path ns1:DirectedInteraction ],
+        [ a sh:PropertyShape ;
+            sh:in ( ncit:C17021 ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:minCount 1 ;
+            sh:node :Interaction ;
+            sh:path sio:SIO_000068 ] ;
+    sh:targetClass ncit:C17021 .
+
+:NCIT_C172573 a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdfs:label ],
+        [ a sh:PropertyShape ;
+            sh:in ( ncit:C172573 ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:node :SIO_010038 ;
+            sh:path owl:sameAs ] ;
+    sh:targetClass ncit:C172573 .
+
+:NCIT_C25338 a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:dataType xsd:double ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path sio:SIO_000300 ],
+        [ a sh:PropertyShape ;
+            sh:in ( ncit:C25338 ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ] ;
+    sh:targetClass ncit:C25338 .
+
+:NCIT_C43531 a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdfs:label ],
+        [ a sh:PropertyShape ;
+            sh:in ( ncit:C43531 ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ] ;
+    sh:targetClass ncit:C43531 .
+
+:NCIT_C7057 a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdfs:label ],
+        [ a sh:PropertyShape ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path owl:sameAs ],
+        [ a sh:PropertyShape ;
+            sh:in ( ncit:C7057 ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ] ;
+    sh:targetClass ncit:C7057 .
+
+:SIO_000750 a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:in ( sio:SIO_000750 ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdfs:label ] ;
+    sh:targetClass sio:SIO_000750 .
+
+:SIO_000983 a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
             sh:dataType xsd:string ;
             sh:minCount 1 ;
             sh:path sio:SIO_000216 ],
@@ -709,7 +798,7 @@ weso-s:NCIT_C16612 a sh:NodeShape ;
         [ a sh:PropertyShape ;
             sh:maxCount 1 ;
             sh:minCount 1 ;
-            sh:node :NCIT_C7057 ;
+            sh:node :NCIT_C16612 ;
             sh:path sio:SIO_000628 ] ;
     sh:targetClass sio:SIO_000983 .
 
@@ -738,7 +827,78 @@ weso-s:NCIT_C16612 a sh:NodeShape ;
 
 :SIO_001262 a sh:NodeShape ;
     sh:property [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdfs:label ],
+        [ a sh:PropertyShape ;
             sh:in ( sio:SIO_001262 ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ] ;
+    sh:targetClass sio:SIO_001262 .
+
+:WebAPI a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:in ( schema:WebAPI ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ] ;
+    sh:targetClass schema:WebAPI .
+
+:Catalog a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:dataType xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path dcterms:created ],
+        [ a sh:PropertyShape ;
+            sh:in ( dcat:Catalog ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path dcterms:creator ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:node :Catalog ;
+            sh:path dcterms:identifier ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 18 ;
+            sh:minCount 18 ;
+            sh:node :Dataset ;
+            sh:path prov:wasDerivedFrom ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path dcterms:title ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 18 ;
+            sh:minCount 18 ;
+            sh:node :Dataset ;
+            sh:path dcterms:source ] ;
+    sh:targetClass dcat:Catalog .
+
+:SIO_010038 a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:in ( sio:SIO_010038 ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ] ;
+    sh:targetClass sio:SIO_010038 .
+
+:Interaction a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path sio:SIO_000068 ],
+        [ a sh:PropertyShape ;
+            sh:in ( <https://vocabularies.wikipathways.org/wp#Interaction> ) ;
             sh:maxCount 1 ;
             sh:minCount 1 ;
             sh:path rdf:type ],
@@ -747,42 +907,444 @@ weso-s:NCIT_C16612 a sh:NodeShape ;
             sh:maxCount 1 ;
             sh:minCount 1 ;
             sh:path rdfs:label ] ;
-    sh:targetClass sio:SIO_001262 .
+    sh:targetClass <https://vocabularies.wikipathways.org/wp#Interaction> .
 
-:WebAPI a sh:NodeShape ;
+:NCIT_C16612 a sh:NodeShape ;
     sh:property [ a sh:PropertyShape ;
-            sh:in ( dcat:DataService ) ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdfs:label ],
+        [ a sh:PropertyShape ;
+            sh:in ( ncit:C16612 ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:minCount 1 ;
+            sh:node :Interaction ;
+            sh:path sio:SIO_000068 ],
+        [ a sh:PropertyShape ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path ns1:Interaction ],
+        [ a sh:PropertyShape ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path ns1:DirectedInteraction ] ;
+    sh:targetClass ncit:C16612 .
+
+:Dataset a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path dcterms:title ],
+        [ a sh:PropertyShape ;
+            sh:in ( dcat:Dataset ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path pav:retrievedOn ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdfs:label ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 2 ;
+            sh:minCount 2 ;
+            sh:node :Dataset ;
+            sh:path pav:retrievedFrom ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdfs:label ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 2 ;
+            sh:minCount 2 ;
+            sh:node :Dataset ;
+            sh:path dcterms:source ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path dcat:landingPage ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path dcterms:title ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path dcat:accessURL ],
+        [ a sh:PropertyShape ;
+            sh:in ( void:Dataset ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 2 ;
+            sh:minCount 2 ;
+            sh:node :Dataset ;
+            sh:path pav:retrievedFrom ],
+        [ a sh:PropertyShape ;
+            sh:in ( void:Dataset ) ;
             sh:maxCount 1 ;
             sh:minCount 1 ;
             sh:path rdf:type ],
         [ a sh:PropertyShape ;
             sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path schema:url ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path schema:url ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 2 ;
+            sh:minCount 2 ;
+            sh:node :Dataset ;
+            sh:path dcterms:source ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path prov:generatedAtTime ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path pav:retrievedOn ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path dcat:landingPage ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path prov:generatedAtTime ],
+        [ a sh:PropertyShape ;
+            sh:in ( dcat:Dataset ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path dcat:accessURL ] ;
+    sh:targetClass void:Dataset,
+        dcat:Dataset .
+
+@prefix bdfo: <https://biodatafuse.org/onto/bdf#> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix interaction: <https://biodatafuse.org/example/interaction> .
+@prefix ncit: <http://purl.obolibrary.org/obo/NCIT_> .
+@prefix ns1: <http://vocabularies.wikipathways.org/wp#> .
+@prefix ns2: <http://aopkb.org/aop_ontology#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix pav: <http://purl.org/pav/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix schema: <https://schema.org/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix sio: <http://semanticscience.org/resource/> .
+@prefix void: <http://rdfs.org/ns/void#> .
+@prefix weso-s: <http://weso.es/shapes/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+weso-s:DataService a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
             sh:nodeKind sh:IRI ;
             sh:path dcat:endpointURL ],
         [ a sh:PropertyShape ;
-            sh:dataType xsd:string ;
+            sh:maxCount 2 ;
+            sh:minCount 2 ;
+            sh:node weso-s:Dataset ;
+            sh:path dcat:servesDataset ],
+        [ a sh:PropertyShape ;
+            sh:in ( dcat:DataService ) ;
             sh:maxCount 1 ;
-            sh:path rdfs:label ],
+            sh:minCount 1 ;
+            sh:path rdf:type ],
         [ a sh:PropertyShape ;
             sh:in ( schema:WebAPI ) ;
             sh:maxCount 1 ;
             sh:minCount 1 ;
             sh:path rdf:type ],
         [ a sh:PropertyShape ;
-            sh:node :Dataset ;
-            sh:path dcat:servesDataset ] ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdfs:label ] ;
+    sh:targetClass dcat:DataService .
+
+weso-s:DisGeNET_Evidence_Index a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:in ( bdfo:DisGeNET_Evidence_Index ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:double ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path sio:SIO_000300 ] ;
+    sh:targetClass bdfo:DisGeNET_Evidence_Index .
+
+weso-s:DisGeNET_Evidence_Level a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:in ( bdfo:DisGeNET_Evidence_Level ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path sio:SIO_000300 ] ;
+    sh:targetClass bdfo:DisGeNET_Evidence_Level .
+
+weso-s:KeyEvent a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:in ( ns2:KeyEvent ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdfs:label ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:path ns2:OrganContext ] ;
+    sh:targetClass ns2:KeyEvent .
+
+weso-s:NCIT_C17021 a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:node weso-s:NCIT_C16612 ;
+            sh:path ns1:Inhibition ],
+        [ a sh:PropertyShape ;
+            sh:minCount 1 ;
+            sh:node weso-s:Interaction ;
+            sh:path sio:SIO_000068 ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:node weso-s:NCIT_C16612 ;
+            sh:path ns1:TranscriptionTranslation ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:node weso-s:NCIT_C16612 ;
+            sh:path ns1:Conversion ],
+        [ a sh:PropertyShape ;
+            sh:node weso-s:NCIT_C16612 ;
+            sh:path ns1:Stimulation ],
+        [ a sh:PropertyShape ;
+            sh:in ( ncit:C17021 ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:minCount 1 ;
+            sh:node weso-s:NCIT_C16612 ;
+            sh:path ns1:Interaction ],
+        [ a sh:PropertyShape ;
+            sh:minCount 1 ;
+            sh:node weso-s:NCIT_C16612 ;
+            sh:path ns1:DirectedInteraction ] ;
+    sh:targetClass ncit:C17021 .
+
+weso-s:NCIT_C172573 a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdfs:label ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:node weso-s:SIO_010038 ;
+            sh:path owl:sameAs ],
+        [ a sh:PropertyShape ;
+            sh:in ( ncit:C172573 ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ] ;
+    sh:targetClass ncit:C172573 .
+
+weso-s:NCIT_C25338 a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:in ( ncit:C25338 ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:double ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path sio:SIO_000300 ] ;
+    sh:targetClass ncit:C25338 .
+
+weso-s:NCIT_C43531 a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:in ( ncit:C43531 ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdfs:label ] ;
+    sh:targetClass ncit:C43531 .
+
+weso-s:NCIT_C7057 a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdfs:label ],
+        [ a sh:PropertyShape ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path owl:sameAs ],
+        [ a sh:PropertyShape ;
+            sh:in ( ncit:C7057 ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ] ;
+    sh:targetClass ncit:C7057 .
+
+weso-s:SIO_000750 a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:in ( sio:SIO_000750 ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdfs:label ] ;
+    sh:targetClass sio:SIO_000750 .
+
+weso-s:SIO_000983 a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:node weso-s:NCIT_C16612 ;
+            sh:path sio:SIO_000628 ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:minCount 1 ;
+            sh:path sio:SIO_000216 ],
+        [ a sh:PropertyShape ;
+            sh:in ( sio:SIO_000983 ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ] ;
+    sh:targetClass sio:SIO_000983 .
+
+weso-s:SIO_001077 a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 2 ;
+            sh:minCount 2 ;
+            sh:path sio:SIO_001403 ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path sio:SIO_000230 ],
+        [ a sh:PropertyShape ;
+            sh:in ( sio:SIO_001077 ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:double ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path sio:SIO_000300 ] ;
+    sh:targetClass sio:SIO_001077 .
+
+weso-s:SIO_001262 a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdfs:label ],
+        [ a sh:PropertyShape ;
+            sh:in ( sio:SIO_001262 ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ] ;
+    sh:targetClass sio:SIO_001262 .
+
+weso-s:WebAPI a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path dcat:endpointURL ],
+        [ a sh:PropertyShape ;
+            sh:node weso-s:Dataset ;
+            sh:path dcat:servesDataset ],
+        [ a sh:PropertyShape ;
+            sh:in ( schema:WebAPI ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:path rdfs:label ],
+        [ a sh:PropertyShape ;
+            sh:in ( dcat:DataService ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ] ;
     sh:targetClass schema:WebAPI .
 
-:Catalog a sh:NodeShape ;
+weso-s:AOP a sh:NodeShape ;
     sh:property [ a sh:PropertyShape ;
-            sh:maxCount 20 ;
-            sh:minCount 20 ;
-            sh:node :Dataset ;
-            sh:path prov:wasDerivedFrom ],
+            sh:dataType xsd:string ;
+            sh:minCount 1 ;
+            sh:path ns2:has_key_event ],
         [ a sh:PropertyShape ;
-            sh:maxCount 20 ;
-            sh:minCount 20 ;
-            sh:node :Dataset ;
+            sh:in ( ns2:AOP ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdfs:label ] ;
+    sh:targetClass ns2:AOP .
+
+weso-s:Catalog a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:maxCount 18 ;
+            sh:minCount 18 ;
+            sh:node weso-s:Dataset ;
             sh:path dcterms:source ],
         [ a sh:PropertyShape ;
             sh:dataType xsd:string ;
@@ -795,6 +1357,11 @@ weso-s:NCIT_C16612 a sh:NodeShape ;
             sh:minCount 1 ;
             sh:path rdf:type ],
         [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:node weso-s:Catalog ;
+            sh:path dcterms:identifier ],
+        [ a sh:PropertyShape ;
             sh:dataType xsd:dateTime ;
             sh:maxCount 1 ;
             sh:minCount 1 ;
@@ -802,44 +1369,35 @@ weso-s:NCIT_C16612 a sh:NodeShape ;
         [ a sh:PropertyShape ;
             sh:maxCount 1 ;
             sh:minCount 1 ;
-            sh:node :Catalog ;
-            sh:path dcterms:identifier ],
-        [ a sh:PropertyShape ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
             sh:nodeKind sh:IRI ;
-            sh:path dcterms:creator ] ;
+            sh:path dcterms:creator ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 18 ;
+            sh:minCount 18 ;
+            sh:node weso-s:Dataset ;
+            sh:path prov:wasDerivedFrom ] ;
     sh:targetClass dcat:Catalog .
 
-:NCIT_C7057 a sh:NodeShape ;
+weso-s:SIO_010038 a sh:NodeShape ;
     sh:property [ a sh:PropertyShape ;
-            sh:in ( obo:NCIT_C7057 ) ;
             sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path rdf:type ],
+            sh:node weso-s:NCIT_C16612 ;
+            sh:path ns1:Stimulation ],
         [ a sh:PropertyShape ;
-            sh:dataType xsd:string ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path rdfs:label ],
-        [ a sh:PropertyShape ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:IRI ;
-            sh:path owl:sameAs ] ;
-    sh:targetClass obo:NCIT_C7057 .
-
-:SIO_010038 a sh:NodeShape ;
-    sh:property [ a sh:PropertyShape ;
-            sh:dataType xsd:string ;
-            sh:maxCount 1 ;
-            sh:path rdfs:label ],
-        [ a sh:PropertyShape ;
-            sh:node :Interaction ;
+            sh:node weso-s:Interaction ;
             sh:path sio:SIO_000068 ],
         [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
             sh:maxCount 1 ;
-            sh:nodeKind sh:IRI ;
-            sh:path owl:sameAs ],
+            sh:path rdfs:label ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:node weso-s:NCIT_C16612 ;
+            sh:path ns1:Interaction ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:node weso-s:NCIT_C16612 ;
+            sh:path ns1:DirectedInteraction ],
         [ a sh:PropertyShape ;
             sh:in ( sio:SIO_010038 ) ;
             sh:maxCount 1 ;
@@ -847,20 +1405,15 @@ weso-s:NCIT_C16612 a sh:NodeShape ;
             sh:path rdf:type ],
         [ a sh:PropertyShape ;
             sh:maxCount 1 ;
-            sh:node :NCIT_C16612 ;
-            sh:path ns1:Stimulation ],
-        [ a sh:PropertyShape ;
-            sh:maxCount 1 ;
-            sh:node :NCIT_C16612 ;
-            sh:path ns1:DirectedInteraction ],
-        [ a sh:PropertyShape ;
-            sh:maxCount 1 ;
-            sh:node :NCIT_C16612 ;
-            sh:path ns1:Interaction ] ;
+            sh:nodeKind sh:IRI ;
+            sh:path owl:sameAs ] ;
     sh:targetClass sio:SIO_010038 .
 
-:Interaction a sh:NodeShape ;
+weso-s:Interaction a sh:NodeShape ;
     sh:property [ a sh:PropertyShape ;
+            sh:node weso-s:NCIT_C16612 ;
+            sh:path sio:SIO_000028 ],
+        [ a sh:PropertyShape ;
             sh:in ( <https://vocabularies.wikipathways.org/wp#Interaction> ) ;
             sh:maxCount 1 ;
             sh:minCount 1 ;
@@ -873,73 +1426,73 @@ weso-s:NCIT_C16612 a sh:NodeShape ;
         [ a sh:PropertyShape ;
             sh:minCount 1 ;
             sh:nodeKind sh:IRI ;
-            sh:path sio:SIO_000068 ],
-        [ a sh:PropertyShape ;
-            sh:node :NCIT_C16612 ;
-            sh:path sio:SIO_000028 ] ;
+            sh:path sio:SIO_000068 ] ;
     sh:targetClass <https://vocabularies.wikipathways.org/wp#Interaction> .
 
-:Dataset a sh:NodeShape ;
+weso-s:Dataset a sh:NodeShape ;
     sh:property [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path dcat:accessURL ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 2 ;
+            sh:minCount 2 ;
+            sh:node weso-s:Dataset ;
+            sh:path dcterms:source ],
+        [ a sh:PropertyShape ;
             sh:in ( void:Dataset ) ;
             sh:maxCount 1 ;
             sh:minCount 1 ;
             sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path void:sparqlEndpoint ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 2 ;
+            sh:minCount 2 ;
+            sh:node weso-s:Dataset ;
+            sh:path dcterms:source ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path schema:url ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path dcterms:title ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 2 ;
+            sh:minCount 2 ;
+            sh:node weso-s:Dataset ;
+            sh:path pav:retrievedFrom ],
         [ a sh:PropertyShape ;
             sh:in ( dcat:Dataset ) ;
             sh:maxCount 1 ;
             sh:minCount 1 ;
             sh:path rdf:type ],
         [ a sh:PropertyShape ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:IRI ;
-            sh:path schema:url ],
-        [ a sh:PropertyShape ;
-            sh:dataType xsd:string ;
-            sh:maxCount 1 ;
-            sh:path dcterms:hasVersion ],
-        [ a sh:PropertyShape ;
             sh:dataType xsd:string ;
             sh:maxCount 1 ;
             sh:minCount 1 ;
             sh:path rdfs:label ],
         [ a sh:PropertyShape ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:IRI ;
-            sh:path dcat:accessURL ],
-        [ a sh:PropertyShape ;
-            sh:dataType xsd:string ;
-            sh:maxCount 1 ;
-            sh:path pav:version ],
-        [ a sh:PropertyShape ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:IRI ;
-            sh:path void:sparqlEndpoint ],
-        [ a sh:PropertyShape ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:IRI ;
-            sh:path dcat:landingPage ],
-        [ a sh:PropertyShape ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:IRI ;
-            sh:path dcat:landingPage ],
-        [ a sh:PropertyShape ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:IRI ;
+            sh:maxCount 2 ;
+            sh:minCount 2 ;
+            sh:node weso-s:Dataset ;
             sh:path pav:retrievedFrom ],
         [ a sh:PropertyShape ;
             sh:maxCount 1 ;
             sh:nodeKind sh:IRI ;
             sh:path dcterms:license ],
         [ a sh:PropertyShape ;
-            sh:dataType xsd:string ;
+            sh:dataType xsd:dateTime ;
             sh:maxCount 1 ;
-            sh:path dcterms:hasVersion ],
-        [ a sh:PropertyShape ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:IRI ;
-            sh:path dcterms:source ],
+            sh:minCount 1 ;
+            sh:path prov:generatedAtTime ],
         [ a sh:PropertyShape ;
             sh:in ( void:Dataset ) ;
             sh:maxCount 1 ;
@@ -947,46 +1500,9 @@ weso-s:NCIT_C16612 a sh:NodeShape ;
             sh:path rdf:type ],
         [ a sh:PropertyShape ;
             sh:maxCount 1 ;
-            sh:nodeKind sh:IRI ;
-            sh:path void:sparqlEndpoint ],
-        [ a sh:PropertyShape ;
-            sh:dataType xsd:dateTime ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path prov:generatedAtTime ],
-        [ a sh:PropertyShape ;
-            sh:dataType xsd:dateTime ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path pav:retrievedOn ],
-        [ a sh:PropertyShape ;
-            sh:maxCount 1 ;
             sh:minCount 1 ;
             sh:nodeKind sh:IRI ;
-            sh:path dcat:accessURL ],
-        [ a sh:PropertyShape ;
-            sh:dataType xsd:string ;
-            sh:maxCount 1 ;
-            sh:path pav:version ],
-        [ a sh:PropertyShape ;
-            sh:dataType xsd:string ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path dcterms:title ],
-        [ a sh:PropertyShape ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:IRI ;
-            sh:path schema:url ],
-        [ a sh:PropertyShape ;
-            sh:dataType xsd:string ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path dcterms:title ],
-        [ a sh:PropertyShape ;
-            sh:dataType xsd:dateTime ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path prov:generatedAtTime ],
+            sh:path dcat:landingPage ],
         [ a sh:PropertyShape ;
             sh:maxCount 1 ;
             sh:nodeKind sh:IRI ;
@@ -997,18 +1513,60 @@ weso-s:NCIT_C16612 a sh:NodeShape ;
             sh:minCount 1 ;
             sh:path pav:retrievedOn ],
         [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path dcterms:title ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path dcat:landingPage ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:path dcterms:hasVersion ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path schema:url ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:path dcterms:hasVersion ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path dcat:accessURL ],
+        [ a sh:PropertyShape ;
             sh:maxCount 1 ;
             sh:nodeKind sh:IRI ;
-            sh:path pav:retrievedFrom ],
+            sh:path void:sparqlEndpoint ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:path pav:version ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path prov:generatedAtTime ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path pav:retrievedOn ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:path pav:version ],
         [ a sh:PropertyShape ;
             sh:dataType xsd:string ;
             sh:maxCount 1 ;
             sh:minCount 1 ;
             sh:path rdfs:label ],
-        [ a sh:PropertyShape ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:IRI ;
-            sh:path dcterms:source ],
         [ a sh:PropertyShape ;
             sh:in ( dcat:Dataset ) ;
             sh:maxCount 1 ;
@@ -1017,35 +1575,26 @@ weso-s:NCIT_C16612 a sh:NodeShape ;
     sh:targetClass void:Dataset,
         dcat:Dataset .
 
-:NCIT_C16612 a sh:NodeShape ;
+weso-s:NCIT_C16612 a sh:NodeShape ;
     sh:property [ a sh:PropertyShape ;
-            sh:node :NCIT_C16612 ;
-            sh:path interaction:TranscriptionTranslation ],
+            sh:nodeKind sh:IRI ;
+            sh:path ns1:Stimulation ],
         [ a sh:PropertyShape ;
-            sh:node :NCIT_C16612 ;
-            sh:path interaction:DirectedInteraction ],
+            sh:nodeKind sh:IRI ;
+            sh:path ns1:TranscriptionTranslation ],
+        [ a sh:PropertyShape ;
+            sh:node weso-s:NCIT_C16612 ;
+            sh:path interaction:Stimulation ],
         [ a sh:PropertyShape ;
             sh:minCount 1 ;
             sh:nodeKind sh:IRI ;
             sh:path ns1:Interaction ],
         [ a sh:PropertyShape ;
-            sh:node :NCIT_C16612 ;
-            sh:path interaction:Conversion ],
+            sh:node weso-s:NCIT_C16612 ;
+            sh:path interaction:TranscriptionTranslation ],
         [ a sh:PropertyShape ;
-            sh:nodeKind sh:IRI ;
-            sh:path ns1:Stimulation ],
-        [ a sh:PropertyShape ;
-            sh:node :NCIT_C16612 ;
-            sh:path interaction:Stimulation ],
-        [ a sh:PropertyShape ;
-            sh:nodeKind sh:IRI ;
-            sh:path ns1:TranscriptionTranslation ],
-        [ a sh:PropertyShape ;
-            sh:node :NCIT_C16612 ;
-            sh:path interaction:Interaction ],
-        [ a sh:PropertyShape ;
-            sh:nodeKind sh:IRI ;
-            sh:path ns1:Inhibition ],
+            sh:node weso-s:AOP ;
+            sh:path sio:SIO_001403 ],
         [ a sh:PropertyShape ;
             sh:dataType xsd:string ;
             sh:maxCount 1 ;
@@ -1053,28 +1602,721 @@ weso-s:NCIT_C16612 a sh:NodeShape ;
             sh:path rdfs:label ],
         [ a sh:PropertyShape ;
             sh:nodeKind sh:IRI ;
-            sh:path ns1:Conversion ],
-        [ a sh:PropertyShape ;
-            sh:node :Dataset ;
-            sh:path pav:importedFrom ],
+            sh:path ns1:Inhibition ],
         [ a sh:PropertyShape ;
             sh:dataType xsd:string ;
             sh:path sio:SIO_000216 ],
         [ a sh:PropertyShape ;
+            sh:node weso-s:NCIT_C16612 ;
+            sh:path interaction:DirectedInteraction ],
+        [ a sh:PropertyShape ;
+            sh:node weso-s:NCIT_C16612 ;
+            sh:path interaction:Conversion ],
+        [ a sh:PropertyShape ;
+            sh:minCount 1 ;
+            sh:node weso-s:Interaction ;
+            sh:path sio:SIO_000068 ],
+        [ a sh:PropertyShape ;
+            sh:nodeKind sh:IRI ;
+            sh:path ns1:Conversion ],
+        [ a sh:PropertyShape ;
+            sh:node weso-s:Dataset ;
+            sh:path pav:importedFrom ],
+        [ a sh:PropertyShape ;
+            sh:in ( ncit:C16612 ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:node weso-s:NCIT_C16612 ;
+            sh:path interaction:Interaction ],
+        [ a sh:PropertyShape ;
+            sh:node weso-s:NCIT_C16612 ;
+            sh:path interaction:Inhibition ],
+        [ a sh:PropertyShape ;
             sh:minCount 1 ;
             sh:nodeKind sh:IRI ;
+            sh:path ns1:DirectedInteraction ] ;
+    sh:targetClass ncit:C16612 .
+
+@prefix : <http://weso.es/shapes/> .
+@prefix bdfo: <https://biodatafuse.org/onto/bdf#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix efo: <http://www.ebi.ac.uk/efo/EFO_> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix interaction: <https://biodatafuse.org/examples/data/gene_to_graph_workflow/BDF_example_graph.ttlinteraction> .
+@prefix ncit: <http://purl.obolibrary.org/obo/NCIT_> .
+@prefix ns1: <http://vocabularies.wikipathways.org/wp#> .
+@prefix ns2: <http://aopkb.org/aop_ontology#> .
+@prefix ns3: <http://purl.obolibrary.org/obo/chebi/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix pav: <http://purl.org/pav/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix schema: <https://schema.org/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix sio: <http://semanticscience.org/resource/> .
+@prefix void: <http://rdfs.org/ns/void#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+:DataService a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:in ( schema:WebAPI ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path dcat:endpointURL ],
+        [ a sh:PropertyShape ;
+            sh:in ( dcat:DataService ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdfs:label ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 2 ;
+            sh:minCount 2 ;
+            sh:node :Dataset ;
+            sh:path dcat:servesDataset ] ;
+    sh:targetClass dcat:DataService .
+
+:DisGeNET_Evidence_Index a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:in ( bdfo:DisGeNET_Evidence_Index ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:double ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path sio:SIO_000300 ] ;
+    sh:targetClass bdfo:DisGeNET_Evidence_Index .
+
+:DisGeNET_Evidence_Level a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:in ( bdfo:DisGeNET_Evidence_Level ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path sio:SIO_000300 ] ;
+    sh:targetClass bdfo:DisGeNET_Evidence_Level .
+
+:NCIT_C17021 a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:node :NCIT_C16612 ;
+            sh:path ns1:Inhibition ],
+        [ a sh:PropertyShape ;
+            sh:minCount 1 ;
+            sh:node :NCIT_C16612 ;
             sh:path ns1:DirectedInteraction ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:node :NCIT_C16612 ;
+            sh:path ns1:Conversion ],
+        [ a sh:PropertyShape ;
+            sh:node :NCIT_C16612 ;
+            sh:path ns1:Stimulation ],
         [ a sh:PropertyShape ;
             sh:minCount 1 ;
             sh:node :Interaction ;
             sh:path sio:SIO_000068 ],
         [ a sh:PropertyShape ;
-            sh:in ( obo:NCIT_C16612 ) ;
+            sh:maxCount 1 ;
+            sh:node :NCIT_C16612 ;
+            sh:path ns1:TranscriptionTranslation ],
+        [ a sh:PropertyShape ;
+            sh:minCount 1 ;
+            sh:node :NCIT_C16612 ;
+            sh:path ns1:Interaction ],
+        [ a sh:PropertyShape ;
+            sh:in ( ncit:C17021 ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ] ;
+    sh:targetClass ncit:C17021 .
+
+:NCIT_C172573 a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdfs:label ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:node :SIO_010038 ;
+            sh:path owl:sameAs ],
+        [ a sh:PropertyShape ;
+            sh:in ( ncit:C172573 ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ] ;
+    sh:targetClass ncit:C172573 .
+
+:NCIT_C7057 a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdfs:label ],
+        [ a sh:PropertyShape ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path owl:sameAs ],
+        [ a sh:PropertyShape ;
+            sh:in ( ncit:C7057 ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ] ;
+    sh:targetClass ncit:C7057 .
+
+:SIO_000750 a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdfs:label ],
+        [ a sh:PropertyShape ;
+            sh:in ( sio:SIO_000750 ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ] ;
+    sh:targetClass sio:SIO_000750 .
+
+:SIO_000983 a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:in ( sio:SIO_000983 ) ;
             sh:maxCount 1 ;
             sh:minCount 1 ;
             sh:path rdf:type ],
         [ a sh:PropertyShape ;
+            sh:minCount 1 ;
+            sh:node :NCIT_C25338 ;
+            sh:path sio:SIO_000216 ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
             sh:node :NCIT_C16612 ;
-            sh:path interaction:Inhibition ] ;
-    sh:targetClass obo:NCIT_C16612 .
+            sh:path sio:SIO_000628 ] ;
+    sh:targetClass sio:SIO_000983 .
+
+:SIO_001262 a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdfs:label ],
+        [ a sh:PropertyShape ;
+            sh:in ( sio:SIO_001262 ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ] ;
+    sh:targetClass sio:SIO_001262 .
+
+:WebAPI a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:in ( schema:WebAPI ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path dcat:endpointURL ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:path rdfs:label ],
+        [ a sh:PropertyShape ;
+            sh:node :Dataset ;
+            sh:path dcat:servesDataset ],
+        [ a sh:PropertyShape ;
+            sh:in ( dcat:DataService ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ] ;
+    sh:targetClass schema:WebAPI .
+
+:AOP a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:minCount 1 ;
+            sh:node :KeyEvent ;
+            sh:path ns2:has_key_event ],
+        [ a sh:PropertyShape ;
+            sh:in ( ns2:AOP ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdfs:label ] ;
+    sh:targetClass ns2:AOP .
+
+:Catalog a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path dcterms:description ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 2 ;
+            sh:minCount 2 ;
+            sh:path dcterms:title ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path dcterms:created ],
+        [ a sh:PropertyShape ;
+            sh:in ( dcat:Catalog ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 18 ;
+            sh:minCount 18 ;
+            sh:node :Dataset ;
+            sh:path dcterms:source ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 2 ;
+            sh:minCount 2 ;
+            sh:node :Person ;
+            sh:path dcterms:creator ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:node :Catalog ;
+            sh:path dcterms:identifier ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 18 ;
+            sh:minCount 18 ;
+            sh:node :Dataset ;
+            sh:path prov:wasDerivedFrom ] ;
+    sh:targetClass dcat:Catalog .
+
+:EFO_0002694 a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path sio:SIO_000253 ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdfs:label ],
+        [ a sh:PropertyShape ;
+            sh:in ( efo:0002694 ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:minCount 1 ;
+            sh:node :SIO_010038 ;
+            sh:path sio:SIO_000230 ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path sio:SIO_000229 ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path dc:identifier ] ;
+    sh:targetClass efo:0002694 .
+
+:KeyEvent a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdfs:label ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path ns2:OrganContext ],
+        [ a sh:PropertyShape ;
+            sh:in ( ns2:KeyEvent ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ] ;
+    sh:targetClass ns2:KeyEvent .
+
+:NCIT_C25338 a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:dataType xsd:double ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path sio:SIO_000300 ],
+        [ a sh:PropertyShape ;
+            sh:in ( ncit:C25338 ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ] ;
+    sh:targetClass ncit:C25338 .
+
+:NCIT_C43531 a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:in ( ncit:C43531 ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdfs:label ] ;
+    sh:targetClass ncit:C43531 .
+
+:Person a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path foaf:name ],
+        [ a sh:PropertyShape ;
+            sh:in ( foaf:Person ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:in ( schema:Person ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:in ( foaf:Person ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path foaf:name ],
+        [ a sh:PropertyShape ;
+            sh:in ( schema:Person ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ] ;
+    sh:targetClass foaf:Person,
+        schema:Person .
+
+:SIO_001077 a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:node :NCIT_C43531 ;
+            sh:path sio:SIO_001403 ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:node :NCIT_C16612 ;
+            sh:path sio:SIO_000230 ],
+        [ a sh:PropertyShape ;
+            sh:in ( sio:SIO_001077 ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:double ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path sio:SIO_000300 ] ;
+    sh:targetClass sio:SIO_001077 .
+
+:SIO_010038 a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:in ( sio:SIO_010038 ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:path ns3:inchi ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:node :NCIT_C16612 ;
+            sh:path ns1:DirectedInteraction ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:node :NCIT_C16612 ;
+            sh:path ns1:Interaction ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:path sio:CHEMINF_000140 ],
+        [ a sh:PropertyShape ;
+            sh:node :Interaction ;
+            sh:path sio:SIO_000068 ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:path ns3:smiles ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path owl:sameAs ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:path rdfs:label ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:node :NCIT_C16612 ;
+            sh:path ns1:Stimulation ] ;
+    sh:targetClass sio:SIO_010038 .
+
+:Interaction a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdfs:label ],
+        [ a sh:PropertyShape ;
+            sh:node :NCIT_C16612 ;
+            sh:path sio:SIO_000028 ],
+        [ a sh:PropertyShape ;
+            sh:in ( <https://vocabularies.wikipathways.org/wp#Interaction> ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path sio:SIO_000068 ] ;
+    sh:targetClass <https://vocabularies.wikipathways.org/wp#Interaction> .
+
+:Dataset a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:dataType xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path prov:generatedAtTime ],
+        [ a sh:PropertyShape ;
+            sh:in ( dcat:Dataset ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path schema:url ],
+        [ a sh:PropertyShape ;
+            sh:in ( dcat:Dataset ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:in ( void:Dataset ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:path pav:version ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:path dcterms:hasVersion ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path dcterms:license ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path pav:retrievedOn ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path dcat:landingPage ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path dcat:landingPage ],
+        [ a sh:PropertyShape ;
+            sh:in ( void:Dataset ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path void:sparqlEndpoint ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path prov:generatedAtTime ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:path pav:version ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 2 ;
+            sh:minCount 2 ;
+            sh:node :Dataset ;
+            sh:path dcterms:source ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdfs:label ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 2 ;
+            sh:minCount 2 ;
+            sh:node :Dataset ;
+            sh:path pav:retrievedFrom ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path dcterms:license ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path pav:retrievedOn ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdfs:label ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path schema:url ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 2 ;
+            sh:minCount 2 ;
+            sh:node :Dataset ;
+            sh:path pav:retrievedFrom ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path void:sparqlEndpoint ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path dcat:accessURL ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path dcterms:title ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 2 ;
+            sh:minCount 2 ;
+            sh:node :Dataset ;
+            sh:path dcterms:source ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path dcterms:title ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:path dcterms:hasVersion ],
+        [ a sh:PropertyShape ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path dcat:accessURL ] ;
+    sh:targetClass void:Dataset,
+        dcat:Dataset .
+
+:NCIT_C16612 a sh:NodeShape ;
+    sh:property [ a sh:PropertyShape ;
+            sh:node :NCIT_C16612 ;
+            sh:path interaction:Stimulation ],
+        [ a sh:PropertyShape ;
+            sh:node :NCIT_C16612 ;
+            sh:path interaction:Inhibition ],
+        [ a sh:PropertyShape ;
+            sh:nodeKind sh:IRI ;
+            sh:path ns1:Inhibition ],
+        [ a sh:PropertyShape ;
+            sh:nodeKind sh:IRI ;
+            sh:path ns1:Conversion ],
+        [ a sh:PropertyShape ;
+            sh:dataType xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdfs:label ],
+        [ a sh:PropertyShape ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path ns1:Interaction ],
+        [ a sh:PropertyShape ;
+            sh:in ( ncit:C16612 ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path rdf:type ],
+        [ a sh:PropertyShape ;
+            sh:node :SIO_001077 ;
+            sh:path sio:SIO_000216 ],
+        [ a sh:PropertyShape ;
+            sh:node :NCIT_C16612 ;
+            sh:path interaction:Conversion ],
+        [ a sh:PropertyShape ;
+            sh:node :AOP ;
+            sh:path sio:SIO_001403 ],
+        [ a sh:PropertyShape ;
+            sh:node :NCIT_C16612 ;
+            sh:path interaction:TranscriptionTranslation ],
+        [ a sh:PropertyShape ;
+            sh:nodeKind sh:IRI ;
+            sh:path ns1:Stimulation ],
+        [ a sh:PropertyShape ;
+            sh:nodeKind sh:IRI ;
+            sh:path ns1:TranscriptionTranslation ],
+        [ a sh:PropertyShape ;
+            sh:node :EFO_0002694 ;
+            sh:path sio:SIO_000629 ],
+        [ a sh:PropertyShape ;
+            sh:node :NCIT_C16612 ;
+            sh:path interaction:DirectedInteraction ],
+        [ a sh:PropertyShape ;
+            sh:node :NCIT_C16612 ;
+            sh:path interaction:Interaction ],
+        [ a sh:PropertyShape ;
+            sh:node :Dataset ;
+            sh:path pav:importedFrom ],
+        [ a sh:PropertyShape ;
+            sh:minCount 1 ;
+            sh:node :Interaction ;
+            sh:path sio:SIO_000068 ],
+        [ a sh:PropertyShape ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path ns1:DirectedInteraction ] ;
+    sh:targetClass ncit:C16612 .
 

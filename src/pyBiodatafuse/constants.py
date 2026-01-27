@@ -717,7 +717,31 @@ KE_UPSTREAM_TITLE = "KE_upstream_title"
 KE_UPSTREAM_ORGAN = "KE_upstream_organ"
 KE_DOWNSTREAM_ORGAN = "KE_downstream_organ"
 PUBCHEM_COMPOUND_AOPWIKI = "pubchem_compound"
+ENSEMBL_AOPWIKI = "Ensembl"
+KE = "ke"
+KE_TITLE = "ke_title"
+KE_ORGAN = "ke_organ"
 
+# Output dict for simple mode (pathway=False)
+AOPWIKI_GENE_OUTPUT_DICT_SIMPLE = {
+    AOP: str,
+    AOP_TITLE: str,
+    KE: str,
+    KE_TITLE: str,
+    KE_ORGAN: str,
+    PUBCHEM_COMPOUND_AOPWIKI: str,
+}
+
+AOPWIKI_COMPOUND_OUTPUT_DICT_SIMPLE = {
+    AOP: str,
+    AOP_TITLE: str,
+    KE: str,
+    KE_TITLE: str,
+    KE_ORGAN: str,
+    ENSEMBL_AOPWIKI: str,
+}
+
+# Output dict for pathway mode (pathway=True)
 AOPWIKI_GENE_OUTPUT_DICT = {
     AOP: str,
     AOP_TITLE: str,
@@ -1259,6 +1283,9 @@ KEY_EVENT_DOWNSTREAM_NODE_MAIN_LABEL = "KE_downstream"
 KE_DOWNSTREAM_KE_EDGE_LABEL = "downstream_of"  # KE downstream to KE upstream edge
 AO_NODE_MAIN_LABEL = "ao"
 AO_KE_EDGE_LABEL = "associated_with"  # KE downstream to AO edge
+# Simple mode (pathway=False)
+KEY_EVENT_NODE_MAIN_LABEL = "ke"  # Simple KE from pathway=False mode
+AOP_KE_EDGE_LABEL = "has_key_event"  # AOP to KE edge (simple mode)
 
 AOPWIKI_EDGE_ATTRS = {
     DATASOURCE: AOPWIKIRDF,
@@ -1328,6 +1355,38 @@ RDF variables
 """
 # Mapper from namespace to BridgeDB datasource
 COMPOUND_NAMESPACE_MAPPER = {"pubchem.compound": "PubChem Compound", "CHEMBL": "ChEMBL compound"}
+
+# Mapper from BridgeDB datasource names to bioregistry-compatible prefixes
+# This is needed because bioregistry doesn't recognize BridgeDB's naming conventions
+BRIDGEDB_TO_BIOREGISTRY = {
+    "Uniprot-TrEMBL": "uniprot",
+    "Uniprot-SwissProt": "uniprot",
+    "NCBI Gene": "ncbigene",
+    "Ensembl": "ensembl",
+    "HGNC": "hgnc",
+    "HGNC Accession Number": "hgnc",
+    "PubChem Compound": "pubchem.compound",
+    "ChEMBL compound": "chembl.compound",
+    "ChEBI": "chebi",
+    "HMDB": "hmdb",
+    "DrugBank": "drugbank",
+    "KEGG Compound": "kegg.compound",
+    "KEGG Drug": "kegg.drug",
+    "InChIKey": "inchikey",
+    "CAS": "cas",
+    "Gene Ontology": "go",
+    "RefSeq": "refseq",
+    "PDB": "pdb",
+    "Pfam": "pfam",
+    "MGI": "mgi",
+    "RGD": "rgd",
+    "SGD": "sgd",
+    "OMIM": "omim",
+    "Wikidata": "wikidata",
+    "Wikipedia": "wikipedia.en",
+    "LIPID MAPS": "lipidmaps",
+    "SwissLipids": "slm",
+}
 
 # Input datasources for BridgeDB
 BRIDGEDB_ENSEMBL = ("Ensembl",)
@@ -1437,11 +1496,14 @@ DATA_TYPES_SOURCES = {
 
 NODE_URI_PREFIXES = {
     ENSEMBL: "https://identifiers.org/ensembl#",
+    "Entrez Gene": "https://identifiers.org/ncbigene/",
     "medgen": "https://www.ncbi.nlm.nih.gov/medgen/",
     "pubchem_assay": "https://pubchem.ncbi.nlm.nih.gov/bioassay/",
     PUBCHEM: "https://pubchem.ncbi.nlm.nih.gov/compound/",
     MOLMEDB: "https://molmedb.upol.cz/mol/",
     "uniprot": "https://www.uniprot.org/uniprotkb/",
+    UNIPROT_TREMBL: "https://www.uniprot.org/uniprotkb/",
+    "Uniprot-SwissProt": "https://www.uniprot.org/uniprotkb/",
     "pubmed": "https://pubmed.ncbi.nlm.nih.gov/",
     WIKIPATHWAYS: "https://www.wikipathways.org/pathways/",
     REACTOME: "https://reactome.org/content/detail/",
@@ -1466,7 +1528,7 @@ NAMESPACE_BINDINGS = {
     "mondo": "https://monarchinitiative.org/disease/",
     "umls": "https://www.ncbi.nlm.nih.gov/medgen/",
     "so": "http://purl.obolibrary.org/obo/so#",
-    "cheminf": " http://semanticscience.org/resource/",
+    "cheminf": "http://semanticscience.org/resource/",
 }
 
 # Patterns URIs for nodes (one for each node in the schema)
@@ -1509,6 +1571,7 @@ NODE_TYPES = {
     "developmental_stage_node": f"{NAMESPACE_BINDINGS['obo']}NCIT_C43531",
     "el_node": "https://biodatafuse.org/onto/bdf#DisGeNET_Evidence_Level",
     "ei_node": "https://biodatafuse.org/onto/bdf#DisGeNET_Evidence_Index",
+    "aop": "http://aopkb.org/aop_ontology#AOP",
     "ao": "http://aopkb.org/aop_ontology#AdverseOutcome",
     "ke": "http://aopkb.org/aop_ontology#KeyEvent",
     "mie": "http://aopkb.org/aop_ontology#MolecularInitiatingEvent",
@@ -1526,6 +1589,8 @@ PREDICATES = {
     "sio_has_value": f"{NAMESPACE_BINDINGS['sio']}SIO_000300",
     "sio_has_input": f"{NAMESPACE_BINDINGS['sio']}SIO_000230",
     "sio_has_output": f"{NAMESPACE_BINDINGS['sio']}SIO_000229",
+    "sio_is_subject_of": f"{NAMESPACE_BINDINGS['sio']}SIO_000629",
+    "dc_identifier": "http://purl.org/dc/elements/1.1/identifier",
     "chebi_inchi": f"{NAMESPACE_BINDINGS['obo']}chebi/inchi",
     "chebi_smiles": f"{NAMESPACE_BINDINGS['obo']}chebi/smiles",
     "cheminf_compound_id": "http://semanticscience.org/resource/CHEMINF_000140",
@@ -1539,10 +1604,15 @@ PREDICATES = {
     "translation_of": f"{NAMESPACE_BINDINGS['obo']}so#translation_of",
     "translates_to": f"{NAMESPACE_BINDINGS['obo']}so#translates_to",
     "variant_of": f"{NAMESPACE_BINDINGS['obo']}so#variant_of",
-    "has_upstreamkey_event": "http://aopkb.org/aop_ontology#has_upstream_key_event",
-    "has_downstreamkey_event": "http://aopkb.org/aop_ontology#has_downstream_key_event",
+    "has_upstream_key_event": "http://aopkb.org/aop_ontology#has_upstream_key_event",
+    "has_downstream_key_event": "http://aopkb.org/aop_ontology#has_downstream_key_event",
+    "has_key_event": "http://aopkb.org/aop_ontology#has_key_event",
+    "has_key_event_relationship": "http://aopkb.org/aop_ontology#has_key_event_relationship",
+    "has_adverse_outcome": "http://aopkb.org/aop_ontology#has_adverse_outcome",
+    "has_molecular_initiating_event": "http://aopkb.org/aop_ontology#has_molecular_initiating_event",
+    "organ_context": "http://aopkb.org/aop_ontology#OrganContext",
     "occurs_in": f"{NAMESPACE_BINDINGS['obo']}BFO_0000066",
-    "molecular_formula": f"{NAMESPACE_BINDINGS['cheminf']}CHEMINF_000042",
+    "molecular_formula": f"{NAMESPACE_BINDINGS['sio']}CHEMINF_000042",
 }
 
 # Classes for clinical phases
@@ -1751,6 +1821,19 @@ SCHEMA_TYPES = {
     "dataset": f"{SCHEMA_NAMESPACE}Dataset",
     "organization": f"{SCHEMA_NAMESPACE}Organization",
     "software_application": f"{SCHEMA_NAMESPACE}SoftwareApplication",
+    "person": f"{SCHEMA_NAMESPACE}Person",
+}
+
+# FOAF (Friend of a Friend) namespace
+FOAF_NAMESPACE = "http://xmlns.com/foaf/0.1/"
+FOAF_PREDICATES = {
+    "name": f"{FOAF_NAMESPACE}name",
+    "homepage": f"{FOAF_NAMESPACE}homepage",
+    "mbox": f"{FOAF_NAMESPACE}mbox",
+}
+FOAF_TYPES = {
+    "person": f"{FOAF_NAMESPACE}Person",
+    "agent": f"{FOAF_NAMESPACE}Agent",
 }
 
 # VoID (Vocabulary of Interlinked Datasets) namespace
@@ -1824,7 +1907,7 @@ DATA_SOURCE_LICENSES = {
     BGEE: "https://creativecommons.org/publicdomain/zero/1.0/",
     COMPOUNDWIKI: "https://creativecommons.org/publicdomain/zero/1.0/",
     DISGENET: "https://www.disgenet.org/legal",
-    INTACT: "https://creativecommons.org/licenses/by/4.0/",
+    INTACT: "https://creativecommons.org/publicdomain/zero/1.0/",
     OPENTARGETS: "https://creativecommons.org/licenses/by/4.0/",
     PUBCHEM: "https://www.ncbi.nlm.nih.gov/home/about/policies/",
     STRING: "https://creativecommons.org/licenses/by/4.0/",

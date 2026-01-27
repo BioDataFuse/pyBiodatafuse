@@ -64,8 +64,8 @@ class TestCreateDatasetNode(unittest.TestCase):
             version="12.0",
         )
         
-        # Check the URI is correct
-        self.assertEqual(str(dataset_uri), "http://example.org/dataset/stringdb")
+        # Check the URI uses the canonical source identifier
+        self.assertEqual(str(dataset_uri), Cons.DATA_SOURCE_IDENTIFIERS[Cons.STRING])
         
         # Check it has the DCAT Dataset type
         self.assertIn(

@@ -192,6 +192,9 @@ def create_dataset_node(
     """
     Create a DCAT Dataset node for a data source with full provenance.
 
+    Uses the canonical source URI from DATA_SOURCE_IDENTIFIERS as the dataset URI
+    when available, falling back to a constructed URI otherwise.
+
     :param g: RDF graph to add the dataset node to.
     :param datasource: Name of the data source.
     :param base_uri: Base URI for the graph.
@@ -200,8 +203,12 @@ def create_dataset_node(
     :param endpoint_url: URL of the endpoint that was queried.
     :return: URIRef of the created dataset node.
     """
-    # Create dataset URI
-    dataset_uri = URIRef(f"{base_uri}dataset/{datasource.lower().replace(' ', '_')}")
+    # Use canonical source URI from DATA_SOURCE_IDENTIFIERS if available
+    if datasource in Cons.DATA_SOURCE_IDENTIFIERS:
+        dataset_uri = URIRef(Cons.DATA_SOURCE_IDENTIFIERS[datasource])
+    else:
+        # Fallback to constructed URI for unknown sources
+        dataset_uri = URIRef(f"{base_uri}dataset/{datasource.lower().replace(' ', '_')}")
 
     # Add dataset type (DCAT Dataset)
     g.add((dataset_uri, RDF.type, URIRef(Cons.DCAT_TYPES["dataset"])))
