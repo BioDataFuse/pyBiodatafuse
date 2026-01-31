@@ -153,13 +153,14 @@ def get_shapes(
     return graph_result
 
 
-def get_shacl_prefixes(namespaces, path, new_uris):
+def get_shacl_prefixes(namespaces, path, new_uris, print_string_output):
     """
     Generate SHACL prefix declarations and save them in Turtle format.
 
     :param namespaces: Optional dictionary of prefix to namespace URI mappings to include in the SHACL declarations.
     :param path: Optional path to a file where the Turtle data will be written. If not provided, the data is not written to disk.
     :param new_uris: Dictionary of prefix to namespace URI mappings to include in the SHACL declarations.
+    :param print_string_output: bool, print or not the generated TTL as a string.
 
     :return: A RDFLib Graph containing the SHACL prefix declarations.
     """
@@ -191,7 +192,10 @@ def get_shacl_prefixes(namespaces, path, new_uris):
         except IOError as e:
             logger.error("Error writing to file %s: %s", path, e)
 
-    print(ttl_data)
+    # Optionally print the graph to the console if print_string_output is True
+    if print_string_output:
+        print(ttl_data)
+
     return graph
 
 

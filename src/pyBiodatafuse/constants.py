@@ -802,6 +802,7 @@ MIRNA_NODE_LABEL = "miRNA"
 TRANS_FACTOR_NODE_LABEL = "Transcription Factor"
 MITOCHONDRIAL_PATHWAY_NODE_LABEL = "Mitochondrial Pathway"
 KEY_EVENT_NODE_LABEL = "Key Event"
+KEY_EVENT_RELATIONSHIP_NODE_LABEL = "Key Event Relationship"
 MIE_NODE_LABEL = "Molecular Initiating Event"
 AOP_NODE_LABEL = "Adverse Outcome Pathway"
 AO_NODE_LABEL = "Adverse Outcome"
@@ -817,6 +818,12 @@ INHIBITS = "INHIBITS"
 EXPRESSED_BY = "EXPRESSED_BY"
 UPSTREAM_OF = "UPSTREAM_OF"
 DOWNSTREAM_OF = "DOWNSTREAM_OF"
+HAS_KEY_EVENT = "HAS_KEY_EVENT"
+HAS_ADVERSE_OUTCOME = "HAS_ADVERSE_OUTCOME"
+HAS_MOLECULAR_INITIATING_EVENT = "HAS_MOLECULAR_INITIATING_EVENT"
+HAS_KEY_EVENT_RELATIONSHIP = "HAS_KEY_EVENT_RELATIONSHIP"
+HAS_UPSTREAM_KEY_EVENT = "HAS_UPSTREAM_KEY_EVENT"
+HAS_DOWNSTREAM_KEY_EVENT = "HAS_DOWNSTREAM_KEY_EVENT"
 
 """
 Anatomical entity nodes and edges
@@ -1258,7 +1265,9 @@ KE_UPSTREAM_MIE_EDGE_LABEL = "upstream_of"  # KE upstream to MIE edge
 KEY_EVENT_DOWNSTREAM_NODE_MAIN_LABEL = "KE_downstream"
 KE_DOWNSTREAM_KE_EDGE_LABEL = "downstream_of"  # KE downstream to KE upstream edge
 AO_NODE_MAIN_LABEL = "ao"
-AO_KE_EDGE_LABEL = "associated_with"  # KE downstream to AO edge
+AO_KE_EDGE_LABEL = "has_adverse_outcome"  # KE downstream to AO edge
+KEY_EVENT_NODE_MAIN_LABEL = "ke"  # Simple KE from pathway=False mode
+AOP_KE_EDGE_LABEL = "has_key_event"  # AOP to KE edge (simple mode)
 
 AOPWIKI_EDGE_ATTRS = {
     DATASOURCE: AOPWIKIRDF,
