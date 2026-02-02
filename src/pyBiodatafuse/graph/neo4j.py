@@ -480,8 +480,6 @@ def connect_db(uri: str, username: str, password: str):
     """
     # Set the connection URL for neomodel
     # Format: bolt://username:password@host:port
-    from urllib.parse import urlparse
-
     parsed = urlparse(uri)
     host = parsed.hostname or "localhost"
     port = parsed.port or 7687
