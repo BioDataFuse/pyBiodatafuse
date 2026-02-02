@@ -77,6 +77,9 @@ def get_uri(source: str, identifier: str) -> Optional[URIRef]:
     :param identifier: Local identifier.
     :return: URIRef or None if source not found.
     """
+    # Normalize sources (patch for bdb)
+    if source == "PubChem-compound":
+        source = "PubChem Compound"
     prefix = Cons.NODE_URI_PREFIXES.get(source) or Cons.SOURCE_NAMESPACES.get(source)
     if prefix and identifier:
         return URIRef(f"{prefix}{identifier}")

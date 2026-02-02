@@ -9,7 +9,7 @@ for processing biological data and generating standardized RDF output.
 
 Architecture
 ------------
-The module uses a layered architecture:
+The module uses this architecture:
 
 1. BDFGraph: Main class that orchestrates RDF generation
 2. Process methods: Handle specific data types (PPI, disease, expression, etc.)
@@ -83,7 +83,6 @@ from pyBiodatafuse.graph.rdf.utils import (
     discover_prefixes_from_graph,
     get_shacl_prefixes,
     get_shapes,
-    replace_na_none,
 )
 from pyBiodatafuse.id_mapper import read_datasource_file
 from pyBiodatafuse.logging_config import get_logger
@@ -115,9 +114,7 @@ class BDFGraph(Graph):
         :param author: The author of the BDF graph (optional, use creators for multiple).
         :param orcid: The ORCID identifier for the author (optional, use creators for multiple).
         :param creators: A list of creator dictionaries, each with 'name' (required),
-                        'orcid' (optional), and 'url' (optional) keys. Example:
-                        [{'name': 'John Doe', 'orcid': 'https://orcid.org/0000-0001-2345-6789'},
-                         {'name': 'Jane Smith', 'url': 'https://example.org/jane'}]
+            'orcid' (optional), and 'url' (optional) keys.
         """
         # Initialize the rdflib.Graph superclass without passing extra arguments
         super().__init__()
@@ -136,7 +133,7 @@ class BDFGraph(Graph):
         self._shex_path = None
         self._shacl_path = None
         self._prefixes_path = None
-        self._namespaces : dict[str, str] = {}
+        self._namespaces: dict[str, str] = {}
         self.include_variants = False  # TODO: Allow user to set options that can affect graph size
 
         # Initialize dataset provenance tracker
@@ -174,20 +171,19 @@ class BDFGraph(Graph):
         # Record dataset usage from metadata for provenance tracking
         if isinstance(metadata, list):
             record_datasource_from_metadata(self.provenance_tracker, metadata)
-
-        df = df.applymap(replace_na_none)
+        # df = df.applymap(replace_na_none)
         datasources = read_datasource_file()
-        if not self.include_variants:
-            # Filter to keep only rows with valid gene identifier sources from datasources file
-            valid_gene_sources = list(datasources[datasources["type"] == "gene"]["source"])
-            df = df[df[Cons.TARGET_SOURCE_COL].isin(valid_gene_sources)]
+        # if not self.include_variants:
+        # Filter to keep only rows with valid gene identifier sources from datasources file
+        # valid_gene_sources = list(datasources[datasources["type"] == "gene"]["source"])
+        # df = df[df[Cons.TARGET_SOURCE_COL].isin(valid_gene_sources)]
 
         total_rows = df.shape[0]
         logger.info(f"Processing {total_rows} rows...")
-
         for j, (_, row) in enumerate(
             tqdm(df.iterrows(), total=total_rows, desc="Building RDF graph")
         ):
+
             self.process_row(row, j, datasources)
 
         self._add_metadata(metadata)
@@ -291,15 +287,20 @@ class BDFGraph(Graph):
         is_gene, is_compound = False, False
 
         identifier_source = row.get("identifier.source")
+
         gene_sources = list(datasources[datasources["type"] == "gene"]["source"]) + ["Entrez Gene"]
-        compound_sources = list(datasources[datasources["type"] == "metabolite"]["source"])
+        compound_sources = list(datasources[datasources["type"] == "metabolite"]["source"]) + [
+            "PubChem-compound"
+        ]
 
         if identifier_source in gene_sources:
             gene_node = self.add_gene_node(row)
             is_gene = True
-        elif identifier_source in compound_sources:
+            is_compound = False
+        if identifier_source in compound_sources:
             compound_node = self.add_compound_node(row)
             is_compound = True
+            is_gene = False
 
         # Validate row
         source_idx = row.get(Cons.IDENTIFIER_COL)
@@ -486,48 +487,37 @@ class BDFGraph(Graph):
     def _process_compound_data(self, row: pd.Series, compound_node: URIRef, id_number: str) -> None:
         """Process all compound-related data types."""
         # Pathways
-        self._safe_process(
-            self.process_pathways, row, compound_node, [], error_msg="Failed to process pathways"
-        )
-
+        self.process_pathways(row, compound_node, [])
         # Inhibitor transporter
         it_data = row.get(Cons.MOLMEDB_COMPOUND_PROTEIN_COL)
         if it_data:
-            self._safe_process(
-                self.process_inhibitor_transporter_data,
+            self.process_inhibitor_transporter_data(
                 compound_node,
                 it_data,
-                error_msg="Failed to process inhibitor transporter data",
             )
 
         # AOP data
         aop_data = row.get(Cons.AOPWIKI_COMPOUND_COL)
         if aop_data:
-            self._safe_process(
-                self.process_aop_data,
+            self.process_aop_data(
                 aop_data,
                 None,
                 compound_node,
-                error_msg="Failed to process AOP data",
             )
 
         # Molecular pathways
         pathways_data = row.get(Cons.WIKIPATHWAYS_MOLECULAR_COL)
         if pathways_data:
-            self._safe_process(
-                self.process_molecular_pathway,
+            self.process_molecular_pathway(
                 pathways_data,
                 compound_node,
                 id_number,
-                error_msg="Failed to process molecular pathway",
             )
 
         # CompoundWiki
-        self._safe_process(
-            self.process_compoundwiki_data,
+        self.process_compoundwiki_data(
             compound_node,
             row,
-            error_msg="Failed to process CompoundWiki data",
         )
 
     # =========================================================================

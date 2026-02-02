@@ -33,10 +33,9 @@ def get_compound_node(g: Graph, row) -> Optional[URIRef]:
     target_source = safe_get(row, "target.source")
     identifier = safe_get(row, "identifier")
     identifier_source = safe_get(row, "identifier.source")
-
     compound_node = None
-    if identifier_source == "PubChem Compound" and identifier:
-        compound_node = get_uri("PubChem Compound", identifier)
+    if identifier_source and identifier:
+        compound_node = get_uri(identifier_source, identifier)
         add_type(g, compound_node, Cons.NODE_TYPES["compound_node"])
         add_label(g, compound_node, identifier)
 
@@ -46,7 +45,6 @@ def get_compound_node(g: Graph, row) -> Optional[URIRef]:
         add_label(g, target_node, target)
         if compound_node:
             add_same_as(g, compound_node, target_node, bidirectional=False)
-
     return compound_node
 
 
