@@ -136,7 +136,7 @@ class BDFGraph(Graph):
         self._shex_path = None
         self._shacl_path = None
         self._prefixes_path = None
-        self._namespaces = {}
+        self._namespaces = dict[str, str] = {}
         self.include_variants = False  # TODO: Allow user to set options that can affect graph size
 
         # Initialize dataset provenance tracker
