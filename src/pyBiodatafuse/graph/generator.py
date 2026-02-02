@@ -2776,12 +2776,19 @@ def _built_gene_based_graph(
         process_homologs(g, combined_df, homolog_df_list, func_dict, dea_columns)
 
     # Process disease-compound relationships
-    dnodes = {
-        d["attr_dict"][Cons.EFO]: n
-        for n, d in g.nodes(data=True)
-        if d["attr_dict"][Cons.LABEL] == Cons.DISEASE_NODE_LABEL
-        and d["attr_dict"][Cons.EFO] is not None
-    }
+    dnode_namespaces = [Cons.EFO, Cons.MONDO]
+    dnodes = {}
+
+    for nspace in dnode_namespaces:
+        dnodes.update(
+            {
+                d["attr_dict"][nspace]: n
+                for n, d in g.nodes(data=True)
+                if d["attr_dict"][Cons.LABEL] == Cons.DISEASE_NODE_LABEL
+                and nspace in d["attr_dict"]
+                and d["attr_dict"][nspace] is not None
+            }
+        )
 
     if disease_compound is not None:
         process_disease_compound(g, disease_compound, disease_nodes=dnodes)
@@ -2848,7 +2855,13 @@ def build_networkx_graph(
 
     main_target_type = combined_df["target.source"].unique()[0]
 
-    if main_target_type == Cons.ENSEMBL:
+    gene_input = [
+        Cons.ENSEMBL,
+        Cons.EFO,
+        Cons.NCBI_GENE,
+    ]
+
+    if main_target_type in gene_input:
         return _built_gene_based_graph(
             g, combined_df, disease_compound, pathway_compound, homolog_df_list
         )
