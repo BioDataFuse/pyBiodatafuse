@@ -140,22 +140,22 @@ class Gene(StructuredNode):
         Cons.PATHWAY_NODE_LABEL, Cons.PART_OF, model=PartOf
     )  # Gene -> Pathway
     part_of_biological_process = RelationshipTo(
-        Cons.GO_BP_NODE_LABEL.replace(" ", ""), Cons.PART_OF, model=PartOf
+        Cons.GO_BP_NODE_LABEL, Cons.PART_OF, model=PartOf
     )  # Gene -> BiologicalProcess
     part_of_molecular_function = RelationshipTo(
-        Cons.GO_MF_NODE_LABEL.replace(" ", ""), Cons.PART_OF, model=PartOf
+        Cons.GO_MF_NODE_LABEL, Cons.PART_OF, model=PartOf
     )  # Gene -> MolecularFunction
     part_of_cellular_component = RelationshipTo(
-        Cons.GO_CC_NODE_LABEL.replace(" ", ""), Cons.PART_OF, model=PartOf
+        Cons.GO_CC_NODE_LABEL, Cons.PART_OF, model=PartOf
     )  # Gene -> CellularComponent
     associated_with_disease = RelationshipTo(
         Cons.DISEASE_NODE_LABEL, Cons.ASSOCIATED_WITH, model=AssociatedWith
     )  # Gene -> Disease
     expressed_by = RelationshipTo(
-        Cons.ANATOMICAL_NODE_LABEL.replace(" ", ""), Cons.EXPRESSED_BY, model=ExpressedBy
+        Cons.ANATOMICAL_NODE_LABEL, Cons.EXPRESSED_BY, model=ExpressedBy
     )  # Gene -> Tissue
     associated_with_aop = RelationshipTo(
-        Cons.AOP_NODE_LABEL.replace(" ", ""), Cons.ASSOCIATED_WITH, model=AssociatedWith
+        Cons.AOP_NODE_LABEL, Cons.ASSOCIATED_WITH, model=AssociatedWith
     )  # Gene -> AO
 
     # incoming edges
@@ -293,14 +293,12 @@ class AdverseOutcomePathway(StructuredNode):
     associated_with = RelationshipFrom(Gene, Cons.ASSOCIATED_WITH, model=AssociatedWith)
 
     # outgoing relations (AOP -> KE, AO, MIE, KER)
-    has_key_event = RelationshipTo(
-        Cons.KEY_EVENT_NODE_LABEL.replace(" ", ""), Cons.HAS_KEY_EVENT, model=HasKeyEvent
-    )
+    has_key_event = RelationshipTo(Cons.KEY_EVENT_NODE_LABEL, Cons.HAS_KEY_EVENT, model=HasKeyEvent)
     has_adverse_outcome = RelationshipTo(
-        Cons.AO_NODE_LABEL.replace(" ", ""), Cons.HAS_ADVERSE_OUTCOME, model=HasAdverseOutcome
+        Cons.AO_NODE_LABEL, Cons.HAS_ADVERSE_OUTCOME, model=HasAdverseOutcome
     )
     has_molecular_initiating_event = RelationshipTo(
-        Cons.MIE_NODE_LABEL.replace(" ", ""),
+        Cons.MIE_NODE_LABEL,
         Cons.HAS_MOLECULAR_INITIATING_EVENT,
         model=HasMolecularInitiatingEvent,
     )
@@ -322,7 +320,7 @@ class MolecularInitiatingEvent(StructuredNode):
 
     # incoming relations (KeyEvent -> MIE)
     associated_with = RelationshipFrom(
-        Cons.KEY_EVENT_NODE_LABEL.replace(" ", ""), Cons.ASSOCIATED_WITH, model=AssociatedWith
+        Cons.KEY_EVENT_NODE_LABEL, Cons.ASSOCIATED_WITH, model=AssociatedWith
     )
 
 
@@ -338,17 +336,17 @@ class KeyEvent(StructuredNode):
     # outgoing relations (KeyEvent -> MIE)
     upstream_of = RelationshipTo(MolecularInitiatingEvent, Cons.UPSTREAM_OF, model=UpstreamOf)
     associated_with = RelationshipFrom(
-        Cons.AO_NODE_LABEL.replace(" ", ""), Cons.ASSOCIATED_WITH, model=AssociatedWith
+        Cons.AO_NODE_LABEL, Cons.ASSOCIATED_WITH, model=AssociatedWith
     )
 
     # outgoing relations (KeyEvent -> KeyEvent)
     downstream_of = RelationshipTo(
-        Cons.KEY_EVENT_NODE_LABEL.replace(" ", ""), Cons.DOWNSTREAM_OF, model=DownstreamOf
+        Cons.KEY_EVENT_NODE_LABEL, Cons.DOWNSTREAM_OF, model=DownstreamOf
     )
 
     # outgoing relations (KeyEvent -> AdverseOutcomePathway)
     has_adverse_outcome = RelationshipFrom(
-        Cons.AO_NODE_LABEL.replace(" ", ""), Cons.HAS_ADVERSE_OUTCOME, model=HasAdverseOutcome
+        Cons.AO_NODE_LABEL, Cons.HAS_ADVERSE_OUTCOME, model=HasAdverseOutcome
     )
 
 
@@ -362,17 +360,17 @@ class KeyEventRelationship(StructuredNode):
 
     # incoming relations (AOP -> KER)
     has_key_event_relationship = RelationshipFrom(
-        Cons.AOP_NODE_LABEL.replace(" ", ""),
+        Cons.AOP_NODE_LABEL,
         Cons.HAS_KEY_EVENT_RELATIONSHIP,
         model=HasKeyEventRelationship,
     )
 
     # outgoing relations (KER -> KE)
     has_upstream_key_event = RelationshipTo(
-        Cons.KEY_EVENT_NODE_LABEL.replace(" ", ""), "HAS_UPSTREAM_KEY_EVENT", model=HasKeyEvent
+        Cons.KEY_EVENT_NODE_LABEL, "HAS_UPSTREAM_KEY_EVENT", model=HasKeyEvent
     )
     has_downstream_key_event = RelationshipTo(
-        Cons.KEY_EVENT_NODE_LABEL.replace(" ", ""), "HAS_DOWNSTREAM_KEY_EVENT", model=HasKeyEvent
+        Cons.KEY_EVENT_NODE_LABEL, "HAS_DOWNSTREAM_KEY_EVENT", model=HasKeyEvent
     )
 
 

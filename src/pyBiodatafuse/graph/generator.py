@@ -1556,7 +1556,8 @@ def add_molmedb_gene_inhibitor_subgraph(g, gene_node_label, annot_list):
     for annot in annot_list:
         if pd.isna(annot[Cons.MOLMEDB_COMPOUND_NAME]):
             continue
-
+        if Cons.COMPOUND_NODE_MAIN_LABEL not in annot:
+            return g
         if not pd.isna(annot[Cons.COMPOUND_NODE_MAIN_LABEL]):
             annot_node_label = annot[Cons.COMPOUND_NODE_MAIN_LABEL]
             annot_id = annot[Cons.COMPOUND_NODE_MAIN_LABEL]
