@@ -346,6 +346,11 @@ class KeyEvent(StructuredNode):
         Cons.KEY_EVENT_NODE_LABEL.replace(" ", ""), Cons.DOWNSTREAM_OF, model=DownstreamOf
     )
 
+    # outgoing relations (KeyEvent -> AdverseOutcomePathway)
+    has_adverse_outcome = RelationshipFrom(
+        Cons.AO_NODE_LABEL.replace(" ", ""), Cons.HAS_ADVERSE_OUTCOME, model=HasAdverseOutcome
+    )
+
 
 class KeyEventRelationship(StructuredNode):
     """Key event relationship node."""

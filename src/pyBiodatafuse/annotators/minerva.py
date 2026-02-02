@@ -111,6 +111,12 @@ def get_minerva_components(
     """
     # Get list of projects
     project_df = list_projects()
+    project_names = project_df["names"].tolist()
+
+    if map_name not in project_names:
+        raise ValueError(
+            f"{map_name} is not a valid MINERVA project name. Please choose from the following list: {project_names}"
+        )
 
     # Get url from the project specified
     condition = project_df["names"] == map_name
