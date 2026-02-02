@@ -107,7 +107,7 @@ def get_minerva_components(
         - 'map_reactions' contains a list for each of the pathways in the model.
         Those lists provide information about the reactions involed in that pathway.
         - 'models' is a list containing pathway-specific information for each of the pathways in the model.
-
+    :raises ValueError: if the provided map_name is not valid.
     """
     # Get list of projects
     project_df = list_projects()
