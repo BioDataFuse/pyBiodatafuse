@@ -400,20 +400,22 @@ def exporter(
     :param neo4j_import_folder: exact path to neo4j database import folder
     :param network_name: network name given by users
 
-    Usage example:
-    >> network = nxGraph
-    >> uri = "neo4j://localhost:7687"
-    >> username = "neo4j"
-    >> password = "biodatafuse"
-    >> neo4j_import_folder = "../../neo4j-community-5.13.0/import/"
-    >> network_name = "Network"
-    >> exporter(
-        network,
-        uri,
-        username,
-        password,
-        neo4j_import_folder, network_name
-    )
+    Usage example::
+
+        network = nxGraph
+        uri = "neo4j://localhost:7687"
+        username = "neo4j"
+        password = "biodatafuse"
+        neo4j_import_folder = "../../neo4j-community-5.13.0/import/"
+        network_name = "Network"
+        exporter(
+            network,
+            uri,
+            username,
+            password,
+            neo4j_import_folder,
+            network_name
+        )
     """
     # credentials
     uri_info = uri

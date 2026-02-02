@@ -1,4 +1,4 @@
-pyBioDataFuse |release| Documentation
+pyBioDataFuse Documentation
 =====================================
 
 💪 Getting Started
