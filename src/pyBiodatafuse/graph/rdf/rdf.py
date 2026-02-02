@@ -136,7 +136,7 @@ class BDFGraph(Graph):
         self._shex_path = None
         self._shacl_path = None
         self._prefixes_path = None
-        self._namespaces = None
+        self._namespaces = {}
         self.include_variants = False  # TODO: Allow user to set options that can affect graph size
 
         # Initialize dataset provenance tracker
@@ -168,8 +168,6 @@ class BDFGraph(Graph):
         :param open_only: A flag indicating whether to process only open data. Defaults to False.
         :param metadata: Metadata information to be added to the RDF graph.
         """
-        import time
-
         start_time = time.time()
         logger.info("Starting RDF graph generation...")
 
@@ -196,10 +194,11 @@ class BDFGraph(Graph):
 
         # Add dataset provenance nodes to the graph
         logger.info("Adding dataset provenance nodes...")
+        graph_uri = self.version_iri if self.version_iri is not None else self.base_uri
         add_dataset_provenance_to_graph(
             g=self,
             base_uri=self.base_uri,
-            graph_uri=self.version_iri,
+            graph_uri=graph_uri,
             tracker=self.provenance_tracker,
         )
 
@@ -207,22 +206,12 @@ class BDFGraph(Graph):
         logger.info(f"RDF graph generation completed in {elapsed:.2f} seconds")
         logger.info(f"Total triples in graph: {len(self)}")
 
-        # Add dataset provenance nodes to the graph
-        add_dataset_provenance_to_graph(
-            g=self,
-            base_uri=self.base_uri,
-            graph_uri=self.version_iri,
-            tracker=self.provenance_tracker,
-        )
-
         # Discover additional prefixes from URIs in the graph using bioregistry
         logger.info("Discovering prefixes from graph URIs using bioregistry...")
         discovered = discover_prefixes_from_graph(self)
         if discovered:
             logger.info(f"Discovered {len(discovered)} additional prefixes")
             # Store discovered prefixes for use in shacl_prefixes()
-            if self._namespaces is None:
-                self._namespaces = {}
             self._namespaces.update(discovered)
             # Also bind them to the graph for serialization
             for prefix, ns_uri in discovered.items():
@@ -342,8 +331,8 @@ class BDFGraph(Graph):
                 protein_nodes = list(
                     self.objects(gene_node, URIRef(Cons.PREDICATES["translation_of"]))
                 )
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("Failed to get protein nodes: %s", e)
 
         # Process gene data
         if is_gene and gene_node:
@@ -367,46 +356,60 @@ class BDFGraph(Graph):
         ppi_data = row.get(Cons.STRING_INTERACT_COL)
         if ppi_data:
             self._safe_process(
-                self.process_ppi_data, ppi_data, gene_node,
-                error_msg="Failed to process PPI data"
+                self.process_ppi_data, ppi_data, gene_node, error_msg="Failed to process PPI data"
             )
 
         # Disease data
         disease_data = self.collect_disease_data(row)
         if disease_data:
             self._safe_process(
-                self.process_disease_data, disease_data, id_number, source_idx, gene_node,
-                error_msg="Failed to process disease data"
+                self.process_disease_data,
+                disease_data,
+                id_number,
+                source_idx,
+                gene_node,
+                error_msg="Failed to process disease data",
             )
 
         # Expression data
         expression_data = row.get(Cons.BGEE_GENE_EXPRESSION_LEVELS_COL)
         if expression_data:
             self._safe_process(
-                self.process_expression_data, expression_data, id_number, source_idx, gene_node,
-                error_msg="Failed to process expression data"
+                self.process_expression_data,
+                expression_data,
+                id_number,
+                source_idx,
+                gene_node,
+                error_msg="Failed to process expression data",
             )
 
         # Pathways
         self._safe_process(
-            self.process_pathways, row, gene_node, protein_nodes,
-            error_msg="Failed to process pathways"
+            self.process_pathways,
+            row,
+            gene_node,
+            protein_nodes,
+            error_msg="Failed to process pathways",
         )
 
         # GO terms
         processes_data = row.get(Cons.OPENTARGETS_GO_COL)
         if processes_data:
             self._safe_process(
-                self.process_processes_data, processes_data, gene_node,
-                error_msg="Failed to process GO terms"
+                self.process_processes_data,
+                processes_data,
+                gene_node,
+                error_msg="Failed to process GO terms",
             )
 
         # Compounds
         compound_data = row.get(Cons.OPENTARGETS_GENE_COMPOUND_COL)
         if compound_data:
             self._safe_process(
-                self.process_compound_data, compound_data, gene_node,
-                error_msg="Failed to process compound data"
+                self.process_compound_data,
+                compound_data,
+                gene_node,
+                error_msg="Failed to process compound data",
             )
 
         # Literature
@@ -414,16 +417,23 @@ class BDFGraph(Graph):
         if literature_data:
             self._safe_process(
                 self.process_literature_data,
-                literature_data, gene_node, id_number, source_idx, self.new_uris, row_index,
-                error_msg="Failed to process literature data"
+                literature_data,
+                gene_node,
+                id_number,
+                source_idx,
+                self.new_uris,
+                row_index,
+                error_msg="Failed to process literature data",
             )
 
         # Transporter inhibitors
         ti_data = row.get(Cons.MOLMEDB_PROTEIN_COMPOUND_COL)
         if ti_data:
             self._safe_process(
-                self.process_transporter_inhibitor_data, gene_node, ti_data,
-                error_msg="Failed to process transporter inhibitor data"
+                self.process_transporter_inhibitor_data,
+                gene_node,
+                ti_data,
+                error_msg="Failed to process transporter inhibitor data",
             )
 
         # Protein variants (not yet implemented)
@@ -437,70 +447,87 @@ class BDFGraph(Graph):
         aop_data = row.get(Cons.AOPWIKI_GENE_COL)
         if aop_data:
             self._safe_process(
-                self.process_aop_data, aop_data, gene_node, None,
-                error_msg="Failed to process AOP data"
+                self.process_aop_data,
+                aop_data,
+                gene_node,
+                None,
+                error_msg="Failed to process AOP data",
             )
 
         # Molecular pathways
         pathways_data = row.get(Cons.WIKIPATHWAYS_MOLECULAR_COL)
         if pathways_data:
             self._safe_process(
-                self.process_molecular_pathway, pathways_data, gene_node, id_number,
-                error_msg="Failed to process molecular pathway"
+                self.process_molecular_pathway,
+                pathways_data,
+                gene_node,
+                id_number,
+                error_msg="Failed to process molecular pathway",
             )
 
         # PubChem assay data
         pubchem_assays = row.get(Cons.PUBCHEM_COMPOUND_ASSAYS_COL)
         if pubchem_assays:
             self._safe_process(
-                self.process_pubchem_assay_data, pubchem_assays, gene_node,
-                error_msg="Failed to process PubChem assay data"
+                self.process_pubchem_assay_data,
+                pubchem_assays,
+                gene_node,
+                error_msg="Failed to process PubChem assay data",
             )
 
         # CompoundWiki
         self._safe_process(
-            self.process_compoundwiki_data, gene_node, row,
-            error_msg="Failed to process CompoundWiki data"
+            self.process_compoundwiki_data,
+            gene_node,
+            row,
+            error_msg="Failed to process CompoundWiki data",
         )
 
-    def _process_compound_data(
-        self, row: pd.Series, compound_node: URIRef, id_number: str
-    ) -> None:
+    def _process_compound_data(self, row: pd.Series, compound_node: URIRef, id_number: str) -> None:
         """Process all compound-related data types."""
         # Pathways
         self._safe_process(
-            self.process_pathways, row, compound_node, [],
-            error_msg="Failed to process pathways"
+            self.process_pathways, row, compound_node, [], error_msg="Failed to process pathways"
         )
 
         # Inhibitor transporter
         it_data = row.get(Cons.MOLMEDB_COMPOUND_PROTEIN_COL)
         if it_data:
             self._safe_process(
-                self.process_inhibitor_transporter_data, compound_node, it_data,
-                error_msg="Failed to process inhibitor transporter data"
+                self.process_inhibitor_transporter_data,
+                compound_node,
+                it_data,
+                error_msg="Failed to process inhibitor transporter data",
             )
 
         # AOP data
         aop_data = row.get(Cons.AOPWIKI_COMPOUND_COL)
         if aop_data:
             self._safe_process(
-                self.process_aop_data, aop_data, None, compound_node,
-                error_msg="Failed to process AOP data"
+                self.process_aop_data,
+                aop_data,
+                None,
+                compound_node,
+                error_msg="Failed to process AOP data",
             )
 
         # Molecular pathways
         pathways_data = row.get(Cons.WIKIPATHWAYS_MOLECULAR_COL)
         if pathways_data:
             self._safe_process(
-                self.process_molecular_pathway, pathways_data, compound_node, id_number,
-                error_msg="Failed to process molecular pathway"
+                self.process_molecular_pathway,
+                pathways_data,
+                compound_node,
+                id_number,
+                error_msg="Failed to process molecular pathway",
             )
 
         # CompoundWiki
         self._safe_process(
-            self.process_compoundwiki_data, compound_node, row,
-            error_msg="Failed to process CompoundWiki data"
+            self.process_compoundwiki_data,
+            compound_node,
+            row,
+            error_msg="Failed to process CompoundWiki data",
         )
 
     # =========================================================================
@@ -625,9 +652,7 @@ class BDFGraph(Graph):
                 expression_data,
                 self.new_uris,
             )
-            self.record_datasource(
-                Cons.BGEE, node=gene_node, interaction_type="gene expression"
-            )
+            self.record_datasource(Cons.BGEE, node=gene_node, interaction_type="gene expression")
 
     def process_processes_data(
         self, processes_data: Optional[List[Dict[str, Any]]], gene_node: URIRef
@@ -852,7 +877,14 @@ class BDFGraph(Graph):
                             Cons.DISEASE_NAME: entry[Cons.DISEASE_NAME],
                         }
                         add_literature_based_data(
-                            self, entry, gene_node, id_number, disease_data_lit, source_idx, new_uris, i
+                            self,
+                            entry,
+                            gene_node,
+                            id_number,
+                            disease_data_lit,
+                            source_idx,
+                            new_uris,
+                            i,
                         )
                         data_added = True
                 except Exception as e:
@@ -943,7 +975,11 @@ class BDFGraph(Graph):
                                     )
                                 )
                                 self.add(
-                                    (pathway_node, URIRef(Cons.PREDICATES["sio_has_part"]), identifier_node)
+                                    (
+                                        pathway_node,
+                                        URIRef(Cons.PREDICATES["sio_has_part"]),
+                                        identifier_node,
+                                    )
                                 )
                                 if protein_nodes:
                                     for protein_node in protein_nodes:
@@ -962,7 +998,11 @@ class BDFGraph(Graph):
                                             )
                                         )
                                 self.add(
-                                    (pathway_node, URIRef(Cons.PREDICATES["sio_has_part"]), identifier_node)
+                                    (
+                                        pathway_node,
+                                        URIRef(Cons.PREDICATES["sio_has_part"]),
+                                        identifier_node,
+                                    )
                                 )
                                 self.add(
                                     (

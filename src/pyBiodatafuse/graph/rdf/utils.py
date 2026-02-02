@@ -287,8 +287,8 @@ def discover_prefixes_from_graph(g: Graph) -> dict:
                     # Only add if not already in NAMESPACE_BINDINGS
                     if prefix not in NAMESPACE_BINDINGS:
                         discovered_prefixes[prefix] = namespace_uri
-            except Exception:
-                pass  # Skip URIs we can't parse
+            except Exception as e:
+                logger.debug("Skipping URI parsing: %s", e)
 
     logger.debug(f"Discovered {len(discovered_prefixes)} new prefixes via bioregistry")
     return discovered_prefixes

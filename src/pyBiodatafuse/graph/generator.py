@@ -1849,8 +1849,10 @@ def add_opentargets_disease_compound_subgraph(g, disease_node, annot_list):
             add_opentargets_compound_side_effect_subgraph(
                 g, annot_node_label, annot[Cons.OPENTARGETS_ADVERSE_EFFECT]
             )
-    
-    logger.debug(f"Processed {compounds_processed} compound-disease edges for disease: {disease_node}")
+
+    logger.debug(
+        f"Processed {compounds_processed} compound-disease edges for disease: {disease_node}"
+    )
     return g
 
 
@@ -2634,30 +2636,36 @@ def process_disease_compound(g, disease_compound, disease_nodes):
     :param disease_nodes: the input dictionary containing disease nodes (ID -> node label mapping).
     """
     logger.debug(f"Processing disease_compound with {len(disease_nodes)} existing disease nodes")
-    
+
     for _i, row in disease_compound.iterrows():
         target_id = row[Cons.TARGET_COL]
         target_source = row.get(Cons.TARGET_SOURCE_COL, "")
-        
+
         # Try to find existing disease node using multiple ID formats
         disease_node_id = None
-        
+
         # Try original format first
         if target_id in disease_nodes:
             disease_node_id = disease_nodes[target_id]
             logger.debug(f"Found existing disease node for {target_id} -> {disease_node_id}")
         else:
             # Try normalized format (EFO_xxx <-> EFO:xxx)
-            normalized_id = target_id.replace("_", ":") if "_" in target_id else target_id.replace(":", "_")
+            normalized_id = (
+                target_id.replace("_", ":") if "_" in target_id else target_id.replace(":", "_")
+            )
             if normalized_id in disease_nodes:
                 disease_node_id = disease_nodes[normalized_id]
-                logger.debug(f"Found existing disease node for {target_id} (normalized: {normalized_id}) -> {disease_node_id}")
-        
+                logger.debug(
+                    f"Found existing disease node for {target_id} (normalized: {normalized_id}) -> {disease_node_id}"
+                )
+
         if disease_node_id is None:
             # Disease not in graph - create a new node with proper attributes
             # Normalize the ID format to use colon separator
             disease_node_id = target_id.replace("_", ":")
-            logger.debug(f"Creating NEW disease node for {target_id} (not found in gene-disease graph)")
+            logger.debug(
+                f"Creating NEW disease node for {target_id} (not found in gene-disease graph)"
+            )
             annot_node_attrs = Cons.OPENTARGET_DISEASE_NODE_ATTRS.copy()
             annot_node_attrs.update(
                 {
@@ -2672,7 +2680,7 @@ def process_disease_compound(g, disease_compound, disease_nodes):
                 annot_node_attrs[Cons.EFO] = disease_node_id
             elif target_source == Cons.MONDO or target_id.startswith("MONDO"):
                 annot_node_attrs[Cons.MONDO] = disease_node_id
-            
+
             merge_node(g, disease_node_id, annot_node_attrs)
             # Add to disease_nodes so subsequent compounds for same disease can find it
             disease_nodes[target_id] = disease_node_id
@@ -2689,8 +2697,10 @@ def process_disease_compound(g, disease_compound, disease_nodes):
                 f"compound_annot_list of type {type(compound_annot_list)} and not list. Skipping..."
             )
             compound_annot_list = []
-        
-        logger.debug(f"Processing {len(compound_annot_list)} compounds for disease {disease_node_id}")
+
+        logger.debug(
+            f"Processing {len(compound_annot_list)} compounds for disease {disease_node_id}"
+        )
         add_opentargets_disease_compound_subgraph(g, disease_node_id, compound_annot_list)
 
 

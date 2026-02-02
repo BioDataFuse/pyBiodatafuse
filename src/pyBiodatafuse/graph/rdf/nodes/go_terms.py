@@ -49,4 +49,3 @@ def add_go_cpf(g: Graph, process_data: dict) -> Optional[URIRef]:
     link_has_source(g, go_node, source_node)
 
     return go_node
-

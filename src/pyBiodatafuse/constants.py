@@ -775,6 +775,7 @@ AOPWIKI_COMPOUND_OUTPUT_DICT = {
     KE_DOWNSTREAM_ORGAN: str,
 }
 
+AOPWIKI_VALUE_CHECK_LIST = [AOP]
 
 # QUERY_PROCESS = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-get-by-biological-process.rq.rq")
 
@@ -1973,4 +1974,3 @@ COLUMN_TO_DATASOURCE = {
 
 # RDF predicate for linking data nodes to their source dataset
 SOURCE_DATASET_PREDICATE = f"{PAV_NAMESPACE}importedFrom"
-

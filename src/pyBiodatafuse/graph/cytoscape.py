@@ -77,12 +77,12 @@ def load_graph(g: nx.MultiDiGraph, network_name: str):
 
     # Define the visual style
     style_name = "BioDataFuse_style"
-    
+
     # Check if style already exists, if so delete it first
     existing_styles = p4c.styles.get_visual_style_names()
     if style_name in existing_styles:
         p4c.styles.delete_visual_style(style_name)
-    
+
     # Create the visual style with defaults
     defaults = {
         "NODE_FILL_COLOR": "#808080",
@@ -107,7 +107,7 @@ def load_graph(g: nx.MultiDiGraph, network_name: str):
 
     # Apply node shape mapping
     p4c.set_node_shape_mapping(column, values, shapes, style_name=style_name)
-    
+
     # Set the node label to show the "labels" attribute (which contains the name)
     # The column name in Cytoscape is "labels" (from Cons.LABEL)
     p4c.set_node_label_mapping(Cons.LABEL, style_name=style_name)

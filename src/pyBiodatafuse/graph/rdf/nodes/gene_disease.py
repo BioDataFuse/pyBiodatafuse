@@ -45,9 +45,7 @@ def add_gene_disease_associations(
         return None
 
     umlscui = safe_get(disease_data, Cons.UMLS, "")
-    assoc_node = create_node(
-        f"{new_uris['gene_disease_association']}/", f"{gene_id}{umlscui}"
-    )
+    assoc_node = create_node(f"{new_uris['gene_disease_association']}/", f"{gene_id}{umlscui}")
     add_type(g, assoc_node, Cons.NODE_TYPES["gene_disease_association"])
     link_refers_to(g, assoc_node, gene_node)
     link_refers_to(g, assoc_node, disease_node)
@@ -125,8 +123,7 @@ def add_score_node(
     :return: URIRef for the created score node.
     """
     score_node = create_node(
-        f"{new_uris['score_base_node']}/",
-        f"{id_number}{i}{source_idx}_{disease_id}{gene_id}"
+        f"{new_uris['score_base_node']}/", f"{id_number}{i}{source_idx}_{disease_id}{gene_id}"
     )
     add_type(g, score_node, Cons.NODE_TYPES["score_node"])
     add_value(g, score_node, score, XSD.double)
@@ -160,8 +157,7 @@ def add_evidence_node(
 
     umls_id = safe_get(disease_data, Cons.UMLS, "")
     node = create_node(
-        f"{new_uris['score_base_node']}/{evidence_type}/",
-        f"{id_number}{i}{source_idx}_{umls_id}"
+        f"{new_uris['score_base_node']}/{evidence_type}/", f"{id_number}{i}{source_idx}_{umls_id}"
     )
 
     datatype = XSD.double if evidence_type != "el" else XSD.string

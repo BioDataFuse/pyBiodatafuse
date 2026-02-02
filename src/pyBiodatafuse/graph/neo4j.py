@@ -295,7 +295,9 @@ class AdverseOutcomePathway(StructuredNode):
         Cons.AO_NODE_LABEL.replace(" ", ""), Cons.HAS_ADVERSE_OUTCOME, model=HasAdverseOutcome
     )
     has_molecular_initiating_event = RelationshipTo(
-        Cons.MIE_NODE_LABEL.replace(" ", ""), Cons.HAS_MOLECULAR_INITIATING_EVENT, model=HasMolecularInitiatingEvent
+        Cons.MIE_NODE_LABEL.replace(" ", ""),
+        Cons.HAS_MOLECULAR_INITIATING_EVENT,
+        model=HasMolecularInitiatingEvent,
     )
     has_key_event_relationship = RelationshipTo(
         "KeyEventRelationship", Cons.HAS_KEY_EVENT_RELATIONSHIP, model=HasKeyEventRelationship
@@ -350,7 +352,9 @@ class KeyEventRelationship(StructuredNode):
 
     # incoming relations (AOP -> KER)
     has_key_event_relationship = RelationshipFrom(
-        Cons.AOP_NODE_LABEL.replace(" ", ""), Cons.HAS_KEY_EVENT_RELATIONSHIP, model=HasKeyEventRelationship
+        Cons.AOP_NODE_LABEL.replace(" ", ""),
+        Cons.HAS_KEY_EVENT_RELATIONSHIP,
+        model=HasKeyEventRelationship,
     )
 
     # outgoing relations (KER -> KE)
@@ -462,7 +466,7 @@ def exporter(
 
 def connect_db(uri: str, username: str, password: str):
     """Connect to the Neo4j database.
-    
+
     :param uri: URI for Neo4j database (e.g., 'bolt://localhost:7687')
     :param username: Neo4j username
     :param password: Neo4j password
@@ -470,21 +474,19 @@ def connect_db(uri: str, username: str, password: str):
     # Set the connection URL for neomodel
     # Format: bolt://username:password@host:port
     from urllib.parse import urlparse
+
     parsed = urlparse(uri)
     host = parsed.hostname or "localhost"
     port = parsed.port or 7687
-    
+
     # Configure neomodel with the connection URL
     connection_url = f"bolt://{username}:{password}@{host}:{port}"
     config.DATABASE_URL = connection_url
-    
+
     # Also set up the driver directly
-    driver = GraphDatabase.driver(
-        uri,
-        auth=(username, password)
-    )
+    driver = GraphDatabase.driver(uri, auth=(username, password))
     config.DRIVER = driver
-    
+
     # Clear existing data
     db.cypher_query("MATCH ()-[r]-() DELETE r")  # delete all relationships
     db.cypher_query("MATCH (n) DETACH DELETE n")  # delete all nodes

@@ -68,9 +68,7 @@ def add_gene_expression_data(
 
         # Link gene to expression value
         add_triple(g, gene_node, "sio_has_measurement_value", gene_expression_value_node)
-        add_triple(
-            g, gene_expression_value_node, "sio_is_associated_with", anatomical_entity_node
-        )
+        add_triple(g, gene_expression_value_node, "sio_is_associated_with", anatomical_entity_node)
         add_triple(
             g, gene_expression_value_node, "sio_is_associated_with", developmental_stage_node
         )

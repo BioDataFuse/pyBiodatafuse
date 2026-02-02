@@ -102,9 +102,7 @@ def add_molecular_pathway_node(g, el, identifier, id_number):
     # Link pathway
     if pathway_id and pathway_label:
         clean_pathway_id = extract_id(pathway_id)
-        pathway_node = create_node(
-            "https://www.wikipathways.org/pathways/", clean_pathway_id
-        )
+        pathway_node = create_node("https://www.wikipathways.org/pathways/", clean_pathway_id)
         link_has_part(g, pathway_node, mimtype_node)
         link_has_part(g, pathway_node, identifier)
         link_has_part(g, pathway_node, mim_node)
@@ -133,9 +131,7 @@ def add_molecular_pathway_node(g, el, identifier, id_number):
 
     # Link target metabolite
     if target_metabolite:
-        target_metabolite_node = URIRef(
-            Cons.NODE_TYPES["compound_node"] + target_metabolite
-        )
+        target_metabolite_node = URIRef(Cons.NODE_TYPES["compound_node"] + target_metabolite)
         add_type(g, target_metabolite_node, Cons.NODE_TYPES["compound_node"])
         wp_predicate = URIRef("http://vocabularies.wikipathways.org/wp#" + mimtype)
         add_triple(g, identifier, wp_predicate, target_metabolite_node)

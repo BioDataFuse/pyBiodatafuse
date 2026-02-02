@@ -13,8 +13,8 @@ from rdflib.namespace import XSD
 
 import pyBiodatafuse.constants as Cons
 from pyBiodatafuse.graph.rdf.nodes.base import (
-    add_type,
     add_triples,
+    add_type,
     create_node,
     safe_get,
 )
@@ -72,12 +72,13 @@ def add_ppi_data(g: Graph, gene_node: URIRef, entry: dict) -> Optional[URIRef]:
         triples.append((ppi_node, URIRef(Cons.PREDICATES["sio_has_part"]), protein_b))
 
     if gene_link_node and protein_b:
-        triples.extend([
-            (gene_link_node, URIRef(Cons.PREDICATES["translates_to"]), protein_b),
-            (protein_b, URIRef(Cons.PREDICATES["translation_of"]), gene_link_node),
-        ])
+        triples.extend(
+            [
+                (gene_link_node, URIRef(Cons.PREDICATES["translates_to"]), protein_b),
+                (protein_b, URIRef(Cons.PREDICATES["translation_of"]), gene_link_node),
+            ]
+        )
 
     add_triples(g, triples)
 
     return ppi_node
-

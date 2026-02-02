@@ -30,7 +30,9 @@ from pyBiodatafuse.utils import (
 # Pre-requisite:
 QUERY_LIMIT = 25
 QUERY_COMPOUND = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-compound.rq")
-QUERY_COMPOUND_SIMPLE = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-compound-simple.rq")
+QUERY_COMPOUND_SIMPLE = os.path.join(
+    os.path.dirname(__file__), "queries", "aopwiki-compound-simple.rq"
+)
 QUERY_GENE = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-gene.rq")
 QUERY_GENE_SIMPLE = os.path.join(os.path.dirname(__file__), "queries", "aopwiki-gene-simple.rq")
 
@@ -125,7 +127,6 @@ def get_aops_gene(bridgedb_df: pd.DataFrame, pathway: bool = False) -> Tuple[pd.
                 for item in res["results"]["bindings"]
             ]
         )
-
         # Retrieve the expected columns from the SPARQL query results' "vars"
         expected_columns = res["head"]["vars"]
 
@@ -136,7 +137,6 @@ def get_aops_gene(bridgedb_df: pd.DataFrame, pathway: bool = False) -> Tuple[pd.
 
         # Concatenate the new results into the intermediate DataFrame
         intermediate_df = pd.concat([intermediate_df, res_df], ignore_index=True)
-
     # Record the end time
     end_time = datetime.datetime.now()
 
@@ -160,7 +160,6 @@ def get_aops_gene(bridgedb_df: pd.DataFrame, pathway: bool = False) -> Tuple[pd.
 
     intermediate_df.rename(columns={input_col: Cons.TARGET_COL}, inplace=True)
     intermediate_df = intermediate_df.drop_duplicates()
-
     # Step 6: Generate metadata
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     time_elapsed = str(end_time - start_time)
@@ -176,12 +175,13 @@ def get_aops_gene(bridgedb_df: pd.DataFrame, pathway: bool = False) -> Tuple[pd.
             "pathway": pathway,
         },
     }
-
+    with open("output_dict.json", "w") as f:
+        f.write(str(output_dict))
     # Check if all keys in df match the keys in OUTPUT_DICT
     check_columns_against_constants(
         data_df=intermediate_df,
         output_dict=output_dict,
-        check_values_in=[],  # no prefix for AOP Wiki RDF
+        check_values_in=[Cons.AOPWIKI_VALUE_CHECK_LIST],
     )
 
     # Step 7: Integrate into main dataframe
@@ -196,13 +196,11 @@ def get_aops_gene(bridgedb_df: pd.DataFrame, pathway: bool = False) -> Tuple[pd.
 
     # Calculate the number of new nodes and edges
     num_new_nodes = intermediate_df[Cons.TARGET_COL].nunique()
-    num_new_edges = intermediate_df.drop_duplicates(subset=[Cons.TARGET_COL]).shape[0]
+    num_new_edges = intermediate_df.shape[0]
 
-    # Check the intermediate_df - commented out to adapt to AOP structure
-    # Building a pathway becomes very complicated if we need to group_by
-    # all columns
-    # if num_new_edges != len(intermediate_df):
-    #    give_annotator_warning(Cons.AOPWIKIRDF)
+    # Check the intermediate_df
+    if num_new_edges != len(intermediate_df):
+        give_annotator_warning(Cons.AOPWIKIRDF)
 
     # Add the number of new nodes and edges to metadata
     metadata_dict[Cons.QUERY][Cons.NUM_NODES] = num_new_nodes
@@ -211,7 +209,9 @@ def get_aops_gene(bridgedb_df: pd.DataFrame, pathway: bool = False) -> Tuple[pd.
     return merged_df, metadata_dict
 
 
-def get_aops_compound(bridgedb_df: pd.DataFrame, pathway: bool = False) -> Tuple[pd.DataFrame, dict]:
+def get_aops_compound(
+    bridgedb_df: pd.DataFrame, pathway: bool = False
+) -> Tuple[pd.DataFrame, dict]:
     """Query for AOPs associated with compounds from AOP Wiki RDF.
 
     :param bridgedb_df: BridgeDb output for creating the list of compound ids to query
@@ -340,7 +340,7 @@ def get_aops_compound(bridgedb_df: pd.DataFrame, pathway: bool = False) -> Tuple
     check_columns_against_constants(
         data_df=intermediate_df,
         output_dict=output_dict,
-        check_values_in=[],  # no prefix for AOP Wiki RDF,
+        check_values_in=[],
     )
 
     # Step 7: Integrate into main dataframe

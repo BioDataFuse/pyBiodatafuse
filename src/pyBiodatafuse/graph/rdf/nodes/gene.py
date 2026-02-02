@@ -42,4 +42,3 @@ def get_gene_node(g: Graph, row) -> Optional[URIRef]:
     add_label(g, gene_node, target)
 
     return gene_node
-

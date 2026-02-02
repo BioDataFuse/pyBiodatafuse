@@ -53,7 +53,6 @@ from rdflib.namespace import OWL, RDF, RDFS, XSD
 
 import pyBiodatafuse.constants as Cons
 
-
 # =============================================================================
 # Node Creation
 # =============================================================================
@@ -164,9 +163,7 @@ def add_same_as(
             g.add((node2, OWL.sameAs, node1))
 
 
-def add_value(
-    g: Graph, node: Optional[URIRef], value: Any, datatype: URIRef = XSD.string
-) -> None:
+def add_value(g: Graph, node: Optional[URIRef], value: Any, datatype: URIRef = XSD.string) -> None:
     """
     Add a sio:has-value triple for a node.
 
@@ -288,7 +285,7 @@ def extract_id(value: str, prefix: Optional[str] = None) -> str:
     if not value:
         return ""
     if prefix and value.startswith(prefix):
-        return value[len(prefix):]
+        return value[len(prefix) :]
     if ":" in value:
         return value.split(":", 1)[1]
     return value

@@ -50,9 +50,7 @@ def get_compound_node(g: Graph, row) -> Optional[URIRef]:
     return compound_node
 
 
-def add_associated_compound_node(
-    g: Graph, compound: dict, gene_node: URIRef
-) -> Optional[URIRef]:
+def add_associated_compound_node(g: Graph, compound: dict, gene_node: URIRef) -> Optional[URIRef]:
     """Create and add a compound node to the RDF graph.
 
     :param g: RDF graph to which the compound node will be added.
@@ -169,9 +167,7 @@ def add_inhibitor_transporter_node(
 
     # Link to CompoundBank
     if compoundbank_id:
-        compoundbank_node = create_node(
-            "https://www.compoundbank.ca/compounds/", compoundbank_id
-        )
+        compoundbank_node = create_node("https://www.compoundbank.ca/compounds/", compoundbank_id)
         add_same_as(g, compound_node, compoundbank_node, bidirectional=False)
 
     # Create inhibited gene node first
@@ -214,9 +210,7 @@ def add_tested_compound_node(
     clean_id = str(compound_id).strip("CID")
     tested_compound_node = get_uri(Cons.PUBCHEM, clean_id)
     if not tested_compound_node:
-        tested_compound_node = create_node(
-            Cons.NODE_URI_PREFIXES[Cons.PUBCHEM], clean_id
-        )
+        tested_compound_node = create_node(Cons.NODE_URI_PREFIXES[Cons.PUBCHEM], clean_id)
 
     add_type(g, tested_compound_node, Cons.NODE_TYPES["tested_compound_node"])
     add_type(g, tested_compound_node, Cons.NODE_TYPES["compound_node"])
@@ -294,9 +288,7 @@ def add_compoundwiki_annotations(
 
             kegg_id = safe_get(annotation, Cons.COMPOUNDWIKI_KEGG_ID)
             if kegg_id:
-                kegg_node = create_node(
-                    "https://www.genome.jp/entry/", str(kegg_id).strip()
-                )
+                kegg_node = create_node("https://www.genome.jp/entry/", str(kegg_id).strip())
                 add_same_as(g, compound_node, kegg_node, bidirectional=False)
 
             wikidata_id = safe_get(annotation, Cons.COMPOUNDWIKI_WIKIDATA_ID)
@@ -310,8 +302,7 @@ def add_compoundwiki_annotations(
             formula = safe_get(annotation, Cons.COMPOUNDWIKI_FORMULA)
             if formula:
                 add_triple(
-                    g, compound_node, "molecular_formula",
-                    Literal(formula, datatype=XSD.string)
+                    g, compound_node, "molecular_formula", Literal(formula, datatype=XSD.string)
                 )
 
             # Link compound to target node (association)

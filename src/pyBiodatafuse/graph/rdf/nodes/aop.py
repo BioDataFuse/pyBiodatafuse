@@ -6,7 +6,7 @@ from typing import Optional
 
 from rdflib import Graph, URIRef
 
-from pyBiodatafuse.constants import NAMESPACE_BINDINGS, NODE_TYPES, SOURCE_NAMESPACES, PREDICATES
+from pyBiodatafuse.constants import NAMESPACE_BINDINGS, NODE_TYPES, PREDICATES, SOURCE_NAMESPACES
 from pyBiodatafuse.graph.rdf.nodes.base import (
     add_label,
     add_triple,
@@ -18,7 +18,10 @@ from pyBiodatafuse.graph.rdf.nodes.base import (
 
 
 def add_aop_data(
-    g: Graph, entry: dict, compound_node: Optional[URIRef] = None, gene_node: Optional[URIRef] = None
+    g: Graph,
+    entry: dict,
+    compound_node: Optional[URIRef] = None,
+    gene_node: Optional[URIRef] = None,
 ) -> None:
     """Add Adverse Outcome Pathway (AOP) data to the RDF graph.
 
@@ -99,9 +102,7 @@ def add_aop_data(
             add_label(g, ke_upstream_node, safe_get(entry, "KE_upstream_title", ""))
 
             # KER has_upstream_key_event KE_upstream
-            add_triple(
-                g, ker_node, URIRef(PREDICATES["has_upstream_key_event"]), ke_upstream_node
-            )
+            add_triple(g, ker_node, URIRef(PREDICATES["has_upstream_key_event"]), ke_upstream_node)
 
             # Add organ context if available
             ke_upstream_organ = safe_get(entry, "KE_upstream_organ")
