@@ -31,17 +31,15 @@ MolMeDB
 OpenTargets
 ~~~~~~~~~~~~~~~
 
-`OpenTargets database <https://www.opentargets.org/>` uses human genetics and genomics data for systematic drug target identification and prioritisation.
+`OpenTargets database <https://www.opentargets.org/>`_ uses human genetics and genomics data for systematic drug target identification and prioritisation.
 
 .. autofunction:: pyBiodatafuse.annotators.opentargets.get_gene_go_process
 
 .. autofunction:: pyBiodatafuse.annotators.opentargets.get_gene_reactome_pathways
 
-.. autofunction:: pyBiodatafuse.annotators.opentargets.get_gene_tractability
-
 .. autofunction:: pyBiodatafuse.annotators.opentargets.get_gene_compound_interactions
 
-.. autofunction:: pyBiodatafuse.annotators.opentargets.get_gene_disease_associations
+.. autofunction:: pyBiodatafuse.annotators.opentargets.get_disease_compound_interactions
 
 StringDB
 ~~~~~~~~~~~~~~~
@@ -67,7 +65,71 @@ WikiPathways
 MINERVA
 ~~~~~~~~~~~~~~~
 
-`MINERVA <https://minerva.pages.uni.lu/doc/>` is a standalone webserver for visual exploration, analysis and management of molecular networks encoded in following systems biology formats.
+`MINERVA <https://minerva.pages.uni.lu/doc/>`_ is a standalone webserver for visual exploration, analysis and management of molecular networks encoded in following systems biology formats.
 
 .. autofunction:: pyBiodatafuse.annotators.minerva.get_minerva_components
 .. autofunction:: pyBiodatafuse.annotators.minerva.get_gene_pathways
+
+AOP-Wiki
+~~~~~~~~~~~~~~~
+
+`AOP-Wiki <https://aopwiki.org/>`_ is a database for Adverse Outcome Pathways (AOPs), which describe mechanistic information about the linkage between a molecular initiating event and an adverse outcome.
+
+.. autofunction:: pyBiodatafuse.annotators.aopwiki.get_aops_gene
+
+.. autofunction:: pyBiodatafuse.annotators.aopwiki.get_aops_compound
+
+.. autofunction:: pyBiodatafuse.annotators.aopwiki.get_aops
+
+IntAct
+~~~~~~~~~~~~~~~
+
+`IntAct <https://www.ebi.ac.uk/intact/>`_ provides a freely available, open source database system and analysis tools for molecular interaction data.
+
+.. autofunction:: pyBiodatafuse.annotators.intact.get_gene_interactions
+
+.. autofunction:: pyBiodatafuse.annotators.intact.get_compound_interactions
+
+KEGG
+~~~~~~~~~~~~~~~
+
+`KEGG <https://www.kegg.jp/>`_ is a database resource for understanding high-level functions and utilities of biological systems from genomic and molecular-level information.
+
+.. autofunction:: pyBiodatafuse.annotators.kegg.get_pathways
+
+.. autofunction:: pyBiodatafuse.annotators.kegg.get_compounds
+
+PubChem
+~~~~~~~~~~~~~~~
+
+`PubChem <https://pubchem.ncbi.nlm.nih.gov/>`_ is a database of chemical molecules and their activities against biological assays.
+
+.. autofunction:: pyBiodatafuse.annotators.pubchem.get_protein_compound_screened
+
+CompoundWiki
+~~~~~~~~~~~~~~~
+
+`CompoundWiki <https://compoundwiki.org/>`_ is a crowd-sourced database that provides comprehensive information about chemical compounds.
+
+.. autofunction:: pyBiodatafuse.annotators.compoundwiki.get_compound_annotations
+
+gProfiler
+~~~~~~~~~~~~~~~
+
+`gProfiler <https://biit.cs.ut.ee/gprofiler/>`_ is a web server for functional enrichment analysis and conversions of gene lists.
+
+.. autofunction:: pyBiodatafuse.annotators.gprofiler.get_gene_enrichment
+
+TFLink
+~~~~~~~~~~~~~~~
+
+`TFLink <https://tflink.net/>`_ is a comprehensive database of transcription factor-target interactions.
+
+.. autofunction:: pyBiodatafuse.annotators.tflink.get_tf_target
+
+MitoCarta
+~~~~~~~~~~~~~~~
+
+`MitoCarta <https://www.broadinstitute.org/mitocarta>`_ is an inventory of mammalian mitochondrial genes.
+
+.. autofunction:: pyBiodatafuse.annotators.mitocarta.get_gene_mito_pathways
