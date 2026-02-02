@@ -107,10 +107,16 @@ def get_minerva_components(
         - 'map_reactions' contains a list for each of the pathways in the model.
         Those lists provide information about the reactions involed in that pathway.
         - 'models' is a list containing pathway-specific information for each of the pathways in the model.
-
+    :raises ValueError: if the provided map_name is not valid.
     """
     # Get list of projects
     project_df = list_projects()
+    project_names = project_df["names"].tolist()
+
+    if map_name not in project_names:
+        raise ValueError(
+            f"{map_name} is not a valid MINERVA project name. Please choose from the following list: {project_names}"
+        )
 
     # Get url from the project specified
     condition = project_df["names"] == map_name

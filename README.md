@@ -9,8 +9,8 @@
 </h1>
 
 <p align="center">
-    <a href="https://github.com/BioDataFuse/pyBiodatafuse/actions/workflows/tests.yml">
-        <img alt="Tests" src="https://github.com/BioDataFuse/pyBiodatafuse/workflows/Tests/badge.svg" />
+    <a href="https://github.com/BioDataFuse/pyBiodatafuse/actions/workflows/tests.yml?query=branch%3Amain">
+        <img alt="Tests" src="https://github.com/BioDataFuse/pyBiodatafuse/actions/workflows/tests.yml/badge.svg?branch=main" />
     </a>
     <a href="https://pypi.org/project/pyBiodatafuse">
         <img alt="PyPI" src="https://img.shields.io/pypi/v/pyBiodatafuse" />

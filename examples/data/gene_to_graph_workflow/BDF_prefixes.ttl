@@ -1,162 +1,84 @@
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-[] sh:declare [ sh:namespace "http://purl.obolibrary.org/obo/"^^xsd:anyURI ;
-            sh:prefix "obo" ] .
+[] sh:declare [ sh:namespace "https://identifiers.org/ensembl:"^^xsd:anyURI ;
+            sh:prefix "ensembl" ] .
 
-[] sh:declare [ sh:namespace "http://purl.obolibrary.org/obo/NCIT_"^^xsd:anyURI ;
-            sh:prefix "ncit" ] .
-
-[] sh:declare [ sh:namespace "https://biodatafuse.org/examples/data/gene_to_graph_workflow/BDF_example_graph.ttlgene_disease_association"^^xsd:anyURI ;
-            sh:prefix "gene_disease_association" ] .
-
-[] sh:declare [ sh:namespace "http://bio2rdf.org/hgnc:"^^xsd:anyURI ;
-            sh:prefix "hgnc" ] .
-
-[] sh:declare [ sh:namespace "https://schema.org/"^^xsd:anyURI ;
-            sh:prefix "schema" ] .
-
-[] sh:declare [ sh:namespace "https://monarchinitiative.org/disease/"^^xsd:anyURI ;
-            sh:prefix "mondo" ] .
-
-[] sh:declare [ sh:namespace "https://biodatafuse.org/examples/data/gene_to_graph_workflow/BDF_example_graph.ttlscore"^^xsd:anyURI ;
+[] sh:declare [ sh:namespace "https://biodatafuse.org/example/score"^^xsd:anyURI ;
             sh:prefix "score_base_node" ] .
-
-[] sh:declare [ sh:namespace "http://www.orpha.net/ORDO/Orphanet_"^^xsd:anyURI ;
-            sh:prefix "orphanet.ordo" ] .
-
-[] sh:declare [ sh:namespace "https://omim.org/MIM:"^^xsd:anyURI ;
-            sh:prefix "omim" ] .
-
-[] sh:declare [ sh:namespace "https://biodatafuse.org/examples/data/gene_to_graph_workflow/BDF_example_graph.ttlgene"^^xsd:anyURI ;
-            sh:prefix "gene_base_node" ] .
-
-[] sh:declare [ sh:namespace "https://biodatafuse.org/examples/data/gene_to_graph_workflow/BDF_example_graph.ttllife_cycle"^^xsd:anyURI ;
-            sh:prefix "life_cycle_base_node" ] .
-
-[] sh:declare [ sh:namespace "http://www.w3.org/2000/01/rdf-schema#"^^xsd:anyURI ;
-            sh:prefix "rdfs" ] .
-
-[] sh:declare [ sh:namespace "http://purl.obolibrary.org/obo/GO_"^^xsd:anyURI ;
-            sh:prefix "go" ] .
-
-[] sh:declare [ sh:namespace "https://www.ncbi.nlm.nih.gov/medgen/"^^xsd:anyURI ;
-            sh:prefix "umls" ] .
 
 [] sh:declare [ sh:namespace "http://purl.obolibrary.org/obo/so#"^^xsd:anyURI ;
             sh:prefix "so" ] .
 
-[] sh:declare [ sh:namespace "http://www.w3.org/2004/02/skos/core#"^^xsd:anyURI ;
-            sh:prefix "skos" ] .
-
-[] sh:declare [ sh:namespace "https://biodatafuse.org/examples/data/gene_to_graph_workflow/BDF_example_graph.ttldatasource"^^xsd:anyURI ;
-            sh:prefix "data_source_base_node" ] .
-
-[] sh:declare [ sh:namespace "https://biodatafuse.org/examples/data/gene_to_graph_workflow/BDF_example_graph.ttlexperimental_process"^^xsd:anyURI ;
-            sh:prefix "experimental_process_node" ] .
-
-[] sh:declare [ sh:namespace "http://rdfs.org/ns/void#"^^xsd:anyURI ;
-            sh:prefix "void" ] .
-
-[] sh:declare [ sh:namespace "http://purl.obolibrary.org/obo/DOID_"^^xsd:anyURI ;
-            sh:prefix "doid" ] .
-
-[] sh:declare [ sh:namespace "http://www.w3.org/ns/prov#"^^xsd:anyURI ;
-            sh:prefix "prov" ] .
-
-[] sh:declare [ sh:namespace "http://purl.org/dc/elements/1.1/"^^xsd:anyURI ;
-            sh:prefix "dc" ] .
+[] sh:declare [ sh:namespace "http://xmlns.com/foaf/0.1/"^^xsd:anyURI ;
+            sh:prefix "foaf" ] .
 
 [] sh:declare [ sh:namespace "http://www.w3.org/2002/07/owl#"^^xsd:anyURI ;
             sh:prefix "owl" ] .
 
-[] sh:declare [ sh:namespace "http://purl.obolibrary.org/obo/chebi/"^^xsd:anyURI ;
-            sh:prefix "chebi" ] .
-
-[] sh:declare [ sh:namespace "http://purl.org/dc/terms/"^^xsd:anyURI ;
-            sh:prefix "dcterms" ] .
-
-[] sh:declare [ sh:namespace "https://identifiers.org/aop.events/"^^xsd:anyURI ;
-            sh:prefix "aop.events" ] .
-
-[] sh:declare [ sh:namespace "http://www.ebi.ac.uk/efo/EFO_"^^xsd:anyURI ;
-            sh:prefix "efo" ] .
-
-[] sh:declare [ sh:namespace "https://pubchem.ncbi.nlm.nih.gov/bioassay/"^^xsd:anyURI ;
-            sh:prefix "pubchem.bioassay" ] .
-
-[] sh:declare [ sh:namespace "https://vocabularies.wikipathways.org/wp#"^^xsd:anyURI ;
-            sh:prefix "wps" ] .
-
-[] sh:declare [ sh:namespace "http://xmlns.com/foaf/0.1/"^^xsd:anyURI ;
-            sh:prefix "foaf" ] .
-
-[] sh:declare [ sh:namespace "https://orcid.org/"^^xsd:anyURI ;
-            sh:prefix "orcid" ] .
-
-[] sh:declare [ sh:namespace "http://www.w3.org/2001/XMLSchema#"^^xsd:anyURI ;
-            sh:prefix "xsd" ] .
-
-[] sh:declare [ sh:namespace "https://biodatafuse.org/examples/data/gene_to_graph_workflow/BDF_example_graph.ttlsource"^^xsd:anyURI ;
-            sh:prefix "source_base_node" ] .
-
-[] sh:declare [ sh:namespace "http://purl.org/pav/"^^xsd:anyURI ;
-            sh:prefix "pav" ] .
-
 [] sh:declare [ sh:namespace "http://semanticscience.org/resource/"^^xsd:anyURI ;
-            sh:prefix "cheminf" ] .
-
-[] sh:declare [ sh:namespace "https://biodatafuse.org/examples/data/gene_to_graph_workflow/BDF_example_graph.ttlgene_symbol"^^xsd:anyURI ;
-            sh:prefix "gene_symbol_base_node" ] .
-
-[] sh:declare [ sh:namespace "http://vocabularies.wikipathways.org/wp#"^^xsd:anyURI ;
-            sh:prefix "wp" ] .
-
-[] sh:declare [ sh:namespace "https://biodatafuse.org/onto/bdf#"^^xsd:anyURI ;
-            sh:prefix "bdfo" ] .
-
-[] sh:declare [ sh:namespace "https://identifiers.org/ensembl:"^^xsd:anyURI ;
-            sh:prefix "ensembl" ] .
-
-[] sh:declare [ sh:namespace "https://meshb.nlm.nih.gov/record/ui?ui="^^xsd:anyURI ;
-            sh:prefix "mesh" ] .
-
-[] sh:declare [ sh:namespace "https://biodatafuse.org/examples/data/gene_to_graph_workflow/BDF_example_graph.ttlinteraction"^^xsd:anyURI ;
-            sh:prefix "interaction" ] .
-
-[] sh:declare [ sh:namespace "https://pubchem.ncbi.nlm.nih.gov/compound/"^^xsd:anyURI ;
-            sh:prefix "pubchem.compound" ] .
-
-[] sh:declare [ sh:namespace "https://biodatafuse.org/examples/data/gene_to_graph_workflow/BDF_example_graph.ttlanatomical_entity"^^xsd:anyURI ;
-            sh:prefix "anatomical_entity_base_node" ] .
-
-[] sh:declare [ sh:namespace "http://aopkb.org/aop_ontology#"^^xsd:anyURI ;
-            sh:prefix "aopo" ] .
-
-[] sh:declare [ sh:namespace "http://www.w3.org/ns/dcat#"^^xsd:anyURI ;
-            sh:prefix "dcat" ] .
-
-[] sh:declare [ sh:namespace "https://biodatafuse.org/examples/data/gene_to_graph_workflow/BDF_example_graph.ttlgene_expression_value"^^xsd:anyURI ;
-            sh:prefix "gene_expression_value_base_node" ] .
-
-[] sh:declare [ sh:namespace "https://biodatafuse.org/"^^xsd:anyURI ;
-            sh:prefix "bdf" ] .
-
-[] sh:declare [ sh:namespace "http://purl.obolibrary.org/obo/UBERON_"^^xsd:anyURI ;
-            sh:prefix "uberon" ] .
-
-[] sh:declare [ sh:namespace "https://identifiers.org/aop/"^^xsd:anyURI ;
-            sh:prefix "aop" ] .
+            sh:prefix "sio" ] .
 
 [] sh:declare [ sh:namespace "https://www.ncbi.nlm.nih.gov/medgen/"^^xsd:anyURI ;
-            sh:prefix "medgen" ] .
+            sh:prefix "umls" ] .
+
+[] sh:declare [ sh:namespace "http://www.w3.org/2000/01/rdf-schema#"^^xsd:anyURI ;
+            sh:prefix "rdfs" ] .
+
+[] sh:declare [ sh:namespace "https://biodatafuse.org/example/experimental_process"^^xsd:anyURI ;
+            sh:prefix "experimental_process_node" ] .
+
+[] sh:declare [ sh:namespace "https://biodatafuse.org/example/gene_disease_association"^^xsd:anyURI ;
+            sh:prefix "gene_disease_association" ] .
+
+[] sh:declare [ sh:namespace "https://biodatafuse.org/example/source"^^xsd:anyURI ;
+            sh:prefix "source_base_node" ] .
+
+[] sh:declare [ sh:namespace "http://www.w3.org/2004/02/skos/core#"^^xsd:anyURI ;
+            sh:prefix "skos" ] .
+
+[] sh:declare [ sh:namespace "https://biodatafuse.org/example/gene_symbol"^^xsd:anyURI ;
+            sh:prefix "gene_symbol_base_node" ] .
+
+[] sh:declare [ sh:namespace "https://biodatafuse.org/example/anatomical_entity"^^xsd:anyURI ;
+            sh:prefix "anatomical_entity_base_node" ] .
+
+[] sh:declare [ sh:namespace "https://monarchinitiative.org/disease/"^^xsd:anyURI ;
+            sh:prefix "mondo" ] .
 
 [] sh:declare [ sh:namespace "http://www.w3.org/1999/02/22-rdf-syntax-ns#"^^xsd:anyURI ;
             sh:prefix "rdf" ] .
 
-[] sh:declare [ sh:namespace "http://semanticscience.org/resource/"^^xsd:anyURI ;
-            sh:prefix "sio" ] .
+[] sh:declare [ sh:namespace "https://biodatafuse.org/example/datasource"^^xsd:anyURI ;
+            sh:prefix "data_source_base_node" ] .
 
-[] sh:declare [ sh:namespace "http://purl.obolibrary.org/obo/HP_"^^xsd:anyURI ;
-            sh:prefix "hp" ] .
+[] sh:declare [ sh:namespace "https://biodatafuse.org/example/interaction"^^xsd:anyURI ;
+            sh:prefix "interaction" ] .
+
+[] sh:declare [ sh:namespace "http://www.w3.org/ns/dcat#"^^xsd:anyURI ;
+            sh:prefix "dcat" ] .
+
+[] sh:declare [ sh:namespace "https://biodatafuse.org/example/life_cycle"^^xsd:anyURI ;
+            sh:prefix "life_cycle_base_node" ] .
+
+[] sh:declare [ sh:namespace "http://bio2rdf.org/hgnc:"^^xsd:anyURI ;
+            sh:prefix "hgnc" ] .
+
+[] sh:declare [ sh:namespace "https://biodatafuse.org/"^^xsd:anyURI ;
+            sh:prefix "bdf" ] .
+
+[] sh:declare [ sh:namespace "https://biodatafuse.org/example/gene_expression_value"^^xsd:anyURI ;
+            sh:prefix "gene_expression_value_base_node" ] .
+
+[] sh:declare [ sh:namespace "https://biodatafuse.org/example/gene"^^xsd:anyURI ;
+            sh:prefix "gene_base_node" ] .
+
+[] sh:declare [ sh:namespace "https://biodatafuse.org/onto/bdf#"^^xsd:anyURI ;
+            sh:prefix "bdfo" ] .
+
+[] sh:declare [ sh:namespace "http://purl.obolibrary.org/obo/"^^xsd:anyURI ;
+            sh:prefix "obo" ] .
+
+[] sh:declare [ sh:namespace "http://www.w3.org/2001/XMLSchema#"^^xsd:anyURI ;
+            sh:prefix "xsd" ] .
 
