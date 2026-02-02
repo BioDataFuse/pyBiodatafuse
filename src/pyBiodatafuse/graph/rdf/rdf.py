@@ -1199,12 +1199,16 @@ class BDFGraph(Graph):
         )
 
     def shacl_prefixes(
-        self, path: Optional[str] = None, namespaces: Optional[Dict[str, str]] = None
+        self,
+        path: Optional[str] = None,
+        namespaces: Optional[Dict[str, str]] = None,
+        print_string_output: bool = False,
     ) -> Any:
         """Get a SHACL prefixes graph, optionally add more namespaces to bind to it.
 
         :param path: Path to save the SHACL prefixes.
         :param namespaces: Namespaces for the prefixes.
+        :param print_string_output: bool, print or not the generated TTL as a string.
         :return: SHACL prefixes.
         """
         output_path = path if path is not None else self._prefixes_path
@@ -1212,8 +1216,10 @@ class BDFGraph(Graph):
         if namespaces:
             current_namespaces = current_namespaces or {}
             current_namespaces.update(namespaces)
+
         return get_shacl_prefixes(
             namespaces=current_namespaces,
             path=output_path,
             new_uris=self.new_uris,
+            print_string_output=print_string_output,
         )
