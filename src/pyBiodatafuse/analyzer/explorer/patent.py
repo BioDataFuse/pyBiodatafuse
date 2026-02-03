@@ -107,7 +107,7 @@ def plot_patent_summary(
 ) -> None:
     """Plot patent summary data.
 
-    :param patent_df: A dataframe with two columns: "label" and "value"
+    :param data_df: A dataframe with two columns: "label" and "value"
     :param compound_id: The compound identifier for the title
     :param fig_size: A tuple with the size of the figure
     :param interactive: Whether to create an interactive plotly plot or a static matplotlib plot
