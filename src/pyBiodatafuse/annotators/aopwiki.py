@@ -175,8 +175,7 @@ def get_aops_gene(bridgedb_df: pd.DataFrame, pathway: bool = False) -> Tuple[pd.
             "pathway": pathway,
         },
     }
-    with open("output_dict.json", "w") as f:
-        f.write(str(output_dict))
+
     # Check if all keys in df match the keys in OUTPUT_DICT
     check_columns_against_constants(
         data_df=intermediate_df,
