@@ -1,6 +1,6 @@
 pyBioDataFuse Documentation
 =====================================
-Current verion: |release|
+Current version: |release|
 
 💪 Getting Started
 -------------------
@@ -17,11 +17,10 @@ graph utility through tasks like link prediction, making BioDataFuse a versatile
 solution for efficient and effective biological data integration.
 
 
-Table of Contents
+Getting Started
 -----------------
 .. toctree::
    :maxdepth: 2
-   :caption: Getting Started
    :name: start
 
    installation

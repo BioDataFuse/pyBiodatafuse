@@ -4,7 +4,6 @@
 
 import datetime
 import json
-import logging
 import time
 import warnings
 from typing import Any, Dict, List, Set, Tuple
@@ -15,6 +14,7 @@ from tqdm import tqdm
 from urllib3 import disable_warnings
 
 import pyBiodatafuse.constants as Cons
+from pyBiodatafuse.logging_config import get_logger
 from pyBiodatafuse.utils import (
     check_columns_against_constants,
     collapse_data_sources,
@@ -22,7 +22,7 @@ from pyBiodatafuse.utils import (
     give_annotator_warning,
 )
 
-logger = logging.getLogger("disgenet")
+logger = get_logger(__name__)
 disable_warnings()
 
 

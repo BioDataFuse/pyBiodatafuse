@@ -7,17 +7,18 @@ WHERE {
        dc:title ?aop_title ;
        aopo:has_adverse_outcome ?ao ;
        aopo:has_molecular_initiating_event ?MIE ;
+       aopo:has_key_event ?ke ;
        nci:C54571 ?stressor .
 
-  OPTIONAL { ?ao
-      edam:data_1025 ?object .
-  ?object skos:exactMatch ?id .
-  ?id a edam:data_1033 ; 
-      edam:data_1033 ?Ensembl .}
+  OPTIONAL { 
+    ?ke edam:data_1025 ?object .
+    ?object skos:exactMatch ?id .
+    ?id a edam:data_1033 ; 
+        edam:data_1033 ?Ensembl .
+  }
 
   ?stressor aopo:has_chemical_entity ?chemical .
-  ?chemical cheminf:000446 ?cas_id ;
-       dc:title ?compound_name .
+  ?ao dc:title ?ao_title .
   ?MIE dc:title ?MIE_title .
   ?aop aopo:has_key_event_relationship ?KER .
   ?KER a aopo:KeyEventRelationship ;

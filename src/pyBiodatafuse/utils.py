@@ -2,7 +2,6 @@
 
 """Python utils file for global functions."""
 
-import logging
 import warnings
 from importlib import resources
 from typing import List, Optional
@@ -10,8 +9,9 @@ from typing import List, Optional
 import pandas as pd
 
 import pyBiodatafuse.constants as Cons
+from pyBiodatafuse.logging_config import get_logger
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 def get_identifier_of_interest(

@@ -68,17 +68,6 @@ def load_graph(g: nx.MultiDiGraph, network_name: str):
     g = g.copy()
     adj_g = _replace_graph_attrs(g)
 
-    # Define the visual style as a dictionary
-    default = {
-        "title": "BioDataFuse_style",
-        "layout_name": "force-directed",
-        "defaults": [
-            {"visualProperty": "NODE_FILL_COLOR", "value": "#FF0000"},
-            {"visualProperty": "EDGE_COLOR", "value": "#000000"},
-        ],
-        "mappings": [],
-    }
-
     # Create the network in Cytoscape
     create_network_from_networkx(
         adj_g,
@@ -86,22 +75,42 @@ def load_graph(g: nx.MultiDiGraph, network_name: str):
         collection="BioDataFuse",
     )
 
-    # Apply the visual style
-    p4c.styles.create_visual_style(default)
+    # Define the visual style
+    style_name = "BioDataFuse_style"
+
+    # Check if style already exists, if so delete it first
+    existing_styles = p4c.styles.get_visual_style_names()
+    if style_name in existing_styles:
+        p4c.styles.delete_visual_style(style_name)
+
+    # Create the visual style with defaults
+    defaults = {
+        "NODE_FILL_COLOR": "#808080",
+        "EDGE_TARGET_ARROW_SHAPE": "ARROW",
+    }
+    p4c.styles.create_visual_style(style_name, defaults=defaults)
 
     # Define node shape and color mapping
-    column = Cons.LABEL
+    column = Cons.NODE_TYPE
     values = list(Cons.ALL_NODE_LABELS.keys())
     shapes = list(Cons.ALL_NODE_LABELS.values())
     colors = list(Cons.COLOR_MAPPER.values())
 
-    # Apply node shape and color mappings
+    # Apply node color mapping
     p4c.set_node_color_mapping(
         column,
         values,
         colors,
         mapping_type="d",
-        style_name="default",
+        style_name=style_name,
     )
 
-    p4c.set_node_shape_mapping(column, values, shapes, style_name="default")
+    # Apply node shape mapping
+    p4c.set_node_shape_mapping(column, values, shapes, style_name=style_name)
+
+    # Set the node label to show the "labels" attribute (which contains the name)
+    # The column name in Cytoscape is "labels" (from Cons.LABEL)
+    p4c.set_node_label_mapping(Cons.LABEL, style_name=style_name)
+
+    # Apply the visual style to the network
+    p4c.styles.set_visual_style(style_name)

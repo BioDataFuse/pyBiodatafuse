@@ -3,7 +3,6 @@
 """Python file for queriying the MINERVA platform (https://minerva.pages.uni.lu/doc/)."""
 
 import datetime
-import logging
 import warnings
 from typing import Any, Dict, Optional, Tuple
 
@@ -12,6 +11,7 @@ import requests
 from tqdm import tqdm
 
 import pyBiodatafuse.constants as Cons
+from pyBiodatafuse.logging_config import get_logger
 from pyBiodatafuse.utils import (
     check_columns_against_constants,
     collapse_data_sources,
@@ -19,7 +19,7 @@ from pyBiodatafuse.utils import (
     give_annotator_warning,
 )
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 def check_endpoint_minerva() -> bool:
@@ -107,10 +107,16 @@ def get_minerva_components(
         - 'map_reactions' contains a list for each of the pathways in the model.
         Those lists provide information about the reactions involed in that pathway.
         - 'models' is a list containing pathway-specific information for each of the pathways in the model.
-
+    :raises ValueError: if the provided map_name is not valid.
     """
     # Get list of projects
     project_df = list_projects()
+    project_names = project_df["names"].tolist()
+
+    if map_name not in project_names:
+        raise ValueError(
+            f"{map_name} is not a valid MINERVA project name. Please choose from the following list: {project_names}"
+        )
 
     # Get url from the project specified
     condition = project_df["names"] == map_name

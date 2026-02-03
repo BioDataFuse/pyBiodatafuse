@@ -1,68 +1,84 @@
-# protein_protein.py
+# coding: utf-8
 
-"""Populate a BDF RDF graph with PPI nodes."""
+"""
+Protein-protein interaction node generation for BDF RDF graphs.
+
+This module creates PPI nodes from StringDB interaction data.
+"""
 
 from typing import Optional
 
 from rdflib import Graph, Literal, URIRef
-from rdflib.namespace import RDF, XSD
+from rdflib.namespace import XSD
 
 import pyBiodatafuse.constants as Cons
+from pyBiodatafuse.graph.rdf.nodes.base import (
+    add_triples,
+    add_type,
+    create_node,
+    safe_get,
+)
 
 
-def add_ppi_data(
-    g: Graph, gene_node: URIRef, entry: dict, base_uri: str, new_uris: dict
-) -> Optional[URIRef]:
-    """Add a protein protein interaction node.
-
-    :param g: RDFLib graph
-    :param gene_node: URIRef for the target protein
-    :param entry: the ppi dictionary
-    :param base_uri: the base URI for the project
-    :param new_uris: dictionary with project node URIs
-    :return: a ppi URIRef node
+def add_ppi_data(g: Graph, gene_node: URIRef, entry: dict) -> Optional[URIRef]:
     """
-    gene_link = entry.get(Cons.STRING_PPI_LINK_TO, None)
-    gene_link_node = URIRef(Cons.BASE_URLS_DBS["uniprot"] + gene_link)  # type: ignore
-    # ensembl = entry.get("Ensembl", None).split(":")[1]
-    score = entry.get(Cons.STRING_PPI_SCORE, None)
-    uniprot = entry.get(Cons.UNIPROT_TREMBL_A, None)
-    uniprot_link = entry.get(Cons.UNIPROT_TREMBL_B, None)
-    if score:
-        score = float(score)
-        # Nodes
-        ppi_node = URIRef(base_uri + f"ppi/{uniprot}_{gene_link_node}")
-        # ensembl_node = URIRef(BASE_URLS_DBS["ensembl"] + f"{ensembl}")
-        if not uniprot:
-            return None
+    Add a protein-protein interaction node to the RDF graph.
 
-        protein_node = URIRef(Cons.BASE_URLS_DBS["uniprot"] + uniprot)  # type: ignore
-        protein_link_node = URIRef(Cons.BASE_URLS_DBS["uniprot"] + uniprot_link)  # type: ignore
-        score_node = URIRef(f"{new_uris['score_base_node']}/{uniprot}_{uniprot_link}")
+    :param g: RDF graph.
+    :param gene_node: URIRef for the source gene.
+    :param entry: Dictionary containing PPI data from StringDB.
+    :return: URIRef for the PPI node, or None if invalid data.
+    """
+    # Extract required data
+    score = safe_get(entry, Cons.STRING_PPI_SCORE)
+    uniprot_a = safe_get(entry, Cons.UNIPROT_TREMBL_A)
+    uniprot_b = safe_get(entry, Cons.UNIPROT_TREMBL_B)
+    gene_link = safe_get(entry, Cons.STRING_PPI_LINK_TO)
 
-        # Edges
-        new_edges_to_add = [
-            (ppi_node, URIRef(Cons.PREDICATES["sio_has_part"]), protein_node),
-            (ppi_node, URIRef(Cons.PREDICATES["sio_has_part"]), protein_link_node),
-            (gene_node, URIRef(Cons.PREDICATES["translates_to"]), protein_node),
-            (gene_link_node, URIRef(Cons.PREDICATES["translates_to"]), protein_link_node),
-            (protein_node, URIRef(Cons.PREDICATES["translation_of"]), gene_node),
-            (protein_link_node, URIRef(Cons.PREDICATES["translation_of"]), gene_link_node),
-            (ppi_node, RDF.type, URIRef(Cons.NODE_TYPES["ppi_node"])),
-            (protein_link_node, RDF.type, URIRef(Cons.NODE_TYPES["protein_node"])),
-            (protein_node, RDF.type, URIRef(Cons.NODE_TYPES["protein_node"])),
-            (score_node, RDF.type, URIRef(Cons.NODE_TYPES["score_node"])),
-            (
-                score_node,
-                URIRef(Cons.PREDICATES["sio_has_value"]),
-                Literal(score, datatype=XSD.double),
-            ),
-            (ppi_node, URIRef(Cons.PREDICATES["sio_has_measurement_value"]), score_node),
-        ]
+    if not score or not uniprot_a:
+        return None
 
-        for edge in new_edges_to_add:
-            g.add(edge)
+    score = float(score)
 
-        return ppi_node
+    # Create nodes
+    uniprot_base = Cons.BASE_URLS_DBS["uniprot"]
+    protein_a = create_node(uniprot_base, uniprot_a)
+    protein_b = create_node(uniprot_base, uniprot_b) if uniprot_b else None
+    gene_link_node = create_node(uniprot_base, gene_link) if gene_link else None
 
-    return None
+    ppi_node = URIRef(f"{g.base_uri}ppi/{uniprot_a}_{uniprot_b or gene_link}")
+    score_node = URIRef(f"{g.new_uris['score_base_node']}/{uniprot_a}_{uniprot_b or gene_link}")
+
+    # Add types
+    add_type(g, ppi_node, Cons.NODE_TYPES["ppi_node"])
+    add_type(g, protein_a, Cons.NODE_TYPES["protein_node"])
+    add_type(g, score_node, Cons.NODE_TYPES["score_node"])
+    if protein_b:
+        add_type(g, protein_b, Cons.NODE_TYPES["protein_node"])
+
+    # Build relationships
+    triples = [
+        # PPI structure
+        (ppi_node, URIRef(Cons.PREDICATES["sio_has_part"]), protein_a),
+        (ppi_node, URIRef(Cons.PREDICATES["sio_has_measurement_value"]), score_node),
+        # Score value
+        (score_node, URIRef(Cons.PREDICATES["sio_has_value"]), Literal(score, datatype=XSD.double)),
+        # Gene-protein relationships
+        (gene_node, URIRef(Cons.PREDICATES["translates_to"]), protein_a),
+        (protein_a, URIRef(Cons.PREDICATES["translation_of"]), gene_node),
+    ]
+
+    if protein_b:
+        triples.append((ppi_node, URIRef(Cons.PREDICATES["sio_has_part"]), protein_b))
+
+    if gene_link_node and protein_b:
+        triples.extend(
+            [
+                (gene_link_node, URIRef(Cons.PREDICATES["translates_to"]), protein_b),
+                (protein_b, URIRef(Cons.PREDICATES["translation_of"]), gene_link_node),
+            ]
+        )
+
+    add_triples(g, triples)
+
+    return ppi_node

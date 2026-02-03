@@ -13,15 +13,15 @@ later, but that will cause problems--the code will get executed twice:
 .. seealso:: https://click.palletsprojects.com/en/8.1.x/setuptools/#setuptools-integration
 """
 
-import logging
-
 import click
+
+from pyBiodatafuse.logging_config import get_logger
 
 __all__ = [
     "main",
 ]
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 @click.group()

@@ -1,0 +1,19 @@
+SELECT DISTINCT ?aop ?aop_title ?ke ?ke_title ?ke_organ ?pubchem_compound (REPLACE(STR(?Ensembl), "https://identifiers.org/ensembl/", "") AS ?Ensembl)
+WHERE {
+  VALUES ?Ensembl { $genes }
+  ?aop a aopo:AdverseOutcomePathway ;
+       dc:title ?aop_title ;
+       aopo:has_key_event ?ke .
+  ?ke edam:data_1025 ?object ;
+      dc:title ?ke_title .
+  OPTIONAL { ?ke aopo:OrganContext ?ke_organ . }
+  ?object skos:exactMatch ?id .
+  ?id a edam:data_1033 ; 
+      edam:data_1033 ?Ensembl .
+  OPTIONAL{
+    ?aop nci:C54571 ?stressor .
+    ?stressor aopo:has_chemical_entity ?chemical .
+    ?chemical skos:exactMatch ?pubchem_compound .
+    FILTER(STRSTARTS(STR(?pubchem_compound), "https://identifiers.org/pubchem.compound/"))
+  }
+}

@@ -4,7 +4,6 @@
 """Module for querying StringDB (https://string-db.org/)."""
 
 import datetime
-import logging
 import warnings
 from time import sleep
 from typing import Any, Dict, List, Tuple
@@ -14,9 +13,10 @@ import requests
 from requests.exceptions import RequestException
 
 import pyBiodatafuse.constants as Cons
+from pyBiodatafuse.logging_config import get_logger
 from pyBiodatafuse.utils import get_identifier_of_interest, give_annotator_warning
 
-logger = logging.getLogger("stringdb")
+logger = get_logger(__name__)
 
 TIMEOUT = 10  # Timeout for requests in seconds
 

@@ -3,10 +3,20 @@
 from typing import Optional
 
 from bioregistry import get_iri
-from rdflib import Graph, Literal, URIRef
-from rdflib.namespace import OWL, RDF, RDFS, XSD
+from rdflib import Graph, URIRef
+from rdflib.namespace import RDFS, XSD
 
 import pyBiodatafuse.constants as Cons
+from pyBiodatafuse.graph.rdf.nodes.base import (
+    add_label,
+    add_same_as,
+    add_triple,
+    add_type,
+    add_value,
+    create_node,
+    link_refers_to,
+    safe_get,
+)
 
 
 def add_gene_disease_associations(
@@ -33,41 +43,34 @@ def add_gene_disease_associations(
     disease_node = add_disease_node(g, disease_data)
     if not disease_node:
         return None
-    umlscui = disease_data.get(Cons.UMLS, "")
-    assoc_node = URIRef(f"{new_uris['gene_disease_association']}/{gene_id}{umlscui}")
-    g.add((assoc_node, RDF.type, URIRef(Cons.NODE_TYPES["gene_disease_association"])))
-    g.add((assoc_node, URIRef(Cons.PREDICATES["sio_refers_to"]), gene_node))
-    g.add((assoc_node, URIRef(Cons.PREDICATES["sio_refers_to"]), disease_node))
-    score = disease_data.get(Cons.DISGENET_SCORE, "")
-    if disease_data.get(Cons.DISGENET_SCORE):
-        score_node = add_score_node(
-            g,
-            id_number,
-            source_idx,
-            umlscui,
-            score,
-            new_uris,
-            i,
-            str(gene_id),
-        )
-        g.add((assoc_node, URIRef(Cons.PREDICATES["sio_has_measurement_value"]), score_node))
 
-    if disease_data.get(Cons.DISGENET_EI):
+    umlscui = safe_get(disease_data, Cons.UMLS, "")
+    assoc_node = create_node(f"{new_uris['gene_disease_association']}/", f"{gene_id}{umlscui}")
+    add_type(g, assoc_node, Cons.NODE_TYPES["gene_disease_association"])
+    link_refers_to(g, assoc_node, gene_node)
+    link_refers_to(g, assoc_node, disease_node)
+
+    score = safe_get(disease_data, Cons.DISGENET_SCORE, "")
+    if score:
+        score_node = add_score_node(
+            g, id_number, source_idx, umlscui, score, new_uris, i, str(gene_id)
+        )
+        add_triple(g, assoc_node, "sio_has_measurement_value", score_node)
+
+    if safe_get(disease_data, Cons.DISGENET_EI):
         ei_node = add_evidence_node(
             g, id_number, source_idx, Cons.DISGENET_EI, disease_data, new_uris, i
         )
         if ei_node:
-            g.add((assoc_node, URIRef(Cons.PREDICATES["sio_has_measurement_value"]), ei_node))
+            add_triple(g, assoc_node, "sio_has_measurement_value", ei_node)
 
-    if disease_data.get(Cons.DISGENET_EL):
+    if safe_get(disease_data, Cons.DISGENET_EL):
         el_node = add_evidence_node(
             g, id_number, source_idx, Cons.DISGENET_EL, disease_data, new_uris, i
         )
         if el_node:
-            g.add((assoc_node, URIRef(Cons.PREDICATES["sio_has_measurement_value"]), el_node))
+            add_triple(g, assoc_node, "sio_has_measurement_value", el_node)
 
-    # data_source_node = add_data_source_node(g, "DISGENET")
-    # g.add((assoc_node, URIRef(PREDICATES["sio_has_source"]), data_source_node))
     return disease_node
 
 
@@ -78,28 +81,21 @@ def add_disease_node(g: Graph, disease_data: dict) -> Optional[URIRef]:
     :param disease_data: Dictionary containing disease information.
     :return: URIRef for the created disease node.
     """
-    disease_curie = disease_data.get(Cons.UMLS)
+    disease_curie = safe_get(disease_data, Cons.UMLS)
     if not disease_curie:
         return None
 
-    disease_iri = Cons.NODE_URI_PREFIXES["medgen"] + disease_curie
-    disease_node = URIRef(disease_iri)
-    g.add((disease_node, RDF.type, URIRef(Cons.NODE_TYPES["disease_node"])))
-    g.add(
-        (
-            disease_node,
-            RDFS.label,
-            Literal(disease_data.get(Cons.DISEASE_NAME), datatype=XSD.string),
-        )
-    )
+    disease_node = create_node(Cons.NODE_URI_PREFIXES["medgen"], disease_curie)
+    add_type(g, disease_node, Cons.NODE_TYPES["disease_node"])
+    add_label(g, disease_node, safe_get(disease_data, Cons.DISEASE_NAME))
 
     for identifier in Cons.DISEASE_IDENTIFIER_TYPES:
-        if disease_data.get(identifier):
-            curies = disease_data.get(identifier, "").split(", ")
+        if safe_get(disease_data, identifier):
+            curies = safe_get(disease_data, identifier, "").split(", ")
             for curie in curies:
                 source_iri = get_iri(curie) or get_iri(f"obo:{curie.split(':')[-1]}")
                 if source_iri:
-                    g.add((disease_node, OWL.sameAs, URIRef(source_iri)))
+                    add_same_as(g, disease_node, URIRef(source_iri), bidirectional=False)
 
     return disease_node
 
@@ -126,13 +122,12 @@ def add_score_node(
     :param gene_id: String value of the gene ID.
     :return: URIRef for the created score node.
     """
-    score_node = URIRef(
-        f"{new_uris['score_base_node']}/{id_number}{i}{source_idx}_{disease_id}{gene_id}"
+    score_node = create_node(
+        f"{new_uris['score_base_node']}/", f"{id_number}{i}{source_idx}_{disease_id}{gene_id}"
     )
-    g.add((score_node, RDF.type, URIRef(Cons.NODE_TYPES["score_node"])))
-    g.add(
-        (score_node, URIRef(Cons.PREDICATES["sio_has_value"]), Literal(score, datatype=XSD.double))
-    )
+    add_type(g, score_node, Cons.NODE_TYPES["score_node"])
+    add_value(g, score_node, score, XSD.double)
+
     return score_node
 
 
@@ -156,16 +151,17 @@ def add_evidence_node(
     :param i: Index or iteration number used for node URI construction.
     :return: URIRef for the created evidence node.
     """
-    value = disease_data.get(evidence_type)
+    value = safe_get(disease_data, evidence_type)
     if value is None:
         return None
 
-    node = URIRef(
-        f"{new_uris['score_base_node']}/{evidence_type}/{id_number}{i}{source_idx}_{disease_data[Cons.UMLS]}"
+    umls_id = safe_get(disease_data, Cons.UMLS, "")
+    node = create_node(
+        f"{new_uris['score_base_node']}/{evidence_type}/", f"{id_number}{i}{source_idx}_{umls_id}"
     )
-    datatype = XSD.double
-    if evidence_type == "el":
-        datatype = XSD.string
-    g.add((node, RDF.type, URIRef(Cons.NODE_TYPES[f"{evidence_type}_node"])))
-    g.add((node, URIRef(Cons.PREDICATES["sio_has_value"]), Literal(value, datatype=datatype)))
+
+    datatype = XSD.double if evidence_type != "el" else XSD.string
+    add_type(g, node, Cons.NODE_TYPES[f"{evidence_type}_node"])
+    add_value(g, node, value, datatype)
+
     return node

@@ -1,20 +1,25 @@
 """Provide utils for BDF RDF."""
 
-import logging
 import os
 
 import numpy as np
 import pandas as pd
-from bioregistry import normalize_curie
+from bioregistry import curie_from_iri, normalize_curie, parse_iri
 from rdflib import BNode, Graph, Literal, URIRef
 from rdflib.namespace import RDF, RDFS, SH, XSD
 from shexer.consts import SHACL_TURTLE, TURTLE
 from shexer.shaper import Shaper
 
-from pyBiodatafuse.constants import DATA_SOURCES, NAMESPACE_BINDINGS, NAMESPACE_SHAPES, NODE_TYPES
+from pyBiodatafuse.constants import (
+    DATA_SOURCES,
+    NAMESPACE_BINDINGS,
+    NAMESPACE_SHAPES,
+    NODE_TYPES,
+    VOID_TYPES,
+)
+from pyBiodatafuse.logging_config import get_logger
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 def replace_na_none(item):
@@ -62,6 +67,8 @@ def construct_uri(base_uri, identifier):
 def add_data_source_node(g: Graph, source: str) -> URIRef:
     """Create and add a data source node to the RDF graph.
 
+    Uses DCAT Dataset and VoID Dataset types, aligned with dataset_provenance.py.
+
     :param g: RDF graph to which the data source node will be added.
     :param source: String containing the name of the source of the data.
     :return: URIRef for the created data source node.
@@ -71,7 +78,9 @@ def add_data_source_node(g: Graph, source: str) -> URIRef:
         source = "OpenTargets"
     data_source_name = Literal(source, datatype=XSD.string)
     data_source_url = URIRef(DATA_SOURCES[source])
+    # Add both DCAT and VoID Dataset types (aligned with dataset_provenance.py)
     g.add((data_source_url, RDF.type, URIRef(NODE_TYPES["data_source_node"])))
+    g.add((data_source_url, RDF.type, URIRef(VOID_TYPES["dataset"])))
     g.add((data_source_url, RDFS.label, data_source_name))
     return data_source_url
 
@@ -211,3 +220,79 @@ def get_node_label(g, node):
     for stmt in g.triples((node, RDFS.label, None)):
         return stmt[2]
     return None
+
+
+def discover_prefixes_from_graph(g: Graph) -> dict:
+    """
+    Discover namespace prefixes from all URIs in a graph using bioregistry.
+
+    This function collects all URIs from subjects, predicates, and objects
+    in the graph, then uses bioregistry to identify prefixes and their
+    corresponding namespace URIs.
+
+    :param g: The RDF graph to analyze.
+    :return: Dictionary mapping prefix names to namespace URIs.
+    """
+    logger.debug("Discovering prefixes from graph using bioregistry")
+
+    # Collect all URIs from the graph (subjects, predicates, objects)
+    all_uris = set()
+    for s, p, o in g:
+        if isinstance(s, URIRef):
+            all_uris.add(str(s))
+        if isinstance(p, URIRef):
+            all_uris.add(str(p))
+        if isinstance(o, URIRef):
+            all_uris.add(str(o))
+
+    logger.debug(f"Collected {len(all_uris)} unique URIs from graph")
+
+    # Track discovered prefixes
+    discovered_prefixes = {}
+
+    # Process each URI with bioregistry
+    for uri in all_uris:
+        try:
+            # Parse IRI to get prefix and local ID
+            parsed = parse_iri(uri)
+            if parsed:
+                prefix, local_id = parsed
+                # Get CURIE to understand the pattern
+                curie = curie_from_iri(uri)
+                if curie and ":" in curie:
+                    # Extract namespace pattern from original URI
+                    # Try to find where the local_id appears in the URI
+                    if local_id in uri:
+                        # Find the position and extract namespace
+                        idx = uri.rfind(local_id)
+                        namespace_uri = uri[:idx]
+                    else:
+                        # Fallback: use standard patterns
+                        if "#" in uri:
+                            namespace_uri = uri.rsplit("#", 1)[0] + "#"
+                        else:
+                            namespace_uri = uri.rsplit("/", 1)[0] + "/"
+
+                    # Only add if not already in NAMESPACE_BINDINGS
+                    if prefix not in NAMESPACE_BINDINGS:
+                        discovered_prefixes[prefix] = namespace_uri
+
+        except Exception:
+            # Fallback for URIs that bioregistry doesn't recognize
+            try:
+                curie = curie_from_iri(uri)
+                if curie and ":" in curie:
+                    prefix = curie.split(":", 1)[0]
+                    # Extract namespace from URI structure
+                    if "#" in uri:
+                        namespace_uri = uri.rsplit("#", 1)[0] + "#"
+                    else:
+                        namespace_uri = uri.rsplit("/", 1)[0] + "/"
+                    # Only add if not already in NAMESPACE_BINDINGS
+                    if prefix not in NAMESPACE_BINDINGS:
+                        discovered_prefixes[prefix] = namespace_uri
+            except Exception as e:
+                logger.debug("Skipping URI parsing: %s", e)
+
+    logger.debug(f"Discovered {len(discovered_prefixes)} new prefixes via bioregistry")
+    return discovered_prefixes

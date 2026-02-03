@@ -361,7 +361,9 @@ def _process_compounds(
 
     drug_df[Cons.DRUGBANK_ID] = drug_df["cross_references"].apply(
         lambda x: (
-            next((ref["ids"][0] for ref in x if ref["source"] == "drugbank"), None) if x else None
+            next((ref["ids"][0] for ref in x if ref["source"] == "drugbank"), None)
+            if isinstance(x, list)
+            else None
         )
     )
     drug_df[Cons.DRUGBANK_ID] = drug_df[Cons.DRUGBANK_ID].apply(
@@ -372,7 +374,7 @@ def _process_compounds(
         drug_df.apply(
             lambda row: (
                 pd.Series([row["adverse_events"]["count"], row["adverse_events"]["rows"]])
-                if row["adverse_events"]
+                if isinstance(row["adverse_events"], dict)
                 else pd.Series([0, None])
             ),
             axis=1,

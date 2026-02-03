@@ -16,17 +16,13 @@ from pyBiodatafuse.annotators.aopwiki import get_aops
 class TestAOPAnnotator(unittest.TestCase):
     """Test the AOP annotator."""
 
-    @patch("pyBiodatafuse.annotators.aopwiki.SPARQLWrapper.queryAndConvert")
-    def test_get_aops(self, mock_sparql_request):
+    def test_get_aops(self):
         """Test the get_aops function."""
-        with open("tests/annotators/data/aop_mock_data.json", "r", encoding="utf-8") as file:
-            mock_sparql_request.return_value = json.load(file)
-
         bridgedb_dataframe = pd.DataFrame(
             {
-                "identifier": ["7350"],
+                "identifier": ["4193"],
                 "identifier.source": ["Entrez Gene"],
-                "target": ["ENSG00000109424"],
+                "target": ["ENSG00000135679"],
                 "target.source": ["Ensembl"],
             }
         )
@@ -48,12 +44,13 @@ class TestAOPAnnotator(unittest.TestCase):
         self.assertEqual(metadata["query"]["size"], 1)
 
         # Validate the content of the DataFrame
-        with open("tests/annotators/data/aop_mock_res.json", "r", encoding="utf-8") as file:
-            expected_data = pd.Series(json.load(file)[Cons.AOPWIKI_GENE_COL])
+        with open("tests/annotators/data/aop_mock_res_simple.json", "r", encoding="utf-8") as file:
+            expected_data = pd.DataFrame(json.load(file))
         expected_data.name = Cons.AOPWIKI_GENE_COL
         expected_data.index = obtained_data.index
-
-        pd.testing.assert_series_equal(obtained_data[Cons.AOPWIKI_GENE_COL], expected_data)
+        self.assertEqual(type(obtained_data), pd.DataFrame)
+        self.assertEqual(type(expected_data), pd.DataFrame)
+        pd.testing.assert_frame_equal(obtained_data, expected_data)
 
 
 if __name__ == "__main__":
