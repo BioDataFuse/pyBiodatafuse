@@ -1871,7 +1871,7 @@ def add_compoundwiki_subgraph(g, compound_node_label, annot_list):
         if not target_cid or target_cid != compound_node_label:
             continue
 
-        annotations = annot.get("CompoundWiki_compounds", {})
+        annotations = annot.get(Cons.COMPOUNDWIKI_COL, {})
 
         if g.has_node(compound_node_label):
             existing_attrs = g.nodes[compound_node_label].get("attr_dict", {})
@@ -2182,13 +2182,6 @@ def add_aopwiki_compound_subgraph(g, compound_node_label, annot_list):
     :returns: a NetworkX MultiDiGraph
     """
     for annot in annot_list:
-
-        mie_node_label = f"{Cons.MOL_INITIATING_EVENT}:{annot.get('MIE', None)}"
-        ke_upstream_node_label = f"{Cons.KEY_EVENT}:{annot.get('KE_upstream')}"
-        ke_downstream_node_label = f"{Cons.KEY_EVENT}:{annot.get('KE_downstream')}"
-        ao_node_label = f"{Cons.ADVERSE_OUTCOME}:{annot.get('ao')}"
-        ke_node_label = f"{Cons.KEY_EVENT}:{annot.get('ke')}"
-
         # Add AOP node
         aop_value = annot.get(Cons.AOP_NODE_MAIN_LABEL, None)
         if aop_value and not pd.isna(aop_value):
@@ -2392,12 +2385,11 @@ def add_compoundwiki_annotations(node_attrs: dict, annot: dict) -> dict:
     :param annot: the interaction/inhibitor annotation dict
     :return: node_attrs updated with CompoundWiki fields if present
     """
-    cw_key = getattr(Cons, "COMPOUNDWIKI_COL", "CompoundWiki_compounds")
-    cw_list = annot.get(cw_key) or annot.get("CompoundWiki_compounds")
+    cw_list = annot.get(Cons.COMPOUNDWIKI_COL)
     if not cw_list or not isinstance(cw_list, list):
         return node_attrs
 
-    source = node_attrs.get("datasource", "")
+    source = node_attrs.get(Cons.DATASOURCE, "")
     skip_matching = source in {Cons.PUBCHEM, Cons.OPENTARGETS}
 
     if not skip_matching:
@@ -2416,9 +2408,7 @@ def add_compoundwiki_annotations(node_attrs: dict, annot: dict) -> dict:
             continue
 
         if not skip_matching:
-            input_id_raw = cw_dict.get(
-                getattr(Cons, "COMPOUNDWIKI_INPUT", "input_identifier")
-            ) or cw_dict.get("input_identifier")
+            input_id_raw = cw_dict.get(Cons.COMPOUNDWIKI_INPUT, None)
             if input_id_raw is not None:
                 input_id_comp = str(input_id_raw).strip()
                 if input_id_comp.upper().startswith("CID:"):
@@ -2431,8 +2421,9 @@ def add_compoundwiki_annotations(node_attrs: dict, annot: dict) -> dict:
                     continue
 
         for key, value in cw_dict.items():
-            if key in (getattr(Cons, "COMPOUNDWIKI_INPUT", "input_identifier"), "input_identifier"):
+            if key in (Cons.COMPOUNDWIKI_INPUT):
                 continue
+
             if value is None or (isinstance(value, str) and not value.strip()):
                 continue
 
@@ -2495,7 +2486,9 @@ def add_ensembl_homolog_subgraph(g, gene_node_label, annot_list):
         edge_data = g.get_edge_data(gene_node_label, hl[Cons.ENSEMBL_HOMOLOG_MAIN_LABEL])
 
         edge_data = {} if edge_data is None else edge_data
-        node_exists = [x for x, y in edge_data.items() if y["attr_dict"]["edge_hash"] == edge_hash]
+        node_exists = [
+            x for x, y in edge_data.items() if y["attr_dict"][Cons.EDGE_HASH] == edge_hash
+        ]
         if len(node_exists) == 0 and not pd.isna(hl[Cons.ENSEMBL_HOMOLOG_MAIN_LABEL]):
             g.add_edge(
                 gene_node_label,

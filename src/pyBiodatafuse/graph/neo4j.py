@@ -303,7 +303,9 @@ class AdverseOutcomePathway(StructuredNode):
         model=HasMolecularInitiatingEvent,
     )
     has_key_event_relationship = RelationshipTo(
-        "KeyEventRelationship", Cons.HAS_KEY_EVENT_RELATIONSHIP, model=HasKeyEventRelationship
+        Cons.KEY_EVENT_RELATIONSHIP_NODE_LABEL,
+        Cons.HAS_KEY_EVENT_RELATIONSHIP,
+        model=HasKeyEventRelationship,
     )
 
 
@@ -367,10 +369,10 @@ class KeyEventRelationship(StructuredNode):
 
     # outgoing relations (KER -> KE)
     has_upstream_key_event = RelationshipTo(
-        Cons.KEY_EVENT_NODE_LABEL, "HAS_UPSTREAM_KEY_EVENT", model=HasKeyEvent
+        Cons.KEY_EVENT_NODE_LABEL, Cons.HAS_UPSTREAM_KEY_EVENT, model=HasKeyEvent
     )
     has_downstream_key_event = RelationshipTo(
-        Cons.KEY_EVENT_NODE_LABEL, "HAS_DOWNSTREAM_KEY_EVENT", model=HasKeyEvent
+        Cons.KEY_EVENT_NODE_LABEL, Cons.HAS_DOWNSTREAM_KEY_EVENT, model=HasKeyEvent
     )
 
 
@@ -698,25 +700,25 @@ def load_graph(g: nx.MultiDiGraph, uri: str, username: str, password: str):
 
             elif edge_type == Cons.HAS_KEY_EVENT:
                 source_node.has_key_event.connect(
-                    target_node, {"datasource": data[Cons.DATASOURCE]}
+                    target_node, {Cons.DATASOURCE: data[Cons.DATASOURCE]}
                 )
                 edges.append([source_node, target_node, edge_type])
 
             elif edge_type == Cons.HAS_ADVERSE_OUTCOME:
                 source_node.has_adverse_outcome.connect(
-                    target_node, {"datasource": data[Cons.DATASOURCE]}
+                    target_node, {Cons.DATASOURCE: data[Cons.DATASOURCE]}
                 )
                 edges.append([source_node, target_node, edge_type])
 
             elif edge_type == Cons.HAS_MOLECULAR_INITIATING_EVENT:
                 source_node.has_molecular_initiating_event.connect(
-                    target_node, {"datasource": data[Cons.DATASOURCE]}
+                    target_node, {Cons.DATASOURCE: data[Cons.DATASOURCE]}
                 )
                 edges.append([source_node, target_node, edge_type])
 
             elif edge_type == Cons.HAS_KEY_EVENT_RELATIONSHIP:
                 source_node.has_key_event_relationship.connect(
-                    target_node, {"datasource": data[Cons.DATASOURCE]}
+                    target_node, {Cons.DATASOURCE: data[Cons.DATASOURCE]}
                 )
                 edges.append([source_node, target_node, edge_type])
 
