@@ -10,6 +10,8 @@ Graph Generator
 
 .. autofunction:: pyBiodatafuse.graph.generator.build_networkx_graph
 
+.. autofunction:: pyBiodatafuse.graph.generator.load_dataframe_from_pickle
+
 Graph Savers
 ~~~~~~~~~~~~
 
@@ -48,4 +50,25 @@ RDF and GraphDB
 .. autoclass:: pyBiodatafuse.graph.rdf.graphdb.GraphDBManager
    :members:
 
+.. autofunction:: pyBiodatafuse.graph.rdf.metadata.add_creator_node
+
 .. autofunction:: pyBiodatafuse.graph.rdf.metadata.add_metadata
+
+RDF Utilities
+~~~~~~~~~~~~~
+
+.. autofunction:: pyBiodatafuse.graph.rdf.utils.replace_na_none
+
+.. autofunction:: pyBiodatafuse.graph.rdf.utils.extract_curie
+
+.. autofunction:: pyBiodatafuse.graph.rdf.utils.construct_uri
+
+.. autofunction:: pyBiodatafuse.graph.rdf.utils.add_data_source_node
+
+.. autofunction:: pyBiodatafuse.graph.rdf.utils.get_shapes
+
+.. autofunction:: pyBiodatafuse.graph.rdf.utils.get_shacl_prefixes
+
+.. autofunction:: pyBiodatafuse.graph.rdf.utils.get_node_label
+
+.. autofunction:: pyBiodatafuse.graph.rdf.utils.discover_prefixes_from_graph

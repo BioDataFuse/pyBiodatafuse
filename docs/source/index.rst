@@ -1,6 +1,6 @@
 pyBioDataFuse Documentation
 =====================================
-Current verion: |release|
+Current version: |release|
 
 💪 Getting Started
 -------------------

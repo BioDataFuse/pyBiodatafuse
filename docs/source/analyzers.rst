@@ -25,3 +25,11 @@ Patent Explorer
 ~~~~~~~~~~~~~~~
 
 .. autofunction:: pyBiodatafuse.analyzer.explorer.patent.get_patent_from_pubchem
+
+Graph Summary
+~~~~~~~~~~~~~
+
+.. autoclass:: pyBiodatafuse.analyzer.summarize.BioGraph
+   :members:
+   :show-inheritance:
+   :undoc-members:
