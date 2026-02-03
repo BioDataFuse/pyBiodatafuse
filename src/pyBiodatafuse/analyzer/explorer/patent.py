@@ -6,12 +6,13 @@ The module contains special functions that are server expensive and can only be 
 """
 
 import time
-from typing import Literal
+from typing import Literal, Union
 
 import pandas as pd
 import requests
 from tqdm import tqdm
-
+import plotly.express as px
+import matplotlib.pyplot as plt
 from pyBiodatafuse.analyzer.utils import (
     plot_hbarplot_chart,
     plot_pie_chart,
@@ -104,15 +105,15 @@ def plot_patent_summary(
     fig_size: tuple = (10, 5),
     interactive: bool = True,
     plot_style: Literal["bar", "pie"] = "bar",
-) -> None:
+) -> Union[px.Figure, plt.Figure, str]:
     """Plot patent summary data.
 
     :param data_df: A dataframe with two columns: "label" and "value"
     :param compound_id: The compound identifier for the title
     :param fig_size: A tuple with the size of the figure
     :param interactive: Whether to create an interactive plotly plot or a static matplotlib plot
-    :param plot_style: The style of the plot, either "bar" or "pie
-    :returns: A bar plot
+    :param plot_style: The style of the plot, either "bar" or "pie"
+    :returns: A plotly or matplotlib plot depending on the interactive parameter
     """
     if compound_id == "":
         return "Please provide a compound identifier for the title."
@@ -139,7 +140,7 @@ def plot_patent_summary(
         )
         fig.update_layout(title_text=f"Patent summary for {compound_id}", showlegend=True)
 
-        return fig.show()
+        return fig
 
     elif plot_style == "bar" and interactive:
         fig = plotly_barplot_chart(
@@ -151,7 +152,7 @@ def plot_patent_summary(
         )
         fig.update_layout(title_text=f"Patent summary for {compound_id}", showlegend=False)
 
-        return fig.show()
+        return fig
 
     elif plot_style == "pie" and not interactive:
         return plot_pie_chart(
@@ -168,3 +169,5 @@ def plot_patent_summary(
             fig_size=fig_size,
             fig_title=f"Patent summary for {compound_id}",
         )
+
+    return "No patent data available to plot."
