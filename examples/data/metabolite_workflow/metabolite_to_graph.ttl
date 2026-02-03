@@ -1,0 +1,378 @@
+@prefix aop: <https://identifiers.org/aop/> .
+@prefix aop.events: <https://identifiers.org/aop.events/> .
+@prefix aopo: <http://aopkb.org/aop_ontology#> .
+@prefix cheminf: <http://semanticscience.org/resource/> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix orcid: <https://orcid.org/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix pav: <http://purl.org/pav/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix pubchem.compound: <https://pubchem.ncbi.nlm.nih.gov/compound/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix schema: <https://schema.org/> .
+@prefix uberon: <http://purl.obolibrary.org/obo/UBERON_> .
+@prefix void: <http://rdfs.org/ns/void#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<https://biodatafuse.org/example/service/aop_wiki_rdf> a dcat:DataService,
+        schema:WebAPI ;
+    rdfs:label "AOP_Wiki_RDF API"^^xsd:string ;
+    dcat:endpointURL <https://aopwiki.rdf.bigcat-bioinformatics.org/sparql/> ;
+    dcat:servesDataset <https://aopwiki.rdf.bigcat-bioinformatics.org/> .
+
+<https://biodatafuse.org/example/service/bridgedb> a dcat:DataService,
+        schema:WebAPI ;
+    rdfs:label "BridgeDB API"^^xsd:string ;
+    dcat:endpointURL <https://webservice.bridgedb.org/Human/xrefsBatch> ;
+    dcat:servesDataset <https://identifiers.org/bridgedb> .
+
+<https://biodatafuse.org/example/service/kegg> a dcat:DataService,
+        schema:WebAPI ;
+    rdfs:label "KEGG API"^^xsd:string ;
+    dcat:endpointURL <https://rest.kegg.jp> ;
+    dcat:servesDataset <https://identifiers.org/kegg> .
+
+<https://biodatafuse.org/example/service/molmedb> a dcat:DataService,
+        schema:WebAPI ;
+    rdfs:label "MolMeDB API"^^xsd:string ;
+    dcat:endpointURL <https://idsm.elixir-czech.cz/sparql/endpoint/molmedb> ;
+    dcat:servesDataset <https://molmedb.upol.cz/> .
+
+<https://biodatafuse.org/example/test_compound.ttl> a dcat:Catalog ;
+    dcterms:created "2026-02-03T10:11:54.725329+00:00"^^xsd:dateTime ;
+    dcterms:creator orcid:0000-0002-4166-7093 ;
+    dcterms:description "Test gene graph"^^xsd:string ;
+    dcterms:identifier <https://biodatafuse.org/example/test_compound.ttl> ;
+    dcterms:source <https://aopwiki.rdf.bigcat-bioinformatics.org/>,
+        <https://identifiers.org/bridgedb>,
+        <https://identifiers.org/kegg>,
+        <https://molmedb.upol.cz/> ;
+    dcterms:title "BDFgene"^^xsd:string,
+        "BioDataFuse Knowledge Graph"^^xsd:string ;
+    prov:wasDerivedFrom <https://aopwiki.rdf.bigcat-bioinformatics.org/>,
+        <https://identifiers.org/bridgedb>,
+        <https://identifiers.org/kegg>,
+        <https://molmedb.upol.cz/> .
+
+aop.events:1003 a aopo:KeyEvent ;
+    rdfs:label "Decreased, Triiodothyronine (T3)"^^xsd:string .
+
+aop.events:1005 a aopo:KeyEvent ;
+    rdfs:label "Reduced, Swimming performance"^^xsd:string .
+
+aop.events:1007 a aopo:KeyEvent ;
+    rdfs:label "Reduced, Anterior swim bladder inflation"^^xsd:string ;
+    aopo:OrganContext uberon:0006860 .
+
+aop.events:1101 a aopo:KeyEvent ;
+    rdfs:label "Altered, Amphibian metamorphosis"^^xsd:string .
+
+aop.events:1115 a aopo:KeyEvent ;
+    rdfs:label "Increase, Reactive oxygen species"^^xsd:string ;
+    aopo:OrganContext uberon:0000062 .
+
+aop.events:1172 a aopo:KeyEvent ;
+    rdfs:label "Increased activation, Nuclear factor kappa B (NF-kB)"^^xsd:string ;
+    aopo:OrganContext uberon:0000479 .
+
+aop.events:1174 a aopo:KeyEvent ;
+    rdfs:label "Activation, NADPH Oxidase"^^xsd:string .
+
+aop.events:1202 a aopo:KeyEvent ;
+    rdfs:label "Suppression, IL-2 and IL-4 production"^^xsd:string ;
+    aopo:OrganContext uberon:0002405 .
+
+aop.events:1283 a aopo:KeyEvent ;
+    rdfs:label "Activation, TGF-beta pathway"^^xsd:string .
+
+aop.events:1365 a aopo:KeyEvent ;
+    rdfs:label "Increase, Apoptosis"^^xsd:string .
+
+aop.events:1392 a aopo:KeyEvent ;
+    rdfs:label "Oxidative Stress "^^xsd:string .
+
+aop.events:1706 a aopo:KeyEvent ;
+    rdfs:label "Stimulation, TLR7/8"^^xsd:string .
+
+aop.events:1707 a aopo:KeyEvent ;
+    rdfs:label "Increase, IL-23 from matured dendritic cells"^^xsd:string ;
+    aopo:OrganContext uberon:0002405 .
+
+aop.events:1708 a aopo:KeyEvent ;
+    rdfs:label "Th17 cell migration and inflammation induction"^^xsd:string ;
+    aopo:OrganContext uberon:0002405 .
+
+aop.events:1709 a aopo:KeyEvent ;
+    rdfs:label "Psoriatic skin disease"^^xsd:string .
+
+aop.events:177 a aopo:KeyEvent ;
+    rdfs:label "Mitochondrial dysfunction"^^xsd:string ;
+    aopo:OrganContext uberon:0000062 .
+
+aop.events:1822 a aopo:KeyEvent ;
+    rdfs:label "Maturation of TNF/iNOS-Producing Dendritic Cells"^^xsd:string .
+
+aop.events:280 a aopo:KeyEvent ;
+    rdfs:label "Thyroxine (T4) in neuronal tissue, Decreased "^^xsd:string ;
+    aopo:OrganContext uberon:0000955 .
+
+aop.events:351 a aopo:KeyEvent ;
+    rdfs:label "Increased Mortality"^^xsd:string .
+
+aop.events:360 a aopo:KeyEvent ;
+    rdfs:label "Decrease, Population growth rate"^^xsd:string .
+
+aop.events:402 a aopo:KeyEvent ;
+    rdfs:label "Cognitive function, decreased "^^xsd:string .
+
+aop.events:756 a aopo:KeyEvent ;
+    rdfs:label "Hippocampal gene expression, Altered "^^xsd:string ;
+    aopo:OrganContext uberon:0000955 .
+
+aop.events:757 a aopo:KeyEvent ;
+    rdfs:label "Hippocampal anatomy, Altered "^^xsd:string ;
+    aopo:OrganContext uberon:0000955 .
+
+aop.events:758 a aopo:KeyEvent ;
+    rdfs:label "Hippocampal Physiology, Altered"^^xsd:string ;
+    aopo:OrganContext uberon:0000955 .
+
+aop.events:759 a aopo:KeyEvent ;
+    rdfs:label "Increased, Kidney Failure"^^xsd:string .
+
+aop.events:957 a aopo:KeyEvent ;
+    rdfs:label "Binding, Transthyretin in serum"^^xsd:string ;
+    aopo:OrganContext uberon:0001977 .
+
+aop.events:958 a aopo:KeyEvent ;
+    rdfs:label "Displacement, Serum thyroxine (T4) from transthyretin"^^xsd:string .
+
+aop.events:959 a aopo:KeyEvent ;
+    rdfs:label "Increased, Free serum thyroxine (T4)"^^xsd:string ;
+    aopo:OrganContext uberon:0000178 .
+
+aop.events:960 a aopo:KeyEvent ;
+    rdfs:label "Increased, Uptake of thyroxine into tissue"^^xsd:string .
+
+aop.events:961 a aopo:KeyEvent ;
+    rdfs:label "Increased, Clearance of thyroxine from serum"^^xsd:string ;
+    aopo:OrganContext uberon:0002107 .
+
+aop.events:979 a aopo:KeyEvent ;
+    rdfs:label "Interference, nuclear localization of NFAT"^^xsd:string ;
+    aopo:OrganContext uberon:0002405 .
+
+aop.events:980 a aopo:KeyEvent ;
+    rdfs:label "Inhibition, Calcineurin Activity"^^xsd:string .
+
+aop.events:981 a aopo:KeyEvent ;
+    rdfs:label "Reduction, NFAT/AP-1 complex formation"^^xsd:string ;
+    aopo:OrganContext uberon:0002405 .
+
+aop.events:984 a aopo:KeyEvent ;
+    rdfs:label "Impairment, T-cell dependent antibody response"^^xsd:string .
+
+aop:152 a aopo:AOP ;
+    rdfs:label "Interference with thyroid serum binding protein transthyretin and subsequent adverse human neurodevelopmental toxicity "^^xsd:string ;
+    aopo:has_key_event aop.events:280,
+        aop.events:281,
+        aop.events:402,
+        aop.events:756,
+        aop.events:757,
+        aop.events:758,
+        aop.events:957,
+        aop.events:958,
+        aop.events:959,
+        aop.events:960,
+        aop.events:961 .
+
+aop:154 a aopo:AOP ;
+    rdfs:label "Inhibition of Calcineurin Activity Leading to Impaired T-Cell Dependent Antibody Response"^^xsd:string ;
+    aopo:has_key_event aop.events:1202,
+        aop.events:979,
+        aop.events:980,
+        aop.events:981,
+        aop.events:984 .
+
+aop:313 a aopo:AOP ;
+    rdfs:label "Stimulation of TLR7/8 in dendric cells leading to Psoriatic skin disease"^^xsd:string ;
+    aopo:has_key_event aop.events:1706,
+        aop.events:1707,
+        aop.events:1708,
+        aop.events:1709,
+        aop.events:1822 .
+
+aop:622 a aopo:AOP ;
+    rdfs:label "Calcineurin inhibitor induced nephrotoxicity leading to kidney failure"^^xsd:string ;
+    aopo:has_key_event aop.events:1115,
+        aop.events:1172,
+        aop.events:1174,
+        aop.events:1283,
+        aop.events:1365,
+        aop.events:1392,
+        aop.events:177,
+        aop.events:759 .
+
+orcid:0000-0002-4166-7093 a foaf:Person,
+        schema:Person ;
+    foaf:name "Javier Millan Acosta"^^xsd:string .
+
+pubchem.compound:100208 a cheminf:SIO_010038 ;
+    rdfs:label "100208"^^xsd:string ;
+    pav:importedFrom <https://aopwiki.rdf.bigcat-bioinformatics.org/> ;
+    owl:sameAs pubchem.compound:100208 .
+
+pubchem.compound:10025195 a cheminf:SIO_010038 ;
+    rdfs:label "10025195"^^xsd:string ;
+    pav:importedFrom <https://aopwiki.rdf.bigcat-bioinformatics.org/> ;
+    owl:sameAs pubchem.compound:10025195 .
+
+pubchem.compound:10040286 a cheminf:SIO_010038 ;
+    rdfs:label "10040286"^^xsd:string ;
+    pav:importedFrom <https://aopwiki.rdf.bigcat-bioinformatics.org/> ;
+    owl:sameAs pubchem.compound:10040286 .
+
+pubchem.compound:10041551 a cheminf:SIO_010038 ;
+    rdfs:label "10041551"^^xsd:string ;
+    pav:importedFrom <https://aopwiki.rdf.bigcat-bioinformatics.org/> ;
+    owl:sameAs pubchem.compound:10041551 .
+
+pubchem.compound:1060 a cheminf:SIO_010038 ;
+    rdfs:label "1060"^^xsd:string ;
+    pav:importedFrom <https://aopwiki.rdf.bigcat-bioinformatics.org/> ;
+    owl:sameAs pubchem.compound:1060 .
+
+pubchem.compound:1172 a cheminf:SIO_010038 ;
+    rdfs:label "1172"^^xsd:string ;
+    pav:importedFrom <https://aopwiki.rdf.bigcat-bioinformatics.org/> ;
+    owl:sameAs pubchem.compound:1172 .
+
+pubchem.compound:159603 a cheminf:SIO_010038 ;
+    rdfs:label "159603"^^xsd:string ;
+    pav:importedFrom <https://aopwiki.rdf.bigcat-bioinformatics.org/> ;
+    cheminf:SIO_001403 aop:313 ;
+    owl:sameAs pubchem.compound:159603 .
+
+pubchem.compound:21831736 a cheminf:SIO_010038 ;
+    rdfs:label "21831736"^^xsd:string ;
+    pav:importedFrom <https://aopwiki.rdf.bigcat-bioinformatics.org/> ;
+    cheminf:SIO_001403 aop:159,
+        aop:175 ;
+    owl:sameAs pubchem.compound:21831736 .
+
+pubchem.compound:445643 a cheminf:SIO_010038 ;
+    rdfs:label "445643"^^xsd:string ;
+    pav:importedFrom <https://aopwiki.rdf.bigcat-bioinformatics.org/> ;
+    cheminf:SIO_001403 aop:154,
+        aop:622 ;
+    owl:sameAs pubchem.compound:445643 .
+
+pubchem.compound:5291 a cheminf:SIO_010038 ;
+    rdfs:label "5291"^^xsd:string ;
+    pav:importedFrom <https://aopwiki.rdf.bigcat-bioinformatics.org/> ;
+    owl:sameAs pubchem.compound:5291 .
+
+pubchem.compound:6030 a cheminf:SIO_010038 ;
+    rdfs:label "6030"^^xsd:string ;
+    pav:importedFrom <https://aopwiki.rdf.bigcat-bioinformatics.org/> ;
+    owl:sameAs pubchem.compound:6030 .
+
+pubchem.compound:697993 a cheminf:SIO_010038 ;
+    rdfs:label "697993"^^xsd:string ;
+    pav:importedFrom <https://aopwiki.rdf.bigcat-bioinformatics.org/> ;
+    cheminf:SIO_001403 aop:159,
+        aop:175 ;
+    owl:sameAs pubchem.compound:697993 .
+
+pubchem.compound:8571 a cheminf:SIO_010038 ;
+    rdfs:label "8571"^^xsd:string ;
+    pav:importedFrom <https://aopwiki.rdf.bigcat-bioinformatics.org/> ;
+    cheminf:SIO_001403 aop:152,
+        aop:175 ;
+    owl:sameAs pubchem.compound:8571 .
+
+aop.events:277 a aopo:KeyEvent ;
+    rdfs:label "Thyroid hormone synthesis, Decreased"^^xsd:string ;
+    aopo:OrganContext uberon:0002046 .
+
+aop.events:279 a aopo:KeyEvent ;
+    rdfs:label "Thyroperoxidase, Inhibition"^^xsd:string ;
+    aopo:OrganContext uberon:0005305 .
+
+aop:159 a aopo:AOP ;
+    rdfs:label "Thyroperoxidase inhibition leading to increased mortality via reduced anterior swim bladder inflation"^^xsd:string ;
+    aopo:has_key_event aop.events:1003,
+        aop.events:1005,
+        aop.events:1007,
+        aop.events:277,
+        aop.events:279,
+        aop.events:281,
+        aop.events:351,
+        aop.events:360 .
+
+aop.events:281 a aopo:KeyEvent ;
+    rdfs:label " Thyroxine (T4) in serum, Decreased"^^xsd:string ;
+    aopo:OrganContext uberon:0001977 .
+
+aop:175 a aopo:AOP ;
+    rdfs:label "Thyroperoxidase inhibition leading to altered amphibian metamorphosis"^^xsd:string ;
+    aopo:has_key_event aop.events:1101,
+        aop.events:277,
+        aop.events:279,
+        aop.events:281 .
+
+<https://identifiers.org/bridgedb> a void:Dataset,
+        dcat:Dataset ;
+    rdfs:label "BridgeDB"^^xsd:string ;
+    dcterms:hasVersion "{'java.version': '11.0.16', 'bridgedb.version': '3.0.25', 'webservice.version': '2.1.7'}"^^xsd:string ;
+    dcterms:source <https://identifiers.org/bridgedb> ;
+    dcterms:title "BridgeDB Dataset"^^xsd:string ;
+    pav:retrievedFrom <https://identifiers.org/bridgedb> ;
+    pav:retrievedOn "2026-02-03T11:10:35+00:00"^^xsd:dateTime ;
+    pav:version "{'java.version': '11.0.16', 'bridgedb.version': '3.0.25', 'webservice.version': '2.1.7'}"^^xsd:string ;
+    dcat:accessURL <https://webservice.bridgedb.org/Human/xrefsBatch> ;
+    dcat:landingPage <https://www.bridgedb.org/> ;
+    prov:generatedAtTime "2026-02-03T11:10:35+00:00"^^xsd:dateTime ;
+    schema:url <https://www.bridgedb.org/> .
+
+<https://identifiers.org/kegg> a void:Dataset,
+        dcat:Dataset ;
+    rdfs:label "KEGG"^^xsd:string ;
+    dcterms:hasVersion "117.0+/02-03"^^xsd:string ;
+    dcterms:source <https://identifiers.org/kegg> ;
+    dcterms:title "KEGG Dataset"^^xsd:string ;
+    pav:retrievedFrom <https://identifiers.org/kegg> ;
+    pav:retrievedOn "2026-02-03T11:11:27+00:00"^^xsd:dateTime ;
+    pav:version "117.0+/02-03"^^xsd:string ;
+    dcat:accessURL <https://rest.kegg.jp> ;
+    prov:generatedAtTime "2026-02-03T11:11:27+00:00"^^xsd:dateTime .
+
+<https://molmedb.upol.cz/> a void:Dataset,
+        dcat:Dataset ;
+    rdfs:label "MolMeDB"^^xsd:string ;
+    dcterms:source <https://molmedb.upol.cz/> ;
+    dcterms:title "MolMeDB Dataset"^^xsd:string ;
+    pav:retrievedFrom <https://molmedb.upol.cz/> ;
+    pav:retrievedOn "2026-02-03T11:10:36+00:00"^^xsd:dateTime ;
+    void:sparqlEndpoint <https://idsm.elixir-czech.cz/sparql/endpoint/molmedb> ;
+    dcat:accessURL <https://idsm.elixir-czech.cz/sparql/endpoint/molmedb> ;
+    dcat:landingPage <https://molmedb.upol.cz> ;
+    prov:generatedAtTime "2026-02-03T11:10:36+00:00"^^xsd:dateTime ;
+    schema:url <https://molmedb.upol.cz> .
+
+<https://aopwiki.rdf.bigcat-bioinformatics.org/> a void:Dataset,
+        dcat:Dataset ;
+    rdfs:label "AOP_Wiki_RDF"^^xsd:string ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    dcterms:source <https://aopwiki.rdf.bigcat-bioinformatics.org/> ;
+    dcterms:title "AOP_Wiki_RDF Dataset"^^xsd:string ;
+    pav:retrievedFrom <https://aopwiki.rdf.bigcat-bioinformatics.org/> ;
+    pav:retrievedOn "2026-02-03T11:10:36+00:00"^^xsd:dateTime ;
+    void:sparqlEndpoint <https://aopwiki.rdf.bigcat-bioinformatics.org/sparql/> ;
+    dcat:accessURL <https://aopwiki.rdf.bigcat-bioinformatics.org/sparql/> ;
+    dcat:landingPage <https://aopwiki.rdf.bigcat-bioinformatics.org> ;
+    prov:generatedAtTime "2026-02-03T11:10:36+00:00"^^xsd:dateTime ;
+    schema:url <https://aopwiki.rdf.bigcat-bioinformatics.org> .
+
