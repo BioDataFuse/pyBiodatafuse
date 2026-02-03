@@ -7,18 +7,19 @@ The module contains special functions that are server expensive and can only be 
 
 import time
 from typing import Literal
+
 import pandas as pd
 import requests
 from tqdm import tqdm
 
-from pyBiodatafuse.constants import PATENT_INPUT_ID
-from pyBiodatafuse.utils import get_identifier_of_interest
 from pyBiodatafuse.analyzer.utils import (
-    plotly_pie_chart,
-    plotly_barplot_chart,
     plot_hbarplot_chart,
     plot_pie_chart,
+    plotly_barplot_chart,
+    plotly_pie_chart,
 )
+from pyBiodatafuse.constants import PATENT_INPUT_ID
+from pyBiodatafuse.utils import get_identifier_of_interest
 
 
 def process_patent_data(patent_dict: dict) -> pd.DataFrame:
@@ -109,6 +110,8 @@ def plot_patent_summary(
     :param patent_df: A dataframe with two columns: "label" and "value"
     :param compound_id: The compound identifier for the title
     :param fig_size: A tuple with the size of the figure
+    :param interactive: Whether to create an interactive plotly plot or a static matplotlib plot
+    :param plot_style: The style of the plot, either "bar" or "pie
     :returns: A bar plot
     """
     if compound_id == "":

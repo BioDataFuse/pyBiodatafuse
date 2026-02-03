@@ -19,6 +19,7 @@ def plot_pie_chart(
 
     :param template_df: A dataframe with two columns: "label" and "value"
     :param fig_size: A tuple with the size of the figure
+    :param fig_title: The title of the figure
     :returns: A pie chart
     """
     plt.figure(figsize=fig_size)
@@ -41,6 +42,7 @@ def plot_hbarplot_chart(
     :param x_label: The x-axis label
     :param y_label: The y-axis label
     :param fig_size: A tuple with the size of the figure
+    :param fig_title: The title of the figure
     :returns: A bar plot
     """
     plt.figure(figsize=fig_size)
@@ -78,6 +80,7 @@ def plotly_pie_chart(
 
     :param template_df: A dataframe with two columns: "label" and "value"
     :param fig_size: A tuple with the size of the figure
+    :param fig_title: The title of the figure
     :returns: A plotly pie chart
     """
     fig = px.pie(template_df, values="value", names="label", width=fig_size[0], height=fig_size[1])
@@ -98,6 +101,7 @@ def plotly_barplot_chart(
     :param x_label: The x-axis label
     :param y_label: The y-axis label
     :param fig_size: A tuple with the size of the figure
+    :param fig_title: The title of the figure
     :returns: A bar plot
     """
     fig = px.bar(template_df, x="value", y="label").update_layout(

@@ -12,12 +12,7 @@ from rdflib import Graph, Literal, URIRef
 from rdflib.namespace import XSD
 
 import pyBiodatafuse.constants as Cons
-from pyBiodatafuse.graph.rdf.nodes.base import (
-    add_triples,
-    add_type,
-    create_node,
-    safe_get,
-)
+from pyBiodatafuse.graph.rdf.nodes.base import add_triples, add_type, create_node, safe_get
 
 
 def add_ppi_data(g: Graph, gene_node: URIRef, entry: dict) -> Optional[URIRef]:
