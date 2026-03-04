@@ -1,8 +1,80 @@
-cff-version: 1.0.2
-message: "If you use this software, please cite it as below."
-title: "pyBioDataFuse"
+cff-version: 1.2.0
+type: software
+title: pyBioDataFuse
+version: v1.3.1
+date-released: 2026-02-03
+license: MIT
+
+abstract: >
+  BioDataFuse is a query-based tool for seamless integration of biomedical
+  databases. It establishes a modular framework for efficient data wrangling,
+  enabling context-specific knowledge graph creation and supporting graph-based
+  analyses. Alongside the Pythonic module, it provides a user-friendly interface
+  that enables users to dynamically create knowledge graphs from their input data.
+  Supported by the robust Python package pyBioDataFuse, this tool excels at data
+  harmonization, aggregating diverse sources via modular queries. Moreover,
+  BioDataFuse provides plugin capabilities for Cytoscape and Neo4j, allowing
+  local graph hosting. Ongoing refinements enhance the graph's utility through
+  tasks such as link prediction, making BioDataFuse a versatile solution for
+  efficient and effective biological data integration.
+
 authors:
-  - name: "Tooba Abbassi-Daloii"
-version: 0.0.1-dev
-doi:
-url: "https://github.com/BioDataFuse/pyBiodatafuse"
+  - family-names: Abbassi-Daloii
+    given-names: Tooba
+    affiliation: Maastricht University
+    orcid: https://orcid.org/0000-0002-4904-3269
+
+  - family-names: Gadiya
+    given-names: Yojana
+    affiliation: Enveda Therapeutics (United States)
+    orcid: https://orcid.org/0000-0002-7683-0452
+
+  - family-names: Millán Acosta
+    given-names: Javier
+    orcid: https://orcid.org/0000-0002-4166-7093
+
+  - family-names: Willighagen
+    given-names: Egon
+    affiliation: Maastricht University
+    orcid: https://orcid.org/0000-0001-7542-0286
+
+  - family-names: Mei
+    given-names: Hailiang
+    orcid: https://orcid.org/0000-0003-1781-5508
+
+  - family-names: Sima
+    given-names: Ana Claudia
+    affiliation: Swiss Institute of Bioinformatics Geneva
+    orcid: https://orcid.org/0000-0003-3213-4495
+
+  - family-names: Martinát
+    given-names: Dominik
+    affiliation: Univerzita Palackého v Olomouci Přírodovědecká fakulta
+    orcid: https://orcid.org/0000-0001-6611-7883
+
+  - family-names: Adriaque Lozano
+    given-names: Alejandro
+    affiliation: Maastricht University
+    orcid: https://orcid.org/0009-0007-2725-2098
+
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.18468943
+    description: Archived software release on Zenodo
+
+repository-code: https://github.com/<org>/pyBioDataFuse
+url: https://github.com/<org>/pyBioDataFuse
+
+keywords:
+  - biomedical data integration
+  - knowledge graphs
+  - graph databases
+  - Cytoscape
+  - Neo4j
+  - data harmonization
+
+preferred-citation:
+  type: article
+  title: "pyBiodatafuse: extending interoperability of data using modular queries across biomedical resources" 
+  journal: Bioinformatics
+  doi: 10.1093/bioinformatics/btag064
