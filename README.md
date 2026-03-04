@@ -117,6 +117,24 @@ The code in this package is licensed under the MIT License.
 The work was started as part of the [Elixir BioHackathon 2023](https://github.com/elixir-europe/biohackathon-projects-2023/tree/main/17) integrating and bringing together multiple Core Data Resources together.
 > Gadiya, Y., Ammar, A., Willighagen, E., Martinat, D., Sima, A. C., Balci, H., & Abbassi Daloii, T. (2023). BioHackEU23 report: Extending interoperability of experimental data using modular queries across biomedical resources. BioHackrXiv Preprints. https://doi.org/10.37044/osf.io/mhsqp
 
+If you use this software, please cite both the article and the software release.
+
+### Software
+```
+Abbassi-Daloii, T., Gadiya, Y., Millán Acosta, J., Willighagen, E.,
+Mei, H., Sima, A. C., Martinát, D., & Adriaque Lozano, A. (2026).
+pyBioDataFuse. Zenodo. https://doi.org/10.5281/zenodo.18468943
+```
+### Article
+```
+Gadiya Y*, Millán Acosta J*, Abbassi-Daloii T, Willighagen E,
+Mei H, Sima AC, Martinát D, Adriaque Lozano A.
+pyBiodatafuse: extending interoperability of data using modular
+queries across biomedical resources.
+Bioinformatics.
+https://doi.org/10.1093/bioinformatics/btag064
+```
+
 <!--
 ### 🎁 Support
 
