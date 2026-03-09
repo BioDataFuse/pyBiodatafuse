@@ -46,6 +46,39 @@ def check_version_intact() -> dict:
         return {"source_version": "unknown"}
 
 
+def _normalize_intact_id(raw_id: str) -> str:
+    """Normalise a raw IntAct identifier field to ``namespace:accession`` form.
+
+    The IntAct REST API returns identifiers in one of two formats:
+
+    * ``"ID (namespace)"``  – e.g. ``"Q14118 (uniprotkb)"``,
+      ``"CHEBI:15361 (chebi)"``, ``"CPX-3573 (complex portal)"``
+    * ``"namespace:ID"``    – legacy format, kept for safety.
+
+    In both cases the returned string is normalised to ``namespace:ID``.
+    Multi-word namespace suffixes (e.g. ``"complex portal"``) are preserved
+    by joining all tokens between the first ``(`` and the closing ``)``.
+
+    :param raw_id: Raw identifier string from the API response.
+    :returns: Normalised ``namespace:accession`` string.
+    """
+    raw_id = raw_id.strip()
+
+    # Current API format: "ID (namespace)" or "CHEBI:15361 (chebi)"
+    if raw_id.endswith(")") and "(" in raw_id:
+        paren_open = raw_id.index("(")
+        accession = raw_id[:paren_open].strip()
+        namespace = raw_id[paren_open + 1 : -1].strip()  # strip surrounding parens
+        # If the accession already carries a colon (e.g. CHEBI:15361) it is
+        # already in canonical form – return as-is.
+        if ":" in accession:
+            return accession
+        return f"{namespace}:{accession}"
+
+    # Legacy / already-canonical format: "namespace:ID"
+    return raw_id
+
+
 def get_intact_interactions(gene_ids: List[str]) -> List[dict]:
     """Retrieve protein interactions for a list of genes from IntAct.
 
@@ -59,19 +92,24 @@ def get_intact_interactions(gene_ids: List[str]) -> List[dict]:
     encoded_ids = urllib.parse.quote(joined_ids)
     url = f"{Cons.INTACT_ENDPOINT}/ws/interaction/findInteractions/{encoded_ids}?pageSize=200"
 
+    logger.debug("Querying IntAct interactions URL: %s", url)
+
     try:
         response = requests.get(url, timeout=60)
         data = response.json()
 
         content = data.get("content", [])
+        logger.debug("IntAct returned %d interaction records for ids: %s", len(content), gene_ids)
         if not content:
             return []
 
-        interation_info = {
+        # Mapping from our output field names to the IntAct REST API JSON keys.
+        # API reference: https://www.ebi.ac.uk/intact/ws/interaction/findInteractions
+        interaction_field_map = {
             Cons.INTACT_INTERACTION_ID: "ac",
-            Cons.INTACT_INTERACTOR_ID_A: "acA",
-            Cons.INTACT_INTERACTOR_ID_B: "acB",
-            Cons.INTACT_SCORE: "intactMiscore",
+            Cons.INTACT_INTERACTOR_ID_A: "acA",  # IntAct AC for interactor A
+            Cons.INTACT_INTERACTOR_ID_B: "acB",  # IntAct AC for interactor B
+            Cons.INTACT_SCORE: "intactMiscore",  # MI-score confidence value
             Cons.INTACT_BIOLOGICAL_ROLE_A: "biologicalRoleA",
             Cons.INTACT_BIOLOGICAL_ROLE_B: "biologicalRoleB",
             Cons.INTACT_TYPE: "type",
@@ -83,39 +121,45 @@ def get_intact_interactions(gene_ids: List[str]) -> List[dict]:
             Cons.INTACT_INTERACTOR_B_SPECIES: "speciesB",
             Cons.INTACT_MOLECULE_A: "moleculeA",
             Cons.INTACT_MOLECULE_B: "moleculeB",
+            # idA / idB: primary identifier in "ID (namespace)" format, e.g.
+            #   "Q14118 (uniprotkb)", "CHEBI:15361 (chebi)", "CPX-3573 (complex portal)"
             Cons.INTACT_ID_A: "idA",
             Cons.INTACT_ID_B: "idB",
             Cons.INTACT_PUBMED_PUBLICATION_ID: "publicationPubmedIdentifier",
         }
 
         interactions = [
-            {key: item.get(value, np.nan) for key, value in interation_info.items()}
+            {key: item.get(api_key, np.nan) for key, api_key in interaction_field_map.items()}
             for item in content
         ]
 
-        # cleanup the alternative ids
+        # Normalise idA / idB from "ID (namespace)" → "namespace:ID"
         for interaction in interactions:
-            ids_a = interaction[Cons.INTACT_ID_A]
-            ids_b = interaction[Cons.INTACT_ID_B]
+            raw_a = interaction[Cons.INTACT_ID_A]
+            raw_b = interaction[Cons.INTACT_ID_B]
 
-            if ":" in ids_a:
-                interaction[Cons.INTACT_ID_A] = ids_a.split(" ")[0]  # stays the same
+            if isinstance(raw_a, str):
+                interaction[Cons.INTACT_ID_A] = _normalize_intact_id(raw_a)
             else:
-                idx = ids_a.split(" ")[0]
-                namespace = ids_a.split(" ")[1].replace("(", "").replace(")", "")
-                interaction[Cons.INTACT_ID_A] = f"{namespace}:{idx}"
+                logger.debug(
+                    "Unexpected non-string idA value: %r (interaction %s)",
+                    raw_a,
+                    interaction.get(Cons.INTACT_INTERACTION_ID),
+                )
 
-            if ":" in ids_b:
-                interaction[Cons.INTACT_ID_B] = ids_b.split(" ")[0]  # stays the same
+            if isinstance(raw_b, str):
+                interaction[Cons.INTACT_ID_B] = _normalize_intact_id(raw_b)
             else:
-                idx = ids_b.split(" ")[0]
-                namespace = ids_b.split(" ")[1].replace("(", "").replace(")", "")
-                interaction[Cons.INTACT_ID_B] = f"{namespace}:{idx}"
+                logger.debug(
+                    "Unexpected non-string idB value: %r (interaction %s)",
+                    raw_b,
+                    interaction.get(Cons.INTACT_INTERACTION_ID),
+                )
 
         return interactions
 
     except requests.RequestException as e:
-        logger.warning(f"Batch request failed for genes {gene_ids}: {e}")
+        logger.warning("Batch request failed for ids %s: %s", gene_ids, e)
         return []
 
 
@@ -126,12 +170,16 @@ def get_protein_intact_acs(id_of_interest: str) -> List[str]:
     :returns: Interactor information if possible, empty list if not.
     """
     url = f"{Cons.INTACT_ENDPOINT}/ws/interactor/findInteractor/{id_of_interest}?pageSize=100"
+    logger.debug("Querying IntAct interactor lookup URL: %s", url)
     try:
         response = requests.get(url, timeout=120)
         response.raise_for_status()
         data = response.json()
 
         content = data.get("content", [])
+        logger.debug(
+            "IntAct interactor lookup returned %d records for %s", len(content), id_of_interest
+        )
 
         protein_acs = []
         for item in content:
@@ -141,10 +189,13 @@ def get_protein_intact_acs(id_of_interest: str) -> List[str]:
             if interactor_type == "protein":
                 protein_acs.append(interactor_ac)
 
+        logger.debug(
+            "Found %d protein AC(s) for %s: %s", len(protein_acs), id_of_interest, protein_acs
+        )
         return protein_acs
 
     except requests.exceptions.RequestException as e:
-        logger.warning(f"Failed to get interactors for {id_of_interest}: {e}")
+        logger.warning("Failed to get interactors for %s: %s", id_of_interest, e)
         return []
 
 
@@ -170,6 +221,13 @@ def get_filtered_interactions(
     """
     results: Dict[str, List[dict]] = {idx: [] for idx in batch_ids}
     interactions = get_intact_interactions(batch_ids)
+    logger.debug(
+        "Filtering %d raw interactions for batch %s (interaction_type=%s, is_compound=%s)",
+        len(interactions),
+        batch_ids,
+        interaction_type,
+        is_compound,
+    )
 
     for interaction in interactions:
         if interaction_type in Cons.INTACT_GENE_INTERACTION_TYPES and not is_compound:
@@ -234,6 +292,13 @@ def get_filtered_interactions(
                 keep_interaction = True
 
         if not keep_interaction:
+            logger.debug(
+                "Skipping interaction %s (id_a=%s, id_b=%s) – does not match type '%s'",
+                interaction.get(Cons.INTACT_INTERACTION_ID),
+                id_a,
+                id_b,
+                interaction_type,
+            )
             continue
 
         for idx in batch_ids:
@@ -252,9 +317,12 @@ def get_filtered_interactions(
 
     for gene_id in batch_ids:
         if not results[gene_id]:
+            logger.debug("No interactions found for %s – inserting empty entry", gene_id)
             empty_entry = {key: np.nan for key in Cons.INTACT_OUTPUT_DICT}
             empty_entry["intact_link_to"] = np.nan
             results[gene_id] = [empty_entry]
+        else:
+            logger.debug("Kept %d interaction(s) for %s", len(results[gene_id]), gene_id)
 
     return results
 

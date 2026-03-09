@@ -8,11 +8,12 @@ The module contains special functions that are server expensive and can only be 
 import time
 from typing import Literal, Union
 
+import matplotlib.pyplot as plt
 import pandas as pd
+import plotly.express as px
 import requests
 from tqdm import tqdm
-import plotly.express as px
-import matplotlib.pyplot as plt
+
 from pyBiodatafuse.analyzer.utils import (
     plot_hbarplot_chart,
     plot_pie_chart,
