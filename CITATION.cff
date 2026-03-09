@@ -23,35 +23,28 @@ authors:
     given-names: Tooba
     affiliation: Maastricht University
     orcid: https://orcid.org/0000-0002-4904-3269
-
   - family-names: Gadiya
     given-names: Yojana
     affiliation: Enveda Therapeutics (United States)
     orcid: https://orcid.org/0000-0002-7683-0452
-
   - family-names: Millán Acosta
     given-names: Javier
     orcid: https://orcid.org/0000-0002-4166-7093
-
   - family-names: Willighagen
     given-names: Egon
     affiliation: Maastricht University
     orcid: https://orcid.org/0000-0001-7542-0286
-
   - family-names: Mei
     given-names: Hailiang
     orcid: https://orcid.org/0000-0003-1781-5508
-
   - family-names: Sima
     given-names: Ana Claudia
     affiliation: Swiss Institute of Bioinformatics Geneva
     orcid: https://orcid.org/0000-0003-3213-4495
-
   - family-names: Martinát
     given-names: Dominik
     affiliation: Univerzita Palackého v Olomouci Přírodovědecká fakulta
     orcid: https://orcid.org/0000-0001-6611-7883
-
   - family-names: Adriaque Lozano
     given-names: Alejandro
     affiliation: Maastricht University
@@ -62,8 +55,8 @@ identifiers:
     value: 10.5281/zenodo.18468943
     description: Archived software release on Zenodo
 
-repository-code: https://github.com/<org>/pyBioDataFuse
-url: https://github.com/<org>/pyBioDataFuse
+repository-code: https://github.com/BioDataFuse/pyBiodatafuse
+url: https://github.com/BioDataFuse/pyBiodatafuse
 
 keywords:
   - biomedical data integration
@@ -75,6 +68,32 @@ keywords:
 
 preferred-citation:
   type: article
-  title: "pyBiodatafuse: extending interoperability of data using modular queries across biomedical resources" 
+  title: "pyBiodatafuse: extending interoperability of data using modular queries across biomedical resources"
   journal: Bioinformatics
+  year: 2023
   doi: 10.1093/bioinformatics/btag064
+  authors:
+    - family-names: Gadiya
+      given-names: Yojana
+      orcid: https://orcid.org/0000-0002-7683-0452
+    - family-names: Millán Acosta
+      given-names: Javier
+      orcid: https://orcid.org/0000-0002-4166-7093
+    - family-names: Abbassi-Daloii
+      given-names: Tooba
+      orcid: https://orcid.org/0000-0002-4904-3269
+    - family-names: Willighagen
+      given-names: Egon
+      orcid: https://orcid.org/0000-0001-7542-0286
+    - family-names: Mei
+      given-names: Hailiang
+      orcid: https://orcid.org/0000-0003-1781-5508
+    - family-names: Sima
+      given-names: Ana Claudia
+      orcid: https://orcid.org/0000-0003-3213-4495
+    - family-names: Martinát
+      given-names: Dominik
+      orcid: https://orcid.org/0000-0001-6611-7883
+    - family-names: Adriaque Lozano
+      given-names: Alejandro
+      orcid: https://orcid.org/0009-0007-2725-2098
