@@ -16,8 +16,104 @@ class TestIntact(unittest.TestCase):
     """Test the IntAct class."""
 
     def test_get_interactions(self):
-        """Test the get_interactions function."""
+        """Test the get_interactions function with mocked API calls.
+
+        Uses controlled mock data to verify:
+        - gene-gene interactions where only one interactor is the input gene are kept (OR logic)
+        - gene-compound interactions are kept under 'both' mode
+        - interactions where neither interactor is the input gene are excluded
+        """
         intact.check_endpoint_intact = Mock(return_value=True)
+        # DAG1 AC is EBI-1755945
+        intact.get_protein_intact_acs = Mock(return_value=["EBI-1755945"])
+
+        mock_interactions = [
+            # Gene-gene: both sides are DAG1 (self-interaction) – should be kept
+            {
+                "interaction_id": "EBI-SELF",
+                "interactor_id_A": "EBI-1755945",
+                "interactor_id_B": "EBI-1755945",
+                "score": 0.56,
+                "biological_role_A": "unspecified role",
+                "biological_role_B": "unspecified role",
+                "type": "direct interaction",
+                "detection_method": "x-ray diffraction",
+                "host_organism": "In vitro",
+                "interactor_A_name": "dag1_human",
+                "interactor_B_name": "dag1_human",
+                "interactor_A_species": "Homo sapiens",
+                "interactor_B_species": "Homo sapiens",
+                "molecule_A": "DAG1",
+                "molecule_B": "DAG1",
+                "id_A": "uniprotkb:Q14118",
+                "id_B": "uniprotkb:Q14118",
+                "pubmed_publication_id": "11111111",
+            },
+            # Gene-gene: only B is DAG1 – should be kept (OR logic)
+            {
+                "interaction_id": "EBI-PARTNER",
+                "interactor_id_A": "EBI-9999999",
+                "interactor_id_B": "EBI-1755945",
+                "score": 0.4,
+                "biological_role_A": "unspecified role",
+                "biological_role_B": "unspecified role",
+                "type": "association",
+                "detection_method": "anti tag coip",
+                "host_organism": "Homo sapiens HEK293T",
+                "interactor_A_name": "partner_human",
+                "interactor_B_name": "dag1_human",
+                "interactor_A_species": "Homo sapiens",
+                "interactor_B_species": "Homo sapiens",
+                "molecule_A": "PARTNER",
+                "molecule_B": "DAG1",
+                "id_A": "uniprotkb:P99999",
+                "id_B": "uniprotkb:Q14118",
+                "pubmed_publication_id": "22222222",
+            },
+            # Gene-compound: A is a ChEBI compound, B is DAG1 – kept under 'both'
+            {
+                "interaction_id": "EBI-COMPOUND",
+                "interactor_id_A": "EBI-5327879",
+                "interactor_id_B": "EBI-1755945",
+                "score": 0.4,
+                "biological_role_A": "unspecified role",
+                "biological_role_B": "unspecified role",
+                "type": "physical association",
+                "detection_method": "biophysical",
+                "host_organism": "In vitro",
+                "interactor_A_name": "ganglioside_gm1",
+                "interactor_B_name": "dag1_human",
+                "interactor_A_species": "Chemical synthesis (Chemical synthesis)",
+                "interactor_B_species": "Homo sapiens",
+                "molecule_A": "ganglioside_gm1",
+                "molecule_B": "DAG1",
+                "id_A": "CHEBI:61048",
+                "id_B": "uniprotkb:Q14118",
+                "pubmed_publication_id": "33333333",
+            },
+            # Gene-gene: neither A nor B is DAG1 – should be excluded
+            {
+                "interaction_id": "EBI-UNRELATED",
+                "interactor_id_A": "EBI-1111111",
+                "interactor_id_B": "EBI-2222222",
+                "score": 0.5,
+                "biological_role_A": "unspecified role",
+                "biological_role_B": "unspecified role",
+                "type": "association",
+                "detection_method": "anti tag coip",
+                "host_organism": "In vitro",
+                "interactor_A_name": "other_a",
+                "interactor_B_name": "other_b",
+                "interactor_A_species": "Homo sapiens",
+                "interactor_B_species": "Homo sapiens",
+                "molecule_A": "OTHERA",
+                "molecule_B": "OTHERB",
+                "id_A": "uniprotkb:P11111",
+                "id_B": "uniprotkb:P22222",
+                "pubmed_publication_id": "44444444",
+            },
+        ]
+        intact.get_intact_interactions = Mock(return_value=mock_interactions)
 
         bridgedb_dataframe = pd.DataFrame(
             {
@@ -32,78 +128,14 @@ class TestIntact(unittest.TestCase):
             bridgedb_dataframe, interaction_type="both"
         )
 
-        expected_data = pd.Series(
-            [
-                [
-                    {
-                        "interaction_id": "EBI-7882257",
-                        "interactor_id_A": "EBI-1755945",
-                        "interactor_id_B": "EBI-1755945",
-                        "score": 0.56,
-                        "biological_role_A": "unspecified role",
-                        "biological_role_B": "unspecified role",
-                        "type": "direct interaction",
-                        "detection_method": "x-ray diffraction",
-                        "host_organism": "In vitro",
-                        "interactor_A_name": "dag1_human",
-                        "interactor_B_name": "dag1_human",
-                        "interactor_A_species": "Homo sapiens",
-                        "interactor_B_species": "Homo sapiens",
-                        "molecule_A": "DAG1",
-                        "molecule_B": "DAG1",
-                        "id_A": "uniprotkb:Q14118",
-                        "id_B": "uniprotkb:Q14118",
-                        "pubmed_publication_id": "11423118",
-                        "intact_link_to": "DAG1",
-                    },
-                    {
-                        "interaction_id": "EBI-7882311",
-                        "interactor_id_A": "EBI-1755945",
-                        "interactor_id_B": "EBI-1755945",
-                        "score": 0.56,
-                        "biological_role_A": "unspecified role",
-                        "biological_role_B": "unspecified role",
-                        "type": "direct interaction",
-                        "detection_method": "elisa",
-                        "host_organism": "In vitro",
-                        "interactor_A_name": "dag1_human",
-                        "interactor_B_name": "dag1_human",
-                        "interactor_A_species": "Homo sapiens",
-                        "interactor_B_species": "Homo sapiens",
-                        "molecule_A": "DAG1",
-                        "molecule_B": "DAG1",
-                        "id_A": "uniprotkb:Q14118",
-                        "id_B": "uniprotkb:Q14118",
-                        "pubmed_publication_id": "11423118",
-                        "intact_link_to": "DAG1",
-                    },
-                    {
-                        "interaction_id": "EBI-5327885",
-                        "interactor_id_A": "EBI-5327879",
-                        "interactor_id_B": "EBI-1755945",
-                        "score": 0.4,
-                        "biological_role_A": "unspecified role",
-                        "biological_role_B": "unspecified role",
-                        "type": "physical association",
-                        "detection_method": "biophysical",
-                        "host_organism": "Homo sapiens HeLa S3 epitheloid cervical carcinoma cell",
-                        "interactor_A_name": "ganglioside_gm1",
-                        "interactor_B_name": "dag1_human",
-                        "interactor_A_species": "Chemical synthesis (Chemical synthesis)",
-                        "interactor_B_species": "Homo sapiens",
-                        "molecule_A": "ganglioside_gm1",
-                        "molecule_B": "DAG1",
-                        "id_A": "CHEBI:61048",
-                        "id_B": "uniprotkb:Q14118",
-                        "pubmed_publication_id": "22106087",
-                        "intact_link_to": "CHEBI:61048",
-                    },
-                ]
-            ]
-        )
-        expected_data.name = INTACT_INTERACT_COL
-
-        pd.testing.assert_series_equal(obtained_data[INTACT_INTERACT_COL], expected_data)
+        result = obtained_data[INTACT_INTERACT_COL].iloc[0]
+        # 3 interactions should be kept (self, partner, compound); unrelated excluded
+        self.assertEqual(len(result), 3)
+        interaction_ids = {r["interaction_id"] for r in result}
+        self.assertIn("EBI-SELF", interaction_ids)
+        self.assertIn("EBI-PARTNER", interaction_ids)
+        self.assertIn("EBI-COMPOUND", interaction_ids)
+        self.assertNotIn("EBI-UNRELATED", interaction_ids)
         self.assertIsInstance(metadata, dict)
 
     def test_get_compound_interactions(self):
