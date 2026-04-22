@@ -230,13 +230,15 @@ def get_ppi(
 
     # Retrieve NCBI taxonomy identifier using the given species term
     params = {"db": "taxonomy", "term": species, "retmode": "json"}
-    response = requests.get(
-        f"{Cons.NCBI_ENDPOINT}/entrez/eutils/esearch.fcgi", params=params
-    ).json()
     try:
+        ncbi_resp = requests.get(
+            f"{Cons.NCBI_ENDPOINT}/entrez/eutils/esearch.fcgi", params=params
+        )
+        ncbi_resp.raise_for_status()
+        response = ncbi_resp.json()
         species_id = response["esearchresult"]["idlist"][0]
-    except (KeyError, IndexError):
-        logger.error("NCBI taxonomy search did not return an ID for species: %s", species)
+    except Exception as e:
+        logger.error("NCBI taxonomy search failed for species '%s': %s", species, e)
         return pd.DataFrame(), {}
 
     data_df = get_identifier_of_interest(
