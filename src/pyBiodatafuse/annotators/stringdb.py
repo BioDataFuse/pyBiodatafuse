@@ -228,8 +228,15 @@ def get_ppi(
     # Record the start time
     start_time = datetime.datetime.now()
 
+    # Known fallback taxonomy IDs to avoid hard dependency on NCBI API
+    _SPECIES_FALLBACK = {
+        "human": "9606",
+        "homo sapiens": "9606",
+    }
+
     # Retrieve NCBI taxonomy identifier using the given species term
     params = {"db": "taxonomy", "term": species, "retmode": "json"}
+    species_id = None
     try:
         ncbi_resp = requests.get(
             f"{Cons.NCBI_ENDPOINT}/entrez/eutils/esearch.fcgi", params=params
@@ -238,8 +245,28 @@ def get_ppi(
         response = ncbi_resp.json()
         species_id = response["esearchresult"]["idlist"][0]
     except Exception as e:
-        logger.error("NCBI taxonomy search failed for species '%s': %s", species, e)
-        return pd.DataFrame(), {}
+        fallback = _SPECIES_FALLBACK.get(species.lower())
+        if fallback:
+            logger.warning(
+                "NCBI taxonomy lookup failed for '%s' (%s). Using fallback ID: %s",
+                species,
+                e,
+                fallback,
+            )
+            warnings.warn(
+                f"STRING annotator: NCBI taxonomy lookup failed for species '{species}' ({e}). "
+                f"Using hardcoded fallback taxonomy ID {fallback}.",
+                stacklevel=2,
+            )
+            species_id = fallback
+        else:
+            logger.error("NCBI taxonomy search failed for species '%s': %s", species, e)
+            warnings.warn(
+                f"STRING annotator: NCBI taxonomy lookup failed for species '{species}' ({e}). "
+                "No fallback available. Please retry later.",
+                stacklevel=2,
+            )
+            return pd.DataFrame(), {}
 
     data_df = get_identifier_of_interest(
         bridgedb_df,
