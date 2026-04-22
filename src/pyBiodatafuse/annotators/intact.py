@@ -252,8 +252,7 @@ def get_filtered_interactions(
             if (
                 has_uniprot_a
                 and has_uniprot_b
-                and id_a in valid_intact_acs
-                and id_b in valid_intact_acs
+                and (id_a in valid_intact_acs or id_b in valid_intact_acs)
             ):
                 keep_interaction = True
 
@@ -278,15 +277,13 @@ def get_filtered_interactions(
             is_gene_gene = (
                 has_uniprot_a
                 and has_uniprot_b
-                and id_a in valid_intact_acs
-                and id_b in valid_intact_acs
+                and (id_a in valid_intact_acs or id_b in valid_intact_acs)
             )
             is_gene_compound = (has_chebi_a and has_uniprot_b) or (has_chebi_b and has_uniprot_a)
             is_compound_compound = (
                 has_chebi_a
                 and has_chebi_b
-                and id_a in valid_intact_acs
-                and id_b in valid_intact_acs
+                and (id_a in valid_intact_acs or id_b in valid_intact_acs)
             )
             if is_gene_gene or is_gene_compound or is_compound_compound:
                 keep_interaction = True

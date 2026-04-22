@@ -268,6 +268,15 @@ def add_intact_interactions_subgraph(g, gene_node_label, annot_list):
                         break
 
             merge_node(g, partner, compound_attrs)
+        else:
+            # Gene partner node — ensure it exists with proper attributes
+            gene_partner_attrs = {
+                Cons.ID: partner,
+                Cons.NAME: partner,
+                Cons.LABEL: Cons.GENE_NODE_LABEL,
+                Cons.DATASOURCE: Cons.INTACT,
+            }
+            merge_node(g, partner, gene_partner_attrs)
 
         edge_key = tuple(sorted([gene_node_label, partner]))
         edge_attrs = {k: v for k, v in Cons.INTACT_PPI_EDGE_ATTRS.items()}
@@ -1758,15 +1767,24 @@ def add_stringdb_ppi_subgraph(g, gene_node_label, annot_list):
             x for x, y in edge_data.items() if y["attr_dict"][Cons.EDGE_HASH] == edge_hash
         ]
         if len(node_exists) == 0 and not pd.isna(ppi[Cons.STRING_PPI_INTERACTS_WITH]):
+            partner = ppi[Cons.STRING_PPI_INTERACTS_WITH]
+            partner_node_attrs = {
+                Cons.ID: partner,
+                Cons.NAME: partner,
+                Cons.LABEL: Cons.GENE_NODE_LABEL,
+                Cons.DATASOURCE: Cons.STRING,
+            }
+            merge_node(g, partner, partner_node_attrs)
+
             g.add_edge(
                 gene_node_label,
-                ppi[Cons.STRING_PPI_INTERACTS_WITH],
+                partner,
                 label=edge_attrs[Cons.LABEL],
                 attr_dict=edge_attrs,
             )
 
             g.add_edge(
-                ppi[Cons.STRING_PPI_INTERACTS_WITH],
+                partner,
                 gene_node_label,
                 label=edge_attrs[Cons.LABEL],
                 attr_dict=edge_attrs,
@@ -2722,12 +2740,6 @@ def process_ppi(g, gene_node_label, row):
             if valid_ppi_list:
                 add_stringdb_ppi_subgraph(g, gene_node_label, valid_ppi_list)
 
-        if not isinstance(ppi_list, float):
-            for item in ppi_list:
-                if pd.isna(item["stringdb_link_to"]):
-                    ppi_list = []
-            add_stringdb_ppi_subgraph(g, gene_node_label, ppi_list)
-
 
 def process_tf_target(g, gene_node_label, row):
     """Process tf-target interactions and add them to the graph.
@@ -2892,42 +2904,23 @@ def _built_gene_based_graph(
 
     # Process disease-compound relationships
     # Build mapping from disease IDs (EFO, MONDO) to disease node label
-    dnodes = {}
-    for n, d in g.nodes(data=True):
-        attr_dict = d.get("attr_dict", {})
-        if attr_dict.get(Cons.LABEL) == Cons.DISEASE_NODE_LABEL:
-            # Map by EFO ID (with and without colon/underscore normalization)
-            efo = attr_dict.get(Cons.EFO)
-            if efo is not None:
-                # Store with original format
-                dnodes[efo] = n
-                # Also store normalized format (EFO_xxx -> EFO:xxx and vice versa)
-                if ":" in efo:
-                    dnodes[efo.replace(":", "_")] = n
-                elif "_" in efo:
-                    dnodes[efo.replace("_", ":")] = n
-            # Map by MONDO ID
-            mondo = attr_dict.get(Cons.MONDO)
-            if mondo is not None:
-                dnodes[mondo] = n
-                # Also store normalized format
-                if ":" in mondo:
-                    dnodes[mondo.replace(":", "_")] = n
-                elif "_" in mondo:
-                    dnodes[mondo.replace("_", ":")] = n
     dnode_namespaces = [Cons.EFO, Cons.MONDO]
     dnodes = {}
 
-    for nspace in dnode_namespaces:
-        dnodes.update(
-            {
-                d["attr_dict"][nspace]: n
-                for n, d in g.nodes(data=True)
-                if d["attr_dict"][Cons.LABEL] == Cons.DISEASE_NODE_LABEL
-                and nspace in d["attr_dict"]
-                and d["attr_dict"][nspace] is not None
-            }
-        )
+    for n, d in g.nodes(data=True):
+        attr_dict = d.get("attr_dict", {})
+        if attr_dict.get(Cons.LABEL) == Cons.DISEASE_NODE_LABEL:
+            for nspace in dnode_namespaces:
+                val = attr_dict.get(nspace)
+                if val is None:
+                    continue
+                # Store with original format
+                dnodes[val] = n
+                # Also store normalised variants (EFO:xxx <-> EFO_xxx)
+                if ":" in val:
+                    dnodes[val.replace(":", "_")] = n
+                elif "_" in val:
+                    dnodes[val.replace("_", ":")] = n
 
     if disease_compound is not None:
         process_disease_compound(g, disease_compound, disease_nodes=dnodes)

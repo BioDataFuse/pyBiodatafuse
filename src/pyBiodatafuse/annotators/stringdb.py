@@ -55,7 +55,8 @@ def _format_data(row, string_ids_df, network_df) -> List[Dict[str, Any]]:
     preferredName_B, and vice versa.
 
     :param row: Row from the input DataFrame (with at least 'identifier' column).
-    :param string_ids_df: DataFrame returned from get_string_ids (not used in this version).
+    :param string_ids_df: DataFrame returned from get_string_ids, used to resolve
+        the gene's preferredName (gene symbol) from its queryItem (input identifier).
     :param network_df: DataFrame returned from the network call.
     :returns: List of dictionaries describing the interactions.
     """
@@ -65,10 +66,22 @@ def _format_data(row, string_ids_df, network_df) -> List[Dict[str, Any]]:
     target = row[Cons.TARGET_COL]
     identifier = row[Cons.IDENTIFIER_COL]
 
+    # Build a set of names to match against preferredName_A/B in the network.
+    # STRING returns gene symbols as preferredNames, but the input identifiers may be
+    # Ensembl gene IDs (ENSG). Use the string_ids_df mapping (queryItem -> preferredName)
+    # to resolve the correct symbol for this gene.
+    preferred_names = {target, identifier}
+    if string_ids_df is not None and not string_ids_df.empty:
+        for query_col in ("queryItem", "stringId"):
+            if query_col in string_ids_df.columns:
+                matches = string_ids_df[string_ids_df[query_col].isin([target, identifier])]
+                if not matches.empty:
+                    preferred_names.update(matches["preferredName"].tolist())
+
     for _, row_arr in network_df.iterrows():
         prot_a = row_arr[Cons.STRING_PREFERRED_NAME_A]
         prot_b = row_arr[Cons.STRING_PREFERRED_NAME_B]
-        if (prot_a == target or prot_a == identifier) and prot_b not in target_links_set:
+        if prot_a in preferred_names and prot_b not in target_links_set:
             gene_ppi_links.append(
                 {
                     Cons.STRING_PPI_INTERACTS_WITH: row_arr[Cons.STRING_PREFERRED_NAME_B],
@@ -79,7 +92,7 @@ def _format_data(row, string_ids_df, network_df) -> List[Dict[str, Any]]:
             )
             target_links_set.add(row_arr[Cons.STRING_PREFERRED_NAME_B])
 
-        elif (prot_b == target or prot_b == identifier) and prot_a not in target_links_set:
+        elif prot_b in preferred_names and prot_a not in target_links_set:
             gene_ppi_links.append(
                 {
                     Cons.STRING_PPI_INTERACTS_WITH: row_arr[Cons.STRING_PREFERRED_NAME_A],
@@ -215,16 +228,43 @@ def get_ppi(
     # Record the start time
     start_time = datetime.datetime.now()
 
+    # Known fallback taxonomy IDs to avoid hard dependency on NCBI API
+    species_fallback = {
+        "human": "9606",
+        "homo sapiens": "9606",
+    }
+
     # Retrieve NCBI taxonomy identifier using the given species term
     params = {"db": "taxonomy", "term": species, "retmode": "json"}
-    response = requests.get(
-        f"{Cons.NCBI_ENDPOINT}/entrez/eutils/esearch.fcgi", params=params
-    ).json()
+    species_id = None
     try:
+        ncbi_resp = requests.get(f"{Cons.NCBI_ENDPOINT}/entrez/eutils/esearch.fcgi", params=params)
+        ncbi_resp.raise_for_status()
+        response = ncbi_resp.json()
         species_id = response["esearchresult"]["idlist"][0]
-    except (KeyError, IndexError):
-        logger.error("NCBI taxonomy search did not return an ID for species: %s", species)
-        return pd.DataFrame(), {}
+    except Exception as e:
+        fallback = species_fallback.get(species.lower())
+        if fallback:
+            logger.warning(
+                "NCBI taxonomy lookup failed for '%s' (%s). Using fallback ID: %s",
+                species,
+                e,
+                fallback,
+            )
+            warnings.warn(
+                f"STRING annotator: NCBI taxonomy lookup failed for species '{species}' ({e}). "
+                f"Using hardcoded fallback taxonomy ID {fallback}.",
+                stacklevel=2,
+            )
+            species_id = fallback
+        else:
+            logger.error("NCBI taxonomy search failed for species '%s': %s", species, e)
+            warnings.warn(
+                f"STRING annotator: NCBI taxonomy lookup failed for species '{species}' ({e}). "
+                "No fallback available. Please retry later.",
+                stacklevel=2,
+            )
+            return pd.DataFrame(), {}
 
     data_df = get_identifier_of_interest(
         bridgedb_df,
