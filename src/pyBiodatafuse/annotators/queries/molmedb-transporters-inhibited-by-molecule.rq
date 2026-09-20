@@ -5,7 +5,7 @@ PREFIX bao: <http://www.bioassayontology.org/bao#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX mmdbvoc: <https://rdf.molmedb.upol.cz/vocabulary#>
 PREFIX repr: <https://w3id.org/reproduceme#>
-PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX prov: <http://www.w3.org/ns/prov#>
 
 SELECT DISTINCT ?inhibitorInChIKey ?uniprot_trembl_id ?hgcn_id ?source_doi ?source_pmid
 
@@ -15,7 +15,7 @@ VALUES ?inhibitorInChIKey { $inhibitor_list }
                              sio:SIO_000300 ?inhibitorInChIKey].
   ?transporterAssay rdf:type bao:BAO_0000040 ;
                     bao:BAO_0090012 ?inhibitor;
-                    bao:BAO_0000426 [dcterms:references	?ref] ;
+                    bao:BAO_0000426 [prov:hadPrimarySource ?ref] ;
                     bao:BAO_0090012 [rdf:type bao:BAO_0000283;
     								sio:SIO_000008 [ sio:SIO_000300 ?uniprot_trembl_id];
                                      rdfs:label ?hgcn_id;

@@ -6,6 +6,7 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX mmdbvoc: <https://rdf.molmedb.upol.cz/vocabulary#>
 PREFIX repr: <https://w3id.org/reproduceme#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX prov: <http://www.w3.org/ns/prov#>
 
 SELECT DISTINCT ?transporterID ?label ?InChIKey ?SMILES
 ?chembl_id ?chebi_id ?drugbank_id ?pubchem_compound_id ?molmedb_id
@@ -18,7 +19,7 @@ WHERE {
                sio:SIO_000008 [ sio:SIO_000300 ?transporterID ] .
   ?transporterAssay rdf:type bao:BAO_0000040 ;
                     bao:BAO_0090012 ?transporter ;
-                    bao:BAO_0000426 [dcterms:references	?ref] ;
+                    bao:BAO_0000426 [prov:hadPrimarySource ?ref] ;
                     bao:BAO_0090012 ?inhibitor ;
                     bao:BAO_0000208 [^bao:BAO_0095000 [rdf:type mmdbvoc:InhibitionAssay;
                                                        sio:SIO_000300 repr:PositiveResult]].
